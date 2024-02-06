@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Contact;
+use Illuminate\Routing\Controller;
+
 class ContactController extends Controller
 {
     public function index()

@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContactController;
 
-Route::resource('contacts', ContactController::class);
 
 Route::get('/{path}', function () {
     return view('index');
@@ -15,3 +14,5 @@ Route::post('/contacts/add', [ContactController::class, 'addContact']);
 
 // Добавьте маршрут для мутации редактирования контакта
 Route::put('/contacts/update/{id}', [ContactController::class, 'updateContact']);
+
+Route::resource('contacts', ContactController::class);

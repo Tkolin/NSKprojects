@@ -18,6 +18,14 @@ export const CONTACTS_QUERY = gql`
         }
     }
 `;
+export const POSITIONS_QUERY = gql`
+    query Position {
+        positions {
+            id
+            name
+        }
+    }
+`;
 
 export const ADD_CONTACT_MUTATION = gql`
     mutation AddContact($first_name: String!, $last_name: String!, $mobile_phone: String!, $email: String!, $sibnipi_email: String!) {
@@ -27,7 +35,7 @@ export const ADD_CONTACT_MUTATION = gql`
             mobile_phone: $mobile_phone
             email: $email
             sibnipi_email: $sibnipi_email
-            position_id: "1"
+            position_id: $position_id
         ) {
             id
             first_name

@@ -2,31 +2,7 @@
 
 type Query {
     contacts: [Contact!]!
-}
-
-type Mutation {
-    addContact(first_name: String!, last_name: String!, mobile_phone: String!, email: String!, sibnipi_email: String!, position_id: ID!): Contact!
-    updateContact(id: ID!, first_name: String!, last_name: String!, mobile_phone: String!, email: String!, sibnipi_email: String!, position_id: ID!): Contact!
-}
-
-type Contact {
-    id: ID!
-    first_name: String!
-    last_name: String!
-    mobile_phone: String!
-    email: String!
-    sibnipi_email: String!
-    position: Position!
-}
-
-type Position {
-    id: ID!
-    name: String!
-}
-
-
-type Query {
-    contacts: [Contact!]!
+    positions: [Position!]!
 }
 
 type Mutation {
@@ -48,4 +24,19 @@ type Mutation {
         sibnipi_email: String!
         position_id: ID!
     ): Contact!
+}
+
+type Contact {
+    id: ID!
+    first_name: String!
+    last_name: String!
+    mobile_phone: String!
+    email: String!
+    sibnipi_email: String!
+    position: Position!
+}
+
+type Position {
+    id: ID!
+    name: String!
 }
