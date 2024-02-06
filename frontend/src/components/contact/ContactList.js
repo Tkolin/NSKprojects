@@ -3,7 +3,7 @@
 import React from 'react';
 import { useQuery } from '@apollo/client';
 import { Table } from 'antd';
-import { CONTACTS_QUERY } from '../graphql/queries';
+import { CONTACTS_QUERY } from '../../graphql/queries';
 
 const ContactList = () => {
     const { loading, error, data } = useQuery(CONTACTS_QUERY);

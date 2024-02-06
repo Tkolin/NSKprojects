@@ -2,34 +2,22 @@
 
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, NavLink } from 'react-router-dom';
-import ContactList from './components/ContactList';
-import ContactForm from './components/ContactForm';
+import ContactList from './components/contact/ContactList';
+import ContactForm from './components/contact/ContactForm';
 import Home from './components/Home';
+import CustomLayout from './components/Layout';
 
 const App = () => {
     return (
         <Router>
-            <div>
-                <nav>
-                    <ul>
-                        <li>
-                            <NavLink to="/contacts">Contact List</NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/contacts/new">Add Contact</NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/">Home</NavLink>
-                        </li>
-                    </ul>
-                </nav>
+            <CustomLayout>
 
                 <Routes>
                     <Route path="/contacts" element={<ContactList />} />
                     <Route path="/contacts/new" element={<ContactForm />} />
                     <Route path="/" element={<Home />} />
                 </Routes>
-            </div>
+            </CustomLayout>
         </Router>
     );
 };

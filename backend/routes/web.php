@@ -16,3 +16,7 @@ Route::post('/contacts/add', [ContactController::class, 'addContact']);
 Route::put('/contacts/update/{id}', [ContactController::class, 'updateContact']);
 
 Route::resource('contacts', ContactController::class);
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

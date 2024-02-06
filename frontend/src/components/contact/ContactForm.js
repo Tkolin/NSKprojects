@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Select } from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
-import {CONTACTS_QUERY, ADD_CONTACT_MUTATION, POSITIONS_QUERY} from '../graphql/queries';
+import {CONTACTS_QUERY, ADD_CONTACT_MUTATION, POSITIONS_QUERY} from '../../graphql/queries';
 
 const { Option } = Select;
 

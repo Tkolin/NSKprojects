@@ -3,7 +3,7 @@
 import { gql } from '@apollo/client';
 
 export const CONTACTS_QUERY = gql`
-    query Contacts {
+    query ContactsQuery {
         contacts {
             id
             first_name
@@ -19,7 +19,7 @@ export const CONTACTS_QUERY = gql`
     }
 `;
 export const POSITIONS_QUERY = gql`
-    query Position {
+    query PositionQuery {
         positions {
             id
             name
@@ -28,7 +28,7 @@ export const POSITIONS_QUERY = gql`
 `;
 
 export const ADD_CONTACT_MUTATION = gql`
-    mutation AddContact($first_name: String!, $last_name: String!, $mobile_phone: String!, $email: String!, $sibnipi_email: String!) {
+    mutation AddContact($first_name: String!, $last_name: String!, $mobile_phone: String!, $email: String!, $sibnipi_email: String!, $position_id: ID! ) {
         addContact(
             first_name: $first_name
             last_name: $last_name
