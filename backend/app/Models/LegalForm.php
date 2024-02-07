@@ -7,5 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class LegalForm extends Model
 {
-    use HasFactory;
+    protected $fillable = [
+        'name',
+        'full_name',
+    ];
 }
+

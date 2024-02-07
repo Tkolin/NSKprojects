@@ -17,10 +17,15 @@ class Contact extends Model
         'email',
         'sibnipi_email',
         'position_id',
+        'organization_id',
     ];
 
     public function position(): BelongsTo
     {
         return $this->belongsTo(Position::class);
+    }
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
     }
 }

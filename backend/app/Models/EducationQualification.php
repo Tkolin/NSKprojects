@@ -6,14 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class InitialAuthorizationDocumentation extends Model
+class EducationQualification extends Model
 {
     protected $fillable = [
         'name',
-        'date_issue',
     ];
-    public function project(): HasMany
+    public function education(): HasMany
     {
-        return $this->hasMany(Project::class);
+        return $this->hasMany(Education::class);
     }
 }
