@@ -1,5 +1,3 @@
-# app/GraphQL/schema.graphql
-
 type Query {
     contacts: [Contact!]!
     positions: [Position!]!
@@ -36,33 +34,40 @@ type Contact {
     sibnipi_email: String!
     position: Position!
 }
+
 type CurrentUser {
     user: User!
     access_token: String!
 }
-type Position {
-    id: ID!
-    name: String!
-}
+
 type User {
     id: ID!
     name: String!
     email: String!
-    role_id: Int!
+    role: Role!
 }
+
 type Role {
     id: ID!
     name: String!
 }
+
+type Position {
+    id: ID!
+    name: String!
+}
+
 input RegisterInput {
     name: String!
     email: String!
     password: String!
 }
+
 input LoginInput {
     email: String!
     password: String!
 }
+
 type AuthPayload {
     user: User!
     access_token: String!

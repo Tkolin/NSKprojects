@@ -32,8 +32,10 @@ export const CURRENT_USER_QUERY = gql`
                 id
                 name
                 email
-                role_id
-             
+                role {
+                    id
+                    name
+                }
         }
     }
 `;
@@ -84,11 +86,13 @@ export const LOGIN_MUTATION = gql`
                 id
                 name
                 email
-                role_id
+                role {
+                    id
+                    name
+                }
             }
             access_token
         }
     }
 `;
-
 
