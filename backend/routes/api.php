@@ -4,7 +4,8 @@ use App\GraphQL\Mutations\RegisterMutation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\PositionController;
+Route::post('/login', 'AuthController@login');
+Route::post('/register', 'AuthController@register');
 
-Route::get('/positions', [PositionController::class, 'positions']);
+// Добавьте маршрут для разлогинивания
+Route::middleware('auth:api')->post('/logout', 'AuthController@logout');

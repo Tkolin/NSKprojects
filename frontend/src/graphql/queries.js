@@ -26,6 +26,18 @@ export const POSITIONS_QUERY = gql`
         }
     }
 `;
+export const CURRENT_USER_QUERY = gql`
+    query CurrentUser {
+        currentUser {
+                id
+                name
+                email
+                role_id
+             
+        }
+    }
+`;
+
 
 export const ADD_CONTACT_MUTATION = gql`
     mutation AddContact($first_name: String!, $last_name: String!, $mobile_phone: String!, $email: String!, $sibnipi_email: String!, $position_id: ID! ) {
@@ -50,4 +62,33 @@ export const ADD_CONTACT_MUTATION = gql`
         }
     }
 `;
+
+export const REGISTER_MUTATION = gql`
+    mutation Register($input: RegisterInput!) {
+        register(input: $input) {
+            user {
+                id
+                name
+                email
+            }
+            access_token
+        }
+    }
+`;
+
+
+export const LOGIN_MUTATION = gql`
+    mutation Login($input: LoginInput!) {
+        login(input: $input) {
+            user {
+                id
+                name
+                email
+                role_id
+            }
+            access_token
+        }
+    }
+`;
+
 
