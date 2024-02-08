@@ -23,6 +23,143 @@ type Mutation {
         sibnipi_email: String!
         position_id: ID!
     ): Contact!
+
+    addOrganization(
+        legal_form_id: ID!
+        name: String!
+        full_name: String!
+        address_legal_id: ID!
+        office_number_legal: String!
+        address_mail_id: ID!
+        office_number_mail: String!
+        phone_number: String!
+        fax_number: String!
+        email: String!
+        INN: String!
+        OGRN: String!
+        OKPO: String!
+        KPP: String!
+        BIK_id: ID!
+        payment_account: String!
+        director_id: ID!
+    ): Organization!
+
+    updateOrganization(
+        id: ID!
+        legal_form_id: ID!
+        name: String!
+        full_name: String!
+        address_legal_id: ID!
+        office_number_legal: String!
+        address_mail_id: ID!
+        office_number_mail: String!
+        phone_number: String!
+        fax_number: String!
+        email: String!
+        INN: String!
+        OGRN: String!
+        OKPO: String!
+        KPP: String!
+        BIK_id: ID!
+        payment_account: String!
+        director_id: ID!
+    ): Organization!
+
+    updatePerson(
+        id: ID!
+        firstname: String!
+        lastname: String!
+        patronymic: String!
+        serial: String!
+        number: String!
+        passport_place_issue_id: ID!
+        birth_date: String!
+        date: String!
+
+        SHILS: String!
+        INN: String!
+        payment_account: String!
+        phone_number: String!
+        email: String!
+        email_sibnipi: String!
+        bank_id: ID!
+        bik_id: ID!
+        noteName: String!
+    ): Person!
+    addPerson(
+        firstname: String!
+        lastname: String!
+        patronymic: String!
+        serial: String!
+        number: String!
+        passport_place_issue_id: ID!
+        birth_date: String!
+        date: String!
+
+        SHILS: String!
+        INN: String!
+        payment_account: String!
+        phone_number: String!
+        email: String!
+        email_sibnipi: String!
+        bank_id: ID!
+        bik_id: ID!
+        noteName: String!
+    ): Person!
+
+    updateFacility(
+        id: ID!
+        name: String!
+        type: ID!
+    ): Facility!
+    addFacility(
+        name: String!
+        type: ID!
+    ): Facility!
+
+    updateProject(
+        id: ID!
+        number: String!
+        name: String!
+        organization_customer_id: ID!
+        type_project_document_id: ID!
+        facility_id: ID!
+        date_signing: String!
+        IAD_id: ID!
+        duration: Int!
+        date_end: String!
+        status_id: ID!
+        date_completion: String!
+    ): Project!
+    addProject(
+        number: String!
+        name: String!
+        organization_customer_id: ID!
+        type_project_document_id: ID!
+        facility_id: ID!
+        date_signing: String!
+        IAD_id: ID!
+        duration: Int!
+        date_end: String!
+        status_id: ID!
+        date_completion: String!
+    ): Project!
+
+    updateProjectStage(
+        id: ID!
+        project_id: ID!
+        stage_id: ID!
+        progress: String!
+        date_start: String!
+        duration: String!
+    ): ProjectStage!
+    addProjectStage(
+        project_id: ID!
+        stage_id: ID!
+        progress: String!
+        date_start: String!
+        duration: String!
+    ): ProjectStage!
 }
 
 type Contact {
@@ -72,7 +209,134 @@ type AuthPayload {
     user: User!
     access_token: String!
 }
-
+type Contact {
+    id: ID!
+    first_name: String!
+    last_name: String!
+    mobile_phone: String!
+    email: String!
+    sibnipi_email: String!
+    position: Position!
+}
+type Organization{
+    id: ID!
+    legal_form: LegalForm!
+    name: String!
+    full_name: String!
+    address_legal: Address!
+    office_number_legal: String!
+    address_mail: Address!
+    office_number_mail: String!
+    phone_number: String!
+    fax_number: String!
+    email: String!
+    INN: String!
+    OGRN: String!
+    OKPO: String!
+    KPP: String!
+    BIK: Bik!
+    payment_account: String!
+    director: Contact!
+}
+type LegalForm{
+    id: ID!
+    name: String!
+}
+type Bik{
+    id: ID!
+    BIK: String!
+    name: String!
+    correspondent_account: String!
+}
+type Address{
+    id: ID!
+    name: String!
+}
+type Person{
+    id: ID!
+    passport: Passport!
+    SHILS: String!
+    INN: String!
+    payment_account: String!
+    phone_number: String!
+    email: String!
+    email_sibnipi: String!
+    bank: Bank!
+    bik: Bik!
+    note: Note!
+}
+type Passport{
+    id: ID!
+    firstname: String!
+    lastname: String!
+    patronymic: String!
+    serial: String!
+    number: String!
+    passport_place_issue: PassportPlaceIssue!
+    birth_date: String!
+    date: String!
+}
+type PassportPlaceIssue{
+    id: ID!
+    name: String!
+}
+type Bank{
+    id: ID!
+    name: String!
+}
+type Note{
+    id: ID!
+    name: String!
+}
+type Facility{
+    id: ID!
+    name: String!
+    type: TypeFacility!
+}
+type TypeFacility{
+    id: ID!
+    name: String!
+}
+type Project{
+    id: ID!
+    number: String!
+    name: String!
+    organization_customer: Organization!
+    type_project_document: TypeProjectDocument!
+    facility: Facility!
+    date_signing: String!
+    IAD: IAD!
+    duration: Int!
+    date_end: String!
+    status: ProjectStatus!
+    date_completion: String!
+}
+type TypeProjectDocument{
+    id: ID!
+    name: String!
+    code: String!
+}
+type IAD{
+    id: ID!
+    name: String!
+    date_issue: String!
+}
+type ProjectStatus{
+    id: ID!
+    name: String!
+}
+type ProjectStage{
+    id: ID!
+    project: Project!
+    stage: Stage!
+    progress: String!
+    date_start: String!
+    duration: String!
+}
+type Stage{
+    id: ID!
+    name: String!
+}
 extend type Mutation {
     register(input: RegisterInput!): AuthPayload!
     login(input:  LoginInput!): AuthPayload!
