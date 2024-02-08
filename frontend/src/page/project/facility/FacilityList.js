@@ -3,9 +3,9 @@
 import React from 'react';
 import { useQuery } from '@apollo/client';
 import { Table } from 'antd';
-import { CONTACTS_QUERY } from '../../graphql/queries';
+import { CONTACTS_QUERY } from '../../../graphql/queries';
 
-const PersonList = () => {
+const FacilityList = () => {
     const { loading, error, data } = useQuery(CONTACTS_QUERY);
 
     if (loading) return 'Loading...';
@@ -38,4 +38,4 @@ const PersonList = () => {
     return <Table dataSource={data.contacts} columns={columns} />;
 };
 
-export default PersonList;
+export default FacilityList;

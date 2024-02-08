@@ -14,6 +14,7 @@ final readonly class AddContact
         $contact = Contact::create([
             'first_name' => $args['first_name'],
             'last_name' => $args['last_name'],
+            'patronymic' => $args['patronymic'],
             'mobile_phone' => $args['mobile_phone'],
             'email' => $args['email'],
             'sibnipi_email' => $args['sibnipi_email'],

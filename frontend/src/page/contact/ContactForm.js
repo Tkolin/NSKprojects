@@ -3,7 +3,14 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Select } from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
-import {CONTACTS_QUERY, ADD_CONTACT_MUTATION, POSITIONS_QUERY} from '../../graphql/queries';
+import {
+    CONTACTS_QUERY,
+    ADD_CONTACT_MUTATION,
+    POSITIONS_NAMES_QUERY,
+    ORGANIZATION_NAMES_QUERY,
+    ORGANIZATION_AND_POSITION_NAMES_QUERY
+} from '../../graphql/queries';
+import StyledFormBlock, { StyledForm, StyledFormItem, StyledButton } from '../style/FormStyles'; // Импорт стилей
 
 const { Option } = Select;
 
@@ -12,7 +19,7 @@ const ContactForm = () => {
     const [addContact] = useMutation(ADD_CONTACT_MUTATION, {
         refetchQueries: [{ query: CONTACTS_QUERY }],
     });
-    const { loading, error, data } = useQuery(POSITIONS_QUERY);
+    const { loading, error, data } = useQuery( ORGANIZATION_AND_POSITION_NAMES_QUERY);
 
     const onFinish = (values) => {
         addContact({ variables: values });
@@ -23,35 +30,47 @@ const ContactForm = () => {
     if (error) return `Error! ${error.message}`;
 
     return (
-        <Form form={form} onFinish={onFinish} layout="vertical">
-            <Form.Item name="first_name" label="First Name" rules={[{ required: true }]}>
+        <StyledFormBlock>
+        <StyledForm form={form} onFinish={onFinish} layout="vertical">
+            <StyledFormItem name="first_name" label="Имя" rules={[{ required: true }]}>
                 <Input />
-            </Form.Item>
-            <Form.Item name="last_name" label="Last Name" rules={[{ required: true }]}>
+            </StyledFormItem>
+            <StyledFormItem name="last_name" label="Фамилия" rules={[{ required: true }]}>
                 <Input />
-            </Form.Item>
-            <Form.Item name="mobile_phone" label="Mobile Phone" rules={[{ required: true }]}>
+            </StyledFormItem>
+            <StyledFormItem name="patronymic" label="Отчество" rules={[{ required: true }]}>
                 <Input />
-            </Form.Item>
-            <Form.Item name="email" label="Email" rules={[{ required: true, type: 'email' }]}>
+            </StyledFormItem>
+            <StyledFormItem name="mobile_phone" label="Мобильный номер телефона" rules={[{ required: true }]}>
                 <Input />
-            </Form.Item>
-            <Form.Item name="sibnipi_email" label="Sibnipi Email" rules={[{ required: true, type: 'email' }]}>
+            </StyledFormItem>
+            <StyledFormItem name="email" label="E-mail" rules={[{ required: true, type: 'email' }]}>
                 <Input />
-            </Form.Item>
-            <Form.Item name="position_id" label="Position" rules={[{ required: true }]}>
+            </StyledFormItem>
+            <StyledFormItem name="sibnipi_email" label="E-mail в Сибнипи" rules={[{ required: true, type: 'email' }]}>
+                <Input />
+            </StyledFormItem>
+            <StyledFormItem name="position_id" label="Должность" rules={[{ required: true }]}>
                 <Select>
-                    {data && data.positions.map(position => (
-                        <Option key={position.id} value={position.id}>{position.name}</Option>
+                    {data && data.positionsNames && data.positionsNames.map(position => (
+                        <Select.Option key={position.id} value={position.id}>{position.name}</Select.Option>
                     ))}
                 </Select>
-            </Form.Item>
-            <Form.Item>
+            </StyledFormItem>
+            <StyledFormItem name="organization_id" label="Организация" rules={[{ required: true }]}>
+                <Select>
+                    {data && data.organizationNames && data.organizationNames.map(organization => (
+                        <Select.Option key={organization.id} value={organization.id}>{organization.name}</Select.Option>
+                    ))}
+                </Select>
+            </StyledFormItem>
+            <StyledFormItem>
                 <Button type="primary" htmlType="submit">
                     Add Contact
                 </Button>
-            </Form.Item>
-        </Form>
+            </StyledFormItem>
+        </StyledForm>
+        </StyledFormBlock>
     );
 };
 

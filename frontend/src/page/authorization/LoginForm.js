@@ -9,6 +9,8 @@ const LoginForm = () => {
     const [form] = Form.useForm();
     const [login, { loading, error }] = useMutation(LOGIN_MUTATION); // Добавлены loading и error
 
+    const navigate = useNavigate();
+
     const onFinish = async (values) => {
         const { email, password } = values; // Извлекаем значения email и password из формы
         try {
@@ -20,7 +22,9 @@ const LoginForm = () => {
             console.log('Рэф токен:');
 
             // Обновляем страницу
+            navigate('/');
             window.location.reload();
+
         } catch (error) {
             message.error(error.message);
         }

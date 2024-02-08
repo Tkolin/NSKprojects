@@ -2,13 +2,13 @@
 
 namespace App\GraphQL\Queries;
 
-use App\Models\Position;
+use App\Models\Organization;
 
-final readonly class Positions
+final readonly class OrganizationNames
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        return Position::all();
+        return Organization::select('id','name')->get();
     }
 }
