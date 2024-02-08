@@ -42,4 +42,8 @@ class Person extends Model
     {
         return $this->hasMany(ProjectResponsiblePerson::class);
     }
+    public function education_person(): HasMany
+    {
+        return $this->hasMany(EducationPerson::class);
+    }
 }

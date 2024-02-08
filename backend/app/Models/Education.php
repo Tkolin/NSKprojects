@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Education extends Model
 {
@@ -30,5 +31,9 @@ class Education extends Model
     public function specialization(): BelongsTo
     {
         return $this->belongsTo(EducationSpecialization::class);
+    }
+    public function education_person(): HasMany
+    {
+        return $this->hasMany(EducationPerson::class);
     }
 }
