@@ -1,54 +1,112 @@
-import React, { useState } from 'react';
-import {
-    DesktopOutlined,
-    FileOutlined,
-    PieChartOutlined,
-    TeamOutlined,
-    UserOutlined,
-} from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
-import {Link} from "react-router-dom";
-const { Header, Content, Footer, Sider } = Layout;
+// Ваш проект/frontend/src/components/ContactList.js
 
-const App = () => {
-    function getItem(label, key, icon, children, link = null) {
-        return {
-            key,
-            icon,
-            children,
-            label,
-            link,
-        };
-    }
-    const name = "asdmin";
-    const items = [
-        getItem('Option 1', '1', <PieChartOutlined />,null,"/option1"),
-        getItem('Option 2', '2', <DesktopOutlined />,null,"/option2"),
-        (name === "admin") &&
-        getItem('User', 'sub1', <UserOutlined />, [
-            getItem('Tom', '3',null,null,"/option3"),
-            getItem('Bill', '4',null,null,"/option4"),
-            getItem('Alex', '5',null,null,"/option5"),
-        ]),
-        getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
-        getItem('Files', '9', <FileOutlined />),
+import React from 'react';
+import {concat, useQuery} from '@apollo/client';
+import { Table } from 'antd';
+import { ORGANIZATION_QUERY} from '../../graphql/queries';
+
+const OrganizationList = () => {
+    const { loading, error, data } = useQuery(ORGANIZATION_QUERY);
+
+    if (loading) return 'Loading...';
+    if (error) return `Error! ${error.message}`;
+
+    const columns = [
+        {
+            title: 'Тип',
+            dataIndex: 'legal_form',
+            key: 'legal_form',
+            render: (legal_form) => legal_form ? legal_form.name : '',
+        },
+        {
+            title: 'Название организации',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Полное название',
+            dataIndex: 'full_name',
+            key: 'full_name',
+            render: (full_name) => full_name ? full_name : '',
+        },
+        {
+            title: 'юр. адресс',
+            dataIndex: 'address_legal',
+            key: 'address_legal',
+            render: (address_legal) => address_legal ? address_legal.name : '',
+        },
+        {
+            title: 'Номер офиса',
+            dataIndex: 'office_number_legal',
+            key: 'office_number_legal',
+        },
+        {
+            title: 'Фактический адресс',
+            dataIndex: 'address_mail',
+            key: 'address_mail',
+            render: (address_mail) => address_mail ? address_mail.name : '',
+        },
+        {
+            title: 'Номер офиса',
+            dataIndex: 'office_number_mail',
+            key: 'office_number_mail',
+        },
+        {
+            title: 'Номер телефона',
+            dataIndex: 'phone_number',
+            key: 'phone_number',
+        },
+        {
+            title: 'Номер факса',
+            dataIndex: 'fax_number',
+            key: 'fax_number',
+        },
+        {
+            title: 'E-mail',
+            dataIndex: 'email',
+            key: 'email',
+        },
+        {
+            title: 'ИНН',
+            dataIndex: 'INN',
+            key: 'INN',
+        },
+        {
+            title: 'ОГРН',
+            dataIndex: 'OGRN',
+            key: 'OGRN',
+        },
+        {
+            title: 'ОКПО',
+            dataIndex: 'OKPO',
+            key: 'OKPO',
+        },
+        {
+            title: 'КПП',
+            dataIndex: 'KPP',
+            key: 'KPP',
+        },
+        {
+            title: 'Бик',
+            dataIndex: 'BIK',
+            key: 'BIK',
+        },
+        {
+            title: 'Расчётный счёт',
+            dataIndex: 'payment_account',
+            key: 'payment_account',
+            render: (payment_account) => payment_account ? payment_account.name : '',
+        },
+        {
+            title: 'Директор',
+            dataIndex: 'director',
+            key: 'director',
+            render: (director) => director ? `${director.first_name} ${director.last_name}` : '',
+        },
     ];
-    const [collapsed, setCollapsed] = useState(false);
-    const {
-        token: { colorBgContainer, borderRadiusLG },
-    } = theme.useToken();
-    return (
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
-            {items.map(item => (
-                <Menu.Item key={item.key} icon={item.icon}>
-                    {item.link ? (
-                        <Link to={item.link}>{item.label}</Link>
-                    ) : (
-                        <span>{item.label}</span>
-                    )}
-                </Menu.Item>
-            ))}
-        </Menu>
-    );
+
+
+    return <Table dataSource={data.organizations} columns={columns} />;
 };
-export default App;
+
+export default OrganizationList;

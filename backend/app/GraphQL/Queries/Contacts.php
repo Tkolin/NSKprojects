@@ -9,6 +9,8 @@ final readonly class Contacts
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        return Contact::with('position')->get();
+        return Contact::with('position')
+            ->with('organization')
+            ->get();
     }
 }

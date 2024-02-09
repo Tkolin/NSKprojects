@@ -1,30 +1,37 @@
 type Query {
-    contacts: [Contact]!
-    positionsNames: [PositionName]!
+    contacts: [Contact!]!
+    positionsNames: [PositionName!]!
     currentUser: User!
-    organizationNames: [OrganizationName]!
+    organizations: [Organization!]!
+    projectStatuses: [ProjectStatus!]!
+    typeProjectDocuments: [TypeProjectDocument!]!
+    facilitys: [Facility!]!
+    iads: [IAD]!
+    projects: [Project!]!
 }
 
 type Mutation {
     addContact(
         first_name: String!
-        last_name: String!
-        patronymic: String!
-        mobile_phone: String!
-        email: String!
-        sibnipi_email: String!
-        position_id: ID!
-        organization_id: ID!
+        last_name: String
+        patronymic: String
+        mobile_phone: String
+        email: String
+        sibnipi_email: String
+        position_id: ID
+        organization_id: ID
     ): Contact!
 
     updateContact(
         id: ID!
         first_name: String!
-        last_name: String!
-        mobile_phone: String!
-        email: String!
-        sibnipi_email: String!
-        position_id: ID!
+        last_name: String
+        patronymic: String
+        mobile_phone: String
+        email: String
+        sibnipi_email: String
+        position_id: ID
+        organization_id: ID
     ): Contact!
 
     addOrganization(
@@ -168,24 +175,24 @@ type Mutation {
 type Contact {
     id: ID!
     first_name: String!
-    last_name: String!
-    patronymic: String!
-    mobile_phone: String!
-    email: String!
-    sibnipi_email: String!
-    position: Position!
-    organization: Organization!
+    last_name: String
+    patronymic: String
+    mobile_phone: String
+    email: String
+    sibnipi_email: String
+    position: Position
+    organization: Organization
 
 }
-
+type ProjectStatus{
+    id: ID!
+    name: String!
+}
 type PositionName {
     id: ID!
     name: String!
 }
-type OrganizationName {
-    id: ID!
-    name: String!
-}
+
 type CurrentUser {
     user: User!
     access_token: String!
@@ -223,34 +230,26 @@ type AuthPayload {
     user: User!
     access_token: String!
 }
-type Contact {
-    id: ID!
-    first_name: String!
-    last_name: String!
-    mobile_phone: String!
-    email: String!
-    sibnipi_email: String!
-    position: Position!
-}
+
 type Organization{
     id: ID!
     legal_form: LegalForm!
     name: String!
-    full_name: String!
-    address_legal: Address!
-    office_number_legal: String!
-    address_mail: Address!
-    office_number_mail: String!
-    phone_number: String!
-    fax_number: String!
-    email: String!
-    INN: String!
-    OGRN: String!
-    OKPO: String!
-    KPP: String!
-    BIK: Bik!
-    payment_account: String!
-    director: Contact!
+    full_name: String
+    address_legal: Address
+    office_number_legal: String
+    address_mail: Address
+    office_number_mail: String
+    phone_number: String
+    fax_number: String
+    email: String
+    INN: String
+    OGRN: String
+    OKPO: String
+    KPP: String
+    BIK: Bik
+    payment_account: String
+    director: Contact
 }
 type LegalForm{
     id: ID!
@@ -263,6 +262,10 @@ type Bik{
     correspondent_account: String!
 }
 type Address{
+    id: ID!
+    name: String!
+}
+type TypeProjectDocument{
     id: ID!
     name: String!
 }
@@ -313,17 +316,17 @@ type TypeFacility{
 }
 type Project{
     id: ID!
-    number: String!
-    name: String!
-    organization_customer: Organization!
-    type_project_document: TypeProjectDocument!
-    facility: Facility!
-    date_signing: String!
-    IAD: IAD!
-    duration: Int!
-    date_end: String!
-    status: ProjectStatus!
-    date_completion: String!
+    number: String
+    name: String
+    organization_customer: Organization
+    type_project_document: TypeProjectDocument
+    facility: Facility
+    date_signing: String
+    IAD: IAD
+    duration: Int
+    date_end: String
+    status: ProjectStatus
+    date_completion: String
 }
 type TypeProjectDocument{
     id: ID!

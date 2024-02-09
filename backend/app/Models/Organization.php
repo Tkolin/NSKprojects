@@ -28,6 +28,9 @@ class Organization extends Model
         'payment_account',
         'director_id',
     ];
+    protected $rules = [
+        'full_name' => 'required', // добавляем правило, что поле full_name обязательное
+    ];
 
     public function legal_form(): BelongsTo
     {

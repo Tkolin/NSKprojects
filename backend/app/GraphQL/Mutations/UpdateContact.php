@@ -2,11 +2,28 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Models\Contact;
+
 final readonly class UpdateContact
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        // TODO implement the resolver
+        $contact = Contact::findOrFail($args['id']);
+
+        // Обновляем поля контакта
+        $contact->update([
+            'first_name' => $args['first_name'] ?? $contact->first_name,
+            'last_name' => $args['last_name'] ?? $contact->last_name,
+            'patronymic' => $args['patronymic'] ?? $contact->patronymic,
+            'mobile_phone' => $args['mobile_phone'] ?? $contact->mobile_phone,
+            'email' => $args['email'] ?? $contact->email,
+            'sibnipi_email' => $args['sibnipi_email'] ?? $contact->sibnipi_email,
+            'position_id' => $args['position_id'] ?? $contact->position_id,
+            'organization_id' => $args['organization_id'] ?? $contact->organization_id
+        ]);
+
+        // Возвращаем обновленный контакт
+        return $contact;
     }
 }
