@@ -1,20 +1,22 @@
-# Используем образ Node.js
-FROM node:14
+# Dockerfile для Front-End (ReactJs, AntD, Styled Components, Apollo Client)
 
-# Устанавливаем рабочую директорию
+# Используем официальный образ Node.js
+FROM node:latest
+
+# Настройка рабочей директории
 WORKDIR /usr/src/app
 
-# Копируем зависимости package.json и package-lock.json
-COPY package*.json ./
+# Копируем файлы проекта в контейнер
+COPY . .
 
 # Устанавливаем зависимости
 RUN npm install
 
-# Копируем исходный код приложения в контейнер
-COPY . .
-
-# Собираем приложение
+# Собираем React приложение
 RUN npm run build
 
-# Запускаем приложение при старте контейнера
-CMD ["npm", "start"]
+# Открываем порт для веб-сервера (по умолчанию 3000)
+EXPOSE 3000
+
+# Команда запуска веб-сервера React
+CMD npm start

@@ -19,12 +19,14 @@ const Context = React.createContext({
 function RadiusUprightOutlined() {
     return null;
 }
+const ContactForm = ({ contact, onClose }) => {
 
-const ContactForm = ({contact, onClose }) => {
+    // Состояния
     const [editingContact, setEditingContact] = useState(null);
-
     const [form] = Form.useForm();
     const [api, contextHolder] = notification.useNotification();
+
+    // Функции уведомлений
     const openNotification = (placement, type, message) => {
         notification[type]({
             message: message,
@@ -32,6 +34,10 @@ const ContactForm = ({contact, onClose }) => {
         });
     };
 
+    // Получение данных для выпадающих списков
+    const { loading, error, data } = useQuery(ORGANIZATION_AND_POSITION_NAMES_QUERY);
+
+    // Заполнение формы данными контакта при его редактировании
     useEffect(() => {
         if (contact) {
             setEditingContact(contact);
@@ -39,6 +45,7 @@ const ContactForm = ({contact, onClose }) => {
         }
     }, [contact]);
 
+    // Мутации для добавления и обновления
     const [addContact] = useMutation(ADD_CONTACT_MUTATION, {
         refetchQueries: [{ query: CONTACTS_QUERY }],
         onCompleted: () => {
@@ -50,7 +57,6 @@ const ContactForm = ({contact, onClose }) => {
         }
     });
 
-    // Логика обновления контакта
     const [updateContact] = useMutation(UPDATE_CONTACT_MUTATION, {
         refetchQueries: [{ query: CONTACTS_QUERY }],
         onCompleted: () => {
@@ -59,12 +65,11 @@ const ContactForm = ({contact, onClose }) => {
             onClose();
         },
         onError: () => {
-            openNotification('topRight', 'error', 'Ошибка при обновлении данных.' + contact.id);
+            openNotification('topRight', 'error', 'Ошибка при обновлении данных.');
         }
     });
 
-    const { loading, error, data } = useQuery(ORGANIZATION_AND_POSITION_NAMES_QUERY);
-
+    // Обработчик отправки формы
     const handleSubmit = () => {
         if (editingContact) {
             updateContact({ variables: { id: editingContact.id, ...form.getFieldsValue() } });
@@ -73,6 +78,7 @@ const ContactForm = ({contact, onClose }) => {
         }
     };
 
+    // Обработка загрузки и ошибок
     if (loading) return 'Loading...';
     if (error) return `Error! ${error.message}`;
 

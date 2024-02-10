@@ -7,21 +7,23 @@ import { CONTACTS_QUERY } from '../../graphql/queries';
 import ContactForm from "./ContactForm";
 
 const ContactList = () => {
+
+    // Состояния
     const { loading, error, data } = useQuery(CONTACTS_QUERY);
     const [selectedContact, setSelectedContact] = useState(null);
     const [editModalVisible, setEditModalVisible] = useState(false);
-    const handleClose = () => {
-        setEditModalVisible(false);
-    };
+    const handleClose = () => {setEditModalVisible(false);};
     const handleEdit = (contactId) => {
         const contact = data.contacts.find(contact => contact.id === contactId);
         setSelectedContact(contact);
         setEditModalVisible(true);
     };
 
+    // Обработка загрузки и ошибок
     if (loading) return 'Loading...';
     if (error) return `Error! ${error.message}`;
 
+    // Формат таблицы
     const columns = [
         {
             title: 'Имя',

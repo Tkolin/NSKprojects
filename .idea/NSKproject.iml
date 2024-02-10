@@ -8,6 +8,8 @@
       <sourceFolder url="file://$MODULE_DIR$/backend/tests" isTestSource="true" packagePrefix="Tests\" />
       <sourceFolder url="file://$MODULE_DIR$/backend/tests/Feature" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/backend/tests/Unit" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/carbonphp/carbon-doctrine-types" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/composer" />
@@ -20,7 +22,6 @@
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/fakerphp/faker" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/filp/whoops" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/firebase/php-jwt" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/fruitcake/laravel-weasyprint" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/fruitcake/php-cors" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/graham-campbell/result-type" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/guzzlehttp/guzzle" />
@@ -74,7 +75,6 @@
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/phpunit/php-text-template" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/phpunit/php-timer" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/phpunit/phpunit" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/pontedilana/php-weasyprint" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/psr/clock" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/psr/container" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/psr/event-dispatcher" />
@@ -142,7 +142,6 @@
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/webonyx/graphql-php" />
       <excludeFolder url="file://$MODULE_DIR$/backend/storage/app" />
       <excludeFolder url="file://$MODULE_DIR$/backend/storage/framework" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/_laravel_idea" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

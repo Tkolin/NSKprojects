@@ -8,6 +8,8 @@ type Query {
     facilitys: [Facility!]!
     iads: [IAD]!
     projects: [Project!]!
+    projectStagesGroup: [ProjectStagesGroup!]!
+    projectStages: [ProjectStage]!
 }
 
 type Mutation {
@@ -328,6 +330,20 @@ type Project{
     status: ProjectStatus
     date_completion: String
 }
+type ProjectStagesGroup{
+    id: ID!
+    number: String
+    name: String
+    projectStage: [ProjectStage]!
+}
+type ProjectStage{
+    id: ID!
+    project: Project!
+    stage: Stage!
+    progress: String!
+    date_start: String!
+    duration: String!
+}
 type TypeProjectDocument{
     id: ID!
     name: String!
@@ -342,14 +358,7 @@ type ProjectStatus{
     id: ID!
     name: String!
 }
-type ProjectStage{
-    id: ID!
-    project: Project!
-    stage: Stage!
-    progress: String!
-    date_start: String!
-    duration: String!
-}
+
 type Stage{
     id: ID!
     name: String!

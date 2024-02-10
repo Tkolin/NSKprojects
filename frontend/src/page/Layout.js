@@ -119,8 +119,9 @@ const CustomLayout = ({ children }) => {
                                 alignItems: 'center',
                                 marginTop: '20px',
                                 marginBottom: '20px'
+
                         }}>
-                            <Text style={{display: 'block', textAlign: 'center', color: '#ffffff'}}>
+                            <Text style={{display: 'block', textAlign: 'center', color: 'silver'}}>
                                 Добро пожаловать: {data.currentUser.name} !
                             </Text>
                             <Button type="primary" danger={true} style={{marginTop: '10px'}} onClick={handleLogout}>

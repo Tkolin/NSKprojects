@@ -77,6 +77,24 @@ export const PROJECT_QUERY = gql`
         }
     }
 `;
+export const PROJECT_STAGE_QUERY = gql`
+    query CurrentUser {
+        projectStages{
+            id
+            project{
+                id
+                name
+            }
+            stage{
+                id
+                name
+            }
+            progress
+            date_start
+            duration
+        }
+    }
+`;
 export const ORGANIZATION_QUERY = gql`
     query ContactsQuery {
         organizations {

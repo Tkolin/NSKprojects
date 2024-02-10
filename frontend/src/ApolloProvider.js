@@ -4,7 +4,7 @@ import { setContext } from '@apollo/client/link/context';
 import { Cookies } from 'react-cookie';
 
 const httpLink = createHttpLink({
-    uri: 'http://localhost:8000/graphql', // Замените на адрес вашего GraphQL-сервера
+    uri: 'http://localhost:8000/graphql/', // Замените на адрес вашего GraphQL-сервера
 });
 
 const createApolloClient = () => {

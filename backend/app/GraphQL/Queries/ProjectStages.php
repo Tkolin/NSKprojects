@@ -1,0 +1,17 @@
+<?php declare(strict_types=1);
+
+namespace App\GraphQL\Queries;
+
+use App\Models\ProjectStage;
+
+final readonly class ProjectStages
+{
+    /** @param  array{}  $args */
+    public function __invoke(null $_, array $args)
+    {
+        return ProjectStage
+            ::with('project:id,name')
+            ->with('stage')
+            ->get();
+    }
+}
