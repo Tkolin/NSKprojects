@@ -4,7 +4,8 @@ import { useMutation, useQuery } from '@apollo/client';
 import {
     PROJECT_QUERY,
     ADD_PROJECT_MUTATION,
-    ADD_PROJECT_VIEW_DATA_QUERY
+    UPDATE_PROJECT_MUTATION,
+    PROJECT_FORM_QUERY,
 } from '../../graphql/queries';
 import StyledFormBlock, { StyledForm, StyledFormItem } from '../style/FormStyles';
 import {DatePicker} from "antd/lib";
@@ -19,7 +20,7 @@ const ProjectForm = ({project, onClose }) => {
     const [facilityFormViewModalVisible, setFacilityFormViewModalVisible] = useState(false);
     const [iadFormViewModalVisible, setIadFormViewModalVisible] = useState(false);
     const [viewListProjectStageModalVisible, setViewListProjectStageModalVisible] = useState(false);
-
+    const [editingProject, setEditingProjcet] = useState(null);
     const handleCostumerFormView = () => {setCostumerFormViewModalVisible(false);};
     const handleFacilityFormView = () => {setFacilityFormViewModalVisible(false);};
     const handleIadFormView = () => {setIadFormViewModalVisible(false);};
@@ -34,7 +35,7 @@ const ProjectForm = ({project, onClose }) => {
     };
 
     // Получение данных для выпадающих списков
-    const { loading, error, data } = useQuery( ADD_PROJECT_VIEW_DATA_QUERY);
+    const { loading, error, data } = useQuery( PROJECT_FORM_QUERY);
 
     // Мутации для добавления и обновления
     const [addProject] = useMutation(ADD_PROJECT_MUTATION, {
@@ -47,11 +48,24 @@ const ProjectForm = ({project, onClose }) => {
             openNotification('topRight', 'error', 'Ошибка при добавлении данных.');
         }
     });
-
-    // Обработчики
+    const [updateProject] = useMutation(UPDATE_PROJECT_MUTATION, {
+        refetchQueries: [{ query: PROJECT_QUERY }],
+        onCompleted: () => {
+            openNotification('topRight', 'success', 'Данные успешно обновлены!');
+            setEditingProjcet(null);
+            onClose();
+        },
+        onError: () => {
+            openNotification('topRight', 'error', 'Ошибка при обновлении данных.');
+        }
+    });
+    // Обработчик отправки формы
     const handleSubmit = () => {
-        addProject({ variables: form.getFieldsValue()  });
-        form.resetFields();
+        if (editingProject) {
+            updateProject({ variables: { id: editingProject.id, ...form.getFieldsValue() } });
+        } else {
+            addProject({ variables: form.getFieldsValue() });
+        }
     };
 
     // Обработка загрузки и ошибок
@@ -138,7 +152,7 @@ const ProjectForm = ({project, onClose }) => {
                     </StyledFormItem>
 
                     <StyledFormItem>
-                        <Button type="primary" onClick={handleViewListProjectStage}>
+                        <Button type="primary" onClick={handleSubmit}>
                             Сохранить проект
                         </Button>
                         <Button type="primary" onClick={()=>setViewListProjectStageModalVisible(true)} >

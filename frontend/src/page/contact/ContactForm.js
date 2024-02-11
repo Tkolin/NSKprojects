@@ -1,30 +1,20 @@
-// Ваш проект/frontend/src/components/ContactForm.js
-
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Form, Input, Button, Select, notification} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
 import {
     CONTACTS_QUERY,
     ADD_CONTACT_MUTATION,
-    ORGANIZATION_AND_POSITION_NAMES_QUERY,
+    CONTACT_FORM_QUERY,
     UPDATE_CONTACT_MUTATION
 } from '../../graphql/queries';
-import StyledFormBlock, { StyledForm, StyledFormItem, StyledButton } from '../style/FormStyles'; // Импорт стилей
+import StyledFormBlock, { StyledForm, StyledFormItem } from '../style/FormStyles'; // Импорт стилей
 
-const { Option } = Select;
-const Context = React.createContext({
-    name: 'Default',
-});
-
-function RadiusUprightOutlined() {
-    return null;
-}
 const ContactForm = ({ contact, onClose }) => {
 
     // Состояния
     const [editingContact, setEditingContact] = useState(null);
     const [form] = Form.useForm();
-    const [api, contextHolder] = notification.useNotification();
+    const [ api,contextHolder] = notification.useNotification();
 
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
@@ -35,7 +25,7 @@ const ContactForm = ({ contact, onClose }) => {
     };
 
     // Получение данных для выпадающих списков
-    const { loading, error, data } = useQuery(ORGANIZATION_AND_POSITION_NAMES_QUERY);
+    const { loading, error, data } = useQuery(CONTACT_FORM_QUERY);
 
     // Заполнение формы данными контакта при его редактировании
     useEffect(() => {
@@ -43,7 +33,7 @@ const ContactForm = ({ contact, onClose }) => {
             setEditingContact(contact);
             form.setFieldsValue(contact);
         }
-    }, [contact]);
+    }, [contact, form]);
 
     // Мутации для добавления и обновления
     const [addContact] = useMutation(ADD_CONTACT_MUTATION, {

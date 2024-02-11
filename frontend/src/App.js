@@ -1,7 +1,5 @@
-// Ваш проект/frontend/src/App.js
-
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, NavLink } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import ContactList from './page/contact/ContactList';
 import ContactForm from './page/contact/ContactForm';
 import LoginForm from './page/authorization/LoginForm';
@@ -10,7 +8,6 @@ import Home from './page/Home';
 import OrganizationForm from './page/organization/OrganizationForm';
 import OrganizationList from './page/organization/OrganizationList';
 import PersonForm from './page/person/PersonForm';
-import PersonList from './page/person/PersonList';
 import ProjectForm from './page/project/ProjectForm';
 import ProjectList from './page/project/ProjectList';
 import FacilityForm from './page/project/facility/FacilityForm';

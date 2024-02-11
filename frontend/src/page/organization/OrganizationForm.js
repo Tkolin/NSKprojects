@@ -1,30 +1,42 @@
-// Ваш проект/frontend/src/components/ContactForm.js
-
-import React, { useState } from 'react';
-import {Form, Input, Button, Select, InputNumber, Col, Row, notification} from 'antd';
+import React, {useEffect, useState} from 'react';
+import {Form, Input, Button, Select, notification} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
 import {
-    PROJECT_QUERY,
-    ADD_PROJECT_MUTATION,
-    ADD_PROJECT_VIEW_DATA_QUERY
+    ORGANIZATION_QUERY,
+    ORGANIZATION_FORM_QUERY,
+    UPDATE_ORGANIZATION_MUTATION,
+    ADD_ORGANIZATION_MUTATION,
 } from '../../graphql/queries';
-import StyledFormBlock, { StyledForm, StyledFormItem, StyledButton } from '../style/FormStyles';
-import {DatePicker} from "antd/lib"; // Импорт стилей
+import StyledFormBlock, { StyledForm, StyledFormItem} from '../style/FormStyles'; // Импорт стилей
+const OrganizationForm = ({ organization, onClose }) => {
 
-const { Option } = Select;
-
-const ContactForm = () => {
+    // Состояния
+    const [editingOrganization, setEditingOrganization] = useState(null);
     const [form] = Form.useForm();
-    const [isNewFormVisible, setIsNewFormVisible] = useState(false);
-    const [api, contextHolder] = notification.useNotification();
+    const [api,contextHolder] = notification.useNotification();
+
+    // Функции уведомлений
     const openNotification = (placement, type, message) => {
         notification[type]({
             message: message,
             placement,
         });
     };
-    const [addProject] = useMutation(ADD_PROJECT_MUTATION, {
-        refetchQueries: [{ query: PROJECT_QUERY }],
+
+    // Получение данных для выпадающих списков
+    const { loading, error, data } = useQuery(ORGANIZATION_FORM_QUERY);
+
+    // Заполнение формы данными контакта при его редактировании
+    useEffect(() => {
+        if (organization) {
+            setEditingOrganization(organization);
+            form.setFieldsValue(organization);
+        }
+    }, [organization, form]);
+
+    // Мутации для добавления и обновления
+    const [addOrganization] = useMutation(ADD_ORGANIZATION_MUTATION, {
+        refetchQueries: [{ query: ORGANIZATION_QUERY }],
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно добавлены!');
             form.resetFields();
@@ -33,133 +45,76 @@ const ContactForm = () => {
             openNotification('topRight', 'error', 'Ошибка при добавлении данных.');
         }
     });
-    const { loading, error, data } = useQuery( ADD_PROJECT_VIEW_DATA_QUERY);
 
+    const [updateOrganization] = useMutation(UPDATE_ORGANIZATION_MUTATION, {
+        refetchQueries: [{ query: ORGANIZATION_QUERY }],
+        onCompleted: () => {
+            openNotification('topRight', 'success', 'Данные успешно обновлены!');
+            setEditingOrganization(null);
+            onClose();
+        },
+        onError: () => {
+            openNotification('topRight', 'error', 'Ошибка при обновлении данных.');
+        }
+    });
+
+    // Обработчик отправки формы
     const handleSubmit = () => {
-        addProject({ variables: form.getFieldsValue()  });
-        form.resetFields();
-    };
-    const handleShowNewForm = () => {
-        setIsNewFormVisible(true);
+        if (editingOrganization) {
+            updateOrganization({ variables: { id: editingOrganization.id, ...form.getFieldsValue() } });
+        } else {
+            addOrganization({ variables: form.getFieldsValue() });
+        }
     };
 
-    const handleHideNewForm = () => {
-        setIsNewFormVisible(false);
-    };
+    // Обработка загрузки и ошибок
     if (loading) return 'Loading...';
     if (error) return `Error! ${error.message}`;
 
     return (
-        <Row gutter={16}>
-            <Col span={12}>
-                <StyledFormBlock>
-                    <StyledForm form={form} layout="vertical">
-                        <StyledFormItem name="number" label="Номер проекта" rules={[{ required: true }]}>
-                            <Input />
-                        </StyledFormItem>
-                        <StyledFormItem name="name" label="Наименование проекта" rules={[{ required: true }]}>
-                            <Input />
-                        </StyledFormItem>
-                        <StyledFormItem name="organization_customer_id" label="Заказчик" rules={[{ required: true}]}>
-                            <Row gutter={8}>
-                                <Col flex="auto">
-                                    <Select>
-                                        {data && data.organizations && data.organizations.map(organization => (
-                                            <Option key={organization.id} value={organization.id}>{organization.name}</Option>
-                                        ))}
-                                    </Select>
-                                </Col>
-                                <Col>
-                                    {!isNewFormVisible && (
-                                        <Button onClick={handleShowNewForm}>Создать</Button>
-                                    )}
-                                </Col>
-                            </Row>
-                        </StyledFormItem>
-                        <StyledFormItem name="type_project_document_id" label="Тип документа" rules={[{ required: true }]}>
-                            <Select>
-                                {data && data.typeProjectDocuments && data.typeProjectDocuments.map(typeDock => (
-                                    <Select.Option key={typeDock.id} value={typeDock.id}>{typeDock.name}</Select.Option>
-                                ))}
-                            </Select>
-                        </StyledFormItem>
-                        <StyledFormItem name="facility_id" label="Объект" rules={[{ required: true }]}>
-                            <Row gutter={8}>
-                                <Col flex="auto">
-                                    <Select>
-                                        {data && data.facilitys && data.facilitys.map(facility => (
-                                            <Select.Option key={facility.id} value={facility.id}>{facility.name}</Select.Option>
-                                        ))}
-                                    </Select>
-                                </Col>
-                                <Col>
-                                    <Button>Новый</Button>
-                                </Col>
-                            </Row>
-                        </StyledFormItem>
-                        <StyledFormItem name="date_signing" label="Дата подписания" rules={[{ required: true }]}>
-                            <DatePicker />
-                        </StyledFormItem>
-                        <StyledFormItem name="IAD_id" label="ИАД" rules={[{ required: true }]}>
-                            <Row gutter={8}>
-                                <Col flex="auto">
-                                    <Select>
-                                        {data && data.organizationNames && data.organizationNames.map(position => (
-                                            <Select.Option key={position.id} value={position.id}>{position.name}</Select.Option>
-                                        ))}
-                                    </Select>
-                                </Col>
-                                <Col>
-                                    <Button>Новый</Button>
-                                </Col>
-                            </Row>
-                        </StyledFormItem>
-                        <StyledFormItem name="duration" label="Продолжительность" rules={[{ required: true }]}>
-                            <InputNumber />
-                        </StyledFormItem>
-                        <StyledFormItem name="date_end" label="Дата окончания" rules={[{ required: true  }]}>
-                            <DatePicker />
-                        </StyledFormItem>
-                        <StyledFormItem name="status_id" label="Статус проекта" rules={[{ required: true }]}>
-                            <Select>
-                                {data && data.projectStatuses && data.projectStatuses.map(status => (
-                                    <Select.Option key={status.id} value={status.id}>{status.name}</Select.Option>
-                                ))}
-                            </Select>
-                        </StyledFormItem>
-                        <StyledFormItem name="date_completion" label="Дата фактического закрытия" rules={[{ required: true }]}>
-                            <DatePicker />
-                        </StyledFormItem>
-
-                        <StyledFormItem>
-                            <Button type="primary" onClick={handleSubmit}>
-                                Add Contact
-                            </Button>
-                        </StyledFormItem>
-                    </StyledForm>
-                </StyledFormBlock>
-            </Col>
-            {/* Условный рендеринг для новой формы */}
-            {isNewFormVisible && (
-                <Col span={12}>
-                    <StyledFormBlock>
-                        <StyledForm form={form} layout="vertical">
-                            {/* Форма для добавления новых данных */}
-                            {/* ... */}
-                            <StyledFormItem>
-                                <Button type="primary" onClick={handleSubmit}>
-                                    Добавить
-                                </Button>
-                                <Button onClick={handleHideNewForm}>Свернуть</Button>
-                            </StyledFormItem>
-                        </StyledForm>
-                    </StyledFormBlock>
-                </Col>
-            )}
-
-        </Row>
-
+        <StyledFormBlock>
+            <StyledForm form={form} layout="vertical">
+                {contextHolder}
+                <StyledFormItem name="first_name" label="Имя" rules={[{ required: true }]}>
+                    <Input />
+                </StyledFormItem>
+                <StyledFormItem name="last_name" label="Фамилия"  rules={[{ required: true }]}>
+                    <Input />
+                </StyledFormItem>
+                <StyledFormItem name="patronymic" label="Отчество" >
+                    <Input />
+                </StyledFormItem>
+                <StyledFormItem name="mobile_phone" label="Мобильный номер телефона" >
+                    <Input />
+                </StyledFormItem>
+                <StyledFormItem name="email" label="E-mail" >
+                    <Input />
+                </StyledFormItem>
+                <StyledFormItem name="sibnipi_email" label="E-mail в Сибнипи" >
+                    <Input />
+                </StyledFormItem>
+                <StyledFormItem name="position_id" label="Должность" >
+                    <Select>
+                        {data && data.positionsNames && data.positionsNames.map(position => (
+                            <Select.Option key={position.id} value={position.id}>{position.name}</Select.Option>
+                        ))}
+                    </Select>
+                </StyledFormItem>
+                <StyledFormItem name="organization_id" label="Организация">
+                    <Select>
+                        {data && data.organizations && data.organizations.map(organization => (
+                            <Select.Option key={organization.id} value={organization.id}>{organization.name}</Select.Option>
+                        ))}
+                    </Select>
+                </StyledFormItem>
+                <StyledFormItem>
+                    <Button type="primary" onClick={handleSubmit}>
+                        {editingOrganization ? "Сохранить изменения" : "Добавить контакт"}
+                    </Button>
+                </StyledFormItem>
+            </StyledForm>
+        </StyledFormBlock>
     );
 };
 
-export default ContactForm;
+export default OrganizationForm;

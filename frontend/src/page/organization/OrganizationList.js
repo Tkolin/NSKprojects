@@ -1,7 +1,5 @@
-// Ваш проект/frontend/src/components/ContactList.js
-
 import React from 'react';
-import {concat, useQuery} from '@apollo/client';
+import {useQuery} from '@apollo/client';
 import { Table } from 'antd';
 import { ORGANIZATION_QUERY} from '../../graphql/queries';
 

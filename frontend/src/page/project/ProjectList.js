@@ -1,5 +1,3 @@
-// Ваш проект/frontend/src/components/ContactList.js
-
 import React, {useState} from 'react';
 import { useQuery } from '@apollo/client';
 import {Button, Modal, Table} from 'antd';

@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Form, Input, Button, message } from 'antd';
 import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/queries';
-import { Cookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
@@ -15,13 +14,9 @@ const LoginForm = () => {
         const { email, password } = values; // Извлекаем значения email и password из формы
         try {
             const response = await login({ variables: { input: { email, password } } }); // Передаем переменные в формате, ожидаемом мутацией
-            const { user, access_token } = response.data.login;
-
-            // Сохраняем access token в localStorage
+            const { access_token } = response.data.login;
             localStorage.setItem('accessToken', access_token);
             console.log('Рэф токен:');
-
-            // Обновляем страницу
             navigate('/');
             window.location.reload();
 

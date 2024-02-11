@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Form, Input, Button, message } from 'antd';
 import { useMutation } from '@apollo/client';
 import { REGISTER_MUTATION } from '../../graphql/queries';
@@ -14,7 +14,6 @@ const RegisterForm = () => {
         register({ variables: { input: inputValues } })
             .then((response) => {
                 const { user, access_token } = response.data.register;
-                // Сохраняем токен в куки с именем 'accessToken'
                 cookies.set('accessToken', access_token, { path: '/' });
                 console.log(cookies.get('accessToken'));
                 message.success(`Registration successful. Welcome, ${user.name}!`);
@@ -36,7 +35,6 @@ const RegisterForm = () => {
             <Form.Item name="password" label="Password" rules={[{ required: true, min: 6 }]}>
                 <Input.Password />
             </Form.Item>
-            {/* Убираем поле для выбора роли */}
             <Form.Item>
                 <Button type="primary" htmlType="submit">
                     Register
