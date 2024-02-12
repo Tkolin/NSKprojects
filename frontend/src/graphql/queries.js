@@ -4,12 +4,12 @@ import { gql } from '@apollo/client';
 export const ORGANIZATION_QUERY = gql`
     query OrganizationsQuery {
         organizations {
+            name
+            full_name
             legal_form{
                 id
                 name
             }
-            name
-            full_name
             address_legal{
                 id
                 name
@@ -45,12 +45,9 @@ export const PROJECT_QUERY = gql`
         projects {
             number
             name
-
             date_signing
-
             duration
             date_end
-
             date_completion
         }
     }
@@ -89,7 +86,7 @@ export const CONTACTS_QUERY = gql`
 `;
 
 export const PROJECT_STAGE_QUERY = gql`
-    query CurrentUser {
+    query ProjectStage {
         projectStages{
             id
             project{
@@ -121,14 +118,24 @@ export const CONTACT_FORM_QUERY = gql`
     }
 `;
 export const ORGANIZATION_FORM_QUERY = gql`
-    query OrganizationsContactsFormQuery {
-        organizations {
+    query OrganizationsFormQuery {
+        legalForms{
             id
             name
         }
-        positionsNames {
+        address{
             id
             name
+        }
+        biks{
+            id
+            BIK
+        }
+        contacts{
+            id
+            first_name
+            last_name
+            patronymic
         }
     }
 `;

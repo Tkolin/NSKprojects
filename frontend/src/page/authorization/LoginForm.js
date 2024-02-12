@@ -3,6 +3,7 @@ import { Form, Input, Button, message } from 'antd';
 import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/queries';
 import { useNavigate } from 'react-router-dom';
+import {StyledFormBlock, StyledFormItem} from '../style/FormStyles';
 
 const LoginForm = () => {
     const [form] = Form.useForm();
@@ -26,34 +27,34 @@ const LoginForm = () => {
     };
 
     return (
-        <Form
+        <StyledFormBlock
             form={form}
             name="loginForm"
             onFinish={onFinish}
             initialValues={{ remember: true }}
         >
-            <Form.Item
+            <StyledFormItem
                 name="email"
                 rules={[{ required: true, message: 'Please input your email!' }]}
             >
                 <Input placeholder="Email" />
-            </Form.Item>
+            </StyledFormItem>
 
-            <Form.Item
+            <StyledFormItem
                 name="password"
                 rules={[{ required: true, message: 'Please input your password!' }]}
             >
                 <Input.Password placeholder="Password" />
-            </Form.Item>
+            </StyledFormItem>
 
-            <Form.Item>
+            <StyledFormItem>
                 <Button type="primary" htmlType="submit" loading={loading}>
                     Log in
                 </Button>
-            </Form.Item>
+            </StyledFormItem>
 
             {error && <p>Error: {error.message}</p>}
-        </Form>
+        </StyledFormBlock>
     );
 };
 

@@ -7,7 +7,7 @@ import {
     UPDATE_PROJECT_MUTATION,
     PROJECT_FORM_QUERY,
 } from '../../graphql/queries';
-import StyledFormBlock, { StyledForm, StyledFormItem } from '../style/FormStyles';
+import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles';
 import {DatePicker} from "antd/lib";
 
 const { Option } = Select;

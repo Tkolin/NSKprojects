@@ -74,20 +74,20 @@ const CustomLayout = ({ children }) => {
                 getItem('Проекты', '2', <FundProjectionScreenOutlined />, [
                     getItem('Список проектов', '2-1', <ProfileOutlined />, null, "/project"),
                     getItem('Добавить Проект', '2-2', <FormOutlined />, null, "/project/new"),
-                    getItem('Список задач', '2-3', <ProfileOutlined />, null, "/project/stage"),
-                    getItem('Добавить задачу', '2-4', <FormOutlined />, null, "/project/stage/new"),
+                    getItem('---Список задач', '2-3', <ProfileOutlined />, null, "/project/stage"),
+                    getItem('---Добавить задачу', '2-4', <FormOutlined />, null, "/project/stage/new"),
                 ]),
                 getItem('Организации', '3', <SolutionOutlined />, [
                     getItem('Список', '3-1', <ProfileOutlined />, null, "/organization"),
                     getItem('Добавить', '3-2', <FormOutlined />, null, "/organization/new"),
                 ]),
-                getItem('Клиенты', '4', <UserOutlined />, [
-                    getItem('Список', '4-1', <ProfileOutlined />, null, "/person"),
-                    getItem('Добавить', '4-2', <FormOutlined />, null, "/person/new"),
+                getItem('---Клиенты', '4', <UserOutlined />, [
+                    getItem('---Список', '4-1', <ProfileOutlined />, null, "/person"),
+                    getItem('---Добавить', '4-2', <FormOutlined />, null, "/person/new"),
                 ]),
-                getItem('Объекты', '6', <ShopOutlined />, [
-                    getItem('Список', '6-1', <ProfileOutlined />, null, "/project/facility"),
-                    getItem('Добавить', '6-2', <FormOutlined />, null, "/project/facility/new"),
+                getItem('---Объекты', '6', <ShopOutlined />, [
+                    getItem('---Список', '6-1', <ProfileOutlined />, null, "/project/facility"),
+                    getItem('---Добавить', '6-2', <FormOutlined />, null, "/project/facility/new"),
                 ])
 
             );

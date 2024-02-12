@@ -1,3 +1,9 @@
-const ProjectL2ist = () => {
-return '';
-}
+const Todo = () => {
+    return (
+        <div>
+            Страница в разработке
+        </div>
+    );
+};
+
+export default Todo;

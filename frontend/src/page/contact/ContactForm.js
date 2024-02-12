@@ -7,7 +7,7 @@ import {
     CONTACT_FORM_QUERY,
     UPDATE_CONTACT_MUTATION
 } from '../../graphql/queries';
-import StyledFormBlock, { StyledForm, StyledFormItem } from '../style/FormStyles'; // Импорт стилей
+import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles'; // Импорт стилей
 
 const ContactForm = ({ contact, onClose }) => {
 

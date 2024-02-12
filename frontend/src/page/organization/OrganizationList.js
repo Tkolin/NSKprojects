@@ -64,47 +64,38 @@ const OrganizationList = () => {
             dataIndex: 'email',
             key: 'email',
         },
-        {
-            title: 'ИНН',
-            dataIndex: 'INN',
-            key: 'INN',
-        },
-        {
-            title: 'ОГРН',
-            dataIndex: 'OGRN',
-            key: 'OGRN',
-        },
-        {
-            title: 'ОКПО',
-            dataIndex: 'OKPO',
-            key: 'OKPO',
-        },
-        {
-            title: 'КПП',
-            dataIndex: 'KPP',
-            key: 'KPP',
-        },
-        {
-            title: 'Бик',
-            dataIndex: 'BIK',
-            key: 'BIK',
-        },
-        {
-            title: 'Расчётный счёт',
-            dataIndex: 'payment_account',
-            key: 'payment_account',
-            render: (payment_account) => payment_account ? payment_account.name : '',
-        },
-        {
-            title: 'Директор',
-            dataIndex: 'director',
-            key: 'director',
-            render: (director) => director ? `${director.first_name} ${director.last_name}` : '',
-        },
     ];
 
 
-    return <Table dataSource={data.organizations} columns={columns} />;
+    return <Table dataSource={data.organizations} columns={columns}
+                  expandable={{
+        expandedRowRender: (record) => (
+            <>
+                <p>
+                    расчётный счёт: {record.payment_account && record.payment_account.name}
+                </p>
+                <p>
+                    бик: {record.bik}
+
+                </p>
+                <p>
+                    кпп: {record.kpp}
+                </p>
+                <p>
+                    окпо: {record.okpo}
+                </p>
+                <p>
+                    огрн: {record.ogrn}
+                </p>
+                <p>
+                    инн: {record.inn}
+                </p>
+                <p>
+                   e-mail: {record.email}
+                </p>
+            </>
+        ),
+                  }}/>;
 };
 
 export default OrganizationList;

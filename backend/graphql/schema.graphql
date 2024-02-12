@@ -10,6 +10,9 @@ type Query {
     projects: [Project!]!
     projectStagesGroup: [ProjectStagesGroup!]!
     projectStages: [ProjectStage]!
+    biks: [Bik!]!
+    address: [Address]!
+    legalForms: [LegalForm]!
 }
 
 type Mutation {

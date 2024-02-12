@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import catImage from '../cat.jpg';
 import {Row, Col, Typography} from "antd"; // Путь к вашему изображению
-import StyledFormBlock from './style/FormStyles'; // Импорт стилей
+import {StyledFormBlock} from './style/FormStyles'; // Импорт стилей
 const { Text, Title } = Typography;
 
 

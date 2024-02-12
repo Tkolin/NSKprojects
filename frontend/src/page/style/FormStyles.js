@@ -8,9 +8,12 @@ export const StyledForm = styled(Form)`
 `;
 
 export const StyledFormItem = styled(Form.Item)`
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 `;
-
+export const StyledBigForm = styled(Form)`
+  max-width: 800px;
+  margin: 0 auto;
+`;
 export const StyledButton = styled(Button)`
   width: 100%;
 `;
@@ -23,6 +26,19 @@ const StyledFormBlockWrapper = styled.div`
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 `;
+export const StyledBigFormBlockWrapper = styled(StyledFormBlockWrapper)`
+    max-width: 800px;
+`;
+
+const StyledBigFormBlock = ({ form, onFinish, children }) => {
+    return (
+        <StyledBigFormBlockWrapper>
+            <Form form={form} onFinish={onFinish} layout="vertical">
+                {children}
+            </Form>
+        </StyledBigFormBlockWrapper>
+    );
+};
 const StyledFormBlock = ({ form, onFinish, children }) => {
     return (
         <StyledFormBlockWrapper>
@@ -33,4 +49,4 @@ const StyledFormBlock = ({ form, onFinish, children }) => {
     );
 };
 
-export default StyledFormBlock;
+export {StyledBigFormBlock, StyledFormBlock};
