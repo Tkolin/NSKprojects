@@ -10,13 +10,8 @@ final readonly class UpdateProject
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args): Project
     {
-        // Находим проект по ID
         $project = Project::findOrFail($args['id']);
-
-        // Обновляем данные проекта
         $project->update($args);
-
-        // Возвращаем обновленный проект
         return $project;
     }
 }

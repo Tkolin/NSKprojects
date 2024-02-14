@@ -13,9 +13,9 @@ class Organization extends Model
         'legal_form_id',
         'name',
         'full_name',
-        'address_legal_id',
+        'address_legal',
         'office_number_legal',
-        'address_mail_id',
+        'address_mail',
         'office_number_mail',
         'phone_number',
         'fax_number',
@@ -36,14 +36,6 @@ class Organization extends Model
     {
         return $this->belongsTo(LegalForm::class);
     }
-    public function address_legal(): BelongsTo
-    {
-        return $this->belongsTo(Address::class);
-    }
-    public function address_mail(): BelongsTo
-    {
-        return $this->belongsTo(Address::class);
-    }
     public function BIK(): BelongsTo
     {
         return $this->belongsTo(Bik::class);
@@ -55,5 +47,9 @@ class Organization extends Model
     public function project(): HasMany
     {
         return $this->hasMany(Project::class);
+    }
+    public function contacts(): HasMany
+    {
+        return $this->hasMany(Contact::class);
     }
 }

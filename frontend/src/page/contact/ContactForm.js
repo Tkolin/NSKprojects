@@ -7,7 +7,9 @@ import {
     CONTACT_FORM_QUERY,
     UPDATE_CONTACT_MUTATION
 } from '../../graphql/queries';
-import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles'; // Импорт стилей
+import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles';
+import {DatePicker} from "antd/lib"; // Импорт стилей
+import moment from 'moment';
 
 const ContactForm = ({ contact, onClose }) => {
 
@@ -30,8 +32,16 @@ const ContactForm = ({ contact, onClose }) => {
     // Заполнение формы данными контакта при его редактировании
     useEffect(() => {
         if (contact) {
-            setEditingContact(contact);
-            form.setFieldsValue(contact);
+            setEditingContact(true);
+            form.setFieldsValue({
+                ...contact,
+                birth_day:  contact.birth_day ? moment(contact.birth_day): null
+            });
+
+            form.setFieldsValue({
+                position_id: contact.position ? contact.position.id : null,
+                organization_id: contact.organization ? contact.organization.id : null,
+            });
         }
     }, [contact, form]);
 
@@ -85,13 +95,19 @@ const ContactForm = ({ contact, onClose }) => {
                 <StyledFormItem name="patronymic" label="Отчество" >
                     <Input />
                 </StyledFormItem>
+                <StyledFormItem name="birth_day" label="Дата рождения" rules={[{ required: true }]}>
+                    <DatePicker />
+                </StyledFormItem>
+                <StyledFormItem name="work_phone" label="Рабочий номер телефона" >
+                    <Input />
+                </StyledFormItem>
                 <StyledFormItem name="mobile_phone" label="Мобильный номер телефона" >
                     <Input />
                 </StyledFormItem>
-                <StyledFormItem name="email" label="E-mail" >
+                <StyledFormItem name="email" label="e-mail" rules={[{ type: 'email' }]} >
                     <Input />
                 </StyledFormItem>
-                <StyledFormItem name="sibnipi_email" label="E-mail в Сибнипи" >
+                <StyledFormItem name="work_email" label="Рабочий e-mail" rules={[{  type: 'email' }]}>
                     <Input />
                 </StyledFormItem>
                 <StyledFormItem name="position_id" label="Должность" >
@@ -101,7 +117,7 @@ const ContactForm = ({ contact, onClose }) => {
                         ))}
                     </Select>
                 </StyledFormItem>
-                <StyledFormItem name="organization_id" label="Организация">
+                <StyledFormItem name="organization_id" label="Организация" rules={[{ required: true }]}>
                     <Select>
                         {data && data.organizations && data.organizations.map(organization => (
                             <Select.Option key={organization.id} value={organization.id}>{organization.name}</Select.Option>

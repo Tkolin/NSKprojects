@@ -1,14 +1,61 @@
-import React from 'react';
-import {useQuery} from '@apollo/client';
-import { Table } from 'antd';
-import { ORGANIZATION_QUERY} from '../../graphql/queries';
+import React, {useState} from 'react';
+import {useMutation, useQuery} from '@apollo/client';
+import {Button, Modal, notification, Table} from 'antd';
+import {DELETE_ORGANIZATION_MUTATION, ORGANIZATION_QUERY} from '../../graphql/queries';
+import OrganizationForm from "./OrganizationForm";
 
 const OrganizationList = () => {
-    const { loading, error, data } = useQuery(ORGANIZATION_QUERY);
 
+    // Состояния
+    const { loading, error, data } = useQuery(ORGANIZATION_QUERY);
+    const [selectedOrganization, setSelectedOrganization] = useState(null);
+    const [editModalVisible, setEditModalVisible] = useState(false);
+
+    // Функции уведомлений
+    const openNotification = (placement, type, message) => {
+        notification[type]({
+            message: message,
+            placement,
+        });
+    };
+
+    // Мутация для удаления
+    const [deleteOrganization] = useMutation(DELETE_ORGANIZATION_MUTATION, {
+        onCompleted: () => {
+            openNotification('topRight', 'success', 'Данные успешно удалены!');
+            window.location.reload();
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
+            window.location.reload();
+        },
+        update: (cache, { data: { deleteOrganization } }) => {
+            const { organizations } = cache.readQuery({ query: ORGANIZATION_QUERY });
+            const updatedOrganization = organizations.filter(organization => organization.id !== deleteOrganization.id);
+            cache.writeQuery({
+                query: ORGANIZATION_QUERY,
+                data: { contacts: updatedOrganization },
+            });
+        },
+    });
+
+    // Обработчик событий
+    const handleClose = () => {setEditModalVisible(false);};
+    const handleEdit = (organizationId) => {
+        console.log("ИД "+ organizationId);
+        const organization = data.organizations.find(organization => organization.id === organizationId);
+        setSelectedOrganization(organization);
+        setEditModalVisible(true);
+    };
+    const handleDelete = (organizationId) => {
+        deleteOrganization({ variables: { id: organizationId}});
+    };
+
+    // Обработка загрузки и ошибок
     if (loading) return 'Loading...';
     if (error) return `Error! ${error.message}`;
 
+    // Формат таблицы
     const columns = [
         {
             title: 'Тип',
@@ -25,77 +72,96 @@ const OrganizationList = () => {
             title: 'Полное название',
             dataIndex: 'full_name',
             key: 'full_name',
-            render: (full_name) => full_name ? full_name : '',
         },
         {
-            title: 'юр. адресс',
-            dataIndex: 'address_legal',
-            key: 'address_legal',
-            render: (address_legal) => address_legal ? address_legal.name : '',
+            title: 'Директор',
+            dataIndex: 'director',
+            key: 'director',
+            render: (director) => director ?
+                director.last_name +" "+ director.first_name : "",
         },
         {
-            title: 'Номер офиса',
-            dataIndex: 'office_number_legal',
-            key: 'office_number_legal',
+            title: 'ИНН',
+            dataIndex: 'INN',
+            key: 'INN',
         },
         {
-            title: 'Фактический адресс',
-            dataIndex: 'address_mail',
-            key: 'address_mail',
-            render: (address_mail) => address_mail ? address_mail.name : '',
+            title: 'ОГРН',
+            dataIndex: 'OGRN',
+            key: 'OGRN',
         },
         {
-            title: 'Номер офиса',
-            dataIndex: 'office_number_mail',
-            key: 'office_number_mail',
+            title: 'ОКПО',
+            dataIndex: 'OKPO',
+            key: 'OKPO',
         },
         {
-            title: 'Номер телефона',
-            dataIndex: 'phone_number',
-            key: 'phone_number',
+            title: 'КПП',
+            dataIndex: 'KPP',
+            key: 'KPP',
         },
         {
-            title: 'Номер факса',
-            dataIndex: 'fax_number',
-            key: 'fax_number',
+            title: 'bik',
+            dataIndex: 'BIK',
+            key: 'BIK',
+            render: (BIK) =>BIK ? BIK.Bik : null,
         },
         {
-            title: 'E-mail',
-            dataIndex: 'email',
-            key: 'email',
+            title: 'payment_account',
+            dataIndex: 'payment_account',
+            key: 'payment_account',
         },
+        {
+            title: 'Управление',
+            key: 'edit',
+            render: (text, record) => (
+                <div>
+                    <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
+                    <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
+                </div>
+            ),
+        },
+
     ];
-
-
-    return <Table dataSource={data.organizations} columns={columns}
+    return<> <Table dataSource={data.organizations} columns={columns}
                   expandable={{
-        expandedRowRender: (record) => (
-            <>
-                <p>
-                    расчётный счёт: {record.payment_account && record.payment_account.name}
-                </p>
-                <p>
-                    бик: {record.bik}
+                      expandedRowRender: (record) => (
+                          <>
+                              <p>
+                                  e-mail: {record.email}
+                              </p>
+                              <p>
+                                  юр. адрес: {record.address_legal}
+                              </p>
+                              <p>
+                                  Номер офиса: {record.office_number_legal}
+                              </p>
+                              <p>
+                                  Фактический адрес: {record.address_mail}
+                              </p>
+                              <p>
+                                  Номер офиса: {record.office_number_mail}
+                              </p>
+                              <p>
+                                  Номер телефона: {record.phone_number}
+                              </p>
+                              <p>
+                                  Номер факса: {record.fax_number}
+                              </p>
 
-                </p>
-                <p>
-                    кпп: {record.kpp}
-                </p>
-                <p>
-                    окпо: {record.okpo}
-                </p>
-                <p>
-                    огрн: {record.ogrn}
-                </p>
-                <p>
-                    инн: {record.inn}
-                </p>
-                <p>
-                   e-mail: {record.email}
-                </p>
-            </>
-        ),
-                  }}/>;
+                          </>
+                      ),
+                  }}/>
+    <Modal
+        visible={editModalVisible}
+        title="Изменить контакт"
+        onCancel={() => setEditModalVisible(false)}
+        footer={null}
+        onClose={handleClose}
+    >
+        <OrganizationForm organization={selectedOrganization} onClose={handleClose}/>
+    </Modal>
+    </>;
 };
 
-export default OrganizationList;
+ export default OrganizationList;

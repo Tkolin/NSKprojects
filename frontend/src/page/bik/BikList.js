@@ -1,10 +1,12 @@
+// Ваш проект/frontend/src/components/ContactList.js
+
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import {Button, Modal, notification, Table} from 'antd';
 import {CONTACTS_QUERY, DELETE_CONTACT_MUTATION} from '../../graphql/queries';
 import ContactForm from "./ContactForm";
 
-const ContactList = () => {
+const BikList = () => {
 
     // Состояния
     const { loading, error, data } = useQuery(CONTACTS_QUERY);
@@ -24,10 +26,12 @@ const ContactList = () => {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно удалены!');
             window.location.reload();
+
         },
         onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
             window.location.reload();
+
         },
         update: (cache, { data: { deleteContact } }) => {
             const { contacts } = cache.readQuery({ query: CONTACTS_QUERY });
@@ -57,19 +61,19 @@ const ContactList = () => {
     // Формат таблицы
     const columns = [
         {
-            title: 'Имя',
-            dataIndex: 'first_name',
-            key: 'first_name',
+            title: 'Бик',
+            dataIndex: 'BIK',
+            key: 'BIK',
         },
         {
-            title: 'Фамилия',
-            dataIndex: 'last_name',
-            key: 'last_name',
+            title: 'Банк',
+            dataIndex: 'name',
+            key: 'name',
         },
         {
-            title: 'Отчество',
-            dataIndex: 'patronymic',
-            key: 'patronymic',
+            title: 'Счёт',
+            dataIndex: 'correspondent_account',
+            key: 'correspondent_account',
         },
         {
             title: 'Дата рождения',
@@ -113,9 +117,10 @@ const ContactList = () => {
             key: 'edit',
             render: (text, record) => (
                 <div>
-                    <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
+                    <Button  onClick={() => handleEdit(record.id)}>Изменить</Button>
                     <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
                 </div>
+
             ),
         },
     ];
@@ -123,16 +128,7 @@ const ContactList = () => {
     return (
         <div>
             <Table dataSource={data.contacts} columns={columns} />
-            <Modal
-                visible={editModalVisible}
-                title="Изменить контакт"
-                onCancel={() => setEditModalVisible(false)}
-                footer={null}
-                onClose={handleClose}
-            >
-                <ContactForm contact={selectedContact} onClose={handleClose}/>
-            </Modal>
         </div>
     );
 };
-export default ContactList;
+export default BikList;

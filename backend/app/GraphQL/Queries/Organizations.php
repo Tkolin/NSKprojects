@@ -11,9 +11,8 @@ final readonly class Organizations
     {
         return Organization
             ::with('legal_form')
-            ->with('address_legal')
-            ->with('address_mail')
-            ->with('BIK')
+            ->with('contacts')
+            ->with('Bik')
             ->get();
     }
 }

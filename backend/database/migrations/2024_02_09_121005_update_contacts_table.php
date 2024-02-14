@@ -30,6 +30,16 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('contacts', function (Blueprint $table) {
+            $table->dropForeign(['organization_id']);
+            $table->dropColumn('organization_id');
+            $table->dropForeign(['position_id']);
+            $table->unsignedBigInteger('position_id')->nullable(false)->change();
+            $table->string('sibnipi_email')->nullable(false)->change();
+            $table->string('email')->nullable(false)->change();
+            $table->string('mobile_phone')->nullable(false)->change();
+            $table->string('last_name')->nullable(false)->change();
+        });
+
     }
 };

@@ -2,14 +2,14 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\Models\Facility;
+use App\Models\Bik;
 
-final readonly class UpdateFacility
+final readonly class UpdateBik
 {
     /** @param  array{}  $args */
-    public function __invoke(null $_, array $args): Facility
+    public function __invoke(null $_, array $args)
     {
-        $facility = Facility::findOrFail($args['id']);
+        $facility = Bik::findOrFail($args['id']);
         $facility->update($args);
         return $facility;
     }

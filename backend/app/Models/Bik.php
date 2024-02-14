@@ -17,7 +17,7 @@ class Bik extends Model
     {
         return $this->hasMany(Person::class);
     }
-    public function organization(): HasMany
+    public function organizations(): HasMany
     {
         return $this->hasMany(Organization::class);
     }

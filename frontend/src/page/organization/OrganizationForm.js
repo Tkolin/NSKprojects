@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Button, Select, notification, Row, Col} from 'antd';
+import {Form, Input, Button, Select, notification, Row, Col, Modal} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
 import {
     ORGANIZATION_QUERY,
@@ -7,14 +7,32 @@ import {
     UPDATE_ORGANIZATION_MUTATION,
     ADD_ORGANIZATION_MUTATION,
 } from '../../graphql/queries';
-import {StyledBigFormBlock, StyledBigForm, StyledFormItem} from '../style/FormStyles';
+import {
+    StyledBigFormBlock,
+    StyledBigForm,
+    StyledFormItem,
+    StyledFormBlock,
+    StyledForm,
+    StyledButtonForm
+} from '../style/FormStyles';
+import {AddressSuggestions} from "react-dadata";
+import 'react-dadata/dist/react-dadata.css';
+import ContactForm from "../contact/ContactForm";
+import BikForm from "../bik/BikForm";
 const OrganizationForm = ({ organization, onClose }) => {
 
     // Состояния
     const [editingOrganization, setEditingOrganization] = useState(null);
     const [form] = Form.useForm();
     const [api,contextHolder] = notification.useNotification();
+    const [bikFormViewModalVisible, setBikFormViewModalVisible] = useState(false);
+    const [contactFormViewModalVisible, setContactFormViewModalVisible] = useState(false);
 
+    const handleBikFormView = () => {setBikFormViewModalVisible(false);};
+    const handleContactFormView = () => {setContactFormViewModalVisible(false);};
+
+    const [address1, setAddress1] = useState();
+    const [address2, setAddress2] = useState();
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
         notification[type]({
@@ -29,8 +47,18 @@ const OrganizationForm = ({ organization, onClose }) => {
     // Заполнение формы данными контакта при его редактировании
     useEffect(() => {
         if (organization) {
-            setEditingOrganization(organization);
-            form.setFieldsValue(organization);
+            setEditingOrganization(true);
+            form.setFieldsValue({
+                ...organization
+            });
+
+            form.setFieldsValue({
+                director: organization.director ? organization.director.id : null,
+                legal_form: organization.legal_form ? organization.legal_form.id : null,
+                BIK_id: organization.BiK ? organization.BiK.id : null,
+            });
+            setAddress1(organization.address_mail);
+            setAddress2(organization.address_legal);
         }
     }, [organization, form]);
 
@@ -41,8 +69,8 @@ const OrganizationForm = ({ organization, onClose }) => {
             openNotification('topRight', 'success', 'Данные успешно добавлены!');
             form.resetFields();
         },
-        onError: () => {
-            openNotification('topRight', 'error', 'Ошибка при добавлении данных.');
+        onError: (error) => {
+            openNotification('topRight', 'error', 'Ошибка при добавлении данных:' + error.message );
         }
     });
 
@@ -60,12 +88,27 @@ const OrganizationForm = ({ organization, onClose }) => {
 
     // Обработчик отправки формы
     const handleSubmit = () => {
+        const formValues = form.getFieldsValue();
+        const { address_legal, address_mail, ...rest } = formValues; // разделяем address_legal и остальные значения
+        const restrictedValue1 = address_legal ?  address_legal.unrestricted_value : address_legal; // получаем unrestricted_value из address_legal
+        const restrictedValue2 = address_mail ? address_mail.unrestricted_value : address_mail;
+        console.log(address_legal?.unrestricted_value);
+        console.log(address_mail?.unrestricted_value);
+        console.log(address_legal);
+        console.log(address_mail);
         if (editingOrganization) {
-            updateOrganization({ variables: { id: editingOrganization.id, ...form.getFieldsValue() } });
+            updateOrganization({ variables: { id: editingOrganization, idaddress_legal: restrictedValue1, address_mail: restrictedValue2 , ...rest} });
         } else {
-            addOrganization({ variables: form.getFieldsValue() });
+            addOrganization({ variables: { address_legal: restrictedValue1, address_mail: restrictedValue2 , ...rest } });
         }
     };
+    const addresChange1 = (suggestion) => {
+        setAddress1(suggestion?.unrestricted_value);
+    };
+    const addresChange2 = (suggestion) => {
+        setAddress2(suggestion?.unrestricted_value);
+    };
+
 
     // Обработка загрузки и ошибок
     if (loading) return 'Loading...';
@@ -84,7 +127,9 @@ const OrganizationForm = ({ organization, onClose }) => {
                     <Col span={4}>
                         <StyledFormItem name="legal_form" label="Форма">
                             <Select>
-                                {/* options */}
+                                {data && data.legalForms  && data.legalForms .map(data => (
+                                    <Select.Option key={data.id} value={data.id}>{data.name}</Select.Option>
+                                ))}
                             </Select>
                         </StyledFormItem>
                     </Col>
@@ -92,26 +137,34 @@ const OrganizationForm = ({ organization, onClose }) => {
                 <StyledFormItem name="full_name" label="Полное наименование компании" rules={[{ required: true }]}>
                     <Input />
                 </StyledFormItem>
-                <StyledFormItem name="director" label="Руководитель">
-                    <Select>
-                        {/* options */}
-                    </Select>
-                </StyledFormItem>
+                <div>
+                    <Row gutter={4} align={"bottom"}>
+                        <Col flex="auto">
+                            <StyledFormItem name="director" label="Руководитель">
+                                <Select>
+                                    {data && data.contacts  && data.contacts .map(data => (
+                                        <Select.Option key={data.id} value={data.id}>{data.last_name} {data.first_name} {data.patronymic}</Select.Option>
+                                    ))}
+                                </Select>
+                            </StyledFormItem>
+                        </Col>
+                        <Col>
+                            <StyledButtonForm onClick={()=>setContactFormViewModalVisible(true)}>Создать</StyledButtonForm>
+                        </Col>
+                    </Row>
+                </div>
                 <Row gutter={8}>
                     <Col span={20}>
-                        <StyledFormItem name="address_legal" label="Юредический адрес" >
-                            <Select>
-                                {data && data.positionsNames && data.positionsNames.map(position => (
-                                    <Select.Option key={position.id} value={position.id}>{position.name}</Select.Option>
-                                ))}
-                            </Select>
+
+                        <StyledFormItem name="address_legal" label="Юридический адрес" minChars={3} delay={50}>
+                            <AddressSuggestions token="5c988a1a82dc2cff7f406026fbc3e8d04f2a168e"
+                                                value={address1}
+                                                onChange={addresChange1} />
                         </StyledFormItem>
-                        <StyledFormItem name="address_mail" label="Почтовый адрес" >
-                            <Select>
-                                {data && data.positionsNames && data.positionsNames.map(position => (
-                                    <Select.Option key={position.id} value={position.id}>{position.name}</Select.Option>
-                                ))}
-                            </Select>
+                        <StyledFormItem name="address_mail" label="Почтовый адрес" minChars={3} delay={50} >
+                                <AddressSuggestions token="5c988a1a82dc2cff7f406026fbc3e8d04f2a168e"
+                                                    value={address2}
+                                                    onChange={addresChange2} />
                         </StyledFormItem>
                     </Col>
                     <Col span={4}>
@@ -125,9 +178,6 @@ const OrganizationForm = ({ organization, onClose }) => {
                 </Row>
                 <Row gutter={8}>
                     <Col span={12}>
-                        <StyledFormItem name="index" label="---Индекс---">
-                            <Input />
-                        </StyledFormItem>
                         <StyledFormItem name="phone_number" label="Телефон">
                             <Input />
                         </StyledFormItem>
@@ -137,8 +187,27 @@ const OrganizationForm = ({ organization, onClose }) => {
                         <StyledFormItem name="email" label="e-mail">
                             <Input />
                         </StyledFormItem>
+                        <StyledFormItem name="payment_account" label="Расчётынй счёт">
+                            <Input />
+                        </StyledFormItem>
+                        <div >
+                            <Row gutter={4} align={"bottom"}>
+                                <Col flex="auto">
+                                    <StyledFormItem name="BIK_id" label="Бик" >
+                                    <Select>
+                                        {data && data.biks && data.biks.map(biks => (
+                                            <Select.Option key={biks.id} value={biks.id}>{biks.name}</Select.Option>
+                                        ))}
+                                    </Select>
+                                    </StyledFormItem>
+                                </Col>
+                                <Col>
+                                    <StyledButtonForm onClick={()=>setBikFormViewModalVisible(true)}>Создать</StyledButtonForm>
+                                </Col>
+                            </Row>
+                        </div>
                     </Col>
-                    <Col span={12}>
+                    <Col span={12} >
                         <StyledFormItem name="INN" label="ИНН">
                             <Input />
                         </StyledFormItem>
@@ -153,15 +222,45 @@ const OrganizationForm = ({ organization, onClose }) => {
                         </StyledFormItem>
                     </Col>
                 </Row>
-                <StyledFormItem name="payment_account" label="Расчётынй счёт">
-                    <Input />
-                </StyledFormItem>
+
                 <StyledFormItem>
                     <Button type="primary" onClick={handleSubmit}>
                         {editingOrganization ? "Сохранить изменения" : "Добавить контакт"}
                     </Button>
                 </StyledFormItem>
             </StyledBigForm>
+            {/*
+            Модальные окна редактирования
+            */}
+            {/* Бики */}
+            <Modal
+                visible={bikFormViewModalVisible}
+                title="Бик"
+                onCancel={() => setBikFormViewModalVisible(false)}
+                footer={null}
+                onClose={handleBikFormView}
+            >
+                <StyledFormBlock>
+                    <StyledForm form={form} layout="vertical">
+<BikForm/>
+
+                    </StyledForm>
+                </StyledFormBlock>
+            </Modal>
+            {/* контакты */}
+            <Modal
+                visible={contactFormViewModalVisible}
+                title="Контакт"
+                onCancel={() => setContactFormViewModalVisible(false)}
+                footer={null}
+                onClose={handleContactFormView}
+            >
+                <StyledFormBlock>
+                    <StyledForm form={form} layout="vertical">
+                        <ContactForm/>
+                    </StyledForm>
+                </StyledFormBlock>
+            </Modal>
         </StyledBigFormBlock>
 
     );

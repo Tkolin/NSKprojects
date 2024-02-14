@@ -14,13 +14,15 @@ final readonly class AddContact
         // Проверяем переданные аргументы и создаем новый контакт
         $contact = Contact::create([
             'first_name' => $args['first_name'],
-            'last_name' => $args['last_name']?? null,
-            'patronymic' => $args['patronymic']?? null,
-            'mobile_phone' => $args['mobile_phone']?? null,
-            'email' => $args['email']?? null,
-            'sibnipi_email' => $args['sibnipi_email']?? null,
-            'position_id' => $args['position_id']?? null,
-            'organization_id' => $args['organization_id']?? null
+            'last_name' => $args['last_name'] ?? null,
+            'patronymic' => $args['patronymic'] ?? null,
+            'mobile_phone' => $args['mobile_phone'] ?? null,
+            'work_phone' => $args['work_phone'] ?? null,
+            'email' => $args['email'] ?? null,
+            'work_email' => $args['work_email'] ?? null,
+            'birth_day' => isset($args['birth_day']) ? substr((string) $args['birth_day'], 0, 10) : null,
+            'position_id' => $args['position_id'] ?? null,
+            'organization_id' => $args['organization_id'] ?? null
         ]);
 
         // Возвращаем добавленный контакт

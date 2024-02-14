@@ -11,18 +11,31 @@ type Query {
     projectStagesGroup: [ProjectStagesGroup!]!
     projectStages: [ProjectStage]!
     biks: [Bik!]!
-    address: [Address]!
     legalForms: [LegalForm]!
 }
 
 type Mutation {
+    addBik(
+        BIK: String!
+        name: String!
+        correspondent_account: String
+    ): Bik!
+
+    updateBik(
+        id: ID!
+        BIK: String!
+        name: String!
+        correspondent_account: String
+    ): Bik!
     addContact(
         first_name: String!
         last_name: String
         patronymic: String
+        birth_day: String
+        work_phone: String
         mobile_phone: String
+        work_email: String
         email: String
-        sibnipi_email: String
         position_id: ID
         organization_id: ID
     ): Contact!
@@ -32,52 +45,59 @@ type Mutation {
         first_name: String!
         last_name: String
         patronymic: String
+        birth_day: String
+        work_phone: String
+        work_email: String
         mobile_phone: String
         email: String
-        sibnipi_email: String
         position_id: ID
         organization_id: ID
     ): Contact!
-
+    deleteContact (
+        id: ID!
+    ): Contact
+    deleteOrganization (
+        id: ID!
+    ): Organization
     addOrganization(
         legal_form_id: ID!
         name: String!
         full_name: String!
-        address_legal_id: ID!
-        office_number_legal: String!
-        address_mail_id: ID!
-        office_number_mail: String!
-        phone_number: String!
-        fax_number: String!
-        email: String!
-        INN: String!
-        OGRN: String!
-        OKPO: String!
-        KPP: String!
-        BIK_id: ID!
-        payment_account: String!
-        director_id: ID!
+        address_legal: String
+        office_number_legal: String
+        address_mail: String
+        office_number_mail: String
+        phone_number: String
+        fax_number: String
+        email: String
+        INN: String
+        OGRN: String
+        OKPO: String
+        KPP: String
+        BIK_id: ID
+        payment_account: String
+        director_id: ID
     ): Organization!
 
     updateOrganization(
         id: ID!
         legal_form_id: ID!
         name: String!
-        full_name: String!
-        address_legal_id: ID!
-        office_number_legal: String!
-        address_mail_id: ID!
-        office_number_mail: String!
-        phone_number: String!
-        fax_number: String!
-        email: String!
-        INN: String!
-        OGRN: String!
-        OKPO: String!
-        KPP: String!
-        BIK_id: ID!
-        payment_account: String!
-        director_id: ID!
+        full_name: String
+        address_legal: String
+        office_number_legal: String
+        address_mail: String
+        office_number_mail: String
+        phone_number: String
+        fax_number: String
+        email: String
+        INN: String
+        OGRN: String
+        OKPO: String
+        KPP: String
+        BIK_id: ID
+        payment_account: String
+        director_id: ID
     ): Organization!
 
     updatePerson(
@@ -149,15 +169,14 @@ type Mutation {
     addProject(
         number: String!
         name: String!
-        organization_customer_id: ID!
-        type_project_document_id: ID!
-        facility_id: ID!
-        date_signing: String!
-        IAD_id: ID!
-        duration: Int!
-        date_end: String!
-        status_id: ID!
-        date_completion: String!
+        organization_customer_id: ID
+        type_project_document_id: ID
+        facility_id: ID
+        date_signing: String
+        duration: Int
+        date_end: String
+        status_id: ID
+        date_completion: String
     ): Project!
 
     updateProjectStage(
@@ -177,14 +196,17 @@ type Mutation {
     ): ProjectStage!
 }
 
+
 type Contact {
     id: ID!
     first_name: String!
     last_name: String
     patronymic: String
+    birth_day: String
+    work_phone: String
+    work_email: String
     mobile_phone: String
     email: String
-    sibnipi_email: String
     position: Position
     organization: Organization
 
@@ -241,9 +263,9 @@ type Organization{
     legal_form: LegalForm!
     name: String!
     full_name: String
-    address_legal: Address
+    address_legal: String
     office_number_legal: String
-    address_mail: Address
+    address_mail: String
     office_number_mail: String
     phone_number: String
     fax_number: String
@@ -252,7 +274,7 @@ type Organization{
     OGRN: String
     OKPO: String
     KPP: String
-    BIK: Bik
+    Bik: Bik
     payment_account: String
     director: Contact
 }
@@ -262,14 +284,11 @@ type LegalForm{
 }
 type Bik{
     id: ID!
-    BIK: String!
-    name: String!
-    correspondent_account: String!
+    Bik: String
+    name: String
+    correspondent_account: String
 }
-type Address{
-    id: ID!
-    name: String!
-}
+
 type TypeProjectDocument{
     id: ID!
     name: String!
@@ -284,7 +303,7 @@ type Person{
     email: String!
     email_sibnipi: String!
     bank: Bank!
-    bik: Bik!
+    BIK: Bik!
     note: Note!
 }
 type Passport{
@@ -327,7 +346,6 @@ type Project{
     type_project_document: TypeProjectDocument
     facility: Facility
     date_signing: String
-    IAD: IAD
     duration: Int
     date_end: String
     status: ProjectStatus

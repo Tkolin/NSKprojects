@@ -29,7 +29,9 @@ const StyledFormBlockWrapper = styled.div`
 export const StyledBigFormBlockWrapper = styled(StyledFormBlockWrapper)`
     max-width: 800px;
 `;
-
+export const StyledButtonForm = styled(Button)`
+    margin-bottom: 6px;
+`;
 const StyledBigFormBlock = ({ form, onFinish, children }) => {
     return (
         <StyledBigFormBlockWrapper>

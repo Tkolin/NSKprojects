@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Form, Input, Button, Select, InputNumber, Col, Row, notification, Modal} from 'antd';
+import {Form, Input, Button, Select, InputNumber, Col, Row, notification, Modal, Space} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
 import {
     PROJECT_QUERY,
@@ -9,6 +9,8 @@ import {
 } from '../../graphql/queries';
 import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles';
 import {DatePicker} from "antd/lib";
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import OrganizationForm from "../organization/OrganizationForm";
 
 const { Option } = Select;
 
@@ -44,10 +46,11 @@ const ProjectForm = ({project, onClose }) => {
             openNotification('topRight', 'success', 'Данные успешно добавлены!');
             form.resetFields();
         },
-        onError: () => {
-            openNotification('topRight', 'error', 'Ошибка при добавлении данных.');
+        onError: (error) => {
+            openNotification('topRight', 'error', 'Ошибка при добавлении данных: '+ error.message);
         }
     });
+
     const [updateProject] = useMutation(UPDATE_PROJECT_MUTATION, {
         refetchQueries: [{ query: PROJECT_QUERY }],
         onCompleted: () => {
@@ -73,7 +76,9 @@ const ProjectForm = ({project, onClose }) => {
     if (error) return `Error! ${error.message}`;
 
     return (
-        <div>
+        <>
+            <Row gutter={16} justify="center" align="top">
+                <Col span={8}>
             <StyledFormBlock>
                 <StyledForm form={form} layout="vertical">
                     <StyledFormItem name="number" label="Номер проекта" rules={[{ required: true }]}>
@@ -82,20 +87,22 @@ const ProjectForm = ({project, onClose }) => {
                     <StyledFormItem name="name" label="Наименование проекта" rules={[{ required: true }]}>
                         <Input />
                     </StyledFormItem>
-                    <StyledFormItem name="organization_customer_id" label="Заказчик" >
+
                         <Row gutter={8}>
                             <Col flex="auto">
+                                <StyledFormItem name="organization_customer_id" label="Заказчик" >
                                 <Select>
                                     {data && data.organizations && data.organizations.map(organization => (
                                         <Option key={organization.id} value={organization.id}>{organization.name}</Option>
                                     ))}
                                 </Select>
+                                </StyledFormItem>
                             </Col>
                             <Col>
                                 <Button onClick={()=>setCostumerFormViewModalVisible(true)}>Создать</Button>
                             </Col>
                         </Row>
-                    </StyledFormItem>
+
                     <StyledFormItem name="type_project_document_id" label="Тип документа">
                         <Select>
                             {data && data.typeProjectDocuments && data.typeProjectDocuments.map(typeDock => (
@@ -103,36 +110,24 @@ const ProjectForm = ({project, onClose }) => {
                             ))}
                         </Select>
                     </StyledFormItem>
-                    <StyledFormItem name="facility_id" label="Объект">
+
                         <Row gutter={8}>
                             <Col flex="auto">
+                                <StyledFormItem name="facility_id" label="Объект">
                                 <Select>
                                     {data && data.facilitys && data.facilitys.map(facility => (
                                         <Select.Option key={facility.id} value={facility.id}>{facility.name}</Select.Option>
                                     ))}
                                 </Select>
+                                </StyledFormItem>
                             </Col>
                             <Col>
                                  <Button onClick={()=>setFacilityFormViewModalVisible(true)}>Создать</Button>
                             </Col>
                         </Row>
-                    </StyledFormItem>
+
                     <StyledFormItem name="date_signing" label="Дата подписания">
                         <DatePicker />
-                    </StyledFormItem>
-                    <StyledFormItem name="IAD_id" label="ИАД">
-                        <Row gutter={8}>
-                            <Col flex="auto">
-                                <Select>
-                                    {data && data.organizationNames && data.organizationNames.map(position => (
-                                        <Select.Option key={position.id} value={position.id}>{position.name}</Select.Option>
-                                    ))}
-                                </Select>
-                            </Col>
-                            <Col>
-                                    <Button onClick={()=>setIadFormViewModalVisible(true)}>Создать</Button>
-                            </Col>
-                        </Row>
                     </StyledFormItem>
                     <StyledFormItem name="duration" label="Продолжительность">
                         <InputNumber />
@@ -160,8 +155,173 @@ const ProjectForm = ({project, onClose }) => {
                         </Button>
                     </StyledFormItem>
                 </StyledForm>
-            </StyledFormBlock>
 
+                    </StyledFormBlock>
+                </Col>
+                <Col span={8}>
+                    <p>
+                        Список ИРД: (пример)
+                    </p>
+
+                    <p>
+                        выпадающий список названия | дата получения
+                    </p>
+
+                    <StyledFormBlock
+                        name="dynamic_form_nest_item"
+                        style={{
+                            maxWidth: 600,
+                        }}
+                        autoComplete="off"
+                    >
+                        <Form.List name="users">
+                            {(fields, {add, remove}) => (
+                                <>
+                                    {fields.map(({key, name, ...restField}) => (
+                                        <Space
+                                            key={key}
+                                            style={{
+                                                display: 'flex',
+                                                marginBottom: 8,
+                                            }}
+                                            align="baseline"
+                                        >
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'first']}
+                                                rules={[
+                                                    {
+                                                        required: true,
+                                                        message: 'Missing first name',
+                                                    },
+                                                ]}
+                                            >
+                                                <Select>
+                                                    {data && data.projectStatuses && data.projectStatuses.map(status => (
+                                                        <Select.Option key={status.id}
+                                                                       value={status.id}>{status.name}</Select.Option>
+                                                    ))}
+                                                </Select>
+                                            </Form.Item>
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'last']}
+                                                rules={[
+                                                    {
+                                                        required: true,
+                                                        message: 'Missing last name',
+                                                    },
+                                                ]}
+                                            >
+                                                <DatePicker/>
+                                            </Form.Item>
+                                        <Form.Item>
+                                            <Button  onClick={() => add()} block icon={<PlusOutlined/>}>
+                                            </Button>
+                                        </Form.Item>
+                                            <MinusCircleOutlined onClick={() => remove(name)}/>
+                                        </Space>
+                                    ))}
+                                    <Form.Item>
+                                        <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined/>}>
+                                            Add field
+                                        </Button>
+                                    </Form.Item>
+                                </>
+                            )}
+                        </Form.List>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit">
+                                Submit
+                            </Button>
+                        </Form.Item>
+                    </StyledFormBlock>
+                </Col>
+                <Col span={8}>
+                    <p>
+                        Список задач: (пример)
+                    </p>
+
+                    <p>
+                        выпадающий список глав | исполнитель | подробней
+                    </p>
+
+                    <StyledFormBlock
+                        name="dynamic_form_nest_item"
+                        style={{
+                            maxWidth: 600,
+                        }}
+                        autoComplete="off"
+                    >
+                        <Form.List name="users">
+                            {(fields, {add, remove}) => (
+                                <>
+                                    {fields.map(({key, name, ...restField}) => (
+                                        <Space
+                                            key={key}
+                                            style={{
+                                                display: 'flex',
+                                                marginBottom: 8,
+                                            }}
+                                            align="baseline"
+                                        >
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'first']}
+                                                rules={[
+                                                    {
+                                                        required: true,
+                                                        message: 'Missing first name',
+                                                    },
+                                                ]}
+                                            >
+                                                <Select>
+                                                    {data && data.projectStatuses && data.projectStatuses.map(status => (
+                                                        <Select.Option key={status.id}
+                                                                       value={status.id}>{status.name}</Select.Option>
+                                                    ))}
+                                                </Select>
+                                            </Form.Item>
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'last']}
+                                                rules={[
+                                                    {
+                                                        required: true,
+                                                        message: 'Missing last name',
+                                                    },
+                                                ]}
+                                            >
+                                                <Select>
+                                                    {data && data.projectStatuses && data.projectStatuses.map(status => (
+                                                        <Select.Option key={status.id}
+                                                                       value={status.id}>{status.name}</Select.Option>
+                                                    ))}
+                                                </Select>
+                                            </Form.Item>
+                                            <Form.Item>
+                                                <Button onClick={() => add()} block icon={<PlusOutlined/>}>
+                                                </Button>
+                                            </Form.Item>
+                                            <MinusCircleOutlined onClick={() => remove(name)}/>
+                                        </Space>
+                                    ))}
+                                    <Form.Item>
+                                        <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined/>}>
+                                            Add field
+                                        </Button>
+                                    </Form.Item>
+                                </>
+                            )}
+                        </Form.List>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit">
+                                Submit
+                            </Button>
+                        </Form.Item>
+                    </StyledFormBlock>
+                </Col>
+            </Row>
             {/*
             Модальные окна редактирования
             */}
@@ -175,8 +335,7 @@ const ProjectForm = ({project, onClose }) => {
             >
                 <StyledFormBlock>
                     <StyledForm form={form} layout="vertical">
-                        {/* Форма для добавления новых данных */}
-                        {/* ... */}
+                        <OrganizationForm/>
 
                     </StyledForm>
                 </StyledFormBlock>
@@ -197,23 +356,8 @@ const ProjectForm = ({project, onClose }) => {
                     </StyledForm>
                 </StyledFormBlock>
             </Modal>
-            {/* Иад */}
-            <Modal
-                visible={iadFormViewModalVisible}
-                title="Иад"
-                onCancel={() => setIadFormViewModalVisible(false)}
-                footer={null}
-                onClose={handleIadFormView}
-            >
-                <StyledFormBlock>
-                    <StyledForm form={form} layout="vertical">
-                        {/* Форма для добавления новых данных */}
-                        {/* ... */}
 
-                    </StyledForm>
-                </StyledFormBlock>
-            </Modal>
-            {/* Список задач */}
+            {/* Список задач (ВСЕХ) */}
             <Modal
                 visible={viewListProjectStageModalVisible}
                 title="Список задач"
@@ -229,7 +373,8 @@ const ProjectForm = ({project, onClose }) => {
                     </StyledForm>
                 </StyledFormBlock>
             </Modal>
-        </div>
+
+        </>
 );
 };
 

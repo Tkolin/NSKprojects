@@ -14,6 +14,8 @@ import FacilityForm from './page/project/facility/FacilityForm';
 import FacilityList from './page/project/facility/FacilityList';
 import ProjectStageFrom from './page/project/stage/ProjectStageForm';
 import ProjectStageList from './page/project/stage/ProjectStageList';
+import StageTaskForm from './page/project/stage/task/StageTaskForm';
+import StageTaskList from './page/project/stage/task/StageTaskList';
 import CustomLayout from './page/Layout';
 import {useQuery} from "@apollo/client";
 import {CURRENT_USER_QUERY} from "./graphql/queries";
@@ -49,6 +51,8 @@ const App = () => {
                                 <Route path="/project/new" element={<ProjectForm />} />
                                 <Route path="/project/stage" element={<ProjectStageList />} />
                                 <Route path="/project/stage/new" element={<ProjectStageFrom />} />
+                                <Route path="/project/stage/task" element={<StageTaskList />}/>
+                                <Route path="/project/stage/task/new" element={<StageTaskForm />} />
                                 <Route path="/project/facility" element={<FacilityList />} />
                                 <Route path="/project/facility/new" element={<FacilityForm />} />
                                 <Route path="/organization" element={<OrganizationList />} />

@@ -12,8 +12,4 @@ class InitialAuthorizationDocumentation extends Model
         'name',
         'date_issue',
     ];
-    public function project(): HasMany
-    {
-        return $this->hasMany(Project::class);
-    }
 }

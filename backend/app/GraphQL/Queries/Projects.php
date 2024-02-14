@@ -13,7 +13,6 @@ final readonly class Projects
             ::with('organization_customer')
             ->with('type_project_document')
             ->with('facility')
-            ->with('IAD')
             ->with('status')
             ->get();
     }

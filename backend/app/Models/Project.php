@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -16,7 +15,6 @@ class Project extends Model
         'type_project_document_id',
         'facility_id',
         'date_signing',
-        'IAD_id',
         'duration',
         'date_end',
         'status_id',
@@ -34,10 +32,6 @@ class Project extends Model
     public function facility(): BelongsTo
     {
         return $this->belongsTo(Facility::class);
-    }
-    public function IAD(): BelongsTo
-    {
-        return $this->belongsTo(InitialAuthorizationDocumentation::class);
     }
     public function status(): BelongsTo
     {

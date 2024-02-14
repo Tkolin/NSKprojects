@@ -10,8 +10,6 @@ final readonly class UpdateContact
     public function __invoke(null $_, array $args)
     {
         $contact = Contact::findOrFail($args['id']);
-
-        // Обновляем поля контакта
         $contact->update([
             'first_name' => $args['first_name'] ?? $contact->first_name,
             'last_name' => $args['last_name'] ?? $contact->last_name,
@@ -22,8 +20,6 @@ final readonly class UpdateContact
             'position_id' => $args['position_id'] ?? $contact->position_id,
             'organization_id' => $args['organization_id'] ?? $contact->organization_id
         ]);
-
-        // Возвращаем обновленный контакт
         return $contact;
     }
 }

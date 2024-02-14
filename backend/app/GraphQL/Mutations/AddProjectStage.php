@@ -9,10 +9,7 @@ final readonly class AddProjectStage
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args):ProjectStage
     {
-        // Создаем новый этап проекта
         $projectStage = ProjectStage::create($args);
-
-        // Возвращаем добавленный этап проекта
         return $projectStage;
     }
 }

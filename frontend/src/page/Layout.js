@@ -74,14 +74,16 @@ const CustomLayout = ({ children }) => {
                 getItem('Проекты', '2', <FundProjectionScreenOutlined />, [
                     getItem('Список проектов', '2-1', <ProfileOutlined />, null, "/project"),
                     getItem('Добавить Проект', '2-2', <FormOutlined />, null, "/project/new"),
-                    getItem('---Список задач', '2-3', <ProfileOutlined />, null, "/project/stage"),
-                    getItem('---Добавить задачу', '2-4', <FormOutlined />, null, "/project/stage/new"),
+                    getItem('---Список этапов', '2-3', <ProfileOutlined />, null, "/project/stage"),
+                    getItem('---Добавить этап', '2-4', <FormOutlined />, null, "/project/stage/new"),
+                    getItem('---Список задач', '2-5', <ProfileOutlined />, null, "/project/stage/task"),
+                    getItem('---Добавить задачу', '2-6', <FormOutlined />, null, "/project/stage/task/new"),
                 ]),
                 getItem('Организации', '3', <SolutionOutlined />, [
                     getItem('Список', '3-1', <ProfileOutlined />, null, "/organization"),
                     getItem('Добавить', '3-2', <FormOutlined />, null, "/organization/new"),
                 ]),
-                getItem('---Клиенты', '4', <UserOutlined />, [
+                getItem('---Сотрудники', '4', <UserOutlined />, [
                     getItem('---Список', '4-1', <ProfileOutlined />, null, "/person"),
                     getItem('---Добавить', '4-2', <FormOutlined />, null, "/person/new"),
                 ]),
