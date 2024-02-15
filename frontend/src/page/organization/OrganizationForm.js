@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {Form, Input, Button, Select, notification, Row, Col, Modal} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
+import {ORGANIZATION_FORM_QUERY} from '../../graphql/queriesGroupData';
+import {ORGANIZATION_QUERY} from '../../graphql/queries';
 import {
-    ORGANIZATION_QUERY,
-    ORGANIZATION_FORM_QUERY,
     UPDATE_ORGANIZATION_MUTATION,
     ADD_ORGANIZATION_MUTATION,
-} from '../../graphql/queries';
+} from '../../graphql/mutationsOrganization';
 import {
     StyledBigFormBlock,
     StyledBigForm,
@@ -92,10 +92,6 @@ const OrganizationForm = ({ organization, onClose }) => {
         const { address_legal, address_mail, ...rest } = formValues; // разделяем address_legal и остальные значения
         const restrictedValue1 = address_legal ?  address_legal.unrestricted_value : address_legal; // получаем unrestricted_value из address_legal
         const restrictedValue2 = address_mail ? address_mail.unrestricted_value : address_mail;
-        console.log(address_legal?.unrestricted_value);
-        console.log(address_mail?.unrestricted_value);
-        console.log(address_legal);
-        console.log(address_mail);
         if (editingOrganization) {
             updateOrganization({ variables: { id: editingOrganization, idaddress_legal: restrictedValue1, address_mail: restrictedValue2 , ...rest} });
         } else {

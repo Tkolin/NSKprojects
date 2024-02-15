@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import {Button, Modal, notification, Table} from 'antd';
-import {DELETE_ORGANIZATION_MUTATION, ORGANIZATION_QUERY} from '../../graphql/queries';
+import {ORGANIZATION_QUERY} from '../../graphql/queries';
+import {DELETE_ORGANIZATION_MUTATION} from '../../graphql/mutationsOrganization';
 import OrganizationForm from "./OrganizationForm";
 
 const OrganizationList = () => {

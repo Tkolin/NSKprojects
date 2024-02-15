@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {Form, Input, Button, Select, notification} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
+import {CONTACTS_QUERY} from '../../graphql/queries';
+import { CONTACT_FORM_QUERY}  from '../../graphql/queriesGroupData';
 import {
-    CONTACTS_QUERY,
     ADD_CONTACT_MUTATION,
-    CONTACT_FORM_QUERY,
     UPDATE_CONTACT_MUTATION
-} from '../../graphql/queries';
+} from '../../graphql/mutationsContact';
 import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles';
 import {DatePicker} from "antd/lib"; // Импорт стилей
 import moment from 'moment';

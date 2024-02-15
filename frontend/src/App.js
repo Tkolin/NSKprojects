@@ -19,6 +19,7 @@ import StageTaskList from './page/project/stage/task/StageTaskList';
 import CustomLayout from './page/Layout';
 import {useQuery} from "@apollo/client";
 import {CURRENT_USER_QUERY} from "./graphql/queries";
+import PersonList from "./page/person/PersonList";
 
 const App = () => {
     const accessToken = localStorage.getItem('accessToken'); // Получаем токен из куки
@@ -58,7 +59,7 @@ const App = () => {
                                 <Route path="/organization" element={<OrganizationList />} />
                                 <Route path="/organization/new" element={<OrganizationForm />} />
 
-                                <Route path="/person" element={<PersonForm />} />
+                                <Route path="/person" element={<PersonList />} />
                                 <Route path="/person/new" element={<PersonForm />} />
 
                             </>

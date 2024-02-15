@@ -1,9 +1,217 @@
-const Todo = () => {
+import React, {useEffect, useState} from 'react';
+import {Form, Input, Button, Select, notification, Col, Row, Modal} from 'antd';
+import { useMutation, useQuery } from '@apollo/client';
+import {PERSON_QUERY} from '../../graphql/queries';
+import {PERSON_FORM_QUERY} from '../../graphql/queriesGroupData';
+import {
+    ADD_PERSON_MUTATION,
+    UPDATE_PERSON_MUTATION
+} from '../../graphql/mutationsPerson';
+import {
+    StyledFormBlock,
+    StyledForm,
+    StyledFormItem,
+    StyledBigFormBlock,
+    StyledBigForm,
+    StyledButtonForm
+} from '../style/FormStyles';
+import {DatePicker} from "antd/lib"; // Импорт стилей
+import moment from 'moment';
+import PassportPlaceIssuesForm from "./passport/passportPlaceIssuesForm";
+
+const PersonForm = ({ person, onClose }) => {
+
+    // Состояния
+    const [editingPerson, setEditingPerson] = useState(null);
+    const [form] = Form.useForm();
+    const [formPassport] = Form.useForm();
+    const [ api,contextHolder] = notification.useNotification();
+    const [ppiFormViewModalVisible, setPpiFormViewModalVisible] = useState(false);
+    const handlePpiFormView = () => {setPpiFormViewModalVisible(false);};
+
+    // Функции уведомлений
+    const openNotification = (placement, type, message) => {
+        notification[type]({
+            message: message,
+            placement,
+        });
+    };
+
+    // Получение данных для выпадающих списков
+    const { loading, error, data } = useQuery(PERSON_FORM_QUERY);
+
+    // Заполнение формы данными контакта при его редактировании
+    useEffect(() => {
+        if (person) {
+            setEditingPerson(person);
+            form.setFieldsValue({
+                ...person,
+                bank_id: person.bank ? person.bank.id : null,
+                bik_id: person.BIK ? person.BIK.id : null,
+            });
+
+            formPassport.setFieldsValue({
+                firstname: person.passport.firstname,
+                lastname: person.passport.lastname,
+                patronymic: person.passport.patronymic,
+                birth_date: person.passport.birth_date ? moment(person.passport.birth_date, 'YYYY-MM-DD') : null,
+                date: person.passport.date ? moment(person.passport.date, 'YYYY-MM-DD') : null,
+                passport_place_issue_id:  person.passport.passport_place_issues ? person.passport.passport_place_issues.id : null,// TODO: НЕ РАБОТАЕТ
+                serial: person.passport.serial,
+                number: person.passport.number,
+            });
+        }
+    }, [person, form, formPassport]);
+
+    // Мутации для добавления и обновления
+    const [addPerson] = useMutation(ADD_PERSON_MUTATION, {
+        refetchQueries: [{ query: PERSON_QUERY }],
+        onCompleted: () => {
+            openNotification('topRight', 'success', 'Данные успешно добавлены!');
+            form.resetFields();
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', 'Ошибка при добавлении данных: ' + error.message);
+        }
+    });
+
+    const [updatePerson] = useMutation(UPDATE_PERSON_MUTATION, {
+        refetchQueries: [{ query: PERSON_QUERY }],
+        onCompleted: () => {
+            openNotification('topRight', 'success', 'Данные успешно обновлены!');
+            setEditingPerson(null);
+            onClose();
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', 'Ошибка при обновлении данных: '+ error.message);
+        }
+    });
+
+    // Обработчик отправки формы
+    const handleSubmit = () => {
+        if (editingPerson) {
+            updatePerson({ variables: { id: editingPerson.id, ...form.getFieldsValue(), ...formPassport.getFieldsValue()} });
+        } else {
+            addPerson({ variables: { ...form.getFieldsValue(), ...formPassport.getFieldsValue()}});
+        }
+    };
+
+    // Обработка загрузки и ошибок
+    if (loading) return 'Loading...';
+    if (error) return `Error! ${error.message}`;
+
     return (
-        <div>
-            Страница в разработке
-        </div>
+        <>
+        <StyledBigFormBlock>
+            <StyledBigForm layout="vertical">
+                {contextHolder}
+                <Row gutter={8}>
+                    <Col span={12}>
+
+                 Паспортные данные
+                 <StyledForm form={formPassport} layout="vertical">
+                    <StyledFormItem name="firstname" label="Имя" rules={[{required: true}]}>
+                        <Input/>
+                    </StyledFormItem>
+                    <StyledFormItem name="lastname" label="Фамилия" rules={[{required: true}]}>
+                        <Input/>
+                    </StyledFormItem>
+                    <StyledFormItem name="patronymic" label="Отчество" rules={[{required: true}]}>
+                        <Input/>
+                    </StyledFormItem>
+                    <StyledFormItem name="birth_date" label="Дата рождения" rules={[{required: true}]}>
+                        <DatePicker/>
+                    </StyledFormItem>
+                    <StyledFormItem name="date" label="Дата выдачи" rules={[{required: true}]}>
+                        <DatePicker/>
+                    </StyledFormItem>
+                            <Row gutter={2} align={"bottom"}>
+                                <Col flex="auto">
+                                    <StyledFormItem name="passport_place_issue_id" label="Место выдачи" rules={[{required: true}]}>
+                                        <Select>
+                                            {data && data.passportPlaceIssues && data.passportPlaceIssues .map(ppi => (
+                                                <Select.Option key={ppi.id} value={ppi.id}>{ppi.name}</Select.Option>
+                                            ))}
+                                        </Select>
+                                    </StyledFormItem>
+                                </Col>
+                                <Col>
+                                        <StyledButtonForm onClick={()=>setPpiFormViewModalVisible(true)}>Создать</StyledButtonForm>
+                                </Col>
+                            </Row>
+
+                    <StyledFormItem name="serial" label="Серия" rules={[{required: true}]}>
+                        <Input/>
+                    </StyledFormItem>
+                    <StyledFormItem name="number" label="Номер" rules={[{required: true}]}>
+                        <Input/>
+                    </StyledFormItem>
+                            </StyledForm>
+                    </Col>
+                        <Col span={12}>
+                        <StyledForm form={form} layout="vertical">
+                {contextHolder}
+                 Данные
+
+                <StyledFormItem name="SHILS" label="Снилс" >
+                    <Input />
+                </StyledFormItem>
+                <StyledFormItem name="INN" label="Инн" rules={[{ required: true }]}>
+                    <Input />
+                </StyledFormItem>
+                <StyledFormItem name="payment_account" label="Расчётный счёт" >
+                    <Input />
+                </StyledFormItem>
+                <StyledFormItem name="phone_number" label="Мобильный номер телефона" >
+                    <Input />
+                </StyledFormItem>
+                <StyledFormItem name="email" label="e-mail" rules={[{ type: 'email' }]} >
+                    <Input />
+                </StyledFormItem>
+                <StyledFormItem name="email_sibnipi" label="e-mail Сибниаи" rules={[{ type: 'email' }]} >
+                    <Input />
+                </StyledFormItem>
+                <StyledFormItem name="bank_id" label="Банк">
+                    <Select>
+                        {data && data.banks && data.banks.map(bank => (
+                            <Select.Option key={bank.id} value={bank.id}>{bank.name}</Select.Option>
+                        ))}
+                    </Select>
+                </StyledFormItem>
+                <StyledFormItem name="bik_id" label="Бик" >
+                    <Select>
+                        {data && data.biks && data.biks.map(bik => (
+                            <Select.Option key={bik.id} value={bik.id}>{bik.name}</Select.Option>
+                        ))}
+                    </Select>
+                </StyledFormItem>
+                <StyledFormItem>
+                    <Button type="primary" onClick={handleSubmit}>
+                        {editingPerson ? "Сохранить изменения" : "Добавить сотрудника"}
+                    </Button>
+                </StyledFormItem>
+                        </StyledForm>
+                            </Col>
+                  </Row>
+                  </StyledBigForm>
+               </StyledBigFormBlock>
+            {/* Места выдачи */}
+            <Modal
+                visible={ppiFormViewModalVisible}
+                title="Бик"
+                onCancel={() => setPpiFormViewModalVisible(false)}
+                footer={null}
+                onClose={handlePpiFormView}
+            >
+                <StyledFormBlock>
+                    <StyledForm form={form} layout="vertical">
+                        <PassportPlaceIssuesForm/>
+
+                    </StyledForm>
+                </StyledFormBlock>
+            </Modal>
+    </>
     );
 };
 
-export default Todo;
+export default PersonForm;

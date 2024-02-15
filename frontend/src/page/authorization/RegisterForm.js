@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Input, Button, message } from 'antd';
 import { useMutation } from '@apollo/client';
-import { REGISTER_MUTATION } from '../../graphql/queries';
+import { REGISTER_MUTATION } from '../../graphql/mutationsAuth';
 import { Cookies } from 'react-cookie';
 import {StyledFormBlock, StyledFormItem} from '../style/FormStyles';
 

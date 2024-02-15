@@ -2,14 +2,16 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\Models\Organization;
+use App\Models\PasspotPlaceIssue;
 
-final readonly class DeleteOrganization
+final readonly class AddPpi
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        $organization = Organization::destroy($args['id']);
 
+
+        $ppi = PasspotPlaceIssue::create($args);
+        return $ppi;
     }
 }

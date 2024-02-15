@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { useQuery } from '@apollo/client';
 import {Button, Modal, Table} from 'antd';
-import { PROJECT_QUERY} from '../../graphql/queries';
+import {PROJECT_QUERY} from '../../graphql/queries';
 import ProjectForm from "./ProjectForm";
 
 const ProjectList = () => {

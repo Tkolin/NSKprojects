@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import {Button, Modal, notification, Table} from 'antd';
-import {CONTACTS_QUERY, DELETE_CONTACT_MUTATION} from '../../graphql/queries';
+import {CONTACTS_QUERY} from '../../graphql/queries';
+import {DELETE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
 import ContactForm from "./ContactForm";
 
 const ContactList = () => {

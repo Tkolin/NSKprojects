@@ -19,7 +19,7 @@ class Passport extends Model
         'birth_date',
         'date',
     ];
-    public function passport_place_issue(): BelongsTo
+    public function passport_place_issues(): BelongsTo
     {
         return $this->belongsTo(PasspotPlaceIssue::class);
     }

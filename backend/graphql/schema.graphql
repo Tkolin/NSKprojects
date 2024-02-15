@@ -12,9 +12,24 @@ type Query {
     projectStages: [ProjectStage]!
     biks: [Bik!]!
     legalForms: [LegalForm]!
+    persons: [Person]!
+    passportPlaceIssues: [PassportPlaceIssue]!
+    banks: [Bank]!
 }
 
+
 type Mutation {
+    addPpi(
+        name: String!
+        code: String!
+    ): PassportPlaceIssue!
+
+    updatePpi(
+        id: ID!
+        name: String!
+        code: String!
+    ): PassportPlaceIssue!
+
     addBik(
         BIK: String!
         name: String!
@@ -56,6 +71,9 @@ type Mutation {
     deleteContact (
         id: ID!
     ): Contact
+    deletePerson (
+        id: ID!
+    ): Person
     deleteOrganization (
         id: ID!
     ): Organization
@@ -102,44 +120,42 @@ type Mutation {
 
     updatePerson(
         id: ID!
-        firstname: String!
-        lastname: String!
-        patronymic: String!
-        serial: String!
-        number: String!
-        passport_place_issue_id: ID!
-        birth_date: String!
-        date: String!
+        firstname: String
+        lastname: String
+        patronymic: String
+        serial: String
+        number: String
+        passport_place_issue_id: ID
+        birth_date: String
+        date: String
 
-        SHILS: String!
-        INN: String!
-        payment_account: String!
-        phone_number: String!
-        email: String!
-        email_sibnipi: String!
-        bank_id: ID!
-        bik_id: ID!
-        noteName: String!
+        SHILS: String
+        INN: String
+        payment_account: String
+        phone_number: String
+        email: String
+        email_sibnipi: String
+        bank_id: ID
+        bik_id: ID
     ): Person!
     addPerson(
-        firstname: String!
-        lastname: String!
-        patronymic: String!
-        serial: String!
-        number: String!
-        passport_place_issue_id: ID!
-        birth_date: String!
-        date: String!
+        firstname: String
+        lastname: String
+        patronymic: String
+        serial: String
+        number: String
+        passport_place_issue_id: ID
+        birth_date: String
+        date: String
 
-        SHILS: String!
-        INN: String!
-        payment_account: String!
-        phone_number: String!
-        email: String!
-        email_sibnipi: String!
-        bank_id: ID!
-        bik_id: ID!
-        noteName: String!
+        SHILS: String
+        INN: String
+        payment_account: String
+        phone_number: String
+        email: String
+        email_sibnipi: String
+        bank_id: ID
+        bik_id: ID
     ): Person!
 
     updateFacility(
@@ -304,7 +320,6 @@ type Person{
     email_sibnipi: String!
     bank: Bank!
     BIK: Bik!
-    note: Note!
 }
 type Passport{
     id: ID!
@@ -313,13 +328,14 @@ type Passport{
     patronymic: String!
     serial: String!
     number: String!
-    passport_place_issue: PassportPlaceIssue!
+    passport_place_issues: PassportPlaceIssue
     birth_date: String!
     date: String!
 }
 type PassportPlaceIssue{
     id: ID!
     name: String!
+    code: String!
 }
 type Bank{
     id: ID!

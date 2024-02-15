@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Input, Button, message } from 'antd';
 import { useMutation } from '@apollo/client';
-import { LOGIN_MUTATION } from '../../graphql/queries';
+import { LOGIN_MUTATION } from '../../graphql/mutationsAuth';
 import { useNavigate } from 'react-router-dom';
 import {StyledFormBlock, StyledFormItem} from '../style/FormStyles';
 

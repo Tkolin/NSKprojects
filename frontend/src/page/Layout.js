@@ -83,9 +83,9 @@ const CustomLayout = ({ children }) => {
                     getItem('Список', '3-1', <ProfileOutlined />, null, "/organization"),
                     getItem('Добавить', '3-2', <FormOutlined />, null, "/organization/new"),
                 ]),
-                getItem('---Сотрудники', '4', <UserOutlined />, [
-                    getItem('---Список', '4-1', <ProfileOutlined />, null, "/person"),
-                    getItem('---Добавить', '4-2', <FormOutlined />, null, "/person/new"),
+                getItem('Сотрудники', '4', <UserOutlined />, [
+                    getItem('Список', '4-1', <ProfileOutlined />, null, "/person"),
+                    getItem('Добавить', '4-2', <FormOutlined />, null, "/person/new"),
                 ]),
                 getItem('---Объекты', '6', <ShopOutlined />, [
                     getItem('---Список', '6-1', <ProfileOutlined />, null, "/project/facility"),

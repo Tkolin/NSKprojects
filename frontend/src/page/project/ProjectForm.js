@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import {Form, Input, Button, Select, InputNumber, Col, Row, notification, Modal, Space} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
+import {PROJECT_QUERY} from '../../graphql/queries';
+import {PROJECT_FORM_QUERY} from '../../graphql/queriesGroupData';
 import {
-    PROJECT_QUERY,
     ADD_PROJECT_MUTATION,
     UPDATE_PROJECT_MUTATION,
-    PROJECT_FORM_QUERY,
-} from '../../graphql/queries';
+} from '../../graphql/mutationsProject';
 import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles';
 import {DatePicker} from "antd/lib";
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import OrganizationForm from "../organization/OrganizationForm";
+import moment from 'moment';
 
 const { Option } = Select;
 

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Person extends Model
 {
+    protected $table = 'persons';
     protected $fillable = [
         'passport_id',
         'SHILS',
@@ -19,7 +20,6 @@ class Person extends Model
         'email_sibnipi',
         'bank_id',
         'bik_id',
-        'note_id',
     ];
 
     public function passport(): BelongsTo
@@ -33,10 +33,6 @@ class Person extends Model
     public function bik(): BelongsTo
     {
         return $this->belongsTo(Bik::class);
-    }
-    public function note(): BelongsTo
-    {
-        return $this->belongsTo(Note::class);
     }
     public function project_responsible_person(): HasMany
     {

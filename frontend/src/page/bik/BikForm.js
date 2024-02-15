@@ -3,9 +3,9 @@ import {Form, Input, Button, Select, notification} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
 import {
     ADD_BIK_MUTATION,
-    BIK_QUERY,
     UPDATE_BIK_MUTATION
-} from '../../graphql/queries';
+} from '../../graphql/mutationsBik';
+import {BIK_QUERY} from '../../graphql/queries';
 import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles';
 
 

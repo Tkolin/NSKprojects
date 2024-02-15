@@ -11,8 +11,4 @@ class Note extends Model
     protected $fillable = [
         'name',
     ];
-    public function person(): HasMany
-    {
-        return $this->hasMany(Person::class);
-    }
 }
