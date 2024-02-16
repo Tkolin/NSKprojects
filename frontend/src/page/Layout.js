@@ -67,29 +67,26 @@ const CustomLayout = ({ children }) => {
     if (data && data.currentUser) {
         if (data.currentUser.role.name === "admin") {
             items.push(
-                getItem('Контакты', '1', <PhoneOutlined />, [
-                    getItem('Список', '1-1', <ProfileOutlined />, null, "/contacts"),
-                    getItem('Добавить', '1-2', <FormOutlined />, null, "/contacts/new"),
+                getItem('Справочники', '1', <ProfileOutlined />, [
+                    getItem('Контактов', '1-1', null, null, "/contacts"),
+                    getItem('Проектов', '2-1', null, null, "/project"),
+                    getItem('Исполнителей', '4-1',null, null, "/person"),
+                    getItem('Организаций', '3-1',null, null, "/organization"),
+                    getItem('---Этапов', '2-3', null, null, "/project/stage"),
+                    getItem('---Задач', '2-5', null, null, "/project/stage/task"),
+                    getItem('---Объектов', '6-1', null, null, "/project/facility"),
                 ]),
-                getItem('Проекты', '2', <FundProjectionScreenOutlined />, [
-                    getItem('Список проектов', '2-1', <ProfileOutlined />, null, "/project"),
-                    getItem('Добавить Проект', '2-2', <FormOutlined />, null, "/project/new"),
-                    getItem('---Список этапов', '2-3', <ProfileOutlined />, null, "/project/stage"),
+                getItem('Формы', '2', <FormOutlined />, [
+                    getItem('Контакт', '1-2', null, null, "/contacts/new"),
+                    getItem('Проект', '2-2', null, null, "/project/new"),
+                    getItem('Организация', '3-2', null, null, "/organization/new"),
+                    getItem('Исполнитель', '4-2', null, null, "/person/new"),
+
                     getItem('---Добавить этап', '2-4', <FormOutlined />, null, "/project/stage/new"),
-                    getItem('---Список задач', '2-5', <ProfileOutlined />, null, "/project/stage/task"),
                     getItem('---Добавить задачу', '2-6', <FormOutlined />, null, "/project/stage/task/new"),
+                    getItem('---Добавить объект', '6-2', <FormOutlined />, null, "/project/facility/new"),
                 ]),
-                getItem('Организации', '3', <SolutionOutlined />, [
-                    getItem('Список', '3-1', <ProfileOutlined />, null, "/organization"),
-                    getItem('Добавить', '3-2', <FormOutlined />, null, "/organization/new"),
-                ]),
-                getItem('Сотрудники', '4', <UserOutlined />, [
-                    getItem('Список', '4-1', <ProfileOutlined />, null, "/person"),
-                    getItem('Добавить', '4-2', <FormOutlined />, null, "/person/new"),
-                ]),
-                getItem('---Объекты', '6', <ShopOutlined />, [
-                    getItem('---Список', '6-1', <ProfileOutlined />, null, "/project/facility"),
-                    getItem('---Добавить', '6-2', <FormOutlined />, null, "/project/facility/new"),
+                getItem('Отчёты', '3', <SolutionOutlined />, [
                 ])
 
             );

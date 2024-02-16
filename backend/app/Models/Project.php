@@ -19,6 +19,7 @@ class Project extends Model
         'date_end',
         'status_id',
         'date_completion',
+        'delegate_id'
     ];
 
     public function organization_customer(): BelongsTo
@@ -37,7 +38,10 @@ class Project extends Model
     {
         return $this->belongsTo(ProjectStatus::class);
     }
-
+    public function delegate(): BelongsTo
+    {
+        return $this->belongsTo(Contact::class);
+    }
     public function project_responsible_person(): HasMany
     {
         return $this->hasMany(ProjectResponsiblePerson::class);

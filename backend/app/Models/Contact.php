@@ -34,4 +34,8 @@ class Contact extends Model
     {
         return $this->HasMany(Organization::class);
     }
+    public function delegates(): HasMany
+    {
+        return $this->HasMany(Project::class);
+    }
 }

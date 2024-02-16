@@ -11,7 +11,9 @@ export const ADD_PROJECT_MUTATION = gql`
         $duration: Int,
         $date_end: String,
         $status_id: ID,
-        $date_completion: String ) {
+        $date_completion: String
+        $delegate_id: ID
+    ) {
         addProject(
             number: $number
             name: $name
@@ -23,6 +25,7 @@ export const ADD_PROJECT_MUTATION = gql`
             date_end: $date_end
             status_id: $status_id
             date_completion: $date_completion
+            delegate_id:  $delegate_id
         ) {
             id
             number
@@ -51,24 +54,43 @@ export const ADD_PROJECT_MUTATION = gql`
                 name
             }
             date_completion
+            delegate {
+                id
+                first_name
+                last_name
+                patronymic
+            }
         }
     }
 `;
 export const UPDATE_PROJECT_MUTATION = gql`
-    mutation UpdateProject($number: String!, $name: String!, $organization_customer_id: ID, $type_project_document_id: ID, $facility_id: ID,
-        $date_signing: String, $IAD_id: ID, $duration: String, $date_end: String, $status_id: ID, $date_completion: String ) {
+    mutation UpdateProject(
+        $id: ID!,
+        $number: String!,
+        $name: String!,
+        $organization_customer_id: ID,
+        $type_project_document_id: ID,
+        $facility_id: ID,
+        $date_signing: String,
+        $duration: Int,
+        $date_end: String,
+        $status_id: ID,
+        $date_completion: String
+        $delegate_id: ID
+    ) {
         updateProject(
+            id: $id
             number: $number
             name: $name
             organization_customer_id: $organization_customer_id
             type_project_document_id: $type_project_document_id
             facility_id: $facility_id
             date_signing: $date_signing
-            IAD_id: $IAD_id
             duration: $duration
             date_end: $date_end
             status_id: $status_id
             date_completion: $date_completion
+            delegate_id:  $delegate_id
         ) {
             id
             number
@@ -97,6 +119,12 @@ export const UPDATE_PROJECT_MUTATION = gql`
                 name
             }
             date_completion
+            delegate {
+                id
+                first_name
+                last_name
+                patronymic
+            }
         }
     }
 `;

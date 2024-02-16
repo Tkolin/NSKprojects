@@ -14,6 +14,7 @@ final readonly class Projects
             ->with('type_project_document')
             ->with('facility')
             ->with('status')
+            ->with('delegate')
             ->get();
     }
 }

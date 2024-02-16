@@ -1,48 +1,28 @@
 import React, {useState} from 'react';
 import { useQuery } from '@apollo/client';
-import {Button, Modal, Table} from 'antd';
+import {Button, Modal, notification, Table} from 'antd';
 import {PROJECT_QUERY} from '../../graphql/queries';
 import ProjectForm from "./ProjectForm";
 
 const ProjectList = () => {
 
-    // Данные
-
+    // Состояния
     const {loading, error, data} = useQuery(PROJECT_QUERY);
     const [selectedProject, setSelectedProject] = useState(null);
     const [editModalVisible, setEditModalVisible] = useState(false);
 
-    if (loading) return 'Loading...';
-    if (error) return `Error! ${error.message}`;
+    // Функции уведомлений
+    const openNotification = (placement, type, message) => {
+        notification[type]({
+            message: message,
+            placement,
+        });
+    };
 
+    // Мутация для удаления
+    // TODO: Нужна ли?
 
-    // Дизайн
-
-    const columns = [
-        Table.EXPAND_COLUMN,
-        Table.SELECTION_COLUMN,
-        {
-            title: 'Номер',
-            dataIndex: 'number',
-            key: 'number',
-        },
-        {
-            title: 'Название',
-            dataIndex: 'name',
-            key: 'name',
-        },
-        {
-            title: 'Управление',
-            key: 'edit',
-            render: (text, record) => (
-                <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
-            ),
-        },
-        // Add more columns as needed
-    ];
-
-    // Логика
-
+    // Обработчик событий
     const onChange = (pagination, filters, sorter, extra) => {
         console.log('params', pagination, filters, sorter, extra);
     };
@@ -56,34 +36,96 @@ const ProjectList = () => {
     };
 
     // Вывод
+    // Обработка загрузки и ошибок
+    if (loading) return 'Loading...';
+    if (error) return `Error! ${error.message}`;
+
+    // Формат таблицы
+    const columns = [
+        {
+            title: 'Номер',
+            dataIndex: 'number',
+            key: 'number',
+        },
+        {
+            title: 'Название',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Заказчик',
+            dataIndex: 'organization_customer',
+            key: 'organization_customer',
+            render: (organization_customer) => organization_customer ?
+                organization_customer.name : "",
+        },
+        {
+            title: 'Представитель',
+            dataIndex: 'delegate',
+            key: 'delegate',
+            render: (delegate) => delegate ?
+                delegate.first_name +" "+ delegate.last_name +" "+ delegate.patronymic : "",
+        },
+        {
+            title: 'Тип документации',
+            dataIndex: 'type_project_document',
+            key: 'type_project_document',
+            render: (type_project_document) => type_project_document ?
+                type_project_document.name : ""
+        },
+        {
+            title: 'Объект',
+            dataIndex: 'facility',
+            key: 'facility',
+            render: (facility) => facility ?
+                facility.name : ""
+
+        },
+        {
+            title: 'Дата подписания',
+            dataIndex: 'date_signing',
+            key: 'date_signing',
+
+        },
+        {
+            title: 'Продолжительность',
+            dataIndex: 'duration',
+            key: 'duration',
+        },
+        {
+            title: 'Дата окончания',
+            dataIndex: 'date_end',
+            key: 'date_end',
+        },
+        {
+            title: 'Статус',
+            dataIndex: 'status',
+            key: 'status',
+            render: (status) => status ?
+                status.name : ""
+        },
+        {
+            title: 'Дата фактического окончания',
+            dataIndex: 'date_completion',
+            key: 'date_completion',
+        },
+        {
+            title: 'Управление',
+            key: 'edit',
+            render: (text, record) => (
+                <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
+            ),
+        },
+    ];
 
     return(
     <div>
         <Table dataSource={data.projects}
                columns={columns}
-               onChange={onChange}
-               expandable={{
-                   expandedRowRender: (record) => (
-                       <>
-                           <p>
-                               Дата подписания: {record.date_signing}
-                           </p>
-                           <p>
-                               Продолжительность: {record.duration}
-                           </p>
-                           <p>
-                               Дата окончания: {record.date_end}
-
-                           </p>
-                           <p>
-                               Дата фактического завершения: {record.date_completion}
-                           </p>
-                       </>
-                   ),
-               }}
-        />
+               onChange={onChange}/>
         <Modal
             visible={editModalVisible}
+            width={1200}
             title="Изменить контакт"
             onCancel={() => setEditModalVisible(false)}
             footer={null}

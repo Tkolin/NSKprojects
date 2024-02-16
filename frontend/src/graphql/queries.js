@@ -46,15 +46,52 @@ export const ORGANIZATION_QUERY = gql`
         }
     }
 `;
+// TODO: не реализовано
+export const CURRENT_DELEGATE_QUERY = gql`
+    query CurrentDelegatesQuery {
+        delegates {
+            id
+            first_name
+        }
+        
+    }
+`;
 export const PROJECT_QUERY = gql`
     query ProjectQuery {
         projects {
+            id
             number
             name
+            organization_customer
+            {
+                id
+                name
+            }
+            type_project_document
+            {
+                id
+                name
+            }
+            facility
+            {
+                id
+                name
+            }
             date_signing
             duration
             date_end
+            status
+            {
+                id
+                name
+            }
             date_completion
+            delegate{
+                id
+                first_name
+                last_name
+                patronymic
+            }
         }
     }
 `;
@@ -98,6 +135,7 @@ export const PERSON_QUERY = gql`
                 id
                 Bik
             }
+
         }
     }
 `;
@@ -135,6 +173,7 @@ export const CONTACTS_QUERY = gql`
                 id
                 name
             }
+ 
         }
     }
 `;

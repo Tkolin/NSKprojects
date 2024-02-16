@@ -14,6 +14,10 @@ export const StyledBigForm = styled(Form)`
   max-width: 800px;
   margin: 0 auto;
 `;
+export const StyledVeryBigForm = styled(Form)`
+  max-width: 1200px;
+  margin: 0 auto;
+`;
 export const StyledButton = styled(Button)`
   width: 100%;
 `;
@@ -29,6 +33,9 @@ const StyledFormBlockWrapper = styled.div`
 export const StyledBigFormBlockWrapper = styled(StyledFormBlockWrapper)`
     max-width: 800px;
 `;
+export const StyledVeryBigFormBlockWrapper = styled(StyledFormBlockWrapper)`
+    max-width: 1200px;
+`;
 export const StyledButtonForm = styled(Button)`
     margin-bottom: 6px;
 `;
@@ -41,6 +48,15 @@ const StyledBigFormBlock = ({ form, onFinish, children }) => {
         </StyledBigFormBlockWrapper>
     );
 };
+const StyledVeryBigFormBlock = ({ form, onFinish, children }) => {
+    return (
+        <StyledVeryBigFormBlockWrapper>
+            <Form form={form} onFinish={onFinish} layout="vertical">
+                {children}
+            </Form>
+        </StyledVeryBigFormBlockWrapper>
+    );
+};
 const StyledFormBlock = ({ form, onFinish, children }) => {
     return (
         <StyledFormBlockWrapper>
@@ -51,4 +67,4 @@ const StyledFormBlock = ({ form, onFinish, children }) => {
     );
 };
 
-export {StyledBigFormBlock, StyledFormBlock};
+export {StyledBigFormBlock, StyledFormBlock, StyledVeryBigFormBlock};

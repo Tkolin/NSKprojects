@@ -35,7 +35,9 @@ export const ADD_CONTACT_MUTATION = gql`
         $mobile_phone: String,
         $email: String,
         $position_id: ID,
-        $organization_id: ID ) {
+        $organization_id: ID,
+ 
+    ) {
         addContact(
             first_name: $first_name
             last_name: $last_name
@@ -47,6 +49,7 @@ export const ADD_CONTACT_MUTATION = gql`
             email: $email
             position_id: $position_id
             organization_id: $organization_id
+
         ) {
             id
             first_name
@@ -64,6 +67,7 @@ export const ADD_CONTACT_MUTATION = gql`
                 id
                 name
             }
+
         }
     }
 `;
@@ -76,7 +80,7 @@ export const UPDATE_CONTACT_MUTATION = gql`
         $mobile_phone: String,
         $email: String,
         $position_id: ID,
-        $organization_id: ID ) {
+        $organization_id: ID) {
         updateContact(
             id: $id
             first_name: $first_name

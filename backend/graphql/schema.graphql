@@ -172,15 +172,16 @@ type Mutation {
         id: ID!
         number: String!
         name: String!
-        organization_customer_id: ID!
-        type_project_document_id: ID!
-        facility_id: ID!
-        date_signing: String!
-        IAD_id: ID!
-        duration: Int!
-        date_end: String!
-        status_id: ID!
-        date_completion: String!
+        organization_customer_id: ID
+        type_project_document_id: ID
+        facility_id: ID
+        date_signing: String
+        IAD_id: ID
+        duration: Int
+        date_end: String
+        status_id: ID
+        date_completion: String
+        delegate_id: ID
     ): Project!
     addProject(
         number: String!
@@ -193,6 +194,7 @@ type Mutation {
         date_end: String
         status_id: ID
         date_completion: String
+        delegate_id: ID
     ): Project!
 
     updateProjectStage(
@@ -225,7 +227,6 @@ type Contact {
     email: String
     position: Position
     organization: Organization
-
 }
 type ProjectStatus{
     id: ID!
@@ -366,6 +367,7 @@ type Project{
     date_end: String
     status: ProjectStatus
     date_completion: String
+    delegate: Contact
 }
 type ProjectStagesGroup{
     id: ID!

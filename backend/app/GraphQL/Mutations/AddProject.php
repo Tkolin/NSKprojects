@@ -13,6 +13,7 @@ final readonly class AddProject
             'number' => $args['number'],
             'name' => $args['name'] ?? null,
             'organization_customer_id' => $args['organization_customer_id'] ?? null,
+            'delegate_id' => $args['delegate_id'] ?? null,
             'type_project_document_id' => $args['type_project_document_id'] ?? null,
             'facility_id' => $args['facility_id'] ?? null,
             'date_signing' => isset($args['date_signing']) ? substr((string) $args['date_signing'], 0, 10) : null,

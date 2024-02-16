@@ -48,6 +48,7 @@ export const ORGANIZATION_FORM_QUERY = gql`
         }
     }
 `;
+
 export const PROJECT_FORM_QUERY = gql`
     query ProjectFormQuery {
         positionsNames {
@@ -73,6 +74,12 @@ export const PROJECT_FORM_QUERY = gql`
         {
             id
             name
+        }
+        contacts {
+            id
+            first_name
+            last_name
+            patronymic
         }
     }
 `;
