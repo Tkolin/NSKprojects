@@ -6,6 +6,7 @@ import {Button, Modal, notification, Table} from 'antd';
 import {CONTACTS_QUERY} from '../../graphql/queries';
 import {DELETE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
 import ContactForm from "./ContactForm";
+import LoadingSpinner from "../component/LoadingSpinner";
 
 const BikList = () => {
 
@@ -56,8 +57,8 @@ const BikList = () => {
     };
 
     // Обработка загрузки и ошибок
-    if (loading) return 'Loading...';
-    if (error) return `Error! ${error.message}`;
+    if (loading) return <LoadingSpinner/>;
+    if (error) return `Ошибка! ${error.message}`;
 
     // Формат таблицы
     const columns = [

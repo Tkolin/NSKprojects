@@ -4,6 +4,7 @@ import {Button, Modal, notification, Table} from 'antd';
 import {ORGANIZATION_QUERY} from '../../graphql/queries';
 import {DELETE_ORGANIZATION_MUTATION} from '../../graphql/mutationsOrganization';
 import OrganizationForm from "./OrganizationForm";
+import LoadingSpinner from "../component/LoadingSpinner";
 
 const OrganizationList = () => {
 
@@ -53,8 +54,8 @@ const OrganizationList = () => {
     };
 
     // Обработка загрузки и ошибок
-    if (loading) return 'Loading...';
-    if (error) return `Error! ${error.message}`;
+    if (loading) return <LoadingSpinner/>;
+    if (error) return `Ошибка! ${error.message}`;
 
     // Формат таблицы
     const columns = [

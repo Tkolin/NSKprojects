@@ -80,11 +80,8 @@ const ContactForm = ({ contact, onClose }) => {
     };
 
     // Обработка загрузки и ошибок
-    if (loading) {
-        return <Spin />;
-    }
+    if (loading) return <LoadingSpinner/>;
     if (error) return `Ошибка! ${error.message}`;
-
     return (
         <StyledFormBlock>
             <StyledForm form={form} layout="vertical">

@@ -48,13 +48,9 @@ const CustomLayout = ({ children }) => {
         navigate('/');
         window.location.reload();
     };
-    if (loading) {
-        return <Spin />;
-    }
-
-    if (data) {
-        if (error) return `Ошибка! ${error.message}`;
-    }
+    // Обработка загрузки и ошибок
+    if (loading) return <LoadingSpinner/>;
+    if (data && error) return `Ошибка! ${error.message}`;
 
     // Меню
 

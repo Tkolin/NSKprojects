@@ -19,6 +19,7 @@ import {AddressSuggestions} from "react-dadata";
 import 'react-dadata/dist/react-dadata.css';
 import ContactForm from "../contact/ContactForm";
 import BikForm from "../bik/BikForm";
+import LoadingSpinner from "../component/LoadingSpinner";
 const OrganizationForm = ({ organization, onClose }) => {
 
     // Состояния
@@ -107,8 +108,8 @@ const OrganizationForm = ({ organization, onClose }) => {
 
 
     // Обработка загрузки и ошибок
-    if (loading) return 'Loading...';
-    if (error) return `Error! ${error.message}`;
+    if (loading) return <LoadingSpinner/>;
+    if (error) return `Ошибка! ${error.message}`;
 
     return (
         <StyledBigFormBlock>

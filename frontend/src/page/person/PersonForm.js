@@ -18,6 +18,7 @@ import {
 import {DatePicker} from "antd/lib"; // Импорт стилей
 import moment from 'moment';
 import PassportPlaceIssuesForm from "./passport/passportPlaceIssuesForm";
+import LoadingSpinner from "../component/LoadingSpinner";
 
 const PersonForm = ({ person, onClose }) => {
 
@@ -97,8 +98,8 @@ const PersonForm = ({ person, onClose }) => {
     };
 
     // Обработка загрузки и ошибок
-    if (loading) return 'Loading...';
-    if (error) return `Error! ${error.message}`;
+    if (loading) return <LoadingSpinner/>;
+    if (error) return `Ошибка! ${error.message}`;
 
     return (
         <>

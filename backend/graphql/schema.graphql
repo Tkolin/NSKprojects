@@ -1,5 +1,6 @@
 type Query {
-    contacts: [Contact!]!
+    contactsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): ContactsResult!
+    contacts: [Contact]!
     positionsNames: [PositionName!]!
     currentUser: User!
     organizations: [Organization!]!
@@ -16,7 +17,6 @@ type Query {
     passportPlaceIssues: [PassportPlaceIssue]!
     banks: [Bank]!
 }
-
 
 type Mutation {
     addPpi(
@@ -214,7 +214,10 @@ type Mutation {
     ): ProjectStage!
 }
 
-
+type ContactsResult {
+    contacts: [Contact!]!
+    count: Int!
+}
 type Contact {
     id: ID!
     first_name: String!

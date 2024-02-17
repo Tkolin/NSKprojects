@@ -35,6 +35,7 @@ const ProjectForm = ({project, onClose}) => {
     const [contactFormViewModalVisible, setContactFormViewModalVisible] = useState(false);
     const [facilityFormViewModalVisible, setFacilityFormViewModalVisible] = useState(false);
     const [viewListProjectStageModalVisible, setViewListProjectStageModalVisible] = useState(false);
+    const [projectTypeDocument, setProjectTypeDocument] = useState(null);
     const [editingProject, setEditingProjcet] = useState(null);
     const [listDelegations, setListDelegations] = useState(null);
     const [selectedOrganization, setSelectedOrganization] = useState(null);
@@ -63,7 +64,7 @@ const ProjectForm = ({project, onClose}) => {
             // });
             setListDelegations(data.delegates);
         } catch (error) {
-            console.error('Ошибка при выборке ответсвтеного лица:', error);
+            console.error('Ошибка при выборке ответственного лица:', error);
         }
     };
     // Функции уведомлений
@@ -131,6 +132,9 @@ const ProjectForm = ({project, onClose}) => {
             addProject({variables: form.getFieldsValue()});
         }
     };
+    const loadTemplateIRD = (typeProjectId) => {
+        //TODO: тут выполняем запрос к таблице irt form project template с id видом документации и в form.list забиваем их
+    };
 
     // Обработка загрузки и ошибок
     if (loading) return <LoadingSpinner/>;
@@ -180,13 +184,25 @@ const ProjectForm = ({project, onClose}) => {
                                         <StyledButtonForm onClick={() => setContactFormViewModalVisible(true)}>Создать</StyledButtonForm>
                                     </Col>
                                 </Row>
-                                <StyledFormItem name="type_project_document_id" label="Тип документа">
-                                    <Select>
-                                        {data && data.typeProjectDocuments && data.typeProjectDocuments.map(typeDock => (
-                                            <Select.Option key={typeDock.id}
-                                                           value={typeDock.id}>{typeDock.name}</Select.Option>))}
-                                    </Select>
-                                </StyledFormItem>
+                                <Row gutter={8} align={"bottom"}>
+                                    <Col flex="auto">
+                                        <StyledFormItem name="type_project_document_id" label="Тип документа">
+                                            <Select
+                                                dropdownMatchSelectWidth={false}
+                                                style={{ maxWidth: 210 }}
+                                                onChange={() => setProjectTypeDocument(Игнорируте_это)}
+                                            >
+                                                {data && data.typeProjectDocuments && data.typeProjectDocuments.map(typeDock => (
+                                                    <Select.Option key={typeDock.id}
+                                                                   value={typeDock.id}>{typeDock.name}</Select.Option>))}
+                                            </Select>
+                                        </StyledFormItem>
+                                    </Col>
+                                    <Col>
+                                        <StyledButtonForm  style={{ maxWidth: 250 }} onClick={()=>loadTemplateIRD(typeProjectId)}>Сформировать ИРД</StyledButtonForm>
+                                    </Col>
+                                </Row>
+
 
                                 <Row gutter={8} align={"bottom"}>
                                     <Col flex="auto" >

@@ -4,6 +4,7 @@ import {Button, Modal, notification, Table} from 'antd';
 import {PERSON_QUERY} from '../../graphql/queries';
 import {DELETE_PERSON_MUTATION} from '../../graphql/mutationsPerson';
 import PersonForm from "./PersonForm";
+import LoadingSpinner from "../component/LoadingSpinner";
 
 const PersonList = () => {
 
@@ -52,8 +53,8 @@ const PersonList = () => {
     };
 
     // Обработка загрузки и ошибок
-    if (loading) return 'Loading...';
-    if (error) return `Error! ${error.message}`;
+    if (loading) return <LoadingSpinner/>;
+    if (error) return `Ошибка! ${error.message}`;
 
     // Формат таблицы
     const columns = [

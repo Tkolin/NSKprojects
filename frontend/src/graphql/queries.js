@@ -152,31 +152,56 @@ export const CURRENT_USER_QUERY = gql`
         }
     }
 `;
-
-export const CONTACTS_QUERY = gql`
-    query ContactsQuery {
-        contacts {
-            id
-            first_name
-            last_name
-            patronymic
-            birth_day
-            work_phone
-            work_email
-            mobile_phone
-            email
-            position {
+export const CONTACTS_TABLE_QUERY = gql`
+    query ContactsTableQuery($page: Int, $limit: Int, $search: String, $sortField: String, $sortOrder: String) {
+        contactsTable(page: $page, limit: $limit, search: $search, sortField: $sortField, sortOrder: $sortOrder) {
+            contacts {
                 id
-                name
+                first_name
+                last_name
+                patronymic
+                birth_day
+                work_phone
+                work_email
+                mobile_phone
+                email
+                position {
+                    id
+                    name
+                }
+                organization {
+                    id
+                    name
+                }
             }
-            organization {
-                id
-                name
-            }
- 
+            count
         }
     }
 `;
+export const CONTACTS_QUERY = gql`
+    query ContactsQuery {
+        contacts {
+                id
+                first_name
+                last_name
+                patronymic
+                birth_day
+                work_phone
+                work_email
+                mobile_phone
+                email
+                position {
+                    id
+                    name
+                }
+                organization {
+                    id
+                    name
+                }
+        }
+    }
+`;
+
 
 export const PROJECT_STAGE_QUERY = gql`
     query ProjectStage {

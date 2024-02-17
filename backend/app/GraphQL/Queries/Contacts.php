@@ -4,8 +4,10 @@ namespace App\GraphQL\Queries;
 
 use App\GraphQL\Service\AuthorizationService;
 use App\Models\Contact;
+use Illuminate\Support\Facades\Log;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
+use Psy\Readline\Hoa\Console;
 
 final readonly class Contacts
 {

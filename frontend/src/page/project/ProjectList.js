@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client';
 import {Button, Modal, notification, Table} from 'antd';
 import {PROJECT_QUERY} from '../../graphql/queries';
 import ProjectForm from "./ProjectForm";
+import LoadingSpinner from "../component/LoadingSpinner";
 
 const ProjectList = () => {
 
@@ -35,10 +36,10 @@ const ProjectList = () => {
         setEditModalVisible(true);
     };
 
-    // Вывод
+
     // Обработка загрузки и ошибок
-    if (loading) return 'Loading...';
-    if (error) return `Error! ${error.message}`;
+    if (loading) return <LoadingSpinner/>;
+    if (error) return `Ошибка! ${error.message}`;
 
     // Формат таблицы
     const columns = [
