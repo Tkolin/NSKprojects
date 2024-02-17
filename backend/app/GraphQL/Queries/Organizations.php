@@ -2,17 +2,27 @@
 
 namespace App\GraphQL\Queries;
 
+use App\GraphQL\Service\AuthorizationService;
 use App\Models\Organization;
+use Nuwave\Lighthouse\Exceptions\AuthenticationException;
+use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final readonly class Organizations
 {
     /** @param  array{}  $args */
-    public function __invoke(null $_, array $args)
+    public function __invoke(null $_, array $args, GraphQLContext $context)
     {
-        return Organization
-            ::with('legal_form')
-            ->with('contacts')
-            ->with('Bik')
-            ->get();
+        $allowedRoles = ['admin']; // Роли, которые разрешены
+        $accessToken = $context->request()->header('Authorization');
+        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
+            return Organization
+                ::with('legal_form')
+                ->with('contacts')
+                ->with('Bik')
+                ->get();
+        } else {
+            throw new AuthenticationException('Отказано в доступе');
+        }
+
     }
 }

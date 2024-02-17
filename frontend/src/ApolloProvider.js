@@ -4,14 +4,14 @@ import { setContext } from '@apollo/client/link/context';
 import { Cookies } from 'react-cookie';
 
 const httpLink = createHttpLink({
-    uri: 'http://localhost:8000/graphql/', // Замените на адрес вашего GraphQL-сервера
+    uri: 'http://localhost:8000/graphql/',
 });
 
 const createApolloClient = () => {
     const authLink = setContext((_, { headers }) => {
         const cookies = new Cookies();
-        const token = cookies.get('accessToken'); // Получаем токен из куки React
-        console.log(token);
+        const token = cookies.get('accessToken');
+        console.log("Токен в аполо"+token);
         return {
             headers: {
                 ...headers,
@@ -27,8 +27,7 @@ const createApolloClient = () => {
 };
 
 const ApolloProvider = ({ children }) => {
-    const client = useMemo(() => createApolloClient(), []); // Используем useMemo для сохранения клиента между рендерами
-
+    const client = useMemo(() => createApolloClient(), []);
     return <ApolloHooksProvider client={client}>{children}</ApolloHooksProvider>;
 };
 

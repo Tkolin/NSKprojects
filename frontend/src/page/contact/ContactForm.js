@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Button, Select, notification} from 'antd';
+import {Form, Input, Button, Select, notification, Spin} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
 import {CONTACTS_QUERY} from '../../graphql/queries';
 import { CONTACT_FORM_QUERY}  from '../../graphql/queriesGroupData';
@@ -10,6 +10,7 @@ import {
 import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles';
 import {DatePicker} from "antd/lib"; // Импорт стилей
 import moment from 'moment';
+import LoadingSpinner from "../component/LoadingSpinner";
 
 const ContactForm = ({ contact, onClose }) => {
 
@@ -79,8 +80,10 @@ const ContactForm = ({ contact, onClose }) => {
     };
 
     // Обработка загрузки и ошибок
-    if (loading) return 'Loading...';
-    if (error) return `Error! ${error.message}`;
+    if (loading) {
+        return <Spin />;
+    }
+    if (error) return `Ошибка! ${error.message}`;
 
     return (
         <StyledFormBlock>

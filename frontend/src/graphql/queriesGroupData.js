@@ -46,6 +46,9 @@ export const ORGANIZATION_FORM_QUERY = gql`
             last_name
             patronymic
         }
+        irds{
+            name
+        }
     }
 `;
 
@@ -80,6 +83,10 @@ export const PROJECT_FORM_QUERY = gql`
             first_name
             last_name
             patronymic
+        }
+        irds {
+            id
+            name
         }
     }
 `;

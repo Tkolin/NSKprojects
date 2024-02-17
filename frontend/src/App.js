@@ -20,10 +20,11 @@ import CustomLayout from './page/Layout';
 import {useQuery} from "@apollo/client";
 import {CURRENT_USER_QUERY} from "./graphql/queries";
 import PersonList from "./page/person/PersonList";
+import {Cookies} from "react-cookie";
 
 const App = () => {
-    const accessToken = localStorage.getItem('accessToken'); // Получаем токен из куки
-
+    const cookies = new Cookies();
+    const accessToken = cookies.get('accessToken');
     const {loading, error, data} = useQuery(CURRENT_USER_QUERY, {
         context: {
             headers: {

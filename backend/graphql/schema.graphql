@@ -6,7 +6,7 @@ type Query {
     projectStatuses: [ProjectStatus!]!
     typeProjectDocuments: [TypeProjectDocument!]!
     facilitys: [Facility!]!
-    iads: [IAD]!
+    irds: [IRD]!
     projects: [Project!]!
     projectStagesGroup: [ProjectStagesGroup!]!
     projectStages: [ProjectStage]!
@@ -313,25 +313,25 @@ type TypeProjectDocument{
 type Person{
     id: ID!
     passport: Passport!
-    SHILS: String!
-    INN: String!
-    payment_account: String!
-    phone_number: String!
-    email: String!
-    email_sibnipi: String!
-    bank: Bank!
-    BIK: Bik!
+    SHILS: String
+    INN: String
+    payment_account: String
+    phone_number: String
+    email: String
+    email_sibnipi: String
+    bank: Bank
+    BIK: Bik
 }
 type Passport{
     id: ID!
-    firstname: String!
-    lastname: String!
-    patronymic: String!
-    serial: String!
-    number: String!
+    firstname: String
+    lastname: String
+    patronymic: String
+    serial: String
+    number: String
     passport_place_issues: PassportPlaceIssue
-    birth_date: String!
-    date: String!
+    birth_date: String
+    date: String
 }
 type PassportPlaceIssue{
     id: ID!
@@ -388,15 +388,24 @@ type TypeProjectDocument{
     name: String!
     code: String!
 }
-type IAD{
+type IRD{
     id: ID!
     name: String!
-    date_issue: String!
 }
 type ProjectStatus{
     id: ID!
     name: String!
 }
+type ProjectIrds{
+    project_id: ID!
+    ird_id: ID!
+    received: Boolean
+}
+type TemplateIrdsTypeProject{
+    project_id: ID!
+    ird_id: ID!
+}
+
 
 type Stage{
     id: ID!

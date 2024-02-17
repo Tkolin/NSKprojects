@@ -10,7 +10,7 @@
         "illuminate/contracts": "^10.40.0",
         "illuminate/support": "^10.40.0",
         "laravel/framework": "^10.43.0",
-        "laravel/passport": "^11.8.4",
+        "laravel/passport": "^11.8",
         "laravel/sail": "^1.27.3",
         "laravel/sanctum": "^3.3.3",
         "laravel/tinker": "^2.9",

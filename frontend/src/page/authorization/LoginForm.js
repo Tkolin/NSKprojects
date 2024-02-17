@@ -4,20 +4,21 @@ import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../graphql/mutationsAuth';
 import { useNavigate } from 'react-router-dom';
 import {StyledFormBlock, StyledFormItem} from '../style/FormStyles';
+import {Cookies} from "react-cookie";
 
 const LoginForm = () => {
     const [form] = Form.useForm();
-    const [login, { loading, error }] = useMutation(LOGIN_MUTATION); // Добавлены loading и error
+    const [login, { loading, error }] = useMutation(LOGIN_MUTATION);
 
     const navigate = useNavigate();
 
     const onFinish = async (values) => {
         const { email, password } = values; // Извлекаем значения email и password из формы
         try {
-            const response = await login({ variables: { input: { email, password } } }); // Передаем переменные в формате, ожидаемом мутацией
+            const response = await login({ variables: { input: { email, password } } });
             const { access_token } = response.data.login;
-            localStorage.setItem('accessToken', access_token);
-            console.log('Рэф токен:');
+            const cookies = new Cookies();
+            cookies.set('accessToken', access_token);
             navigate('/');
             window.location.reload();
 

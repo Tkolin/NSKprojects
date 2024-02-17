@@ -54,5 +54,9 @@ class Project extends Model
     {
         return $this->hasMany(ProjectStatus::class);
     }
+    public function project_irds(): HasMany
+    {
+        return $this->hasMany(ProjectIrds::class);
+    }
 }
 

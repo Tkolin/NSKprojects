@@ -2,13 +2,22 @@
 
 namespace App\GraphQL\Queries;
 
+use App\GraphQL\Service\AuthorizationService;
 use App\Models\PasspotPlaceIssue;
+use Nuwave\Lighthouse\Exceptions\AuthenticationException;
+use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final readonly class PassportPlaceIssues
 {
     /** @param  array{}  $args */
-    public function __invoke(null $_, array $args)
+    public function __invoke(null $_, array $args, GraphQLContext $context)
     {
-        return PasspotPlaceIssue::all();
+        $allowedRoles = ['admin']; // Роли, которые разрешены
+        $accessToken = $context->request()->header('Authorization');
+        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
+            return PasspotPlaceIssue::all();
+        } else {
+            throw new AuthenticationException('Отказано в доступе');
+        }
     }
 }

@@ -2,15 +2,25 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\GraphQL\Service\AuthorizationService;
 use App\Models\PasspotPlaceIssue;
+use Nuwave\Lighthouse\Exceptions\AuthenticationException;
+use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final readonly class UpdatePpi
 {
     /** @param  array{}  $args */
-    public function __invoke(null $_, array $args)
+    public function __invoke(null $_, array $args, GraphQLContext $context)
     {
-        $ppi = PasspotPlaceIssue::findOrFail($args['id']);
-        $ppi->update($args);
-        return $ppi;
+        $allowedRoles = ['admin']; // Роли, которые разрешены
+        $accessToken = $context->request()->header('Authorization');
+        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
+            $ppi = PasspotPlaceIssue::findOrFail($args['id']);
+            $ppi->update($args);
+            return $ppi;
+        } else {
+            throw new AuthenticationException('Отказано в доступе');
+        }
+
     }
 }

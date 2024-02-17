@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Button, Select, InputNumber, Col, Row, notification, Modal, Space} from 'antd';
+import {Form, Input, Button, Select, InputNumber, Col, Row, notification, Modal, Space, Checkbox} from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
 import {CURRENT_DELEGATE_QUERY, PROJECT_QUERY} from '../../graphql/queries';
 import {PROJECT_FORM_QUERY} from '../../graphql/queriesGroupData';
@@ -20,6 +20,8 @@ import OrganizationForm from "../organization/OrganizationForm";
 import moment from 'moment';
 import {keys, values} from "mobx";
 import ContactForm from "../contact/ContactForm";
+import {Cookies} from "react-cookie";
+import LoadingSpinner from "../component/LoadingSpinner";
 
 const {Option} = Select;
 
@@ -61,7 +63,7 @@ const ProjectForm = ({project, onClose}) => {
             // });
             setListDelegations(data.delegates);
         } catch (error) {
-            console.error('Error fetching delegations:', error);
+            console.error('Ошибка при выборке ответсвтеного лица:', error);
         }
     };
     // Функции уведомлений
@@ -72,7 +74,15 @@ const ProjectForm = ({project, onClose}) => {
     };
 
     // Получение данных для выпадающих списков
-    const {loading, error, data} = useQuery(PROJECT_FORM_QUERY);
+    const cookies = new Cookies();
+    const accessToken = cookies.get('accessToken');
+    const {loading, error, data} = useQuery(PROJECT_FORM_QUERY,{
+        context: {
+            headers: {
+                Authorization: accessToken ? `Bearer ${accessToken}` : 'null',
+            }
+        }
+    });
 
     // Заполнение формы данными контакта при его редактировании
     useEffect(() => {
@@ -123,8 +133,8 @@ const ProjectForm = ({project, onClose}) => {
     };
 
     // Обработка загрузки и ошибок
-    if (loading) return 'Loading...';
-    if (error) return `Error! ${error.message}`;
+    if (loading) return <LoadingSpinner/>;
+    if (error) return `Ошибка! ${error.message}`;
 
     return (
         <>
@@ -237,9 +247,6 @@ const ProjectForm = ({project, onClose}) => {
 
                                 <StyledFormBlock
                                     name="dynamic_form_nest_item"
-                                    style={{
-                                        maxWidth: 600,
-                                    }}
                                     autoComplete="off"
                                 >
                                     <Form.List name="users">
@@ -258,10 +265,10 @@ const ProjectForm = ({project, onClose}) => {
                                                         required: true, message: 'Missing first name',
                                                     },]}
                                                 >
-                                                    <Select>
-                                                        {data && data.projectStatuses && data.projectStatuses.map(status => (
-                                                            <Select.Option key={status.id}
-                                                                           value={status.id}>{status.name}</Select.Option>))}
+                                                    <Select     dropdownMatchSelectWidth={false}  style={{ maxWidth: 250 }}>
+                                                        {data && data.irds && data.irds.map(ird => (
+                                                            <Select.Option key={ird.id}
+                                                                           value={ird.id}>{ird.name}</Select.Option>))}
                                                     </Select>
                                                 </Form.Item>
                                                 <Form.Item
@@ -271,7 +278,7 @@ const ProjectForm = ({project, onClose}) => {
                                                         required: true, message: 'Missing last name',
                                                     },]}
                                                 >
-                                                    <DatePicker/>
+                                                    <Checkbox/>
                                                 </Form.Item>
                                                 <Form.Item>
                                                     <Button onClick={() => add()} block icon={<PlusOutlined/>}>

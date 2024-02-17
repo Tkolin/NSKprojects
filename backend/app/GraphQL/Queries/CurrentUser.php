@@ -10,10 +10,8 @@ class CurrentUser
 {
     public function __invoke($rootValue, array $args, GraphQLContext $context)
     {
-        error_log('Зашёл в проверку юзера');
-        $accessToken = $context->request()->header('Authorization');
-        error_log('Received access token: ' . $accessToken);
 
+        $accessToken = $context->request()->header('Authorization');
         if ($accessToken) {
             if (Auth::guard('api')->check()) {
                 return User::with('role')->find(Auth::guard('api')->id());

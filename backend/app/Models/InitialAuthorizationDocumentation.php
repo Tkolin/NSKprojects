@@ -10,6 +10,6 @@ class InitialAuthorizationDocumentation extends Model
 {
     protected $fillable = [
         'name',
-        'date_issue',
     ];
+
 }

@@ -16,4 +16,8 @@ class TypeProjectDocument extends Model
     {
         return $this->hasMany(Project::class);
     }
+    public function template_irds_type_project(): HasMany
+    {
+        return $this->hasMany(InitialAuthorizationDocumentation::class);
+    }
 }

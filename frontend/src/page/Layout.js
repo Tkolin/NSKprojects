@@ -9,12 +9,14 @@ import {
     FormOutlined,
     ProfileOutlined,
 } from '@ant-design/icons';
-import {Layout, Menu, Button, theme, Space, Typography} from 'antd';
+import {Layout, Menu, Button, theme, Space, Typography, Spin} from 'antd';
 import {useQuery} from "@apollo/client";
 import {CURRENT_USER_QUERY} from "../graphql/queries";
 import {Link, useNavigate} from "react-router-dom";
 import SubMenu from "antd/es/menu/SubMenu";
 import warning from "antd/es/_util/warning";
+import {Cookies} from "react-cookie";
+import LoadingSpinner from "./component/LoadingSpinner";
 
 const { Text } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
@@ -31,32 +33,27 @@ function getItem(label, key, icon, children, link = null) {
 const CustomLayout = ({ children }) => {
 
     // Дизайн
-
     const [collapsed, setCollapsed] = useState(false);
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
 
     // Логика
-
     const navigate = useNavigate();
-
-    const accessToken = localStorage.getItem('accessToken'); // Получаем токен из куки
-    const {loading, error, data} = useQuery(CURRENT_USER_QUERY, {
-        context: {
-            headers: {
-                Authorization: accessToken ? `Bearer ${accessToken}` : '',
-            }
-        }
-    });
+    const cookies = new Cookies();
+    const accessToken = cookies.get('accessToken');
+    const {loading, error, data} = useQuery(CURRENT_USER_QUERY);
     const handleLogout = () => {
-        localStorage.removeItem('accessToken'); // Удаление токена из куки
+        cookies.remove('accessToken'); // Удаление токена из куки
         navigate('/');
         window.location.reload();
     };
-    if (loading) return 'Loading...';
+    if (loading) {
+        return <Spin />;
+    }
+
     if (data) {
-        if (error) return `Error! ${error.message}`;
+        if (error) return `Ошибка! ${error.message}`;
     }
 
     // Меню
