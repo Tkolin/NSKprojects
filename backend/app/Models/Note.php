@@ -11,4 +11,8 @@ class Note extends Model
     protected $fillable = [
         'name',
     ];
+    public function templateIrdsTypeProjects(): HasMany
+    {
+        return $this->hasMany(TemplateIrdsTypeProjects::class);
+    }
 }

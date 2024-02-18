@@ -33,7 +33,6 @@ function getItem(label, key, icon, children, link = null) {
 const CustomLayout = ({ children }) => {
 
     // Дизайн
-    const [collapsed, setCollapsed] = useState(false);
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
@@ -41,7 +40,6 @@ const CustomLayout = ({ children }) => {
     // Логика
     const navigate = useNavigate();
     const cookies = new Cookies();
-    const accessToken = cookies.get('accessToken');
     const {loading, error, data} = useQuery(CURRENT_USER_QUERY);
     const handleLogout = () => {
         cookies.remove('accessToken'); // Удаление токена из куки
@@ -179,7 +177,8 @@ const CustomLayout = ({ children }) => {
                         textAlign: 'center',
                     }}
                 >
-                    NSKproject ©{new Date().getFullYear()} Created by Tkolin
+                    ©2024 - {new Date().getFullYear()} ООО ПО "СИБНИПИ"
+                    Created by Tkolin
                 </Footer>
             </Layout>
         </Layout>

@@ -202,7 +202,6 @@ export const CONTACTS_QUERY = gql`
     }
 `;
 
-
 export const PROJECT_STAGE_QUERY = gql`
     query ProjectStage {
         projectStages{

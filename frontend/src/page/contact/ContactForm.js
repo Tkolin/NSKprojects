@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Button, Select, notification, Spin} from 'antd';
+import {Form, Input, Button, Select, notification, Spin, AutoComplete} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
 import {CONTACTS_QUERY} from '../../graphql/queries';
 import { CONTACT_FORM_QUERY}  from '../../graphql/queriesGroupData';
@@ -11,6 +11,8 @@ import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles'
 import {DatePicker} from "antd/lib"; // Импорт стилей
 import moment from 'moment';
 import LoadingSpinner from "../component/LoadingSpinner";
+import {values} from "mobx";
+import {log} from "util";
 
 const ContactForm = ({ contact, onClose }) => {
 
@@ -18,7 +20,14 @@ const ContactForm = ({ contact, onClose }) => {
     const [editingContact, setEditingContact] = useState(null);
     const [form] = Form.useForm();
     const [ api,contextHolder] = notification.useNotification();
-
+    const [autoCompleteOrganization, setAutoCompleteOrganization] = useState({ id: '', name: '' });
+    const [autoCompletePositions, setAutoCompletePositions] = useState({ id: '', name: '' });
+    const handleAutoCompleteOrganization = (value, option) => {
+        setAutoCompleteOrganization({ id: option.key, name: value });
+    };
+    const handleAutoCompletePositions = (value, option) => {
+        setAutoCompletePositions({ id: option.key, name: value });
+    };
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
         notification[type]({
@@ -28,20 +37,27 @@ const ContactForm = ({ contact, onClose }) => {
     };
 
     // Получение данных для выпадающих списков
-    const { loading, error, data } = useQuery(CONTACT_FORM_QUERY);
+    const { loading, error, data } = useQuery(CONTACT_FORM_QUERY, {
+        variables: {
+            searchOrganizations: autoCompleteOrganization.name,
+            searchPositions: autoCompletePositions.name,
+        },
+    });
 
     // Заполнение формы данными контакта при его редактировании
     useEffect(() => {
         if (contact) {
-            setEditingContact(true);
+            setEditingContact(contact);
             form.setFieldsValue({
                 ...contact,
                 birth_day:  contact.birth_day ? moment(contact.birth_day): null
             });
 
+            contact.position ? setAutoCompletePositions({id: contact.position.id, name: contact.position.name}) : setAutoCompletePositions({id: "", name: ""});
+            contact.organization ? setAutoCompleteOrganization({id: contact.organization.id, name: contact.organization.name}) : setAutoCompleteOrganization({id: "", name: ""});
             form.setFieldsValue({
-                position_id: contact.position ? contact.position.id : null,
-                organization_id: contact.organization ? contact.organization.id : null,
+                position_id:   contact.position ? contact.position.name : null,
+                organization_id: contact.organization ? contact.organization.name : null
             });
         }
     }, [contact, form]);
@@ -53,8 +69,8 @@ const ContactForm = ({ contact, onClose }) => {
             openNotification('topRight', 'success', 'Данные успешно добавлены!');
             form.resetFields();
         },
-        onError: () => {
-            openNotification('topRight', 'error', 'Ошибка при добавлении данных.');
+        onError: (error) => {
+            openNotification('topRight', 'error', 'Ошибка при добавлении данных:' + error.message);
         }
     });
 
@@ -65,22 +81,22 @@ const ContactForm = ({ contact, onClose }) => {
             setEditingContact(null);
             onClose();
         },
-        onError: () => {
-            openNotification('topRight', 'error', 'Ошибка при обновлении данных.');
+        onError: (error) => {
+            openNotification('topRight', 'error', 'Ошибка при обновлении данных:' + error.message);
         }
     });
 
     // Обработчик отправки формы
     const handleSubmit = () => {
         if (editingContact) {
-            updateContact({ variables: { id: editingContact.id, ...form.getFieldsValue() } });
+            console.log(editingContact.id);
+            updateContact({ variables: { id: editingContact.id , ...form.getFieldsValue(), organization_id: autoCompleteOrganization.id , position_id: autoCompletePositions.id} });
         } else {
-            addContact({ variables: form.getFieldsValue() });
+            addContact({ variables: {...form.getFieldsValue(), organization_id: autoCompleteOrganization.id , position_id: autoCompletePositions.id} });
         }
     };
 
-    // Обработка загрузки и ошибок
-    if (loading) return <LoadingSpinner/>;
+
     if (error) return `Ошибка! ${error.message}`;
     return (
         <StyledFormBlock>
@@ -111,18 +127,30 @@ const ContactForm = ({ contact, onClose }) => {
                     <Input />
                 </StyledFormItem>
                 <StyledFormItem name="position_id" label="Должность" >
-                    <Select>
-                        {data && data.positionsNames && data.positionsNames.map(position => (
-                            <Select.Option key={position.id} value={position.id}>{position.name}</Select.Option>
-                        ))}
-                    </Select>
+                    <AutoComplete
+                        dropdownMatchSelectWidth ={false}
+                        filterOption = {false}
+                        options={data && data.positionsTable && data.positionsTable.positions.map(position => ({
+                            key: position.id,
+                            value: position.name,
+                            label: position.name,
+                        }))}
+                        onChange={(value, option)=>handleAutoCompletePositions(value, option)} // Передаем введенное значение
+                        placeholder="Начните ввод..."
+                    />
                 </StyledFormItem>
                 <StyledFormItem name="organization_id" label="Организация" rules={[{ required: true }]}>
-                    <Select>
-                        {data && data.organizations && data.organizations.map(organization => (
-                            <Select.Option key={organization.id} value={organization.id}>{organization.name}</Select.Option>
-                        ))}
-                    </Select>
+                    <AutoComplete
+                        dropdownMatchSelectWidth ={false}
+                        filterOption = {false}
+                        options={data && data.organizationsTable && data.organizationsTable.organizations.map(organization => ({
+                            key: organization.id,
+                            value: organization.name,
+                            label: organization.name,
+                        }))}
+                        onChange={(value, option)=>handleAutoCompleteOrganization(value, option)} // Передаем введенное значение
+                        placeholder="Начните ввод..."
+                    />
                 </StyledFormItem>
                 <StyledFormItem>
                     <Button type="primary" onClick={handleSubmit}>

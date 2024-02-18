@@ -2,14 +2,20 @@
 import {gql} from "@apollo/client";
 
 export const CONTACT_FORM_QUERY = gql`
-    query ContactsFormQuery {
-        organizations {
-            id
-            name
+    query ContactsFormTableQuery($searchPositions: String, $searchOrganizations: String) {
+        organizationsTable(page: 1, limit: 20, search: $searchOrganizations) {
+            organizations {
+                id
+                name
+            }
+            count
         }
-        positionsNames {
-            id
-            name
+        positionsTable(page: 1, limit: 20, search: $searchPositions) {
+            positions {
+                id
+                name
+            }
+            count
         }
     }
 `;
@@ -53,7 +59,7 @@ export const ORGANIZATION_FORM_QUERY = gql`
 `;
 
 export const PROJECT_FORM_QUERY = gql`
-    query ProjectFormQuery {
+    query ProjectFormQuery ($typeProject: ID) {
         positionsNames {
             id
             name
@@ -85,6 +91,10 @@ export const PROJECT_FORM_QUERY = gql`
             patronymic
         }
         irds {
+            id
+            name
+        }
+        templatesIrdsTypeProjects(typeProject: $typeProject) {
             id
             name
         }

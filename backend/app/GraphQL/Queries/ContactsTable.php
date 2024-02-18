@@ -14,6 +14,7 @@ final readonly class ContactsTable
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
         $allowedRoles = ['admin']; // Роли, которые разрешены
+
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
 
@@ -26,7 +27,6 @@ final readonly class ContactsTable
                     ->where('first_name', 'like', "%$searchTerm%")
                     ->orWhere('last_name', 'like', "%$searchTerm%")
                     ->orWhere('patronymic', 'like', "%$searchTerm%")
-                    ->orWhere('birth_day', 'like', "%$searchTerm%")
                     ->orWhere('work_phone', 'like', "%$searchTerm%")
                     ->orWhere('work_email', 'like', "%$searchTerm%")
                     ->orWhere('mobile_phone', 'like', "%$searchTerm%")

@@ -1,16 +1,18 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, Modal, notification, Table} from 'antd';
+import {Button, Form, Input, Modal, notification, Table} from 'antd';
 import {CONTACTS_QUERY, CONTACTS_TABLE_QUERY} from '../../graphql/queries';
 import {DELETE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
 import ContactForm from "./ContactForm";
 import LoadingSpinner from "../component/LoadingSpinner";
+import Search from "antd/es/input/Search";
 
 const ContactList = () => {
 
     // Состояния
     const [selectedContact, setSelectedContact] = useState(null);
     const [editModalVisible, setEditModalVisible] = useState(false);
+    const [formSearch] = Form.useForm();
 
     // Данные
     const [page, setPage] = useState(1);
@@ -64,7 +66,7 @@ const ContactList = () => {
     // Обработчик событий
     const handleClose = () => {setEditModalVisible(false);};
     const handleEdit = (contactId) => {
-        const contact = data.contacts.find(contact => contact.id === contactId);
+        const contact = data.contactsTable.contacts.find(contact => contact.id === contactId);
         setSelectedContact(contact);
         setEditModalVisible(true);
     };
@@ -72,7 +74,12 @@ const ContactList = () => {
         deleteContact({ variables: { id: contactId}});
     };
 
+    const onSearch = (value) =>{
+        setSearch(value);
+    }
+
     // Обработка загрузки и ошибок
+    if(!data)
     if (loading) return <LoadingSpinner/>;
     if (error) return `Ошибка! ${error.message}`;
 
@@ -202,7 +209,18 @@ const ContactList = () => {
     };
     return (
         <div>
+            <Form form={formSearch} layout="horizontal">
+                <Form.Item label="Поиск:" name="search">
+                    <Search
+                        placeholder="Найти..."
+                        allowClear
+                        enterButton="Search"
+                        onSearch={onSearch}
+                    />
+                </Form.Item>
+            </Form>
             <Table
+                loading={loading}
                 dataSource={data.contactsTable.contacts}
                 columns={columns}
                 onChange={onChange}

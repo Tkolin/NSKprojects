@@ -1,13 +1,20 @@
 type Query {
-    contactsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): ContactsResult!
+
+    contactsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): ContactsResult
+    organizationsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): OrganizationsResult
+    positionsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): PositionsResult
+
     contacts: [Contact]!
     positionsNames: [PositionName!]!
     currentUser: User!
-    organizations: [Organization!]!
+
+    organizations: [Organization]
+
     projectStatuses: [ProjectStatus!]!
     typeProjectDocuments: [TypeProjectDocument!]!
     facilitys: [Facility!]!
     irds: [IRD]!
+    templatesIrdsTypeProjects(typeProject: ID): [IRD]
     projects: [Project!]!
     projectStagesGroup: [ProjectStagesGroup!]!
     projectStages: [ProjectStage]!
@@ -215,8 +222,16 @@ type Mutation {
 }
 
 type ContactsResult {
-    contacts: [Contact!]!
-    count: Int!
+    contacts: [Contact]
+    count: Int
+}
+type OrganizationsResult {
+    organizations: [Organization]
+    count: Int
+}
+type PositionsResult {
+    positions: [Position]
+    count: Int
 }
 type Contact {
     id: ID!

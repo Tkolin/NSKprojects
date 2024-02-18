@@ -72,7 +72,7 @@ export const ADD_CONTACT_MUTATION = gql`
     }
 `;
 export const UPDATE_CONTACT_MUTATION = gql`
-    mutation AddContact($id: ID!, $first_name:
+    mutation UpdateContact($id: ID!, $first_name:
     String!, $last_name: String,$patronymic: String,
         $birth_day: String,
         $work_phone: String,

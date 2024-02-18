@@ -2,17 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TemplateIrdsTypeProjects extends Model
 {
-    public function project(): BelongsTo
+    protected $table = 'template_irds_type_project';
+    public function type_project(): BelongsTo
     {
         return $this->belongsTo(TypeProjectDocument::class);
     }
-    public function stage(): BelongsTo
+    public function ird(): BelongsTo
     {
         return $this->belongsTo(InitialAuthorizationDocumentation::class);
     }
