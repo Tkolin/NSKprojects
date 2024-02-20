@@ -30,9 +30,15 @@ final readonly class ContactsTable
                     ->orWhere('work_phone', 'like', "%$searchTerm%")
                     ->orWhere('work_email', 'like', "%$searchTerm%")
                     ->orWhere('mobile_phone', 'like', "%$searchTerm%")
-                    ->orWhere('email', 'like', "%$searchTerm%");
+                    ->orWhere('email', 'like', "%$searchTerm%")
+                    ->orWhere('id', 'like', "%$searchTerm%");
             }
-
+            // Поиск по организации
+            if (isset($args['searchOrganizationId'])) {
+                $searchTerm = $args['searchOrganizationId'];
+                $contactsQuery = $contactsQuery
+                    ->where('organization_id', 'like', "%$searchTerm%");
+            }
             // Получаем количество записей
             $count = $contactsQuery->count();
 
@@ -40,7 +46,7 @@ final readonly class ContactsTable
             if (isset($args['sortField']) && isset($args['sortOrder'])) {
                 $sortField = $args['sortField'];
                 $sortOrder = $args['sortOrder'];
-                $contacts = $contactsQuery->orderBy($sortField, $sortOrder);
+                $contactsQuery = $contactsQuery->orderBy($sortField, $sortOrder);
             }
 
             // Пагинация

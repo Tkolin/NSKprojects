@@ -1,18 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Button, Select, notification, Spin, AutoComplete} from 'antd';
+import {Form, Input, Button, notification, AutoComplete} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
 import {CONTACTS_QUERY} from '../../graphql/queries';
-import { CONTACT_FORM_QUERY}  from '../../graphql/queriesGroupData';
 import {
     ADD_CONTACT_MUTATION,
     UPDATE_CONTACT_MUTATION
 } from '../../graphql/mutationsContact';
 import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles';
-import {DatePicker} from "antd/lib"; // Импорт стилей
+import {DatePicker} from "antd/lib";
 import moment from 'moment';
-import LoadingSpinner from "../component/LoadingSpinner";
-import {values} from "mobx";
-import {log} from "util";
+import {SEARCH_ORGANIZATIONS_QUERY, SEARCH_POSITIONS_QUERY} from "../../graphql/queriesSearch";
 
 const ContactForm = ({ contact, onClose }) => {
 
@@ -37,10 +34,15 @@ const ContactForm = ({ contact, onClose }) => {
     };
 
     // Получение данных для выпадающих списков
-    const { loading, error, data } = useQuery(CONTACT_FORM_QUERY, {
+    const { loading: loadingPositions, error: errorPositions, data: dataPositions } = useQuery(SEARCH_POSITIONS_QUERY, {
+        variables: {
+            searchPositions: autoCompletePositions.name,
+        },
+    });
+
+    const { loading: loadingOrganizations, error: errorOrganizations, data: dataOrganizations } = useQuery(SEARCH_ORGANIZATIONS_QUERY, {
         variables: {
             searchOrganizations: autoCompleteOrganization.name,
-            searchPositions: autoCompletePositions.name,
         },
     });
 
@@ -97,7 +99,7 @@ const ContactForm = ({ contact, onClose }) => {
     };
 
 
-    if (error) return `Ошибка! ${error.message}`;
+    if (errorOrganizations) return `Ошибка! ${errorOrganizations.message}`;
     return (
         <StyledFormBlock>
             <StyledForm form={form} layout="vertical">
@@ -111,26 +113,51 @@ const ContactForm = ({ contact, onClose }) => {
                 <StyledFormItem name="patronymic" label="Отчество" >
                     <Input />
                 </StyledFormItem>
-                <StyledFormItem name="birth_day" label="Дата рождения" rules={[{ required: true }]}>
-                    <DatePicker />
+                <StyledFormItem name="birth_day" label="Дата рождения">
+                    <DatePicker placeholder="Выберите дату" />
                 </StyledFormItem>
-                <StyledFormItem name="work_phone" label="Рабочий номер телефона" >
-                    <Input />
+                <StyledFormItem name="work_phone" label="Рабочий номер телефона"  rules={[
+                    {
+                        pattern: /^[\d\s()-]+$/,
+                        message: 'Пожалуйста, введите корректный номер телефона',
+                    },
+                ]}
+                >
+                    <Input
+                        placeholder="Введите номер телефона"
+                        addonBefore="+7"
+                        maxLength={15}
+                        minLength={11}
+                        pattern="\d*"
+                    />
+
                 </StyledFormItem>
-                <StyledFormItem name="mobile_phone" label="Мобильный номер телефона" >
-                    <Input />
+                <StyledFormItem name="mobile_phone" label="Мобильный номер телефона"  rules={[
+                    {
+                        pattern: /^[\d\s()-]+$/,
+                        message: 'Пожалуйста, введите корректный номер телефона',
+                    },
+                ]}
+                >
+                    <Input
+                        placeholder="Введите номер телефона"
+                        addonBefore="+7"
+                        maxLength={15}
+                        minLength={11}
+                        pattern="\d*"
+                    />
                 </StyledFormItem>
-                <StyledFormItem name="email" label="e-mail" rules={[{ type: 'email' }]} >
-                    <Input />
+                <StyledFormItem name="email" label="Личный e-mail" rules={[{ type: 'email', message: 'Пожалуйста, введите корректный почтовый адресс', }]} >
+                    <Input        placeholder="Введите e-mail"/>
                 </StyledFormItem>
-                <StyledFormItem name="work_email" label="Рабочий e-mail" rules={[{  type: 'email' }]}>
-                    <Input />
+                <StyledFormItem name="work_email" label="Рабочий e-mail" rules={[{  type: 'email', message: 'Пожалуйста, введите корректный почтовый адресс', }]}>
+                    <Input        placeholder="Введите e-mail"/>
                 </StyledFormItem>
                 <StyledFormItem name="position_id" label="Должность" >
                     <AutoComplete
-                        dropdownMatchSelectWidth ={false}
+                        dropdownMatchSelectWidth={false}
                         filterOption = {false}
-                        options={data && data.positionsTable && data.positionsTable.positions.map(position => ({
+                        options={dataPositions  && dataPositions.positionsTable && dataPositions.positionsTable.positions.map(position => ({
                             key: position.id,
                             value: position.name,
                             label: position.name,
@@ -141,9 +168,9 @@ const ContactForm = ({ contact, onClose }) => {
                 </StyledFormItem>
                 <StyledFormItem name="organization_id" label="Организация" rules={[{ required: true }]}>
                     <AutoComplete
-                        dropdownMatchSelectWidth ={false}
+                        dropdownMatchSelectWidth={false}
                         filterOption = {false}
-                        options={data && data.organizationsTable && data.organizationsTable.organizations.map(organization => ({
+                        options={dataOrganizations &&  dataOrganizations.organizationsTable && dataOrganizations.organizationsTable.organizations.map(organization => ({
                             key: organization.id,
                             value: organization.name,
                             label: organization.name,

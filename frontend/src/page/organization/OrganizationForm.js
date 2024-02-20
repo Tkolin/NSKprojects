@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Button, Select, notification, Row, Col, Modal} from 'antd';
+import {Form, Input, Button, Select, notification, Row, Col, Modal, AutoComplete} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
 import {ORGANIZATION_FORM_QUERY} from '../../graphql/queriesGroupData';
 import {ORGANIZATION_QUERY} from '../../graphql/queries';
@@ -20,7 +20,12 @@ import 'react-dadata/dist/react-dadata.css';
 import ContactForm from "../contact/ContactForm";
 import BikForm from "../bik/BikForm";
 import LoadingSpinner from "../component/LoadingSpinner";
+import {SEARCH_CONTACTS_QUERY} from "../../graphql/queriesSearch";
 const OrganizationForm = ({ organization, onClose }) => {
+
+    // Переменные
+
+    const phoneRegExp = /^\+?[0-9]{10,}$/;
 
     // Состояния
     const [editingOrganization, setEditingOrganization] = useState(null);
@@ -28,7 +33,10 @@ const OrganizationForm = ({ organization, onClose }) => {
     const [api,contextHolder] = notification.useNotification();
     const [bikFormViewModalVisible, setBikFormViewModalVisible] = useState(false);
     const [contactFormViewModalVisible, setContactFormViewModalVisible] = useState(false);
-
+    const [autoCompleteContacts, setAutoCompleteContacts] = useState({ id: '', name: '' });
+    const handleAutoCompleteContacts = (value, option) => {
+        setAutoCompleteContacts({ id: option.key, name: value });
+    };
     const handleBikFormView = () => {setBikFormViewModalVisible(false);};
     const handleContactFormView = () => {setContactFormViewModalVisible(false);};
 
@@ -44,7 +52,11 @@ const OrganizationForm = ({ organization, onClose }) => {
 
     // Получение данных для выпадающих списков
     const { loading, error, data } = useQuery(ORGANIZATION_FORM_QUERY);
-
+    const { loadingContacts, errorContacts, dataContacts } = useQuery(SEARCH_CONTACTS_QUERY, {
+        variables: {
+            searchContacts: autoCompleteContacts.name,
+        },
+    });
     // Заполнение формы данными контакта при его редактировании
     useEffect(() => {
         if (organization) {
@@ -138,11 +150,17 @@ const OrganizationForm = ({ organization, onClose }) => {
                     <Row gutter={4} align={"bottom"}>
                         <Col flex="auto">
                             <StyledFormItem name="director" label="Руководитель">
-                                <Select>
-                                    {data && data.contacts  && data.contacts .map(data => (
-                                        <Select.Option key={data.id} value={data.id}>{data.last_name} {data.first_name} {data.patronymic}</Select.Option>
-                                    ))}
-                                </Select>
+                                <AutoComplete
+                                    dropdownMatchSelectWidth={false}
+                                    filterOption = {false}
+                                    options={dataContacts && dataContacts.contactsTable && dataContacts.contactsTable.positions.map(position => ({
+                                        key: position.id,
+                                        value: position.last_name + position.first_name + position.patronymic,
+                                        label: position.last_name + position.first_name + position.patronymic,
+                                    }))}
+                                    onChange={(value, option)=>handleAutoCompleteContacts(value, option)} // Передаем введенное значение
+                                    placeholder="Начните ввод..."
+                                />
                             </StyledFormItem>
                         </Col>
                         <Col>
@@ -161,37 +179,55 @@ const OrganizationForm = ({ organization, onClose }) => {
                         <StyledFormItem name="address_mail" label="Почтовый адрес" minChars={3} delay={50} >
                                 <AddressSuggestions token="5c988a1a82dc2cff7f406026fbc3e8d04f2a168e"
                                                     value={address2}
-                                                    onChange={addresChange2} />
+                                                    onChange={addresChange2}/>
                         </StyledFormItem>
                     </Col>
                     <Col span={4}>
                         <StyledFormItem name="office_number_legal" label="Номер офиса" >
-                            <Input />
+                            <Input  placeholder="№"/>
                         </StyledFormItem>
                         <StyledFormItem name="office_number_mail" label="Номер офиса" >
-                            <Input />
+                            <Input  placeholder="№"/>
                         </StyledFormItem>
                     </Col>
                 </Row>
                 <Row gutter={8}>
                     <Col span={12}>
-                        <StyledFormItem name="phone_number" label="Телефон">
-                            <Input />
+                        <StyledFormItem name="phone_number" label="Телефон"  rules={[
+                            {
+                                pattern: /^[\d\s()-]+$/,
+                                message: 'Пожалуйста, введите корректный номер телефона',
+                            },
+                        ]}
+                        >
+                            <Input
+                                placeholder="Введите номер телефона"
+                                addonBefore="+7"
+                                maxLength={15}
+                                minLength={11}
+                                pattern="\d*"
+                            />
                         </StyledFormItem>
                         <StyledFormItem name="fax_number" label="Факс">
-                            <Input />
+                            <Input                                 placeholder="Введите номер факса" />
                         </StyledFormItem>
-                        <StyledFormItem name="email" label="e-mail">
-                            <Input />
+                        <StyledFormItem name="email" label="e-mail"  rules={[
+                            {
+                                type: "email",
+                                message: 'Пожалуйста, введите корректный почтовый адресс',
+                            },
+                        ]}
+                        >
+                            <Input                                 placeholder="Введите почтовый адресс"/>
                         </StyledFormItem>
                         <StyledFormItem name="payment_account" label="Расчётынй счёт">
-                            <Input />
+                            <Input placeholder="Введите номер расчётного счёта"/>
                         </StyledFormItem>
                         <div >
                             <Row gutter={4} align={"bottom"}>
                                 <Col flex="auto">
                                     <StyledFormItem name="BIK_id" label="Бик" >
-                                    <Select>
+                                    <Select placeholder="fafda">
                                         {data && data.biks && data.biks.map(biks => (
                                             <Select.Option key={biks.id} value={biks.id}>{biks.name}</Select.Option>
                                         ))}
@@ -205,17 +241,61 @@ const OrganizationForm = ({ organization, onClose }) => {
                         </div>
                     </Col>
                     <Col span={12} >
-                        <StyledFormItem name="INN" label="ИНН">
-                            <Input />
+                        <StyledFormItem name="INN" label="ИНН" rules={[
+                            {
+                                pattern: /^[\d\s]+$/,
+                                message: 'Пожалуйста, введите корректный номер ИНН',
+                            },
+                        ]}
+                        >
+                            <Input
+                                placeholder="Введите номер ИНН"
+                                maxLength={12}
+                                minLength={10}
+                                pattern="\d*"
+                            />
                         </StyledFormItem>
-                        <StyledFormItem name="OGRN" label="ОГРН">
-                            <Input />
+                        <StyledFormItem name="OGRN" label="ОГРН" rules={[
+                            {
+                                pattern: /^[\d\s]+$/,
+                                message: 'Пожалуйста, введите корректный номер ОГРН',
+                            },
+                        ]}
+                        >
+                            <Input
+                                placeholder="Введите номер ОГРН"
+                                maxLength={13}
+                                minLength={13}
+                                pattern="\d*"
+                            />
                         </StyledFormItem>
-                        <StyledFormItem name="OKPO" label="ОКПО">
-                            <Input />
+                        <StyledFormItem name="OKPO" label="ОКПО" rules={[
+                            {
+                                pattern: /^[\d\s]+$/,
+                                message: 'Пожалуйста, введите корректный номер ОКПО',
+                            },
+                        ]}
+                        >
+                            <Input
+                                placeholder="Введите номер ОКПО"
+                                maxLength={10}
+                                minLength={8}
+                                pattern="\d*"
+                            />
                         </StyledFormItem>
-                        <StyledFormItem name="KPP" label="КПП">
-                            <Input />
+                        <StyledFormItem name="KPP" label="КПП" rules={[
+                            {
+                                pattern: /^[\d\s]+$/,
+                                message: 'Пожалуйста, введите корректный номер КПП',
+                            },
+                        ]}
+                        >
+                            <Input
+                                placeholder="Введите номер КПП"
+                                maxLength={9}
+                                minLength={9}
+                                pattern="\d*"
+                            />
                         </StyledFormItem>
                     </Col>
                 </Row>

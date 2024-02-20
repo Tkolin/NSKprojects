@@ -32,6 +32,13 @@ final readonly class OrganizationsTable
             // Получаем количество записей
             $count = $organizationsQuery->count();
 
+            // Сортировка
+            if (isset($args['sortField']) && isset($args['sortOrder'])) {
+                $sortField = $args['sortField'];
+                $sortOrder = $args['sortOrder'];
+                $organizationsQuery = $organizationsQuery->orderBy($sortField, $sortOrder);
+            }
+
             if (isset($args['page'])) {
                 $organizations = $organizationsQuery->paginate($args['limit'], ['*'], 'page', $args['page']);
             } else {
@@ -39,6 +46,8 @@ final readonly class OrganizationsTable
             }
 
             return ['organizations' => $organizations, 'count' => $count];
+
+
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }

@@ -73,14 +73,13 @@ const ContactList = () => {
     const handleDelete = (contactId) => {
         deleteContact({ variables: { id: contactId}});
     };
-
     const onSearch = (value) =>{
         setSearch(value);
-    }
+    };
 
     // Обработка загрузки и ошибок
     if(!data)
-    if (loading) return <LoadingSpinner/>;
+        if (loading) return <LoadingSpinner/>;
     if (error) return `Ошибка! ${error.message}`;
 
     // Формат таблицы
@@ -184,7 +183,6 @@ const ContactList = () => {
     const onChange = (pagination, filters, sorter) => {
 
         if((sorter.field !== undefined) && currentSort !== sorter){
-            console.log(sortColum + " | " + sorter.field);
             setCurrentSort(sorter);
             if (sortColum !== sorter.field) {
                 setSortColum(sorter.field);

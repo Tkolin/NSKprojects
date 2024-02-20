@@ -12,6 +12,7 @@ const PersonList = () => {
     const { loading, error, data } = useQuery(PERSON_QUERY);
     const [selectedPerson, setSelectedPerson] = useState(null);
     const [editModalVisible, setEditModalVisible] = useState(false);
+    const [search,setSearch] = useState(null);
 
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
@@ -51,7 +52,9 @@ const PersonList = () => {
     const handleDelete = (personId) => {
         deletePerson({ variables: { id: personId}});
     };
-
+    const onSearch = (value) =>{
+        setSearch(value);
+    }
     // Обработка загрузки и ошибок
     if (loading) return <LoadingSpinner/>;
     if (error) return `Ошибка! ${error.message}`;

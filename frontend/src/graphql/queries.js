@@ -152,6 +152,17 @@ export const CURRENT_USER_QUERY = gql`
         }
     }
 `;
+export const ORGANIZATIONS_TABLE_QUERY = gql`
+    query ContactsTableQuery($page: Int, $limit: Int, $search: String, $sortField: String, $sortOrder: String) {
+        organizationsTable(page: $page, limit: $limit, search: $search, sortField: $sortField, sortOrder: $sortOrder) {
+            organizations {
+                id
+                name
+            }
+            count
+        }
+    }
+`;
 export const CONTACTS_TABLE_QUERY = gql`
     query ContactsTableQuery($page: Int, $limit: Int, $search: String, $sortField: String, $sortOrder: String) {
         contactsTable(page: $page, limit: $limit, search: $search, sortField: $sortField, sortOrder: $sortOrder) {

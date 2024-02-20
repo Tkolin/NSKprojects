@@ -22,7 +22,6 @@ import {CURRENT_USER_QUERY} from "./graphql/queries";
 import PersonList from "./page/person/PersonList";
 import {Cookies} from "react-cookie";
 import LoadingSpinner from "./page/component/LoadingSpinner";
-import Test from "./page/Test";
 
 const App = () => {
     const cookies = new Cookies();
@@ -45,7 +44,6 @@ const App = () => {
             <CustomLayout currentUser={currentUser}>
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/test" element={<Test />} />
                     {currentUser ? (
                         currentUser.role.name === "admin" ? (
                             <>

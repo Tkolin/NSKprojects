@@ -1,16 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\GraphQL\Queries;
 
 use App\GraphQL\Service\AuthorizationService;
-use App\Models\TemplateIrdsTypeProjects; // Импорт модели
 use App\Models\InitialAuthorizationDocumentation;
+use App\Models\Stage;
+use App\Models\TemplateIrdsTypeProjects;
+use App\Models\TemplateStagesTypeProjects;
 use Illuminate\Support\Facades\Log;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
-final readonly class TemplatesIrdsTypeProjects
+final readonly class TemplatesStagesTypeProjects
 {
+    /** @param  array{}  $args */
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
         $allowedRoles = ['admin'];
@@ -18,11 +21,11 @@ final readonly class TemplatesIrdsTypeProjects
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
             if (isset($args['typeProject'])) {
 
-                $irdsTamplate = TemplateIrdsTypeProjects::where('project_type_id', $args['typeProject'])->get();
-                $irdIds = $irdsTamplate->pluck('ird_id');
-                $irds = InitialAuthorizationDocumentation::whereIn('id', $irdIds)->get();
+                $stageTamplate = TemplateStagesTypeProjects::where('project_type_id', $args['typeProject'])->get();
+                $stageIds = $stageTamplate->pluck('stage_id');
+                $stage = Stage::whereIn('id', $stageIds)->get();
 
-                return $irds;
+                return $stage;
             } else {
                 return null;
             }

@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class TemplateIrdsTypeProjects extends Model
+class TemplateContentTypeProjects extends Model
 {
-    protected $table = 'template_irds_type_project';
+    protected $table = 'template_content_type_project';
     public function type_project(): BelongsTo
     {
         return $this->belongsTo(TypeProjectDocumentPost::class);
     }
-    public function ird(): BelongsTo
+    public function content(): BelongsTo
     {
-        return $this->belongsTo(InitialAuthorizationDocumentation::class);
+        return $this->belongsTo(Contents::class);
     }
 }

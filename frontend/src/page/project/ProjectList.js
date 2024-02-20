@@ -11,7 +11,7 @@ const ProjectList = () => {
     const {loading, error, data} = useQuery(PROJECT_QUERY);
     const [selectedProject, setSelectedProject] = useState(null);
     const [editModalVisible, setEditModalVisible] = useState(false);
-
+    const [search,setSearch] = useState(null);
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
         notification[type]({
@@ -22,7 +22,9 @@ const ProjectList = () => {
 
     // Мутация для удаления
     // TODO: Нужна ли?
-
+    const onSearch = (value) =>{
+        setSearch(value);
+    }
     // Обработчик событий
     const onChange = (pagination, filters, sorter, extra) => {
         console.log('params', pagination, filters, sorter, extra);

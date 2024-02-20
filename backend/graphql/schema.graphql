@@ -1,6 +1,5 @@
 type Query {
-
-    contactsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): ContactsResult
+    contactsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String, searchOrganizationId: String): ContactsResult
     organizationsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): OrganizationsResult
     positionsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): PositionsResult
 
@@ -10,11 +9,16 @@ type Query {
 
     organizations: [Organization]
 
+    templatesIrdsTypeProjects(typeProject: ID): [IRD]
+    templatesContentsTypeProjects(typeProject: ID): [IRD]
+    templatesStagesTypeProjects(typeProject: ID): [IRD]
+
+
     projectStatuses: [ProjectStatus!]!
     typeProjectDocuments: [TypeProjectDocument!]!
     facilitys: [Facility!]!
     irds: [IRD]!
-    templatesIrdsTypeProjects(typeProject: ID): [IRD]
+
     projects: [Project!]!
     projectStagesGroup: [ProjectStagesGroup!]!
     projectStages: [ProjectStage]!

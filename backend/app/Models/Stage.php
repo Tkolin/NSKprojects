@@ -15,4 +15,8 @@ class Stage extends Model
     {
         return $this->hasMany(ProjectStage::class);
     }
+    public function template_stage(): HasMany
+    {
+        return $this->hasMany(TemplateStagesTypeProjects::class);
+    }
 }

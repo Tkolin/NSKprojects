@@ -2,19 +2,14 @@ import React, { useState } from 'react';
 import {
     SolutionOutlined,
     HomeOutlined,
-    UserOutlined,
-    ShopOutlined,
-    PhoneOutlined,
-    FundProjectionScreenOutlined,
     FormOutlined,
     ProfileOutlined,
 } from '@ant-design/icons';
-import {Layout, Menu, Button, theme, Space, Typography, Spin} from 'antd';
+import {Layout, Menu, Button, theme, Typography} from 'antd';
 import {useQuery} from "@apollo/client";
 import {CURRENT_USER_QUERY} from "../graphql/queries";
 import {Link, useNavigate} from "react-router-dom";
 import SubMenu from "antd/es/menu/SubMenu";
-import warning from "antd/es/_util/warning";
 import {Cookies} from "react-cookie";
 import LoadingSpinner from "./component/LoadingSpinner";
 
@@ -59,13 +54,13 @@ const CustomLayout = ({ children }) => {
         if (data.currentUser.role.name === "admin") {
             items.push(
                 getItem('Справочники', '1', <ProfileOutlined />, [
-                    getItem('Контактов', '1-1', null, null, "/contacts"),
-                    getItem('Проектов', '2-1', null, null, "/project"),
-                    getItem('Исполнителей', '4-1',null, null, "/person"),
-                    getItem('Организаций', '3-1',null, null, "/organization"),
-                    getItem('---Этапов', '2-3', null, null, "/project/stage"),
-                    getItem('---Задач', '2-5', null, null, "/project/stage/task"),
-                    getItem('---Объектов', '6-1', null, null, "/project/facility"),
+                    getItem('Контакты', '1-1', null, null, "/contacts"),
+                    getItem('Проекты', '2-1', null, null, "/project"),
+                    getItem('Исполнители', '4-1',null, null, "/person"),
+                    getItem('Организации', '3-1',null, null, "/organization"),
+                    //getItem('---Этапов', '2-3', null, null, "/project/stage"),
+                    //getItem('---Задач', '2-5', null, null, "/project/stage/task"),
+                    //getItem('---Объектов', '6-1', null, null, "/project/facility"),
                 ]),
                 getItem('Формы', '2', <FormOutlined />, [
                     getItem('Контакт', '1-2', null, null, "/contacts/new"),
@@ -73,9 +68,9 @@ const CustomLayout = ({ children }) => {
                     getItem('Организация', '3-2', null, null, "/organization/new"),
                     getItem('Исполнитель', '4-2', null, null, "/person/new"),
 
-                    getItem('---Добавить этап', '2-4', <FormOutlined />, null, "/project/stage/new"),
-                    getItem('---Добавить задачу', '2-6', <FormOutlined />, null, "/project/stage/task/new"),
-                    getItem('---Добавить объект', '6-2', <FormOutlined />, null, "/project/facility/new"),
+                    //getItem('---Добавить этап', '2-4', <FormOutlined />, null, "/project/stage/new"),
+                    //getItem('---Добавить задачу', '2-6', <FormOutlined />, null, "/project/stage/task/new"),
+                    //getItem('---Добавить объект', '6-2', <FormOutlined />, null, "/project/facility/new"),
                 ]),
                 getItem('Отчёты', '3', <SolutionOutlined />, [
                 ])

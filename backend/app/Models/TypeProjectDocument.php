@@ -12,12 +12,9 @@ class TypeProjectDocument extends Model
         'code',
         'name',
     ];
-    public function project(): HasMany
+    public function type_project_docunt_post(): HasMany
     {
-        return $this->hasMany(Project::class);
+        return $this->hasMany(TypeProjectDocumentPost::class);
     }
-    public function template_irds_type_project(): HasMany
-    {
-        return $this->hasMany(InitialAuthorizationDocumentation::class);
-    }
+
 }

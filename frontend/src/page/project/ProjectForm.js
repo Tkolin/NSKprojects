@@ -1,5 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Button, Select, InputNumber, Col, Row, notification, Modal, Space, Checkbox} from 'antd';
+import {
+    Form,
+    Input,
+    Button,
+    Select,
+    InputNumber,
+    Col,
+    Row,
+    notification,
+    Modal,
+    Space,
+    Checkbox,
+    AutoComplete
+} from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
 import {CURRENT_DELEGATE_QUERY, PROJECT_QUERY, TEMPLATE_IRDS_QUERY} from '../../graphql/queries';
 import {PROJECT_FORM_QUERY} from '../../graphql/queriesGroupData';
@@ -22,6 +35,10 @@ import {keys, values} from "mobx";
 import ContactForm from "../contact/ContactForm";
 import {Cookies} from "react-cookie";
 import LoadingSpinner from "../component/LoadingSpinner";
+import {
+    SEARCH_DELEGATES_OR_ORGANIZATION_QUERY, SEARCH_ORGANIZATIONS_QUERY,
+    SEARCH_TEMPLATE_OR_TYPE_PROJECT_QUERY
+} from "../../graphql/queriesSearch";
 
 const {Option} = Select;
 
@@ -30,16 +47,21 @@ const ProjectForm = ({project, onClose}) => {
     // Состояния
     const [form] = Form.useForm();
     const [formIRD] = Form.useForm();
-    const [formda] = Form.useForm();
+    const [formContents] = Form.useForm();
+    const [formStage] = Form.useForm();
     const [costumerFormViewModalVisible, setCostumerFormViewModalVisible] = useState(false);
     const [contactFormViewModalVisible, setContactFormViewModalVisible] = useState(false);
     const [facilityFormViewModalVisible, setFacilityFormViewModalVisible] = useState(false);
     const [viewListProjectStageModalVisible, setViewListProjectStageModalVisible] = useState(false);
     const [projectTypeDocument, setProjectTypeDocument] = useState(null);
     const [editingProject, setEditingProjcet] = useState(null);
-    const [listDelegations, setListDelegations] = useState(null);
-    const [selectedOrganization, setSelectedOrganization] = useState(null);
-    const [irdsList, setIrdsList] = useState([]);
+    const [autoCompleteOrganization, setAutoCompleteOrganization] = useState({ id: '', name: '' });
+
+    const handleAutoCompleteOrganization = (value, option) => {
+        setAutoCompleteOrganization({ id: option.key, name: value });
+        console.log(autoCompleteOrganization.id);
+
+    };
 
 
     const handleContactFormView = () => {
@@ -54,21 +76,7 @@ const ProjectForm = ({project, onClose}) => {
     const handleViewListProjectStage = () => {
         setViewListProjectStageModalVisible(false);
     };
-    const handleOrganizationChange = (value) => {
-        setSelectedOrganization(value);
-        delegateFilterForOrganizations(value);
-    };
-    const delegateFilterForOrganizations = async (organizationId) => {
-        try {
-            //const { data } = await client.query({
-            //     query: CURRENT_DELEGATE_QUERY,
-            //     variables: { organizationId },
-            // });
-            setListDelegations(data.delegates);
-        } catch (error) {
-            console.error('Ошибка при выборке ответственного лица:', error);
-        }
-    };
+
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
         notification[type]({
@@ -77,16 +85,18 @@ const ProjectForm = ({project, onClose}) => {
     };
 
     // Получение данных для выпадающих списков
-    const cookies = new Cookies();
-    const accessToken = cookies.get('accessToken');
-    const {loading, error, data} = useQuery(PROJECT_FORM_QUERY,{
+    const { loading: loadingAll, error: errorAll,data:  dataAll} = useQuery(PROJECT_FORM_QUERY);
+
+    const { loading: loadingTemplate, error: errorTemplate, data: dataTemplate} = useQuery(SEARCH_TEMPLATE_OR_TYPE_PROJECT_QUERY,{
         variables: { typeProject: projectTypeDocument },
-        context: {
-            headers: {
-                Authorization: accessToken ? `Bearer ${accessToken}` : 'null',
-            }
-        }
     });
+    const { loading: loadingDelegates, error: errorDelegates, data: dataDelegates} = useQuery(SEARCH_DELEGATES_OR_ORGANIZATION_QUERY,{
+        variables: { searchOrganizationId: autoCompleteOrganization.id },
+    });
+    const { loading: loadingOrganizations, error: errorOrganizations, data: dataOrganizations } = useQuery(SEARCH_ORGANIZATIONS_QUERY, {
+        variables: { searchOrganizations: autoCompleteOrganization.name },
+    });
+
     // Заполнение формы данными контакта при его редактировании
     useEffect(() => {
         if (project) {
@@ -135,32 +145,35 @@ const ProjectForm = ({project, onClose}) => {
         }
     };
 
-    const loadTemplateIRD = () => {
-        console.log("------------------ loadTemplateIRD");
-        const irds = data.templatesIrdsTypeProjects; // Assuming data.templatesIrdsTypeProjects contains your IRD data
-        const initialValues = irds.map(ird => ({
+    const loadTemplate = () => {
+        const irds = dataTemplate && dataTemplate.templatesIrdsTypeProjects;
+        const initialValuesIrds = irds && irds.map(ird => ({
             ird_id: ird.id,
-            isChecked: false, // Set your default value here
+            isChecked: false,
         }));
-        console.log(irds);
-        console.log(initialValues);
-        formIRD.setFieldsValue({ irds_to_project: initialValues });
+        formIRD.setFieldsValue({ irds_to_project: initialValuesIrds });
+        const stages = dataTemplate && dataTemplate.templatesStagesTypeProjects;
+        const initialValuesStages = stages && stages.map(ird => ({
+            ird_id: ird.id,
+            isChecked: false,
+        }));
+        formStage.setFieldsValue({ irds_to_project: initialValuesStages });
+        const contents = dataTemplate && dataTemplate.templatesContentsTypeProjects;
+        const initialValuesContents = contents && contents.map(ird => ({
+            ird_id: ird.id,
+            isChecked: false,
+        }));
+        formContents.setFieldsValue({ irds_to_project: initialValuesContents });
     };
-
-
-    // Обработка загрузки и ошибок
-    if (loading) return <LoadingSpinner/>;
-    if (error) return `Ошибка! ${error.message}`;
 
     return (
         <>
             <StyledVeryBigFormBlock>
                 <StyledVeryBigForm layout="vertical">
-
                     <Row gutter={8}>
                         <Col span={8}>
-                            Проект
-                            <StyledForm form={form} layout="vertical">
+                            Компонент для проекта
+                            <StyledFormBlock form={form} layout="vertical">
                                 <StyledFormItem name="number" label="Номер проекта" rules={[{required: true}]}>
                                     <Input/>
                                 </StyledFormItem>
@@ -171,24 +184,33 @@ const ProjectForm = ({project, onClose}) => {
                                 <Row gutter={8} align={"bottom"}>
                                     <Col flex="auto">
                                         <StyledFormItem name="organization_customer_id" label="Заказчик">
-                                            <Select>
-                                                {data && data.organizations && data.organizations.map(organization => (
-                                                    <Option key={organization.id}
-                                                            value={organization.id}>{organization.name}</Option>))}
-                                            </Select>
+                                            <AutoComplete
+                                                dropdownMatchSelectWidth={false}
+                                                filterOption = {false}
+                                                options={dataOrganizations &&  dataOrganizations.organizationsTable && dataOrganizations.organizationsTable.organizations.map(organization => ({
+                                                    key: organization.id,
+                                                    value: organization.name,
+                                                    label: organization.name,
+                                                }))}
+                                                onChange={(value, option)=>handleAutoCompleteOrganization(value, option)} // Передаем введенное значение
+                                                onSelect={(value, option)=>handleAutoCompleteOrganization(value, option)}
+                                                placeholder="Начните ввод..."
+                                            />
                                         </StyledFormItem>
                                     </Col>
                                     <Col>
                                         <StyledButtonForm onClick={() => setCostumerFormViewModalVisible(true)}>Создать</StyledButtonForm>
                                     </Col>
                                 </Row>
-                                <Row gutter={8} align={"bottom"}>
+                                <Row gutter={4} align={"bottom"}>
                                     <Col flex="auto">
                                         <StyledFormItem name="delegate_id" label="Представитель компании">
-                                            <Select>
-                                                {data && data.contacts && data.contacts.map(data => (
-                                                    <Select.Option key={data.id}
-                                                                   value={data.id}>{data.last_name} {data.first_name} {data.patronymic}</Select.Option>))}
+                                            <Select
+                                                style={{ maxWidth: 249 }}
+                                                placeholder="По компаниям">
+                                                {dataDelegates && dataDelegates.contactsTable  && dataDelegates.contactsTable.contacts.map(delegate => (
+                                                    <Select.Option key={delegate.id}
+                                                                   value={delegate.id}>{delegate.last_name} {delegate.first_name} {delegate.patronymic}</Select.Option>))}
                                             </Select>
                                         </StyledFormItem>
                                     </Col>
@@ -196,31 +218,33 @@ const ProjectForm = ({project, onClose}) => {
                                         <StyledButtonForm onClick={() => setContactFormViewModalVisible(true)}>Создать</StyledButtonForm>
                                     </Col>
                                 </Row>
-                                <Row gutter={8} align={"bottom"}>
+                                <Row gutter={4} align={"bottom"}>
                                     <Col flex="auto">
                                         <StyledFormItem name="type_project_document_id" label="Тип документа">
                                             <Select
                                                 dropdownMatchSelectWidth={false}
-                                                style={{ maxWidth: 210 }}
+                                                style={{ maxWidth: 200 }}
                                                 onChange={(value)=>setProjectTypeDocument(value)}
-                                            >
-                                                {data && data.typeProjectDocuments && data.typeProjectDocuments.map(typeDock => (
+                                                placeholder="Выберите тип документа">
+                                                {dataAll &&  dataAll.typeProjectDocuments && dataAll.typeProjectDocuments.map(typeDock => (
                                                     <Select.Option key={typeDock.id}
                                                                    value={typeDock.id}>{typeDock.name}</Select.Option>))}
                                             </Select>
                                         </StyledFormItem>
                                     </Col>
                                     <Col>
-                                        <StyledButtonForm  style={{ maxWidth: 250 }} onClick={() => loadTemplateIRD()}>Сформировать ИРД</StyledButtonForm>
+                                        <StyledButtonForm  style={{ maxWidth: 250 }} onClick={() => loadTemplate()}>Сформировать</StyledButtonForm>
                                     </Col>
                                 </Row>
 
 
-                                <Row gutter={8} align={"bottom"}>
+                                <Row gutter={4} align={"bottom"}>
                                     <Col flex="auto" >
                                         <StyledFormItem name="facility_id" label="Объект">
-                                            <Select>
-                                                {data && data.facilitys && data.facilitys.map(facility => (
+                                            <Select
+                                                style={{ maxWidth: 249 }}
+                                            >
+                                                {dataAll &&  dataAll.facilitys && dataAll.facilitys.map(facility => (
                                                     <Select.Option key={facility.id}
                                                                    value={facility.id}>{facility.name}</Select.Option>))}
                                             </Select>
@@ -232,23 +256,23 @@ const ProjectForm = ({project, onClose}) => {
                                 </Row>
 
                                 <StyledFormItem name="date_signing" label="Дата подписания">
-                                    <DatePicker/>
+                                    <DatePicker               placeholder="Выберите дату"/>
                                 </StyledFormItem>
                                 <StyledFormItem name="duration" label="Продолжительность">
                                     <InputNumber/>
                                 </StyledFormItem>
                                 <StyledFormItem name="date_end" label="Дата окончания">
-                                    <DatePicker/>
+                                    <DatePicker placeholder="Выберите дату"/>
                                 </StyledFormItem>
                                 <StyledFormItem name="status_id" label="Статус проекта">
                                     <Select>
-                                        {data && data.projectStatuses && data.projectStatuses.map(status => (
+                                        {dataAll && dataAll.projectStatuses && dataAll.projectStatuses.map(status => (
                                             <Select.Option key={status.id}
                                                            value={status.id}>{status.name}</Select.Option>))}
                                     </Select>
                                 </StyledFormItem>
                                 <StyledFormItem name="date_completion" label="Дата фактического закрытия">
-                                    <DatePicker/>
+                                    <DatePicker placeholder="Выберите дату"/>
                                 </StyledFormItem>
 
                                 <StyledFormItem>
@@ -259,88 +283,12 @@ const ProjectForm = ({project, onClose}) => {
                                         Список задач
                                     </Button>
                                 </StyledFormItem>
-                            </StyledForm>
-                        </Col>
-
-                        <Col span={8}>
-                            <StyledFormBlock
-                                name="dynamic_form_nest_item"
-                                autoComplete="off"
-                            >
-                            <StyledForm form={formIRD} layout="vertical">
-
-                                <p>
-                                    Список ИРД: (пример)
-                                </p>
-
-                                <p>
-                                    выпадающий список названия | дата получения
-                                </p>
-
-
-                                    <Form.List name="irds_to_project">
-                                        {(fields, { add, remove }) => (
-                                            <>
-                                                {fields.map(({ key, name, ...restField }) => (
-                                                    <Space
-                                                        key={key}
-                                                        style={{ display: 'flex', marginBottom: 8 }}
-                                                        align="baseline"
-                                                    >
-                                                        <Form.Item
-                                                            {...restField}
-                                                            name={[name, 'ird_id']}
-                                                            rules={[{ required: true, message: 'Missing IRD ID' }]}
-                                                        >
-
-                                                            <Select dropdownMatchSelectWidth={false} style={{ maxWidth: 250 }}>
-                                                                {data && data.irds  && data.irds .map(ird => (
-                                                                    <Select.Option key={ird.id}
-                                                                                   value={ird.id}>{ird.name}</Select.Option>))}
-                                                            </Select>
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            {...restField}
-                                                            name={[name, 'isChecked']}
-                                                            valuePropName="checked"
-                                                        >
-                                                            <Checkbox />
-                                                        </Form.Item>
-                                                        <Form.Item>
-                                                            <Button onClick={() => add()} block icon={<PlusOutlined />} />
-                                                        </Form.Item>
-                                                        <MinusCircleOutlined onClick={() => remove(name)} />
-                                                    </Space>
-                                                ))}
-                                                <Form.Item>
-                                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                                                        Add field
-                                                    </Button>
-                                                </Form.Item>
-                                            </>
-                                        )}
-                                    </Form.List>
-
-                            </StyledForm>
-                        </StyledFormBlock>
+                            </StyledFormBlock>
                         </Col>
                         <Col span={8}>
-                            <p>
-                                Список задач: (пример)
-                            </p>
-
-                            <p>
-                                выпадающий список глав | исполнитель | подробней
-                            </p>
-
-                            <StyledFormBlock
-                                name="dynamic_form_nest_item"
-                                style={{
-                                    maxWidth: 600,
-                                }}
-                                autoComplete="off"
-                            >
-                                <Form.List name="users">
+                            Компонент для этапов
+                            <StyledFormBlock name="dynamic_form_nest_itemы" style={{ maxWidth: 600 }} autoComplete="off">
+                                <Form.List name="users" >
                                     {(fields, {add, remove}) => (<>
                                         {fields.map(({key, name, ...restField}) => (<Space
                                             key={key}
@@ -357,7 +305,7 @@ const ProjectForm = ({project, onClose}) => {
                                                 },]}
                                             >
                                                 <Select>
-                                                    {data && data.projectStatuses && data.projectStatuses.map(status => (
+                                                    {dataAll && dataAll.projectStatuses && dataAll.projectStatuses.map(status => (
                                                         <Select.Option key={status.id}
                                                                        value={status.id}>{status.name}</Select.Option>))}
                                                 </Select>
@@ -370,7 +318,106 @@ const ProjectForm = ({project, onClose}) => {
                                                 },]}
                                             >
                                                 <Select>
-                                                    {data && data.projectStatuses && data.projectStatuses.map(status => (
+                                                    {dataAll && dataAll.projectStatuses && dataAll.projectStatuses.map(status => (
+                                                        <Select.Option key={status.id}
+                                                                       value={status.id}>{status.name}</Select.Option>))}
+                                                </Select>
+                                            </Form.Item>
+                                            <Form.Item>
+                                                <Button onClick={() => add()} block icon={<PlusOutlined/>}>
+                                                </Button>
+                                            </Form.Item>
+                                            <MinusCircleOutlined onClick={() => remove(name)}/>
+                                        </Space>))}
+                                        <Form.Item>
+                                            <Button type="dashed" onClick={() => add()} block
+                                                    icon={<PlusOutlined/>}>
+                                                Add field
+                                            </Button>
+                                        </Form.Item>
+                                    </>)}
+                                </Form.List>
+                            </StyledFormBlock>
+                            Компонент для ИРД
+                            <StyledFormBlock name="dynamic_form_nest_item" autoComplete="off">
+                                <Form.List name="irds_to_project">
+                                    {(fields, { add, remove }) => (
+                                        <>
+                                            {fields.map(({ key, name, ...restField }) => (
+                                                <Space
+                                                    key={key}
+                                                    style={{ display: 'flex', marginBottom: 8 }}
+                                                    align="baseline"
+                                                >
+                                                    <Form.Item
+                                                        {...restField}
+                                                        name={[name, 'ird_id']}
+                                                        rules={[{ required: true, message: 'Missing IRD ID' }]}
+                                                    >
+
+                                                        <Select dropdownMatchSelectWidth={false} style={{ maxWidth: 250 }}>
+                                                            {dataAll && dataAll.irds  && dataAll.irds .map(ird => (
+                                                                <Select.Option key={ird.id}
+                                                                               value={ird.id}>{ird.name}</Select.Option>))}
+                                                        </Select>
+                                                    </Form.Item>
+                                                    <Form.Item
+                                                        {...restField}
+                                                        name={[name, 'isChecked']}
+                                                        valuePropName="checked"
+                                                    >
+                                                        <Checkbox />
+                                                    </Form.Item>
+                                                    <Form.Item>
+                                                        <Button onClick={() => add()} block icon={<PlusOutlined />} />
+                                                    </Form.Item>
+                                                    <MinusCircleOutlined onClick={() => remove(name)} />
+                                                </Space>
+                                            ))}
+                                            <Form.Item>
+                                                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                                    Add field
+                                                </Button>
+                                            </Form.Item>
+                                        </>
+                                    )}
+                                </Form.List>
+                            </StyledFormBlock>
+                        </Col>
+                        <Col span={8}>
+                            Содержание проекта
+                            <StyledFormBlock name="dynamic_form_nest_item" style={{ maxWidth: 600 }} autoComplete="off">
+                                <Form.List name="users">
+                                    {(fields, {add, remove}) => (<>
+                                        {fields.map(({key, name, ...restField}) => (<Space
+                                            key={key}
+                                            style={{
+                                                display: 'flex', marginBottom: 8,
+                                            }}
+                                            align="baseline"
+                                        >
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'first']}
+                                                rules={[{
+                                                    required: true,
+                                                },]}
+                                            >
+                                                <Select>
+                                                    {dataAll && dataAll.projectStatuses && dataAll.projectStatuses.map(status => (
+                                                        <Select.Option key={status.id}
+                                                                       value={status.id}>{status.name}</Select.Option>))}
+                                                </Select>
+                                            </Form.Item>
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'last']}
+                                                rules={[{
+                                                    required: true, message: 'Missing last name',
+                                                },]}
+                                            >
+                                                <Select>
+                                                    {dataAll && dataAll.projectStatuses && dataAll.projectStatuses.map(status => (
                                                         <Select.Option key={status.id}
                                                                        value={status.id}>{status.name}</Select.Option>))}
                                                 </Select>
@@ -392,6 +439,7 @@ const ProjectForm = ({project, onClose}) => {
                             </StyledFormBlock>
                         </Col>
                     </Row>
+
                     {/*
             Модальные окна редактирования
             */}
