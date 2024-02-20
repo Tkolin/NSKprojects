@@ -60,7 +60,6 @@ const ProjectForm = ({project, onClose}) => {
     const handleAutoCompleteOrganization = (value, option) => {
         setAutoCompleteOrganization({ id: option.key, name: value });
         console.log(autoCompleteOrganization.id);
-
     };
 
 
@@ -152,18 +151,20 @@ const ProjectForm = ({project, onClose}) => {
             isChecked: false,
         }));
         formIRD.setFieldsValue({ irds_to_project: initialValuesIrds });
+
         const stages = dataTemplate && dataTemplate.templatesStagesTypeProjects;
-        const initialValuesStages = stages && stages.map(ird => ({
-            ird_id: ird.id,
-            isChecked: false,
+        const initialValuesStages = stages && stages.map(stage => ({
+            stage_id: stage.id,
+
         }));
-        formStage.setFieldsValue({ irds_to_project: initialValuesStages });
+        formStage.setFieldsValue({ stages_to_project: initialValuesStages });
+
         const contents = dataTemplate && dataTemplate.templatesContentsTypeProjects;
         const initialValuesContents = contents && contents.map(ird => ({
             ird_id: ird.id,
-            isChecked: false,
+
         }));
-        formContents.setFieldsValue({ irds_to_project: initialValuesContents });
+        formContents.setFieldsValue({ contents_to_project: initialValuesContents });
     };
 
     return (
@@ -287,45 +288,45 @@ const ProjectForm = ({project, onClose}) => {
                         </Col>
                         <Col span={8}>
                             Компонент для этапов
-                            <StyledFormBlock name="dynamic_form_nest_itemы" style={{ maxWidth: 600 }} autoComplete="off">
-                                <Form.List name="users" >
+                            <StyledFormBlock form={formStage} style={{ maxWidth: 600 }} autoComplete="off">
+                                <Form.List name="stages_to_project" >
                                     {(fields, {add, remove}) => (<>
                                         {fields.map(({key, name, ...restField}) => (<Space
                                             key={key}
                                             style={{
-                                                display: 'flex', marginBottom: 8,
+                                                display: 'flex'
                                             }}
-                                            align="baseline"
-                                        >
+                                            align="baseline">
                                             <Form.Item
                                                 {...restField}
-                                                name={[name, 'first']}
+                                                name={[name, 'stage_id']}
                                                 rules={[{
                                                     required: true, message: 'Missing first name',
                                                 },]}
                                             >
                                                 <Select>
-                                                    {dataAll && dataAll.projectStatuses && dataAll.projectStatuses.map(status => (
-                                                        <Select.Option key={status.id}
-                                                                       value={status.id}>{status.name}</Select.Option>))}
+                                                    {dataAll && dataAll.stages && dataAll.stages.map(stage => (
+                                                        <Select.Option key={stage.id}
+                                                                       value={stage.id}>{stage.name}</Select.Option>))}
                                                 </Select>
                                             </Form.Item>
                                             <Form.Item
                                                 {...restField}
-                                                name={[name, 'last']}
+                                                name={[name, 'date_start']}
                                                 rules={[{
                                                     required: true, message: 'Missing last name',
                                                 },]}
                                             >
-                                                <Select>
-                                                    {dataAll && dataAll.projectStatuses && dataAll.projectStatuses.map(status => (
-                                                        <Select.Option key={status.id}
-                                                                       value={status.id}>{status.name}</Select.Option>))}
-                                                </Select>
+                                                <DatePicker/>
                                             </Form.Item>
-                                            <Form.Item>
-                                                <Button onClick={() => add()} block icon={<PlusOutlined/>}>
-                                                </Button>
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'date_end']}
+                                                rules={[{
+                                                    required: true, message: 'Missing last name',
+                                                },]}
+                                            >
+                                                <DatePicker/>
                                             </Form.Item>
                                             <MinusCircleOutlined onClick={() => remove(name)}/>
                                         </Space>))}
@@ -339,23 +340,24 @@ const ProjectForm = ({project, onClose}) => {
                                 </Form.List>
                             </StyledFormBlock>
                             Компонент для ИРД
-                            <StyledFormBlock name="dynamic_form_nest_item" autoComplete="off">
+                            <StyledFormBlock form={formIRD} name="dynamic_form_nest_item" autoComplete="off">
                                 <Form.List name="irds_to_project">
                                     {(fields, { add, remove }) => (
                                         <>
                                             {fields.map(({ key, name, ...restField }) => (
                                                 <Space
                                                     key={key}
-                                                    style={{ display: 'flex', marginBottom: 8 }}
+                                                    style={{ display: 'flex', marginBottom: 0, marginTop: 0 }}
                                                     align="baseline"
                                                 >
                                                     <Form.Item
                                                         {...restField}
                                                         name={[name, 'ird_id']}
                                                         rules={[{ required: true, message: 'Missing IRD ID' }]}
+                                                        style={{ marginBottom: 0, display: 'flex' }}
                                                     >
 
-                                                        <Select dropdownMatchSelectWidth={false} style={{ maxWidth: 250 }}>
+                                                        <Select dropdownMatchSelectWidth={false} style={{ maxWidth: 250, minWidth: 300}}>
                                                             {dataAll && dataAll.irds  && dataAll.irds .map(ird => (
                                                                 <Select.Option key={ird.id}
                                                                                value={ird.id}>{ird.name}</Select.Option>))}
@@ -365,11 +367,9 @@ const ProjectForm = ({project, onClose}) => {
                                                         {...restField}
                                                         name={[name, 'isChecked']}
                                                         valuePropName="checked"
+                                                        style={{ marginBottom: 0 }}
                                                     >
                                                         <Checkbox />
-                                                    </Form.Item>
-                                                    <Form.Item>
-                                                        <Button onClick={() => add()} block icon={<PlusOutlined />} />
                                                     </Form.Item>
                                                     <MinusCircleOutlined onClick={() => remove(name)} />
                                                 </Space>

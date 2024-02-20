@@ -22,6 +22,7 @@ import {CURRENT_USER_QUERY} from "./graphql/queries";
 import PersonList from "./page/person/PersonList";
 import {Cookies} from "react-cookie";
 import LoadingSpinner from "./page/component/LoadingSpinner";
+import TemplateForm from "./page/component/TemplateForm";
 
 const App = () => {
     const cookies = new Cookies();
@@ -47,6 +48,8 @@ const App = () => {
                     {currentUser ? (
                         currentUser.role.name === "admin" ? (
                             <>
+                                <Route path="/template/new" element={<TemplateForm />} />
+
                                 <Route path="/contacts" element={<ContactList />} />
                                 <Route path="/contacts/new" element={<ContactForm />} />
 
@@ -64,7 +67,7 @@ const App = () => {
                                 <Route path="/person" element={<PersonList />} />
                                 <Route path="/person/new" element={<PersonForm />} />
 
-                            </>
+                        </>
                         ) : null
                     ) : (
                         <>

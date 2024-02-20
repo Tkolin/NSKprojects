@@ -22,8 +22,8 @@ final readonly class TemplatesContentsTypeProjects
             if (isset($args['typeProject'])) {
 
                 $contentTamplate = TemplateContentTypeProjects::where('project_type_id', $args['typeProject'])->get();
-                $contentIds = $contentTamplate->pluck('ird_id');
-                $contects = Contents::whereIn('id', $contentIds)->get();
+                $idsTamplate = $contentTamplate->pluck('contents_id');
+                $contects = Contents::whereIn('id', $idsTamplate)->get();
 
                 return $contects;
             } else {

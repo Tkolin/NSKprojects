@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TypeProjectDocument extends Model
@@ -12,9 +13,20 @@ class TypeProjectDocument extends Model
         'code',
         'name',
     ];
-    public function type_project_docunt_post(): HasMany
+
+
+    public function template_content_type_project(): HasMany
     {
-        return $this->hasMany(TypeProjectDocumentPost::class);
+        return $this->belongsTo(TemplateIrdsTypeProjects::class);
+    }
+    public function template_stages_type_project(): HasMany
+    {
+        return $this->belongsTo(TemplateStagesTypeProjects::class);
+    }
+
+    public function template_contents_type_project(): HasMany
+    {
+        return $this->belongsTo(TemplateContentTypeProjects::class);
     }
 
 }

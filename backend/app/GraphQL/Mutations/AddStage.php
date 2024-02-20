@@ -1,34 +1,23 @@
 <?php declare(strict_types=1);
 
-namespace App\GraphQL\Queries;
+namespace App\GraphQL\Mutations;
 
 use App\GraphQL\Service\AuthorizationService;
 use App\Models\InitialAuthorizationDocumentation;
 use App\Models\Stage;
-use App\Models\TemplateIrdsTypeProjects;
-use App\Models\TemplateStagesTypeProjects;
-use Illuminate\Support\Facades\Log;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
-final readonly class TemplatesStagesTypeProjects
+final readonly class AddStage
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
-
-        $allowedRoles = ['admin'];
+        $allowedRoles = ['admin']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            if (isset($args['typeProject'])) {
-                $stageTamplate = TemplateStagesTypeProjects::where('project_type_id', $args['typeProject'])->get();
-                $stageIds = $stageTamplate->pluck('stages_is');
-                $stage = Stage::whereIn('id', $stageIds)->get();
-
-                return $stage;
-            } else {
-                return null;
-            }
+            $stage = Stage::create($args);
+            return $stage;
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }

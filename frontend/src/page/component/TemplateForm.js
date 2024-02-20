@@ -1,27 +1,35 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Button, Select, InputNumber, Col, Row, notification, Modal, Space, Checkbox} from 'antd';
-import {useMutation, useQuery} from '@apollo/client';
-import {CURRENT_DELEGATE_QUERY, PROJECT_QUERY, TEMPLATE_IRDS_QUERY} from '../../graphql/queries';
-import {PROJECT_FORM_QUERY} from '../../graphql/queriesGroupData';
 import {
-    ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION,
-} from '../../graphql/mutationsProject';
+    Form,
+    Button,
+    Select,
+    InputNumber,
+    Col,
+    Row,
+    notification,
+    Modal,
+    Space,
+    AutoComplete
+} from 'antd';
+import {useMutation, useQuery} from '@apollo/client';
+import { TYPES_PROJECTS_QUERY} from '../../graphql/queries';
+import { UPDATE_IRDS_TEMPLATE_MUTATION, UPDATE_STAGES_TEMPLATE_MUTATION } from '../../graphql/mutationsTemplate';
 import {
     StyledFormBlock,
     StyledForm,
     StyledFormItem,
     StyledBigFormBlock,
-    StyledBigForm,
     StyledVeryBigFormBlock, StyledVeryBigForm, StyledButtonForm
 } from '../style/FormStyles';
-import {DatePicker} from "antd/lib";
 import {MinusCircleOutlined, PlusOutlined} from '@ant-design/icons';
-import OrganizationForm from "../organization/OrganizationForm";
-import moment from 'moment';
-import {keys, values} from "mobx";
-import ContactForm from "../contact/ContactForm";
-import {Cookies} from "react-cookie";
-import LoadingSpinner from "./LoadingSpinner";
+import {
+    SEARCH_IRDS_QUERY,
+    SEARCH_STAGES_QUERY,
+    SEARCH_TEMPLATE_OR_TYPE_PROJECT_QUERY
+} from "../../graphql/queriesSearch";
+import IrdForm from "../ird/IrdForm";
+import StageForm from "./StageForm";
+import TypeProjectForm from "./TypeProjectForm";
 
 const {Option} = Select;
 
@@ -30,31 +38,47 @@ const TemplateForm = ({project, onClose}) => {
     // Состояния
     const [form] = Form.useForm();
     const [formIRD] = Form.useForm();
-    const [formContents] = Form.useForm();
     const [formStage] = Form.useForm();
-    const [costumerFormViewModalVisible, setCostumerFormViewModalVisible] = useState(false);
-    const [contactFormViewModalVisible, setContactFormViewModalVisible] = useState(false);
-    const [facilityFormViewModalVisible, setFacilityFormViewModalVisible] = useState(false);
-    const [viewListProjectStageModalVisible, setViewListProjectStageModalVisible] = useState(false);
-    const [projectTypeDocument, setProjectTypeDocument] = useState(null);
-    const [editingProject, setEditingProjcet] = useState(null);
-    const [listDelegations, setListDelegations] = useState(null);
-    const [selectedOrganization, setSelectedOrganization] = useState(null);
-    const [irdsList, setIrdsList] = useState([]);
+
+    const [typeProjectFormViewModalVisible, setTypeProjectFormViewModalVisible] = useState(false);
+    const [irdFormViewModalVisible, setIrdFormViewModalVisible] = useState(false);
+    const [stageFormViewModalVisible, setStageFormViewModalVisible] = useState(false);
+
+    const [editingTemplate, setEditingTemplate] = useState();
+    const handleEditingTemplate = (value) => {
+        setEditingTemplate(value);
+    };
+
+    const [autoCompleteIrd, setAutoCompleteIrd] = useState({ id: '', name: '' });
+    const [autoCompleteStage, setAutoCompleteStage] = useState({ id: '', name: '' });
+    const handleAutoCompleteIrd = (value, option) => {
+        if(option.key == 'СОЗДАТЬ')
+        {
+            console.log(option.key);
+            setIrdFormViewModalVisible(true);
+            setAutoCompleteIrd({id: '', name: ''})
+        }
+        else{
+            setAutoCompleteIrd({ id: option.key, name: value });
+        }
+
+    };
+    const handleAutoCompleteStage = (value, option) => {
+        if(option.key == 'СОЗДАТЬ')
+        {
+            console.log(option.key);
+            setStageFormViewModalVisible(true);
+            setAutoCompleteStage({id: '', name: ''})
+        }
+        else{
+            setAutoCompleteStage({ id: option.key, name: value });
+        }
+    };
 
 
-    const handleContactFormView = () => {
-        setContactFormViewModalVisible(false);
-    };
-    const handleCostumerFormView = () => {
-        setCostumerFormViewModalVisible(false);
-    };
-    const handleFacilityFormView = () => {
-        setFacilityFormViewModalVisible(false);
-    };
-    const handleViewListProjectStage = () => {
-        setViewListProjectStageModalVisible(false);
-    };
+    const handleTypeProjectFormView = () => { setTypeProjectFormViewModalVisible(false); };
+    const handleIrdFormView = () => { setIrdFormViewModalVisible(false); };
+    const handleStageFormView = () => { setStageFormViewModalVisible(false); };
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
         notification[type]({
@@ -63,89 +87,89 @@ const TemplateForm = ({project, onClose}) => {
     };
 
     // Получение данных для выпадающих списков
-    const cookies = new Cookies();
-    const accessToken = cookies.get('accessToken');
-    const {loading, error, data} = useQuery(PROJECT_FORM_QUERY,{
-        variables: { typeProject: projectTypeDocument },
-        context: {
-            headers: {
-                Authorization: accessToken ? `Bearer ${accessToken}` : 'null',
-            }
-        }
+    const { loading: loadingTypeProject, error: errorTypeProject, data: dataTypeProject} = useQuery(TYPES_PROJECTS_QUERY);
+    const { loading: loadingTemplate, error: errorTemplate, data: dataTemplate} = useQuery(SEARCH_TEMPLATE_OR_TYPE_PROJECT_QUERY,{
+        variables: { typeProject: editingTemplate },
     });
-    // Заполнение формы данными контакта при его редактировании
+    const { loading: loadingIrds, error: errorIrds,data:  dataIrds} = useQuery(SEARCH_IRDS_QUERY, {
+        variables: { search: autoCompleteIrd.name},
+    });
+    const { loading: loadingStages, error: errorStages,data:  dataStages} = useQuery(SEARCH_STAGES_QUERY, {
+        variables: { search: autoCompleteStage.name},
+    });
+
+    // Загрузка шаблонов при редактировании
     useEffect(() => {
-        if (project) {
-            setEditingProjcet(project);
+        if (editingTemplate) {
+            setEditingTemplate(editingTemplate);
             form.setFieldsValue({
-                ...project,
-                date_signing: project.date_signing ? moment(project.date_signing, 'YYYY-MM-DD') : null,
-                date_end: project.date_end ? moment(project.date_end, 'YYYY-MM-DD') : null,
-                date_completion: project.date_completion ? moment(project.date_completion, 'YYYY-MM-DD') : null,
-                organization_customer_id: project.organization_customer ? project.organization_customer.id : null,
-                delegate_id: project.delegate ? project.delegate.id : null,
-                type_project_document_id: project.type_project_document ? project.type_project_document.id : null,
-                facility_id: project.facility ? project.facility.id : null,
-                status_id: project.status ? project.status.id : null,
+                ...editingTemplate
             });
+
+            const irds = dataTemplate.templatesIrdsTypeProjects;
+            const initialValuesIrds = irds.map(ird => ({
+                ird_id: ird.id,
+                isChecked: false,
+            }));
+            formIRD.setFieldsValue({ irds_to_project: initialValuesIrds });
+
+            const stages = dataTemplate.templatesStagesTypeProjects;
+            const initialValuesStages = stages.map(ird => ({
+                ird_id: ird.id,
+                isChecked: false,
+            }));
+            formStage.setFieldsValue({ irds_to_project: initialValuesIrds });
         }
-    }, [project, form]);
+    }, [project, form, formIRD, formStage]);
 
 
     // Мутации для добавления и обновления
-    const [addProject] = useMutation(ADD_PROJECT_MUTATION, {
-        refetchQueries: [{query: PROJECT_QUERY}], onCompleted: () => {
-            openNotification('topRight', 'success', 'Данные успешно добавлены!');
-            form.resetFields();
+    const [updateTemplateStage] = useMutation(UPDATE_STAGES_TEMPLATE_MUTATION, {
+        onCompleted: () => {
+            openNotification('topRight', 'success', 'Данные успешно обновлены ts!');
         }, onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при добавлении данных: ' + error.message);
+            openNotification('topRight', 'error', 'Ошибка при обновлении данных: ts'+ error.message);
         }
     });
-
-    const [updateProject] = useMutation(UPDATE_PROJECT_MUTATION, {
-        refetchQueries: [{query: PROJECT_QUERY}], onCompleted: () => {
-            openNotification('topRight', 'success', 'Данные успешно обновлены!');
-            setEditingProjcet(null);
-            onClose();
+    const [updateTemplateIrds] = useMutation(UPDATE_IRDS_TEMPLATE_MUTATION, {
+        onCompleted: () => {
+            openNotification('topRight', 'success', 'Данные успешно обновлены! ti');
         }, onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при обновлении данных: '+ error.message);
+            openNotification('topRight', 'error', 'Ошибка при обновлении данных: ti'+ error.message);
         }
     });
 
     // Обработчик отправки формы
     const handleSubmit = () => {
-        if (editingProject) {
-            updateProject({variables: {id: editingProject.id, ...form.getFieldsValue()}});
-        } else {
-            addProject({variables: form.getFieldsValue()});
-        }
+        const stagesData = formStage.getFieldsValue().stageList.map(stage => ({
+            stage_id: stage.stage,
+            procent: stage.procent
+        }));
+
+        const irdsData = formIRD.getFieldsValue().irdList.map(ird => ({
+            ird_id: ird.ird_id,
+            stage_number: ird.stageNumber,
+            app_number: ird.appNumber
+        }));
+
+        // Вызов мутаций для обновления данных
+        updateTemplateStage({
+            variables:
+                {
+                    typeProjectId: editingTemplate,
+                    listStages_id: stagesData.map(stage => parseInt(stage.stage_id)),
+                    listPercent: stagesData.map(stage => stage.procent)
+                }});
+        updateTemplateIrds({
+            variables:
+                {
+                    typeProjectId: editingTemplate,
+                    listIrds_id: irdsData.map(ird => parseInt(ird.ird_id)),
+                    listStageNumber: irdsData.map(ird => ird.stage_number),
+                    listAppNumber: irdsData.map(ird => ird.app_number)
+                }});
     };
 
-    const loadTemplate = () => {
-        const irds = data.templatesIrdsTypeProjects;
-        const initialValuesIrds = irds.map(ird => ({
-            ird_id: ird.id,
-            isChecked: false,
-        }));
-        formIRD.setFieldsValue({ irds_to_project: initialValuesIrds });
-        const stages = data.templatesStagesTypeProjects;
-        const initialValuesStages = stages.map(ird => ({
-            ird_id: ird.id,
-            isChecked: false,
-        }));
-        formStage.setFieldsValue({ irds_to_project: initialValuesIrds });
-        const contents = data.templatesContentsTypeProjects;
-        const initialValuesContents = contents.map(ird => ({
-            ird_id: ird.id,
-            isChecked: false,
-        }));
-        formContents.setFieldsValue({ irds_to_project: initialValuesIrds });
-    };
-
-
-    // Обработка загрузки и ошибок
-    if (loading) return <LoadingSpinner/>;
-    if (error) return `Ошибка! ${error.message}`;
 
     return (
         <>
@@ -159,30 +183,29 @@ const TemplateForm = ({project, onClose}) => {
                                             <StyledFormItem name="organization_customer_id" label="Тип документации">
                                                <Row>
                                                    <Col flex="auto">
-                                                       <Select>
-                                                           {data && data.typeDocuments && data.typeDocuments.map(typeDocument => (
+                                                       <Select onSelect={(value)=>handleEditingTemplate(value)}>
+                                                           {dataTypeProject && dataTypeProject.typeProjectDocuments  && dataTypeProject.typeProjectDocuments.map(typeDocument => (
                                                                <Option key={typeDocument.id}
                                                                        value={typeDocument.id}>{typeDocument.name}</Option>))}
                                                        </Select>
                                                    </Col>
-                                <Col>
-                                    <StyledButtonForm onClick={() => setProjectTypeDocument(true)}>Создать</StyledButtonForm>
-                                </Col>
-                          </Row>
-
+                                                    <Col>
+                                                        <StyledButtonForm onClick={() => setTypeProjectFormViewModalVisible(true)}>Создать тип</StyledButtonForm>
+                                                    </Col>
+                                              </Row>
                                             </StyledFormItem>
-                                            <StyledButtonForm type="primary" onClick={() => setProjectTypeDocument(true)}>Сохранить настройки</StyledButtonForm>
+                                            <StyledButtonForm type="primary" onClick={() => handleSubmit()}>Сохранить настройки</StyledButtonForm>
                                         </Col>
                                     </Row>
                                 </StyledFormBlock>
-                                  <p>      Список этапов:</p>
+                                  <p>           Список этапов:</p>
                                 <StyledFormBlock form={formStage} layout="vertical">
-                                    <Form.List name="stages" >
+                                    <Form.List name="stageList" >
                                         {(fields, {add, remove}) => (<>
                                             {fields.map(({key, name, ...restField}) => (<Space
                                                 key={key}
                                                 style={{
-                                                    display: 'flex', marginBottom: 2,
+                                                    display: 'flex', marginBottom: 0, marginTop: 0
                                                 }}
                                                 align="baseline"
                                             >
@@ -190,11 +213,19 @@ const TemplateForm = ({project, onClose}) => {
                                                     {...restField}
                                                     name={[name, 'stage']}
                                                 >
-                                                    <Select>
-                                                        {data && data.projectStages && data.projectStages.map(stage => (
-                                                            <Select.Option key={stage.id}
-                                                                           value={stage.id}>{stage.name}</Select.Option>))}
-                                                    </Select>
+                                                    <AutoComplete
+                                                        style={{ maxWidth: 249 , minWidth: 249}}
+                                                        dropdownMatchSelectWidth={false}
+                                                        filterOption = {false}
+                                                        options={dataStages &&  dataStages.stagesTable && dataStages.stagesTable.stages.map(stage => ({
+                                                            key: stage.id,
+                                                            value: stage.id,
+                                                            label: stage.name,
+                                                        })).concat(dataStages && dataStages.stagesTable && dataStages.stagesTable.stages && dataStages.stagesTable.stages.length === 0 ? [{ label: 'Создать новый этап?', value: '' ,key: 'СОЗДАТЬ' }] : [])}
+                                                        onChange={(value, option)=>handleAutoCompleteStage(value, option)} // Передаем введенное значение
+                                                        onSelect={(value, option)=>handleAutoCompleteStage(value, option)}
+                                                        placeholder="Начните ввод..."
+                                                    />
                                                 </Form.Item>
                                                 <Form.Item
                                                     {...restField}
@@ -221,29 +252,41 @@ const TemplateForm = ({project, onClose}) => {
                         </Col>
                         <Col span={16}>
                             ИРД
-                            <StyledBigFormBlock name="dynamic_form_nest_itemы" style={{ maxWidth: 600 }} autoComplete="off">
-                                <Form.List name="users" >
+                            <StyledBigFormBlock
+                                name="dynamic_form_nest_itemы"
+                                style={{ maxWidth: 600 }}
+                                form={formIRD}
+                            >
+                                <Form.List name="irdList" >
                                     {(fields, {add, remove}) => (<>
                                         {fields.map(({key, name, ...restField}) => (<Space
                                             key={key}
                                             style={{
-                                                display: 'flex', marginBottom: 8,
+                                                display: 'flex', marginBottom: 0, marginTop: 0
                                             }}
                                             align="baseline"
                                         >
                                             <Form.Item
                                                 {...restField}
-                                                name={[name, 'first']}
+                                                name={[name, 'ird_id']}
                                             >
-                                                <Select placeholder={"Наименование"}>
-                                                    {data && data.projectStatuses && data.projectStatuses.map(status => (
-                                                        <Select.Option key={status.id}
-                                                                       value={status.id}>{status.name}</Select.Option>))}
-                                                </Select>
+                                                <AutoComplete
+                                                    style={{ maxWidth: 300 , minWidth: 300}}
+                                                    dropdownMatchSelectWidth={false}
+                                                    filterOption = {false}
+                                                    options={dataIrds &&  dataIrds.irdsTable && dataIrds.irdsTable.irds && dataIrds.irdsTable.irds.map(ird => ({
+                                                        key: ird.id,
+                                                        value: ird.id,
+                                                        label: ird.name,
+                                                    })).concat(dataIrds && dataIrds.irdsTable && dataIrds.irdsTable.irds && dataIrds.irdsTable.irds.length === 0 ? [{ label: 'Создать новый ИРД?', value: '' ,key: 'СОЗДАТЬ' }] : [])}
+                                                    onChange={(value, option)=>handleAutoCompleteIrd(value, option)} // Передаем введенное значение
+                                                    onSelect={(value, option)=>handleAutoCompleteIrd(value, option)}
+                                                    placeholder="Начните ввод..."
+                                                />
                                             </Form.Item>
                                             <Form.Item
                                                 {...restField}
-                                                name={[name, 'last']}
+                                                name={[name, 'stageNumber']}
                                             >
                                                 <InputNumber
                                                     size={"middle"}
@@ -255,7 +298,7 @@ const TemplateForm = ({project, onClose}) => {
                                             </Form.Item>
                                             <Form.Item
                                                 {...restField}
-                                                name={[name, 'last']}
+                                                name={[name, 'appNumber']}
                                             >
                                                 <InputNumber
                                                     size={"middle"}
@@ -280,69 +323,46 @@ const TemplateForm = ({project, onClose}) => {
                         <Col></Col>
                     </Row>
 
-                    {/*
-            Модальные окна редактирования
-            */}
-                    {/* Тип документации */}
+                    {/* Модальные окна редактирования   */}
+                    {/* ЭТАП */}
                     <Modal
-                        visible={contactFormViewModalVisible}
-                        title="Организация"
-                        onCancel={() => setContactFormViewModalVisible(false)}
+                        visible={stageFormViewModalVisible}
+                        title="Этап"
+                        onCancel={() => setStageFormViewModalVisible(false)}
                         footer={null}
-                        onClose={handleContactFormView}
+                        onClose={handleStageFormView}
                     >
                         <StyledFormBlock>
                             <StyledForm form={form} layout="vertical">
-                                <ContactForm/>
-
+                                <StageForm/>
                             </StyledForm>
                         </StyledFormBlock>
                     </Modal>
-                    {/* Заказчик */}
+                    {/* ТИП ДОКУМЕНТА */}
                     <Modal
-                        visible={costumerFormViewModalVisible}
-                        title="Организация"
-                        onCancel={() => setCostumerFormViewModalVisible(false)}
+                        visible={typeProjectFormViewModalVisible}
+                        title="Тип документа"
+                        onCancel={() => setTypeProjectFormViewModalVisible(false)}
                         footer={null}
-                        onClose={handleCostumerFormView}
+                        onClose={handleTypeProjectFormView}
                     >
                         <StyledFormBlock>
                             <StyledForm form={form} layout="vertical">
-                                <OrganizationForm/>
-
+                                <TypeProjectForm/>
                             </StyledForm>
                         </StyledFormBlock>
                     </Modal>
-                    {/* Объект */}
+                    {/* ИРД */}
                     <Modal
-                        visible={facilityFormViewModalVisible}
-                        title="Объект"
-                        onCancel={() => setFacilityFormViewModalVisible(false)}
+                        visible={irdFormViewModalVisible}
+                        title="Ирд"
+                        onCancel={() => setIrdFormViewModalVisible(false)}
                         footer={null}
-                        onClose={handleFacilityFormView}
+                        onClose={handleIrdFormView}
                     >
                         <StyledFormBlock>
                             <StyledForm form={form} layout="vertical">
-                                {/* Форма для добавления новых данных */}
-                                {/* ... */}
-
-                            </StyledForm>
-                        </StyledFormBlock>
-                    </Modal>
-
-                    {/* Список задач (ВСЕХ) */}
-                    <Modal
-                        visible={viewListProjectStageModalVisible}
-                        title="Список задач"
-                        onCancel={() => setViewListProjectStageModalVisible(false)}
-                        footer={null}
-                        onClose={handleViewListProjectStage}
-                    >
-                        <StyledFormBlock>
-                            <StyledForm form={form} layout="vertical">
-                                {/* Форма для добавления новых данных */}
-                                {/* ... */}
-
+                                <IrdForm/>
                             </StyledForm>
                         </StyledFormBlock>
                     </Modal>

@@ -9,9 +9,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class TemplateStagesTypeProjects extends Model
 {
     protected $table = 'template_stages_type_project';
+    protected $primaryKey = ['project_type_id', 'stages_is'];
+    public $incrementing = false;
+
+    protected $fillable = [
+        'project_type_id',
+        'stages_is',
+        'date_start',
+        'date_end',
+        'percentage',
+        'number',
+    ];
     public function type_project(): BelongsTo
     {
-        return $this->belongsTo(TypeProjectDocumentPost::class);
+        return $this->belongsTo(TypeProjectDocument::class);
     }
     public function stage(): BelongsTo
     {

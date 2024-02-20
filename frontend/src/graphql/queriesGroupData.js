@@ -66,6 +66,10 @@ export const PROJECT_FORM_QUERY = gql`
             id
             name
         }
+        stages{
+            id
+            name
+        }
 
     }
 `;

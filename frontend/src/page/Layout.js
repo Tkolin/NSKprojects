@@ -67,7 +67,7 @@ const CustomLayout = ({ children }) => {
                     getItem('Проект', '2-2', null, null, "/project/new"),
                     getItem('Организация', '3-2', null, null, "/organization/new"),
                     getItem('Исполнитель', '4-2', null, null, "/person/new"),
-
+                    getItem('Шаблоны по типу проекта', '4-3', null, null, "/template/new"),
                     //getItem('---Добавить этап', '2-4', <FormOutlined />, null, "/project/stage/new"),
                     //getItem('---Добавить задачу', '2-6', <FormOutlined />, null, "/project/stage/task/new"),
                     //getItem('---Добавить объект', '6-2', <FormOutlined />, null, "/project/facility/new"),

@@ -2,6 +2,8 @@ type Query {
     contactsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String, searchOrganizationId: String): ContactsResult
     organizationsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): OrganizationsResult
     positionsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): PositionsResult
+    irdsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): IrdsResult
+    stagesTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): StagesResult
 
     contacts: [Contact]!
     positionsNames: [PositionName!]!
@@ -10,14 +12,16 @@ type Query {
     organizations: [Organization]
 
     templatesIrdsTypeProjects(typeProject: ID): [IRD]
-    templatesContentsTypeProjects(typeProject: ID): [IRD]
-    templatesStagesTypeProjects(typeProject: ID): [IRD]
+    templatesContentsTypeProjects(typeProject: ID): [Content]
+    templatesStagesTypeProjects(typeProject: ID): [Stage]
 
 
     projectStatuses: [ProjectStatus!]!
-    typeProjectDocuments: [TypeProjectDocument!]!
+    typeProjectDocuments: [TypeProjectDocument]
     facilitys: [Facility!]!
+
     irds: [IRD]!
+    stages: [Stage]!
 
     projects: [Project!]!
     projectStagesGroup: [ProjectStagesGroup!]!
@@ -30,6 +34,54 @@ type Query {
 }
 
 type Mutation {
+
+    updateIrdsTemplate(
+        typeProjectId: ID!
+        listIrds_id: [ID!]!
+        listStageNumber: [Int]
+        listAppNumber: [Int]
+    ) : Int
+
+    updateStagesTemplate(
+        typeProjectId: ID!
+        listStages_id: [ID!]!
+        listPercent: [Int]
+        listNumber: [Int]
+    ) : Int
+
+
+
+    addTypeProject(
+        name: String!
+        code: String!
+    ): TypeProjectDocument!
+
+    updateTypeProject(
+        id: ID!
+        name: String!
+        code: String!
+    ): TypeProjectDocument!
+
+    addIrd(
+        name: String!
+    ): IRD!
+
+    updateIrd(
+        id: ID!
+        name: String!
+    ): IRD!
+
+    addStage(
+        name: String!
+    ): Stage!
+
+    updateStage(
+        id: ID!
+        name: String!
+    ): Stage!
+
+
+
     addPpi(
         name: String!
         code: String!
@@ -237,6 +289,14 @@ type PositionsResult {
     positions: [Position]
     count: Int
 }
+type IrdsResult {
+    irds: [IRD]
+    count: Int
+}
+type StagesResult {
+    stages: [Stage]
+    count: Int
+}
 type Contact {
     id: ID!
     first_name: String!
@@ -275,7 +335,10 @@ type Role {
     id: ID!
     name: String!
 }
-
+type Content {
+    id: ID!
+    name: String!
+}
 type Position {
     id: ID!
     name: String!
@@ -330,6 +393,7 @@ type Bik{
 
 type TypeProjectDocument{
     id: ID!
+    code: String!
     name: String!
 }
 type Person{

@@ -37,6 +37,28 @@ export const SEARCH_POSITIONS_QUERY = gql`
         }
     }
 `;
+export const SEARCH_IRDS_QUERY = gql`
+    query SearchIrdsQuery($search: String){
+        irdsTable(page: 1, limit: 20, search: $search) {
+            irds {
+                id
+                name
+            }
+            count
+        }
+    }
+`;
+export const SEARCH_STAGES_QUERY = gql`
+    query SearchStagesQuery($search: String){
+        stagesTable(page: 1, limit: 20, search: $search) {
+            stages {
+                id
+                name
+            }
+            count
+        }
+    }
+`;
 export const SEARCH_DELEGATES_OR_ORGANIZATION_QUERY = gql`
     query SearchDelegatesQuery($searchOrganizationId: String){
         contactsTable(searchOrganizationId: $searchOrganizationId) {

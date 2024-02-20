@@ -46,14 +46,29 @@ export const ORGANIZATION_QUERY = gql`
         }
     }
 `;
-// TODO: не реализовано
-export const CURRENT_DELEGATE_QUERY = gql`
-    query CurrentDelegatesQuery {
-        delegates {
+export const IRDS_QUERY = gql`
+    query IrdsQuery {
+        irds{
             id
-            first_name
+            name
         }
-        
+    }
+`;
+export const STAGES_QUERY = gql`
+    query StagesQuery {
+        stages{
+            id
+            name
+        }
+    }
+`;
+export const TYPES_PROJECTS_QUERY = gql`
+    query TypeProjectsQuery {
+        typeProjectDocuments
+        {
+            id
+            name
+        }
     }
 `;
 export const PROJECT_QUERY = gql`
