@@ -1,19 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import {Form, Input, Button, Select, notification} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
-import {BIK_QUERY} from '../../graphql/queries';
 import {
     ADD_BIK_MUTATION,
     UPDATE_BIK_MUTATION
 } from '../../graphql/mutationsBik';
+import {BIK_QUERY} from '../../graphql/queries';
 import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles';
-import {ADD_STAGE_MUTATION, UPDATE_STAGE_MUTATION} from "../../graphql/mutationsStage";
 
 
-const IrdForm = ({ stage, onClose }) => {
+const BikForm = ({ bik, onClose }) => {
 
     // Состояния
-    const [editingStage, setEditingStage] = useState(null);
+    const [editingBik, setEditingBik] = useState(null);
     const [form] = Form.useForm();
     const [ api,contextHolder] = notification.useNotification();
 
@@ -28,14 +27,14 @@ const IrdForm = ({ stage, onClose }) => {
 
     // Заполнение формы данными контакта при его редактировании
     useEffect(() => {
-        if (stage) {
-            setEditingStage(stage);
-            form.setFieldsValue();
+        if (bik) {
+            setEditingBik(bik);
+            form.setFieldsValue(...bik);
         }
-    }, [stage, form]);
+    }, [bik, form]);
 
     // Мутации для добавления и обновления
-    const [addStage] = useMutation(ADD_STAGE_MUTATION, {
+    const [addBik] = useMutation(ADD_BIK_MUTATION, {
         refetchQueries: [{ query: BIK_QUERY }],
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно добавлены!');
@@ -46,11 +45,11 @@ const IrdForm = ({ stage, onClose }) => {
         }
     });
 
-    const [updateStage] = useMutation(UPDATE_STAGE_MUTATION, {
+    const [updateBik] = useMutation(UPDATE_BIK_MUTATION, {
         refetchQueries: [{ query: BIK_QUERY }],
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно обновлены!');
-            setEditingStage(null);
+            setEditingBik(null);
             onClose();
         },
         onError: () => {
@@ -60,10 +59,10 @@ const IrdForm = ({ stage, onClose }) => {
 
     // Обработчик отправки формы
     const handleSubmit = () => {
-        if (editingStage) {
-            updateStage({ variables: { id: editingStage.id, ...form.getFieldsValue() } });
+        if (editingBik) {
+            updateBik({ variables: { id: editingBik.id, ...form.getFieldsValue() } });
         } else {
-            addStage({ variables: form.getFieldsValue() });
+            addBik({ variables: form.getFieldsValue() });
         }
     };
 
@@ -71,12 +70,18 @@ const IrdForm = ({ stage, onClose }) => {
         <StyledFormBlock>
             <StyledForm form={form} layout="vertical">
                 {contextHolder}
+                <StyledFormItem name="BIK" label="Бик" rules={[{ required: true }]}>
+                    <Input />
+                </StyledFormItem>
                 <StyledFormItem name="name" label="Наименование"  rules={[{ required: true }]}>
+                    <Input />
+                </StyledFormItem>
+                <StyledFormItem name="correspondent_account" label="Корреспондентский счёт" >
                     <Input />
                 </StyledFormItem>
                 <StyledFormItem>
                     <Button type="primary" onClick={handleSubmit}>
-                        {editingStage ? "Сохранить изменения" : "Добавить"}
+                        {editingBik ? "Сохранить изменения" : "Добавить бик"}
                     </Button>
                 </StyledFormItem>
             </StyledForm>
@@ -84,4 +89,4 @@ const IrdForm = ({ stage, onClose }) => {
     );
 };
 
-export default IrdForm;
+export default BikForm;

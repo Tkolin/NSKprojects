@@ -1,7 +1,13 @@
 
 // Мутации
 import {gql} from "@apollo/client";
-
+export const DELETE_STAGE_MUTATION = gql`
+    mutation DeleteStage($id: ID! ) {
+        deleteStage(
+            id: $id
+        )
+    }
+`;
 export const ADD_STAGE_MUTATION = gql`
     mutation AddStage(
         $name: String!,

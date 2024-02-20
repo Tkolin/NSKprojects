@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { useQuery } from '@apollo/client';
 import {Button, Modal, notification, Table} from 'antd';
 import {PROJECT_QUERY} from '../../graphql/queries';
-import ProjectForm from "./ProjectForm";
+import ProjectForm from "../form/ProjectForm";
 import LoadingSpinner from "../component/LoadingSpinner";
 
 const ProjectList = () => {

@@ -1,18 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {Form, Input, Button, Select, notification} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
+import {BIK_QUERY, IRDS_QUERY} from '../../graphql/queries';
 import {
     ADD_BIK_MUTATION,
     UPDATE_BIK_MUTATION
 } from '../../graphql/mutationsBik';
-import {BIK_QUERY} from '../../graphql/queries';
 import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles';
+import {ADD_IRD_MUTATION, UPDATE_IRD_MUTATION} from "../../graphql/mutationsIrd";
 
 
-const BikForm = ({ bik, onClose }) => {
+const IrdForm = ({ ird, onClose }) => {
 
     // Состояния
-    const [editingBik, setEditingBik] = useState(null);
+    const [editingIrd, setEditingIrd] = useState(null);
     const [form] = Form.useForm();
     const [ api,contextHolder] = notification.useNotification();
 
@@ -27,15 +28,16 @@ const BikForm = ({ bik, onClose }) => {
 
     // Заполнение формы данными контакта при его редактировании
     useEffect(() => {
-        if (bik) {
-            setEditingBik(bik);
-            form.setFieldsValue();
+        if (ird) {
+            console.log(ird);
+            setEditingIrd(ird);
+            form.setFieldsValue({name: ird.name});
         }
-    }, [bik, form]);
+    }, [ird, form]);
 
     // Мутации для добавления и обновления
-    const [addBik] = useMutation(ADD_BIK_MUTATION, {
-        refetchQueries: [{ query: BIK_QUERY }],
+    const [addIrd] = useMutation(ADD_IRD_MUTATION, {
+        refetchQueries: [{ query: IRDS_QUERY }],
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно добавлены!');
             form.resetFields();
@@ -45,11 +47,11 @@ const BikForm = ({ bik, onClose }) => {
         }
     });
 
-    const [updateBik] = useMutation(UPDATE_BIK_MUTATION, {
-        refetchQueries: [{ query: BIK_QUERY }],
+    const [updateIrd] = useMutation(UPDATE_IRD_MUTATION, {
+        refetchQueries: [{ query: IRDS_QUERY }],
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно обновлены!');
-            setEditingBik(null);
+            setEditingIrd(null);
             onClose();
         },
         onError: () => {
@@ -59,10 +61,10 @@ const BikForm = ({ bik, onClose }) => {
 
     // Обработчик отправки формы
     const handleSubmit = () => {
-        if (editingBik) {
-            updateBik({ variables: { id: editingBik.id, ...form.getFieldsValue() } });
+        if (editingIrd) {
+            updateIrd({ variables: { id: editingIrd.id, ...form.getFieldsValue() } });
         } else {
-            addBik({ variables: form.getFieldsValue() });
+            addIrd({ variables: form.getFieldsValue() });
         }
     };
 
@@ -70,18 +72,12 @@ const BikForm = ({ bik, onClose }) => {
         <StyledFormBlock>
             <StyledForm form={form} layout="vertical">
                 {contextHolder}
-                <StyledFormItem name="BIK" label="Бик" rules={[{ required: true }]}>
-                    <Input />
-                </StyledFormItem>
                 <StyledFormItem name="name" label="Наименование"  rules={[{ required: true }]}>
-                    <Input />
-                </StyledFormItem>
-                <StyledFormItem name="correspondent_account" label="Корреспондентский счёт" >
                     <Input />
                 </StyledFormItem>
                 <StyledFormItem>
                     <Button type="primary" onClick={handleSubmit}>
-                        {editingBik ? "Сохранить изменения" : "Добавить бик"}
+                        {editingIrd ? "Сохранить изменения" : "Добавить"}
                     </Button>
                 </StyledFormItem>
             </StyledForm>
@@ -89,4 +85,4 @@ const BikForm = ({ bik, onClose }) => {
     );
 };
 
-export default BikForm;
+export default IrdForm;

@@ -47,27 +47,26 @@ export const ORGANIZATION_QUERY = gql`
     }
 `;
 export const IRDS_QUERY = gql`
-    query IrdsQuery {
-        irds{
-            id
-            name
+    query IrdQuery($page: Int, $limit: Int, $search: String, $sortField: String, $sortOrder: String) {
+        irdsTable(page: $page, limit: $limit, search: $search, sortField: $sortField, sortOrder: $sortOrder) {
+            irds {
+                id
+                name
+            }
+            count
         }
     }
 `;
-export const STAGES_QUERY = gql`
-    query StagesQuery {
-        stages{
-            id
-            name
-        }
-    }
-`;
+
 export const TYPES_PROJECTS_QUERY = gql`
-    query TypeProjectsQuery {
-        typeProjectDocuments
-        {
-            id
-            name
+    query TypeProjectsQuery($page: Int, $limit: Int, $search: String, $sortField: String, $sortOrder: String) {
+        typeProjectsTable(page: $page, limit: $limit, search: $search, sortField: $sortField, sortOrder: $sortOrder) {
+            typeProjects {
+                id
+                name
+                code
+            }
+            count
         }
     }
 `;
@@ -199,6 +198,17 @@ export const CONTACTS_TABLE_QUERY = gql`
                     id
                     name
                 }
+            }
+            count
+        }
+    }
+`;
+export const STAGES_QUERY = gql`
+    query StagesQuery($page: Int, $limit: Int, $search: String, $sortField: String, $sortOrder: String) {
+        stagesTable(page: $page, limit: $limit, search: $search, sortField: $sortField, sortOrder: $sortOrder) {
+            stages {
+                id
+                name
             }
             count
         }

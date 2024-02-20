@@ -17,7 +17,7 @@ import {
 } from '../style/FormStyles';
 import {DatePicker} from "antd/lib"; // Импорт стилей
 import moment from 'moment';
-import PassportPlaceIssuesForm from "./passport/passportPlaceIssuesForm";
+import PassportPlaceIssuesForm from "./passportPlaceIssuesForm";
 import LoadingSpinner from "../component/LoadingSpinner";
 
 const PersonForm = ({ person, onClose }) => {

@@ -1,19 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {Form, Input, Button, Select, notification} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
+import {BIK_QUERY, TYPES_PROJECTS_QUERY} from '../../graphql/queries';
 import {
-    ADD_PPI_MUTATION,
-    UPDATE_PPI_MUTATION
-} from '../../../graphql/mutationsPerson';
-import {StyledFormBlock, StyledForm, StyledFormItem } from '../../style/FormStyles';
-import {ADD_BIK_MUTATION, UPDATE_BIK_MUTATION} from "../../../graphql/mutationsBik";
-import {PPI_QUERY} from "../../../graphql/queries";
+    ADD_BIK_MUTATION,
+    UPDATE_BIK_MUTATION
+} from '../../graphql/mutationsBik';
+import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles';
+import {ADD_TYPE_PROJECTS_MUTATIOM, UPDATE_TYPE_PROJECTS_MUTATIOM} from "../../graphql/mutationsTypeProject";
 
 
-const PassportPlaceIssuesForm = ({ issues, onClose }) => {
+const IrdForm = ({ typeProject, onClose }) => {
 
     // Состояния
-    const [editingIssues, setEditingIssues] = useState(null);
+    const [editingTypeProject, setEditingTypeProject] = useState(null);
     const [form] = Form.useForm();
     const [ api,contextHolder] = notification.useNotification();
 
@@ -28,42 +28,42 @@ const PassportPlaceIssuesForm = ({ issues, onClose }) => {
 
     // Заполнение формы данными контакта при его редактировании
     useEffect(() => {
-        if (issues) {
-            setEditingIssues(issues);
-            form.setFieldsValue();
+        if (typeProject) {
+            setEditingTypeProject(typeProject);
+            form.setFieldsValue({code: typeProject.code, name: typeProject.name});
         }
-    }, [issues, form]);
+    }, [typeProject, form]);
 
     // Мутации для добавления и обновления
-    const [addIssues] = useMutation(ADD_PPI_MUTATION, {
-        refetchQueries: [{ query: PPI_QUERY }],
+    const [addTypeProject] = useMutation(ADD_TYPE_PROJECTS_MUTATIOM, {
+        refetchQueries: [{ query: TYPES_PROJECTS_QUERY }],
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно добавлены!');
             form.resetFields();
         },
-        onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при добавлении данных: '+ error.message);
+        onError: () => {
+            openNotification('topRight', 'error', 'Ошибка при добавлении данных.');
         }
     });
 
-    const [updateIssues] = useMutation(UPDATE_PPI_MUTATION, {
-        refetchQueries: [{ query:  PPI_QUERY}],
+    const [updateTypeProject] = useMutation(UPDATE_TYPE_PROJECTS_MUTATIOM, {
+        refetchQueries: [{ query: TYPES_PROJECTS_QUERY }],
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно обновлены!');
-            setEditingIssues(null);
+            setEditingTypeProject(null);
             onClose();
         },
-        onError: () => {
-            openNotification('topRight', 'error', 'Ошибка при обновлении данных.');
+        onError: (error) => {
+            openNotification('topRight', 'error', 'Ошибка при обновлении данных:' + error.message);
         }
     });
 
     // Обработчик отправки формы
     const handleSubmit = () => {
-        if (editingIssues) {
-            updateIssues({ variables: { id: editingIssues.id, ...form.getFieldsValue() } });
+        if (editingTypeProject) {
+            updateTypeProject({ variables: { id: editingTypeProject.id, ...form.getFieldsValue() } });
         } else {
-            addIssues({ variables: form.getFieldsValue() });
+            addTypeProject({ variables: form.getFieldsValue() });
         }
     };
 
@@ -74,12 +74,12 @@ const PassportPlaceIssuesForm = ({ issues, onClose }) => {
                 <StyledFormItem name="name" label="Наименование"  rules={[{ required: true }]}>
                     <Input />
                 </StyledFormItem>
-                <StyledFormItem name="code" label="Код"  rules={[{ required: true }]}>
+                <StyledFormItem name="code" label="код"  rules={[{ required: true }]}>
                     <Input />
                 </StyledFormItem>
                 <StyledFormItem>
                     <Button type="primary" onClick={handleSubmit}>
-                        {editingIssues ? "Сохранить изменения" : "Добавить"}
+                        {editingTypeProject ? "Сохранить изменения" : "Добавить"}
                     </Button>
                 </StyledFormItem>
             </StyledForm>
@@ -87,4 +87,4 @@ const PassportPlaceIssuesForm = ({ issues, onClose }) => {
     );
 };
 
-export default PassportPlaceIssuesForm;
+export default IrdForm;

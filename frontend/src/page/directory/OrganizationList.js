@@ -3,7 +3,7 @@ import {useMutation, useQuery} from '@apollo/client';
 import {Button, Modal, notification, Table} from 'antd';
 import {CONTACTS_TABLE_QUERY, ORGANIZATION_QUERY, ORGANIZATIONS_TABLE_QUERY} from '../../graphql/queries';
 import {DELETE_ORGANIZATION_MUTATION} from '../../graphql/mutationsOrganization';
-import OrganizationForm from "./OrganizationForm";
+import OrganizationForm from "../form/OrganizationForm";
 import LoadingSpinner from "../component/LoadingSpinner";
 
 const OrganizationList = () => {

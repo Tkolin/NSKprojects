@@ -48,6 +48,7 @@ export const SEARCH_IRDS_QUERY = gql`
         }
     }
 `;
+
 export const SEARCH_STAGES_QUERY = gql`
     query SearchStagesQuery($search: String){
         stagesTable(page: 1, limit: 20, search: $search) {

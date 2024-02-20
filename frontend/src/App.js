@@ -1,28 +1,31 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
-import ContactList from './page/contact/ContactList';
-import ContactForm from './page/contact/ContactForm';
+import ContactList from './page/directory/ContactList';
+import ContactForm from './page/form/ContactForm';
 import LoginForm from './page/authorization/LoginForm';
 import RegisterForm from './page/authorization/RegisterForm';
 import Home from './page/Home';
-import OrganizationForm from './page/organization/OrganizationForm';
-import OrganizationList from './page/organization/OrganizationList';
-import PersonForm from './page/person/PersonForm';
-import ProjectForm from './page/project/ProjectForm';
-import ProjectList from './page/project/ProjectList';
-import FacilityForm from './page/project/facility/FacilityForm';
-import FacilityList from './page/project/facility/FacilityList';
-import ProjectStageFrom from './page/project/stage/ProjectStageForm';
-import ProjectStageList from './page/project/stage/ProjectStageList';
-import StageTaskForm from './page/project/stage/task/StageTaskForm';
-import StageTaskList from './page/project/stage/task/StageTaskList';
+import OrganizationForm from './page/form/OrganizationForm';
+import OrganizationList from './page/directory/OrganizationList';
+import PersonForm from './page/form/PersonForm';
+import ProjectForm from './page/form/ProjectForm';
+import ProjectList from './page/directory/ProjectList';
+import FacilityForm from './page/form/FacilityForm';
+import FacilityList from './page/directory/FacilityList';
+import ProjectStageFrom from './page/form/ProjectStageForm';
+import ProjectStageList from './page/directory/ProjectStageList';
+import StageTaskForm from './page/form/StageTaskForm';
+import StageTaskList from './page/directory/StageTaskList';
 import CustomLayout from './page/Layout';
 import {useQuery} from "@apollo/client";
 import {CURRENT_USER_QUERY} from "./graphql/queries";
-import PersonList from "./page/person/PersonList";
+import PersonList from "./page/directory/PersonList";
 import {Cookies} from "react-cookie";
 import LoadingSpinner from "./page/component/LoadingSpinner";
-import TemplateForm from "./page/component/TemplateForm";
+import TemplateForm from "./page/form/TemplateForm";
+import IrdList from "./page/directory/IrdList";
+import TypeProjectList from "./page/directory/TypeProjectList";
+import StageList from "./page/directory/StageList";
 
 const App = () => {
     const cookies = new Cookies();
@@ -48,6 +51,10 @@ const App = () => {
                     {currentUser ? (
                         currentUser.role.name === "admin" ? (
                             <>
+                                <Route path="/ird" element={<IrdList />} />
+                                <Route path="/typeProject" element={<TypeProjectList />} />
+                                <Route path="/stageProject" element={<StageList />} />
+
                                 <Route path="/template/new" element={<TemplateForm />} />
 
                                 <Route path="/contacts" element={<ContactList />} />

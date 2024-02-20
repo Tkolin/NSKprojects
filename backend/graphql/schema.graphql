@@ -4,6 +4,8 @@ type Query {
     positionsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): PositionsResult
     irdsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): IrdsResult
     stagesTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): StagesResult
+    typeProjectsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): TypeProjectsResult
+
 
     contacts: [Contact]!
     positionsNames: [PositionName!]!
@@ -55,31 +57,36 @@ type Mutation {
         name: String!
         code: String!
     ): TypeProjectDocument!
-
     updateTypeProject(
         id: ID!
         name: String!
         code: String!
     ): TypeProjectDocument!
+    deleteTypeProject (
+        id: ID!
+    ): String
 
     addIrd(
         name: String!
     ): IRD!
-
     updateIrd(
         id: ID!
         name: String!
     ): IRD!
+    deleteIrd (
+        id: ID!
+    ): String
 
     addStage(
         name: String!
     ): Stage!
-
     updateStage(
         id: ID!
         name: String!
     ): Stage!
-
+    deleteStage (
+        id: ID!
+    ): String
 
 
     addPpi(
@@ -137,6 +144,10 @@ type Mutation {
     deletePerson (
         id: ID!
     ): Person
+
+
+
+
     deleteOrganization (
         id: ID!
     ): Organization
@@ -295,6 +306,10 @@ type IrdsResult {
 }
 type StagesResult {
     stages: [Stage]
+    count: Int
+}
+type TypeProjectsResult {
+    typeProjects: [TypeProjectDocument]
     count: Int
 }
 type Contact {

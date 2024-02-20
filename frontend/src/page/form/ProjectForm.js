@@ -29,10 +29,10 @@ import {
 } from '../style/FormStyles';
 import {DatePicker} from "antd/lib";
 import {MinusCircleOutlined, PlusOutlined} from '@ant-design/icons';
-import OrganizationForm from "../organization/OrganizationForm";
+import OrganizationForm from "./OrganizationForm";
 import moment from 'moment';
 import {keys, values} from "mobx";
-import ContactForm from "../contact/ContactForm";
+import ContactForm from "./ContactForm";
 import {Cookies} from "react-cookie";
 import LoadingSpinner from "../component/LoadingSpinner";
 import {

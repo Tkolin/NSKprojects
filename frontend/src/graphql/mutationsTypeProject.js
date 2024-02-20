@@ -1,6 +1,14 @@
 // Мутации
 import {gql} from "@apollo/client";
 
+export const DELETE_TYPE_PROJECT_MUTATION = gql`
+    mutation DeleteTypeProject($id: ID! ) {
+        deleteTypeProject(
+            id: $id
+        )
+    }
+`;
+
 export const ADD_TYPE_PROJECTS_MUTATIOM = gql`
     mutation AddTypeProject(
         $name: String!,

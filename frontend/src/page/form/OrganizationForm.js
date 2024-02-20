@@ -17,8 +17,8 @@ import {
 } from '../style/FormStyles';
 import {AddressSuggestions} from "react-dadata";
 import 'react-dadata/dist/react-dadata.css';
-import ContactForm from "../contact/ContactForm";
-import BikForm from "../bik/BikForm";
+import ContactForm from "./ContactForm";
+import BikForm from "./BikForm";
 import LoadingSpinner from "../component/LoadingSpinner";
 import {SEARCH_CONTACTS_QUERY} from "../../graphql/queriesSearch";
 const OrganizationForm = ({ organization, onClose }) => {

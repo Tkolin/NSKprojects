@@ -1,0 +1,176 @@
+// Ваш проект/frontend/src/components/IrdList.js
+
+import React, {useState} from 'react';
+import {useMutation, useQuery} from '@apollo/client';
+import {Button, Form, Modal, notification, Table} from 'antd';
+import {CONTACTS_QUERY, IRDS_QUERY, STAGES_QUERY} from '../../graphql/queries';
+import {DELETE_CONTACT_MUTATION, DELETE_IRD_MUTATION} from '../../graphql/mutationsIrd';
+import IrdForm from "../form/IrdForm";
+import {SEARCH_STAGES_QUERY} from "../../graphql/queriesSearch";
+import LoadingSpinner from "../component/LoadingSpinner";
+import Search from "antd/es/input/Search";
+
+const IrdList = () => {
+
+    // Состояния
+    const [selectedIrd, setSelectedIrd] = useState(null);
+    const [editModalVisible, setEditModalVisible] = useState(false);
+    const [formSearch] = Form.useForm();
+
+    // Данные
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+
+    const [currentSort, setCurrentSort] = useState({});
+
+    const [sortField, setSortField] = useState('');
+    const [sortOrder, setSortOrder] = useState('');
+
+    const [search, setSearch] = useState('');
+
+    const { loading, error, data } = useQuery(IRDS_QUERY, {
+        variables: {
+            page,
+            limit,
+            search,
+            sortField,
+            sortOrder,
+        },
+    });
+
+    // Функции уведомлений
+    const openNotification = (placement, type, message) => {
+        notification[type]({
+            message: message,
+            placement,
+        });
+    };
+
+    // Мутация для удаления
+    const [deleteIrd] = useMutation(DELETE_IRD_MUTATION, {
+        onCompleted: () => {
+            openNotification('topRight', 'success', 'Данные успешно удалены!');
+            window.location.reload();
+
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
+            window.location.reload();
+
+        },
+        update: (cache, { data: { deleteIrd } }) => {
+            const { irds } = cache.readQuery({ query: STAGES_QUERY });
+            const updatedIrds = irds.filter(ird => ird.id !== deleteIrd.id);
+            cache.writeQuery({
+                query: STAGES_QUERY,
+                data: { irds: updatedIrds },
+            });
+        },
+    });
+
+    // Обработчик событий
+    const handleClose = () => {setEditModalVisible(false);};
+    const handleEdit = (irdId) => {
+        const ird = data.irdsTable.irds.find(ird => ird.id === irdId);
+        setSelectedIrd(ird);
+        setEditModalVisible(true);
+    };
+    const handleDelete = (irdId) => {
+        deleteIrd({ variables: { id: irdId}});
+    };
+    const onSearch = (value) =>{
+        setSearch(value);
+    };
+    // Обработка загрузки и ошибок
+    if(!data)
+        if (loading) return <LoadingSpinner/>;
+    if (error) return `Ошибка! ${error.message}`;
+
+    // Формат таблицы
+    const columns = [
+        {
+            title: 'Наименование',
+            dataIndex: 'name',
+            key: 'name',
+
+            sorter: true,
+            ellipsis: true,
+        },
+        {
+            title: 'Управление',
+            key: 'edit',
+            render: (text, record) => (
+                <div>
+                    <Button  onClick={() => handleEdit(record.id)}>Изменить</Button>
+                    <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
+                </div>
+
+            ),
+        },
+    ];
+    const onChange = (pagination, filters, sorter) => {
+
+        if((sorter.field !== undefined) && currentSort !== sorter){
+            setCurrentSort(sorter);
+            if (sortField !== sorter.field) {
+                setSortField(sorter.field);
+                setSortOrder("asc");
+            }
+            else {
+                setSortField(sortField);
+                switch (sortOrder){
+                    case ("asc"):
+                        setSortOrder("desc");
+                        break;
+                    case ("desc"):
+                        setSortOrder("");
+                        break;
+                    case (""):
+                        setSortOrder("asc");
+                        break;
+                }
+            }
+        }else
+            console.log("Фильтры сохранены");
+    };
+    return (
+        <div>
+            <Form form={formSearch} layout="horizontal">
+                <Form.Item label="Поиск:" name="search">
+                    <Search
+                        placeholder="Найти..."
+                        allowClear
+                        enterButton="Search"
+                        onSearch={onSearch}
+                    />
+                </Form.Item>
+            </Form>
+            <Table
+                loading={loading}
+                dataSource={data.irdsTable.irds}
+                columns={columns}
+                onChange={onChange}
+                pagination={{
+                    total: data.irdsTable.count,
+                    current: page,
+                    limit,
+                    onChange: (page, limit) => setPage(page),
+                    onShowSizeChange: (current, size) => {
+                        setPage(1);
+                        setLimit(size);
+                    },
+                }}
+            />
+            <Modal
+                visible={editModalVisible}
+                title="Изменить этап"
+                onCancel={() => setEditModalVisible(false)}
+                footer={null}
+                onClose={handleClose}
+            >
+                <IrdForm ird={selectedIrd} onClose={handleClose}/>
+            </Modal>
+        </div>
+    );
+};
+export default IrdList;

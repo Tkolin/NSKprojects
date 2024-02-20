@@ -27,7 +27,7 @@ import {
     SEARCH_STAGES_QUERY,
     SEARCH_TEMPLATE_OR_TYPE_PROJECT_QUERY
 } from "../../graphql/queriesSearch";
-import IrdForm from "../ird/IrdForm";
+import IrdForm from "./IrdForm";
 import StageForm from "./StageForm";
 import TypeProjectForm from "./TypeProjectForm";
 

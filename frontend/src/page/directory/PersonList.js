@@ -3,7 +3,7 @@ import {useMutation, useQuery} from '@apollo/client';
 import {Button, Modal, notification, Table} from 'antd';
 import {PERSON_QUERY} from '../../graphql/queries';
 import {DELETE_PERSON_MUTATION} from '../../graphql/mutationsPerson';
-import PersonForm from "./PersonForm";
+import PersonForm from "../form/PersonForm";
 import LoadingSpinner from "../component/LoadingSpinner";
 
 const PersonList = () => {
