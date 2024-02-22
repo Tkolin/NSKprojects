@@ -2,13 +2,15 @@
 
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, Form, Modal, notification, Table} from 'antd';
+import {Button, FloatButton, Form, Modal, notification, Table} from 'antd';
 import {CONTACTS_QUERY, STAGES_QUERY} from '../../graphql/queries';
 import {DELETE_CONTACT_MUTATION, DELETE_STAGE_MUTATION} from '../../graphql/mutationsStage';
 import StageForm from "../form/StageForm";
 import {SEARCH_STAGES_QUERY} from "../../graphql/queriesSearch";
 import LoadingSpinner from "../component/LoadingSpinner";
 import Search from "antd/es/input/Search";
+import {PlusSquareOutlined} from "@ant-design/icons";
+import TypeProjectForm from "../form/TypeProjectForm";
 
 const StageList = () => {
 
@@ -16,6 +18,7 @@ const StageList = () => {
     const [selectedStage, setSelectedStage] = useState(null);
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [formSearch] = Form.useForm();
+    const [addModalVisible, setAddModalVisible] = useState(false);
 
     // Данные
     const [page, setPage] = useState(1);
@@ -75,6 +78,9 @@ const StageList = () => {
         setSelectedStage(stage);
         setEditModalVisible(true);
     };
+    const handleAdd = () => {
+        setAddModalVisible(true);
+    };
     const handleDelete = (stageId) => {
         deleteStage({ variables: { id: stageId}});
     };
@@ -100,7 +106,7 @@ const StageList = () => {
             title: 'Управление',
             key: 'edit',
             render: (text, record) => (
-                <div>
+                <div style={{display: 'flex', gap: '8px'}}>
                     <Button  onClick={() => handleEdit(record.id)}>Изменить</Button>
                     <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
                 </div>
@@ -135,6 +141,13 @@ const StageList = () => {
     };
     return (
         <div>
+            <FloatButton
+                style={{  display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'green'  }}
+                onClick={() => handleAdd()}
+                tooltip={<div>Создать новую запись</div>}
+            >
+                <PlusSquareOutlined style={{ fontSize: '90px', color: 'green' }} />
+            </FloatButton>
             <Form form={formSearch} layout="horizontal">
                 <Form.Item label="Поиск:" name="search">
                     <Search
@@ -146,6 +159,10 @@ const StageList = () => {
                 </Form.Item>
             </Form>
             <Table
+                size={'small'}
+                sticky={{
+                    offsetHeader: 64,
+                }}
                 loading={loading}
                 dataSource={data.stagesTable.stages}
                 columns={columns}
@@ -159,6 +176,8 @@ const StageList = () => {
                         setPage(1);
                         setLimit(size);
                     },
+                    showSizeChanger: true,
+                    pageSizeOptions: ['10', '20', '50', '100'],
                 }}
             />
             <Modal
@@ -169,6 +188,15 @@ const StageList = () => {
                 onClose={handleClose}
             >
                 <StageForm stage={selectedStage} onClose={handleClose}/>
+            </Modal>
+            <Modal
+                visible={addModalVisible}
+                title="Создать этап"
+                onCancel={() => setAddModalVisible(false)}
+                footer={null}
+                onClose={handleClose}
+            >
+                <StageForm onClose={handleClose}/>
             </Modal>
         </div>
     );

@@ -2,19 +2,21 @@
 
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, Form, Modal, notification, Table} from 'antd';
-import {CONTACTS_QUERY, STAGES_QUERY, TYPES_PROJECTS_QUERY} from '../../graphql/queries';
-import {DELETE_CONTACT_MUTATION, DELETE_TYPE_PROJECT_MUTATION} from '../../graphql/mutationsTypeProject';
+import {Button, FloatButton, Form, Modal, notification, Table} from 'antd';
+import { TYPES_PROJECTS_QUERY} from '../../graphql/queries';
+import { DELETE_TYPE_PROJECT_MUTATION} from '../../graphql/mutationsTypeProject';
 import TypeProjectForm from "../form/TypeProjectForm";
-import {SEARCH_STAGES_QUERY} from "../../graphql/queriesSearch";
+
 import LoadingSpinner from "../component/LoadingSpinner";
 import Search from "antd/es/input/Search";
+import {EditTwoTone, PlusSquareOutlined} from "@ant-design/icons";
 
 const TypeProjectList = () => {
 
     // Состояния
     const [selectedTypeProject, setSelectedTypeProject] = useState(null);
     const [editModalVisible, setEditModalVisible] = useState(false);
+    const [addModalVisible, setAddModalVisible] = useState(false);
     const [formSearch] = Form.useForm();
 
     // Данные
@@ -75,6 +77,9 @@ const TypeProjectList = () => {
         setSelectedTypeProject(typeProject);
         setEditModalVisible(true);
     };
+    const handleAdd = () => {
+        setAddModalVisible(true);
+    };
     const handleDelete = (typeProjectId) => {
         deleteTypeProject({ variables: { id: typeProjectId}});
     };
@@ -108,7 +113,7 @@ const TypeProjectList = () => {
             title: 'Управление',
             key: 'edit',
             render: (text, record) => (
-                <div>
+                <div style={{display: 'flex', gap: '8px'}}>
                     <Button  onClick={() => handleEdit(record.id)}>Изменить</Button>
                     <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
                 </div>
@@ -143,6 +148,15 @@ const TypeProjectList = () => {
     };
     return (
         <div>
+
+            <FloatButton
+                style={{  display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'green'  }}
+                onClick={() => handleAdd()}
+                tooltip={<div>Создать новую запись</div>}
+            >
+                <PlusSquareOutlined style={{ fontSize: '90px', color: 'green' }} />
+            </FloatButton>
+
             <Form form={formSearch} layout="horizontal">
                 <Form.Item label="Поиск:" name="search">
                     <Search
@@ -154,6 +168,10 @@ const TypeProjectList = () => {
                 </Form.Item>
             </Form>
             <Table
+                size={'small'}
+                sticky={{
+                    offsetHeader: 64,
+                }}
                 loading={loading}
                 dataSource={data.typeProjectsTable.typeProjects}
                 columns={columns}
@@ -167,16 +185,27 @@ const TypeProjectList = () => {
                         setPage(1);
                         setLimit(size);
                     },
+                    showSizeChanger: true,
+                    pageSizeOptions: ['10', '20', '50', '100'],
                 }}
             />
             <Modal
                 visible={editModalVisible}
-                title="Изменить этап"
+                title="Изменить тип проекта"
                 onCancel={() => setEditModalVisible(false)}
                 footer={null}
                 onClose={handleClose}
             >
                 <TypeProjectForm typeProject={selectedTypeProject} onClose={handleClose}/>
+            </Modal>
+            <Modal
+                visible={addModalVisible}
+                title="Создать тип проекта"
+                onCancel={() => setAddModalVisible(false)}
+                footer={null}
+                onClose={handleClose}
+            >
+                <TypeProjectForm onClose={handleClose}/>
             </Modal>
         </div>
     );

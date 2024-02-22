@@ -15,16 +15,16 @@ class TypeProjectDocument extends Model
     ];
 
 
-    public function template_content_type_project(): HasMany
+    public function template_content_type_project(): BelongsTo
     {
         return $this->belongsTo(TemplateIrdsTypeProjects::class);
     }
-    public function template_stages_type_project(): HasMany
+    public function template_stages_type_project(): BelongsTo
     {
         return $this->belongsTo(TemplateStagesTypeProjects::class);
     }
 
-    public function template_contents_type_project(): HasMany
+    public function template_contents_type_project(): BelongsTo
     {
         return $this->belongsTo(TemplateContentTypeProjects::class);
     }

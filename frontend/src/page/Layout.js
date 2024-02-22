@@ -61,9 +61,6 @@ const CustomLayout = ({ children }) => {
                     getItem('ИРД', '1-5',null, null, "/ird"),
                     getItem('Типы документации', '1-6',null, null, "/typeProject"),
                     getItem('Этапы проекта', '1-7',null, null, "/stageProject"),
-                    //getItem('---Этапов', '2-3', null, null, "/project/stage"),
-                    //getItem('---Задач', '2-5', null, null, "/project/stage/task"),
-                    //getItem('---Объектов', '6-1', null, null, "/project/facility"),
                 ]),
                 getItem('Формы', '2', <FormOutlined />, [
                     getItem('Контакт', '2-1', null, null, "/contacts/new"),
@@ -71,9 +68,6 @@ const CustomLayout = ({ children }) => {
                     getItem('Организация', '2-3', null, null, "/organization/new"),
                     getItem('Исполнитель', '2-4', null, null, "/person/new"),
                     getItem('Шаблоны по типу проекта', '2-5', null, null, "/template/new"),
-                    //getItem('---Добавить этап', '2-4', <FormOutlined />, null, "/project/stage/new"),
-                    //getItem('---Добавить задачу', '2-6', <FormOutlined />, null, "/project/stage/task/new"),
-                    //getItem('---Добавить объект', '6-2', <FormOutlined />, null, "/project/facility/new"),
                 ]),
                 getItem('Отчёты', '3', <SolutionOutlined />, [
                 ])

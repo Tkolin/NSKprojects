@@ -159,12 +159,6 @@ const ProjectForm = ({project, onClose}) => {
         }));
         formStage.setFieldsValue({ stages_to_project: initialValuesStages });
 
-        const contents = dataTemplate && dataTemplate.templatesContentsTypeProjects;
-        const initialValuesContents = contents && contents.map(ird => ({
-            ird_id: ird.id,
-
-        }));
-        formContents.setFieldsValue({ contents_to_project: initialValuesContents });
     };
 
     return (
@@ -289,7 +283,7 @@ const ProjectForm = ({project, onClose}) => {
                         <Col span={8}>
                             Компонент для этапов
                             <StyledFormBlock form={formStage} style={{ maxWidth: 600 }} autoComplete="off">
-                                <Form.List name="stages_to_project" >
+                                <Form.List name="stages_to_project"  >
                                     {(fields, {add, remove}) => (<>
                                         {fields.map(({key, name, ...restField}) => (<Space
                                             key={key}
@@ -300,6 +294,7 @@ const ProjectForm = ({project, onClose}) => {
                                             <Form.Item
                                                 {...restField}
                                                 name={[name, 'stage_id']}
+                                                style={{ marginBottom: 0, display: 'flex' }}
                                                 rules={[{
                                                     required: true, message: 'Missing first name',
                                                 },]}
@@ -385,58 +380,7 @@ const ProjectForm = ({project, onClose}) => {
                             </StyledFormBlock>
                         </Col>
                         <Col span={8}>
-                            Содержание проекта
-                            <StyledFormBlock name="dynamic_form_nest_item" style={{ maxWidth: 600 }} autoComplete="off">
-                                <Form.List name="users">
-                                    {(fields, {add, remove}) => (<>
-                                        {fields.map(({key, name, ...restField}) => (<Space
-                                            key={key}
-                                            style={{
-                                                display: 'flex', marginBottom: 8,
-                                            }}
-                                            align="baseline"
-                                        >
-                                            <Form.Item
-                                                {...restField}
-                                                name={[name, 'first']}
-                                                rules={[{
-                                                    required: true,
-                                                },]}
-                                            >
-                                                <Select>
-                                                    {dataAll && dataAll.projectStatuses && dataAll.projectStatuses.map(status => (
-                                                        <Select.Option key={status.id}
-                                                                       value={status.id}>{status.name}</Select.Option>))}
-                                                </Select>
-                                            </Form.Item>
-                                            <Form.Item
-                                                {...restField}
-                                                name={[name, 'last']}
-                                                rules={[{
-                                                    required: true, message: 'Missing last name',
-                                                },]}
-                                            >
-                                                <Select>
-                                                    {dataAll && dataAll.projectStatuses && dataAll.projectStatuses.map(status => (
-                                                        <Select.Option key={status.id}
-                                                                       value={status.id}>{status.name}</Select.Option>))}
-                                                </Select>
-                                            </Form.Item>
-                                            <Form.Item>
-                                                <Button onClick={() => add()} block icon={<PlusOutlined/>}>
-                                                </Button>
-                                            </Form.Item>
-                                            <MinusCircleOutlined onClick={() => remove(name)}/>
-                                        </Space>))}
-                                        <Form.Item>
-                                            <Button type="dashed" onClick={() => add()} block
-                                                    icon={<PlusOutlined/>}>
-                                                Add field
-                                            </Button>
-                                        </Form.Item>
-                                    </>)}
-                                </Form.List>
-                            </StyledFormBlock>
+
                         </Col>
                     </Row>
 

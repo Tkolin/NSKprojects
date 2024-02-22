@@ -5,7 +5,8 @@ type Query {
     irdsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): IrdsResult
     stagesTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): StagesResult
     typeProjectsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): TypeProjectsResult
-
+    projectsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): ProjectsResult
+    personsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): PersonsResult
 
     contacts: [Contact]!
     positionsNames: [PositionName!]!
@@ -298,6 +299,14 @@ type OrganizationsResult {
 }
 type PositionsResult {
     positions: [Position]
+    count: Int
+}
+type ProjectsResult {
+    projects: [Project]
+    count: Int
+}
+type PersonsResult {
+    persons: [Person]
     count: Int
 }
 type IrdsResult {

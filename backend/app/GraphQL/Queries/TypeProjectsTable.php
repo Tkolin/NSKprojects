@@ -23,7 +23,8 @@ final readonly class TypeProjectsTable
             if (isset($args['search'])) {
                 $searchTerm = $args['search'];
                 $tpds = $tpds
-                    ->where('name', 'like', "%$searchTerm%");
+                    ->where('name', 'like', "%$searchTerm%")
+                    ->orWhere('code', 'like', "%$searchTerm%");
             }
 
             // Получаем количество записей

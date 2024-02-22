@@ -1,15 +1,20 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, Modal, notification, Table} from 'antd';
+import {Button, FloatButton, Form, Modal, notification, Table} from 'antd';
 import {CONTACTS_TABLE_QUERY, ORGANIZATION_QUERY, ORGANIZATIONS_TABLE_QUERY} from '../../graphql/queries';
 import {DELETE_ORGANIZATION_MUTATION} from '../../graphql/mutationsOrganization';
 import OrganizationForm from "../form/OrganizationForm";
 import LoadingSpinner from "../component/LoadingSpinner";
+import TypeProjectForm from "../form/TypeProjectForm";
+import Search from "antd/es/input/Search";
+import {PlusSquareOutlined} from "@ant-design/icons";
 
 const OrganizationList = () => {
     // Состояния
     const [selectedOrganization, setSelectedOrganization] = useState(null);
     const [editModalVisible, setEditModalVisible] = useState(false);
+    const [addModalVisible, setAddModalVisible] = useState(false);
+    const [formSearch] = Form.useForm();
 
     // Данные
     const [page, setPage] = useState(1);
@@ -66,6 +71,9 @@ const OrganizationList = () => {
         const organization = data.organizationsTable.organizations.find(organization => organization.id === organizationId);
         setSelectedOrganization(organization);
         setEditModalVisible(true);
+    };
+    const handleAdd = () => {
+        setAddModalVisible(true);
     };
     const handleDelete = (organizationId) => {
         deleteOrganization({ variables: { id: organizationId}});
@@ -159,7 +167,7 @@ const OrganizationList = () => {
             title: 'Управление',
             key: 'edit',
             render: (text, record) => (
-                <div>
+                <div style={{display: 'flex', gap: '8px'}}>
                     <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
                     <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
                 </div>
@@ -195,7 +203,28 @@ const OrganizationList = () => {
     };
 
     return<>
+        <FloatButton
+            style={{  display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'green'  }}
+            onClick={() => handleAdd()}
+            tooltip={<div>Создать новую запись</div>}
+        >
+            <PlusSquareOutlined style={{ fontSize: '90px', color: 'green' }} />
+        </FloatButton>
+        <Form form={formSearch} layout="horizontal">
+            <Form.Item label="Поиск:" name="search">
+                <Search
+                    placeholder="Найти..."
+                    allowClear
+                    enterButton="Search"
+                    onSearch={onSearch}
+                />
+            </Form.Item>
+        </Form>
         <Table
+            size={'small'}
+            sticky={{
+                offsetHeader: 64,
+            }}
             loading={loading}
             dataSource={data.organizationsTable.organizations}
             columns={columns}
@@ -209,6 +238,8 @@ const OrganizationList = () => {
                     setPage(1);
                     setLimit(size);
                 },
+                showSizeChanger: true,
+                pageSizeOptions: ['10', '20', '50', '100'],
             }}
             expandable={{
                 expandedRowRender: (record) => (
@@ -241,13 +272,22 @@ const OrganizationList = () => {
         />
     <Modal
         visible={editModalVisible}
-        title="Изменить контакт"
+        title="Изменить организацию"
         onCancel={() => setEditModalVisible(false)}
         footer={null}
         onClose={handleClose}
     >
         <OrganizationForm organization={selectedOrganization} onClose={handleClose}/>
     </Modal>
+        <Modal
+            visible={addModalVisible}
+            title="Создать организацию"
+            onCancel={() => setAddModalVisible(false)}
+            footer={null}
+            onClose={handleClose}
+        >
+            <OrganizationForm onClose={handleClose}/>
+        </Modal>
     </>;
 };
 

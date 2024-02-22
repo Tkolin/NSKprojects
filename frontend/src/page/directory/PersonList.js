@@ -1,18 +1,42 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, Modal, notification, Table} from 'antd';
-import {PERSON_QUERY} from '../../graphql/queries';
+import {Button, Form, Modal, notification, Table} from 'antd';
+import {PERSON_QUERY, PERSON_TABLE_QUERY} from '../../graphql/queries';
 import {DELETE_PERSON_MUTATION} from '../../graphql/mutationsPerson';
 import PersonForm from "../form/PersonForm";
 import LoadingSpinner from "../component/LoadingSpinner";
+import Search from "antd/es/input/Search";
+import TypeProjectForm from "../form/TypeProjectForm";
 
 const PersonList = () => {
 
     // Состояния
-    const { loading, error, data } = useQuery(PERSON_QUERY);
+    const [formSearch ] = Form.useForm();
     const [selectedPerson, setSelectedPerson] = useState(null);
     const [editModalVisible, setEditModalVisible] = useState(false);
-    const [search,setSearch] = useState(null);
+    const [addModalVisible, setAddModalVisible] = useState(false);
+
+    // Данные
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+
+    const [currentSort, setCurrentSort] = useState({});
+
+    const [sortField, setSortField] = useState('');
+    const [sortOrder, setSortOrder] = useState('');
+
+    const [search, setSearch] = useState('');
+
+
+    const { loading, error, data } = useQuery(PERSON_TABLE_QUERY, {
+        variables: {
+            page,
+            limit,
+            search,
+            sortField,
+            sortOrder,
+        },
+    });
 
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
@@ -49,6 +73,9 @@ const PersonList = () => {
         setSelectedPerson(person);
         setEditModalVisible(true);
     };
+    const handleAdd = () => {
+        setAddModalVisible(true);
+    };
     const handleDelete = (personId) => {
         deletePerson({ variables: { id: personId}});
     };
@@ -56,6 +83,7 @@ const PersonList = () => {
         setSearch(value);
     }
     // Обработка загрузки и ошибок
+    if(!data)
     if (loading) return <LoadingSpinner/>;
     if (error) return `Ошибка! ${error.message}`;
 
@@ -86,31 +114,49 @@ const PersonList = () => {
             title: 'СНИЛС',
             dataIndex: 'SHILS',
             key: 'SHILS',
+
+            sorter: true,
+            ellipsis: true,
         },
         {
             title: 'ИНН',
             dataIndex: 'INN',
             key: 'INN',
+
+            sorter: true,
+            ellipsis: true,
         },
         {
             title: 'Расчётный счёт',
             dataIndex: 'payment_account',
             key: 'payment_account',
+
+            sorter: true,
+            ellipsis: true,
         },
         {
             title: 'Номер телефона',
             dataIndex: 'phone_number',
             key: 'phone_number',
+
+            sorter: true,
+            ellipsis: true,
         },
         {
             title: 'email',
             dataIndex: 'email',
             key: 'email',
+
+            sorter: true,
+            ellipsis: true,
           },
         {
             title: 'email Сибнипи',
             dataIndex: 'email_sibnipi',
             key: 'email_sibnipi',
+
+            sorter: true,
+            ellipsis: true,
           },
         {
             title: 'банк',
@@ -135,10 +181,65 @@ const PersonList = () => {
             ),
         },
     ];
+    const onChange = (pagination, filters, sorter) => {
 
+        if((sorter.field !== undefined) && currentSort !== sorter){
+            setCurrentSort(sorter);
+            if (sortField !== sorter.field) {
+                setSortField(sorter.field);
+                setSortOrder("asc");
+            }
+            else {
+                setSortField(sortField);
+                switch (sortOrder){
+                    case ("asc"):
+                        setSortOrder("desc");
+                        break;
+                    case ("desc"):
+                        setSortOrder("");
+                        break;
+                    case (""):
+                        setSortOrder("asc");
+                        break;
+                }
+            }
+        }else
+            console.log("Фильтры сохранены");
+    };
     return (
         <div>
-            <Table dataSource={data.persons} columns={columns} />
+            <Form form={formSearch} layout="horizontal">
+                <Form.Item label="Поиск:" name="search">
+                    <Search
+                        placeholder="Найти..."
+                        allowClear
+                        enterButton="Search"
+                        onSearch={onSearch}
+                    />
+                </Form.Item>
+            </Form>
+            <Table
+                   size={'small'}
+                   sticky={{
+                       offsetHeader: 64,
+                   }}
+                   loading={loading}
+                   dataSource={data.personsTable.persons}
+                   columns={columns}
+                   onChange={onChange}
+                   pagination={{
+                       total: data.personsTable.count,
+                       current: page,
+                       limit,
+                       onChange: (page, limit) => setPage(page),
+                       onShowSizeChange: (current, size) => {
+                           setPage(1);
+                           setLimit(size);
+                       },
+                       showSizeChanger: true,
+                       pageSizeOptions: ['10', '20', '50', '100'],
+                   }}
+            />
             <Modal
                 visible={editModalVisible}
                 title="Изменить контакт"
@@ -147,6 +248,15 @@ const PersonList = () => {
                 onClose={handleClose}
             >
                 <PersonForm person={selectedPerson} onClose={handleClose}/>
+            </Modal>
+            <Modal
+                visible={addModalVisible}
+                title="Создать этап"
+                onCancel={() => setAddModalVisible(false)}
+                footer={null}
+                onClose={handleClose}
+            >
+                <PersonForm onClose={handleClose}/>
             </Modal>
         </div>
     );

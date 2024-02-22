@@ -109,6 +109,48 @@ export const PROJECT_QUERY = gql`
         }
     }
 `;
+
+export const PROJECT_TABLE_QUERY = gql`
+    query ProjectTableQuery($page: Int, $limit: Int, $search: String, $sortField: String, $sortOrder: String) {
+        projectsTable(page: $page, limit: $limit, search: $search, sortField: $sortField, sortOrder: $sortOrder) {
+            projects{
+            id
+            number
+            name
+            organization_customer
+            {
+                id
+                name
+            }
+            type_project_document
+            {
+                id
+                name
+            }
+            facility
+            {
+                id
+                name
+            }
+            date_signing
+            duration
+            date_end
+            status
+            {
+                id
+                name
+            }
+            date_completion
+            delegate{
+                id
+                first_name
+                last_name
+                patronymic
+            }}
+            count
+        }
+    }
+`;
 export const PPI_QUERY = gql`
     query PpiQuery {
         passportPlaceIssues {
@@ -151,6 +193,45 @@ export const PERSON_QUERY = gql`
             }
 
         }
+    }
+`;
+
+export const PERSON_TABLE_QUERY = gql`
+    query PersonTableQuery($page: Int, $limit: Int, $search: String, $sortField: String, $sortOrder: String) {
+        personsTable(page: $page, limit: $limit, search: $search, sortField: $sortField, sortOrder: $sortOrder){
+            persons {
+                id
+                passport{
+                    firstname
+                    lastname
+                    patronymic
+                    serial
+                    number
+                    passport_place_issues{
+                        id
+                        name
+                    }
+                    birth_date
+                    date
+                }
+                SHILS
+                INN
+                payment_account
+                phone_number
+                email
+                email_sibnipi
+                bank{
+                    id
+                    name
+                }
+                BIK{
+                    id
+                    Bik
+                }
+        }
+            count
+        }
+        
     }
 `;
 export const CURRENT_USER_QUERY = gql`

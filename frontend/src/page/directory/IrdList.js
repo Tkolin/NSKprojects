@@ -2,13 +2,15 @@
 
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, Form, Modal, notification, Table} from 'antd';
+import {Button, FloatButton, Form, Modal, notification, Table} from 'antd';
 import {CONTACTS_QUERY, IRDS_QUERY, STAGES_QUERY} from '../../graphql/queries';
 import {DELETE_CONTACT_MUTATION, DELETE_IRD_MUTATION} from '../../graphql/mutationsIrd';
 import IrdForm from "../form/IrdForm";
 import {SEARCH_STAGES_QUERY} from "../../graphql/queriesSearch";
 import LoadingSpinner from "../component/LoadingSpinner";
 import Search from "antd/es/input/Search";
+import {PlusSquareOutlined} from "@ant-design/icons";
+import TypeProjectForm from "../form/TypeProjectForm";
 
 const IrdList = () => {
 
@@ -16,6 +18,7 @@ const IrdList = () => {
     const [selectedIrd, setSelectedIrd] = useState(null);
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [formSearch] = Form.useForm();
+    const [addModalVisible, setAddModalVisible] = useState(false);
 
     // Данные
     const [page, setPage] = useState(1);
@@ -51,12 +54,10 @@ const IrdList = () => {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно удалены!');
             window.location.reload();
-
         },
         onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
             window.location.reload();
-
         },
         update: (cache, { data: { deleteIrd } }) => {
             const { irds } = cache.readQuery({ query: STAGES_QUERY });
@@ -74,6 +75,9 @@ const IrdList = () => {
         const ird = data.irdsTable.irds.find(ird => ird.id === irdId);
         setSelectedIrd(ird);
         setEditModalVisible(true);
+    };
+    const handleAdd = () => {
+        setAddModalVisible(true);
     };
     const handleDelete = (irdId) => {
         deleteIrd({ variables: { id: irdId}});
@@ -100,8 +104,9 @@ const IrdList = () => {
             title: 'Управление',
             key: 'edit',
             render: (text, record) => (
-                <div>
-                    <Button  onClick={() => handleEdit(record.id)}>Изменить</Button>
+
+                <div style={{display: 'flex', gap: '8px'}}>
+                    <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
                     <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
                 </div>
 
@@ -135,6 +140,13 @@ const IrdList = () => {
     };
     return (
         <div>
+            <FloatButton
+                style={{  display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'green'  }}
+                onClick={() => handleAdd()}
+                tooltip={<div>Создать новую запись</div>}
+            >
+                <PlusSquareOutlined style={{ fontSize: '90px', color: 'green' }} />
+            </FloatButton>
             <Form form={formSearch} layout="horizontal">
                 <Form.Item label="Поиск:" name="search">
                     <Search
@@ -146,6 +158,10 @@ const IrdList = () => {
                 </Form.Item>
             </Form>
             <Table
+                size={'small'}
+                sticky={{
+                    offsetHeader: 64,
+                }}
                 loading={loading}
                 dataSource={data.irdsTable.irds}
                 columns={columns}
@@ -159,6 +175,8 @@ const IrdList = () => {
                         setPage(1);
                         setLimit(size);
                     },
+                    showSizeChanger: true,
+                    pageSizeOptions: ['10', '20', '50', '100'],
                 }}
             />
             <Modal
@@ -169,6 +187,15 @@ const IrdList = () => {
                 onClose={handleClose}
             >
                 <IrdForm ird={selectedIrd} onClose={handleClose}/>
+            </Modal>
+            <Modal
+                visible={addModalVisible}
+                title="Создать ИРД"
+                onCancel={() => setAddModalVisible(false)}
+                footer={null}
+                onClose={handleClose}
+            >
+                <IrdForm onClose={handleClose}/>
             </Modal>
         </div>
     );

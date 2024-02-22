@@ -1,17 +1,39 @@
 import React, {useState} from 'react';
 import { useQuery } from '@apollo/client';
-import {Button, Modal, notification, Table} from 'antd';
-import {PROJECT_QUERY} from '../../graphql/queries';
+import {Button, Form, Modal, notification, Table} from 'antd';
+import {IRDS_QUERY, PROJECT_QUERY, PROJECT_TABLE_QUERY} from '../../graphql/queries';
 import ProjectForm from "../form/ProjectForm";
 import LoadingSpinner from "../component/LoadingSpinner";
+import Search from "antd/es/input/Search";
 
 const ProjectList = () => {
 
     // Состояния
-    const {loading, error, data} = useQuery(PROJECT_QUERY);
+    const [formSearch ] = Form.useForm();
     const [selectedProject, setSelectedProject] = useState(null);
     const [editModalVisible, setEditModalVisible] = useState(false);
-    const [search,setSearch] = useState(null);
+
+    // Данные
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+
+    const [currentSort, setCurrentSort] = useState({});
+
+    const [sortField, setSortField] = useState('');
+    const [sortOrder, setSortOrder] = useState('');
+
+    const [search, setSearch] = useState('');
+
+    const { loading, error, data } = useQuery(PROJECT_TABLE_QUERY, {
+        variables: {
+            page,
+            limit,
+            search,
+            sortField,
+            sortOrder,
+        },
+    });
+
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
         notification[type]({
@@ -21,14 +43,10 @@ const ProjectList = () => {
     };
 
     // Мутация для удаления
-    // TODO: Нужна ли?
     const onSearch = (value) =>{
         setSearch(value);
     }
     // Обработчик событий
-    const onChange = (pagination, filters, sorter, extra) => {
-        console.log('params', pagination, filters, sorter, extra);
-    };
     const handleClose = () => {
         setEditModalVisible(false);
     };
@@ -40,6 +58,7 @@ const ProjectList = () => {
 
 
     // Обработка загрузки и ошибок
+    if(!data)
     if (loading) return <LoadingSpinner/>;
     if (error) return `Ошибка! ${error.message}`;
 
@@ -49,11 +68,17 @@ const ProjectList = () => {
             title: 'Номер',
             dataIndex: 'number',
             key: 'number',
+
+            sorter: true,
+            ellipsis: true,
         },
         {
             title: 'Название',
             dataIndex: 'name',
             key: 'name',
+
+            sorter: true,
+            ellipsis: true,
         },
         {
             title: 'Заказчик',
@@ -89,16 +114,25 @@ const ProjectList = () => {
             dataIndex: 'date_signing',
             key: 'date_signing',
 
+            sorter: true,
+            ellipsis: true,
+
         },
         {
             title: 'Продолжительность',
             dataIndex: 'duration',
             key: 'duration',
+
+            sorter: true,
+            ellipsis: true,
         },
         {
             title: 'Дата окончания',
             dataIndex: 'date_end',
             key: 'date_end',
+
+            sorter: true,
+            ellipsis: true,
         },
         {
             title: 'Статус',
@@ -111,6 +145,9 @@ const ProjectList = () => {
             title: 'Дата фактического окончания',
             dataIndex: 'date_completion',
             key: 'date_completion',
+
+            sorter: true,
+            ellipsis: true,
         },
         {
             title: 'Управление',
@@ -120,12 +157,65 @@ const ProjectList = () => {
             ),
         },
     ];
+    const onChange = (pagination, filters, sorter) => {
 
+        if((sorter.field !== undefined) && currentSort !== sorter){
+            setCurrentSort(sorter);
+            if (sortField !== sorter.field) {
+                setSortField(sorter.field);
+                setSortOrder("asc");
+            }
+            else {
+                setSortField(sortField);
+                switch (sortOrder){
+                    case ("asc"):
+                        setSortOrder("desc");
+                        break;
+                    case ("desc"):
+                        setSortOrder("");
+                        break;
+                    case (""):
+                        setSortOrder("asc");
+                        break;
+                }
+            }
+        }else
+            console.log("Фильтры сохранены");
+    };
     return(
     <div>
-        <Table dataSource={data.projects}
+        <Form form={formSearch} layout="horizontal">
+            <Form.Item label="Поиск:" name="search">
+                <Search
+                    placeholder="Найти..."
+                    allowClear
+                    enterButton="Search"
+                    onSearch={onSearch}
+                />
+            </Form.Item>
+        </Form>
+        <Table
+               size={'small'}
+               sticky={{
+                   offsetHeader: 64,
+               }}
+               loading={loading}
+               dataSource={data.projectsTable.projects}
                columns={columns}
-               onChange={onChange}/>
+               onChange={onChange}
+               pagination={{
+                   total: data.irdsTable.count,
+                   current: page,
+                   limit,
+                   onChange: (page, limit) => setPage(page),
+                   onShowSizeChange: (current, size) => {
+                       setPage(1);
+                       setLimit(size);
+                   },
+                   showSizeChanger: true,
+                   pageSizeOptions: ['10', '20', '50', '100'],
+               }}
+        />
         <Modal
             visible={editModalVisible}
             width={1200}
@@ -136,6 +226,7 @@ const ProjectList = () => {
         >
             <ProjectForm project={selectedProject} onClose={handleClose}/>
         </Modal>
+
     </div>
     )};
 

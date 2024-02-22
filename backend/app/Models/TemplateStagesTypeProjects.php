@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class TemplateStagesTypeProjects extends Model
 {
     protected $table = 'template_stages_type_project';
-    protected $primaryKey = ['project_type_id', 'stages_is'];
-    public $incrementing = false;
 
     protected $fillable = [
         'project_type_id',

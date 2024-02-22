@@ -1,11 +1,13 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, Form, Input, Modal, notification, Table} from 'antd';
+import {Button, FloatButton, Form, Input, Modal, notification, Table} from 'antd';
 import {CONTACTS_QUERY, CONTACTS_TABLE_QUERY} from '../../graphql/queries';
 import {DELETE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
 import ContactForm from "../form/ContactForm";
 import LoadingSpinner from "../component/LoadingSpinner";
 import Search from "antd/es/input/Search";
+import TypeProjectForm from "../form/TypeProjectForm";
+import {PlusSquareOutlined} from "@ant-design/icons";
 
 const ContactList = () => {
 
@@ -13,6 +15,7 @@ const ContactList = () => {
     const [selectedContact, setSelectedContact] = useState(null);
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [formSearch] = Form.useForm();
+    const [addModalVisible, setAddModalVisible] = useState(false);
 
     // Данные
     const [page, setPage] = useState(1);
@@ -69,6 +72,9 @@ const ContactList = () => {
         const contact = data.contactsTable.contacts.find(contact => contact.id === contactId);
         setSelectedContact(contact);
         setEditModalVisible(true);
+    };
+    const handleAdd = () => {
+        setAddModalVisible(true);
     };
     const handleDelete = (contactId) => {
         deleteContact({ variables: { id: contactId}});
@@ -172,7 +178,7 @@ const ContactList = () => {
             title: 'Управление',
             key: 'edit',
             render: (text, record) => (
-                <div>
+                <div style={{display: 'flex', gap: '8px'}}>
                     <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
                     <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
                 </div>
@@ -207,6 +213,13 @@ const ContactList = () => {
     };
     return (
         <div>
+            <FloatButton
+                style={{  display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'green'  }}
+                onClick={() => handleAdd()}
+                tooltip={<div>Создать новую запись</div>}
+            >
+                <PlusSquareOutlined style={{ fontSize: '90px', color: 'green' }} />
+            </FloatButton>
             <Form form={formSearch} layout="horizontal">
                 <Form.Item label="Поиск:" name="search">
                     <Search
@@ -218,6 +231,10 @@ const ContactList = () => {
                 </Form.Item>
             </Form>
             <Table
+                size={'small'}
+                sticky={{
+                    offsetHeader: 64,
+                }}
                 loading={loading}
                 dataSource={data.contactsTable.contacts}
                 columns={columns}
@@ -231,6 +248,8 @@ const ContactList = () => {
                         setPage(1);
                         setLimit(size);
                     },
+                    showSizeChanger: true,
+                    pageSizeOptions: ['10', '20', '50', '100'],
                 }}
             />
             <Modal
@@ -241,6 +260,15 @@ const ContactList = () => {
                 onClose={handleClose}
             >
                 <ContactForm contact={selectedContact} onClose={handleClose}/>
+            </Modal>
+            <Modal
+                visible={addModalVisible}
+                title="Создать этап"
+                onCancel={() => setAddModalVisible(false)}
+                footer={null}
+                onClose={handleClose}
+            >
+                <ContactForm onClose={handleClose}/>
             </Modal>
         </div>
     );

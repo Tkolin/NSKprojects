@@ -14,6 +14,7 @@ const BikList = () => {
     const { loading, error, data } = useQuery(CONTACTS_QUERY);
     const [selectedContact, setSelectedContact] = useState(null);
     const [editModalVisible, setEditModalVisible] = useState(false);
+    const [addModalVisible, setAddModalVisible] = useState(false);
 
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
@@ -118,7 +119,7 @@ const BikList = () => {
             title: 'Управление',
             key: 'edit',
             render: (text, record) => (
-                <div>
+                <div style={{display: 'flex', gap: '8px'}}>
                     <Button  onClick={() => handleEdit(record.id)}>Изменить</Button>
                     <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
                 </div>

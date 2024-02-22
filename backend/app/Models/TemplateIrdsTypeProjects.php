@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class TemplateIrdsTypeProjects extends Model
 {
     protected $table = 'template_irds_type_project';
-    protected $primaryKey = ['project_type_id', 'ird_id'];
-    public $incrementing = false;
+
     protected $fillable = [
         'project_type_id',
         'ird_id',

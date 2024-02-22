@@ -26,6 +26,9 @@ import TemplateForm from "./page/form/TemplateForm";
 import IrdList from "./page/directory/IrdList";
 import TypeProjectList from "./page/directory/TypeProjectList";
 import StageList from "./page/directory/StageList";
+import TypeProjectForm from "./page/form/TypeProjectForm";
+import StageForm from "./page/form/StageForm";
+import IrdForm from "./page/form/IrdForm";
 
 const App = () => {
     const cookies = new Cookies();
@@ -54,6 +57,7 @@ const App = () => {
                                 <Route path="/ird" element={<IrdList />} />
                                 <Route path="/typeProject" element={<TypeProjectList />} />
                                 <Route path="/stageProject" element={<StageList />} />
+
 
                                 <Route path="/template/new" element={<TemplateForm />} />
 
