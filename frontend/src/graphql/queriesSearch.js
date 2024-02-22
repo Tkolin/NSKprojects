@@ -77,15 +77,22 @@ export const SEARCH_TEMPLATE_OR_TYPE_PROJECT_QUERY = gql`
     query TemplateQuery($typeProject: ID) {
         templatesIrdsTypeProjects(typeProject: $typeProject) {
             id
-            name
-        }
-        templatesContentsTypeProjects(typeProject: $typeProject) {
-            id
-            name
+            ird {
+                id
+                name
+            }
+            application_to_project
+            stage_number
         }
         templatesStagesTypeProjects(typeProject: $typeProject) {
             id
-            name
+            stage{
+                id
+                name
+            }
+            stage_number
+            date_start
+            date_end
         }
     }
 `;

@@ -103,7 +103,6 @@
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sebastian/recursion-context" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sebastian/type" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sebastian/version" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/stella-maris/clock" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/symfony/console" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/symfony/css-selector" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/symfony/deprecation-contracts" />

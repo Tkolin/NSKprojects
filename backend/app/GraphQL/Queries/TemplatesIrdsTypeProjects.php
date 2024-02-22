@@ -13,19 +13,19 @@ final readonly class TemplatesIrdsTypeProjects
 {
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
+
         $allowedRoles = ['admin'];
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            if (isset($args['typeProject'])) {
+            if($args['typeProject']){
+            $tmItdTp = TemplateIrdsTypeProjects
+                ::where('project_type_id', $args['typeProject'])
+                ->with('type_project')
+                ->with('ird')
+                ->get();
 
-                $irdsTamplate = TemplateIrdsTypeProjects::where('project_type_id', $args['typeProject'])->get();
-                $irdIds = $irdsTamplate->pluck('ird_id');
-                $irds = InitialAuthorizationDocumentation::whereIn('id', $irdIds)->get();
+            return $tmItdTp;}
 
-                return $irds;
-            } else {
-                return null;
-            }
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }

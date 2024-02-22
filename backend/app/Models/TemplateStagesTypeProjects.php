@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -12,11 +11,11 @@ class TemplateStagesTypeProjects extends Model
 
     protected $fillable = [
         'project_type_id',
-        'stages_is',
+        'stage_id',
         'date_start',
         'date_end',
         'percentage',
-        'number',
+        'stage_number',
     ];
     public function type_project(): BelongsTo
     {
@@ -24,6 +23,7 @@ class TemplateStagesTypeProjects extends Model
     }
     public function stage(): BelongsTo
     {
-        return $this->belongsTo(Stage::class);
+        return $this->belongsTo(Stage::class, 'stage_id');
     }
 }
+

@@ -14,9 +14,9 @@ type Query {
 
     organizations: [Organization]
 
-    templatesIrdsTypeProjects(typeProject: ID): [IRD]
-    templatesContentsTypeProjects(typeProject: ID): [Content]
-    templatesStagesTypeProjects(typeProject: ID): [Stage]
+    templatesIrdsTypeProjects(typeProject: ID): [TemplateIRD]
+    templatesContentsTypeProjects(typeProject: ID): [TemplateContent]
+    templatesStagesTypeProjects(typeProject: ID): [TemplateStage]
 
 
     projectStatuses: [ProjectStatus!]!
@@ -519,8 +519,31 @@ type TemplateIrdsTypeProject{
 
 type Stage{
     id: ID!
+    name: String
+}
+
+type TemplateIRD {
+    id: ID!
+    project_type: TypeProjectDocument
+    ird: IRD
+    stage_number: Int
+    application_to_project: Int
+}
+type TemplateStage{
+    id: ID!
+    stage: Stage
+    project_type: TypeProjectDocument
+    date_start: String
+    date_end: String
+    stage_number: Int
+    percentage: Int
+}
+type TemplateContent{
+    id: ID!
     name: String!
 }
+
+
 extend type Mutation {
     register(input: RegisterInput!): AuthPayload!
     login(input:  LoginInput!): AuthPayload!

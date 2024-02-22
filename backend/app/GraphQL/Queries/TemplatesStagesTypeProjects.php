@@ -20,17 +20,17 @@ final readonly class TemplatesStagesTypeProjects
         $allowedRoles = ['admin'];
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            if (isset($args['typeProject'])) {
-                $stageTamplate = TemplateStagesTypeProjects::where('project_type_id', $args['typeProject'])->get();
-                $stageIds = $stageTamplate->pluck('stages_is');
-                $stage = Stage::whereIn('id', $stageIds)->get();
-
-                return $stage;
-            } else {
-                return null;
+            if($args['typeProject']) {
+                return TemplateStagesTypeProjects
+                    ::where('project_type_id', $args['typeProject'])
+                    ->with('type_project')
+                    ->with('stage')
+                    ->get();
             }
+
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }
     }
 }
+

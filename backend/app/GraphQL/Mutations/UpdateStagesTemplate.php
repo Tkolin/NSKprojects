@@ -27,7 +27,7 @@ final readonly class UpdateStagesTemplate
             TemplateStagesTypeProjects::updateOrCreate(
                 [
                     'project_type_id' => $typeProjectId,
-                    'stages_is' => (string)$listStagesId[$i]
+                    'stage_id' => (string)$listStagesId[$i]
                 ],
                 [
                     'percentage' => (int)$listPercent[$i]

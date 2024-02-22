@@ -21,7 +21,7 @@ import {
     StyledBigFormBlock,
     StyledVeryBigFormBlock, StyledVeryBigForm, StyledButtonForm
 } from '../style/FormStyles';
-import {MinusCircleOutlined, PlusOutlined} from '@ant-design/icons';
+import {Loading3QuartersOutlined, MinusCircleOutlined, PlusOutlined} from '@ant-design/icons';
 import {
     SEARCH_IRDS_QUERY,
     SEARCH_STAGES_QUERY,
@@ -30,6 +30,7 @@ import {
 import IrdForm from "./IrdForm";
 import StageForm from "./StageForm";
 import TypeProjectForm from "./TypeProjectForm";
+import LoadingSpinner from "../component/LoadingSpinner";
 
 const {Option} = Select;
 
@@ -44,13 +45,15 @@ const TemplateForm = ({project, onClose}) => {
     const [irdFormViewModalVisible, setIrdFormViewModalVisible] = useState(false);
     const [stageFormViewModalVisible, setStageFormViewModalVisible] = useState(false);
 
-    const [editingTemplate, setEditingTemplate] = useState();
-    const handleEditingTemplate = (value) => {
-        setEditingTemplate(value);
-    };
+    const [editingTemplate, setEditingTemplate] = useState(null);
+
+    const [confirmTypeChangeModalVisible, setConfirmTypeChangeModalVisible] = useState(false);
 
     const [autoCompleteIrd, setAutoCompleteIrd] = useState('');
     const [autoCompleteStage, setAutoCompleteStage] = useState('');
+
+    const [selectedTypeProject, setSelectedTypeProject] = useState(null);
+    const [loadTemplateStatus,setLoadTemplateStatus] = useState({irdsUp: false, stageUp: false, temlUp: false});
     const handleAutoCompleteIrdSelect = (value) => {
         if(value == 'CREATE_NEW')
         {
@@ -90,40 +93,91 @@ const TemplateForm = ({project, onClose}) => {
     };
 
     // Получение данных для выпадающих списков
+    const [dataIrds, setDataIrds] = useState(null);
+    const [dataStages, setDataStages] = useState(null);
+
     const { loading: loadingTypeProject, error: errorTypeProject, data: dataTypeProject} = useQuery(TYPES_PROJECTS_QUERY);
     const { loading: loadingTemplate, error: errorTemplate, data: dataTemplate} = useQuery(SEARCH_TEMPLATE_OR_TYPE_PROJECT_QUERY,{
         variables: { typeProject: editingTemplate },
     });
-    const { loading: loadingIrds, error: errorIrds,data:  dataIrds} = useQuery(SEARCH_IRDS_QUERY, {
+    const { loading: loadingIrds, error: errorIrds, refetch: refetchIrds} = useQuery(SEARCH_IRDS_QUERY, {
         variables: { search: autoCompleteIrd},
+        onCompleted: (data) => setDataIrds(data)
     });
-    const { loading: loadingStages, error: errorStages,data:  dataStages} = useQuery(SEARCH_STAGES_QUERY, {
+    const { loading: loadingStages, error: errorStages,refetch: refetchStages} = useQuery(SEARCH_STAGES_QUERY, {
         variables: { search: autoCompleteStage},
+        onCompleted: (data) => setDataStages(data)
     });
+
+    // Переключение типов документации
+    const handleEditingTemplate = (value) => {
+          setSelectedTypeProject(value);
+          showConfirmTypeChangeModal(value);
+    };
+
+    const showConfirmTypeChangeModal = (value) => {
+        setConfirmTypeChangeModalVisible(true);
+    };
+
+    const handleConfirmTypeChange = (confirm) => {
+        if(confirm) {
+                        console.log('p,');
+                     setEditingTemplate(selectedTypeProject);
+                     setLoadTemplateStatus({temlUp: true});
+
+        }
+        setSelectedTypeProject(null);
+        setConfirmTypeChangeModalVisible(false);
+    };
+
+
 
     // Загрузка шаблонов при редактировании
     useEffect(() => {
-        if (editingTemplate) {
-            setEditingTemplate(editingTemplate);
-            form.setFieldsValue({
-                ...editingTemplate
-            });
+        console.log('useEffect');
+        console.log('useEffect.pre.if2');
+            if (dataTemplate && dataTemplate.templatesIrdsTypeProjects) {
+                console.log('useEffect.if2');
+                const newIrds = dataTemplate.templatesIrdsTypeProjects.map(row => ({
+                    id: row.ird.name,
+                    name: row.ird.name,
+                }));
 
-            const irds = dataTemplate.templatesIrdsTypeProjects;
-            const initialValuesIrds = irds.map(ird => ({
-                ird_id: ird.id,
-                isChecked: false,
-            }));
-            formIRD.setFieldsValue({ irds_to_project: initialValuesIrds });
+                refetchIrds({ search: autoCompleteIrd }).then(({ data }) => {
+                    const existingIrds =  dataIrds.irdsTable ? dataIrds.irdsTable.irds : [];
+                    const updatedIrds = [...existingIrds, ...newIrds];
+                    setDataIrds({
+                        ...dataIrds,
+                        irdsTable: {
+                            ...dataIrds.irdsTable,
+                            irds: updatedIrds,
+                        },
+                    });
+                });
+                loadTemplate();
+            }
+        console.log('useEffect.pre.if3');
+            if (dataTemplate && dataTemplate.templatesStagesTypeProjects) {
+                console.log('useEffect.if3');
+                const newStages = dataTemplate.templatesStagesTypeProjects.map(row => ({
+                    id: row.stage.id,
+                    name: row.stage.name,
+                }));
 
-            const stages = dataTemplate.templatesStagesTypeProjects;
-            const initialValuesStages = stages.map(ird => ({
-                ird_id: ird.id,
-                isChecked: false,
-            }));
-            formStage.setFieldsValue({ irds_to_project: initialValuesIrds });
-        }
-    }, [project, form, formIRD, formStage]);
+                refetchStages({ search: autoCompleteStage }).then(({ data }) => {
+                    const existingStages =  dataStages.stagesTable ? dataStages.stagesTable.stages : [];
+                    const updatedStages = [...existingStages, ...newStages];
+                    setDataStages({
+                        ...dataStages,
+                        stagesTable: {
+                            ...dataStages.stagesTable,
+                            stages: updatedStages,
+                        },
+                    });
+                });
+                loadTemplate();
+            }
+    }, [dataTemplate]);
 
 
     // Мутации для добавления и обновления
@@ -146,13 +200,13 @@ const TemplateForm = ({project, onClose}) => {
     const handleSubmit = () => {
         const stagesData = formStage.getFieldsValue().stageList.map(stage => ({
             stage_id: stage.stage,
-            procent: stage.procent
+            procent: stage.procent,
         }));
 
         const irdsData = formIRD.getFieldsValue().irdList.map(ird => ({
             ird_id: ird.ird_id,
             stage_number: ird.stageNumber,
-            app_number: ird.appNumber
+            app_number: ird.appNumber,
         }));
 
         // Вызов мутаций для обновления данных
@@ -176,16 +230,22 @@ const TemplateForm = ({project, onClose}) => {
     const loadTemplate = () => {
         const irds = dataTemplate && dataTemplate.templatesIrdsTypeProjects;
         const initialValuesIrds = irds && irds.map(ird => ({
-            ird_id: ird.id,
+            ird_item: ird.id,
+            stageNumber_item: -1,
+            appNumber_item: -1,
         }));
         formIRD.setFieldsValue({ irdList: initialValuesIrds });
 
         const stages = dataTemplate && dataTemplate.templatesStagesTypeProjects;
         const initialValuesStages = stages && stages.map(stage => ({
-            stage_id: stage.id,
+            stage_item: stage.id,
+            procent_item: -1,
         }));
         formStage.setFieldsValue({ stageList: initialValuesStages });
     };
+
+    if(loadingTemplate)
+        return <LoadingSpinner />
 
     return (
         <>
@@ -199,7 +259,9 @@ const TemplateForm = ({project, onClose}) => {
                                             <StyledFormItem  name="type_project_id" label="Тип документации">
                                                <Row>
                                                    <Col flex="auto">
-                                                       <Select onSelect={(value)=>handleEditingTemplate(value)}>
+                                                       <Select
+                                                           value={editingTemplate}
+                                                           onSelect={handleEditingTemplate}>
                                                            {dataTypeProject && dataTypeProject.typeProjectsTable  && dataTypeProject.typeProjectsTable.typeProjects .map(typeDocument => (
                                                                <Option key={typeDocument.id}
                                                                        value={typeDocument.id}>{typeDocument.name}</Option>))}
@@ -207,7 +269,6 @@ const TemplateForm = ({project, onClose}) => {
                                                    </Col>
                                                     <Col>
                                                         <StyledButtonForm onClick={() => setTypeProjectFormViewModalVisible(true)}>Создать тип</StyledButtonForm>
-                                                        <StyledButtonForm onClick={() => loadTemplate()}>Загрузить шаблоны</StyledButtonForm>
                                                         <StyledButtonForm onClick={() => loadTemplate()}>Создать этап</StyledButtonForm>
                                                         <StyledButtonForm onClick={() => loadTemplate()}>Создать ИРД</StyledButtonForm>
                                                     </Col>
@@ -231,11 +292,11 @@ const TemplateForm = ({project, onClose}) => {
                                                 <Form.Item
                                                     {...restField}
                                                     style={{ marginBottom: 0, display: 'flex' }}
-                                                    name={[name, 'stage']}
+                                                    name={[name, 'stage_item']}
                                                 >
                                                     <Select
                                                         style={{ maxWidth: 249 , minWidth: 249}}
-                                                        dropdownMatchSelectWidth={false}
+                                                        popupMatchSelectWidth={false}
                                                         filterOption = {false}
                                                         onSearch={(value)=>handleAutoCompleteStage(value)} // Передаем введенное значение
                                                         onSelect={(value)=>handleAutoCompleteStageSelect(value)}
@@ -254,7 +315,7 @@ const TemplateForm = ({project, onClose}) => {
                                                 <Form.Item
                                                     {...restField}
                                                     style={{ marginBottom: 0, display: 'flex' }}
-                                                    name={[name, 'procent']}>
+                                                    name={[name, 'procent_item']}>
                                                     <InputNumber
                                                         size={"middle"}
                                                         min={1}
@@ -296,17 +357,18 @@ const TemplateForm = ({project, onClose}) => {
                                                 style={{
                                                     display: 'flex', marginBottom: 0, marginTop: 0
                                                 }}
-                                                name={[name, 'ird_id']}
+                                                name={[name, 'ird_item']}
                                             >
                                                 <Select
                                                     style={{ maxWidth: 300 , minWidth: 300, marginBottom: 0}}
-                                                    dropdownMatchSelectWidth={false}
+                                                    popupMatchSelectWidth={false}
                                                     filterOption = {false}
                                                     placeholder="Начните ввод..."
                                                     onSearch={(value)=>handleAutoCompleteIrd(value)}
                                                     onSelect={(value)=>handleAutoCompleteIrdSelect(value)}
                                                     allowClear
                                                     showSearch
+                                                    loading={loadingIrds}
                                                 >
                                                     {dataIrds &&  dataIrds.irdsTable && dataIrds.irdsTable.irds && dataIrds.irdsTable.irds.map(ird => (
                                                         <Select.Option key={ird.id} value={ird.id}>{ird.name}</Select.Option>
@@ -321,7 +383,7 @@ const TemplateForm = ({project, onClose}) => {
                                                 style={{
                                                     display: 'flex', marginBottom: 0, marginTop: 0
                                                 }}
-                                                name={[name, 'stageNumber']}
+                                                name={[name, 'stageNumber_item']}
                                             >
                                                 <InputNumber
                                                     size={"middle"}
@@ -336,7 +398,7 @@ const TemplateForm = ({project, onClose}) => {
                                                 style={{
                                                     display: 'flex', marginBottom: 0, marginTop: 0
                                                 }}
-                                                name={[name, 'appNumber']}
+                                                name={[name, 'appNumber_item']}
                                             >
                                                 <InputNumber
                                                     size={"middle"}
@@ -433,7 +495,16 @@ const TemplateForm = ({project, onClose}) => {
                             </StyledForm>
                         </StyledFormBlock>
                     </Modal>
-
+                    <Modal
+                        visible={confirmTypeChangeModalVisible}
+                        title="Подтверждение изменения типа документа"
+                        onCancel={() => handleConfirmTypeChange(false)}
+                        onOk={() => handleConfirmTypeChange(true)}
+                        okText="Да"
+                        cancelText="Отмена"
+                    >
+                        <p>Вы уверены, что хотите изменить выбранный тип документа?</p>
+                    </Modal>
                 </StyledVeryBigForm>
             </StyledVeryBigFormBlock>
 
