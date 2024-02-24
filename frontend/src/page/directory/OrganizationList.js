@@ -8,6 +8,7 @@ import LoadingSpinner from "../component/LoadingSpinner";
 import TypeProjectForm from "../form/TypeProjectForm";
 import Search from "antd/es/input/Search";
 import {PlusSquareOutlined} from "@ant-design/icons";
+import {StyledTable} from "../style/TableStyles";
 
 const OrganizationList = () => {
     // Состояния
@@ -27,7 +28,7 @@ const OrganizationList = () => {
 
     const [search, setSearch] = useState('');
 
-    const { loading, error, data } = useQuery(ORGANIZATIONS_TABLE_QUERY, {
+    const {loading, error, data} = useQuery(ORGANIZATIONS_TABLE_QUERY, {
         variables: {
             page,
             limit,
@@ -55,18 +56,20 @@ const OrganizationList = () => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
             window.location.reload();
         },
-        update: (cache, { data: { deleteOrganization } }) => {
-            const { organizations } = cache.readQuery({ query: ORGANIZATION_QUERY });
+        update: (cache, {data: {deleteOrganization}}) => {
+            const {organizations} = cache.readQuery({query: ORGANIZATION_QUERY});
             const updatedOrganization = organizations.filter(organization => organization.id !== deleteOrganization.id);
             cache.writeQuery({
                 query: ORGANIZATION_QUERY,
-                data: { contacts: updatedOrganization },
+                data: {contacts: updatedOrganization},
             });
         },
     });
 
     // Обработчик событий
-    const handleClose = () => {setEditModalVisible(false);};
+    const handleClose = () => {
+        setEditModalVisible(false);
+    };
     const handleEdit = (organizationId) => {
         const organization = data.organizationsTable.organizations.find(organization => organization.id === organizationId);
         setSelectedOrganization(organization);
@@ -76,13 +79,13 @@ const OrganizationList = () => {
         setAddModalVisible(true);
     };
     const handleDelete = (organizationId) => {
-        deleteOrganization({ variables: { id: organizationId}});
+        deleteOrganization({variables: {id: organizationId}});
     };
-    const onSearch = (value) =>{
+    const onSearch = (value) => {
         setSearch(value);
     }
     // Обработка загрузки и ошибок
-    if(!data)
+    if (!data)
         if (loading) return <LoadingSpinner/>;
     if (error) return `Ошибка! ${error.message}`;
 
@@ -115,7 +118,7 @@ const OrganizationList = () => {
             dataIndex: 'director',
             key: 'director',
             render: (director) => director ?
-                director.last_name +" "+ director.first_name : "",
+                director.last_name + " " + director.first_name : "",
         },
         {
             title: 'ИНН',
@@ -153,7 +156,7 @@ const OrganizationList = () => {
             title: 'bik',
             dataIndex: 'BIK',
             key: 'BIK',
-            render: (BIK) =>BIK ? BIK.Bik : null,
+            render: (BIK) => BIK ? BIK.Bik : null,
         },
         {
             title: 'payment_account',
@@ -167,7 +170,7 @@ const OrganizationList = () => {
             title: 'Управление',
             key: 'edit',
             render: (text, record) => (
-                <div style={{display: 'flex', gap: '8px'}}>
+                <div >
                     <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
                     <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
                 </div>
@@ -178,15 +181,14 @@ const OrganizationList = () => {
 
     const onChange = (pagination, filters, sorter) => {
 
-        if((sorter.field !== undefined) && currentSort !== sorter){
+        if ((sorter.field !== undefined) && currentSort !== sorter) {
             setCurrentSort(sorter);
             if (sortColum !== sorter.field) {
                 setSortColum(sorter.field);
                 setSortOrder("asc");
-            }
-            else {
+            } else {
                 setSortColum(sortColum);
-                switch (sortOrder){
+                switch (sortOrder) {
                     case ("asc"):
                         setSortOrder("desc");
                         break;
@@ -198,17 +200,17 @@ const OrganizationList = () => {
                         break;
                 }
             }
-        }else
+        } else
             console.log("Фильтры сохранены");
     };
 
-    return<>
+    return <>
         <FloatButton
-            style={{  display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'green'  }}
+            style={{display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'green'}}
             onClick={() => handleAdd()}
             tooltip={<div>Создать новую запись</div>}
         >
-            <PlusSquareOutlined style={{ fontSize: '90px', color: 'green' }} />
+            <PlusSquareOutlined style={{fontSize: '90px', color: 'green'}}/>
         </FloatButton>
         <Form form={formSearch} layout="horizontal">
             <Form.Item label="Поиск:" name="search">
@@ -220,10 +222,10 @@ const OrganizationList = () => {
                 />
             </Form.Item>
         </Form>
-        <Table
+        <StyledTable
             size={'small'}
             sticky={{
-                offsetHeader: 64,
+                offsetHeader: 0,
             }}
             loading={loading}
             dataSource={data.organizationsTable.organizations}
@@ -270,15 +272,15 @@ const OrganizationList = () => {
                 ),
             }}
         />
-    <Modal
-        visible={editModalVisible}
-        title="Изменить организацию"
-        onCancel={() => setEditModalVisible(false)}
-        footer={null}
-        onClose={handleClose}
-    >
-        <OrganizationForm organization={selectedOrganization} onClose={handleClose}/>
-    </Modal>
+        <Modal
+            visible={editModalVisible}
+            title="Изменить организацию"
+            onCancel={() => setEditModalVisible(false)}
+            footer={null}
+            onClose={handleClose}
+        >
+            <OrganizationForm organization={selectedOrganization} onClose={handleClose}/>
+        </Modal>
         <Modal
             visible={addModalVisible}
             title="Создать организацию"
@@ -291,4 +293,4 @@ const OrganizationList = () => {
     </>;
 };
 
- export default OrganizationList;
+export default OrganizationList;

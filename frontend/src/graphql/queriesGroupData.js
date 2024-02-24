@@ -62,14 +62,5 @@ export const PROJECT_FORM_QUERY = gql`
             last_name
             patronymic
         }
-        irds {
-            id
-            name
-        }
-        stages{
-            id
-            name
-        }
-
     }
 `;

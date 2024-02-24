@@ -119,7 +119,7 @@ const BikList = () => {
             title: 'Управление',
             key: 'edit',
             render: (text, record) => (
-                <div style={{display: 'flex', gap: '8px'}}>
+                <div>
                     <Button  onClick={() => handleEdit(record.id)}>Изменить</Button>
                     <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
                 </div>

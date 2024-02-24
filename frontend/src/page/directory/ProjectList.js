@@ -197,7 +197,7 @@ const ProjectList = () => {
         <Table
                size={'small'}
                sticky={{
-                   offsetHeader: 64,
+                   offsetHeader: 0,
                }}
                loading={loading}
                dataSource={data.projectsTable.projects}

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->dropColumn(['number']);;
 
             $table->dropForeign(["stages_is"]);
+
+
             $table->foreign('stages_is')->references('id')->on('stages');
         });
     }

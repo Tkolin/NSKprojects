@@ -3,7 +3,7 @@ import { Form, Input, Button, message } from 'antd';
 import { useMutation } from '@apollo/client';
 import { REGISTER_MUTATION } from '../../graphql/mutationsAuth';
 import { Cookies } from 'react-cookie';
-import {StyledFormBlock, StyledFormItem} from '../style/FormStyles';
+import { StyledFormItem, StyledFormRegular } from '../style/FormStyles';
 
 const RegisterForm = () => {
     const [form] = Form.useForm();
@@ -26,7 +26,7 @@ const RegisterForm = () => {
     };
 
     return (
-        <StyledFormBlock form={form} onFinish={onFinish} layout="vertical">
+        <StyledFormRegular form={form} onFinish={onFinish} layout="vertical">
             <StyledFormItem name="name" label="Name" rules={[{ required: true }]}>
                 <Input />
             </StyledFormItem>
@@ -41,7 +41,7 @@ const RegisterForm = () => {
                     Register
                 </Button>
             </StyledFormItem>
-        </StyledFormBlock>
+        </StyledFormRegular>
     );
 };
 

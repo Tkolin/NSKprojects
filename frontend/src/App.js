@@ -29,6 +29,7 @@ import StageList from "./page/directory/StageList";
 import TypeProjectForm from "./page/form/TypeProjectForm";
 import StageForm from "./page/form/StageForm";
 import IrdForm from "./page/form/IrdForm";
+import Test from "./test";
 
 const App = () => {
     const cookies = new Cookies();
@@ -51,6 +52,8 @@ const App = () => {
             <CustomLayout currentUser={currentUser}>
                 <Routes>
                     <Route path="/" element={<Home />} />
+                    <Route path="/t" element={<Test />} />
+
                     {currentUser ? (
                         currentUser.role.name === "admin" ? (
                             <>

@@ -32,6 +32,10 @@ final readonly class UpdateIrdsTemplate
                 ]
             );
         }
+        // Удаление записей, которых нет в списке
+        TemplateIrdsTypeProjects::where('project_type_id', $typeProjectId)
+            ->whereNotIn('ird_id', $listIrdsIds)
+            ->delete();
 
         return true;
     }

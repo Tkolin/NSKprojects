@@ -6,8 +6,10 @@ import {
     ADD_BIK_MUTATION,
     UPDATE_BIK_MUTATION
 } from '../../graphql/mutationsBik';
-import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles';
+import {StyledFormBlock, StyledForm, StyledFormItem, StyledFormRegular} from '../style/FormStyles';
 import {ADD_STAGE_MUTATION, UPDATE_STAGE_MUTATION} from "../../graphql/mutationsStage";
+import {StyledBlockRegular} from "../style/BlockStyles";
+import {StyledButtonGreen} from "../style/ButtonStyles";
 
 
 const IrdForm = ({ stage, onClose }) => {
@@ -68,20 +70,21 @@ const IrdForm = ({ stage, onClose }) => {
     };
 
     return (
-        <StyledFormBlock>
-            <StyledForm form={form} layout="vertical">
-                {contextHolder}
-                <StyledFormItem name="name" label="Наименование"  rules={[{ required: true }]}>
-                    <Input />
+        <StyledBlockRegular label={'Этап'}>
+            <StyledFormRegular form={form} layout="vertical">
+                <StyledFormItem name="name" label="Наименование" rules={[{required: true}]}>
+                    <Input/>
                 </StyledFormItem>
-                <StyledFormItem>
-                    <Button type="primary" onClick={handleSubmit}>
-                        {editingStage ? "Сохранить изменения" : "Добавить"}
-                    </Button>
-                </StyledFormItem>
-            </StyledForm>
-        </StyledFormBlock>
-    );
+                <div style={{textAlign: 'center'}}>
+                    <StyledFormItem>
+                        <StyledButtonGreen type="primary" onClick={handleSubmit}>
+                            {editingStage ? "Сохранить изменения" : "Добавить"}
+                        </StyledButtonGreen>
+                    </StyledFormItem>
+                </div>
+            </StyledFormRegular>
+        </StyledBlockRegular>
+);
 };
 
 export default IrdForm;

@@ -90,9 +90,7 @@ export const SEARCH_TEMPLATE_OR_TYPE_PROJECT_QUERY = gql`
                 id
                 name
             }
-            stage_number
-            date_start
-            date_end
+            percentage
         }
     }
 `;

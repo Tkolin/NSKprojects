@@ -13,13 +13,7 @@ final readonly class Projects
         $allowedRoles = ['admin']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            return Project
-                ::with('organization_customer')
-                ->with('type_project_document')
-                ->with('facility')
-                ->with('status')
-                ->with('delegate')
-                ->get();
+            return Project::all();
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }

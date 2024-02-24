@@ -5,9 +5,9 @@ import {
     ADD_PPI_MUTATION,
     UPDATE_PPI_MUTATION
 } from '../../graphql/mutationsPerson';
-import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles';
-import {ADD_BIK_MUTATION, UPDATE_BIK_MUTATION} from "../../graphql/mutationsBik";
+import {StyledFormItem, StyledFormBig} from '../style/FormStyles';
 import {PPI_QUERY} from "../../graphql/queries";
+import {StyledBlockBig} from "../style/BlockStyles";
 
 
 const PassportPlaceIssuesForm = ({ issues, onClose }) => {
@@ -68,8 +68,8 @@ const PassportPlaceIssuesForm = ({ issues, onClose }) => {
     };
 
     return (
-        <StyledFormBlock>
-            <StyledForm form={form} layout="vertical">
+        <StyledBlockBig>
+            <StyledFormBig form={form} layout="vertical">
                 {contextHolder}
                 <StyledFormItem name="name" label="Наименование"  rules={[{ required: true }]}>
                     <Input />
@@ -82,8 +82,8 @@ const PassportPlaceIssuesForm = ({ issues, onClose }) => {
                         {editingIssues ? "Сохранить изменения" : "Добавить"}
                     </Button>
                 </StyledFormItem>
-            </StyledForm>
-        </StyledFormBlock>
+            </StyledFormBig>
+        </StyledBlockBig>
     );
 };
 

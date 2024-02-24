@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Button, Select, notification} from 'antd';
-import { useMutation, useQuery } from '@apollo/client';
+import {Form, Input, Button, notification} from 'antd';
+import { useMutation } from '@apollo/client';
 import {
     ADD_BIK_MUTATION,
     UPDATE_BIK_MUTATION
 } from '../../graphql/mutationsBik';
 import {BIK_QUERY} from '../../graphql/queries';
-import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles';
+import {StyledFormItem, StyledFormRegular} from "../style/FormStyles";
+import {StyledBlockRegular} from "../style/BlockStyles";
+import {StyledButtonGreen} from "../style/ButtonStyles";
 
 
 const BikForm = ({ bik, onClose }) => {
@@ -67,26 +69,27 @@ const BikForm = ({ bik, onClose }) => {
     };
 
     return (
-        <StyledFormBlock>
-            <StyledForm form={form} layout="vertical">
-                {contextHolder}
-                <StyledFormItem name="BIK" label="Бик" rules={[{ required: true }]}>
-                    <Input />
+        <StyledBlockRegular label={'Бик'}>
+            <StyledFormRegular form={form}>
+                <StyledFormItem name="BIK" label="Бик" rules={[{required: true}]}>
+                    <Input/>
                 </StyledFormItem>
-                <StyledFormItem name="name" label="Наименование"  rules={[{ required: true }]}>
-                    <Input />
+                <StyledFormItem name="name" label="Наименование" rules={[{required: true}]}>
+                    <Input/>
                 </StyledFormItem>
-                <StyledFormItem name="correspondent_account" label="Корреспондентский счёт" >
-                    <Input />
+                <StyledFormItem name="correspondent_account" label="Корреспондентский счёт">
+                    <Input/>
                 </StyledFormItem>
-                <StyledFormItem>
-                    <Button type="primary" onClick={handleSubmit}>
-                        {editingBik ? "Сохранить изменения" : "Добавить бик"}
-                    </Button>
-                </StyledFormItem>
-            </StyledForm>
-        </StyledFormBlock>
-    );
+                <div style={{textAlign: 'center'}}>
+                    <StyledFormItem>
+                        <StyledButtonGreen type="primary" onClick={handleSubmit}>
+                            {editingBik ? "Сохранить изменения" : "Добавить бик"}
+                        </StyledButtonGreen>
+                    </StyledFormItem>
+                </div>
+            </StyledFormRegular>
+        </StyledBlockRegular>
+);
 };
 
 export default BikForm;

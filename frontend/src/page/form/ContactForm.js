@@ -6,10 +6,13 @@ import {
     ADD_CONTACT_MUTATION,
     UPDATE_CONTACT_MUTATION
 } from '../../graphql/mutationsContact';
-import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles';
+import {StyledForm, StyledFormItem, StyledFormRegular} from '../style/FormStyles';
 import {DatePicker} from "antd/lib";
 import moment from 'moment';
 import {SEARCH_ORGANIZATIONS_QUERY, SEARCH_POSITIONS_QUERY} from "../../graphql/queriesSearch";
+import {StyledBlockRegular} from "../style/BlockStyles";
+import Title from "antd/es/typography/Title";
+import {StyledButtonGreen} from "../style/ButtonStyles";
 
 const ContactForm = ({ contact, onClose }) => {
 
@@ -101,9 +104,8 @@ const ContactForm = ({ contact, onClose }) => {
 
     if (errorOrganizations) return `Ошибка! ${errorOrganizations.message}`;
     return (
-        <StyledFormBlock>
-            <StyledForm form={form} layout="vertical">
-                {contextHolder}
+        <StyledBlockRegular label={'Контакт'}>
+            <StyledFormRegular form={form}   onFinish={handleSubmit}>
                 <StyledFormItem name="first_name" label="Имя" rules={[{ required: true }]}>
                     <Input />
                 </StyledFormItem>
@@ -116,7 +118,7 @@ const ContactForm = ({ contact, onClose }) => {
                 <StyledFormItem name="birth_day" label="Дата рождения">
                     <DatePicker placeholder="Выберите дату" />
                 </StyledFormItem>
-                <StyledFormItem name="work_phone" label="Рабочий номер телефона"  rules={[
+                <StyledFormItem name="work_phone" label="Рабочий"  rules={[
                     {
                         pattern: /^[\d\s()-]+$/,
                         message: 'Пожалуйста, введите корректный номер телефона',
@@ -132,7 +134,7 @@ const ContactForm = ({ contact, onClose }) => {
                     />
 
                 </StyledFormItem>
-                <StyledFormItem name="mobile_phone" label="Мобильный номер телефона"  rules={[
+                <StyledFormItem name="mobile_phone" label="Мобильный"  rules={[
                     {
                         pattern: /^[\d\s()-]+$/,
                         message: 'Пожалуйста, введите корректный номер телефона',
@@ -144,8 +146,7 @@ const ContactForm = ({ contact, onClose }) => {
                         addonBefore="+7"
                         maxLength={15}
                         minLength={11}
-                        pattern="\d*"
-                    />
+                        pattern="\d*"/>
                 </StyledFormItem>
                 <StyledFormItem name="email" label="Личный e-mail" rules={[{ type: 'email', message: 'Пожалуйста, введите корректный почтовый адресс', }]} >
                     <Input        placeholder="Введите e-mail"/>
@@ -155,7 +156,7 @@ const ContactForm = ({ contact, onClose }) => {
                 </StyledFormItem>
                 <StyledFormItem name="position_id" label="Должность" >
                     <AutoComplete
-                        dropdownMatchSelectWidth={false}
+                        popupMatchSelectWidth={false}
                         filterOption = {false}
                         options={dataPositions  && dataPositions.positionsTable && dataPositions.positionsTable.positions.map(position => ({
                             key: position.id,
@@ -163,12 +164,11 @@ const ContactForm = ({ contact, onClose }) => {
                             label: position.name,
                         }))}
                         onChange={(value, option)=>handleAutoCompletePositions(value, option)} // Передаем введенное значение
-                        placeholder="Начните ввод..."
-                    />
+                        placeholder="Начните ввод..."/>
                 </StyledFormItem>
                 <StyledFormItem name="organization_id" label="Организация" rules={[{ required: true }]}>
                     <AutoComplete
-                        dropdownMatchSelectWidth={false}
+                        popupMatchSelectWidth={false}
                         filterOption = {false}
                         options={dataOrganizations &&  dataOrganizations.organizationsTable && dataOrganizations.organizationsTable.organizations.map(organization => ({
                             key: organization.id,
@@ -176,16 +176,17 @@ const ContactForm = ({ contact, onClose }) => {
                             label: organization.name,
                         }))}
                         onChange={(value, option)=>handleAutoCompleteOrganization(value, option)} // Передаем введенное значение
-                        placeholder="Начните ввод..."
-                    />
+                        placeholder="Начните ввод..."/>
                 </StyledFormItem>
                 <StyledFormItem>
-                    <Button type="primary" onClick={handleSubmit}>
-                        {editingContact ? "Сохранить изменения" : "Добавить контакт"}
-                    </Button>
+                    <div style={{textAlign: 'center'}}>
+                        <StyledButtonGreen type="primary" htmlType={"submit"}>
+                            {editingContact ? "Сохранить изменения" : "Добавить контакт"}
+                        </StyledButtonGreen>
+                    </div>
                 </StyledFormItem>
-            </StyledForm>
-        </StyledFormBlock>
+            </StyledFormRegular>
+        </StyledBlockRegular>
     );
 };
 

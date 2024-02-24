@@ -28,5 +28,8 @@ class TypeProjectDocument extends Model
     {
         return $this->belongsTo(TemplateContentTypeProjects::class);
     }
-
+    public function project(): HasMany
+    {
+        return $this->hasMany(Project::class);
+    }
 }

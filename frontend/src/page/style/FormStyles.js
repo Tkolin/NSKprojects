@@ -1,70 +1,82 @@
-// FormStyles.js
 import styled from 'styled-components';
-import { Form, Input, Select, Button } from 'antd';
+import { Form } from 'antd';
 
-export const StyledForm = styled(Form)`
-  max-width: 400px;
-  margin: 0 auto;
+export const StyledFormWrapperSmall = styled(Form)`
+    max-width: 200px;
+    margin: 0 auto;
+ 
+`;
+export const StyledFormWrapperRegular = styled(Form)`
+    max-width: 400px;
+    margin: 0 auto;
+ 
+`;
+export const StyledFormWrapperBig = styled(Form)`
+    max-width: 800px;
+    margin: 0 auto;
+`;
+export const StyledFormWrapperLarge = styled(Form)`
+    max-width: 1200px;
+    margin: 0 auto;
 `;
 
 export const StyledFormItem = styled(Form.Item)`
-  margin-bottom: 5px;
+  
 `;
-export const StyledBigForm = styled(Form)`
-  max-width: 800px;
-  margin: 0 auto;
-`;
-export const StyledVeryBigForm = styled(Form)`
-  max-width: 1200px;
-  margin: 0 auto;
-`;
-export const StyledButton = styled(Button)`
-  width: 100%;
-`;
+const StyledForm = ({form, onFinish, children  }) => {
+    return (
+        <Form form={form} onFinish={onFinish}
+              labelAlign="right"
+              labelCol={{ flex: '120px' }}
+              wrapperCol={{flex: '180px'}}
+              labelWrap
+              layout="horizontal">
 
-const StyledFormBlockWrapper = styled.div`
-  max-width: 400px;
-  margin: 0 auto;
-  background-color: #f0f0f0;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-`;
-export const StyledBigFormBlockWrapper = styled(StyledFormBlockWrapper)`
-    max-width: 800px;
-`;
-export const StyledVeryBigFormBlockWrapper = styled(StyledFormBlockWrapper)`
-    max-width: 1200px;
-`;
-export const StyledButtonForm = styled(Button)`
-    margin-bottom: 6px;
-`;
-const StyledBigFormBlock = ({ form, onFinish, children }) => {
-    return (
-        <StyledBigFormBlockWrapper>
-            <Form form={form} onFinish={onFinish} layout="vertical">
-                {children}
-            </Form>
-        </StyledBigFormBlockWrapper>
+            {children}
+        </Form>
     );
 };
-const StyledVeryBigFormBlock = ({ form, onFinish, children }) => {
+const StyledFormSmall = ({ form, onFinish, children  }) => {
     return (
-        <StyledVeryBigFormBlockWrapper>
-            <Form form={form} onFinish={onFinish} layout="vertical">
-                {children}
-            </Form>
-        </StyledVeryBigFormBlockWrapper>
-    );
-};
-const StyledFormBlock = ({ form, onFinish, children }) => {
-    return (
-        <StyledFormBlockWrapper>
-            <Form form={form} onFinish={onFinish} layout="vertical">
-                {children}
-            </Form>
-        </StyledFormBlockWrapper>
-    );
-};
 
-export {StyledBigFormBlock, StyledFormBlock, StyledVeryBigFormBlock};
+            <Form form={form} onFinish={onFinish} layout="vertical">
+                 {children}
+            </Form>
+
+    );
+};
+const StyledFormRegular = ({form, onFinish, children, layout  }) => {
+    return (
+            <Form form={form} onFinish={onFinish}
+                  labelAlign="left"
+
+                  wrapperCol={{flex: 1}}
+                  labelWrap
+                  layout={layout ? layout : "horizontal"}>
+
+                {children}
+            </Form>
+    );
+};
+const StyledFormBig = ({ form, onFinish, children  }) => {
+    return (
+            <Form form={form}
+                  onFinish={onFinish}
+                  labelAlign="left"
+                  labelWrap
+                  layout="horizontal"
+            >
+                {children}
+            </Form>
+    );
+};
+const StyledFormLarge = ({ form, onFinish, children  }) => {
+    return (
+            <Form
+                form={form}
+                  onFinish={onFinish} layout="vertical">
+                {children}
+            </Form>
+    );
+};
+export {StyledFormSmall,StyledFormRegular,StyledFormBig,StyledFormLarge,StyledForm};

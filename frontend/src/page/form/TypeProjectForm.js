@@ -6,8 +6,9 @@ import {
     ADD_BIK_MUTATION,
     UPDATE_BIK_MUTATION
 } from '../../graphql/mutationsBik';
-import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles';
+import {StyledFormBlock, StyledForm, StyledFormItem, StyledFormLarge} from '../style/FormStyles';
 import {ADD_TYPE_PROJECTS_MUTATIOM, UPDATE_TYPE_PROJECTS_MUTATIOM} from "../../graphql/mutationsTypeProject";
+import {StyledBlockLarge} from "../style/BlockStyles";
 
 
 const IrdForm = ({ typeProject, onClose }) => {
@@ -68,9 +69,8 @@ const IrdForm = ({ typeProject, onClose }) => {
     };
 
     return (
-        <StyledFormBlock>
-            <StyledForm form={form} layout="vertical">
-                {contextHolder}
+        <StyledBlockLarge lable={''}>
+            <StyledFormLarge form={form} layout="vertical">
                 <StyledFormItem name="name" label="Наименование"  rules={[{ required: true }]}>
                     <Input />
                 </StyledFormItem>
@@ -82,8 +82,8 @@ const IrdForm = ({ typeProject, onClose }) => {
                         {editingTypeProject ? "Сохранить изменения" : "Добавить"}
                     </Button>
                 </StyledFormItem>
-            </StyledForm>
-        </StyledFormBlock>
+            </StyledFormLarge>
+        </StyledBlockLarge>
     );
 };
 

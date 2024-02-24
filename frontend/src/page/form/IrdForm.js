@@ -1,13 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Button, Select, notification} from 'antd';
-import { useMutation, useQuery } from '@apollo/client';
-import {BIK_QUERY, IRDS_QUERY} from '../../graphql/queries';
-import {
-    ADD_BIK_MUTATION,
-    UPDATE_BIK_MUTATION
-} from '../../graphql/mutationsBik';
-import {StyledFormBlock, StyledForm, StyledFormItem } from '../style/FormStyles';
+import {Form, Input, Button, notification} from 'antd';
+import { useMutation } from '@apollo/client';
+import {IRDS_QUERY} from '../../graphql/queries';
+import {StyledFormItem, StyledFormRegular} from '../style/FormStyles';
 import {ADD_IRD_MUTATION, UPDATE_IRD_MUTATION} from "../../graphql/mutationsIrd";
+import {StyledBlockRegular} from "../style/BlockStyles";
+import {StyledButtonGreen} from "../style/ButtonStyles";
 
 
 const IrdForm = ({ ird, onClose }) => {
@@ -69,20 +67,21 @@ const IrdForm = ({ ird, onClose }) => {
     };
 
     return (
-        <StyledFormBlock>
-            <StyledForm form={form} layout="vertical">
-                {contextHolder}
-                <StyledFormItem name="name" label="Наименование"  rules={[{ required: true }]}>
-                    <Input />
+        <StyledBlockRegular label={'Ирд'}>
+            <StyledFormRegular form={form} layout="vertical">
+                <StyledFormItem name="name" label="Наименование" rules={[{required: true}]}>
+                    <Input/>
                 </StyledFormItem>
-                <StyledFormItem>
-                    <Button type="primary" onClick={handleSubmit}>
-                        {editingIrd ? "Сохранить изменения" : "Добавить"}
-                    </Button>
-                </StyledFormItem>
-            </StyledForm>
-        </StyledFormBlock>
-    );
+                <div style={{textAlign: 'center'}}>
+                    <StyledFormItem>
+                        <StyledButtonGreen type="primary" onClick={handleSubmit}>
+                            {editingIrd ? "Сохранить изменения" : "Добавить"}
+                        </StyledButtonGreen>
+                    </StyledFormItem>
+                </div>
+            </StyledFormRegular>
+        </StyledBlockRegular>
+);
 };
 
 export default IrdForm;
