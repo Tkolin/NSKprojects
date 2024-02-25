@@ -4,6 +4,7 @@ type Query {
     positionsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): PositionsResult
     irdsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): IrdsResult
     stagesTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): StagesResult
+    tasksTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): TasksResult
     typeProjectsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): TypeProjectsResult
     projectsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): ProjectsResult
     personsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): PersonsResult
@@ -15,8 +16,8 @@ type Query {
     organizations: [Organization]
 
     templatesIrdsTypeProjects(typeProject: ID): [TemplateIRD]
-    templatesContentsTypeProjects(typeProject: ID): [TemplateContent]
     templatesStagesTypeProjects(typeProject: ID): [TemplateStage]
+    templatesTasksTypeProjects(typeProject: ID): [TemplateTask]
 
 
     projectStatuses: [ProjectStatus!]!
@@ -38,6 +39,14 @@ type Query {
 
 type Mutation {
 
+    addTask(
+        name: String!
+    ): IRD!
+    updateTask(
+        id: ID!
+        name: String!
+    ): IRD!
+
     updateIrdsToProject(
         typeProjectId: ID!
         listIrds_id: [ID!]!
@@ -57,6 +66,13 @@ type Mutation {
         listIrds_id: [ID!]!
         listStageNumber: [Int]
         listAppNumber: [Int]
+    ) : Int
+
+    updateTaskTemplate(
+        typeProjectId: ID!,
+        listTasks_id: [ID!]!,
+        listInheritedTasks_id: [ID],
+        stageNumber: [Int],
     ) : Int
 
     updateStagesTemplate(
@@ -331,6 +347,10 @@ type StagesResult {
     stages: [Stage]
     count: Int
 }
+type TasksResult {
+    tasks: [Task]
+    count: Int
+}
 type TypeProjectsResult {
     typeProjects: [TypeProjectDocument]
     count: Int
@@ -535,6 +555,10 @@ type Stage{
     id: ID!
     name: String
 }
+type Task{
+    id: ID!
+    name: String
+}
 
 type TemplateIRD {
     id: ID!
@@ -552,11 +576,13 @@ type TemplateStage{
     stage_number: Int
     percentage: Int
 }
-type TemplateContent{
+type TemplateTask{
     id: ID!
-    name: String!
+    task: Task
+    inheritedTask: TemplateTask
+    inherited_task_id: ID
+    stage_number: Int
 }
-
 
 extend type Mutation {
     register(input: RegisterInput!): AuthPayload!

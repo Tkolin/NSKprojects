@@ -44,4 +44,8 @@ class Person extends Model
     {
         return $this->hasMany(EducationPerson::class);
     }
+    public function executor_person(): HasMany
+    {
+        return $this->hasMany(ProjectExecutors::class);
+    }
 }

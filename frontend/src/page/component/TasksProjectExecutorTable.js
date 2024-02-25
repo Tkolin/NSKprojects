@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { Table, Select, InputNumber, DatePicker, Button } from 'antd';
-import {GET_TEMPLATES_TASKS_TYPE_PROJECTS, SEARCH_PERSONS_QUERY} from "./graphql/queriesSearch";
+import {GET_TEMPLATES_TASKS_TYPE_PROJECTS, SEARCH_PERSONS_QUERY} from "../../graphql/queriesSearch";
 
-const HierarchicalTable = ({ typeProjectId }) => {
+const TasksProjectExecutorTable = ({ project,typeProjectId }) => {
     const [dataPersons, setDataPersons] = useState(null);
     const [autoCompletePersons, setAutoCompletePersons] = useState('');
-
+    const [typeProjectId, setTypeProjectId] = useState('')
     const handleAutoCompletePersonsSelect = (value, taskId) => {
         console.log(taskId);
         handleExecutorChange(value, taskId);
@@ -119,5 +119,5 @@ const HierarchicalTable = ({ typeProjectId }) => {
     );
 };
 
-export default HierarchicalTable;
+export default TasksProjectExecutorTable;
 

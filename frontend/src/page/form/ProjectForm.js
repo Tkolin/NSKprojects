@@ -1,12 +1,25 @@
 import React, {useEffect, useState} from 'react';
 import {
-    Form, Input, Button, Select, InputNumber, Col, Row, notification, Modal, Space, Checkbox, AutoComplete
+    Form,
+    Input,
+    Button,
+    Select,
+    InputNumber,
+    Col,
+    Row,
+    notification,
+    Modal,
+    Space,
+    Checkbox,
+    AutoComplete,
+    Cascader,
+    Carousel
 } from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
-import {CURRENT_DELEGATE_QUERY, PROJECT_QUERY, TEMPLATE_IRDS_QUERY, TYPES_PROJECTS_QUERY} from '../../graphql/queries';
+import {PROJECT_QUERY, TYPES_PROJECTS_QUERY} from '../../graphql/queries';
 import {PROJECT_FORM_QUERY} from '../../graphql/queriesGroupData';
 import {
-    ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION,
+    ADD_PROJECT_MUTATION, UPDATE_IRDS_TO_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION, UPDATE_STAGES_TO_PROJECT_MUTATION,
 } from '../../graphql/mutationsProject';
 import {
     StyledFormBig, StyledFormItem, StyledFormRegular
@@ -26,14 +39,17 @@ import {
 import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../style/BlockStyles";
 import {StyledButtonForm, StyledButtonGreen} from "../style/ButtonStyles";
 import {UPDATE_STAGES_TEMPLATE_MUTATION} from "../../graphql/mutationsTemplate";
+import TasksProjectExecutorTable from "../component/TasksProjectExecutorTable";
+import IrdsProjectForm from "../component/IrdsProjectForm";
+import StagesProjectForm from "../component/StagesProjectForm";
 
 const {Option} = Select;
-const { RangePicker } = DatePicker;
+const {RangePicker} = DatePicker;
 const ProjectForm = ({project, onClose}) => {
 
     // Состояния
     const [form] = Form.useForm();
-    const [formIRD] = Form.useForm();
+    const [formTasks] = Form.useForm();
     const [formContents] = Form.useForm();
     const [formStage] = Form.useForm();
     const [projectTypeDocument, setProjectTypeDocument] = useState(null);
@@ -41,7 +57,7 @@ const ProjectForm = ({project, onClose}) => {
     const [autoCompleteOrganization, setAutoCompleteOrganization] = useState({id: '', name: ''});
 
     const [typeProjectFormViewModalVisible, setTypeProjectFormViewModalVisible] = useState(false);
-    const [irdFormViewModalVisible, setIrdFormViewModalVisible] = useState(false);
+
     const [stageFormViewModalVisible, setStageFormViewModalVisible] = useState(false);
     const [confirmTypeChangeModalVisible, setConfirmTypeChangeModalVisible] = useState(false);
     const [costumerFormViewModalVisible, setCostumerFormViewModalVisible] = useState(false);
@@ -51,7 +67,7 @@ const ProjectForm = ({project, onClose}) => {
 
     const [editingTypeProject, setEditingTypeProject] = useState(null);
 
-    const [autoCompleteIrd, setAutoCompleteIrd] = useState('');
+
     const [autoCompleteStage, setAutoCompleteStage] = useState('');
 
     const [selectedTypeProject, setSelectedTypeProject] = useState(null);
@@ -61,14 +77,7 @@ const ProjectForm = ({project, onClose}) => {
         console.log(autoCompleteOrganization.id);
     };
 
-    const handleAutoCompleteIrdSelect = (value) => {
-        if (value == 'CREATE_NEW') {
-            setIrdFormViewModalVisible(true);
-            setAutoCompleteIrd('');
-        } else {
-            setAutoCompleteIrd('');
-        }
-    };
+
     const handleAutoCompleteStageSelect = (value) => {
         if (value == 'CREATE_NEW') {
             setIrdFormViewModalVisible(true);
@@ -77,9 +86,7 @@ const ProjectForm = ({project, onClose}) => {
             setAutoCompleteIrd('');
         }
     };
-    const handleAutoCompleteIrd = (value) => {
-        setAutoCompleteIrd(value)
-    };
+
     const handleAutoCompleteStage = (value) => {
         setAutoCompleteStage(value);
     };
@@ -122,7 +129,6 @@ const ProjectForm = ({project, onClose}) => {
     };
 
     // Получение данных для выпадающих списков
-    const [dataIrds, setDataIrds] = useState(null);
     const [dataStages, setDataStages] = useState(null);
 
     const {loading: loadingAll, error: errorAll, data: dataAll} = useQuery(PROJECT_FORM_QUERY);
@@ -134,9 +140,7 @@ const ProjectForm = ({project, onClose}) => {
         fetchPolicy: 'network-only',
         onCompleted: (data) => addIrdsAndStages(data),
     });
-    const {loading: loadingIrds, error: errorIrds, refetch: refetchIrds} = useQuery(SEARCH_IRDS_QUERY, {
-        variables: {search: autoCompleteIrd}, onCompleted: (data) => setDataIrds(data)
-    });
+
     const {loading: loadingStages, error: errorStages, refetch: refetchStages} = useQuery(SEARCH_STAGES_QUERY, {
         variables: {search: autoCompleteStage}, onCompleted: (data) => setDataStages(data)
     });
@@ -173,26 +177,7 @@ const ProjectForm = ({project, onClose}) => {
         }
     }, [project, form]);
 
-    const addingIrds = (value) => {
-        if (dataIrds && value) {
-            console.log('addingIrds');
 
-            const newIrds = value.templatesIrdsTypeProjects.map(a => ({
-                id: a.ird ? a.ird.id : null, name: a.ird ? a.ird.name : null,
-            }));
-
-            refetchIrds({search: autoCompleteIrd}).then(({data}) => {
-                const existingIrds = dataIrds.irdsTable ? dataIrds.irdsTable.irds : [];
-                const updatedIrds = [...existingIrds, ...newIrds];
-                setDataIrds({
-                    ...dataIrds, irdsTable: {
-                        ...dataIrds.irdsTable, irds: updatedIrds,
-                    },
-                });
-            });
-            console.log(dataIrds);
-        }
-    }
 
     const addingStages = (value) => {
         if (dataStages && value) {
@@ -217,7 +202,6 @@ const ProjectForm = ({project, onClose}) => {
         }
     }
 
-
     // Мутации для добавления и обновления
     const [addProject] = useMutation(ADD_PROJECT_MUTATION, {
         refetchQueries: [{query: PROJECT_QUERY}], onCompleted: () => {
@@ -237,14 +221,7 @@ const ProjectForm = ({project, onClose}) => {
             openNotification('topRight', 'error', 'Ошибка при обновлении данных: ' + error.message);
         }
     });
-    const [updateIrdsToProject] = useMutation(UPDATE_IRDS_TO_PROJECT_MUTATION, {
-        refetchQueries: [{query: PROJECT_QUERY}], onCompleted: () => {
-            openNotification('topRight', 'success', 'Данные успешно добавлены!');
-            form.resetFields();
-        }, onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при добавлении данных: ' + error.message);
-        }
-    });
+
 
     const [updateStagesToProject] = useMutation(UPDATE_STAGES_TO_PROJECT_MUTATION, {
         refetchQueries: [{query: PROJECT_QUERY}], onCompleted: () => {
@@ -259,46 +236,23 @@ const ProjectForm = ({project, onClose}) => {
     const handleSubmit = () => {
 
         if (editingProject) {
-            updateProject({variables: {id: editingProject.id, ...form.getFieldsValue(), organization_customer_id:  autoCompleteOrganization.id}});
+            updateProject({
+                variables: {
+                    id: editingProject.id, ...form.getFieldsValue(),
+                    organization_customer_id: autoCompleteOrganization.id
+                }
+            });
         } else {
-            addProject({variables: {...form.getFieldsValue(), organization_customer_id:  autoCompleteOrganization.id}});
+            addProject({variables: {...form.getFieldsValue(), organization_customer_id: autoCompleteOrganization.id}});
         }
         //TODO: Прочитать 3 формы и вызвать 2 + 2 мутации
 
-        const stagesData = formStage.getFieldsValue().stageList.map(stage => ({
-            stage_id: stage.stage_item, procent: stage.procent_item, procent: stage.procent_item, procent: stage.procent_item,
-        }));
 
-        const irdsData = formIRD.getFieldsValue().irdList.map(ird => ({
-            ird_id: ird.ird_item, stage_number: ird.stageNumber_item, app_number: ird.appNumber_item,
-        }));
-        // Вызов мутаций для обновления данных
-        updateStagesToProject({
-            variables: {
-                typeProjectId: editingTemplate,
-                listStages_id: stagesData && stagesData.map(stage => parseInt(stage.stage_id)),
-                listPercent: stagesData && stagesData.map(stage => stage.procent)
-            }
-        });
-        updateIrdsToProject({
-            variables: {
-                typeProjectId: editingTemplate,
-                listIrds_id: irdsData.map(ird => parseInt(ird.ird_id)),
-                listStageNumber: irdsData.map(ird => ird.stage_number),
-                listAppNumber: irdsData.map(ird => ird.app_number)
-            }
-        });
     };
 
     const loadTemplate = () => {
         if (dataTemplate) {
-            const irds = dataTemplate && dataTemplate.templatesIrdsTypeProjects;
 
-            const initialValuesIrds = irds && irds.map(data => ({
-                ird_item: data.ird.id, stageNumber_item: data.stage_number, appNumber_item: data.application_to_project,
-            }));
-
-            formIRD.setFieldsValue({irdList: initialValuesIrds});
 
             const stages = dataTemplate && dataTemplate.templatesStagesTypeProjects;
 
@@ -316,6 +270,7 @@ const ProjectForm = ({project, onClose}) => {
         loadTemplate();
     }
 
+
     return (<>
         <StyledBlockLarge>
             <Row gutter={8} align="top">
@@ -331,7 +286,7 @@ const ProjectForm = ({project, onClose}) => {
                             <Space.Compact block style={{alignItems: 'flex-end'}}>
                                 <StyledFormItem name="organization_customer_id" label="Заказчик"
                                                 style={{
-                                                    width: '100%',
+                                                    width: '90%',
                                                 }}>
 
                                     <AutoComplete
@@ -354,7 +309,7 @@ const ProjectForm = ({project, onClose}) => {
                                 <StyledFormItem name="delegate_id"
                                                 label="Представитель компании"
                                                 style={{
-                                                    width: '100%',
+                                                    width: '90%',
                                                 }}>
                                     <Select
                                         popupMatchSelectWidth={false}
@@ -371,7 +326,7 @@ const ProjectForm = ({project, onClose}) => {
                             <Space.Compact block style={{alignItems: 'flex-end'}}>
                                 <StyledFormItem name="type_project_document_id" label="Тип документа"
                                                 style={{
-                                                    width: '100%',
+                                                    width: '90%',
                                                 }}>
                                     <Select
                                         popupMatchSelectWidth={false}
@@ -387,10 +342,10 @@ const ProjectForm = ({project, onClose}) => {
                                                    onClick={() => showConfirmTypeChangeModal(true)}/>
                             </Space.Compact>
                             <Space.Compact block style={{alignItems: 'flex-end'}}>
-                            <StyledFormItem name="facility_id" label="Объект"
-                                            style={{
-                                                width: '100%',
-                                            }}>
+                                <StyledFormItem name="facility_id" label="Объект"
+                                                style={{
+                                                    width: '90%',
+                                                }}>
 
                                     <Select
                                         popupMatchSelectWidth={false}>
@@ -398,9 +353,9 @@ const ProjectForm = ({project, onClose}) => {
                                             <Select.Option key={facility.id}
                                                            value={facility.id}>{facility.name}</Select.Option>))}
                                     </Select>
-                            </StyledFormItem>
-                                    <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
-                                                       onClick={() => setFacilityFormViewModalVisible(true)}/>
+                                </StyledFormItem>
+                                <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
+                                                   onClick={() => setFacilityFormViewModalVisible(true)}/>
 
 
                             </Space.Compact>
@@ -441,140 +396,18 @@ const ProjectForm = ({project, onClose}) => {
                 </Col>
 
                 <Col span={16}>
-                    <StyledBlockBig label={'Этапы'}>
-                        <StyledFormBig form={formStage}>
-                            <Form.List name="stageList">
-                                {(fields, {add, remove}) => (<>
-                                    {fields.map(({key, name, ...restField}) => (<Space
-                                        key={key}
-                                        style={{
-                                            display: 'flex',
-                                            marginBottom: 2,
-                                            marginTop: 2
-                                        }}
-                                        align="baseline"
-                                    >
-                                        <Form.Item
-                                            {...restField}
-                                            style={{marginBottom: 0, display: 'flex'}}
-                                            name={[name, 'stage_item']}
-                                        >
-                                            <Select
-                                                style={{maxWidth: 260, minWidth: 260}}
-                                                popupMatchSelectWidth={false}
-                                                filterOption={false}
-                                                onSearch={(value) => handleAutoCompleteStage(value)} // Передаем введенное значение
-                                                onSelect={(value) => handleAutoCompleteStageSelect(value)}
-                                                placeholder="Начните ввод..."
-                                                allowClear
-                                                showSearch
-                                            >
-                                                {dataStages && dataStages.stagesTable && dataStages.stagesTable.stages.map(stage => (
-                                                    <Select.Option value={stage.id}>{stage.name}</Select.Option>))}
-                                                {dataStages && dataStages.stagesTable && dataStages.stagesTable.stages && dataStages.stagesTable.stages.length === 0 && (
-                                                    <Select.Option value="CREATE_NEW">Создать новый
-                                                        этап?</Select.Option>)}
-                                            </Select>
-                                        </Form.Item>
-                                        <Form.Item
-                                            {...restField}
-                                            style={{marginBottom: 0, display: 'flex'}}
-                                            name={[name, 'date_range']}
-                                            rules={[{
-                                                required: true, message: 'Missing last name',
-                                            },]}
-                                        >
-                                            <RangePicker
-                                                id={{
-                                                    start: 'date_start_item',
-                                                    end: 'date_end_item',
-                                                }}
-                                            />
-                                        </Form.Item>
-                                        <Form.Item
-                                            {...restField}
-                                            style={{marginBottom: 0, display: 'flex'}}
-                                            name={[name, 'percent_item']}
-                                            rules={[{
-                                                required: true, message: 'Missing last name',
-                                            },]}
-                                        >
-                                            <InputNumber/>
-                                        </Form.Item>
-                                        <MinusCircleOutlined onClick={() => remove(name)}/>
-                                    </Space>))}
-                                    <Form.Item>
-                                        <Button type="dashed" onClick={() => add()} block
-                                                icon={<PlusOutlined/>}>
-                                            Добавить элемент
-                                        </Button>
-                                    </Form.Item>
-                                </>)}
-                            </Form.List>
-                        </StyledFormBig>
-
+                    <StyledBlockBig label={'Генерация договоров с исполнителем'}>
+                        <StagesProjectForm />
                     </StyledBlockBig>
-                    <StyledBlockBig label={'ИРД'}>
-                        <StyledFormBig form={formIRD} name="dynamic_form_nest_item" autoComplete="off">
-                            <Form.List name="irdList">
-                                {(fields, {add, remove}) => (<>
-                                    {fields.map(({key, name, ...restField}) => (<Space
-                                        key={key}
-                                        style={{
-                                            display: 'flex', marginBottom: 2, marginTop: 2
-                                        }}
-                                        align="baseline"
-                                    >
-                                        <Form.Item
-                                            {...restField}
-                                            style={{width: 570, minWidth: 220, marginBottom: 0}}
-                                            name={[name, 'ird_item']}
-                                        >
-                                            <Select
-                                                style={{width: 570, minWidth: 220, marginBottom: 0}}
-                                                popupMatchSelectWidth={false}
-                                                filterOption={false}
-                                                placeholder="Начните ввод..."
-                                                onSearch={(value) => handleAutoCompleteIrd(value)}
-                                                onSelect={(value) => handleAutoCompleteIrdSelect(value)}
-                                                allowClear
-                                                showSearch
-                                                loading={loadingIrds}
-                                            >
-                                                {dataIrds && dataIrds.irdsTable && dataIrds.irdsTable.irds && dataIrds.irdsTable.irds.map(ird => (
-                                                    <Select.Option key={ird.id}
-                                                                   value={ird.id}>
-                                                        {ird.name}
-                                                    </Select.Option>))}
-                                                {dataIrds && dataIrds.irdsTable && dataIrds.irdsTable.irds && dataIrds.irdsTable.irds.length === 0 && (
-                                                    <Select.Option value="CREATE_NEW">
-                                                        Создать новый ИРД?
-                                                    </Select.Option>)}
-                                            </Select>
-                                        </Form.Item>
-                                        <Form.Item
-                                            {...restField}
-                                            name={[name, 'isChecked']}
-                                            valuePropName="dateComplite_item"
-                                            style={{
-                                                display: 'flex', marginBottom: 0, marginTop: 0
-                                            }}
-                                        >
-                                            <DatePicker
-                                                status={"warning"}
-                                                placeholder="Получено"/>
-                                        </Form.Item>
-                                        <MinusCircleOutlined onClick={() => remove(name)}/>
-                                    </Space>))}
-                                    <Form.Item>
-                                        <Button type="dashed" onClick={() => add()} block
-                                                icon={<PlusOutlined/>}>
-                                            Add field
-                                        </Button>
-                                    </Form.Item>
-                                </>)}
-                            </Form.List>
-                        </StyledFormBig>
+
+
+                    <StyledBlockBig label={'Генерация договоров с исполнителем'}>
+                        <IrdsProjectForm />
+                    </StyledBlockBig>
+
+
+                    <StyledBlockBig label={'Генерация договоров с исполнителем'}>
+                        <TasksProjectExecutorTable typeProjectId={selectedTypeProject}/>
                     </StyledBlockBig>
                 </Col>
             </Row>

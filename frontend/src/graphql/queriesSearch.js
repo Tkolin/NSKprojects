@@ -60,6 +60,33 @@ export const SEARCH_STAGES_QUERY = gql`
         }
     }
 `;
+export const SEARCH_TASKS_QUERY = gql`
+    query SearchTaskQuery($search: String){
+        tasksTable(page: 1, limit: 20, search: $search) {
+            tasks {
+                id
+                name
+            }
+            count
+        }
+    }
+`;
+export const SEARCH_PERSONS_QUERY = gql`
+    query SearchTaskQuery($search: String){
+        personsTable(page: 1, limit: 20, search: $search) {
+            persons {
+                id
+                passport {
+                    id
+                    firstname
+                    lastname
+                    patronymic
+                }
+            }
+            count
+        }
+    }
+`;
 export const SEARCH_DELEGATES_OR_ORGANIZATION_QUERY = gql`
     query SearchDelegatesQuery($searchOrganizationId: String){
         contactsTable(searchOrganizationId: $searchOrganizationId) {
@@ -70,6 +97,19 @@ export const SEARCH_DELEGATES_OR_ORGANIZATION_QUERY = gql`
                 patronymic
             }
             count
+        }
+    }
+`;
+export const GET_TEMPLATES_TASKS_TYPE_PROJECTS  = gql`
+    query GetTemplatesTasksTypeProjects ($typeProjectId: ID){
+        templatesTasksTypeProjects(typeProject: $typeProjectId) {
+            id
+            task {
+                id
+                name
+            }
+            inherited_task_id
+            stage_number
         }
     }
 `;
@@ -91,6 +131,21 @@ export const SEARCH_TEMPLATE_OR_TYPE_PROJECT_QUERY = gql`
                 name
             }
             percentage
+        }
+        templatesTasksTypeProjects(typeProject: $typeProject) {
+            id
+            task{
+                id
+                name
+            }
+            inheritedTask{
+                id
+                task {
+                    id
+                    name
+                }
+            }
+            stage_number
         }
     }
 `;

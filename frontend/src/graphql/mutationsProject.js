@@ -137,9 +137,6 @@ export const UPDATE_IRDS_TO_PROJECT_MUTATION = gql`
     ) {
         updateStagesToProject(
             typeProjectId: $typeProjectId
-            listStages_id: $listStages_id
-            listPercent: $listPercent
-            listNumber: $listNumber
         )
     }
 `;

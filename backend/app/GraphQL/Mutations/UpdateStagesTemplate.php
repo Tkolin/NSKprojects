@@ -14,16 +14,13 @@ final readonly class UpdateStagesTemplate
         $typeProjectId = $args['typeProjectId'];
         $listStagesId = $args['listStages_id'];
         $listPercent = $args['listPercent'];
-        error_log("Type Project ID: " . $typeProjectId);
-        error_log("List Stages ID: " . json_encode($listStagesId));
-        error_log("List Percent: " . json_encode($listPercent));
+
         if (count($listStagesId) !== count($listPercent)) {
             throw new \Exception('Length of lists must be equal');
         }
 
         $count = count($listStagesId);
         for ($i = 0; $i < $count; $i++) {
-            error_log("тут");
             TemplateStagesTypeProjects::updateOrCreate(
                 [
                     'project_type_id' => $typeProjectId,

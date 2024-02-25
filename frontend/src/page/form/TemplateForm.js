@@ -4,13 +4,17 @@ import {
 } from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
 import {TYPES_PROJECTS_QUERY} from '../../graphql/queries';
-import {UPDATE_IRDS_TEMPLATE_MUTATION, UPDATE_STAGES_TEMPLATE_MUTATION} from '../../graphql/mutationsTemplate';
+import {
+    UPDATE_IRDS_TEMPLATE_MUTATION,
+    UPDATE_STAGES_TEMPLATE_MUTATION,
+    UPDATE_TASKS_TEMPLATE_MUTATION
+} from '../../graphql/mutationsTemplate';
 import {
     StyledFormBig, StyledFormItem, StyledFormLarge, StyledFormRegular
 } from '../style/FormStyles';
 import {Loading3QuartersOutlined, MinusCircleOutlined, PlusOutlined} from '@ant-design/icons';
 import {
-    SEARCH_IRDS_QUERY, SEARCH_STAGES_QUERY, SEARCH_TEMPLATE_OR_TYPE_PROJECT_QUERY
+    SEARCH_IRDS_QUERY, SEARCH_STAGES_QUERY, SEARCH_TASKS_QUERY, SEARCH_TEMPLATE_OR_TYPE_PROJECT_QUERY
 } from "../../graphql/queriesSearch";
 import IrdForm from "./IrdForm";
 import StageForm from "./StageForm";
@@ -27,9 +31,11 @@ const TemplateForm = ({project, onClose}) => {
     const [form] = Form.useForm();
     const [formIRD] = Form.useForm();
     const [formStage] = Form.useForm();
+    const [formTask] = Form.useForm();
 
     const [typeProjectFormViewModalVisible, setTypeProjectFormViewModalVisible] = useState(false);
     const [irdFormViewModalVisible, setIrdFormViewModalVisible] = useState(false);
+    const [taskFormViewModalVisible, setTaskFormViewModalVisible] = useState(false);
     const [stageFormViewModalVisible, setStageFormViewModalVisible] = useState(false);
     const [confirmTypeChangeModalVisible, setConfirmTypeChangeModalVisible] = useState(false);
 
@@ -37,6 +43,7 @@ const TemplateForm = ({project, onClose}) => {
 
     const [autoCompleteIrd, setAutoCompleteIrd] = useState('');
     const [autoCompleteStage, setAutoCompleteStage] = useState('');
+    const [autoCompleteTask, setAutoCompleteTask] = useState('');
 
     const [selectedTypeProject, setSelectedTypeProject] = useState(null);
     const handleAutoCompleteIrdSelect = (value) => {
@@ -55,8 +62,19 @@ const TemplateForm = ({project, onClose}) => {
             setAutoCompleteIrd('');
         }
     };
+    const handleAutoCompleteTaskSelect = (value) => {
+        if (value == 'CREATE_NEW') {
+            setTaskFormViewModalVisible(true);
+            setAutoCompleteTask('');
+        } else {
+            setAutoCompleteTask('');
+        }
+    };
     const handleAutoCompleteIrd = (value) => {
         setAutoCompleteIrd(value)
+    };
+    const handleAutoCompleteTask = (value) => {
+        setAutoCompleteTask(value)
     };
     const handleAutoCompleteStage = (value) => {
         setAutoCompleteStage(value);
@@ -70,6 +88,9 @@ const TemplateForm = ({project, onClose}) => {
     const handleStageFormView = () => {
         setStageFormViewModalVisible(false);
     };
+    const handleTaskFormView = () => {
+        setTaskFormViewModalVisible(false);
+    };
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
         notification[type]({
@@ -80,6 +101,7 @@ const TemplateForm = ({project, onClose}) => {
     // Получение данных для выпадающих списков
     const [dataIrds, setDataIrds] = useState(null);
     const [dataStages, setDataStages] = useState(null);
+    const [dataTasks, setDataTasks] = useState(null);
 
     const {
         loading: loadingTypeProject, error: errorTypeProject, data: dataTypeProject
@@ -97,30 +119,26 @@ const TemplateForm = ({project, onClose}) => {
     const {loading: loadingStages, error: errorStages, refetch: refetchStages} = useQuery(SEARCH_STAGES_QUERY, {
         variables: {search: autoCompleteStage}, onCompleted: (data) => setDataStages(data)
     });
+    const {loading: loadingTasks, error: errorTasks, refetch: refetchTasks} = useQuery(SEARCH_TASKS_QUERY, {
+        variables: {search: autoCompleteTask}, onCompleted: (data) => setDataTasks(data)
+    });
 
 
     // Переключение типов документации
     const handleEditingTemplate = (value) => {
         setSelectedTypeProject(value);
-        console.log('нажатие SelectedTypeProject: ' + value);
         showConfirmTypeChangeModal();
     };
 
     const showConfirmTypeChangeModal = () => {
-        console.log('открытие selectedTypeProject: ' + selectedTypeProject);
-        console.log('открытие editingTemplate pre: ' + editingTemplate);
         setConfirmTypeChangeModalVisible(true);
     };
 
     const handleConfirmTypeChange = (confirm) => {
         if (confirm) {
-            console.log('принятие да selectedTypeProject: ' + selectedTypeProject);
-            console.log('принятие да editingTemplate pre: ' + editingTemplate);
             setEditingTemplate(selectedTypeProject);
-            console.log('принятие да editingTemplate post: ' + editingTemplate);
         }
         setSelectedTypeProject(null);
-        console.log('принятие нет SelectedTypeProject null: ' + selectedTypeProject);
         setConfirmTypeChangeModalVisible(false);
     };
 
@@ -129,6 +147,7 @@ const TemplateForm = ({project, onClose}) => {
     const addIrdsAndStages = (value) => {
         addingStages(value);
         addingIrds(value);
+        addingTasks(value)
         loadTemplate();
     }
 
@@ -150,6 +169,25 @@ const TemplateForm = ({project, onClose}) => {
         }
     }
 
+    const addingTasks = (value) => {
+        if (dataTasks && value) {
+            const newTasks = value.templatesTasksTypeProjects.map(a => ({
+                id: a.task ? a.task.id : null,
+                name: a.task ? a.task.name : null,
+            }));
+
+            refetchTasks({search: autoCompleteTask}).then(({data}) => {
+                const existingTasks = dataTasks.stagesTable ? dataTasks.stagesTable.stages : [];
+                const updatedTasks = [...existingTasks, ...newTasks];
+                setDataStages({
+                    ...dataTasks, tasksTable: {
+                        ...dataTasks.tasksTable,
+                        tasks: updatedTasks,
+                    },
+                });
+            });
+        }
+    }
 
     const addingIrds = (value) => {
         if (dataIrds && value) {
@@ -174,6 +212,13 @@ const TemplateForm = ({project, onClose}) => {
 
 
     // Мутации для добавления и обновления
+    const [updateTemplateTask] = useMutation(UPDATE_TASKS_TEMPLATE_MUTATION, {
+        onCompleted: () => {
+            openNotification('topRight', 'success', 'Данные успешно обновлены tt!');
+        }, onError: (error) => {
+            openNotification('topRight', 'error', 'Ошибка при обновлении данных: tt' + error.message);
+        }
+    });
     const [updateTemplateStage] = useMutation(UPDATE_STAGES_TEMPLATE_MUTATION, {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно обновлены ts!');
@@ -198,7 +243,19 @@ const TemplateForm = ({project, onClose}) => {
         const irdsData = formIRD.getFieldsValue().irdList.map(ird => ({
             ird_id: ird.ird_item, stage_number: ird.stageNumber_item, app_number: ird.appNumber_item,
         }));
+
+        const tasksData = formTask.getFieldsValue().taskList.map(task => ({
+            task_id: task.task_item, up_task_id: task.up_task_item, stage_number: task.stage_item,
+        }));
         // Вызов мутаций для обновления данных
+        updateTemplateTask({
+            variables: {
+                typeProjectId: editingTemplate,
+                listTasks_id: tasksData && tasksData.map(task => parseInt(task.task_id)),
+                listInheritedTasks_id: tasksData && tasksData.map(task => parseInt(task.up_task_id)),
+                stageNumber: tasksData && tasksData.map(task => task.stage_number),
+            }
+        });
         updateTemplateStage({
             variables: {
                 typeProjectId: editingTemplate,
@@ -235,6 +292,14 @@ const TemplateForm = ({project, onClose}) => {
             }));
 
             formStage.setFieldsValue({stageList: initialValuesStages});
+
+            const tasks = dataTemplate && dataTemplate.templatesTasksTypeProjects;
+
+            const initialValuesTasks = tasks && tasks.map(data => ({
+                task_item: data.task.id, up_task_item: data.inheritedTask && data.inheritedTask.task && data.inheritedTask.task.id, stage_item: data.stage_number,
+            }));
+
+            formTask.setFieldsValue({taskList: initialValuesTasks});
         }
     };
 
@@ -245,8 +310,9 @@ const TemplateForm = ({project, onClose}) => {
             <Col span={8}>
                 <StyledBlockRegular label={'Тип проекта'}>
                     <StyledFormRegular form={form} layout="vertical">
-                        <StyledFormItem name="type_project_id" label="Тип документации">
-                            <Space.Compact block>
+                        <Space.Compact block  style={{alignItems: 'flex-end'}}>
+                        <StyledFormItem name="type_project_id" label="Тип документации" style={{
+                            width: '90%'}}>
                                 <Select
                                     popupMatchSelectWidth={false}
                                     value={editingTemplate}
@@ -255,10 +321,11 @@ const TemplateForm = ({project, onClose}) => {
                                         <Option key={typeDocument.id}
                                                 value={typeDocument.id}>{typeDocument.name}</Option>))}
                                 </Select>
-                                <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
-                                                   onClick={() => setTypeProjectFormViewModalVisible(true)}/>
-                            </Space.Compact>
                         </StyledFormItem>
+                            <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
+                                               onClick={() => setTypeProjectFormViewModalVisible(true)}/>
+
+                        </Space.Compact>
                         <div style={{textAlign: 'center'}}>
                             <StyledButtonForm type="primary" onClick={() => handleSubmit()}>Сохранить
                                 настройки</StyledButtonForm>
@@ -421,6 +488,107 @@ const TemplateForm = ({project, onClose}) => {
 
                     </StyledFormBig>
                 </StyledBlockBig>
+                <StyledBlockBig label={'Задачи'}>
+                    <StyledFormBig
+                        name="dynamic_form_nest_itemы"
+                        style={{maxWidth: 600}}
+                        form={formTask}
+                    >
+
+                        <Form.List name="taskList">
+                            {(fields, {add, remove}) => (<>
+                                {fields.map(({key, name, ...restField}) => (
+                                    <Space
+                                    key={key}
+                                    style={{
+                                        display: 'flex', marginBottom: 0, marginTop: 0
+                                    }}
+                                    align="baseline"
+                                >
+                                    <Form.Item
+                                        {...restField}
+                                        style={{
+                                            display: 'flex', marginBottom: 0, marginTop: 0
+                                        }}
+                                        name={[name, 'task_item']}
+                                    >
+                                        <Select
+                                            style={{maxWidth: 380, minWidth: 380, marginBottom: 0}}
+                                            popupMatchSelectWidth={false}
+                                            filterOption={false}
+                                            placeholder="Задача..."
+                                            onSearch={(value) => handleAutoCompleteTask(value)}
+                                            onSelect={(value) => handleAutoCompleteTaskSelect(value)}
+                                            allowClear
+                                            showSearch
+                                            loading={loadingIrds}
+                                        >
+                                            {dataTasks && dataTasks.tasksTable && dataTasks.tasksTable.tasks && dataTasks.tasksTable.tasks.map(task => (
+                                                <Select.Option key={task.id}
+                                                               value={task.id}>{task.name}</Select.Option>))}
+                                            {dataTasks && dataTasks.tasksTable && dataTasks.tasksTable.tasks && dataTasks.tasksTable.tasks.length === 0 && (
+                                                <Select.Option value="CREATE_NEW">Создать новый
+                                                    ИРД?</Select.Option>)}
+                                        </Select>
+                                    </Form.Item>
+                                    <Form.Item
+                                        {...restField}
+                                        style={{
+                                            display: 'flex', marginBottom: 0, marginTop: 0
+                                        }}
+                                        name={[name, 'up_task_item']}
+                                    >
+                                        <Select
+                                            style={{maxWidth: 250, minWidth: 250, marginBottom: 0}}
+                                            popupMatchSelectWidth={false}
+                                            filterOption={false}
+                                            placeholder="Наследуемая от..."
+                                            onSearch={(value) => handleAutoCompleteIrd(value)}
+                                            onSelect={(value) => handleAutoCompleteIrdSelect(value)}
+                                            allowClear
+                                            showSearch
+                                            loading={loadingIrds}
+                                        >
+                                            {dataTasks && dataTasks.tasksTable && dataTasks.tasksTable.tasks && dataTasks.tasksTable.tasks.map(task => (
+                                                <Select.Option key={task.id}
+                                                               value={task.id}>{task.name}</Select.Option>))}
+                                        </Select>
+                                    </Form.Item>
+                                    <Form.Item
+                                        {...restField}
+                                        style={{
+                                            width: '100%',
+                                            display: 'flex', marginBottom: 0, marginTop: 0
+                                        }}
+                                        name={[name, 'stage_item']}
+                                    >
+                                        <InputNumber
+                                            size={"middle"}
+                                            min={1}
+                                            max={100}
+                                            placeholder="Номер этапа"
+                                            style={{
+                                                width: 60
+                                            }}/>
+                                    </Form.Item>
+                                    <MinusCircleOutlined onClick={() => remove(name)}/>
+                                </Space>
+                                ))}
+                                <Form.Item>
+                                    <Button type="dashed" onClick={() => add()} block
+                                            icon={<PlusOutlined/>}>
+                                        Добавить задачу к шаблону
+                                    </Button>
+                                </Form.Item>
+                            </>)}
+                        </Form.List>
+                        <div style={{textAlign: 'center'}}>
+                            <StyledButtonGreen
+                                type={'dashed'}
+                                onClick={() => setIrdFormViewModalVisible(true)}>Создать ИРД</StyledButtonGreen></div>
+
+                    </StyledFormBig>
+                </StyledBlockBig>
             </Col>
         </Row>
         <Modal
@@ -451,9 +619,17 @@ const TemplateForm = ({project, onClose}) => {
             footer={null}
             onClose={handleTypeProjectFormView}
         >
-
             <TypeProjectForm/>
-
+        </Modal>
+        {/* ЗАДАЧИ */}
+        <Modal
+            open={taskFormViewModalVisible}
+            onCancel={() => setTaskFormViewModalVisible(false)}
+            footer={null}
+            onClose={handleTypeProjectFormView}
+        >
+            {/* TODO: добавить */}
+            <TypeProjectForm/>
         </Modal>
         <Modal
             open={confirmTypeChangeModalVisible}
