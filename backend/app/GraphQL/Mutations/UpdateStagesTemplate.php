@@ -34,7 +34,10 @@ final readonly class UpdateStagesTemplate
                 ]
             );
         }
-
+        // Удаление записей, которых нет в списке
+        TemplateStagesTypeProjects::where('project_type_id', $typeProjectId)
+            ->whereNotIn('stage_id', $listStagesId)
+            ->delete();
         return true;
     }
 

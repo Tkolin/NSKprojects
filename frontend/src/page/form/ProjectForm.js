@@ -12,7 +12,7 @@ import {
     StyledFormBig, StyledFormItem, StyledFormRegular
 } from '../style/FormStyles';
 import {DatePicker} from "antd/lib";
-import {MinusCircleOutlined, PlusOutlined} from '@ant-design/icons';
+import {MinusCircleOutlined, PlusOutlined, SwapOutlined} from '@ant-design/icons';
 import OrganizationForm from "./OrganizationForm";
 import moment from 'moment';
 import ContactForm from "./ContactForm";
@@ -25,9 +25,10 @@ import {
 } from "../../graphql/queriesSearch";
 import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../style/BlockStyles";
 import {StyledButtonForm, StyledButtonGreen} from "../style/ButtonStyles";
+import {UPDATE_STAGES_TEMPLATE_MUTATION} from "../../graphql/mutationsTemplate";
 
 const {Option} = Select;
-
+const { RangePicker } = DatePicker;
 const ProjectForm = ({project, onClose}) => {
 
     // Состояния
@@ -108,10 +109,8 @@ const ProjectForm = ({project, onClose}) => {
 
     const handleConfirmTypeChange = (confirm) => {
         if (confirm) {
-            console.log('p,');
             setEditingTypeProject(selectedTypeProject);
         }
-        setSelectedTypeProject(null);
         setConfirmTypeChangeModalVisible(false);
     };
 
@@ -238,17 +237,57 @@ const ProjectForm = ({project, onClose}) => {
             openNotification('topRight', 'error', 'Ошибка при обновлении данных: ' + error.message);
         }
     });
+    const [updateIrdsToProject] = useMutation(UPDATE_IRDS_TO_PROJECT_MUTATION, {
+        refetchQueries: [{query: PROJECT_QUERY}], onCompleted: () => {
+            openNotification('topRight', 'success', 'Данные успешно добавлены!');
+            form.resetFields();
+        }, onError: (error) => {
+            openNotification('topRight', 'error', 'Ошибка при добавлении данных: ' + error.message);
+        }
+    });
 
+    const [updateStagesToProject] = useMutation(UPDATE_STAGES_TO_PROJECT_MUTATION, {
+        refetchQueries: [{query: PROJECT_QUERY}], onCompleted: () => {
+            openNotification('topRight', 'success', 'Данные успешно обновлены!');
+            setEditingProjcet(null);
+            onClose();
+        }, onError: (error) => {
+            openNotification('topRight', 'error', 'Ошибка при обновлении данных: ' + error.message);
+        }
+    });
     // Обработчик отправки формы
     const handleSubmit = () => {
-        //TODO: Прочитать 3 формы и вызвать 2 + 2 мутации
-
 
         if (editingProject) {
-            updateProject({variables: {id: editingProject.id, ...form.getFieldsValue()}});
+            updateProject({variables: {id: editingProject.id, ...form.getFieldsValue(), organization_customer_id:  autoCompleteOrganization.id}});
         } else {
-            addProject({variables: form.getFieldsValue()});
+            addProject({variables: {...form.getFieldsValue(), organization_customer_id:  autoCompleteOrganization.id}});
         }
+        //TODO: Прочитать 3 формы и вызвать 2 + 2 мутации
+
+        const stagesData = formStage.getFieldsValue().stageList.map(stage => ({
+            stage_id: stage.stage_item, procent: stage.procent_item, procent: stage.procent_item, procent: stage.procent_item,
+        }));
+
+        const irdsData = formIRD.getFieldsValue().irdList.map(ird => ({
+            ird_id: ird.ird_item, stage_number: ird.stageNumber_item, app_number: ird.appNumber_item,
+        }));
+        // Вызов мутаций для обновления данных
+        updateStagesToProject({
+            variables: {
+                typeProjectId: editingTemplate,
+                listStages_id: stagesData && stagesData.map(stage => parseInt(stage.stage_id)),
+                listPercent: stagesData && stagesData.map(stage => stage.procent)
+            }
+        });
+        updateIrdsToProject({
+            variables: {
+                typeProjectId: editingTemplate,
+                listIrds_id: irdsData.map(ird => parseInt(ird.ird_id)),
+                listStageNumber: irdsData.map(ird => ird.stage_number),
+                listAppNumber: irdsData.map(ird => ird.app_number)
+            }
+        });
     };
 
     const loadTemplate = () => {
@@ -272,10 +311,8 @@ const ProjectForm = ({project, onClose}) => {
         }
     };
     const addIrdsAndStages = (value) => {
-        console.log('addIrdsAndStages');
         addingStages(value);
         addingIrds(value);
-        console.log('loadTemplate');
         loadTemplate();
     }
 
@@ -291,9 +328,12 @@ const ProjectForm = ({project, onClose}) => {
                             <StyledFormItem name="name" label="Наименование проекта" rules={[{required: true}]}>
                                 <Input/>
                             </StyledFormItem>
+                            <Space.Compact block style={{alignItems: 'flex-end'}}>
+                                <StyledFormItem name="organization_customer_id" label="Заказчик"
+                                                style={{
+                                                    width: '100%',
+                                                }}>
 
-                            <div style={{display: 'flex', alignItems: 'center'}}>
-                                <StyledFormItem name="organization_customer_id" label="Заказчик">
                                     <AutoComplete
                                         popupMatchSelectWidth={false}
                                         filterOption={false}
@@ -305,59 +345,65 @@ const ProjectForm = ({project, onClose}) => {
                                         placeholder="Начните ввод..."
                                     />
                                 </StyledFormItem>
-                                <StyledButtonForm style={{marginTop: 8}}
-                                    onClick={() => setCostumerFormViewModalVisible(true)}>Создать
-                                </StyledButtonForm>
-                            </div>
-                            <div style={{display: 'flex', alignItems: 'center'}}>
-                                <StyledFormItem name="delegate_id" label="Представитель компании">
+                                <StyledButtonGreen icon={<PlusOutlined/>}
+                                                   onClick={() => setCostumerFormViewModalVisible(true)}/>
+
+
+                            </Space.Compact>
+                            <Space.Compact block style={{alignItems: 'flex-end'}}>
+                                <StyledFormItem name="delegate_id"
+                                                label="Представитель компании"
+                                                style={{
+                                                    width: '100%',
+                                                }}>
                                     <Select
                                         popupMatchSelectWidth={false}
-                                        style={{maxWidth: 249}}
                                         placeholder="По компаниям">
                                         {dataDelegates && dataDelegates.contactsTable && dataDelegates.contactsTable.contacts.map(delegate => (
                                             <Select.Option key={delegate.id}
                                                            value={delegate.id}>{delegate.last_name} {delegate.first_name} {delegate.patronymic}</Select.Option>))}
                                     </Select>
                                 </StyledFormItem>
+                                <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
+                                                   onClick={() => setContactFormViewModalVisible(true)}/>
 
-                                <StyledButtonGreen type={"dashed"} style={{marginTop: 8}}
-                                                   onClick={() => setContactFormViewModalVisible(true)}>Создать</StyledButtonGreen>
-                            </div>
-
-                            <div style={{display: 'flex', alignItems: 'center'}}>
-                                <StyledFormItem name="type_project_document_id" label="Тип документа">
+                            </Space.Compact>
+                            <Space.Compact block style={{alignItems: 'flex-end'}}>
+                                <StyledFormItem name="type_project_document_id" label="Тип документа"
+                                                style={{
+                                                    width: '100%',
+                                                }}>
                                     <Select
                                         popupMatchSelectWidth={false}
-                                        value={editingTypeProject}
-                                        style={{minWidth: 122, maxWidth: 200}}
+                                        value={selectedTypeProject}
                                         onSelect={handleEditingTemplate}>
                                         {dataTypeProject && dataTypeProject.typeProjectsTable && dataTypeProject.typeProjectsTable.typeProjects.map(typeDocument => (
                                             <Option key={typeDocument.id}
                                                     value={typeDocument.id}>{typeDocument.name}</Option>))}
                                     </Select>
                                 </StyledFormItem>
-                                <StyledButtonGreen type={"dashed"}
-                                                   style={{marginTop: 8}}
+                                <StyledButtonGreen type={"dashed"} icon={<SwapOutlined/>}
                                                    loading={loadingTemplate}
-                                                   onClick={() =>         showConfirmTypeChangeModal(true)}>Сформировать</StyledButtonGreen>
-                            </div>
+                                                   onClick={() => showConfirmTypeChangeModal(true)}/>
+                            </Space.Compact>
+                            <Space.Compact block style={{alignItems: 'flex-end'}}>
+                            <StyledFormItem name="facility_id" label="Объект"
+                                            style={{
+                                                width: '100%',
+                                            }}>
 
-
-                            <div style={{display: 'flex', alignItems: 'center'}}>
-                                <StyledFormItem name="facility_id" label="Объект">
                                     <Select
-                                        popupMatchSelectWidth={false}
-                                        style={{flex: 1}}
-                                    >
+                                        popupMatchSelectWidth={false}>
                                         {dataAll && dataAll.facilitys && dataAll.facilitys.map(facility => (
                                             <Select.Option key={facility.id}
                                                            value={facility.id}>{facility.name}</Select.Option>))}
                                     </Select>
-                                </StyledFormItem>
-                                <StyledButtonGreen type={"dashed"} style={{marginTop: 8}}
-                                                   onClick={() => setFacilityFormViewModalVisible(true)}>Создать</StyledButtonGreen>
-                            </div>
+                            </StyledFormItem>
+                                    <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
+                                                       onClick={() => setFacilityFormViewModalVisible(true)}/>
+
+
+                            </Space.Compact>
 
                             <StyledFormItem name="date_signing" label="Дата подписания">
                                 <DatePicker placeholder="Выберите дату"/>
@@ -403,8 +449,8 @@ const ProjectForm = ({project, onClose}) => {
                                         key={key}
                                         style={{
                                             display: 'flex',
-                                            marginBottom: 0,
-                                            marginTop: 0
+                                            marginBottom: 2,
+                                            marginTop: 2
                                         }}
                                         align="baseline"
                                     >
@@ -432,23 +478,18 @@ const ProjectForm = ({project, onClose}) => {
                                         </Form.Item>
                                         <Form.Item
                                             {...restField}
-                                            name={[name, 'date_start_item']}
                                             style={{marginBottom: 0, display: 'flex'}}
+                                            name={[name, 'date_range']}
                                             rules={[{
                                                 required: true, message: 'Missing last name',
                                             },]}
                                         >
-                                            <DatePicker/>
-                                        </Form.Item>
-                                        <Form.Item
-                                            {...restField}
-                                            style={{marginBottom: 0, display: 'flex'}}
-                                            name={[name, 'date_end_item']}
-                                            rules={[{
-                                                required: true, message: 'Missing last name',
-                                            },]}
-                                        >
-                                            <DatePicker/>
+                                            <RangePicker
+                                                id={{
+                                                    start: 'date_start_item',
+                                                    end: 'date_end_item',
+                                                }}
+                                            />
                                         </Form.Item>
                                         <Form.Item
                                             {...restField}
@@ -480,19 +521,17 @@ const ProjectForm = ({project, onClose}) => {
                                     {fields.map(({key, name, ...restField}) => (<Space
                                         key={key}
                                         style={{
-                                            display: 'flex', marginBottom: 0, marginTop: 0
+                                            display: 'flex', marginBottom: 2, marginTop: 2
                                         }}
                                         align="baseline"
                                     >
                                         <Form.Item
                                             {...restField}
-                                            style={{
-                                                display: 'flex', marginBottom: 0, marginTop: 0
-                                            }}
+                                            style={{width: 570, minWidth: 220, marginBottom: 0}}
                                             name={[name, 'ird_item']}
                                         >
                                             <Select
-                                                style={{maxWidth: 570, minWidth: 570, marginBottom: 0}}
+                                                style={{width: 570, minWidth: 220, marginBottom: 0}}
                                                 popupMatchSelectWidth={false}
                                                 filterOption={false}
                                                 placeholder="Начните ввод..."
@@ -517,7 +556,9 @@ const ProjectForm = ({project, onClose}) => {
                                             {...restField}
                                             name={[name, 'isChecked']}
                                             valuePropName="dateComplite_item"
-                                            style={{marginBottom: 0}}
+                                            style={{
+                                                display: 'flex', marginBottom: 0, marginTop: 0
+                                            }}
                                         >
                                             <DatePicker
                                                 status={"warning"}

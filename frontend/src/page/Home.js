@@ -7,8 +7,7 @@ const { Text, Title } = Typography;
 
 const Home = () => {
     return (
-        <StyledBlockLarge>
-            <Title>Главная страница!</Title>
+        <StyledBlockLarge label={"Главная страница!"}>
             <img src={catImage} alt="Cat" style={{maxWidth: '100%', height: 'auto'}}/>
         </StyledBlockLarge>
     );

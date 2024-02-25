@@ -142,7 +142,7 @@ const CustomLayout = ({ children }) => {
     return (
         <Layout style={{minHeight: '100vh'}}>
             <Sider
-                width={300}
+                width={200}
                 style={{
                     overflow: 'auto',
                     height: '100vh',
@@ -176,7 +176,7 @@ const CustomLayout = ({ children }) => {
                     selectedKeys={[current]}
                 />
             </Sider>
-            <Layout style={{marginLeft: 300}}>
+            <Layout style={{marginLeft: 200}}>
                 <Content style={{margin: '24px 16px 0', overflow: 'initial'}}>
                     <div className="site-layout-content">{children}</div>
                 </Content>

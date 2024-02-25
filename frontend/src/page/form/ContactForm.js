@@ -129,7 +129,7 @@ const ContactForm = ({ contact, onClose }) => {
                         placeholder="Введите номер телефона"
                         addonBefore="+7"
                         maxLength={15}
-                        minLength={11}
+                        minLength={10}
                         pattern="\d*"
                     />
 
@@ -145,7 +145,7 @@ const ContactForm = ({ contact, onClose }) => {
                         placeholder="Введите номер телефона"
                         addonBefore="+7"
                         maxLength={15}
-                        minLength={11}
+                        minLength={10}
                         pattern="\d*"/>
                 </StyledFormItem>
                 <StyledFormItem name="email" label="Личный e-mail" rules={[{ type: 'email', message: 'Пожалуйста, введите корректный почтовый адресс', }]} >

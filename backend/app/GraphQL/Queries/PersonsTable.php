@@ -43,6 +43,13 @@ final readonly class PersonsTable
             // Получаем количество записей
             $count = $personQuery->count();
 
+            // Сортировка
+            if (isset($args['sortField']) && isset($args['sortOrder'])) {
+                $sortField = $args['sortField'];
+                $sortOrder = $args['sortOrder'];
+                $personQuery = $personQuery->orderBy($sortField, $sortOrder);
+            }
+
             if (isset($args['page'])) {
                 $persons = $personQuery->paginate($args['limit'], ['*'], 'page', $args['page']);
             } else {

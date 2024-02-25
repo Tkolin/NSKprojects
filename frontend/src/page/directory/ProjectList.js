@@ -1,10 +1,12 @@
 import React, {useState} from 'react';
 import { useQuery } from '@apollo/client';
-import {Button, Form, Modal, notification, Table} from 'antd';
+import {Button, Form, Modal, notification, Space, Table} from 'antd';
 import {IRDS_QUERY, PROJECT_QUERY, PROJECT_TABLE_QUERY} from '../../graphql/queries';
 import ProjectForm from "../form/ProjectForm";
 import LoadingSpinner from "../component/LoadingSpinner";
 import Search from "antd/es/input/Search";
+import {StyledFormLarge} from "../style/FormStyles";
+import {StyledButtonGreen} from "../style/ButtonStyles";
 
 const ProjectList = () => {
 
@@ -158,7 +160,6 @@ const ProjectList = () => {
         },
     ];
     const onChange = (pagination, filters, sorter) => {
-
         if((sorter.field !== undefined) && currentSort !== sorter){
             setCurrentSort(sorter);
             if (sortField !== sorter.field) {
@@ -184,16 +185,20 @@ const ProjectList = () => {
     };
     return(
     <div>
-        <Form form={formSearch} layout="horizontal">
-            <Form.Item label="Поиск:" name="search">
-                <Search
-                    placeholder="Найти..."
-                    allowClear
-                    enterButton="Search"
-                    onSearch={onSearch}
-                />
-            </Form.Item>
-        </Form>
+
+            <StyledFormLarge form={formSearch} layout="horizontal">
+                <Form.Item label="Поиск:" name="search">
+                    <Space>
+                        <Search
+                            placeholder="Найти..."
+                            allowClear
+                            enterButton="Найти"
+                            onSearch={onSearch}
+                        />
+                    </Space>
+                </Form.Item>
+            </StyledFormLarge>
+
         <Table
                size={'small'}
                sticky={{
@@ -204,7 +209,7 @@ const ProjectList = () => {
                columns={columns}
                onChange={onChange}
                pagination={{
-                   total: data.irdsTable.count,
+                   total: data.irdsTable && data.irdsTable.count,
                    current: page,
                    limit,
                    onChange: (page, limit) => setPage(page),
@@ -217,9 +222,7 @@ const ProjectList = () => {
                }}
         />
         <Modal
-            visible={editModalVisible}
-            width={1200}
-            title="Изменить контакт"
+            open={editModalVisible}
             onCancel={() => setEditModalVisible(false)}
             footer={null}
             onClose={handleClose}

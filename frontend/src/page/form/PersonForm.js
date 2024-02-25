@@ -15,6 +15,7 @@ import PassportPlaceIssuesForm from "./passportPlaceIssuesForm";
 import LoadingSpinner from "../component/LoadingSpinner";
 import {StyledBlockBig, StyledBlockRegular} from "../style/BlockStyles";
 import {StyledButtonForm, StyledButtonGreen} from "../style/ButtonStyles";
+import {PlusOutlined} from "@ant-design/icons";
 
 const PersonForm = ({person, onClose}) => {
 
@@ -98,7 +99,7 @@ const PersonForm = ({person, onClose}) => {
 
             <Row gutter={8}>
                 <Col span={12}>
-                    <StyledFormRegular form={formPassport} layout="vertical">
+                    <StyledFormRegular form={formPassport} layout="horizontal">
                         <StyledFormItem name="firstname" label="Имя" rules={[{required: true}]}>
                             <Input/>
                         </StyledFormItem>
@@ -114,19 +115,19 @@ const PersonForm = ({person, onClose}) => {
                         <StyledFormItem name="date" label="Дата выдачи" rules={[{required: true}]}>
                             <DatePicker/>
                         </StyledFormItem>
-                        <Space.Compact>
-                            <StyledFormItem name="passport_place_issue_id" label="Место выдачи"
-                                            rules={[{required: true}]}>
-                                <Select>
+
+                        <StyledFormItem name="passport_place_issue_id" label="Место выдачи"
+                                        rules={[{required: true}]}>
+                            <Space.Compact block>
+                                <Select style={{minWidth: 180}}>
                                     {data && data.passportPlaceIssues && data.passportPlaceIssues.map(ppi => (
                                         <Select.Option key={ppi.id} value={ppi.id}>{ppi.name}</Select.Option>))}
                                 </Select>
-                            </StyledFormItem>
+                                <StyledButtonGreen icon={<PlusOutlined/>}
+                                                   onClick={() => setPpiFormViewModalVisible(true)}/>
+                            </Space.Compact>
+                        </StyledFormItem>
 
-                            <StyledButtonForm
-                                onClick={() => setPpiFormViewModalVisible(true)}>Создать
-                            </StyledButtonForm>
-                        </Space.Compact>
 
                         <StyledFormItem name="serial" label="Серия" rules={[{required: true}]}>
                             <Input/>
@@ -137,7 +138,7 @@ const PersonForm = ({person, onClose}) => {
                     </StyledFormRegular>
                 </Col>
                 <Col span={12}>
-                    <StyledFormRegular form={form} layout="vertical">
+                    <StyledFormRegular form={form} layout="horizontal">
                         <StyledFormItem name="SHILS" label="Снилс">
                             <Input/>
                         </StyledFormItem>
@@ -147,12 +148,9 @@ const PersonForm = ({person, onClose}) => {
                         <StyledFormItem name="payment_account" label="Расчётный счёт">
                             <Input/>
                         </StyledFormItem>
-                        <StyledFormItem name="phone_number" label="Мобильный"  rules={[
-                            {
-                                pattern: /^[\d\s()-]+$/,
-                                message: 'Пожалуйста, введите корректный номер телефона',
-                            },
-                        ]}
+                        <StyledFormItem name="phone_number" label="Мобильный" rules={[{
+                            pattern: /^[\d\s()-]+$/, message: 'Пожалуйста, введите корректный номер телефона',
+                        },]}
                         >
                             <Input
                                 placeholder="Введите номер телефона"
@@ -168,20 +166,20 @@ const PersonForm = ({person, onClose}) => {
                             <Input/>
                         </StyledFormItem>
                         <StyledFormItem name="bank_id" label="Банк">
-                            <Select>
+                            <Select style={{minWidth: 200}}>
                                 {data && data.banks && data.banks.map(bank => (
                                     <Select.Option key={bank.id} value={bank.id}>{bank.name}</Select.Option>))}
                             </Select>
                         </StyledFormItem>
                         <StyledFormItem name="bik_id" label="Бик">
-                            <Select>
+                            <Select style={{minWidth: 200}}>
                                 {data && data.biks && data.biks.map(bik => (
                                     <Select.Option key={bik.id} value={bik.id}>{bik.name}</Select.Option>))}
                             </Select>
                         </StyledFormItem>
                     </StyledFormRegular>
                 </Col>
-        </Row>
+            </Row>
             <StyledFormItem>
                 <div style={{textAlign: 'center'}}>
                     <StyledButtonGreen type="dashed" onClick={handleSubmit}>
@@ -199,7 +197,7 @@ const PersonForm = ({person, onClose}) => {
                 onClose={handlePpiFormView}
             >
 
-                    <PassportPlaceIssuesForm/>
+                <PassportPlaceIssuesForm/>
 
             </Modal>
         </StyledBlockBig>);

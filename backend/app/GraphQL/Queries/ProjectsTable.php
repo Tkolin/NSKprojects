@@ -17,7 +17,7 @@ final readonly class ProjectsTable
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
 
-            $projectsQuery = Projects::with('organization_customer')
+            $projectsQuery = Project::with('organization_customer')
                 ->with('type_project_document')
                 ->with('facility')
                 ->with('status')

@@ -2,7 +2,7 @@
 
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, FloatButton, Form, Modal, notification, Table} from 'antd';
+import {Button, FloatButton, Form, Modal, notification, Space, Table} from 'antd';
 import {CONTACTS_QUERY, STAGES_QUERY} from '../../graphql/queries';
 import {DELETE_CONTACT_MUTATION, DELETE_STAGE_MUTATION} from '../../graphql/mutationsStage';
 import StageForm from "../form/StageForm";
@@ -11,6 +11,8 @@ import LoadingSpinner from "../component/LoadingSpinner";
 import Search from "antd/es/input/Search";
 import {PlusSquareOutlined} from "@ant-design/icons";
 import TypeProjectForm from "../form/TypeProjectForm";
+import {StyledFormLarge} from "../style/FormStyles";
+import {StyledButtonGreen} from "../style/ButtonStyles";
 
 const StageList = () => {
 
@@ -141,23 +143,19 @@ const StageList = () => {
     };
     return (
         <div>
-            <FloatButton
-                style={{  display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'green'  }}
-                onClick={() => handleAdd()}
-                tooltip={<div>Создать новую запись</div>}
-            >
-                <PlusSquareOutlined style={{ fontSize: '90px', color: 'green' }} />
-            </FloatButton>
-            <Form form={formSearch} layout="horizontal">
+            <StyledFormLarge form={formSearch} layout="horizontal">
                 <Form.Item label="Поиск:" name="search">
-                    <Search
-                        placeholder="Найти..."
-                        allowClear
-                        enterButton="Search"
-                        onSearch={onSearch}
-                    />
+                    <Space>
+                        <Search
+                            placeholder="Найти..."
+                            allowClear
+                            enterButton="Найти"
+                            onSearch={onSearch}
+                        />
+                        <StyledButtonGreen onClick={() => handleAdd()}>Создать новую запись</StyledButtonGreen>
+                    </Space>
                 </Form.Item>
-            </Form>
+            </StyledFormLarge>
             <Table
                 size={'small'}
                 sticky={{
@@ -181,8 +179,8 @@ const StageList = () => {
                 }}
             />
             <Modal
-                visible={editModalVisible}
-                title="Изменить этап"
+                open={editModalVisible}
+                width={900}
                 onCancel={() => setEditModalVisible(false)}
                 footer={null}
                 onClose={handleClose}
@@ -190,8 +188,8 @@ const StageList = () => {
                 <StageForm stage={selectedStage} onClose={handleClose}/>
             </Modal>
             <Modal
-                visible={addModalVisible}
-                title="Создать этап"
+                open={addModalVisible}
+                width={900}
                 onCancel={() => setAddModalVisible(false)}
                 footer={null}
                 onClose={handleClose}

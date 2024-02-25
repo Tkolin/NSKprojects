@@ -2,7 +2,7 @@ import {gql} from "@apollo/client";
 
 
 export const SEARCH_CONTACTS_QUERY = gql`
-    query SearchOrganizationsQuery($searchContacts: String){
+    query SearchContactsQuery($searchContacts: String){
         contactsTable(page: 1, limit: 20, search: $searchContacts) {
             contacts {
                 id

@@ -2,7 +2,7 @@
 
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, FloatButton, Form, Modal, notification, Table} from 'antd';
+import {Button, FloatButton, Form, Modal, notification, Space, Table} from 'antd';
 import { TYPES_PROJECTS_QUERY} from '../../graphql/queries';
 import { DELETE_TYPE_PROJECT_MUTATION} from '../../graphql/mutationsTypeProject';
 import TypeProjectForm from "../form/TypeProjectForm";
@@ -10,6 +10,8 @@ import TypeProjectForm from "../form/TypeProjectForm";
 import LoadingSpinner from "../component/LoadingSpinner";
 import Search from "antd/es/input/Search";
 import {EditTwoTone, PlusSquareOutlined} from "@ant-design/icons";
+import {StyledButtonGreen} from "../style/ButtonStyles";
+import {StyledFormLarge} from "../style/FormStyles";
 
 const TypeProjectList = () => {
 
@@ -148,25 +150,19 @@ const TypeProjectList = () => {
     };
     return (
         <div>
-
-            <FloatButton
-                style={{  display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'green'  }}
-                onClick={() => handleAdd()}
-                tooltip={<div>Создать новую запись</div>}
-            >
-                <PlusSquareOutlined style={{ fontSize: '90px', color: 'green' }} />
-            </FloatButton>
-
-            <Form form={formSearch} layout="horizontal">
+            <StyledFormLarge form={formSearch} layout="horizontal">
                 <Form.Item label="Поиск:" name="search">
-                    <Search
-                        placeholder="Найти..."
-                        allowClear
-                        enterButton="Search"
-                        onSearch={onSearch}
-                    />
+                    <Space>
+                        <Search
+                            placeholder="Найти..."
+                            allowClear
+                            enterButton="Найти"
+                            onSearch={onSearch}
+                        />
+                        <StyledButtonGreen onClick={() => handleAdd()}>Создать новую запись</StyledButtonGreen>
+                    </Space>
                 </Form.Item>
-            </Form>
+            </StyledFormLarge>
             <Table
                 size={'small'}
                 sticky={{
@@ -190,8 +186,8 @@ const TypeProjectList = () => {
                 }}
             />
             <Modal
-                visible={editModalVisible}
-                title="Изменить тип проекта"
+                open={editModalVisible}
+                width={900}
                 onCancel={() => setEditModalVisible(false)}
                 footer={null}
                 onClose={handleClose}
@@ -199,8 +195,8 @@ const TypeProjectList = () => {
                 <TypeProjectForm typeProject={selectedTypeProject} onClose={handleClose}/>
             </Modal>
             <Modal
-                visible={addModalVisible}
-                title="Создать тип проекта"
+                open={addModalVisible}
+                width={900}
                 onCancel={() => setAddModalVisible(false)}
                 footer={null}
                 onClose={handleClose}

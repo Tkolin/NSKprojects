@@ -61,8 +61,6 @@ const TemplateForm = ({project, onClose}) => {
     const handleAutoCompleteStage = (value) => {
         setAutoCompleteStage(value);
     };
-
-
     const handleTypeProjectFormView = () => {
         setTypeProjectFormViewModalVisible(false);
     };
@@ -103,39 +101,39 @@ const TemplateForm = ({project, onClose}) => {
 
     // Переключение типов документации
     const handleEditingTemplate = (value) => {
-
         setSelectedTypeProject(value);
-        showConfirmTypeChangeModal(value);
+        console.log('нажатие SelectedTypeProject: ' + value);
+        showConfirmTypeChangeModal();
     };
 
-    const showConfirmTypeChangeModal = (value) => {
+    const showConfirmTypeChangeModal = () => {
+        console.log('открытие selectedTypeProject: ' + selectedTypeProject);
+        console.log('открытие editingTemplate pre: ' + editingTemplate);
         setConfirmTypeChangeModalVisible(true);
     };
 
     const handleConfirmTypeChange = (confirm) => {
         if (confirm) {
-            console.log('p,');
+            console.log('принятие да selectedTypeProject: ' + selectedTypeProject);
+            console.log('принятие да editingTemplate pre: ' + editingTemplate);
             setEditingTemplate(selectedTypeProject);
+            console.log('принятие да editingTemplate post: ' + editingTemplate);
         }
         setSelectedTypeProject(null);
+        console.log('принятие нет SelectedTypeProject null: ' + selectedTypeProject);
         setConfirmTypeChangeModalVisible(false);
     };
 
 
     // Загрузка шаблонов при редактировании
     const addIrdsAndStages = (value) => {
-        console.log('addIrdsAndStages');
         addingStages(value);
         addingIrds(value);
-        console.log('loadTemplate');
         loadTemplate();
     }
 
     const addingStages = (value) => {
         if (dataStages && value) {
-            console.log('addingStages');
-
-
             const newStages = value.templatesStagesTypeProjects.map(a => ({
                 id: a.stage ? a.stage.id : null, name: a.stage ? a.stage.name : null,
             }));
@@ -149,16 +147,12 @@ const TemplateForm = ({project, onClose}) => {
                     },
                 });
             });
-            console.log(dataStages);
-
         }
     }
 
 
     const addingIrds = (value) => {
         if (dataIrds && value) {
-            console.log('addingIrds');
-
             const newIrds = value.templatesIrdsTypeProjects.map(a => ({
                 id: a.ird ? a.ird.id : null, name: a.ird ? a.ird.name : null,
             }));
@@ -172,7 +166,6 @@ const TemplateForm = ({project, onClose}) => {
                     },
                 });
             });
-            console.log(dataIrds);
         }
     }
     useEffect(() => {
@@ -199,14 +192,11 @@ const TemplateForm = ({project, onClose}) => {
     // Обработчик отправки формы
     const handleSubmit = () => {
         const stagesData = formStage.getFieldsValue().stageList.map(stage => ({
-            stage_id: stage.stage_item,
-            procent: stage.procent_item,
+            stage_id: stage.stage_item, procent: stage.procent_item,
         }));
 
         const irdsData = formIRD.getFieldsValue().irdList.map(ird => ({
-            ird_id: ird.ird_item,
-            stage_number: ird.stageNumber_item,
-            app_number: ird.appNumber_item,
+            ird_id: ird.ird_item, stage_number: ird.stageNumber_item, app_number: ird.appNumber_item,
         }));
         // Вызов мутаций для обновления данных
         updateTemplateStage({
@@ -251,235 +241,231 @@ const TemplateForm = ({project, onClose}) => {
     if (loadingTemplate && loadingTypeProject) return <LoadingSpinner/>
 
     return (<StyledBlockLarge>
-            <Row gutter={8}>
-                <Col span={8}>
-                    <StyledBlockRegular label={'Тип проекта'}>
-                        <StyledFormRegular form={form} layout="vertical">
-                            <Row gutter={8} align={"bottom"}>
-                                <Col flex="auto">
-                                    <StyledFormItem name="type_project_id" label="Тип документации">
-                                                <Select
-                                                    popupMatchSelectWidth={false}
-                                                    value={editingTemplate}
-                                                    onSelect={handleEditingTemplate}>
-                                                    {dataTypeProject && dataTypeProject.typeProjectsTable && dataTypeProject.typeProjectsTable.typeProjects.map(typeDocument => (
-                                                        <Option key={typeDocument.id}
-                                                                value={typeDocument.id}>{typeDocument.name}</Option>))}
-                                                </Select>
-                                    </StyledFormItem>
-                                    <div style={{textAlign: 'center'}}>
-                                        <StyledButtonGreen type={"dashed"}
-                                            onClick={() => setTypeProjectFormViewModalVisible(true)}>Создать
-                                            тип</StyledButtonGreen>
+        <Row gutter={8}>
+            <Col span={8}>
+                <StyledBlockRegular label={'Тип проекта'}>
+                    <StyledFormRegular form={form} layout="vertical">
+                        <StyledFormItem name="type_project_id" label="Тип документации">
+                            <Space.Compact block>
+                                <Select
+                                    popupMatchSelectWidth={false}
+                                    value={editingTemplate}
+                                    onSelect={handleEditingTemplate}>
+                                    {dataTypeProject && dataTypeProject.typeProjectsTable && dataTypeProject.typeProjectsTable.typeProjects.map(typeDocument => (
+                                        <Option key={typeDocument.id}
+                                                value={typeDocument.id}>{typeDocument.name}</Option>))}
+                                </Select>
+                                <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
+                                                   onClick={() => setTypeProjectFormViewModalVisible(true)}/>
+                            </Space.Compact>
+                        </StyledFormItem>
+                        <div style={{textAlign: 'center'}}>
+                            <StyledButtonForm type="primary" onClick={() => handleSubmit()}>Сохранить
+                                настройки</StyledButtonForm>
+                        </div>
+                    </StyledFormRegular>
+                </StyledBlockRegular>
+                <StyledBlockRegular label={'Этапы'}>
+                    <StyledFormRegular form={formStage} layout="vertical">
 
-                                        <StyledButtonForm type="primary" onClick={() => handleSubmit()}>Сохранить
-                                            настройки</StyledButtonForm></div>
-                                </Col>
-                            </Row>
-                        </StyledFormRegular>
-                    </StyledBlockRegular>
-                    <StyledBlockRegular label={'Этапы'}>
-                        <StyledFormRegular form={formStage} layout="vertical">
+                        <Form.List name="stageList">
+                            {(fields, {add, remove}) => (<>
+                                {fields.map(({key, name, ...restField}) => (<Space
+                                    key={key}
+                                    style={{
+                                        display: 'flex', marginBottom: 0, marginTop: 0
+                                    }}
+                                    align="baseline"
+                                >
+                                    <Form.Item
+                                        {...restField}
+                                        style={{marginBottom: 0, display: 'flex'}}
+                                        name={[name, 'stage_item']}
+                                    >
+                                        <Select
+                                            style={{maxWidth: 260, minWidth: 260}}
+                                            popupMatchSelectWidth={false}
+                                            filterOption={false}
+                                            onSearch={(value) => handleAutoCompleteStage(value)} // Передаем введенное значение
+                                            onSelect={(value) => handleAutoCompleteStageSelect(value)}
+                                            placeholder="Начните ввод..."
+                                            allowClear
+                                            showSearch
+                                        >
+                                            {dataStages && dataStages.stagesTable && dataStages.stagesTable.stages.map(stage => (
+                                                <Select.Option key={stage.id} value={stage.id}>{stage.name}</Select.Option>))}
+                                            {dataStages && dataStages.stagesTable && dataStages.stagesTable.stages && dataStages.stagesTable.stages.length === 0 && (
+                                                <Select.Option value="CREATE_NEW">Создать новый
+                                                    этап?</Select.Option>)}
+                                        </Select>
+                                    </Form.Item>
+                                    <Form.Item
+                                        {...restField}
+                                        style={{marginBottom: 0, display: 'flex'}}
+                                        name={[name, 'procent_item']}>
+                                        <InputNumber
+                                            size={"middle"}
+                                            min={1}
+                                            max={100}
+                                            style={{
+                                                width: 50
+                                            }}/>
+                                    </Form.Item>
+                                    <MinusCircleOutlined onClick={() => remove(name)}/>
+                                </Space>))}
+                                <Form.Item>
+                                    <Button type="dashed" onClick={() => add()} block
+                                            icon={<PlusOutlined/>}>
+                                        Добавить элемент
+                                    </Button>
+                                </Form.Item>
+                            </>)}
+                        </Form.List>
+                        <div style={{textAlign: 'center'}}>
+                            <StyledButtonGreen type={'dashed'}
+                                               onClick={() => setStageFormViewModalVisible(true)}>
+                                Создать этап
+                            </StyledButtonGreen>
 
-                            <Form.List name="stageList">
-                                {(fields, {add, remove}) => (<>
-                                    {fields.map(({key, name, ...restField}) => (<Space
-                                        key={key}
+                        </div>
+                    </StyledFormRegular>
+                </StyledBlockRegular>
+            </Col>
+            <Col span={16}>
+                <StyledBlockBig label={'ИРД'}>
+                    <StyledFormBig
+                        name="dynamic_form_nest_itemы"
+                        style={{maxWidth: 600}}
+                        form={formIRD}
+                    >
+
+                        <Form.List name="irdList">
+                            {(fields, {add, remove}) => (<>
+                                {fields.map(({key, name, ...restField}) => (<Space
+                                    key={key}
+                                    style={{
+                                        display: 'flex', marginBottom: 0, marginTop: 0
+                                    }}
+                                    align="baseline"
+                                >
+                                    <Form.Item
+                                        {...restField}
                                         style={{
                                             display: 'flex', marginBottom: 0, marginTop: 0
                                         }}
-                                        align="baseline"
+                                        name={[name, 'ird_item']}
                                     >
-                                        <Form.Item
-                                            {...restField}
-                                            style={{marginBottom: 0, display: 'flex'}}
-                                            name={[name, 'stage_item']}
+                                        <Select
+                                            style={{maxWidth: 570, minWidth: 570, marginBottom: 0}}
+                                            popupMatchSelectWidth={false}
+                                            filterOption={false}
+                                            placeholder="Начните ввод..."
+                                            onSearch={(value) => handleAutoCompleteIrd(value)}
+                                            onSelect={(value) => handleAutoCompleteIrdSelect(value)}
+                                            allowClear
+                                            showSearch
+                                            loading={loadingIrds}
                                         >
-                                            <Select
-                                                style={{maxWidth: 260, minWidth: 260}}
-                                                popupMatchSelectWidth={false}
-                                                filterOption={false}
-                                                onSearch={(value) => handleAutoCompleteStage(value)} // Передаем введенное значение
-                                                onSelect={(value) => handleAutoCompleteStageSelect(value)}
-                                                placeholder="Начните ввод..."
-                                                allowClear
-                                                showSearch
-                                            >
-                                                {dataStages && dataStages.stagesTable && dataStages.stagesTable.stages.map(stage => (
-                                                    <Select.Option value={stage.id}>{stage.name}</Select.Option>))}
-                                                {dataStages && dataStages.stagesTable && dataStages.stagesTable.stages && dataStages.stagesTable.stages.length === 0 && (
-                                                    <Select.Option value="CREATE_NEW">Создать новый
-                                                        этап?</Select.Option>)}
-                                            </Select>
-                                        </Form.Item>
-                                        <Form.Item
-                                            {...restField}
-                                            style={{marginBottom: 0, display: 'flex'}}
-                                            name={[name, 'procent_item']}>
-                                            <InputNumber
-                                                size={"middle"}
-                                                min={1}
-                                                max={100}
-                                                style={{
-                                                    width: 50
-                                                }}/>
-                                        </Form.Item>
-                                        <MinusCircleOutlined onClick={() => remove(name)}/>
-                                    </Space>))}
-                                    <Form.Item>
-                                        <Button type="dashed" onClick={() => add()} block
-                                                icon={<PlusOutlined/>}>
-                                            Добавить элемент
-                                        </Button>
+                                            {dataIrds && dataIrds.irdsTable && dataIrds.irdsTable.irds && dataIrds.irdsTable.irds.map(ird => (
+                                                <Select.Option key={ird.id}
+                                                               value={ird.id}>{ird.name}</Select.Option>))}
+                                            {dataIrds && dataIrds.irdsTable && dataIrds.irdsTable.irds && dataIrds.irdsTable.irds.length === 0 && (
+                                                <Select.Option value="CREATE_NEW">Создать новый
+                                                    ИРД?</Select.Option>)}
+                                        </Select>
                                     </Form.Item>
-                                </>)}
-                            </Form.List>
-                            <div style={{textAlign: 'center'}}>
-                                <StyledButtonGreen type={'dashed'}
-                                                   onClick={() => setStageFormViewModalVisible(true)}>
-                                    Создать этап
-                                </StyledButtonGreen>
-
-                            </div>
-                        </StyledFormRegular>
-                    </StyledBlockRegular>
-                </Col>
-                <Col span={16}>
-                    <StyledBlockBig label={'ИРД'}>
-                        <StyledFormBig
-                            name="dynamic_form_nest_itemы"
-                            style={{maxWidth: 600}}
-                            form={formIRD}
-                        >
-
-                            <Form.List name="irdList">
-                                {(fields, {add, remove}) => (<>
-                                    {fields.map(({key, name, ...restField}) => (<Space
-                                        key={key}
+                                    <Form.Item
+                                        {...restField}
                                         style={{
                                             display: 'flex', marginBottom: 0, marginTop: 0
                                         }}
-                                        align="baseline"
+                                        name={[name, 'stageNumber_item']}
                                     >
-                                        <Form.Item
-                                            {...restField}
+                                        <InputNumber
+                                            size={"middle"}
+                                            min={1}
+                                            max={100}
                                             style={{
-                                                display: 'flex', marginBottom: 0, marginTop: 0
-                                            }}
-                                            name={[name, 'ird_item']}
-                                        >
-                                            <Select
-                                                style={{maxWidth: 570, minWidth: 570, marginBottom: 0}}
-                                                popupMatchSelectWidth={false}
-                                                filterOption={false}
-                                                placeholder="Начните ввод..."
-                                                onSearch={(value) => handleAutoCompleteIrd(value)}
-                                                onSelect={(value) => handleAutoCompleteIrdSelect(value)}
-                                                allowClear
-                                                showSearch
-                                                loading={loadingIrds}
-                                            >
-                                                {dataIrds && dataIrds.irdsTable && dataIrds.irdsTable.irds && dataIrds.irdsTable.irds.map(ird => (
-                                                    <Select.Option key={ird.id}
-                                                                   value={ird.id}>{ird.name}</Select.Option>))}
-                                                {dataIrds && dataIrds.irdsTable && dataIrds.irdsTable.irds && dataIrds.irdsTable.irds.length === 0 && (
-                                                    <Select.Option value="CREATE_NEW">Создать новый
-                                                        ИРД?</Select.Option>)}
-                                            </Select>
-                                        </Form.Item>
-                                        <Form.Item
-                                            {...restField}
-                                            style={{
-                                                display: 'flex', marginBottom: 0, marginTop: 0
-                                            }}
-                                            name={[name, 'stageNumber_item']}
-                                        >
-                                            <InputNumber
-                                                size={"middle"}
-                                                min={1}
-                                                max={100}
-                                                style={{
-                                                    width: 60
-                                                }}/>
-                                        </Form.Item>
-                                        <Form.Item
-                                            {...restField}
-                                            style={{
-                                                display: 'flex', marginBottom: 0, marginTop: 0
-                                            }}
-                                            name={[name, 'appNumber_item']}
-                                        >
-                                            <InputNumber
-                                                size={"middle"}
-                                                min={1}
-                                                max={100}
-                                                style={{
-                                                    width: 60
-                                                }}/>
-                                        </Form.Item>
-                                        <MinusCircleOutlined onClick={() => remove(name)}/>
-                                    </Space>))}
-                                    <Form.Item>
-                                        <Button type="dashed" onClick={() => add()} block
-                                                icon={<PlusOutlined/>}>
-                                            Добавить ИРД к шаблону
-                                        </Button>
+                                                width: 60
+                                            }}/>
                                     </Form.Item>
-                                </>)}
-                            </Form.List>
-                            <div style={{textAlign: 'center'}}>
-                                <StyledButtonGreen
-                                    type={'dashed'}
-                                    onClick={() => setIrdFormViewModalVisible(true)}>Создать ИРД</StyledButtonGreen></div>
+                                    <Form.Item
+                                        {...restField}
+                                        style={{
+                                            display: 'flex', marginBottom: 0, marginTop: 0
+                                        }}
+                                        name={[name, 'appNumber_item']}
+                                    >
+                                        <InputNumber
+                                            size={"middle"}
+                                            min={1}
+                                            max={100}
+                                            style={{
+                                                width: 60
+                                            }}/>
+                                    </Form.Item>
+                                    <MinusCircleOutlined onClick={() => remove(name)}/>
+                                </Space>))}
+                                <Form.Item>
+                                    <Button type="dashed" onClick={() => add()} block
+                                            icon={<PlusOutlined/>}>
+                                        Добавить ИРД к шаблону
+                                    </Button>
+                                </Form.Item>
+                            </>)}
+                        </Form.List>
+                        <div style={{textAlign: 'center'}}>
+                            <StyledButtonGreen
+                                type={'dashed'}
+                                onClick={() => setIrdFormViewModalVisible(true)}>Создать ИРД</StyledButtonGreen></div>
 
-                        </StyledFormBig>
-                    </StyledBlockBig>
-                </Col>
-            </Row>
-            <Modal
-                open={stageFormViewModalVisible}
-                onCancel={() => setStageFormViewModalVisible(false)}
-                footer={null}
-                onClose={handleStageFormView}
-            >
+                    </StyledFormBig>
+                </StyledBlockBig>
+            </Col>
+        </Row>
+        <Modal
+            open={stageFormViewModalVisible}
+            onCancel={() => setStageFormViewModalVisible(false)}
+            footer={null}
+            onClose={handleStageFormView}
+        >
 
-                <StageForm/>
+            <StageForm/>
 
-            </Modal>
-            {/* ИРД */}
-            <Modal
-                open={irdFormViewModalVisible}
-                onCancel={() => setIrdFormViewModalVisible(false)}
-                footer={null}
-                onClose={handleIrdFormView}
-            >
+        </Modal>
+        {/* ИРД */}
+        <Modal
+            open={irdFormViewModalVisible}
+            onCancel={() => setIrdFormViewModalVisible(false)}
+            footer={null}
+            onClose={handleIrdFormView}
+        >
+            <IrdForm/>
 
-                    <IrdForm/>
+        </Modal>
+        {/*  */}
+        {/* ТИП ДОКУМЕНТА */}
+        <Modal
+            open={typeProjectFormViewModalVisible}
+            onCancel={() => setTypeProjectFormViewModalVisible(false)}
+            footer={null}
+            onClose={handleTypeProjectFormView}
+        >
 
-            </Modal>
-            {/*  */}
-            {/* ТИП ДОКУМЕНТА */}
-            <Modal
-                open={typeProjectFormViewModalVisible}
-                onCancel={() => setTypeProjectFormViewModalVisible(false)}
-                footer={null}
-                onClose={handleTypeProjectFormView}
-            >
+            <TypeProjectForm/>
 
-                    <TypeProjectForm/>
-
-            </Modal>
-            <Modal
-                open={confirmTypeChangeModalVisible}
-                title="Подтверждение изменения типа документа"
-                onCancel={() => handleConfirmTypeChange(false)}
-                onOk={() => handleConfirmTypeChange(true)}
-                okText="Да"
-                cancelText="Отмена"
-            >
-                <p>Вы уверены, что хотите изменить выбранный тип документа?</p>
-            </Modal>
-        </StyledBlockLarge>);
+        </Modal>
+        <Modal
+            open={confirmTypeChangeModalVisible}
+            title="Подтверждение изменения типа документа"
+            onCancel={() => handleConfirmTypeChange(false)}
+            onOk={() => handleConfirmTypeChange(true)}
+            okText="Да"
+            cancelText="Отмена"
+        >
+            <p>Вы уверены, что хотите изменить выбранный тип документа?</p>
+        </Modal>
+    </StyledBlockLarge>);
 };
 
 export default TemplateForm;

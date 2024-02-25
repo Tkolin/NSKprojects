@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import {gql} from '@apollo/client';
 
 // Запросы данных
 export const BIK_QUERY = gql`
@@ -114,39 +114,40 @@ export const PROJECT_TABLE_QUERY = gql`
     query ProjectTableQuery($page: Int, $limit: Int, $search: String, $sortField: String, $sortOrder: String) {
         projectsTable(page: $page, limit: $limit, search: $search, sortField: $sortField, sortOrder: $sortOrder) {
             projects{
-            id
-            number
-            name
-            organization_customer
-            {
                 id
+                number
                 name
+                organization_customer
+                {
+                    id
+                    name
+                }
+                type_project_document
+                {
+                    id
+                    name
+                }
+                facility
+                {
+                    id
+                    name
+                }
+                date_signing
+                duration
+                date_end
+                status
+                {
+                    id
+                    name
+                }
+                date_completion
+                delegate{
+                    id
+                    first_name
+                    last_name
+                    patronymic
+                }
             }
-            type_project_document
-            {
-                id
-                name
-            }
-            facility
-            {
-                id
-                name
-            }
-            date_signing
-            duration
-            date_end
-            status
-            {
-                id
-                name
-            }
-            date_completion
-            delegate{
-                id
-                first_name
-                last_name
-                patronymic
-            }}
             count
         }
     }
@@ -163,7 +164,7 @@ export const PPI_QUERY = gql`
 export const PERSON_QUERY = gql`
     query PersonQuery {
         persons {
-                id
+            id
             passport{
                 firstname
                 lastname
@@ -202,6 +203,7 @@ export const PERSON_TABLE_QUERY = gql`
             persons {
                 id
                 passport{
+                    id
                     firstname
                     lastname
                     patronymic
@@ -227,11 +229,13 @@ export const PERSON_TABLE_QUERY = gql`
                 BIK{
                     id
                     Bik
+                    name
+                    correspondent_account
                 }
-        }
+            }
             count
         }
-        
+
     }
 `;
 export const CURRENT_USER_QUERY = gql`
@@ -252,7 +256,36 @@ export const ORGANIZATIONS_TABLE_QUERY = gql`
         organizationsTable(page: $page, limit: $limit, search: $search, sortField: $sortField, sortOrder: $sortOrder) {
             organizations {
                 id
+                legal_form{
+                    id
+                    name
+                }
                 name
+                full_name
+                address_legal
+                office_number_legal
+                address_mail
+                office_number_mail
+                phone_number
+                fax_number
+                email
+                INN
+                OGRN
+                OKPO
+                KPP
+                Bik{
+                    id
+                    Bik
+                    correspondent_account
+                    name
+                }
+                payment_account
+                director{
+                    id
+                    first_name
+                    last_name
+                    patronymic
+                }
             }
             count
         }
@@ -298,23 +331,23 @@ export const STAGES_QUERY = gql`
 export const CONTACTS_QUERY = gql`
     query ContactsQuery {
         contacts {
+            id
+            first_name
+            last_name
+            patronymic
+            birth_day
+            work_phone
+            work_email
+            mobile_phone
+            email
+            position {
                 id
-                first_name
-                last_name
-                patronymic
-                birth_day
-                work_phone
-                work_email
-                mobile_phone
-                email
-                position {
-                    id
-                    name
-                }
-                organization {
-                    id
-                    name
-                }
+                name
+            }
+            organization {
+                id
+                name
+            }
         }
     }
 `;

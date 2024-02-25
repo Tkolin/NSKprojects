@@ -20,6 +20,7 @@ import LoadingSpinner from "../component/LoadingSpinner";
 import {SEARCH_CONTACTS_QUERY} from "../../graphql/queriesSearch";
 import {StyledBlockBig, StyledBlockRegular} from "../style/BlockStyles";
 import {StyledButtonForm, StyledButtonGreen} from "../style/ButtonStyles";
+import {PlusOutlined, SwapOutlined} from "@ant-design/icons";
 
 const OrganizationForm = ({organization, onClose}) => {
 
@@ -33,9 +34,9 @@ const OrganizationForm = ({organization, onClose}) => {
     const [api, contextHolder] = notification.useNotification();
     const [bikFormViewModalVisible, setBikFormViewModalVisible] = useState(false);
     const [contactFormViewModalVisible, setContactFormViewModalVisible] = useState(false);
-    const [autoCompleteContacts, setAutoCompleteContacts] = useState({id: '', name: ''});
-    const handleAutoCompleteContacts = (value, option) => {
-        setAutoCompleteContacts({id: option.key, name: value});
+    const [autoCompleteContacts, setAutoCompleteContacts] = useState('');
+    const handleAutoCompleteContacts = (value) => {
+        setAutoCompleteContacts(value)
     };
     const handleBikFormView = () => {
         setBikFormViewModalVisible(false);
@@ -58,7 +59,7 @@ const OrganizationForm = ({organization, onClose}) => {
     const {loading, error, data} = useQuery(ORGANIZATION_FORM_QUERY);
     const {loadingContacts, errorContacts, dataContacts} = useQuery(SEARCH_CONTACTS_QUERY, {
         variables: {
-            searchContacts: autoCompleteContacts.name,
+            searchContacts: autoCompleteContacts,
         },
     });
     // Заполнение формы данными контакта при его редактировании
@@ -127,64 +128,82 @@ const OrganizationForm = ({organization, onClose}) => {
     if (loading) return <LoadingSpinner/>;
     if (error) return `Ошибка! ${error.message}`;
 
-    return (
-        <StyledBlockBig label={'Организация'}>
+    return (<StyledBlockBig label={'Организация'}>
             <StyledFormBig form={form} onFinish={handleSubmit}>
 
-        <Space.Compact>
+                <Space.Compact block >
                     <StyledFormItem name="name"
-                                    style={{width: 660}}
-                               label={"Наименование компании"}
-                               rules={[{required: true}]}>
-                        <Input placeholder={"Наименование"}/>
+                                    label={"Наименование компании"}
+                                    rules={[{required: true}]}
+                                    style={{
+                                        width: '100%',
+                                    }}>
+                        <Input placeholder={"Наименование"} />
                     </StyledFormItem>
-                    <StyledFormItem name="legal_form" style={{width: 100}}>
-                        <Select placeholder={"Форма"}>
+                    <StyledFormItem name="legal_form">
+                        <Select placeholder={"Форма"} style={{maxWidth: 100}}>
                             {data && data.legalForms && data.legalForms.map(data => (
                                 <Select.Option key={data.id} value={data.id}>{data.name}</Select.Option>))}
                         </Select>
                     </StyledFormItem>
-            </Space.Compact>
-
+                </Space.Compact>
                 <StyledFormItem name="full_name" label="Полное наименование" rules={[{required: true}]}>
                     <Input/>
                 </StyledFormItem>
-                <Space.Compact>
-                    <StyledFormItem name="director" label="Руководитель">
-                        <AutoComplete
-                            style={{width: 575}}
-                            popupMatchSelectWidth={false}
-                            filterOption={false}
-                            options={dataContacts && dataContacts.contactsTable && dataContacts.contactsTable.positions.map(position => ({
-                                key: position.id,
-                                value: position.last_name + position.first_name + position.patronymic,
-                                label: position.last_name + position.first_name + position.patronymic,
-                            }))}
-                            onChange={(value, option) => handleAutoCompleteContacts(value, option)} // Передаем введенное значение
-                            placeholder="Начните ввод..."
-                        />
-                    </StyledFormItem>
-                    <StyledButtonForm onClick={() => setContactFormViewModalVisible(true)}>Создать</StyledButtonForm>
+                <Space.Compact block>
+                <StyledFormItem name="director"
+                                label="Руководитель"
+                                style={{width: '100%',}}>
+                    <Select
+                        popupMatchSelectWidth={false}
+                        filterOption={false}
+                        onSearch={(value) => handleAutoCompleteContacts(value)} // Передаем введенное значение
+                        placeholder="Начните ввод..."
+                        allowClear
+                        showSearch
+                        loading={loadingContacts}
+                    >
+                        {dataContacts && dataContacts.contactsTable && dataContacts.contactsTable.contacts.map(contact => (
+                            <Select.Option value={contact.id}>{contact.id}</Select.Option>))}
+                    </Select>
+
+                </StyledFormItem>
+                    <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
+                                       onClick={() => setContactFormViewModalVisible(true)}/>
 
                 </Space.Compact>
-                <Space.Compact>
-                    <StyledFormItem style={{width: 660}} name="address_legal" label="Юридический адрес" minchars={3} delay={50}>
+                <Space.Compact block>
+                    <StyledFormItem name="address_legal" label="Юридический адрес" minchars={3}
+                                    delay={50}
+                                    style={{
+                                        width: '100%',
+                                    }}>
                         <AddressSuggestions token="5c988a1a82dc2cff7f406026fbc3e8d04f2a168e"
                                             value={address1}
                                             onChange={addresChange1}/>
                     </StyledFormItem>
-                    <StyledFormItem name="office_number_legal">
+                    <StyledFormItem name="office_number_legal"                        style={{
+                        width: 100,
+                    }}>
                         <Input placeholder="Офис"/>
                     </StyledFormItem>
                 </Space.Compact>
-                <Space.Compact>
-                    <StyledFormItem style={{width: 660}} name="address_mail" label="Почтовый адрес" minchars={3} delay={50}>
+                <Space.Compact block>
+                    <StyledFormItem name="address_mail" label="Почтовый адрес" minchars={3}
+                                    delay={50}
+                                    style={{
+                                        width: '100%',
+                                    }}>
                         <AddressSuggestions token="5c988a1a82dc2cff7f406026fbc3e8d04f2a168e"
                                             value={address2}
                                             onChange={addresChange2}
                                             style={{textFontSize: 10}}/>
                     </StyledFormItem>
-                    <StyledFormItem name="office_number_mail">
+                    <StyledFormItem
+                        name="office_number_mail"
+                        style={{
+                            width: 100,
+                        }}>
                         <Input placeholder="Офис"/>
                     </StyledFormItem>
                 </Space.Compact>
@@ -215,17 +234,19 @@ const OrganizationForm = ({organization, onClose}) => {
                         <StyledFormItem name="payment_account" label="Расчётынй счёт">
                             <Input placeholder="Введите номер расчётного счёта"/>
                         </StyledFormItem>
-                        <Space.Compact >
-                            <StyledFormItem name="BIK_id" label="Бик" style={{width: 293}}>
+
+                        <StyledFormItem name="BIK_id" label="Бик">
+                            <Space.Compact block>
                                 <Select placeholder="fafda">
                                     {data && data.biks && data.biks.map(biks => (
                                         <Select.Option key={biks.id} value={biks.id}>{biks.name}</Select.Option>))}
                                 </Select>
-                            </StyledFormItem>
+                                <StyledButtonGreen icon={<PlusOutlined/>}
+                                                   onClick={() => setBikFormViewModalVisible(true)}/>
+                            </Space.Compact>
+                        </StyledFormItem>
 
-                            <StyledButtonForm
-                                onClick={() => setBikFormViewModalVisible(true)}>Создать</StyledButtonForm>
-                        </Space.Compact>
+
                     </Col>
                     <Col span={12}>
                         <StyledFormItem name="INN" label="ИНН" rules={[{
@@ -273,7 +294,7 @@ const OrganizationForm = ({organization, onClose}) => {
 
                 <StyledFormItem>
                     <div style={{textAlign: 'center'}}>
-                        <StyledButtonGreen type="dashed" htmlType={"submit"} >
+                        <StyledButtonGreen type="dashed" htmlType={"submit"}>
                             {editingOrganization ? "Сохранить изменения" : "Добавить контакт"}
                         </StyledButtonGreen>
                     </div>
@@ -290,7 +311,7 @@ const OrganizationForm = ({organization, onClose}) => {
                 footer={null}
                 onClose={handleBikFormView}>
 
-                    <BikForm/>
+                <BikForm/>
 
             </Modal>
             {/* контакты */}
@@ -301,7 +322,7 @@ const OrganizationForm = ({organization, onClose}) => {
                 footer={null}
                 onClose={handleContactFormView}>
 
-                    <ContactForm/>
+                <ContactForm/>
 
             </Modal>
         </StyledBlockBig>

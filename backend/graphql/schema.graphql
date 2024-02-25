@@ -38,6 +38,20 @@ type Query {
 
 type Mutation {
 
+    updateIrdsToProject(
+        typeProjectId: ID!
+        listIrds_id: [ID!]!
+        listStageNumber: [Int]
+        listAppNumber: [Int]
+    ): Int
+    updateStagesToProject(
+        typeProjectId: ID!
+        listIrds_id: [ID!]!
+        listStageNumber: [Int]
+        listAppNumber: [Int]
+    ): Int
+
+
     updateIrdsTemplate(
         typeProjectId: ID!
         listIrds_id: [ID!]!
