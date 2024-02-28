@@ -8,18 +8,19 @@ type Query {
     typeProjectsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): TypeProjectsResult
     projectsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): ProjectsResult
     personsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): PersonsResult
-
     contacts: [Contact]!
     positionsNames: [PositionName!]!
     currentUser: User!
 
     organizations: [Organization]
 
+    paymentsProjects(project: ID): [projectPayment]
+
     templatesIrdsTypeProjects(typeProject: ID): [TemplateIRD]
     templatesStagesTypeProjects(typeProject: ID): [TemplateStage]
     templatesTasksTypeProjects(typeProject: ID): [TemplateTask]
 
-
+    TypePayments: [TypePayment]
     projectStatuses: [ProjectStatus!]!
     typeProjectDocuments: [TypeProjectDocument]
     facilitys: [Facility!]!
@@ -58,6 +59,9 @@ type Mutation {
         listIrds_id: [ID!]!
         listStageNumber: [Int]
         listAppNumber: [Int]
+    ): Int
+    updatePaymentsToProject(
+        project: ID
     ): Int
 
 
@@ -347,6 +351,7 @@ type StagesResult {
     stages: [Stage]
     count: Int
 }
+
 type TasksResult {
     tasks: [Task]
     count: Int
@@ -381,7 +386,17 @@ type CurrentUser {
     user: User!
     access_token: String!
 }
-
+type TypePayment {
+    id: ID!
+    name: String!
+}
+type projectPayment {
+    id: ID!
+    date_time_payment: String
+    project: Project
+    type_payment: TypePayment
+    price: Int
+}
 type User {
     id: ID!
     name: String!
@@ -449,11 +464,7 @@ type Bik{
     correspondent_account: String
 }
 
-type TypeProjectDocument{
-    id: ID!
-    code: String!
-    name: String!
-}
+
 type Person{
     id: ID!
     passport: Passport!

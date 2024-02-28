@@ -1,32 +1,24 @@
-import {StyledFormBig} from "../style/FormStyles";
-import {Button, Form, InputNumber, notification, Select, Space} from "antd";
-import {LoadingOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
+import {Button, Form, InputNumber, Modal, notification, Select, Space} from "antd";
 import React, {useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
 import {
     SEARCH_STAGES_QUERY,
-
+    SEARCH_TEMPLATE_OR_TYPE_PROJECT_QUERY,
     SEARCH_TEMPLATE_STAGES_OR_TYPE_PROJECT_QUERY
 } from "../../graphql/queriesSearch";
-import {DatePicker} from "antd/lib";
 import {UPDATE_STAGES_TEMPLATE_MUTATION} from "../../graphql/mutationsTemplate";
-import {UPDATE_STAGES_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
-import {PROJECT_QUERY} from "../../graphql/queries";
 import LoadingSpinner from "./LoadingSpinner";
+import {StyledFormRegular} from "../style/FormStyles";
+import {LoadingOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
+import {StyledButtonGreen} from "../style/ButtonStyles";
+import StageForm from "../form/StageForm";
+import TemplateForm from "../form/TemplateForm";
 
-const {RangePicker} = DatePicker;
-const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMethod }) => {
-    // Триггер
-    if (triggerMethod) {
-        handleSubmit();
-        setTriggerMethod(false); // Reset the trigger
-    }
-
+const StagesTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod  }) => {
     // Состояния
     const [formStage] = Form.useForm();
-    const [autoCompleteStage, setAutoCompleteStage] = useState('');
     const [stageFormViewModalVisible, setStageFormViewModalVisible] = useState(false);
-
+    const [autoCompleteStage, setAutoCompleteStage] = useState('');
     const handleAutoCompleteStageSelect = (value) => {
         if (value == 'CREATE_NEW') {
             setStageFormViewModalVisible(true);
@@ -35,9 +27,17 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod, setTrigger
             setAutoCompleteStage('');
         }
     };
-
     const handleAutoCompleteStage = (value) => {
         setAutoCompleteStage(value);
+    };
+    const handleStageFormView = () => {
+        setStageFormViewModalVisible(false);
+    };
+    // Функции уведомлений
+    const openNotification = (placement, type, message) => {
+        notification[type]({
+            message: message, placement,
+        });
     };
 
     // Получение данных для выпадающих списков
@@ -50,15 +50,16 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod, setTrigger
     } = useQuery(SEARCH_TEMPLATE_STAGES_OR_TYPE_PROJECT_QUERY, {
         variables: {typeProject: typeProjectId},
         fetchPolicy: 'network-only',
-        onCompleted: (data) => addingStages(data),
+        onCompleted: (data) => addingStages(data)
     });
 
+    // Загрузка шаблонов при редактировании
     const addingStages = (value) => {
         if (dataStages && value) {
-            console.log('addingStages');
             const newStages = value.templatesStagesTypeProjects.map(a => ({
                 id: a.stage ? a.stage.id : null, name: a.stage ? a.stage.name : null,
             }));
+
             refetchStages({search: autoCompleteStage}).then(({data}) => {
                 const existingStages = dataStages.stagesTable ? dataStages.stagesTable.stages : [];
                 const updatedStages = [...existingStages, ...newStages];
@@ -71,67 +72,62 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod, setTrigger
             loadTemplate();
         }
     }
-    // Функции уведомлений
-    const openNotification = (placement, type, message) => {
-        notification[type]({
-            message: message, placement,
-        });
-    };
-
-    // Подгрузка формы
-    const loadTemplate = () => {
-        if (dataTemplate) {
-            const stages = dataTemplate && dataTemplate.templatesStagesTypeProjects;
-            const initialValuesStages = stages && stages.map(data => ({
-                stage_item: data.stage.id,
-                percent_item: data.percentage,
-            }));
-            formStage.setFieldsValue({stageList: initialValuesStages});
-        }
-    };
 
     // Мутации для добавления и обновления
-    const [updateStagesToProject] = useMutation(UPDATE_STAGES_TO_PROJECT_MUTATION, {
+    const [updateTemplateStage] = useMutation(UPDATE_STAGES_TEMPLATE_MUTATION, {
         onCompleted: () => {
-            openNotification('topRight', 'success', 'Данные успешно обновлены!');
+            openNotification('topRight', 'success', 'Данные успешно обновлены ts!');
         }, onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при обновлении данных: ' + error.message);
+            openNotification('topRight', 'error', 'Ошибка при обновлении данных: ts' + error.message);
         }
     });
 
+    // Обработчик отправки формы
     const handleSubmit = () => {
         const stagesData = formStage.getFieldsValue().stageList.map(stage => ({
-            stage_id: stage.stage_item, dateStart: stage.data_range.date_start_item, dateEnd: stage.data_range.date_end_item, percent: stage.percent_item,
+            stage_id: stage.stage_item, procent: stage.procent_item,
         }));
-
         // Вызов мутаций для обновления данных
-        updateStagesToProject({
+        updateTemplateStage({
             variables: {
                 typeProjectId: typeProjectId,
                 listStages_id: stagesData && stagesData.map(stage => parseInt(stage.stage_id)),
                 listPercent: stagesData && stagesData.map(stage => stage.procent)
             }
         });
+    };
+    // Триггер
+    if (triggerMethod) {
+        handleSubmit();
+        setTriggerMethod(false); // Reset the trigger
     }
 
+    // Подстановка значений
+    const loadTemplate = () => {
+        if (dataTemplate) {
+            const stages = dataTemplate && dataTemplate.templatesStagesTypeProjects;
+            const initialValuesStages = stages && stages.map(data => ({
+                stage_item: data.stage.id, procent_item: data.percentage,
+            }));
+            formStage.setFieldsValue({stageList: initialValuesStages});
+        }
+    };
     if(loadingTemplate)
-       return <LoadingOutlined
-           style={{
-               fontSize: 24,
-           }}
-           spin
-       />
+        return <LoadingOutlined
+            style={{
+                fontSize: 24,
+            }}
+            spin
+        />
+    return (<>
+            <StyledFormRegular form={formStage} layout="vertical">
 
-    return (
-            <StyledFormBig  form={formStage} name="dynamic_form_nest_item" autoComplete="off">
                 <Form.List name="stageList">
                     {(fields, {add, remove}) => (<>
                         {fields.map(({key, name, ...restField}) => (<Space
                             key={key}
                             style={{
-                                display: 'flex',
-                                marginBottom: 2,
-                                marginTop: 2
+                                display: 'flex', marginBottom: 0, marginTop: 0
                             }}
                             align="baseline"
                         >
@@ -151,7 +147,7 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod, setTrigger
                                     showSearch
                                 >
                                     {dataStages && dataStages.stagesTable && dataStages.stagesTable.stages.map(stage => (
-                                        <Select.Option value={stage.id}>{stage.name}</Select.Option>))}
+                                        <Select.Option key={stage.id} value={stage.id}>{stage.name}</Select.Option>))}
                                     {dataStages && dataStages.stagesTable && dataStages.stagesTable.stages && dataStages.stagesTable.stages.length === 0 && (
                                         <Select.Option value="CREATE_NEW">Создать новый
                                             этап?</Select.Option>)}
@@ -160,27 +156,14 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod, setTrigger
                             <Form.Item
                                 {...restField}
                                 style={{marginBottom: 0, display: 'flex'}}
-                                name={[name, 'date_range']}
-                                rules={[{
-                                    required: true, message: 'Missing last name',
-                                },]}
-                            >
-                                <RangePicker
-                                    id={{
-                                        start: 'date_start_item',
-                                        end: 'date_end_item',
-                                    }}
-                                />
-                            </Form.Item>
-                            <Form.Item
-                                {...restField}
-                                style={{marginBottom: 0, display: 'flex'}}
-                                name={[name, 'percent_item']}
-                                rules={[{
-                                    required: true, message: 'Missing last name',
-                                },]}
-                            >
-                                <InputNumber/>
+                                name={[name, 'procent_item']}>
+                                <InputNumber
+                                    size={"middle"}
+                                    min={1}
+                                    max={100}
+                                    style={{
+                                        width: 50
+                                    }}/>
                             </Form.Item>
                             <MinusCircleOutlined onClick={() => remove(name)}/>
                         </Space>))}
@@ -192,7 +175,21 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod, setTrigger
                         </Form.Item>
                     </>)}
                 </Form.List>
-            </StyledFormBig>
-    );
-}
-export default StagesProjectForm;
+                <div style={{textAlign: 'center'}}>
+                    <StyledButtonGreen type={'dashed'}
+                                       onClick={() => setStageFormViewModalVisible(true)}>
+                        Создать этап
+                    </StyledButtonGreen>
+
+                </div>
+            </StyledFormRegular>
+            <Modal
+                open={stageFormViewModalVisible}
+                onCancel={() => setStageFormViewModalVisible(false)}
+                footer={null}
+                onClose={handleStageFormView}
+            >
+                <StageForm/>
+            </Modal></>)
+};
+export default StagesTemplateForm;

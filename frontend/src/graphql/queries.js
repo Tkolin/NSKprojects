@@ -2,12 +2,20 @@ import {gql} from '@apollo/client';
 
 // Запросы данных
 export const BIK_QUERY = gql`
-    query ProjectQuery {
+    query BikQuery {
         biks {
             id
             Bik
             name
             correspondent_account
+        }
+    }
+`;
+export const TYPES_PAYMENT_QUERY = gql`
+    query TypePaymentsQuery {
+        TypePayments {
+            id
+            name
         }
     }
 `;

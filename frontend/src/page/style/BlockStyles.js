@@ -27,8 +27,10 @@ const marginTop = 5;
 const StyledBlockSmall = ({ lable, children  }) => {
     return (
         <StyledBlockWrapperSmall>
+            <div style={{textAlign: 'center'}}>
                 <Title level={3} style={{marginBottom: marginBottom, marginTop: marginTop}}>{lable}</Title>
-                {children}
+            </div>
+            {children}
         </StyledBlockWrapperSmall>
     );
 };

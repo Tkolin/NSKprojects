@@ -1,28 +1,24 @@
-import {StyledFormBig} from "../style/FormStyles";
-import {Button, Form, notification, Select, Space} from "antd";
-import {DatePicker} from "antd/lib";
-import {LoadingOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
-import React, {useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
 import {
     SEARCH_IRDS_QUERY,
     SEARCH_TEMPLATE_IRDS_OR_TYPE_PROJECT_QUERY,
+    SEARCH_TEMPLATE_OR_TYPE_PROJECT_QUERY
 } from "../../graphql/queriesSearch";
-import {UPDATE_IRDS_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
-import {PROJECT_QUERY} from "../../graphql/queries";
+import React, {useState} from "react";
+import {Button, Form, InputNumber, Modal, notification, Select, Space} from "antd";
+import {LoadingOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
+import {StyledButtonGreen} from "../style/ButtonStyles";
+import {StyledFormBig} from "../style/FormStyles";
+import {UPDATE_IRDS_TEMPLATE_MUTATION} from "../../graphql/mutationsTemplate";
 import LoadingSpinner from "./LoadingSpinner";
-const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMethod }) => {
-    // Триггер
-    if (triggerMethod) {
-        handleSubmit();
-        setTriggerMethod(false); // Reset the trigger
-    }
+import IrdForm from "../form/IrdForm";
+import TemplateForm from "../form/TemplateForm";
 
+const IrdsTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod  }) => {
     // Состояния
     const [formIRD] = Form.useForm();
-    const [autoCompleteIrd, setAutoCompleteIrd] = useState('');
     const [irdFormViewModalVisible, setIrdFormViewModalVisible] = useState(false);
-
+    const [autoCompleteIrd, setAutoCompleteIrd] = useState('');
     const handleAutoCompleteIrdSelect = (value) => {
         if (value == 'CREATE_NEW') {
             setIrdFormViewModalVisible(true);
@@ -33,6 +29,15 @@ const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMe
     };
     const handleAutoCompleteIrd = (value) => {
         setAutoCompleteIrd(value)
+    };
+    const handleIrdFormView = () => {
+        setIrdFormViewModalVisible(false);
+    };
+    // Функции уведомлений
+    const openNotification = (placement, type, message) => {
+        notification[type]({
+            message: message, placement,
+        });
     };
 
     // Получение данных для выпадающих списков
@@ -45,15 +50,16 @@ const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMe
     } = useQuery(SEARCH_TEMPLATE_IRDS_OR_TYPE_PROJECT_QUERY, {
         variables: {typeProject: typeProjectId},
         fetchPolicy: 'network-only',
-        onCompleted: (data) => addingIrds(data),
+        onCompleted: (data) => addingIrds(data)
     });
 
+    // Загрузка шаблонов при редактировании
     const addingIrds = (value) => {
         if (dataIrds && value) {
-            console.log('addingIrds');
             const newIrds = value.templatesIrdsTypeProjects.map(a => ({
                 id: a.ird ? a.ird.id : null, name: a.ird ? a.ird.name : null,
             }));
+
             refetchIrds({search: autoCompleteIrd}).then(({data}) => {
                 const existingIrds = dataIrds.irdsTable ? dataIrds.irdsTable.irds : [];
                 const updatedIrds = [...existingIrds, ...newIrds];
@@ -66,14 +72,38 @@ const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMe
             loadTemplate();
         }
     }
-    // Функции уведомлений
-    const openNotification = (placement, type, message) => {
-        notification[type]({
-            message: message, placement,
+
+    // Мутации для добавления и обновления
+    const [updateTemplateIrds] = useMutation(UPDATE_IRDS_TEMPLATE_MUTATION, {
+        onCompleted: () => {
+            openNotification('topRight', 'success', 'Данные успешно обновлены! ti');
+        }, onError: (error) => {
+            openNotification('topRight', 'error', 'Ошибка при обновлении данных: ti' + error.message);
+        }
+    });
+
+    // Обработчик отправки формы
+    const handleSubmit = () => {
+        const irdsData = formIRD.getFieldsValue().irdList.map(ird => ({
+            ird_id: ird.ird_item, stage_number: ird.stageNumber_item, app_number: ird.appNumber_item,
+        }));
+        // Вызов мутаций для обновления данных
+        updateTemplateIrds({
+            variables: {
+                typeProjectId: typeProjectId,
+                listIrds_id: irdsData.map(ird => parseInt(ird.ird_id)),
+                listStageNumber: irdsData.map(ird => ird.stage_number),
+                listAppNumber: irdsData.map(ird => ird.app_number)
+            }
         });
     };
 
-    // Подгрузка формы
+    // Триггер
+    if (triggerMethod) {
+        handleSubmit();
+        setTriggerMethod(false); // Reset the trigger
+    }
+    // Подстановка значений
     const loadTemplate = () => {
         if (dataTemplate) {
             const irds = dataTemplate && dataTemplate.templatesIrdsTypeProjects;
@@ -84,31 +114,6 @@ const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMe
         }
     };
 
-    // Мутации для добавления и обновления
-    const [updateIrdsToProject] = useMutation(UPDATE_IRDS_TO_PROJECT_MUTATION, {
-        onCompleted: () => {
-            openNotification('topRight', 'success', 'Данные успешно добавлены ird!');
-        }, onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при добавлении данных ird: ' + error.message);
-        }
-    });
-
-    const handleSubmit = () => {
-        const irdsData = formIRD.getFieldsValue().irdList.map(ird => ({
-            ird_id: ird.ird_item, date_complete: ird.date_complete_item
-        }));
-
-        // Вызов мутаций для обновления данных
-        updateIrdsToProject({
-            variables: {
-                typeProjectId: typeProjectId,
-                listIrds_id: irdsData.map(ird => parseInt(ird.ird_id)),
-                listDateComplete: irdsData.map(ird => ird.date_complete),
-
-            }
-        });
-    }
-
     if(loadingTemplate)
         return <LoadingOutlined
             style={{
@@ -116,25 +121,31 @@ const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMe
             }}
             spin
         />
+    return (<>
+            <StyledFormBig
+                name="dynamic_form_nest_itemы"
+                style={{maxWidth: 600}}
+                form={formIRD}
+            >
 
-    return (
-            <StyledFormBig form={formIRD} name="dynamic_form_nest_item" autoComplete="off">
                 <Form.List name="irdList">
                     {(fields, {add, remove}) => (<>
                         {fields.map(({key, name, ...restField}) => (<Space
                             key={key}
                             style={{
-                                display: 'flex', marginBottom: 2, marginTop: 2
+                                display: 'flex', marginBottom: 0, marginTop: 0
                             }}
                             align="baseline"
                         >
                             <Form.Item
                                 {...restField}
-                                style={{width: 570, minWidth: 220, marginBottom: 0}}
+                                style={{
+                                    display: 'flex', marginBottom: 0, marginTop: 0
+                                }}
                                 name={[name, 'ird_item']}
                             >
                                 <Select
-                                    style={{width: 570, minWidth: 220, marginBottom: 0}}
+                                    style={{maxWidth: 570, minWidth: 570, marginBottom: 0}}
                                     popupMatchSelectWidth={false}
                                     filterOption={false}
                                     placeholder="Начните ввод..."
@@ -146,39 +157,66 @@ const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMe
                                 >
                                     {dataIrds && dataIrds.irdsTable && dataIrds.irdsTable.irds && dataIrds.irdsTable.irds.map(ird => (
                                         <Select.Option key={ird.id}
-                                                       value={ird.id}>
-                                            {ird.name}
-                                        </Select.Option>))}
+                                                       value={ird.id}>{ird.name}</Select.Option>))}
                                     {dataIrds && dataIrds.irdsTable && dataIrds.irdsTable.irds && dataIrds.irdsTable.irds.length === 0 && (
-                                        <Select.Option value="CREATE_NEW">
-                                            Создать новый ИРД?
-                                        </Select.Option>)}
+                                        <Select.Option value="CREATE_NEW">Создать новый
+                                            ИРД?</Select.Option>)}
                                 </Select>
                             </Form.Item>
                             <Form.Item
                                 {...restField}
-                                name={[name, 'isChecked']}
-                                valuePropName="date_complite_item"
                                 style={{
                                     display: 'flex', marginBottom: 0, marginTop: 0
                                 }}
+                                name={[name, 'stageNumber_item']}
                             >
-                                <DatePicker
-                                    status={"warning"}
-                                    placeholder="Получено"/>
+                                <InputNumber
+                                    size={"middle"}
+                                    min={1}
+                                    max={100}
+                                    style={{
+                                        width: 60
+                                    }}/>
+                            </Form.Item>
+                            <Form.Item
+                                {...restField}
+                                style={{
+                                    display: 'flex', marginBottom: 0, marginTop: 0
+                                }}
+                                name={[name, 'appNumber_item']}
+                            >
+                                <InputNumber
+                                    size={"middle"}
+                                    min={1}
+                                    max={100}
+                                    style={{
+                                        width: 60
+                                    }}/>
                             </Form.Item>
                             <MinusCircleOutlined onClick={() => remove(name)}/>
                         </Space>))}
                         <Form.Item>
                             <Button type="dashed" onClick={() => add()} block
                                     icon={<PlusOutlined/>}>
-                                Add field
+                                Добавить ИРД к шаблону
                             </Button>
                         </Form.Item>
                     </>)}
                 </Form.List>
-            </StyledFormBig>
-    )
-};
+                <div style={{textAlign: 'center'}}>
+                    <StyledButtonGreen
+                        type={'dashed'}
+                        onClick={() => setIrdFormViewModalVisible(true)}>Создать ИРД</StyledButtonGreen></div>
 
-export default IrdsProjectForm;
+            </StyledFormBig>
+            <Modal
+                open={irdFormViewModalVisible}
+                onCancel={() => setIrdFormViewModalVisible(false)}
+                footer={null}
+                onClose={handleIrdFormView}
+            >
+                <IrdForm/>
+            </Modal>
+        </>);
+};
+export default IrdsTemplateForm;

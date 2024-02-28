@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
-import { Table, Select, InputNumber, DatePicker, Button } from 'antd';
-import {GET_TEMPLATES_TASKS_TYPE_PROJECTS, SEARCH_PERSONS_QUERY} from "../../graphql/queriesSearch";
+import {Table, Select, InputNumber, DatePicker, Button} from 'antd';
+import {
+    GET_TEMPLATES_TASKS_TYPE_PROJECTS,
+    SEARCH_PERSONS_QUERY,
+} from "../../graphql/queriesSearch";
+import {LoadingOutlined} from "@ant-design/icons";
 
-const TasksProjectExecutorTable = ({ project,typeProjectId }) => {
+
+const TasksProjectExecutorForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMethod }) => {
     const [dataPersons, setDataPersons] = useState(null);
     const [autoCompletePersons, setAutoCompletePersons] = useState('');
-    const [typeProjectId, setTypeProjectId] = useState('')
+
+
     const handleAutoCompletePersonsSelect = (value, taskId) => {
         console.log(taskId);
         handleExecutorChange(value, taskId);
@@ -20,7 +26,7 @@ const TasksProjectExecutorTable = ({ project,typeProjectId }) => {
     };
 
     const { loading, error, data } = useQuery(GET_TEMPLATES_TASKS_TYPE_PROJECTS, {
-        variables: { typeProjectId },
+        variables: { typeProjectId: typeProjectId },
     });
 
     const { loading: loadingPersons, error: errorPersons, refetch: refetchPersons } = useQuery(SEARCH_PERSONS_QUERY, {
@@ -77,7 +83,6 @@ const TasksProjectExecutorTable = ({ project,typeProjectId }) => {
             stage_number: item.stage_number,
             executor: (
                 <Select
-                    style={{ maxWidth: 380, minWidth: 380, marginBottom: 0 }}
                     popupMatchSelectWidth={false}
                     filterOption={false}
                     placeholder="Исполнитель..."
@@ -111,13 +116,20 @@ const TasksProjectExecutorTable = ({ project,typeProjectId }) => {
         { title: 'Срок (Либо 2 даты либо дата и продолжительность)', dataIndex: 'deadline', key: 'deadline' },
     ];
 
+    if(loading)
+        return <LoadingOutlined
+            style={{
+                fontSize: 24,
+            }}
+            spin
+        />
+
     return (
         <>
             <Table columns={columns} dataSource={dataSource} />
-            <Button onClick={handleSave}>Save</Button>
         </>
     );
 };
 
-export default TasksProjectExecutorTable;
+export default TasksProjectExecutorForm;
 

@@ -156,3 +156,12 @@ export const UPDATE_STAGES_TO_PROJECT_MUTATION = gql`
         )
     }
 `;
+export const UPDATE_PAYMENTS_TO_PROJECT_MUTATION = gql`
+    mutation UpdatePaymentsToProject(
+        $ProjectId: ID!,
+    ) {
+        updatePaymentsToProject(
+            project: $ProjectId
+        )
+    }
+`;

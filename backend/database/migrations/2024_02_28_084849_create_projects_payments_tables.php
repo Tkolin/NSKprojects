@@ -4,7 +4,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-
 return new class extends Migration
 {
     /**
@@ -12,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('type_education_documents', function (Blueprint $table) {
+        Schema::create('project_payments', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-
+            $table->dateTime('date_time_payment');
+            $table->foreignId('project_id')->constrained('projects');
+            $table->foreignId('type_payment_id')->constrained('type_payment');
+            $table->integer('price');
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('type_education_documents');
+        Schema::dropIfExists('projects_payments_tables');
     }
 };

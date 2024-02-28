@@ -149,3 +149,48 @@ export const SEARCH_TEMPLATE_OR_TYPE_PROJECT_QUERY = gql`
         }
     }
 `;
+export const SEARCH_TEMPLATE_IRDS_OR_TYPE_PROJECT_QUERY = gql`
+    query TemplateIrdsQuery($typeProject: ID) {
+        templatesIrdsTypeProjects(typeProject: $typeProject) {
+            id
+            ird {
+                id
+                name
+            }
+            application_to_project
+            stage_number
+        }
+    }
+`;
+export const SEARCH_TEMPLATE_STAGES_OR_TYPE_PROJECT_QUERY = gql`
+    query TemplateStagesQuery($typeProject: ID) {
+        templatesStagesTypeProjects(typeProject: $typeProject) {
+            id
+            stage{
+                id
+                name
+            }
+            percentage
+        }
+    }
+`;
+
+export const SEARCH_TEMPLATE_TASKS_OR_TYPE_PROJECT_QUERY = gql`
+    query TemplateTasksQuery($typeProject: ID) {
+        templatesTasksTypeProjects(typeProject: $typeProject) {
+            id
+            task{
+                id
+                name
+            }
+            inheritedTask{
+                id
+                task {
+                    id
+                    name
+                }
+            }
+            stage_number
+        }
+    }
+`;

@@ -58,9 +58,10 @@ class Project extends Model
     {
         return $this->hasMany(ProjectIrds::class);
     }
-    public function project_contents(): HasMany
+    public function project_payment(): HasMany
     {
-        return $this->hasMany(ProjectContents::class);
+        return $this->hasMany(ProjectPayment::class);
     }
+
 }
 

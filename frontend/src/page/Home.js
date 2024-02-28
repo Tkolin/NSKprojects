@@ -1,15 +1,15 @@
 import React from 'react';
 import catImage from '../cat.jpg';
-import {Typography} from "antd";
-import {StyledBlockLarge} from "./style/BlockStyles";
+import { Typography } from "antd";
+import {StyledBlockLarge, StyledBlockRegular, StyledBlockSmall} from "./style/BlockStyles";
+import './style.css'; // Подключаем файл со стилями для анимации
 const { Text, Title } = Typography;
-
 
 const Home = () => {
     return (
-        <StyledBlockLarge label={"Главная страница!"}>
-            <img src={catImage} alt="Cat" style={{maxWidth: '100%', height: 'auto'}}/>
-        </StyledBlockLarge>
+        <StyledBlockRegular label={"Главная страница!"}>
+            <img src={catImage} alt="Cat" className="rotate-image" />
+        </StyledBlockRegular>
     );
 };
 

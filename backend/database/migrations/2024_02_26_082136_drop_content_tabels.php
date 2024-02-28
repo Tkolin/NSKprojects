@@ -4,7 +4,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-
 return new class extends Migration
 {
     /**
@@ -12,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('type_education_documents', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
+        Schema::dropIfExists('template_content_type_project');
+        Schema::dropIfExists('project_contents');
+        Schema::dropIfExists('contents');
 
-            $table->timestamps();
-        });
     }
 
     /**
@@ -25,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('type_education_documents');
+        //
     }
 };

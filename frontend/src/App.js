@@ -26,10 +26,10 @@ import TemplateForm from "./page/form/TemplateForm";
 import IrdList from "./page/directory/IrdList";
 import TypeProjectList from "./page/directory/TypeProjectList";
 import StageList from "./page/directory/StageList";
-import TypeProjectForm from "./page/form/TypeProjectForm";
-import StageForm from "./page/form/StageForm";
-import IrdForm from "./page/form/IrdForm";
 import Test from "./test";
+import {ConfigProvider} from "antd";
+import ruRU from "antd/locale/ru_RU";
+
 
 const App = () => {
     const cookies = new Cookies();
@@ -47,7 +47,9 @@ const App = () => {
 
     const currentUser = data?.currentUser;
 
+
     return (
+        <ConfigProvider locale={ruRU}>
         <Router>
             <CustomLayout currentUser={currentUser}>
                 <Routes>
@@ -92,6 +94,7 @@ const App = () => {
                 </Routes>
             </CustomLayout>
         </Router>
+            </ ConfigProvider >
     );
 };
 
