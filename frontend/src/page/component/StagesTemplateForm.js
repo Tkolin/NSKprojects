@@ -1,5 +1,5 @@
-import {Button, Form, InputNumber, Modal, notification, Select, Space} from "antd";
-import React, {useState} from "react";
+import {Button, Form, Input, InputNumber, Modal, notification, Select, Space} from "antd";
+import React, {useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
 import {
     SEARCH_STAGES_QUERY,
@@ -112,6 +112,22 @@ const StagesTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod  }) 
             formStage.setFieldsValue({stageList: initialValuesStages});
         }
     };
+
+    // Подсчёт суммы процентов
+    const [totalToPercent, setTotalToPercent] = useState(0);
+    const handleChangeItemPercent = () => {
+        const stageList = formStage.getFieldValue('stageList');
+        if (Array.isArray(stageList)) {
+            const allProcents = stageList.map(item => item.procent_item);
+            const totalProcent = allProcents.reduce((acc, val) => acc + val, 0);
+            setTotalToPercent(totalProcent);
+        }
+    };
+    useEffect(() => {
+        handleChangeItemPercent();
+    }, [formStage.getFieldValue('stageList')]);
+
+
     if(loadingTemplate)
         return <LoadingOutlined
             style={{
@@ -121,6 +137,17 @@ const StagesTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod  }) 
         />
     return (<>
             <StyledFormRegular form={formStage} layout="vertical">
+
+                <Form.Item label="Сумма процентов">
+                    <Input
+                        value={totalToPercent}
+                        suffix={"%"}
+                        style={{
+                            width: 80,
+                            background: totalToPercent > 100 ? '#EE4848' : totalToPercent < 100 ? '#FFD700' : '#7DFF7D'
+                        }}
+                    />
+                </Form.Item>
 
                 <Form.List name="stageList">
                     {(fields, {add, remove}) => (<>
@@ -158,6 +185,7 @@ const StagesTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod  }) 
                                 style={{marginBottom: 0, display: 'flex'}}
                                 name={[name, 'procent_item']}>
                                 <InputNumber
+                                    onChange={handleChangeItemPercent}
                                     size={"middle"}
                                     min={1}
                                     max={100}

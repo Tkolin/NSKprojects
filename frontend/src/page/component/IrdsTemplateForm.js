@@ -20,9 +20,9 @@ const IrdsTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod  }) =>
     const [irdFormViewModalVisible, setIrdFormViewModalVisible] = useState(false);
     const [autoCompleteIrd, setAutoCompleteIrd] = useState('');
     const handleAutoCompleteIrdSelect = (value) => {
+        console.log(value);
         if (value == 'CREATE_NEW') {
-            setIrdFormViewModalVisible(true);
-            setAutoCompleteIrd('');
+            console.log(value);
         } else {
             setAutoCompleteIrd('');
         }

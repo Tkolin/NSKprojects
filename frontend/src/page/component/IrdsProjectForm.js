@@ -9,8 +9,9 @@ import {
     SEARCH_TEMPLATE_IRDS_OR_TYPE_PROJECT_QUERY,
 } from "../../graphql/queriesSearch";
 import {UPDATE_IRDS_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
-import {PROJECT_QUERY} from "../../graphql/queries";
+import {IRDS_QUERY, PROJECT_QUERY} from "../../graphql/queries";
 import LoadingSpinner from "./LoadingSpinner";
+import {ADD_IRD_MUTATION} from "../../graphql/mutationsIrd";
 const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMethod }) => {
     // Триггер
     if (triggerMethod) {
@@ -21,14 +22,23 @@ const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMe
     // Состояния
     const [formIRD] = Form.useForm();
     const [autoCompleteIrd, setAutoCompleteIrd] = useState('');
-    const [irdFormViewModalVisible, setIrdFormViewModalVisible] = useState(false);
+
+    //Мутация
+    const [addIrd] = useMutation(ADD_IRD_MUTATION, {
+        refetchQueries: [{ query: IRDS_QUERY }],
+        onCompleted: () => {
+            openNotification('topRight', 'success', 'ИРД успешно добавлено, произеведите выбор!');
+        },
+        onError: () => {
+            openNotification('topRight', 'error', 'Ошибка при добавлении ИРД.');
+        }
+    });
 
     const handleAutoCompleteIrdSelect = (value) => {
+        console.log("Стоп");
         if (value == 'CREATE_NEW') {
-            setIrdFormViewModalVisible(true);
-            setAutoCompleteIrd('');
-        } else {
-            setAutoCompleteIrd('');
+            addIrd({variables: {name: autoCompleteIrd}});
+            refetchIrds({ search: autoCompleteIrd });
         }
     };
     const handleAutoCompleteIrd = (value) => {
@@ -150,7 +160,8 @@ const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMe
                                             {ird.name}
                                         </Select.Option>))}
                                     {dataIrds && dataIrds.irdsTable && dataIrds.irdsTable.irds && dataIrds.irdsTable.irds.length === 0 && (
-                                        <Select.Option value="CREATE_NEW">
+                                        <Select.Option value="CREATE_NEW" style={{ background: '#52c41a',
+                                            color: '#fff'}}>
                                             Создать новый ИРД?
                                         </Select.Option>)}
                                 </Select>

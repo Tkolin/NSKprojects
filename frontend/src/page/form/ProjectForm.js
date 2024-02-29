@@ -62,6 +62,8 @@ const ProjectForm = ({project, onClose}) => {
 
     const [triggerSaveStages, setTriggerSaveStages] = useState(false);
     const [triggerTotalToPayStages, setTriggertriggerTotalToPayStages] = useState(0);
+    const [triggerDayStart, setTriggerDayStart] = useState(0);
+    const [triggerDayEnd, setTriggerDayEnd] = useState("");
     const [triggerSaveIrds, setTriggerSaveIrds] = useState(false);
     const [triggerSaveTasks, setTriggerSaveTasks] = useState(false);
     const handleEditingPrice = (value) => {
@@ -69,10 +71,14 @@ const ProjectForm = ({project, onClose}) => {
             setTriggertriggerTotalToPayStages(+value); // Преобразуйте строку в число с помощью унарного плюса
         }
     };
-
+    const handleDateStart = (value) => {
+        setTriggerDayStart(value); // Преобразуйте строку в число с помощью унарного плюса
+    };
+    const handleDateEnd = (value) => {
+        setTriggerDayEnd(value); // Преобразуйте строку в число с помощью унарного плюса
+    };
     const handleAutoCompleteOrganization = (value, option) => {
         setAutoCompleteOrganization({id: option.key, name: value});
-        console.log(autoCompleteOrganization.id);
     };
 
     // Вызов модальных окон
@@ -232,11 +238,9 @@ const ProjectForm = ({project, onClose}) => {
                                                    onClick={() => setContactFormViewModalVisible(true)}/>
 
                             </Space.Compact>
-                            <Space.Compact block style={{alignItems: 'flex-end'}}>
+
                                 <StyledFormItem name="type_project_document_id" label="Тип документа"
-                                                style={{
-                                                    width: '90%',
-                                                }}>
+                                                >
                                     <Select
                                         popupMatchSelectWidth={false}
                                         value={selectedTypeProject}
@@ -246,9 +250,7 @@ const ProjectForm = ({project, onClose}) => {
                                                     value={typeDocument.id}>{typeDocument.name}</Option>))}
                                     </Select>
                                 </StyledFormItem>
-                                <StyledButtonGreen type={"dashed"} icon={<SwapOutlined/>}
-                                                   onClick={() => showConfirmTypeChangeModal(true)}/>
-                            </Space.Compact>
+
                             <Space.Compact block style={{alignItems: 'flex-end'}}>
                                 <StyledFormItem name="facility_id" label="Объект"
                                                 style={{
@@ -265,13 +267,15 @@ const ProjectForm = ({project, onClose}) => {
                                                    onClick={() => setFacilityFormViewModalVisible(true)}/>
                             </Space.Compact>
                             <StyledFormItem name="date_signing" label="Дата подписания">
-                                <DatePicker placeholder="Выберите дату"/>
+                                <DatePicker placeholder="Выберите дату"
+                                            onChange={(value) => handleDateStart(value)}/>
                             </StyledFormItem>
                             <StyledFormItem name="duration" label="Продолжительность">
                                 <InputNumber/>
                             </StyledFormItem>
                             <StyledFormItem name="date_end" label="Дата окончания">
-                                <DatePicker placeholder="Выберите дату"/>
+                                <DatePicker placeholder="Выберите дату"
+                                            onChange={(value) => handleDateEnd(value)}/>
                             </StyledFormItem>
                             <StyledFormItem name="status_id" label="Статус проекта">
                                 <Select>
@@ -315,6 +319,8 @@ const ProjectForm = ({project, onClose}) => {
                 <Col span={16}>
                     <StyledBlockBig label={'Этапы'}>
                         <StagesProjectForm totalToPay={triggerTotalToPayStages}
+                                           dateStart={triggerDayStart}
+                                           dateEnd={triggerDayEnd}
                                            triggerMethod={triggerSaveStages}
                                            setTriggerMethod={setTriggerSaveStages}
                                            typeProjectId={selectedTypeProject}

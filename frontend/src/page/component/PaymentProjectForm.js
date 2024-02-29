@@ -1,8 +1,8 @@
 import {StyledFormBig, StyledFormRegular} from "../style/FormStyles";
-import {Button, Col, Form, Input, notification, Row, Select, Space} from "antd";
+import {Button, Col, Form, Input, InputNumber, notification, Row, Select, Space} from "antd";
 import {DatePicker} from "antd/lib";
 import {LoadingOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
 import {
     SEARCH_IRDS_QUERY,
@@ -11,7 +11,7 @@ import {
 import {UPDATE_IRDS_TO_PROJECT_MUTATION, UPDATE_PAYMENTS_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
 import {TYPES_PAYMENT_QUERY} from "../../graphql/queries";
 
-const PaymentProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMethod, totalToPay }) => {
+const PaymentProjectForm = ({typeProjectId, projectId, triggerMethod, setTriggerMethod, totalToPay}) => {
     // Триггер
     if (triggerMethod) {
         handleSubmit();
@@ -20,6 +20,10 @@ const PaymentProjectForm = ({ typeProjectId, projectId, triggerMethod, setTrigge
 
     // Состояния
     const [formPayment] = Form.useForm();
+
+    const [totalPaid, setTotalPaid] = useState(0);
+    const [totalDebt, setTotalDebt] = useState(totalToPay);
+
 
 
     // Получение данных для выпадающих списков
@@ -55,39 +59,48 @@ const PaymentProjectForm = ({ typeProjectId, projectId, triggerMethod, setTrigge
             }
         });
     }
+    const handleChangeItemPrice = () => {
+        const payList = formPayment.getFieldValue('payments');
+        if (Array.isArray(payList)) {
+            const allPaid = payList.map(item => item.price);
+            const paid = allPaid.reduce((acc, val) => acc + val, 0);
+            const newDebt = totalToPay - paid;
 
+            setTotalPaid(paid);
+            setTotalDebt(newDebt);
+        }
+    };
+
+    useEffect(() => {
+        handleChangeItemPrice();
+    }, [formPayment.getFieldValue('payments'), totalToPay]);
     return (
-        <StyledFormRegular form={formPayment} name="dynamic_form_nest_item" autoComplete="off">
-
-            <Row gutter={[16, 16]}>
-                <Col span={8}>
-                    <Form.Item label="Сумма" initialValue={totalToPay}>
-                        <Input  disabled  value={totalToPay}/>
-                    </Form.Item>
-                </Col>
-                <Col span={8}>
-                    <Form.Item label="Оплачено" name="totalPaidInput">
-                        <Input disabled />
-                    </Form.Item>
-                </Col>
-                <Col span={8}>
-                    <Form.Item label="Долг" name="totalDebtInput">
-                        <Input className={formPayment.getFieldValue('totalDebt') > 0 ? 'red' : ''} disabled />
-                    </Form.Item>
-                </Col>
-            </Row>
+ <StyledFormRegular form={formPayment} name="dynamic_form_nest_item" autoComplete="off">
+            <Space.Compact block>
+                <Form.Item label="Сумма">
+                    <Input value={totalToPay} suffix={"₽"}/>
+                </Form.Item>
+                <Form.Item label="Оплачено">
+                    <Input value={totalPaid} suffix={"₽"}/>
+                </Form.Item>
+                <Form.Item
+                    label="Долг">
+                    <Input style={{background: totalDebt > 0 ? '#EE4848' : '#7DFF7D'}} value={totalDebt}
+                                         suffix={"₽"}/>
+                </Form.Item>
+            </Space.Compact>
 
 
             <Form.List name="payments">
-                {(fields, { add, remove }) => (
+                {(fields, {add, remove}) => (
                     <>
-                        {fields.map(({ key, name, ...restField }) => (
-                            <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                        {fields.map(({key, name, ...restField}) => (
+                            <Space key={key} style={{display: 'flex', marginBottom: 8}} align="baseline">
                                 <Form.Item
                                     {...restField}
                                     name={[name, 'type']}
                                     key={key}
-                                    rules={[{ required: true, message: 'Missing type' }]}
+                                    rules={[{required: true, message: 'Missing type'}]}
                                 >
                                     <Select
                                         popupMatchSelectWidth={false}
@@ -96,7 +109,7 @@ const PaymentProjectForm = ({ typeProjectId, projectId, triggerMethod, setTrigge
                                         allowClear
                                         showSearch
                                     >
-                                        {dataPayment && dataPayment.TypePayments  && dataPayment.TypePayments.map(tp => (
+                                        {dataPayment && dataPayment.TypePayments && dataPayment.TypePayments.map(tp => (
                                             <Select.Option key={tp.id}
                                                            value={tp.id}>{tp.name}</Select.Option>))}
                                     </Select>
@@ -105,26 +118,26 @@ const PaymentProjectForm = ({ typeProjectId, projectId, triggerMethod, setTrigge
                                     {...restField}
                                     name={[name, 'date']}
                                     Key={[key, 'date']}
-                                    rules={[{ required: true, message: 'Missing date' }]}
+                                    rules={[{required: true, message: 'Missing date'}]}
                                 >
-                                    <DatePicker showTime />
+                                    <DatePicker showTime/>
                                 </Form.Item>
                                 <Form.Item
                                     {...restField}
                                     name={[name, 'price']}
-                                    Key={[key,  'price']}
-                                    rules={[{ required: true, message: 'Missing date' }]}
+                                    Key={[key, 'price']}
+                                    rules={[{required: true, message: 'Missing date'}]}
                                 >
-                                    <Input placeholder="Сумма" />
+                                    <InputNumber min={1} onChange={handleChangeItemPrice} placeholder="Сумма"/>
                                 </Form.Item>
-                                <MinusCircleOutlined onClick={() => remove(name)} />
+                                <MinusCircleOutlined onClick={() => remove(name)}/>
                             </Space>
                         ))}
                         <Form.Item>
                             <Button
                                 type="dashed"
                                 onClick={() => add()}
-                                icon={<PlusOutlined />}
+                                icon={<PlusOutlined/>}
                             >
                                 Add payment
                             </Button>
@@ -133,7 +146,7 @@ const PaymentProjectForm = ({ typeProjectId, projectId, triggerMethod, setTrigge
                 )}
             </Form.List>
         </StyledFormRegular>
-    );
-};
+            )
+        };
 
 export default PaymentProjectForm;

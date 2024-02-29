@@ -1,7 +1,7 @@
 import {StyledFormBig} from "../style/FormStyles";
-import {Button, Form, InputNumber, notification, Select, Space} from "antd";
+import {Button, Form, Input, InputNumber, notification, Select, Space} from "antd";
 import {LoadingOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
 import {
     SEARCH_STAGES_QUERY,
@@ -13,9 +13,12 @@ import {UPDATE_STAGES_TEMPLATE_MUTATION} from "../../graphql/mutationsTemplate";
 import {UPDATE_STAGES_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
 import {PROJECT_QUERY} from "../../graphql/queries";
 import LoadingSpinner from "./LoadingSpinner";
+import dayjs from "dayjs";
+import moment from "moment";
 
 const {RangePicker} = DatePicker;
-const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMethod }) => {
+const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod,
+                               setTriggerMethod, price ,dateStart, dateEnd }) => {
     // Триггер
     if (triggerMethod) {
         handleSubmit();
@@ -35,6 +38,36 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod, setTrigger
             setAutoCompleteStage('');
         }
     };
+    const handleDateStageRebuild = () => {
+        const stageList = formStage.getFieldValue('stageList');
+
+        if (Array.isArray(stageList)) {
+            const updatedStageList = stageList.map((stage, index) => {
+                if (index === 0) {
+                    return {
+                        ...stage,
+                        date_range: [dateStart, stage.date_range ? stage.date_range[1] : null],
+                    };
+                } else if (index === stageList.length - 1) {
+                    return {
+                        ...stage,
+                        date_range: [stage.date_range ? stage.date_range[0] : null, dateEnd],
+                    };
+                } else {
+                    const prevStageEndDate = stageList[index - 1].date_range ? stageList[index - 1].date_range[1] : null;
+                    return {
+                        ...stage,
+                        date_range: [prevStageEndDate, stage.date_range ? stage.date_range[1] : null],
+                    };
+                }
+            });
+
+            formStage.setFieldsValue({
+                stageList: updatedStageList,
+            });
+        }
+    };
+
 
     const handleAutoCompleteStage = (value) => {
         setAutoCompleteStage(value);
@@ -124,6 +157,13 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod, setTrigger
 
     return (
             <StyledFormBig  form={formStage} name="dynamic_form_nest_item" autoComplete="off">
+                <Space.Compact block>
+                    <Form.Item label="Суммарный срок реализации">
+                        <RangePicker value={[dateStart, dateEnd]}  suffix={"₽"}/>
+                    </Form.Item>
+                    <Button onClick={handleDateStageRebuild}>Уровнять</Button>
+                </Space.Compact>
+
                 <Form.List name="stageList">
                     {(fields, {add, remove}) => (<>
                         {fields.map(({key, name, ...restField}) => (<Space
@@ -166,6 +206,9 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod, setTrigger
                                 },]}
                             >
                                 <RangePicker
+                                    minDate={dateStart}
+                                    maxDate={dateEnd}
+                                    onChange={handleDateStageRebuild}
                                     id={{
                                         start: 'date_start_item',
                                         end: 'date_end_item',

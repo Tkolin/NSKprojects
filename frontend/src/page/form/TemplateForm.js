@@ -3,7 +3,7 @@ import {
     Form, Button, Select, InputNumber, Col, Row, notification, Modal, Space
 } from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
-import {TYPES_PROJECTS_QUERY} from '../../graphql/queries';
+import {IRDS_QUERY, TYPES_PROJECTS_QUERY} from '../../graphql/queries';
 import {
     UPDATE_IRDS_TEMPLATE_MUTATION, UPDATE_STAGES_TEMPLATE_MUTATION, UPDATE_TASKS_TEMPLATE_MUTATION
 } from '../../graphql/mutationsTemplate';
@@ -23,6 +23,7 @@ import {StyledButtonForm, StyledButtonGreen} from "../style/ButtonStyles";
 import StagesTemplateForm from "../component/StagesTemplateForm";
 import IrdsTemplateForm from "../component/IrdsTemplateForm";
 import TasksTemplateForm from "../component/TasksTemplateForm";
+import {ADD_IRD_MUTATION} from "../../graphql/mutationsIrd";
 
 const {Option} = Select;
 
@@ -46,6 +47,7 @@ const TemplateForm = ({project, onClose}) => {
             message: message, placement,
         });
     };
+
 
     // Получение данных для выпадающих списков
     const {
@@ -93,15 +95,21 @@ const TemplateForm = ({project, onClose}) => {
                     </StyledFormRegular>
                 </StyledBlockRegular>
                 <StyledBlockRegular label={'Этапы'}>
-                    <StagesTemplateForm triggerMethod={triggerSaveStages} setTriggerMethod={setTriggerSaveStages} typeProjectId={selectedTypeProject}/>
+                    <StagesTemplateForm triggerMethod={triggerSaveStages}
+                                        setTriggerMethod={setTriggerSaveStages}
+                                        typeProjectId={selectedTypeProject}/>
                 </StyledBlockRegular>
             </Col>
             <Col span={16}>
                 <StyledBlockBig label={'ИРД'}>
-                    <IrdsTemplateForm triggerMethod={triggerSaveIrds} setTriggerMethod={setTriggerSaveIrds} typeProjectId={selectedTypeProject}/>
+                    <IrdsTemplateForm triggerMethod={triggerSaveIrds}
+                                      setTriggerMethod={setTriggerSaveIrds}
+                                      typeProjectId={selectedTypeProject}/>
                 </StyledBlockBig>
                 <StyledBlockBig label={'Задачи'}>
-                    <TasksTemplateForm triggerMethod={triggerSaveTasks} setTriggerMethod={setTriggerSaveTasks} typeProjectId={selectedTypeProject}/>
+                    <TasksTemplateForm triggerMethod={triggerSaveTasks}
+                                       setTriggerMethod={setTriggerSaveTasks}
+                                       typeProjectId={selectedTypeProject}/>
                 </StyledBlockBig>
             </Col>
         </Row>
