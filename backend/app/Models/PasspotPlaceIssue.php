@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PasspotPlaceIssue extends Model
 {
@@ -12,7 +13,7 @@ class PasspotPlaceIssue extends Model
         'name',
         'code',
     ];
-    public function passport(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function passports(): HasMany
     {
         return $this->hasMany(Passport::class);
     }

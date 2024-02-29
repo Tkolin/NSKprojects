@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import ContactList from './page/directory/ContactList';
 import ContactForm from './page/form/ContactForm';
 import LoginForm from './page/authorization/LoginForm';
@@ -43,58 +43,71 @@ const App = () => {
     });
     // Обработка загрузки и ошибок
     if (loading) return <LoadingSpinner/>;
-    if (data)if(error) return `Ошибка! ${error.message}`;
+    if (data) if (error) return `Ошибка! ${error.message}`;
 
     const currentUser = data?.currentUser;
 
 
     return (
         <ConfigProvider locale={ruRU}>
-        <Router>
-            <CustomLayout currentUser={currentUser}>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/t" element={<Test />} />
+            <Router>
+                <CustomLayout currentUser={currentUser}>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/t" element={<Test />} />
 
-                    {currentUser ? (
-                        currentUser.role.name === "admin" ? (
+                        {currentUser ? (
                             <>
-                                <Route path="/ird" element={<IrdList />} />
-                                <Route path="/typeProject" element={<TypeProjectList />} />
-                                <Route path="/stageProject" element={<StageList />} />
+                                {currentUser.role.name === "admin" && (
+                                    <>
+                                        <Route path="/ird" element={<IrdList />} />
+                                        <Route path="/typeProject" element={<TypeProjectList />} />
+                                        <Route path="/stageProject" element={<StageList />} />
 
+                                        <Route path="/template/new" element={<TemplateForm />} />
 
-                                <Route path="/template/new" element={<TemplateForm />} />
+                                        <Route path="/contacts" element={<ContactList />} />
+                                        <Route path="/contacts/new" element={<ContactForm />} />
 
-                                <Route path="/contacts" element={<ContactList />} />
-                                <Route path="/contacts/new" element={<ContactForm />} />
+                                        <Route path="/project" element={<ProjectList />} />
+                                        <Route path="/project/new" element={<ProjectForm />} />
+                                        <Route path="/project/stage" element={<ProjectStageList />} />
+                                        <Route path="/project/stage/new" element={<ProjectStageFrom />} />
+                                        <Route path="/project/stage/task" element={<StageTaskList />}/>
+                                        <Route path="/project/stage/task/new" element={<StageTaskForm />} />
+                                        <Route path="/project/facility" element={<FacilityList />} />
+                                        <Route path="/project/facility/new" element={<FacilityForm />} />
+                                        <Route path="/organization" element={<OrganizationList />} />
+                                        <Route path="/organization/new" element={<OrganizationForm />} />
 
-                                <Route path="/project" element={<ProjectList />} />
-                                <Route path="/project/new" element={<ProjectForm />} />
-                                <Route path="/project/stage" element={<ProjectStageList />} />
-                                <Route path="/project/stage/new" element={<ProjectStageFrom />} />
-                                <Route path="/project/stage/task" element={<StageTaskList />}/>
-                                <Route path="/project/stage/task/new" element={<StageTaskForm />} />
-                                <Route path="/project/facility" element={<FacilityList />} />
-                                <Route path="/project/facility/new" element={<FacilityForm />} />
-                                <Route path="/organization" element={<OrganizationList />} />
-                                <Route path="/organization/new" element={<OrganizationForm />} />
+                                        <Route path="/person" element={<PersonList />} />
+                                        <Route path="/person/new" element={<PersonForm />} />
+                                    </>
+                                )}
 
-                                <Route path="/person" element={<PersonList />} />
-                                <Route path="/person/new" element={<PersonForm />} />
+                                {currentUser.role.name === "bookkeeper" && (
+                                    <>
+                                        <Route path="/contacts" element={<ContactList />} />
+                                        <Route path="/contacts/new" element={<ContactForm />} />
 
-                        </>
-                        ) : null
-                    ) : (
-                        <>
-                            <Route path="/auth/register" element={<RegisterForm />} />
-                            <Route path="/auth/login" element={<LoginForm />} />
-                        </>
-                    )}
-                </Routes>
-            </CustomLayout>
-        </Router>
-            </ ConfigProvider >
+                                        <Route path="/person" element={<PersonList />} />
+                                        <Route path="/person/new" element={<PersonForm />} />
+
+                                        <Route path="/organization" element={<OrganizationList />} />
+                                        <Route path="/organization/new" element={<OrganizationForm />} />
+                                    </>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                <Route path="/auth/register" element={<RegisterForm />} />
+                                <Route path="/auth/login" element={<LoginForm />} />
+                            </>
+                        )}
+                    </Routes>
+                </CustomLayout>
+            </Router>
+        </ ConfigProvider>
     );
 };
 

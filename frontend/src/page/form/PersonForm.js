@@ -53,7 +53,7 @@ const PersonForm = ({person, onClose}) => {
                 patronymic: person.passport.patronymic,
                 birth_date: person.passport.birth_date ? moment(person.passport.birth_date, 'YYYY-MM-DD') : null,
                 date: person.passport.date ? moment(person.passport.date, 'YYYY-MM-DD') : null,
-                passport_place_issue_id: person.passport.passport_place_issues ? person.passport.passport_place_issues.id : null,// TODO: НЕ РАБОТАЕТ
+                passport_place_issue_id: person.passport.passport_place_issue ? person.passport.passport_place_issue.id : null,// TODO: НЕ РАБОТАЕТ
                 serial: person.passport.serial,
                 number: person.passport.number,
             });
@@ -83,7 +83,7 @@ const PersonForm = ({person, onClose}) => {
     // Обработчик отправки формы
     const handleSubmit = () => {
         if (editingPerson) {
-            updatePerson({variables: {id: editingPerson.id, ...form.getFieldsValue(), ...formPassport.getFieldsValue()}});
+            updatePerson({variables: {id: editingPerson.id, ...form.getFieldsValue(), ...formPassport.getFieldsValue(), }});
         } else {
             addPerson({variables: {...form.getFieldsValue(), ...formPassport.getFieldsValue()}});
         }
@@ -115,19 +115,20 @@ const PersonForm = ({person, onClose}) => {
                         <StyledFormItem name="date" label="Дата выдачи" rules={[{required: true}]}>
                             <DatePicker/>
                         </StyledFormItem>
-
+                        <Space.Compact block>
                         <StyledFormItem name="passport_place_issue_id" label="Место выдачи"
                                         rules={[{required: true}]}>
-                            <Space.Compact block>
+
                                 <Select style={{minWidth: 180}}>
                                     {data && data.passportPlaceIssues && data.passportPlaceIssues.map(ppi => (
                                         <Select.Option key={ppi.id} value={ppi.id}>{ppi.name}</Select.Option>))}
                                 </Select>
-                                <StyledButtonGreen icon={<PlusOutlined/>}
-                                                   onClick={() => setPpiFormViewModalVisible(true)}/>
-                            </Space.Compact>
-                        </StyledFormItem>
 
+
+                        </StyledFormItem>
+                            <StyledButtonGreen icon={<PlusOutlined/>}
+                                               onClick={() => setPpiFormViewModalVisible(true)}/>
+                        </Space.Compact>
 
                         <StyledFormItem name="serial" label="Серия" rules={[{required: true}]}>
                             <Input/>
@@ -182,7 +183,7 @@ const PersonForm = ({person, onClose}) => {
             </Row>
             <StyledFormItem>
                 <div style={{textAlign: 'center'}}>
-                    <StyledButtonGreen type="dashed" onClick={handleSubmit}>
+                    <StyledButtonGreen   style={{    marginBottom: 0}} type="dashed" onClick={handleSubmit}>
                         {editingPerson ? "Сохранить изменения" : "Добавить сотрудника"}
                     </StyledButtonGreen>
                 </div>

@@ -5,7 +5,7 @@ export const BIK_QUERY = gql`
     query BikQuery {
         biks {
             id
-            Bik
+            BIK
             name
             correspondent_account
         }
@@ -42,7 +42,7 @@ export const ORGANIZATION_QUERY = gql`
             KPP
             Bik{
                 id
-                Bik
+                BIK
                 name
             }
             payment_account
@@ -179,7 +179,7 @@ export const PERSON_QUERY = gql`
                 patronymic
                 serial
                 number
-                passport_place_issues{
+                passport_place_issue{
                     id
                     name
                 }
@@ -198,7 +198,7 @@ export const PERSON_QUERY = gql`
             }
             BIK{
                 id
-                Bik
+                BIK
             }
 
         }
@@ -217,7 +217,7 @@ export const PERSON_TABLE_QUERY = gql`
                     patronymic
                     serial
                     number
-                    passport_place_issues{
+                    passport_place_issue{
                         id
                         name
                     }
@@ -236,7 +236,7 @@ export const PERSON_TABLE_QUERY = gql`
                 }
                 BIK{
                     id
-                    Bik
+                    BIK
                     name
                     correspondent_account
                 }
@@ -283,7 +283,7 @@ export const ORGANIZATIONS_TABLE_QUERY = gql`
                 KPP
                 Bik{
                     id
-                    Bik
+                    BIK
                     correspondent_account
                     name
                 }

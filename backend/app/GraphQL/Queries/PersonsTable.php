@@ -12,11 +12,11 @@ final readonly class PersonsTable
 {
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
-        $allowedRoles = ['admin']; // Роли, которые разрешены
+        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
 
-            $personQuery = Person::with('passport')
+            $personQuery = Person::with(['passport', 'passport.passport_place_issue'])
                 ->with('bank')
                 ->with('BIK');
 
@@ -55,7 +55,6 @@ final readonly class PersonsTable
             } else {
                 $persons = $personQuery->get();
             }
-
             return ['persons' => $persons, 'count' => $count];
         } else {
             throw new AuthenticationException('Отказано в доступе');

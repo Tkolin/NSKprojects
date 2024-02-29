@@ -74,7 +74,7 @@ const IrdForm = ({ ird, onClose }) => {
                 </StyledFormItem>
                 <div style={{textAlign: 'center'}}>
                     <StyledFormItem>
-                        <StyledButtonGreen type="primary" onClick={handleSubmit}>
+                        <StyledButtonGreen   style={{    marginBottom: 0}} type="primary" onClick={handleSubmit}>
                             {editingIrd ? "Сохранить изменения" : "Добавить"}
                         </StyledButtonGreen>
                     </StyledFormItem>

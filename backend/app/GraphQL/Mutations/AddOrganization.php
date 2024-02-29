@@ -13,7 +13,7 @@ final readonly class AddOrganization
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args, GraphQLContext $context): Organization
     {
-        $allowedRoles = ['admin']; // Роли, которые разрешены
+        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
             $organization = Organization::create($args);

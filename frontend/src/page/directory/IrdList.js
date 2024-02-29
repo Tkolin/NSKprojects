@@ -151,7 +151,7 @@ const IrdList = () => {
                             enterButton="Найти"
                             onSearch={onSearch}
                         />
-                        <StyledButtonGreen onClick={() => handleAdd()}>Создать новую запись</StyledButtonGreen>
+                        <StyledButtonGreen   style={{    marginBottom: 0}} onClick={() => handleAdd()}>Создать новую запись</StyledButtonGreen>
                     </Space>
                 </Form.Item>
             </StyledFormLarge>

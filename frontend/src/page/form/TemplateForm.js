@@ -84,7 +84,7 @@ const TemplateForm = ({project, onClose}) => {
                                                 value={typeDocument.id}>{typeDocument.name}</Option>))}
                                 </Select>
                             </StyledFormItem>
-                            <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
+                            <StyledButtonGreen   style={{    marginBottom: 0}} type={"dashed"} icon={<PlusOutlined/>}
                                                onClick={() => setTypeProjectFormViewModalVisible(true)}/>
 
                         </Space.Compact>

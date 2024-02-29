@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, FloatButton, Form, Modal, notification, Space, Table} from 'antd';
+import {Button, Descriptions, FloatButton, Form, Modal, notification, Space, Table} from 'antd';
 import {CONTACTS_TABLE_QUERY, ORGANIZATION_QUERY, ORGANIZATIONS_TABLE_QUERY} from '../../graphql/queries';
 import {DELETE_ORGANIZATION_MUTATION} from '../../graphql/mutationsOrganization';
 import OrganizationForm from "../form/OrganizationForm";
@@ -18,10 +18,10 @@ const OrganizationList = () => {
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [addModalVisible, setAddModalVisible] = useState(false);
     const [formSearch] = Form.useForm();
-
+    const [expandedRowKeys, setExpandedRowKeys] = useState([]);
     // Данные
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(10);
+    const [limit, setLimit] = useState(50);
 
     const [currentSort, setCurrentSort] = useState({});
 
@@ -30,7 +30,7 @@ const OrganizationList = () => {
 
     const [search, setSearch] = useState('');
 
-    const {loading, error, data} = useQuery(ORGANIZATIONS_TABLE_QUERY, {
+    const {loading, error, data, refetch} = useQuery(ORGANIZATIONS_TABLE_QUERY, {
         variables: {
             page, limit, search, sortField: sortColum, sortOrder,
         }, fetchPolicy: 'network-only',
@@ -62,6 +62,7 @@ const OrganizationList = () => {
 
     // Обработчик событий
     const handleClose = () => {
+        refetch();
         setEditModalVisible(false);
     };
     const handleEdit = (organizationId) => {
@@ -83,47 +84,35 @@ const OrganizationList = () => {
     if (error) return `Ошибка! ${error.message}`;
 
     // Формат таблицы
-    const columns = [{
+    const columns = [
+
+        {
         title: 'Тип',
         dataIndex: 'legal_form',
         key: 'legal_form',
         render: (legal_form) => legal_form ? legal_form.name : '',
     }, {
         title: 'Название организации', dataIndex: 'name', key: 'name',
-
         sorter: true, ellipsis: true,
-    }, {
-        title: 'Полное название', dataIndex: 'full_name', key: 'full_name',
-
-        sorter: true, ellipsis: true,
-    }, {
+    },  {
         title: 'Директор',
         dataIndex: 'director',
         key: 'director',
-        render: (director) => director ? director.last_name + " " + director.first_name : "",
-    }, {
-        title: 'ИНН', dataIndex: 'INN', key: 'INN',
-
+        render: (director) => {
+            if (director) {
+                return `${director.last_name} ${director.first_name} ${director.patronymic}`;
+            } else {
+                return '';
+            }
+        },
+    },  {
+        title: 'email', dataIndex: 'email', key: 'email',
         sorter: true, ellipsis: true,
-    }, {
-        title: 'ОГРН', dataIndex: 'OGRN', key: 'OGRN',
-
+    },  {
+        title: 'номер телеофна', dataIndex: 'phone_number', key: 'phone_number',
         sorter: true, ellipsis: true,
-    }, {
-        title: 'ОКПО', dataIndex: 'OKPO', key: 'OKPO',
-
-        sorter: true, ellipsis: true,
-    }, {
-        title: 'КПП', dataIndex: 'KPP', key: 'KPP',
-
-        sorter: true, ellipsis: true,
-    }, {
-        title: 'bik', dataIndex: 'BIK', key: 'BIK', render: (BIK) => BIK ? BIK.Bik : null,
-    }, {
-        title: 'payment_account', dataIndex: 'payment_account', key: 'payment_account',
-
-        sorter: true, ellipsis: true,
-    }, {
+    },
+        {
         title: 'Управление', key: 'edit', render: (text, record) => (<div>
                 <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
                 <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
@@ -166,7 +155,7 @@ const OrganizationList = () => {
                         enterButton="Найти"
                         onSearch={onSearch}
                     />
-                    <StyledButtonGreen onClick={() => handleAdd()}>Создать новую запись</StyledButtonGreen>
+                    <StyledButtonGreen   style={{    marginBottom: 0}} onClick={() => handleAdd()}>Создать новую запись</StyledButtonGreen>
                 </Space>
             </Form.Item>
         </StyledFormLarge>
@@ -176,46 +165,42 @@ const OrganizationList = () => {
                 offsetHeader: 0,
             }}
             loading={loading}
-            dataSource={data.organizationsTable.organizations}
+            dataSource={data.organizationsTable.organizations.map((org, index) => ({...org, key: index}))}
             columns={columns}
             onChange={onChange}
             pagination={{
                 total: data.organizationsTable.count,
                 current: page,
-                limit,
+                pageSize: limit,
                 onChange: (page, limit) => setPage(page),
                 onShowSizeChange: (current, size) => {
                     setPage(1);
                     setLimit(size);
                 },
                 showSizeChanger: true,
-                pageSizeOptions: ['10', '20', '50', '100'],
+                pageSizeOptions: ['50', '100', '200'],
             }}
-            expandable={{
-                expandedRowRender: (record) => (<>
-                        <p>
-                            e-mail: {record.email}
-                        </p>
-                        <p>
-                            юр. адрес: {record.address_legal}
-                        </p>
-                        <p>
-                            Номер офиса: {record.office_number_legal}
-                        </p>
-                        <p>
-                            Фактический адрес: {record.address_mail}
-                        </p>
-                        <p>
-                            Номер офиса: {record.office_number_mail}
-                        </p>
-                        <p>
-                            Номер телефона: {record.phone_number}
-                        </p>
-                        <p>
-                            Номер факса: {record.fax_number}
-                        </p>
 
-                    </>),
+            expandable={{
+                expandedRowKeys,
+                onExpand: (expanded, record) => {
+                    const keys = expanded ? [record.key] : [];
+                    setExpandedRowKeys(keys);
+                },
+                expandedRowRender: (record) => (
+                    <Descriptions column={1}>
+                        <Descriptions.Item label="Полное наименование">{record.full_name}</Descriptions.Item>
+                        <Descriptions.Item label="Юридический адрес">{record.address_legal} {record.office_number_legal}</Descriptions.Item>
+                        <Descriptions.Item label="Почтовый адрес">{record.address_mail} {record.office_number_mail}</Descriptions.Item>
+                        <Descriptions.Item label="Факс">{record.fax_number}</Descriptions.Item>
+                        <Descriptions.Item label="ИНН">{record.INN}</Descriptions.Item>
+                        <Descriptions.Item label="ОГРН">{record.OGRN}</Descriptions.Item>
+                        <Descriptions.Item label="ОКПО">{record.OKPO}</Descriptions.Item>
+                        <Descriptions.Item label="КПП">{record.KPP}</Descriptions.Item>
+                        <Descriptions.Item label="БИК">{record.BIK}</Descriptions.Item>
+                        <Descriptions.Item label="Расчетный счет">{record.payment_account}</Descriptions.Item>
+                    </Descriptions>
+                ),
             }}
         />
         <Modal
@@ -234,7 +219,7 @@ const OrganizationList = () => {
             footer={null}
             onClose={handleClose}
         >
-            <OrganizationForm onClose={handleClose}/>
+            <OrganizationForm contact={null} onClose={handleClose}/>
         </Modal>
     </>;
 };

@@ -13,8 +13,9 @@ import SubMenu from "antd/es/menu/SubMenu";
 import {Cookies} from "react-cookie";
 import LoadingSpinner from "./component/LoadingSpinner";
 
-const { Text } = Typography;
-const { Header, Content, Footer, Sider } = Layout;
+const {Text} = Typography;
+const {Header, Content, Footer, Sider} = Layout;
+
 function getItem(label, key, icon, children, type) {
     return {
         key,
@@ -24,7 +25,8 @@ function getItem(label, key, icon, children, type) {
         type,
     };
 }
-const CustomLayout = ({ children }) => {
+
+const CustomLayout = ({children}) => {
 
     // Логика
     const navigate = useNavigate();
@@ -46,26 +48,37 @@ const CustomLayout = ({ children }) => {
 
     items.push(getItem('Главная', '0', <HomeOutlined/>, null, "/"));
     if (data && data.currentUser) {
-        if (data.currentUser.role.name === "admin") {
-            items.push(
-                getItem('Справочники', '1', <ProfileOutlined/>, [
-                    getItem('Контакты', '1-1', null, null),
-                    getItem('Проекты', '1-2', null, null),
-                    getItem('Исполнители', '1-3', null, null),
-                    getItem('Организации', '1-4', null, null),
-                    getItem('ИРД', '1-5', null, null),
-                    getItem('Типы документации', '1-6', null, null),
-                    getItem('Этапы проекта', '1-7', null, null),
-                ]),
-                getItem('Формы', '2', <FormOutlined/>, [
-                    getItem('Контакт', '2-1', null, null),
-                    getItem('Проект', '2-2', null, null),
-                    getItem('Организация', '2-3', null, null),
-                    getItem('Исполнитель', '2-4', null, null),
-                    getItem('Шаблоны по типу проекта', '2-5', null, null),
-                ]),
-                getItem('Отчёты', '3', <SolutionOutlined/>, [])
-            );
+        switch (data.currentUser.role.name) {
+            case "admin":
+                items.push(
+                    getItem('Справочники', '1', <ProfileOutlined/>, [
+                        getItem('Контакты', '1-1', null, null),
+                        getItem('Проекты', '1-2', null, null),
+                        getItem('Исполнители', '1-3', null, null),
+                        getItem('Организации', '1-4', null, null),
+                        getItem('ИРД', '1-5', null, null),
+                        getItem('Типы документации', '1-6', null, null),
+                        getItem('Этапы проекта', '1-7', null, null),
+                    ]),
+                    getItem('Формы', '2', <FormOutlined/>, [
+                        getItem('Контакт', '2-1', null, null),
+                        getItem('Проект', '2-2', null, null),
+                        getItem('Организация', '2-3', null, null),
+                        getItem('Исполнитель', '2-4', null, null),
+                        getItem('Шаблоны по типу проекта', '2-5', null, null),
+                    ]),
+                    getItem('Отчёты', '3', <SolutionOutlined/>, [])
+                );
+                break;
+            case "bookkeeper":
+                items.push(
+                    getItem('Справочники', '1', <ProfileOutlined/>, [
+                        getItem('Контакты', '1-1', null, null),
+                        getItem('Организации', '1-4', null, null),
+                        getItem('Исполнители', '1-3', null, null),
+                    ])
+                );
+                break;
         }
     } else {
         items.push(

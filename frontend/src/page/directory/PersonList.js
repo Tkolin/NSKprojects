@@ -92,7 +92,7 @@ const PersonList = () => {
         title: 'Даные паспорта',
         dataIndex: 'passport',
         key: 'passport_data',
-        render: (passport) => passport ? passport.serial + " " + passport.number + " " + passport.date : "",
+        render: (passport) => passport ?  `${passport.serial} ${passport.number} ${passport.date}` : "",
 
     }, {
         title: 'Дата рождения',
@@ -127,7 +127,10 @@ const PersonList = () => {
     }, {
         title: 'банк', dataIndex: 'bank', key: 'bank', render: (bank) => bank ? bank.name : null,
     }, {
-        title: 'бик', dataIndex: 'bik', key: 'bik', render: (bik) => bik ? bik.Bik : null,
+        title: 'бик',
+        dataIndex: 'BIK',
+        key: 'BIK',
+        render: (BIK) => BIK ? BIK.name : null,
     }, {
         title: 'Управление', key: 'edit', render: (text, record) => (<div>
                 <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
@@ -167,7 +170,7 @@ const PersonList = () => {
                         enterButton="Найти"
                         onSearch={onSearch}
                     />
-                    <StyledButtonGreen onClick={() => handleAdd()}>Создать новую запись</StyledButtonGreen>
+                    <StyledButtonGreen   style={{    marginBottom: 0}} onClick={() => handleAdd()}>Создать новую запись</StyledButtonGreen>
                 </Space>
             </Form.Item>
         </StyledFormLarge>
@@ -183,7 +186,7 @@ const PersonList = () => {
                 pagination={{
                     total: data.personsTable.count,
                     current: page,
-                    limit,
+                    pageSize: limit,
                     onChange: (page, limit) => setPage(page),
                     onShowSizeChange: (current, size) => {
                         setPage(1);
@@ -209,7 +212,7 @@ const PersonList = () => {
                 footer={null}
                 onClose={handleClose}
             >
-                <PersonForm onClose={handleClose}/>
+                <PersonForm contact={null}  onClose={handleClose}/>
             </Modal>
         </div>);
 };

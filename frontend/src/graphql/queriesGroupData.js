@@ -14,6 +14,7 @@ export const PERSON_FORM_QUERY = gql`
         }
         biks {
             id
+            BIK
             name
         }
     }
@@ -26,9 +27,7 @@ export const ORGANIZATION_FORM_QUERY = gql`
         }
         biks{
             id
-            Bik
-        }
-        irds{
+            BIK
             name
         }
     }

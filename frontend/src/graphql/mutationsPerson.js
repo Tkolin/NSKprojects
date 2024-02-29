@@ -11,7 +11,8 @@ export const DELETE_PERSON_MUTATION = gql`
                 patronymic
                 serial
                 number
-                passport_place_issues{
+                passport_place_issue{
+                    id
                     name
                 }
                 birth_date
@@ -27,7 +28,9 @@ export const DELETE_PERSON_MUTATION = gql`
                 name
             }
             BIK{
-                Bik
+                id
+                BIK
+                name
             }
         }
     }
@@ -78,7 +81,8 @@ export const ADD_PERSON_MUTATION = gql`
                 patronymic
                 serial
                 number
-                passport_place_issues{
+                passport_place_issue{
+                    id
                     name
                 }
                 birth_date
@@ -94,7 +98,9 @@ export const ADD_PERSON_MUTATION = gql`
                 name
             }
             BIK{
-                Bik
+                id
+                name
+                BIK
             }
         }
     }
@@ -146,7 +152,8 @@ export const UPDATE_PERSON_MUTATION = gql`
                 patronymic
                 serial
                 number
-                passport_place_issues{
+                passport_place_issue{
+                    id
                     name
                 }
                 birth_date
@@ -162,7 +169,9 @@ export const UPDATE_PERSON_MUTATION = gql`
                 name
             }
             BIK{
-                Bik
+                id
+                name
+                BIK
             }
         }
     }

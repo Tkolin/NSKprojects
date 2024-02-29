@@ -12,7 +12,7 @@ final readonly class UpdateContact
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
-        $allowedRoles = ['admin']; // Роли, которые разрешены
+        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
             $contact = Contact::findOrFail($args['id']);
@@ -21,6 +21,7 @@ final readonly class UpdateContact
                 'last_name' => $args['last_name'] ?? $contact->last_name,
                 'patronymic' => $args['patronymic'] ?? $contact->patronymic,
                 'mobile_phone' => $args['mobile_phone'] ?? $contact->mobile_phone,
+                'birth_day' => isset($args['birth_day']) ? substr((string) $args['birth_day'], 0, 10) : null,
                 'email' => $args['email'] ?? $contact->email,
                 'sibnipi_email' => $args['sibnipi_email'] ?? $contact->sibnipi_email,
                 'position_id' => $args['position_id'] ?? $contact->position_id,

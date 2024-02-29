@@ -22,7 +22,7 @@ const ContactList = () => {
 
     // Данные
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(10);
+    const [limit, setLimit] = useState(50);
 
     const [currentSort, setCurrentSort] = useState({});
 
@@ -31,7 +31,7 @@ const ContactList = () => {
 
     const [search, setSearch] = useState('');
 
-    const {loading, error, data} = useQuery(CONTACTS_TABLE_QUERY, {
+    const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(CONTACTS_TABLE_QUERY, {
         variables: {
             page, limit, search, sortField: sortField, sortOrder,
         }, fetchPolicy: 'network-only',
@@ -63,6 +63,7 @@ const ContactList = () => {
 
     // Обработчик событий
     const handleClose = () => {
+        refetch();
         setEditModalVisible(false);
     };
     const handleEdit = (contactId) => {
@@ -85,11 +86,8 @@ const ContactList = () => {
     if (error) return `Ошибка! ${error.message}`;
 
     // Формат таблицы
-    const columns = [{
-        title: 'id', dataIndex: 'id', key: 'id',
-
-        sorter: true, ellipsis: true,
-    }, {
+    const columns = [
+        {
         title: 'Имя', dataIndex: 'first_name', key: 'first_name',
 
         sorter: true, ellipsis: true,
@@ -170,7 +168,7 @@ const ContactList = () => {
                             enterButton="Найти"
                             onSearch={onSearch}
                         />
-                        <StyledButtonGreen onClick={() => handleAdd()}>Создать новую запись</StyledButtonGreen>
+                        <StyledButtonGreen   style={{    marginBottom: 0}} onClick={() => handleAdd()}>Создать новую запись</StyledButtonGreen>
                     </Space>
                 </Form.Item>
             </StyledFormLarge>
@@ -180,20 +178,20 @@ const ContactList = () => {
                     offsetHeader: 0,
                 }}
                 loading={loading}
-                dataSource={data.contactsTable.contacts}
+                dataSource={data.contactsTable.contacts.map((org, index) => ({...org, key: index}))}
                 columns={columns}
                 onChange={onChange}
                 pagination={{
                     total: data.contactsTable.count,
                     current: page,
-                    limit,
+                    pageSize: limit,
                     onChange: (page, limit) => setPage(page),
                     onShowSizeChange: (current, size) => {
                         setPage(1);
                         setLimit(size);
                     },
                     showSizeChanger: true,
-                    pageSizeOptions: ['10', '20', '50', '100'],
+                    pageSizeOptions: ['50', '100', '200'],
                 }}
             />
             <Modal
@@ -210,7 +208,7 @@ const ContactList = () => {
                 footer={null}
                 onClose={handleClose}
             >
-                <ContactForm contact={selectedContact} onClose={handleClose}/>
+                <ContactForm contact={null} onClose={handleClose}/>
             </Modal>
         </div>);
 };

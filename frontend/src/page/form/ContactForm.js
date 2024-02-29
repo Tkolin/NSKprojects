@@ -94,13 +94,11 @@ const ContactForm = ({ contact, onClose }) => {
     // Обработчик отправки формы
     const handleSubmit = () => {
         if (editingContact) {
-            console.log(editingContact.id);
             updateContact({ variables: { id: editingContact.id , ...form.getFieldsValue(), organization_id: autoCompleteOrganization.id , position_id: autoCompletePositions.id} });
         } else {
             addContact({ variables: {...form.getFieldsValue(), organization_id: autoCompleteOrganization.id , position_id: autoCompletePositions.id} });
         }
     };
-
 
     if (errorOrganizations) return `Ошибка! ${errorOrganizations.message}`;
     return (
@@ -121,7 +119,7 @@ const ContactForm = ({ contact, onClose }) => {
                 <StyledFormItem name="work_phone" label="Рабочий"  rules={[
                     {
                         pattern: /^[\d\s()-]+$/,
-                        message: 'Пожалуйста, введите корректный номер телефона',
+                        message: 'Пожалуйста, введите в формате 9002001010',
                     },
                 ]}
                 >
@@ -137,7 +135,7 @@ const ContactForm = ({ contact, onClose }) => {
                 <StyledFormItem name="mobile_phone" label="Мобильный"  rules={[
                     {
                         pattern: /^[\d\s()-]+$/,
-                        message: 'Пожалуйста, введите корректный номер телефона',
+                        message: 'Пожалуйста, введите в формате 9002001010',
                     },
                 ]}
                 >
@@ -180,7 +178,7 @@ const ContactForm = ({ contact, onClose }) => {
                 </StyledFormItem>
                 <StyledFormItem>
                     <div style={{textAlign: 'center'}}>
-                        <StyledButtonGreen type="primary" htmlType={"submit"}>
+                        <StyledButtonGreen   style={{    marginBottom: 0}} type="primary" htmlType={"submit"}>
                             {editingContact ? "Сохранить изменения" : "Добавить контакт"}
                         </StyledButtonGreen>
                     </div>

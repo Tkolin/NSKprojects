@@ -459,7 +459,7 @@ type LegalForm{
 }
 type Bik{
     id: ID!
-    Bik: String
+    BIK: String
     name: String
     correspondent_account: String
 }
@@ -484,7 +484,7 @@ type Passport{
     patronymic: String
     serial: String
     number: String
-    passport_place_issues: PassportPlaceIssue
+    passport_place_issue: PassportPlaceIssue
     birth_date: String
     date: String
 }

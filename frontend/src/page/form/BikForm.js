@@ -82,7 +82,7 @@ const BikForm = ({ bik, onClose }) => {
                 </StyledFormItem>
                 <div style={{textAlign: 'center'}}>
                     <StyledFormItem>
-                        <StyledButtonGreen type="primary" onClick={handleSubmit}>
+                        <StyledButtonGreen   style={{    marginBottom: 0}} type="primary" onClick={handleSubmit}>
                             {editingBik ? "Сохранить изменения" : "Добавить бик"}
                         </StyledButtonGreen>
                     </StyledFormItem>

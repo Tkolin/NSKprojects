@@ -205,6 +205,7 @@ const IrdsTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod  }) =>
                 </Form.List>
                 <div style={{textAlign: 'center'}}>
                     <StyledButtonGreen
+                        style={{    marginBottom: 0}}
                         type={'dashed'}
                         onClick={() => setIrdFormViewModalVisible(true)}>Создать ИРД</StyledButtonGreen></div>
 

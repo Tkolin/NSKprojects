@@ -296,7 +296,7 @@ const ProjectForm = ({project, onClose}) => {
                             </StyledFormItem>
                             <div style={{textAlign: 'center'}}>
                                 <Space>
-                                    <StyledButtonGreen type="dashed" onClick={handleSubmit}>
+                                    <StyledButtonGreen   style={{    marginBottom: 0}} type="dashed" onClick={handleSubmit}>
                                         Сохранить проект
                                     </StyledButtonGreen>
                                     <Button type="primary"
