@@ -1,7 +1,7 @@
 import {StyledFormBig} from "../style/FormStyles";
-import {Button, Form, Input, InputNumber, notification, Select, Space} from "antd";
+import {Button, Form,  InputNumber, Modal, notification, Select, Space} from "antd";
 import {LoadingOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
-import React, {useEffect, useState} from "react";
+import React, { useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
 import {
     SEARCH_STAGES_QUERY,
@@ -9,12 +9,9 @@ import {
     SEARCH_TEMPLATE_STAGES_OR_TYPE_PROJECT_QUERY
 } from "../../graphql/queriesSearch";
 import {DatePicker} from "antd/lib";
-import {UPDATE_STAGES_TEMPLATE_MUTATION} from "../../graphql/mutationsTemplate";
 import {UPDATE_STAGES_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
-import {PROJECT_QUERY} from "../../graphql/queries";
-import LoadingSpinner from "./LoadingSpinner";
-import dayjs from "dayjs";
-import moment from "moment";
+import {StyledButtonGreen} from "../style/ButtonStyles";
+import TasksToProjectStageForm from "./TasksToProjectStageForm";
 
 const {RangePicker} = DatePicker;
 const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod,
@@ -29,7 +26,12 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod,
     const [formStage] = Form.useForm();
     const [autoCompleteStage, setAutoCompleteStage] = useState('');
     const [stageFormViewModalVisible, setStageFormViewModalVisible] = useState(false);
+    const [viewListProjectTasksStageModalVisible, setViewListProjectTasksStageModalVisible] = useState(false);
 
+
+    const handleViewListProjectTasksStage = () => {
+        setViewListProjectTasksStageModalVisible(false);
+    };
     const handleAutoCompleteStageSelect = (value) => {
         if (value == 'CREATE_NEW') {
             setStageFormViewModalVisible(true);
@@ -225,6 +227,8 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod,
                             >
                                 <InputNumber/>
                             </Form.Item>
+                            <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
+                                               onClick={() => setViewListProjectTasksStageModalVisible(true)}/>
                             <MinusCircleOutlined onClick={() => remove(name)}/>
                         </Space>))}
                         <Form.Item>
@@ -235,6 +239,14 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod,
                         </Form.Item>
                     </>)}
                 </Form.List>
+                <Modal
+                    open={viewListProjectTasksStageModalVisible}
+                    onCancel={() => setViewListProjectTasksStageModalVisible(false)}
+                    footer={null}
+                    onClose={handleViewListProjectTasksStage}
+                >
+                    <TasksToProjectStageForm />
+                </Modal>
             </StyledFormBig>
     );
 }

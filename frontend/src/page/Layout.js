@@ -5,16 +5,15 @@ import {
     FormOutlined,
     ProfileOutlined,
 } from '@ant-design/icons';
-import {Layout, Menu, Button, theme, Typography} from 'antd';
+import {Layout, Menu, Button, Typography} from 'antd';
 import {useQuery} from "@apollo/client";
 import {CURRENT_USER_QUERY} from "../graphql/queries";
-import {Link, useNavigate} from "react-router-dom";
-import SubMenu from "antd/es/menu/SubMenu";
+import { useNavigate} from "react-router-dom";
 import {Cookies} from "react-cookie";
 import LoadingSpinner from "./component/LoadingSpinner";
 
 const {Text} = Typography;
-const {Header, Content, Footer, Sider} = Layout;
+const { Content: Contents, Footer: Footers, Sider: Siders} = Layout;
 
 function getItem(label, key, icon, children, type) {
     return {
@@ -48,7 +47,8 @@ const CustomLayout = ({children}) => {
 
     items.push(getItem('Главная', '0', <HomeOutlined/>, null, "/"));
     if (data && data.currentUser) {
-        switch (data.currentUser.role.name) {
+        const roleName = data.currentUser.role.name;
+        switch (roleName) {
             case "admin":
                 items.push(
                     getItem('Справочники', '1', <ProfileOutlined/>, [
@@ -79,6 +79,7 @@ const CustomLayout = ({children}) => {
                     ])
                 );
                 break;
+            default: break;
         }
     } else {
         items.push(
@@ -154,7 +155,7 @@ const CustomLayout = ({children}) => {
     // Вывод слоя
     return (
         <Layout style={{minHeight: '100vh'}}>
-            <Sider
+            <Siders
                 width={200}
                 style={{
                     overflow: 'auto',
@@ -188,14 +189,14 @@ const CustomLayout = ({children}) => {
                     items={items}
                     selectedKeys={[current]}
                 />
-            </Sider>
+            </Siders>
             <Layout style={{marginLeft: 200}}>
-                <Content style={{margin: '24px 16px 0', overflow: 'initial'}}>
+                <Contents style={{margin: '24px 16px 0', overflow: 'initial'}}>
                     <div className="site-layout-content">{children}</div>
-                </Content>
-                <Footer style={{textAlign: 'center'}}>
-                    ©2024 - {new Date().getFullYear()} ООО ПО "СИБНИПИ" Created by Tkolin
-                </Footer>
+                </Contents>
+                <Footers style={{textAlign: 'center'}}>
+                    ©2024 - {new Date().getFullYear()} ООО ПО "СИБНИПИ" Создал Tkolin
+                </Footers>
             </Layout>
         </Layout>
     );

@@ -1,15 +1,12 @@
-// Ваш проект/frontend/src/components/TypeProjectList.js
-
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, FloatButton, Form, Modal, notification, Space, Table} from 'antd';
+import {Button, Form, Modal, notification, Space, Table} from 'antd';
 import { TYPES_PROJECTS_QUERY} from '../../graphql/queries';
 import { DELETE_TYPE_PROJECT_MUTATION} from '../../graphql/mutationsTypeProject';
 import TypeProjectForm from "../form/TypeProjectForm";
 
 import LoadingSpinner from "../component/LoadingSpinner";
 import Search from "antd/es/input/Search";
-import {EditTwoTone, PlusSquareOutlined} from "@ant-design/icons";
 import {StyledButtonGreen} from "../style/ButtonStyles";
 import {StyledFormLarge} from "../style/FormStyles";
 

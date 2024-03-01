@@ -1,16 +1,11 @@
-// Ваш проект/frontend/src/components/IrdList.js
-
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, FloatButton, Form, Modal, notification, Space, Table} from 'antd';
-import {CONTACTS_QUERY, IRDS_QUERY, STAGES_QUERY} from '../../graphql/queries';
-import {DELETE_CONTACT_MUTATION, DELETE_IRD_MUTATION} from '../../graphql/mutationsIrd';
+import {Button, Form, Modal, notification, Space, Table} from 'antd';
+import { IRDS_QUERY, STAGES_QUERY} from '../../graphql/queries';
+import { DELETE_IRD_MUTATION} from '../../graphql/mutationsIrd';
 import IrdForm from "../form/IrdForm";
-import {SEARCH_STAGES_QUERY} from "../../graphql/queriesSearch";
 import LoadingSpinner from "../component/LoadingSpinner";
 import Search from "antd/es/input/Search";
-import {PlusSquareOutlined} from "@ant-design/icons";
-import TypeProjectForm from "../form/TypeProjectForm";
 import {StyledFormLarge} from "../style/FormStyles";
 import {StyledButtonGreen} from "../style/ButtonStyles";
 

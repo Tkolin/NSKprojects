@@ -1,17 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Button, notification, AutoComplete} from 'antd';
+import {Form, Input, notification, AutoComplete} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
 import {CONTACTS_QUERY} from '../../graphql/queries';
 import {
     ADD_CONTACT_MUTATION,
     UPDATE_CONTACT_MUTATION
 } from '../../graphql/mutationsContact';
-import {StyledForm, StyledFormItem, StyledFormRegular} from '../style/FormStyles';
+import {StyledFormItem, StyledFormRegular} from '../style/FormStyles';
 import {DatePicker} from "antd/lib";
 import moment from 'moment';
 import {SEARCH_ORGANIZATIONS_QUERY, SEARCH_POSITIONS_QUERY} from "../../graphql/queriesSearch";
 import {StyledBlockRegular} from "../style/BlockStyles";
-import Title from "antd/es/typography/Title";
 import {StyledButtonGreen} from "../style/ButtonStyles";
 
 const ContactForm = ({ contact, onClose }) => {

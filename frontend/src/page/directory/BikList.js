@@ -1,11 +1,8 @@
-// Ваш проект/frontend/src/components/ContactList.js
-
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, Modal, notification, Table} from 'antd';
+import {Button, notification, Table} from 'antd';
 import {CONTACTS_QUERY} from '../../graphql/queries';
 import {DELETE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
-import ContactForm from "./ContactForm";
 import LoadingSpinner from "../component/LoadingSpinner";
 
 const BikList = () => {
@@ -14,7 +11,6 @@ const BikList = () => {
     const { loading, error, data } = useQuery(CONTACTS_QUERY);
     const [selectedContact, setSelectedContact] = useState(null);
     const [editModalVisible, setEditModalVisible] = useState(false);
-    const [addModalVisible, setAddModalVisible] = useState(false);
 
     // Функции уведомлений
     const openNotification = (placement, type, message) => {

@@ -1,12 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Button, Select, notification} from 'antd';
-import { useMutation, useQuery } from '@apollo/client';
-import {BIK_QUERY, TYPES_PROJECTS_QUERY} from '../../graphql/queries';
-import {
-    ADD_BIK_MUTATION,
-    UPDATE_BIK_MUTATION
-} from '../../graphql/mutationsBik';
-import {StyledFormBlock, StyledForm, StyledFormItem, StyledFormLarge} from '../style/FormStyles';
+import {Form, Input, Button, notification} from 'antd';
+import { useMutation } from '@apollo/client';
+import { TYPES_PROJECTS_QUERY} from '../../graphql/queries';
+import { StyledFormItem, StyledFormLarge} from '../style/FormStyles';
 import {ADD_TYPE_PROJECTS_MUTATIOM, UPDATE_TYPE_PROJECTS_MUTATIOM} from "../../graphql/mutationsTypeProject";
 import {StyledBlockLarge} from "../style/BlockStyles";
 

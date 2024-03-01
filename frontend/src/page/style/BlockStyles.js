@@ -1,6 +1,7 @@
 import styled from 'styled-components';
-import { Form, Button } from 'antd';
+import {Divider} from 'antd';
 import Title from "antd/es/typography/Title";
+import React from "react";
 
 const StyledBlockWrapper = styled.div`
   margin: 0 auto;
@@ -22,14 +23,14 @@ export const StyledBlockWrapperLarge = styled(StyledBlockWrapper)`
     max-width: 1200px;
 `;
 
-const marginBottom = 20;
-const marginTop = 5;
-const StyledBlockSmall = ({ lable, children  }) => {
+const StyledBlockSmall = ({ label, children  }) => {
     return (
         <StyledBlockWrapperSmall>
-            <div style={{textAlign: 'center'}}>
-                <Title level={3} style={{marginBottom: marginBottom, marginTop: marginTop}}>{lable}</Title>
-            </div>
+            <Divider style={{ marginBottom: '20px', marginTop: '0px' }}  >
+                <Title level={3}  >{label}</Title>
+            </Divider>
+
+
             {children}
         </StyledBlockWrapperSmall>
     );
@@ -37,9 +38,10 @@ const StyledBlockSmall = ({ lable, children  }) => {
 const StyledBlockRegular = ({label, children  }) => {
     return (
         <StyledBlockWrapperRegular>
-            <div style={{textAlign: 'center'}}>
-                <Title level={3} style={{marginBottom: marginBottom, marginTop: marginTop}}>{label}</Title>
-            </div>
+            <Divider style={{ marginBottom: '20px', marginTop: '0px' }}  >
+                <Title level={3}  >{label}</Title>
+            </Divider>
+
             {children}
         </StyledBlockWrapperRegular>
     );
@@ -47,9 +49,10 @@ const StyledBlockRegular = ({label, children  }) => {
 const StyledBlockBig = ({label, children}) => {
     return (
         <StyledBlockWrapperBig>
-            <div style={{textAlign: 'center'}}>
-                <Title level={3}  >{label}</Title>
-            </div>
+
+            <Divider style={{ marginBottom: '20px', marginTop: '0px' }}  >                <Title level={3}  >{label}</Title>
+             </Divider>
+
             {children}
         </StyledBlockWrapperBig>
     );
@@ -57,9 +60,11 @@ const StyledBlockBig = ({label, children}) => {
 const StyledBlockLarge = ({label, children}) => {
     return (
         <StyledBlockWrapperLarge>
-            <div style={{textAlign: 'center'}}>
-                <Title level={3} style={{marginBottom: marginBottom, marginTop: marginTop}}>{label}</Title>
-            </div>
+            <Divider style={{ marginBottom: '20px', marginTop: '0px' }}  >
+                <Title level={3}  >{label}</Title>
+            </Divider>
+
+
             {children}
         </StyledBlockWrapperLarge>
     );

@@ -1,21 +1,15 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
-    Form, Button, Select, InputNumber, Col, Row, notification, Modal, Space
+    Form, Select, Col, Row, notification, Modal, Space
 } from 'antd';
-import {useMutation, useQuery} from '@apollo/client';
-import {IRDS_QUERY, TYPES_PROJECTS_QUERY} from '../../graphql/queries';
+import {useQuery} from '@apollo/client';
+import {TYPES_PROJECTS_QUERY} from '../../graphql/queries';
+
 import {
-    UPDATE_IRDS_TEMPLATE_MUTATION, UPDATE_STAGES_TEMPLATE_MUTATION, UPDATE_TASKS_TEMPLATE_MUTATION
-} from '../../graphql/mutationsTemplate';
-import {
-    StyledFormBig, StyledFormItem, StyledFormLarge, StyledFormRegular
+    StyledFormItem, StyledFormRegular
 } from '../style/FormStyles';
-import {Loading3QuartersOutlined, MinusCircleOutlined, PlusOutlined} from '@ant-design/icons';
-import {
-    SEARCH_IRDS_QUERY, SEARCH_STAGES_QUERY, SEARCH_TASKS_QUERY, SEARCH_TEMPLATE_OR_TYPE_PROJECT_QUERY
-} from "../../graphql/queriesSearch";
-import IrdForm from "./IrdForm";
-import StageForm from "./StageForm";
+import {  PlusOutlined} from '@ant-design/icons';
+
 import TypeProjectForm from "./TypeProjectForm";
 import LoadingSpinner from "../component/LoadingSpinner";
 import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../style/BlockStyles";
@@ -23,7 +17,6 @@ import {StyledButtonForm, StyledButtonGreen} from "../style/ButtonStyles";
 import StagesTemplateForm from "../component/StagesTemplateForm";
 import IrdsTemplateForm from "../component/IrdsTemplateForm";
 import TasksTemplateForm from "../component/TasksTemplateForm";
-import {ADD_IRD_MUTATION} from "../../graphql/mutationsIrd";
 
 const {Option} = Select;
 
@@ -84,7 +77,7 @@ const TemplateForm = ({project, onClose}) => {
                                                 value={typeDocument.id}>{typeDocument.name}</Option>))}
                                 </Select>
                             </StyledFormItem>
-                            <StyledButtonGreen   style={{    marginBottom: 0}} type={"dashed"} icon={<PlusOutlined/>}
+                            <StyledButtonGreen    type={"dashed"} icon={<PlusOutlined/>}
                                                onClick={() => setTypeProjectFormViewModalVisible(true)}/>
 
                         </Space.Compact>

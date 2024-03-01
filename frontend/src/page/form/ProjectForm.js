@@ -16,13 +16,13 @@ import {useMutation, useQuery} from '@apollo/client';
 import {PROJECT_QUERY, TYPES_PROJECTS_QUERY} from '../../graphql/queries';
 import {PROJECT_FORM_QUERY} from '../../graphql/queriesGroupData';
 import {
-    ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION, UPDATE_STAGES_TO_PROJECT_MUTATION,
+    ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION,
 } from '../../graphql/mutationsProject';
 import {
     StyledFormItem, StyledFormRegular
 } from '../style/FormStyles';
 import {DatePicker} from "antd/lib";
-import {PlusOutlined, SwapOutlined} from '@ant-design/icons';
+import {PlusOutlined} from '@ant-design/icons';
 import OrganizationForm from "./OrganizationForm";
 import moment from 'moment';
 import ContactForm from "./ContactForm";
@@ -32,10 +32,8 @@ import {
 } from "../../graphql/queriesSearch";
 import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../style/BlockStyles";
 import {StyledButtonGreen} from "../style/ButtonStyles";
-import TasksProjectExecutorForm from "../component/TasksProjectExecutorForm";
 import IrdsProjectForm from "../component/IrdsProjectForm";
 import StagesProjectForm from "../component/StagesProjectForm";
-import PaymentProjectForm from "../component/PaymentProjectForm";
 import dayjs from "dayjs";
 
 const {Option} = Select;
@@ -44,29 +42,19 @@ const ProjectForm = ({project, onClose}) => {
 
     // Состояния
     const [form] = Form.useForm();
-    const [formTasks] = Form.useForm();
-    const [formContents] = Form.useForm();
-    const [projectTypeDocument, setProjectTypeDocument] = useState(null);
     const [editingProject, setEditingProjcet] = useState(null);
     const [autoCompleteOrganization, setAutoCompleteOrganization] = useState({id: '', name: ''});
 
-    const [typeProjectFormViewModalVisible, setTypeProjectFormViewModalVisible] = useState(false);
-
-    const [confirmTypeChangeModalVisible, setConfirmTypeChangeModalVisible] = useState(false);
     const [costumerFormViewModalVisible, setCostumerFormViewModalVisible] = useState(false);
     const [contactFormViewModalVisible, setContactFormViewModalVisible] = useState(false);
     const [facilityFormViewModalVisible, setFacilityFormViewModalVisible] = useState(false);
     const [viewListProjectStageModalVisible, setViewListProjectStageModalVisible] = useState(false);
-
-    const [editingTypeProject, setEditingTypeProject] = useState(null);
     const [selectedTypeProject, setSelectedTypeProject] = useState(null);
 
     const [triggerSaveStages, setTriggerSaveStages] = useState(false);
     const [triggerTotalToPayStages, setTriggertriggerTotalToPayStages] = useState(0);
-    const [triggerDayStart, setTriggerDayStart] = useState(0);
-    const [triggerDayEnd, setTriggerDayEnd] = useState("");
-    const [triggerSaveIrds, setTriggerSaveIrds] = useState(false);
-    const [triggerSaveTasks, setTriggerSaveTasks] = useState(false);
+/*    const [triggerSaveIrds, setTriggerSaveIrds] = useState(false);
+    const [triggerSaveTasks, setTriggerSaveTasks] = useState(false)*/
     const [cascaderFacility, setCascaderFacility] = useState(null);
 
 
@@ -75,17 +63,7 @@ const ProjectForm = ({project, onClose}) => {
             setTriggertriggerTotalToPayStages(+value); // Преобразуйте строку в число с помощью унарного плюса
         }
     };
-    const handleEditingDuration = (value) => {
-        if (!isNaN(value)) {
-            setTriggertriggerTotalToPayStages(+value); // Преобразуйте строку в число с помощью унарного плюса
-        }
-    };
-    const handleDateStart = (value) => {
-        setTriggerDayStart(value); // Преобразуйте строку в число с помощью унарного плюса
-    };
-    const handleDateEnd = (value) => {
-        setTriggerDayEnd(value); // Преобразуйте строку в число с помощью унарного плюса
-    };
+
     const handleAutoCompleteOrganization = (value, option) => {
         setAutoCompleteOrganization({id: option.key, name: value});
     };
@@ -139,24 +117,13 @@ const ProjectForm = ({project, onClose}) => {
     const handleFacilityFormView = () => {
         setFacilityFormViewModalVisible(false);
     };
+
     const handleViewListProjectStage = () => {
         setViewListProjectStageModalVisible(false);
     };
-
     // Переключение типов документации
     const handleEditingTemplate = (value) => {
         setSelectedTypeProject(value);
-    };
-
-    const showConfirmTypeChangeModal = (value) => {
-        setConfirmTypeChangeModalVisible(true);
-    };
-
-    const handleConfirmTypeChange = (confirm) => {
-        if (confirm) {
-            setEditingTypeProject(selectedTypeProject);
-        }
-        setConfirmTypeChangeModalVisible(false);
     };
 
     // Функции уведомлений
@@ -209,9 +176,9 @@ const ProjectForm = ({project, onClose}) => {
         onCompleted: (data) => {
             openNotification('topRight', 'success', 'Данные успешно добавлены!');
             setEditingProjcet(data);
-            setTriggerSaveStages(true);
+/*            setTriggerSaveStages(true);
             setTriggerSaveTasks(true);
-            setTriggerSaveIrds(true);
+            setTriggerSaveIrds(true);*/
         }, onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при добавлении данных: ' + error.message);
         }
@@ -261,6 +228,9 @@ const ProjectForm = ({project, onClose}) => {
             addProject({variables: {...form.getFieldsValue(), organization_customer_id: autoCompleteOrganization.id}});
         }
     };
+
+    if(errorAll || errorAll || errorTypeProject || errorDelegates|| errorOrganizations)
+        return <>Ошибка загрузки данных</>
     return (<>
         <StyledBlockLarge>
             <Row gutter={8} align="top">
@@ -281,6 +251,7 @@ const ProjectForm = ({project, onClose}) => {
                                     <AutoComplete
                                         popupMatchSelectWidth={false}
                                         filterOption={false}
+                                        loading={loadingOrganizations}
                                         options={dataOrganizations && dataOrganizations.organizationsTable && dataOrganizations.organizationsTable.organizations.map(organization => ({
                                             key: organization.id, value: organization.name, label: organization.name,
                                         }))}
@@ -300,7 +271,8 @@ const ProjectForm = ({project, onClose}) => {
                                                 }}>
                                     <Select
                                         popupMatchSelectWidth={false}
-                                        placeholder="По компаниям">
+                                        placeholder="По компаниям"
+                                        loading={loadingDelegates}>
                                         {dataDelegates && dataDelegates.contactsTable && dataDelegates.contactsTable.contacts.map(delegate => (
                                             <Select.Option key={delegate.id}
                                                            value={delegate.id}>{delegate.last_name} {delegate.first_name} {delegate.patronymic}</Select.Option>))}
@@ -316,6 +288,7 @@ const ProjectForm = ({project, onClose}) => {
                                 <Select
                                     popupMatchSelectWidth={false}
                                     value={selectedTypeProject}
+                                    loading={loadingTypeProject}
                                     onSelect={handleEditingTemplate}>
                                     {dataTypeProject && dataTypeProject.typeProjectsTable && dataTypeProject.typeProjectsTable.typeProjects.map(typeDocument => (
                                         <Option key={typeDocument.id}
@@ -329,9 +302,7 @@ const ProjectForm = ({project, onClose}) => {
                                                     width: '90%',
                                                 }}>
                                     <Cascader
-                                        style={{
-                                            width: '100%',
-                                        }}
+                                        style={{width: '100%'}}
                                         options={cascaderFacility}
                                         multiple
                                         expandTrigger="hover" // Или "click"
@@ -343,22 +314,29 @@ const ProjectForm = ({project, onClose}) => {
                                 <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
                                                    onClick={() => setFacilityFormViewModalVisible(true)}/>
                             </Space.Compact>
+                            <Space.Compact block style={{alignItems: 'flex-end'}}>
                             <StyledFormItem name="date_signing" label="Дата подписания">
                                 <DatePicker placeholder="Выберите дату"
                                             onChange={(value) => handleDateSigningChange(value)}/>
                             </StyledFormItem>
-                            <StyledFormItem name="duration" label="Продолжительность">
+                            <StyledFormItem name="duration" label="Срок" style={{width: '15%'}}>
                                 <InputNumber
                                     formatter={(value) => `${value}`.replace(/[^0-9]/g, '')}
-                                    parser={(value) => `${value}`.replace(/[^0-9]/g, '')} // Удаляем все символы, кроме цифр
+                                    parser={(value) => `${value}`.replace(/[^0-9]/g, '')}
+                                    style={{width: '100%'}}
+                                    // Удаляем все символы, кроме цифр
                                     onChange={(value) => handleDurationChange(value)}
                                 />
                             </StyledFormItem>
                             <StyledFormItem name="date_end" label="Дата окончания">
-                                <DatePicker minDate={dateSigning} placeholder="Выберите дату" onChange={handleDateEndChange}/>
+                                <DatePicker minDate={dateSigning}
+                                            style={{width: '100%'}}
+
+                                            placeholder="Выберите дату" onChange={handleDateEndChange}/>
                             </StyledFormItem>
+                            </Space.Compact>
                             <StyledFormItem name="status_id" label="Статус проекта">
-                                <Select>
+                                <Select loading={loadingAll}>
                                     {dataAll && dataAll.projectStatuses && dataAll.projectStatuses.map(status => (
                                         <Select.Option key={status.id}
                                                        value={status.id}>{status.name}</Select.Option>))}
@@ -385,13 +363,7 @@ const ProjectForm = ({project, onClose}) => {
 
                         </StyledFormRegular>
                     </StyledBlockRegular>
-                    <StyledBlockRegular label={'Список платежей'}>
-                        <PaymentProjectForm totalToPay={triggerTotalToPayStages}
-                                            triggerMethod={triggerSaveStages}
-                                            setTriggerMethod={setTriggerSaveStages}
-                                            typeProjectId={selectedTypeProject}
-                                            projectId={editingProject && editingProject.id}/>
-                    </StyledBlockRegular>
+
                 </Col>
                 <Col span={16}>
                     <StyledBlockBig label={'Этапы'}>
@@ -408,12 +380,7 @@ const ProjectForm = ({project, onClose}) => {
                                          typeProjectId={selectedTypeProject}
                                          projectId={editingProject && editingProject.id}/>
                     </StyledBlockBig>
-                    <StyledBlockBig label={'Генерация договоров с исполнителем'}>
-                        <TasksProjectExecutorForm triggerMethod={triggerSaveStages}
-                                                  setTriggerMethod={setTriggerSaveStages}
-                                                  typeProjectId={selectedTypeProject}
-                                                  projectId={editingProject && editingProject.id}/>
-                    </StyledBlockBig>
+
                 </Col>
             </Row>
         </StyledBlockLarge>
@@ -451,17 +418,7 @@ const ProjectForm = ({project, onClose}) => {
             footer={null}
             onClose={handleViewListProjectStage}
         >
-        </Modal>
-        <Modal
-            open={confirmTypeChangeModalVisible}
-            title="Подтверждение изменения типа документа"
-            onCancel={() => handleConfirmTypeChange(false)}
-            onOk={() => handleConfirmTypeChange(true)}
-            okText="Да"
-            cancelText="Отмена"
-        >
-            <p>Вы уверены, что хотите изменить выбранный тип документа?</p>
-        </Modal>
+        </Modal>        {/* Список задач (ВСЕХ) */}
     </>);
 };
 

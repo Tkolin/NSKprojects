@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Button, notification} from 'antd';
+import {Form, Input, notification} from 'antd';
 import { useMutation } from '@apollo/client';
 import {
     ADD_BIK_MUTATION,
@@ -9,7 +9,6 @@ import {BIK_QUERY} from '../../graphql/queries';
 import {StyledFormItem, StyledFormRegular} from "../style/FormStyles";
 import {StyledBlockRegular} from "../style/BlockStyles";
 import {StyledButtonGreen} from "../style/ButtonStyles";
-
 
 const BikForm = ({ bik, onClose }) => {
 

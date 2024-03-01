@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
-import {Table, Select, InputNumber, DatePicker, Button} from 'antd';
+import {Table, Select, InputNumber, DatePicker} from 'antd';
 import {
     GET_TEMPLATES_TASKS_TYPE_PROJECTS,
     SEARCH_PERSONS_QUERY,

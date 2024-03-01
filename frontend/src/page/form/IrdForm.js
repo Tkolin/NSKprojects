@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Button, notification} from 'antd';
+import {Form, Input, notification} from 'antd';
 import { useMutation } from '@apollo/client';
 import {IRDS_QUERY} from '../../graphql/queries';
 import {StyledFormItem, StyledFormRegular} from '../style/FormStyles';
 import {ADD_IRD_MUTATION, UPDATE_IRD_MUTATION} from "../../graphql/mutationsIrd";
 import {StyledBlockRegular} from "../style/BlockStyles";
 import {StyledButtonGreen} from "../style/ButtonStyles";
-
 
 const IrdForm = ({ ird, onClose }) => {
 

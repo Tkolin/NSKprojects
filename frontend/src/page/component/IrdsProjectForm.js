@@ -9,8 +9,7 @@ import {
     SEARCH_TEMPLATE_IRDS_OR_TYPE_PROJECT_QUERY,
 } from "../../graphql/queriesSearch";
 import {UPDATE_IRDS_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
-import {IRDS_QUERY, PROJECT_QUERY} from "../../graphql/queries";
-import LoadingSpinner from "./LoadingSpinner";
+import {IRDS_QUERY} from "../../graphql/queries";
 import {ADD_IRD_MUTATION} from "../../graphql/mutationsIrd";
 const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMethod }) => {
     // Триггер

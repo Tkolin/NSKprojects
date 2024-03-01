@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Button, Select, notification} from 'antd';
-import { useMutation, useQuery } from '@apollo/client';
+import {Form, Input, Button, notification} from 'antd';
+import { useMutation } from '@apollo/client';
 import {
     ADD_PPI_MUTATION,
     UPDATE_PPI_MUTATION
@@ -15,7 +15,7 @@ const PassportPlaceIssuesForm = ({ issues, onClose }) => {
     // Состояния
     const [editingIssues, setEditingIssues] = useState(null);
     const [form] = Form.useForm();
-    const [ api,contextHolder] = notification.useNotification();
+    const [ ,contextHolder] = notification.useNotification();
 
     // Функции уведомлений
     const openNotification = (placement, type, message) => {

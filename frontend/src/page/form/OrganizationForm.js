@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Button, Select, Space, notification, Row, Col, Modal, AutoComplete} from 'antd';
+import {Form, Input, Select, Space, notification, Row, Col, Modal} from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
 import {ORGANIZATION_FORM_QUERY} from '../../graphql/queriesGroupData';
 import {ORGANIZATION_QUERY} from '../../graphql/queries';
@@ -9,24 +9,18 @@ import {
 import {
     StyledFormItem, StyledFormBig
 } from '../style/FormStyles';
-import {
-    StyledAddressSuggestions
-} from '../style/InputStyles';
+
 import {AddressSuggestions} from "react-dadata";
 import 'react-dadata/dist/react-dadata.css';
 import ContactForm from "./ContactForm";
 import BikForm from "./BikForm";
 import LoadingSpinner from "../component/LoadingSpinner";
-import {SEARCH_CONTACTS_QUERY, SEARCH_IRDS_QUERY} from "../../graphql/queriesSearch";
-import {StyledBlockBig, StyledBlockRegular} from "../style/BlockStyles";
-import {StyledButtonForm, StyledButtonGreen} from "../style/ButtonStyles";
-import {PlusOutlined, SwapOutlined} from "@ant-design/icons";
+import {SEARCH_CONTACTS_QUERY} from "../../graphql/queriesSearch";
+import {StyledBlockBig} from "../style/BlockStyles";
+import { StyledButtonGreen} from "../style/ButtonStyles";
+import {PlusOutlined} from "@ant-design/icons";
 
 const OrganizationForm = ({organization, onClose}) => {
-
-    // Переменные
-    const phoneRegExp = /^\+?[0-9]{10,}$/;
-
     // Состояния
     const [editingOrganization, setEditingOrganization] = useState(null);
     const [form] = Form.useForm();
@@ -243,9 +237,12 @@ const OrganizationForm = ({organization, onClose}) => {
                             <Input placeholder="Введите номер расчётного счёта"/>
                         </StyledFormItem>
                         <Space.Compact block>
-                        <StyledFormItem name="BIK_id" label="Бик">
+                        <StyledFormItem name="BIK_id" label="Бик" style={{
+                            width: '100%',
+                        }}>
 
-                                <Select placeholder="Бик">
+                                <Select placeholder="Бик"
+                                        popupMatchSelectWidth={false}>
                                     {data && data.biks && data.biks.map(biks => (
                                         <Select.Option key={biks.id}
                                                        value={biks.id}>{biks.bik} {biks.name}</Select.Option>))}

@@ -1,16 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Button, Select, notification} from 'antd';
-import { useMutation, useQuery } from '@apollo/client';
+import {Form, Input, notification} from 'antd';
+import { useMutation } from '@apollo/client';
 import {BIK_QUERY} from '../../graphql/queries';
-import {
-    ADD_BIK_MUTATION,
-    UPDATE_BIK_MUTATION
-} from '../../graphql/mutationsBik';
-import {StyledFormBlock, StyledForm, StyledFormItem, StyledFormRegular} from '../style/FormStyles';
+import { StyledFormItem, StyledFormRegular} from '../style/FormStyles';
 import {ADD_STAGE_MUTATION, UPDATE_STAGE_MUTATION} from "../../graphql/mutationsStage";
 import {StyledBlockRegular} from "../style/BlockStyles";
 import {StyledButtonGreen} from "../style/ButtonStyles";
-
 
 const IrdForm = ({ stage, onClose }) => {
 

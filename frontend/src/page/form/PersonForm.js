@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Button, Select, notification, Col, Row, Modal, Space} from 'antd';
+import {Form, Input, Select, notification, Col, Row, Modal, Space} from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
 import {PERSON_QUERY} from '../../graphql/queries';
 import {PERSON_FORM_QUERY} from '../../graphql/queriesGroupData';
@@ -7,14 +7,14 @@ import {
     ADD_PERSON_MUTATION, UPDATE_PERSON_MUTATION
 } from '../../graphql/mutationsPerson';
 import {
-    StyledFormItem, StyledFormBig, StyledFormRegular
+    StyledFormItem, StyledFormRegular
 } from '../style/FormStyles';
-import {DatePicker} from "antd/lib"; // Импорт стилей
+import {DatePicker} from "antd/lib";
 import moment from 'moment';
 import PassportPlaceIssuesForm from "./passportPlaceIssuesForm";
 import LoadingSpinner from "../component/LoadingSpinner";
-import {StyledBlockBig, StyledBlockRegular} from "../style/BlockStyles";
-import {StyledButtonForm, StyledButtonGreen} from "../style/ButtonStyles";
+import {StyledBlockBig} from "../style/BlockStyles";
+import {StyledButtonGreen} from "../style/ButtonStyles";
 import {PlusOutlined} from "@ant-design/icons";
 
 const PersonForm = ({person, onClose}) => {

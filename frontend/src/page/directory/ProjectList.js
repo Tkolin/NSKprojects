@@ -1,12 +1,11 @@
 import React, {useState} from 'react';
 import { useQuery } from '@apollo/client';
 import {Button, Form, Modal, notification, Space, Table} from 'antd';
-import {IRDS_QUERY, PROJECT_QUERY, PROJECT_TABLE_QUERY} from '../../graphql/queries';
+import { PROJECT_TABLE_QUERY} from '../../graphql/queries';
 import ProjectForm from "../form/ProjectForm";
 import LoadingSpinner from "../component/LoadingSpinner";
 import Search from "antd/es/input/Search";
 import {StyledFormLarge} from "../style/FormStyles";
-import {StyledButtonGreen} from "../style/ButtonStyles";
 
 const ProjectList = () => {
 

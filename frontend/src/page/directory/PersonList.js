@@ -6,7 +6,6 @@ import {DELETE_PERSON_MUTATION} from '../../graphql/mutationsPerson';
 import PersonForm from "../form/PersonForm";
 import LoadingSpinner from "../component/LoadingSpinner";
 import Search from "antd/es/input/Search";
-import TypeProjectForm from "../form/TypeProjectForm";
 import {StyledFormLarge} from "../style/FormStyles";
 import {StyledButtonGreen} from "../style/ButtonStyles";
 

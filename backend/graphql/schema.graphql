@@ -582,8 +582,7 @@ type TemplateStage{
     id: ID!
     stage: Stage
     project_type: TypeProjectDocument
-    date_start: String
-    date_end: String
+    duration: Int
     stage_number: Int
     percentage: Int
 }

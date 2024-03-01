@@ -3,16 +3,12 @@ import React, {useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
 import {
     SEARCH_TASKS_QUERY,
-    SEARCH_TEMPLATE_IRDS_OR_TYPE_PROJECT_QUERY,
-    SEARCH_TEMPLATE_OR_TYPE_PROJECT_QUERY, SEARCH_TEMPLATE_TASKS_OR_TYPE_PROJECT_QUERY
+    SEARCH_TEMPLATE_TASKS_OR_TYPE_PROJECT_QUERY
 } from "../../graphql/queriesSearch";
 import {UPDATE_TASKS_TEMPLATE_MUTATION} from "../../graphql/mutationsTemplate";
-import LoadingSpinner from "./LoadingSpinner";
 import {StyledFormBig} from "../style/FormStyles";
 import {LoadingOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 import {StyledButtonGreen} from "../style/ButtonStyles";
-import TypeProjectForm from "../form/TypeProjectForm";
-import TemplateForm from "../form/TemplateForm";
 
 const TasksTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod  }) => {
     // Состояния

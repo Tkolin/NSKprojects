@@ -2,7 +2,6 @@ import {useMutation, useQuery} from "@apollo/client";
 import {
     SEARCH_IRDS_QUERY,
     SEARCH_TEMPLATE_IRDS_OR_TYPE_PROJECT_QUERY,
-    SEARCH_TEMPLATE_OR_TYPE_PROJECT_QUERY
 } from "../../graphql/queriesSearch";
 import React, {useState} from "react";
 import {Button, Form, InputNumber, Modal, notification, Select, Space} from "antd";
@@ -10,9 +9,7 @@ import {LoadingOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/ic
 import {StyledButtonGreen} from "../style/ButtonStyles";
 import {StyledFormBig} from "../style/FormStyles";
 import {UPDATE_IRDS_TEMPLATE_MUTATION} from "../../graphql/mutationsTemplate";
-import LoadingSpinner from "./LoadingSpinner";
 import IrdForm from "../form/IrdForm";
-import TemplateForm from "../form/TemplateForm";
 
 const IrdsTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod  }) => {
     // Состояния

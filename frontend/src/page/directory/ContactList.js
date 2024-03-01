@@ -1,14 +1,11 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, FloatButton, Form, Input, Modal, notification, Space, Table} from 'antd';
+import {Button, Form, Modal, notification, Space, Table} from 'antd';
 import {CONTACTS_QUERY, CONTACTS_TABLE_QUERY} from '../../graphql/queries';
 import {DELETE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
 import ContactForm from "../form/ContactForm";
 import LoadingSpinner from "../component/LoadingSpinner";
 import Search from "antd/es/input/Search";
-import TypeProjectForm from "../form/TypeProjectForm";
-import {PlusSquareOutlined} from "@ant-design/icons";
-import {StyledBlockRegular} from "../style/BlockStyles";
 import {StyledFormLarge, StyledFormRegular} from "../style/FormStyles";
 import {StyledButtonGreen} from "../style/ButtonStyles";
 
