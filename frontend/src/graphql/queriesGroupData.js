@@ -54,6 +54,10 @@ export const PROJECT_FORM_QUERY = gql`
         {
             id
             name
+            type_facility {
+                id
+                name
+            }
         }
         contacts {
             id

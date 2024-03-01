@@ -11,7 +11,7 @@ class TypeFacility extends Model
     protected $fillable = [
         'name',
     ];
-    public function facility(): HasMany
+    public function facilitys(): HasMany
     {
         return $this->hasMany(Facility::class);
     }

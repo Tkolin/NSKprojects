@@ -15,7 +15,7 @@ class Facility extends Model
     ];
     public function type_facility(): BelongsTo
     {
-        return $this->belongsTo(TypeFacility::class);
+        return $this->belongsTo(TypeFacility::class, 'type_id');
     }
     public function project(): HasMany
     {

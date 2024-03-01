@@ -111,6 +111,7 @@ const OrganizationList = () => {
     },  {
         title: 'номер телеофна', dataIndex: 'phone_number', key: 'phone_number',
         sorter: true, ellipsis: true,
+            render: (phone_number) => phone_number ? "+7" + phone_number : '',
     },
         {
         title: 'Управление', key: 'edit', render: (text, record) => (<div>

@@ -25,7 +25,6 @@ import {PlusOutlined, SwapOutlined} from "@ant-design/icons";
 const OrganizationForm = ({organization, onClose}) => {
 
     // Переменные
-
     const phoneRegExp = /^\+?[0-9]{10,}$/;
 
     // Состояния
@@ -64,16 +63,16 @@ const OrganizationForm = ({organization, onClose}) => {
             searchContacts: autoCompleteContacts,
         },
     });
+
     // Заполнение формы данными контакта при его редактировании
     useEffect(() => {
         if (organization) {
             setEditingOrganization(organization);
+            form.resetFields();
             form.setFieldsValue({
                 ...organization
             });
             form.setFieldsValue({
-                address_legal: organization.address_legal ? organization.address_legald : null,
-                address_mail: organization.address_mail ? organization.address_mail : null,
                 director: organization.director ? organization.director.id : null,
                 legal_form: organization.legal_form ? organization.legal_form.id : null,
                 BIK_id: organization.BiK ? organization.BiK.id : null,
@@ -106,16 +105,17 @@ const OrganizationForm = ({organization, onClose}) => {
     // Обработчик отправки формы
     const handleSubmit = () => {
         const formValues = form.getFieldsValue();
-        const {address_legal, address_mail, director, BIK_id, legal_form, ...rest} = formValues; // разделяем address_legal и остальные значения
-        const restrictedValue1 = address_legal ? address_legal.unrestricted_value : address_legal; // получаем unrestricted_value из address_legal
+        const {address_legal, address_mail, director, BIK_id, legal_form, ...rest} = formValues;
+        const restrictedValue1 = address_legal ? address_legal.unrestricted_value : address_legal;
         const restrictedValue2 = address_mail ? address_mail.unrestricted_value : address_mail;
+
         if (editingOrganization) {
             updateOrganization({
                 variables: {
                     id: editingOrganization.id,
-                    idaddress_legal: restrictedValue1,
+                    address_legal: restrictedValue1,
                     address_mail: restrictedValue2,
-                    legal_form_id: legal_form,
+                    legal_form: legal_form,
                     director_id: director,
                     BIK_id: BIK_id,
                     ...rest
@@ -126,6 +126,7 @@ const OrganizationForm = ({organization, onClose}) => {
                 variables: {
                     address_legal: restrictedValue1,
                     address_mail: restrictedValue2,
+                    legal_form: legal_form,
                     director_id: director,
                     BIK_id: BIK_id,
                     ...rest
@@ -146,14 +147,11 @@ const OrganizationForm = ({organization, onClose}) => {
 
     return (<StyledBlockBig label={'Организация'}>
             <StyledFormBig form={form} onFinish={handleSubmit}>
-
                 <Space.Compact block>
                     <StyledFormItem name="name"
                                     label={"Наименование компании"}
                                     rules={[{required: true}]}
-                                    style={{
-                                        width: '100%',
-                                    }}>
+                                    style={{width: '100%',}}>
                         <Input placeholder={"Наименование"}/>
                     </StyledFormItem>
                     <StyledFormItem name="legal_form">
@@ -177,8 +175,7 @@ const OrganizationForm = ({organization, onClose}) => {
                             onSearch={(value) => handleAutoCompleteContacts(value)}
                             allowClear
                             showSearch
-                            loading={loadingContacts}
-                        >
+                            loading={loadingContacts}>
                             {dataContacts && dataContacts.contactsTable && dataContacts.contactsTable.contacts && dataContacts.contactsTable.contacts.map(contact => (
                                 <Select.Option key={contact.id}
                                                value={contact.id}>{contact.last_name} {contact.first_name} {contact.patronymic}</Select.Option>))}
@@ -197,12 +194,10 @@ const OrganizationForm = ({organization, onClose}) => {
                                         width: '100%',
                                     }}>
                         <AddressSuggestions token="5c988a1a82dc2cff7f406026fbc3e8d04f2a168e"
-                                            value={address1}
+                                            defaultQuery={address1}
                                             onChange={addresChange1}/>
                     </StyledFormItem>
-                    <StyledFormItem name="office_number_legal" style={{
-                        width: 100,
-                    }}>
+                    <StyledFormItem name="office_number_legal" style={{width: 100,}}>
                         <Input placeholder="Офис"/>
                     </StyledFormItem>
                 </Space.Compact>
@@ -213,7 +208,7 @@ const OrganizationForm = ({organization, onClose}) => {
                                         width: '100%',
                                     }}>
                         <AddressSuggestions token="5c988a1a82dc2cff7f406026fbc3e8d04f2a168e"
-                                            value={address2}
+                                            defaultQuery={address2}
                                             onChange={addresChange2}
                                             style={{textFontSize: 10}}/>
                     </StyledFormItem>
@@ -225,13 +220,10 @@ const OrganizationForm = ({organization, onClose}) => {
                         <Input placeholder="Офис"/>
                     </StyledFormItem>
                 </Space.Compact>
-
                 <Row gutter={8}>
                     <Col span={12}>
                         <StyledFormItem name="phone_number" label="Телефон" rules={[{
-                            pattern: /^[\d\s()-]+$/, message: 'Пожалуйста, введите корректный номер телефона',
-                        },]}
-                        >
+                            pattern: /^[\d\s()-]+$/, message: 'Пожалуйста, введите корректный номер телефона',},]}>
                             <Input
                                 placeholder="Введите номер телефона"
                                 addonBefore="+7"
@@ -244,9 +236,7 @@ const OrganizationForm = ({organization, onClose}) => {
                             <Input placeholder="Введите номер факса"/>
                         </StyledFormItem>
                         <StyledFormItem name="email" label="e-mail" rules={[{
-                            type: "email", message: 'Пожалуйста, введите корректный почтовый адресс',
-                        },]}
-                        >
+                            type: "email", message: 'Пожалуйста, введите корректный почтовый адресс',},]}>
                             <Input placeholder="Введите почтовый адресс"/>
                         </StyledFormItem>
                         <StyledFormItem name="payment_account" label="Расчётынй счёт">
@@ -330,9 +320,7 @@ const OrganizationForm = ({organization, onClose}) => {
                 onCancel={() => setBikFormViewModalVisible(false)}
                 footer={null}
                 onClose={handleBikFormView}>
-
                 <BikForm/>
-
             </Modal>
             {/* контакты */}
             <Modal
@@ -341,7 +329,6 @@ const OrganizationForm = ({organization, onClose}) => {
                 onCancel={() => setContactFormViewModalVisible(false)}
                 footer={null}
                 onClose={handleContactFormView}>
-
                 <ContactForm/>
             </Modal>
         </StyledBlockBig>

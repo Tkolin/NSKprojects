@@ -504,7 +504,7 @@ type Note{
 type Facility{
     id: ID!
     name: String!
-    type: TypeFacility!
+    type_facility: TypeFacility
 }
 type TypeFacility{
     id: ID!

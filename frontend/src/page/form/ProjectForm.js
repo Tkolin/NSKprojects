@@ -10,7 +10,7 @@ import {
     notification,
     Modal,
     Space,
-    AutoComplete,
+    AutoComplete, Cascader,
 } from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
 import {PROJECT_QUERY, TYPES_PROJECTS_QUERY} from '../../graphql/queries';
@@ -36,6 +36,7 @@ import TasksProjectExecutorForm from "../component/TasksProjectExecutorForm";
 import IrdsProjectForm from "../component/IrdsProjectForm";
 import StagesProjectForm from "../component/StagesProjectForm";
 import PaymentProjectForm from "../component/PaymentProjectForm";
+import dayjs from "dayjs";
 
 const {Option} = Select;
 
@@ -66,7 +67,15 @@ const ProjectForm = ({project, onClose}) => {
     const [triggerDayEnd, setTriggerDayEnd] = useState("");
     const [triggerSaveIrds, setTriggerSaveIrds] = useState(false);
     const [triggerSaveTasks, setTriggerSaveTasks] = useState(false);
+    const [cascaderFacility, setCascaderFacility] = useState(null);
+
+
     const handleEditingPrice = (value) => {
+        if (!isNaN(value)) {
+            setTriggertriggerTotalToPayStages(+value); // Преобразуйте строку в число с помощью унарного плюса
+        }
+    };
+    const handleEditingDuration = (value) => {
         if (!isNaN(value)) {
             setTriggertriggerTotalToPayStages(+value); // Преобразуйте строку в число с помощью унарного плюса
         }
@@ -79,6 +88,45 @@ const ProjectForm = ({project, onClose}) => {
     };
     const handleAutoCompleteOrganization = (value, option) => {
         setAutoCompleteOrganization({id: option.key, name: value});
+    };
+
+    // Подсчёт даты
+    const [dateSigning, setDateSigning] = useState(null);
+    const [duration, setDuration] = useState(null);
+    const [dateEnd, setDateEnd] = useState(null);
+
+    const handleDateSigningChange = (value) => {
+        console.log(value);
+        setDateSigning(value);
+        calculateEndDate(value, duration);
+    };
+
+    const handleDurationChange = (value) => {
+        if (!isNaN(value)) {
+            setDuration(value);
+            calculateEndDate(dateSigning, value);
+        }
+    };
+
+    const handleDateEndChange = (value) => {
+        setDateEnd(value);
+        calculateDuration(dateSigning, value);
+    };
+
+    const calculateEndDate = (dateSigning, duration) => {
+        if (dateSigning && duration) {
+            const endDate = dayjs(dateSigning).add(duration, 'day');
+            form.setFieldsValue({date_end: endDate});
+            setDateEnd(endDate);
+        }
+    };
+
+    const calculateDuration = (dateSigning, dateEnd) => {
+        if (dateSigning && dateEnd) {
+            const duration = dayjs(dateEnd).diff(dateSigning, 'days');
+            form.setFieldsValue({duration: duration});
+            setDuration(duration);
+        }
     };
 
     // Вызов модальных окон
@@ -118,9 +166,11 @@ const ProjectForm = ({project, onClose}) => {
         });
     };
 
-    // Получение данных для выпадающих списков
-    const {loading: loadingAll, error: errorAll, data: dataAll} = useQuery(PROJECT_FORM_QUERY);
 
+    // Получение данных для выпадающих списков
+    const {loading: loadingAll, error: errorAll, data: dataAll} = useQuery(PROJECT_FORM_QUERY, {
+        onCompleted: (data) => setCascaderFacility(sortFacilitysForCascader(data))
+    });
     const {
         loading: loadingTypeProject, error: errorTypeProject, data: dataTypeProject
     } = useQuery(TYPES_PROJECTS_QUERY);
@@ -176,6 +226,28 @@ const ProjectForm = ({project, onClose}) => {
         }
     });
 
+    const sortFacilitysForCascader = (data) => {
+        // Группируем facilitys по type_facility
+        const groupedFacilitys = data.facilitys.reduce((acc, facility) => {
+            const {id, name, type_facility} = facility;
+            const {id: typeId, name: typeName} = type_facility;
+
+            if (!acc[typeId]) {
+                acc[typeId] = {value: typeId, label: typeName, children: []};
+            }
+            acc[typeId].children.push({value: id, label: name});
+
+            return acc;
+        }, {});
+
+        // Преобразуем объект в массив и сортируем по названию type_facility
+        const sortedOptions = Object.values(groupedFacilitys).sort((a, b) => {
+            return a.label.localeCompare(b.label);
+        });
+
+        return sortedOptions;
+    };
+
     // Обработчик отправки формы
     const handleSubmit = () => {
         if (editingProject) {
@@ -186,7 +258,7 @@ const ProjectForm = ({project, onClose}) => {
                 }
             });
         } else {
-           addProject({variables: {...form.getFieldsValue(), organization_customer_id: autoCompleteOrganization.id}});
+            addProject({variables: {...form.getFieldsValue(), organization_customer_id: autoCompleteOrganization.id}});
         }
     };
     return (<>
@@ -239,43 +311,51 @@ const ProjectForm = ({project, onClose}) => {
 
                             </Space.Compact>
 
-                                <StyledFormItem name="type_project_document_id" label="Тип документа"
-                                                >
-                                    <Select
-                                        popupMatchSelectWidth={false}
-                                        value={selectedTypeProject}
-                                        onSelect={handleEditingTemplate}>
-                                        {dataTypeProject && dataTypeProject.typeProjectsTable && dataTypeProject.typeProjectsTable.typeProjects.map(typeDocument => (
-                                            <Option key={typeDocument.id}
-                                                    value={typeDocument.id}>{typeDocument.name}</Option>))}
-                                    </Select>
-                                </StyledFormItem>
+                            <StyledFormItem name="type_project_document_id" label="Тип документа"
+                            >
+                                <Select
+                                    popupMatchSelectWidth={false}
+                                    value={selectedTypeProject}
+                                    onSelect={handleEditingTemplate}>
+                                    {dataTypeProject && dataTypeProject.typeProjectsTable && dataTypeProject.typeProjectsTable.typeProjects.map(typeDocument => (
+                                        <Option key={typeDocument.id}
+                                                value={typeDocument.id}>{typeDocument.name}</Option>))}
+                                </Select>
+                            </StyledFormItem>
 
                             <Space.Compact block style={{alignItems: 'flex-end'}}>
                                 <StyledFormItem name="facility_id" label="Объект"
                                                 style={{
                                                     width: '90%',
                                                 }}>
-                                    <Select
-                                        popupMatchSelectWidth={false}>
-                                        {dataAll && dataAll.facilitys && dataAll.facilitys.map(facility => (
-                                            <Select.Option key={facility.id}
-                                                           value={facility.id}>{facility.name}</Select.Option>))}
-                                    </Select>
+                                    <Cascader
+                                        style={{
+                                            width: '100%',
+                                        }}
+                                        options={cascaderFacility}
+                                        multiple
+                                        expandTrigger="hover" // Или "click"
+
+                                        maxTagCount="responsive"
+                                    />
+
                                 </StyledFormItem>
                                 <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
                                                    onClick={() => setFacilityFormViewModalVisible(true)}/>
                             </Space.Compact>
                             <StyledFormItem name="date_signing" label="Дата подписания">
                                 <DatePicker placeholder="Выберите дату"
-                                            onChange={(value) => handleDateStart(value)}/>
+                                            onChange={(value) => handleDateSigningChange(value)}/>
                             </StyledFormItem>
                             <StyledFormItem name="duration" label="Продолжительность">
-                                <InputNumber/>
+                                <InputNumber
+                                    formatter={(value) => `${value}`.replace(/[^0-9]/g, '')}
+                                    parser={(value) => `${value}`.replace(/[^0-9]/g, '')} // Удаляем все символы, кроме цифр
+                                    onChange={(value) => handleDurationChange(value)}
+                                />
                             </StyledFormItem>
                             <StyledFormItem name="date_end" label="Дата окончания">
-                                <DatePicker placeholder="Выберите дату"
-                                            onChange={(value) => handleDateEnd(value)}/>
+                                <DatePicker minDate={dateSigning} placeholder="Выберите дату" onChange={handleDateEndChange}/>
                             </StyledFormItem>
                             <StyledFormItem name="status_id" label="Статус проекта">
                                 <Select>
@@ -283,9 +363,6 @@ const ProjectForm = ({project, onClose}) => {
                                         <Select.Option key={status.id}
                                                        value={status.id}>{status.name}</Select.Option>))}
                                 </Select>
-                            </StyledFormItem>
-                            <StyledFormItem name="date_completion" label="Дата фактического закрытия">
-                                <DatePicker placeholder="Выберите дату"/>
                             </StyledFormItem>
                             <StyledFormItem name="price" label="Стоимость">
                                 <InputNumber
@@ -296,7 +373,7 @@ const ProjectForm = ({project, onClose}) => {
                             </StyledFormItem>
                             <div style={{textAlign: 'center'}}>
                                 <Space>
-                                    <StyledButtonGreen   style={{    marginBottom: 0}} type="dashed" onClick={handleSubmit}>
+                                    <StyledButtonGreen style={{marginBottom: 0}} type="dashed" onClick={handleSubmit}>
                                         Сохранить проект
                                     </StyledButtonGreen>
                                     <Button type="primary"
@@ -319,18 +396,23 @@ const ProjectForm = ({project, onClose}) => {
                 <Col span={16}>
                     <StyledBlockBig label={'Этапы'}>
                         <StagesProjectForm totalToPay={triggerTotalToPayStages}
-                                           dateStart={triggerDayStart}
-                                           dateEnd={triggerDayEnd}
+                                           dateStart={dateSigning}
+                                           dateEnd={dateEnd}
                                            triggerMethod={triggerSaveStages}
                                            setTriggerMethod={setTriggerSaveStages}
                                            typeProjectId={selectedTypeProject}
                                            projectId={editingProject && editingProject.id}/>
                     </StyledBlockBig>
                     <StyledBlockBig label={'ИРД'}>
-                        <IrdsProjectForm triggerMethod={triggerSaveStages} setTriggerMethod={setTriggerSaveStages} typeProjectId={selectedTypeProject} projectId={editingProject && editingProject.id}/>
+                        <IrdsProjectForm triggerMethod={triggerSaveStages} setTriggerMethod={setTriggerSaveStages}
+                                         typeProjectId={selectedTypeProject}
+                                         projectId={editingProject && editingProject.id}/>
                     </StyledBlockBig>
                     <StyledBlockBig label={'Генерация договоров с исполнителем'}>
-                        <TasksProjectExecutorForm triggerMethod={triggerSaveStages} setTriggerMethod={setTriggerSaveStages} typeProjectId={selectedTypeProject} projectId={editingProject && editingProject.id}/>
+                        <TasksProjectExecutorForm triggerMethod={triggerSaveStages}
+                                                  setTriggerMethod={setTriggerSaveStages}
+                                                  typeProjectId={selectedTypeProject}
+                                                  projectId={editingProject && editingProject.id}/>
                     </StyledBlockBig>
                 </Col>
             </Row>

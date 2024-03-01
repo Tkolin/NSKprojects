@@ -15,7 +15,7 @@ final readonly class Facilitys
         $allowedRoles = ['admin']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            return Facility::all();
+            return Facility::with('type_facility')->get();
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }

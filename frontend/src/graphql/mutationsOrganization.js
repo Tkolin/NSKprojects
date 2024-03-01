@@ -108,8 +108,9 @@ export const ADD_ORGANIZATION_MUTATION = gql`
 `;
 
 export const UPDATE_ORGANIZATION_MUTATION = gql`
-    mutation AddOrganization($id: ID!,
-        $legal_form_id: ID!,
+    mutation AddOrganization(
+        $id: ID!,
+        $legal_form: ID!,
         $name: String!,
         $full_name: String!,
         $address_legal: String,
@@ -129,7 +130,7 @@ export const UPDATE_ORGANIZATION_MUTATION = gql`
     ) {
         updateOrganization(
             id: $id
-            legal_form_id: $legal_form_id
+            legal_form_id: $legal_form
             name: $name
             full_name: $full_name
             address_legal: $address_legal

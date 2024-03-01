@@ -105,10 +105,12 @@ const ContactList = () => {
         sorter: true, ellipsis: true,
     }, {
         title: 'Номер телефона', dataIndex: 'mobile_phone', key: 'mobile_phone',
+            render: (mobile_phone) => mobile_phone ? "+7" + mobile_phone : '',
 
         sorter: true, ellipsis: true,
     }, {
         title: 'Рабочий Номер телефона', dataIndex: 'work_phone', key: 'work_phone',
+            render: (work_phone) => work_phone ? "+7" + work_phone : '',
 
         sorter: true, ellipsis: true,
     }, {
