@@ -62,7 +62,7 @@ const CustomLayout = ({children}) => {
                     ]),
                     getItem('Формы', '2', <FormOutlined/>, [
                         getItem('Контакт', '2-1', null, null),
-                        getItem('Проект', '2-2', null, null),
+                        getItem('Создание нового договора', '2-2', null, null),
                         getItem('Организация', '2-3', null, null),
                         getItem('Исполнитель', '2-4', null, null),
                         getItem('Шаблоны по типу проекта', '2-5', null, null),
