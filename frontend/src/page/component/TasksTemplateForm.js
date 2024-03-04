@@ -1,74 +1,111 @@
-import {Button, Form, InputNumber, Modal, notification, Select, Space} from "antd";
-import React, {useState} from "react";
-import {useMutation, useQuery} from "@apollo/client";
-import {
-    SEARCH_TASKS_QUERY,
-    SEARCH_TEMPLATE_TASKS_OR_TYPE_PROJECT_QUERY
-} from "../../graphql/queriesSearch";
+import React, { useEffect, useState } from 'react';
+import {Button, Collapse, Divider, notification, Transfer, Tree} from 'antd';
+import {SEARCH_TASKS_QUERY, SEARCH_TEMPLATE_TASKS_OR_TYPE_PROJECT_QUERY} from '../../graphql/queriesSearch';
+import {useMutation, useQuery} from '@apollo/client';
 import {UPDATE_TASKS_TEMPLATE_MUTATION} from "../../graphql/mutationsTemplate";
-import {StyledFormBig} from "../style/FormStyles";
-import {LoadingOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
-import {StyledButtonGreen} from "../style/ButtonStyles";
+const { Panel } = Collapse;
 
-const TasksTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod  }) => {
-    // Состояния
-    const [formTask] = Form.useForm();
-    const [taskFormViewModalVisible, setTaskFormViewModalVisible] = useState(false);
-    const [autoCompleteTask, setAutoCompleteTask] = useState('');
-    const handleAutoCompleteTaskSelect = (value) => {
-        if (value == 'CREATE_NEW') {
-            setTaskFormViewModalVisible(true);
-            setAutoCompleteTask('');
-        } else {
-            setAutoCompleteTask('');
+const App = ({ typeProjectId, triggerMethod, setTriggerMethod }) => {
+    const [dataTasks, setDataTasks] = useState(null);
+    const [targetKeys, setTargetKeys] = useState([]);
+    const [gData, setGData] = useState();
+    const {  } = useQuery(
+        SEARCH_TASKS_QUERY,
+        {
+            onCompleted: (data) => setDataTasks(data),
         }
+    );
+
+
+    const handleChange = (newTargetKeys) => {
+        setTargetKeys(newTargetKeys);
+
     };
-    const handleAutoCompleteTask = (value) => {
-        setAutoCompleteTask(value)
+
+    useEffect(() => {
+        if (dataTasks && dataTasks.tasksTable) {
+            const tasks = dataTasks.tasksTable.tasks.map((task) => ({
+                key: task.id.toString(),
+                title: task.name,
+                children: [],
+            }));
+            setGData(tasks);
+        }
+    }, [dataTasks]);
+
+
+
+    const generateNumber = (parentNumbers, index) => {
+        if (!parentNumbers) {
+            return `${index + 1}`;
+        }
+        return `${parentNumbers}.${index + 1}`;
     };
-    const handleTaskFormView = () => {
-        setTaskFormViewModalVisible(false);
+
+    const generateTreeData = (data, parentNumbers = '') => {
+        return data.map((item, index) => {
+            const numbers = generateNumber(parentNumbers, index);
+            return {
+                key: item.key,
+                title: `${numbers} ${item.title}`,
+                children: item.children ? generateTreeData(item.children, numbers) : [],
+            };
+        });
     };
+
+    const onDrop = (info) => {
+        const dropKey = info.node.key;
+        const dragKey = info.dragNode.key;
+        const dropPos = info.node.pos.split('-');
+        const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
+
+        const loop = (data, key, callback) => {
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].key === key) {
+                    return callback(data[i], i, data);
+                }
+                if (data[i].children) {
+                    loop(data[i].children, key, callback);
+                }
+            }
+        };
+
+        const data = [...gData];
+        let dragObj;
+
+        loop(data, dragKey, (item, index, arr) => {
+            arr.splice(index, 1);
+            dragObj = item;
+        });
+
+        if (!info.dropToGap) {
+            loop(data, dropKey, (item) => {
+                item.children = item.children || [];
+                item.children.unshift(dragObj);
+            });
+        } else {
+            let ar;
+            let i;
+            loop(data, dropKey, (item, index, arr) => {
+                ar = arr;
+                i = index;
+            });
+            if (dropPosition === -1) {
+                ar.splice(i, 0, dragObj);
+            } else {
+                ar.splice(i + 1, 0, dragObj);
+            }
+        }
+        setGData(data);
+    };
+
+
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
         notification[type]({
             message: message, placement,
         });
     };
-
-    // Получение данных для выпадающих списков
-    const [dataTasks, setDataTasks] = useState(null);
-    const {loading: loadingTasks, error: errorTasks, refetch: refetchTasks} = useQuery(SEARCH_TASKS_QUERY, {
-        variables: {search: autoCompleteTask}, onCompleted: (data) => setDataTasks(data)
-    });
-    const {
-        loading: loadingTemplate, error: errorTemplate, data: dataTemplate
-    } = useQuery(SEARCH_TEMPLATE_TASKS_OR_TYPE_PROJECT_QUERY, {
-        variables: {typeProject: typeProjectId},
-        fetchPolicy: 'network-only',
-        onCompleted: (data) => addingTasks(data)
-    });
-
-    // Загрузка шаблонов при редактировании
-    const addingTasks = (value) => {
-        if (dataTasks && value) {
-            const newTasks = value.templatesTasksTypeProjects.map(a => ({
-                id: a.task ? a.task.id : null, name: a.task ? a.task.name : null,
-            }));
-
-            refetchTasks({search: autoCompleteTask}).then(({data}) => {
-                const existingTasks = dataTasks.tasksTable ? dataTasks.tasksTable.tasks : [];
-                const updatedTasks = [...existingTasks, ...newTasks];
-                setDataTasks({
-                    ...dataTasks, tasksTable: {
-                        ...dataTasks.tasksTable, tasks: updatedTasks,
-                    },
-                });
-            });
-            loadTemplate();
-        }
-    }
-
     // Мутации для добавления и обновления
     const [updateTemplateTask] = useMutation(UPDATE_TASKS_TEMPLATE_MUTATION, {
         onCompleted: () => {
@@ -77,13 +114,37 @@ const TasksTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod  }) =
             openNotification('topRight', 'error', 'Ошибка при обновлении данных: tt' + error.message);
         }
     });
+    const {
+        loading: loadingTemplate, error: errorTemplate, data: dataTemplate
+    } = useQuery(SEARCH_TEMPLATE_TASKS_OR_TYPE_PROJECT_QUERY, {
+        onCompleted: (data) => loadTemplate(),
+        variables: {typeProject: typeProjectId},
+        fetchPolicy: 'network-only',
+    });
+    // Функция для извлечения данных из gData
+    const extractDataFromTree = (treeData) => {
+        const extractedData = [];
+        const extract = (data, parentNumbers = '') => {
+            data.forEach((item, index) => {
+                const numbers = parentNumbers ? `${parentNumbers}.${index + 1}` : `${index + 1}`;
+                extractedData.push({
+                    task_id: item.key,
+                    up_task_id: parentNumbers,
+                    stage_number: numbers,
+                });
+                if (item.children) {
+                    extract(item.children, numbers);
+                }
+            });
+        };
+        extract(treeData);
+        return extractedData;
+    };
+
 
     // Обработчик отправки формы
     const handleSubmit = () => {
-        const tasksData = formTask.getFieldsValue().taskList.map(task => ({
-            task_id: task.task_item, up_task_id: task.up_task_item, stage_number: task.stage_item,
-        }));
-        // Вызов мутаций для обновления данных
+        const tasksData = extractDataFromTree(gData);
         updateTemplateTask({
             variables: {
                 typeProjectId: typeProjectId,
@@ -99,131 +160,110 @@ const TasksTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod  }) =
         setTriggerMethod(false); // Reset the trigger
     }
     // Подстановка значений
+    const importDataToTree = (data, parentKey = null) => {
+        return data.map((item, index) => {
+            const newItem = {
+                key: item.key,
+                title: item.title,
+                children: [],
+            };
+
+            if (item.children && item.children.length > 0) {
+                newItem.children = importDataToTree(item.children, item.key);
+            }
+
+            return newItem;
+        });
+    };
+
+
     const loadTemplate = () => {
         if (dataTemplate) {
             const tasks = dataTemplate && dataTemplate.templatesTasksTypeProjects;
-            const initialValuesTasks = tasks && tasks.map(data => ({
-                task_item: data.task.id,
-                up_task_item: data.inheritedTask && data.inheritedTask.task && data.inheritedTask.task.id,
-                stage_item: data.stage_number,
+            const ids = tasks && tasks.map(data => ({
+                key: data.task.id.toString(),
+                title: data.task.name,
+                children: tasks.filter(child => child.inheritedTask && child.inheritedTask.id === data.task.id)
+                    .map(child => ({
+                        key: child.task.id.toString(),
+                        title: child.task.name,
+                    })),
             }));
-            formTask.setFieldsValue({taskList: initialValuesTasks});
+
+            setTargetKeys(ids.map(item => item.key));
+
+
+            // Сначала сгруппируем tasks по inheritedTask.id
+            const groupedTasks = tasks.reduce((acc, task) => {
+                const parentId = task.inheritedTask && task.inheritedTask.id;
+                if (!acc[parentId]) {
+                    acc[parentId] = [];
+                }
+                acc[parentId].push(task);
+                return acc;
+            }, {});
+
+            // Функция для создания дочерних элементов
+            const createChildren = (parentId) => {
+                const children = groupedTasks[parentId] || [];
+                return children.map(child => ({
+                    key: child.task.id.toString(),
+                    title: child.task.name,
+                    children: createChildren(child.task.id),
+                }));
+            };
+
+            // Формируем иерархию, начиная с элементов без родителей
+            const rootTasks = groupedTasks[null] || [];
+            const gd = rootTasks.map(root => ({
+                key: root.task.id.toString(),
+                title: root.task.name,
+                children: createChildren(root.task.id),
+            }));
+
+            setGData(importDataToTree(gd));
         }
     };
 
-    if(loadingTemplate)
-        return <LoadingOutlined
-            style={{
-                fontSize: 24,
-            }}
-            spin
-        />
-    return (<>
-            <StyledFormBig
-                name="dynamic_form_nest_itemы"
-                style={{maxWidth: 600}}
-                form={formTask}
-            >
+    return (
+        <>
+            <div>
+                <Transfer
 
-                <Form.List name="taskList">
-                    {(fields, {add, remove}) => (<>
-                        {fields.map(({key, name, ...restField}) => (<Space
-                                key={key}
-                                style={{
-                                    display: 'flex', marginBottom: 0, marginTop: 0
-                                }}
-                                align="baseline"
-                            >
-                                <Form.Item
-                                    {...restField}
-                                    style={{
-                                        display: 'flex', marginBottom: 0, marginTop: 0
-                                    }}
-                                    name={[name, 'task_item']}
-                                >
-                                    <Select
-                                        style={{maxWidth: 380, minWidth: 380, marginBottom: 0}}
-                                        popupMatchSelectWidth={false}
-                                        filterOption={false}
-                                        placeholder="Задача..."
-                                        onSearch={(value) => handleAutoCompleteTask(value)}
-                                        onSelect={(value) => handleAutoCompleteTaskSelect(value)}
-                                        allowClear
-                                        showSearch
-                                        loading={loadingTasks}
-                                    >
-                                        {dataTasks && dataTasks.tasksTable && dataTasks.tasksTable.tasks && dataTasks.tasksTable.tasks.map(task => (
-                                            <Select.Option key={task.id}
-                                                           value={task.id}>{task.name}</Select.Option>))}
-                                        {dataTasks && dataTasks.tasksTable && dataTasks.tasksTable.tasks && dataTasks.tasksTable.tasks.length === 0 && (
-                                            <Select.Option value="CREATE_NEW">Создать новый
-                                                ИРД?</Select.Option>)}
-                                    </Select>
-                                </Form.Item>
-                                <Form.Item
-                                    {...restField}
-                                    style={{
-                                        display: 'flex', marginBottom: 0, marginTop: 0
-                                    }}
-                                    name={[name, 'up_task_item']}
-                                >
-                                    <Select
-                                        style={{maxWidth: 250, minWidth: 250, marginBottom: 0}}
-                                        popupMatchSelectWidth={false}
-                                        filterOption={false}
-                                        placeholder="Наследуемая от..."
-                                        onSearch={(value) => handleAutoCompleteTask(value)}
-                                        onSelect={(value) => handleAutoCompleteTaskSelect(value)}
-                                        allowClear
-                                        showSearch
-                                        loading={loadingTasks}
-                                    >
-                                        {dataTasks && dataTasks.tasksTable && dataTasks.tasksTable.tasks && dataTasks.tasksTable.tasks.map(task => (
-                                            <Select.Option key={task.id}
-                                                           value={task.id}>{task.name}</Select.Option>))}
-                                    </Select>
-                                </Form.Item>
-                                <Form.Item
-                                    {...restField}
-                                    style={{
-                                        width: '100%', display: 'flex', marginBottom: 0, marginTop: 0
-                                    }}
-                                    name={[name, 'stage_item']}
-                                >
-                                    <InputNumber
-                                        size={"middle"}
-                                        min={1}
-                                        max={100}
-                                        placeholder="Номер этапа"
-                                        style={{
-                                            width: 60
-                                        }}/>
-                                </Form.Item>
-                                <MinusCircleOutlined onClick={() => remove(name)}/>
-                            </Space>))}
-                        <Form.Item>
-                            <Button type="dashed" onClick={() => add()} block
-                                    icon={<PlusOutlined/>}>
-                                Добавить задачу к шаблону
-                            </Button>
-                        </Form.Item>
-                    </>)}
-                </Form.List>
-                <div style={{textAlign: 'center'}}>
-                    <StyledButtonGreen
-                        type={'dashed'}
-                        onClick={() => setTaskFormViewModalVisible(true)}>Создать Задачу</StyledButtonGreen></div>
-
-            </StyledFormBig>
-            <Modal
-                open={taskFormViewModalVisible}
-                onCancel={() => setTaskFormViewModalVisible(false)}
-                footer={null}
-                //onClose={handleTypeProjectFormView}
-            >
-                {/* TODO: добавить
-                <TypeProjectForm/>*/}
-            </Modal>
-        </>)
+                    dataSource={dataTasks && dataTasks.tasksTable
+                        ? dataTasks.tasksTable.tasks.map(task => ({
+                            key: task.id.toString(),
+                            title: task.name,
+                            chosen: targetKeys.includes(task.id.toString()),
+                        }))
+                        : []}
+                    showSearch
+                    listStyle={{
+                        display: 'flex',
+                        flex: 1,
+                        height: 300,
+                    }}
+                    operations={['Добавить', 'Убрать']}
+                    targetKeys={targetKeys}
+                    onChange={handleChange}
+                    render={(item) => `${item.title}`}
+                />
+            </div>
+            <Divider>Упорядочить</Divider>
+            <Collapse defaultActiveKey={['1']} >
+                <Panel header="Групировка задач" key="1">
+                    <Tree
+                        style={{ margin: 15 }}
+                        className="draggable-tree"
+                        draggable
+                        blockNode
+                        onDrop={onDrop}
+                        treeData={gData && generateTreeData(gData.filter(item => targetKeys.includes(item.key)))}
+                    />
+                </Panel>
+            </Collapse>
+        </>
+    );
 };
-export default TasksTemplateForm;
+
+export default App;

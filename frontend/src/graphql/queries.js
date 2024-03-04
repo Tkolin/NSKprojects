@@ -1,9 +1,20 @@
 import {gql} from '@apollo/client';
+import {SEARCH_TASKS_QUERY} from "./queriesSearch";
 
 // Запросы данных
 export const BIK_QUERY = gql`
     query BikQuery {
         biks {
+            id
+            BIK
+            name
+            correspondent_account
+        }
+    }
+`;
+export const TASKS_QUERY = gql`
+    query BikQuery {
+        tasksTable {
             id
             BIK
             name

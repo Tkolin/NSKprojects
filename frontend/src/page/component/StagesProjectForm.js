@@ -165,7 +165,10 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod,
                     </Form.Item>
                     <Button onClick={handleDateStageRebuild}>Уровнять</Button>
                 </Space.Compact>
-
+                <Space.Compact block>
+                <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>} style={{width: '50%'}}
+                                   onClick={() => setViewListProjectTasksStageModalVisible(true)}>Распределить задачи по этапам</StyledButtonGreen>
+                </Space.Compact>
                 <Form.List name="stageList">
                     {(fields, {add, remove}) => (<>
                         {fields.map(({key, name, ...restField}) => (<Space
@@ -227,8 +230,7 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod,
                             >
                                 <InputNumber/>
                             </Form.Item>
-                            <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
-                                               onClick={() => setViewListProjectTasksStageModalVisible(true)}/>
+
                             <MinusCircleOutlined onClick={() => remove(name)}/>
                         </Space>))}
                         <Form.Item>
@@ -239,12 +241,13 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod,
                         </Form.Item>
                     </>)}
                 </Form.List>
+                {/* распределение задач */}
                 <Modal
+                    width={1200}
                     open={viewListProjectTasksStageModalVisible}
                     onCancel={() => setViewListProjectTasksStageModalVisible(false)}
                     footer={null}
-                    onClose={handleViewListProjectTasksStage}
-                >
+                    onClose={handleViewListProjectTasksStage}>
                     <TasksToProjectStageForm />
                 </Modal>
             </StyledFormBig>

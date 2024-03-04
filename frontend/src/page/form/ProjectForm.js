@@ -53,8 +53,8 @@ const ProjectForm = ({project, onClose}) => {
 
     const [triggerSaveStages, setTriggerSaveStages] = useState(false);
     const [triggerTotalToPayStages, setTriggertriggerTotalToPayStages] = useState(0);
-/*    const [triggerSaveIrds, setTriggerSaveIrds] = useState(false);
-    const [triggerSaveTasks, setTriggerSaveTasks] = useState(false)*/
+    /*    const [triggerSaveIrds, setTriggerSaveIrds] = useState(false);
+        const [triggerSaveTasks, setTriggerSaveTasks] = useState(false)*/
     const [cascaderFacility, setCascaderFacility] = useState(null);
 
 
@@ -176,9 +176,9 @@ const ProjectForm = ({project, onClose}) => {
         onCompleted: (data) => {
             openNotification('topRight', 'success', 'Данные успешно добавлены!');
             setEditingProjcet(data);
-/*            setTriggerSaveStages(true);
-            setTriggerSaveTasks(true);
-            setTriggerSaveIrds(true);*/
+            /*            setTriggerSaveStages(true);
+                        setTriggerSaveTasks(true);
+                        setTriggerSaveIrds(true);*/
         }, onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при добавлении данных: ' + error.message);
         }
@@ -229,7 +229,7 @@ const ProjectForm = ({project, onClose}) => {
         }
     };
 
-    if(errorAll || errorAll || errorTypeProject || errorDelegates|| errorOrganizations)
+    if (errorAll || errorAll || errorTypeProject || errorDelegates || errorOrganizations)
         return <>Ошибка загрузки данных</>
     return (<>
         <StyledBlockLarge>
@@ -305,35 +305,33 @@ const ProjectForm = ({project, onClose}) => {
                                         style={{width: '100%'}}
                                         options={cascaderFacility}
                                         multiple
-                                        expandTrigger="hover" // Или "click"
-
+                                        expandTrigger="hover"
                                         maxTagCount="responsive"
                                     />
-
                                 </StyledFormItem>
                                 <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
                                                    onClick={() => setFacilityFormViewModalVisible(true)}/>
                             </Space.Compact>
                             <Space.Compact block style={{alignItems: 'flex-end'}}>
-                            <StyledFormItem name="date_signing" label="Дата подписания">
-                                <DatePicker placeholder="Выберите дату"
-                                            onChange={(value) => handleDateSigningChange(value)}/>
-                            </StyledFormItem>
-                            <StyledFormItem name="duration" label="Срок" style={{width: '15%'}}>
-                                <InputNumber
-                                    formatter={(value) => `${value}`.replace(/[^0-9]/g, '')}
-                                    parser={(value) => `${value}`.replace(/[^0-9]/g, '')}
-                                    style={{width: '100%'}}
-                                    // Удаляем все символы, кроме цифр
-                                    onChange={(value) => handleDurationChange(value)}
-                                />
-                            </StyledFormItem>
-                            <StyledFormItem name="date_end" label="Дата окончания">
-                                <DatePicker minDate={dateSigning}
-                                            style={{width: '100%'}}
+                                <StyledFormItem name="date_signing" label="Дата подписания">
+                                    <DatePicker placeholder="Выберите дату"
+                                                onChange={(value) => handleDateSigningChange(value)}/>
+                                </StyledFormItem>
+                                <StyledFormItem name="duration" label="Срок" style={{width: '15%'}}>
+                                    <InputNumber
+                                        formatter={(value) => `${value}`.replace(/[^0-9]/g, '')}
+                                        parser={(value) => `${value}`.replace(/[^0-9]/g, '')}
+                                        style={{width: '100%'}}
+                                        // Удаляем все символы, кроме цифр
+                                        onChange={(value) => handleDurationChange(value)}
+                                    />
+                                </StyledFormItem>
+                                <StyledFormItem name="date_end" label="Дата окончания">
+                                    <DatePicker minDate={dateSigning}
+                                                style={{width: '100%'}}
 
-                                            placeholder="Выберите дату" onChange={handleDateEndChange}/>
-                            </StyledFormItem>
+                                                placeholder="Выберите дату" onChange={handleDateEndChange}/>
+                                </StyledFormItem>
                             </Space.Compact>
                             <StyledFormItem name="status_id" label="Статус проекта">
                                 <Select loading={loadingAll}>
@@ -384,6 +382,7 @@ const ProjectForm = ({project, onClose}) => {
                 </Col>
             </Row>
         </StyledBlockLarge>
+        {/* Создание контакта */}
         <Modal
             open={contactFormViewModalVisible}
             onCancel={() => setContactFormViewModalVisible(false)}
@@ -392,7 +391,7 @@ const ProjectForm = ({project, onClose}) => {
         >
             <ContactForm/>
         </Modal>
-        {/* Заказчик */}
+        {/* Создание организации */}
         <Modal
             open={costumerFormViewModalVisible}
             onCancel={() => setCostumerFormViewModalVisible(false)}
@@ -401,16 +400,16 @@ const ProjectForm = ({project, onClose}) => {
         >
             <OrganizationForm/>
         </Modal>
-        {/* Объект */}
+        {/*  Объект
         <Modal
             open={facilityFormViewModalVisible}
             onCancel={() => setFacilityFormViewModalVisible(false)}
             footer={null}
             onClose={handleFacilityFormView}
         >
-            {/* Форма для добавления новых данных */}
-            {/* ... */}
-        </Modal>
+             Форма для добавления новых данных
+             ...
+        </Modal>*/}
         {/* Список задач (ВСЕХ) */}
         <Modal
             open={viewListProjectStageModalVisible}
@@ -418,7 +417,8 @@ const ProjectForm = ({project, onClose}) => {
             footer={null}
             onClose={handleViewListProjectStage}
         >
-        </Modal>        {/* Список задач (ВСЕХ) */}
+
+        </Modal>
     </>);
 };
 

@@ -61,8 +61,8 @@ export const SEARCH_STAGES_QUERY = gql`
     }
 `;
 export const SEARCH_TASKS_QUERY = gql`
-    query SearchTaskQuery($search: String){
-        tasksTable(page: 1, limit: 20, search: $search) {
+    query SearchTaskQuery($search: String, $page: Int, $limit: Int ){
+        tasksTable(page: $page, limit: $limit, search: $search) {
             tasks {
                 id
                 name

@@ -26,7 +26,7 @@ const TasksProjectExecutorForm = ({ typeProjectId, projectId, triggerMethod, set
     };
 
     const { loading, error, data } = useQuery(GET_TEMPLATES_TASKS_TYPE_PROJECTS, {
-        variables: { typeProjectId: typeProjectId },
+        variables: { typeProjectId: 1 },
     });
 
     const { loading: loadingPersons, error: errorPersons, refetch: refetchPersons } = useQuery(SEARCH_PERSONS_QUERY, {

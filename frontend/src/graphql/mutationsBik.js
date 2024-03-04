@@ -14,7 +14,7 @@ export const ADD_BIK_MUTATION = gql`
         ) {
             id
             name
-            Bik
+            BIK
             correspondent_account
         }
     }
@@ -36,7 +36,7 @@ export const UPDATE_BIK_MUTATION = gql`
         ) {
             id
             name
-            Bik
+            BIK
             correspondent_account
         }
     }
