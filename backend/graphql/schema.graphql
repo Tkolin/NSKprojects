@@ -29,7 +29,6 @@ type Query {
     stages: [Stage]!
 
     projects: [Project!]!
-    projectStagesGroup: [ProjectStagesGroup!]!
     projectStages: [ProjectStage]!
     biks: [Bik!]!
     legalForms: [LegalForm]!
@@ -283,27 +282,34 @@ type Mutation {
         name: String!
         organization_customer_id: ID
         type_project_document_id: ID
-        facility_id: ID
         date_signing: String
-        IAD_id: ID
-        duration: Int
         date_end: String
         status_id: ID
         date_completion: String
-        delegate_id: ID
+        price: Int
+
+        facilitys: [Int]
+        stages: [Int]
+        irds: [Int]
     ): Project!
     addProject(
         number: String!
         name: String!
         organization_customer_id: ID
         type_project_document_id: ID
-        facility_id: ID
         date_signing: String
-        duration: Int
         date_end: String
         status_id: ID
         date_completion: String
-        delegate_id: ID
+        price: Int
+
+        facilitys: [ID]
+        delegates: [ID]
+
+        tasks: [ProjectTasksInput]
+        stages: [ProjectStageInput]
+        irds: [ProjectIrdInput]
+
     ): Project!
 
     updateProjectStage(
@@ -322,45 +328,54 @@ type Mutation {
         duration: String!
     ): ProjectStage!
 }
+input ProjectIrdInput {
+    stage: ID
+    persent: Int
+    date_start: String
+    date_end: String
+    number: Int
+}input ProjectStageInput {
+    stage: ID
+    persent: Int
+    date_start: String
+    date_end: String
+    number: Int
+}input ProjectTasksInput {
+    stage: ID
+    persent: Int
+    date_start: String
+    date_end: String
+    number: Int
+}
 
 type ContactsResult {
     contacts: [Contact]
     count: Int
-}
-type OrganizationsResult {
+}type OrganizationsResult {
     organizations: [Organization]
     count: Int
-}
-type PositionsResult {
+}type PositionsResult {
     positions: [Position]
     count: Int
-}
-type ProjectsResult {
+}type ProjectsResult {
     projects: [Project]
     count: Int
-}
-type PersonsResult {
+}type PersonsResult {
     persons: [Person]
     count: Int
-}
-type IrdsResult {
+}type IrdsResult {
     irds: [IRD]
     count: Int
-}
-type StagesResult {
+}type StagesResult {
     stages: [Stage]
     count: Int
-}
-
-type TasksResult {
+}type TasksResult {
     tasks: [Task]
     count: Int
-}
-type TypeProjectsResult {
+}type TypeProjectsResult {
     typeProjects: [TypeProjectDocument]
     count: Int
-}
-type Contact {
+}type Contact {
     id: ID!
     first_name: String!
     last_name: String
@@ -372,68 +387,49 @@ type Contact {
     email: String
     position: Position
     organization: Organization
-}
-type ProjectStatus{
+}type ProjectStatus{
     id: ID!
     name: String!
-}
-type PositionName {
+}type PositionName {
     id: ID!
     name: String!
-}
-
-type CurrentUser {
+}type CurrentUser {
     user: User!
     access_token: String!
-}
-type TypePayment {
+}type TypePayment {
     id: ID!
     name: String!
-}
-type projectPayment {
+}type projectPayment {
     id: ID!
     date_time_payment: String
     project: Project
     type_payment: TypePayment
     price: Int
-}
-type User {
+}type User {
     id: ID!
     name: String!
     email: String!
     role: Role!
-}
-
-type Role {
+}type Role {
     id: ID!
     name: String!
-}
-type Content {
+}type Content {
     id: ID!
     name: String!
-}
-type Position {
+}type Position {
     id: ID!
     name: String!
-}
-
-input RegisterInput {
+}input RegisterInput {
     name: String!
     email: String!
     password: String!
-}
-
-input LoginInput {
+}input LoginInput {
     email: String!
     password: String!
-}
-
-type AuthPayload {
+}type AuthPayload {
     user: User!
     access_token: String!
-}
-
-type Organization{
+}type Organization{
     id: ID!
     legal_form: LegalForm!
     name: String!
@@ -452,20 +448,15 @@ type Organization{
     Bik: Bik
     payment_account: String
     director: Contact
-}
-type LegalForm{
+}type LegalForm{
     id: ID!
     name: String!
-}
-type Bik{
+}type Bik{
     id: ID!
     BIK: String
     name: String
     correspondent_account: String
-}
-
-
-type Person{
+}type Person{
     id: ID!
     passport: Passport!
     SHILS: String
@@ -476,8 +467,7 @@ type Person{
     email_sibnipi: String
     bank: Bank
     BIK: Bik
-}
-type Passport{
+}type Passport{
     id: ID!
     firstname: String
     lastname: String
@@ -487,113 +477,81 @@ type Passport{
     passport_place_issue: PassportPlaceIssue
     birth_date: String
     date: String
-}
-type PassportPlaceIssue{
+}type PassportPlaceIssue{
     id: ID!
     name: String!
     code: String!
-}
-type Bank{
+}type Bank{
     id: ID!
     name: String!
-}
-type Note{
-    id: ID!
-    name: String!
-}
-type Facility{
+}type Facility{
     id: ID!
     name: String!
     type_facility: TypeFacility
-}
-type TypeFacility{
+}type TypeFacility{
     id: ID!
     name: String!
-}
-type Project{
+}type Project{
     id: ID!
     number: String
     name: String
     organization_customer: Organization
     type_project_document: TypeProjectDocument
-    facility: Facility
+    facilitys: [Facility]
     date_signing: String
-    duration: Int
     date_end: String
     status: ProjectStatus
     date_completion: String
-    delegate: Contact
-}
-type ProjectStagesGroup{
+    delegates: [Contact]
+    price: Int
+    IRDs: [ProjectIRD]
+    stages: [ProjectStage]
+}type ProjectStage{
     id: ID!
-    number: String
-    name: String
-    projectStage: [ProjectStage]!
-}
-type ProjectStage{
+    project: Project
+    stage: Stage
+    persent: Int
+    date_start: String
+    date_end: String
+    number: Int
+}type ProjectIRD{
     id: ID!
-    project: Project!
-    stage: Stage!
-    progress: String!
-    date_start: String!
-    duration: String!
-}
-type TypeProjectDocument{
+    project: Project
+    IRD: IRD
+    received: String
+}type TypeProjectDocument{
     id: ID!
     name: String!
     code: String!
-}
-type IRD{
+}type IRD{
     id: ID!
     name: String!
-}
-type ProjectStatus{
-    id: ID!
-    name: String!
-}
-type ProjectIrds{
-    project_id: ID!
-    ird_id: ID!
-    received: Boolean
-}
-type TemplateIrdsTypeProject{
-    project_id: ID!
-    ird_id: ID!
-}
-
-
-type Stage{
+}type Stage{
     id: ID!
     name: String
-}
-type Task{
+}type Task{
     id: ID!
     name: String
-}
-
-type TemplateIRD {
+}type TemplateIRD {
     id: ID!
     project_type: TypeProjectDocument
     ird: IRD
     stage_number: Int
     application_to_project: Int
-}
-type TemplateStage{
+}type TemplateStage{
     id: ID!
     stage: Stage
     project_type: TypeProjectDocument
     duration: Int
     stage_number: Int
     percentage: Int
-}
-type TemplateTask{
+}type TemplateTask{
     id: ID!
     task: Task
     inheritedTask: TemplateTask
     inherited_task_id: ID
     stage_number: Int
 }
-
 extend type Mutation {
     register(input: RegisterInput!): AuthPayload!
     login(input:  LoginInput!): AuthPayload!

@@ -1,135 +1,81 @@
 import React, { useState } from 'react';
-import { useQuery } from '@apollo/client';
-import {Table, Select, InputNumber, DatePicker} from 'antd';
-import {
-    GET_TEMPLATES_TASKS_TYPE_PROJECTS,
-    SEARCH_PERSONS_QUERY,
-} from "./graphql/queriesSearch";
-import {LoadingOutlined} from "@ant-design/icons";
+import { Steps } from 'antd';
 
+const { Step } = Steps;
 
-const TasksProjectExecutorForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMethod }) => {
-    const [dataPersons, setDataPersons] = useState(null);
-    const [autoCompletePersons, setAutoCompletePersons] = useState('');
+const MyComponent = () => {
+    const [currentStep, setCurrentStep] = useState(0);
+    const [step1Data, setStep1Data] = useState(null);
+    const [step2Data, setStep2Data] = useState(null);
 
-
-    const handleAutoCompletePersonsSelect = (value, taskId) => {
-        console.log(taskId);
-        handleExecutorChange(value, taskId);
-        if (value === 'CREATE_NEW') {
-            setAutoCompletePersons('');
-        }
+    const handleStep1Submit = (data) => {
+        setStep1Data(data);
+        setCurrentStep(1);
     };
 
-    const handleAutoCompletePersons = (value) => {
-        setAutoCompletePersons(value);
+    const handleStep2Submit = (data) => {
+        setStep2Data(data);
+        setCurrentStep(2);
     };
-
-    const { loading, error, data } = useQuery(GET_TEMPLATES_TASKS_TYPE_PROJECTS, {
-        variables: { typeProjectId: 1 },
-    });
-
-    const { loading: loadingPersons, error: errorPersons, refetch: refetchPersons } = useQuery(SEARCH_PERSONS_QUERY, {
-        variables: { search: autoCompletePersons },
-        onCompleted: (data) => setDataPersons(data),
-    });
-
-    const [tasksData, setTasksData] = useState([]);
-
-    const handleSave = () => {
-        console.log('Saved tasks data:', tasksData);
-    };
-
-    const buildHierarchy = (tasks, parentId = null) => {
-        return tasks
-            .filter(task => task.inherited_task_id === parentId)
-            .map(task => {
-                const children = buildHierarchy(tasks, task.id);
-                return { ...task, children };
-            });
-    };
-
-    const tasksHierarchy = buildHierarchy(data?.templatesTasksTypeProjects || []);
-
-    const updateExecutorInChildren = (dataSource, parentId, executor) => {
-        return dataSource.map(item => {
-            if (item.key === parentId) {
-                return {
-                    ...item,
-                    executor: executor,
-                    children: item.children ? updateExecutorInChildren(item.children, null, executor) : null
-                };
-            } else if (item.children) {
-                return {
-                    ...item,
-                    children: updateExecutorInChildren(item.children, parentId, executor)
-                };
-            }
-            return item;
-        });
-    };
-
-    const handleExecutorChange = (value, taskId) => {
-        setTasksData(prevState => {
-            const updatedData = updateExecutorInChildren(prevState, taskId, value);
-            return updatedData;
-        });
-    };
-
-    const renderTable = (dataSource) => {
-        return dataSource.map(item => ({
-            key: item.id,
-            task: item.task.name,
-            stage_number: item.stage_number,
-            executor: (
-                <Select
-                    popupMatchSelectWidth={false}
-                    filterOption={false}
-                    placeholder="Исполнитель..."
-                    onSearch={(value) => handleAutoCompletePersons(value)}
-                    onSelect={(value) => handleAutoCompletePersonsSelect(value, item.id)} // Pass taskId directly
-                    allowClear
-                    showSearch
-                    loading={loadingPersons}
-                >
-                    {dataPersons && dataPersons.personsTable && dataPersons.personsTable.persons && dataPersons.personsTable.persons.map(person => (
-                        <Select.Option key={person.id} value={person.id}>{person.passport.lastname} {person.passport.firstname}</Select.Option>
-                    ))}
-                </Select>
-            ),
-            cost: <InputNumber defaultValue={0} onChange={(value) => {
-                setTasksData(prevState => [...prevState, { id: item.id, cost: value }]);
-            }} />,
-            deadline: <DatePicker onChange={(date, dateString) => {
-                setTasksData(prevState => [...prevState, { id: item.id, deadline: dateString }]);
-            }} />,
-            children: item.children ? renderTable(item.children) : null,
-        }));
-    };
-
-    const dataSource = renderTable(tasksHierarchy);
-
-    const columns = [
-        { title: 'Задача', dataIndex: 'task', key: 'task' },
-        { title: 'Исполнитель', dataIndex: 'executor', key: 'executor' },
-        { title: 'Цена', dataIndex: 'cost', key: 'cost' },
-        { title: 'Срок (Либо 2 даты либо дата и продолжительность)', dataIndex: 'deadline', key: 'deadline' },
-    ];
-
-    if(loading)
-        return <LoadingOutlined
-            style={{
-                fontSize: 24,
-            }}
-            spin
-        />
 
     return (
-        <>
-            <Table columns={columns} dataSource={dataSource} />
-        </>
+        <div>
+            <Steps current={currentStep}>
+                <Step title="Шаг 1" />
+                <Step title="Шаг 2" />
+                <Step title="Шаг 3" />
+            </Steps>
+            {currentStep === 0 && (
+                <Step1 onSubmit={handleStep1Submit} />
+            )}
+            {currentStep === 1 && (
+                <Step2 onSubmit={handleStep2Submit} />
+            )}
+            {currentStep === 2 && (
+                <Step3 step1Data={step1Data} step2Data={step2Data} />
+            )}
+        </div>
     );
 };
 
-export default TasksProjectExecutorForm;
+const Step1 = ({ onSubmit }) => {
+    const [data, setData] = useState('');
 
+    const handleSubmit = () => {
+        onSubmit(data);
+    };
+
+    return (
+        <div>
+            <input value={data} onChange={(e) => setData(e.target.value)} />
+            <button onClick={handleSubmit}>Следующий шаг</button>
+        </div>
+    );
+};
+
+const Step2 = ({ onSubmit }) => {
+    const [data, setData] = useState('');
+
+    const handleSubmit = () => {
+        onSubmit(data);
+    };
+
+    return (
+        <div>
+            <input value={data} onChange={(e) => setData(e.target.value)} />
+            <button onClick={handleSubmit}>Следующий шаг</button>
+        </div>
+    );
+};
+
+const Step3 = ({ step1Data, step2Data }) => {
+    return (
+        <div>
+            <p>Данные из шага 1: {step1Data}</p>
+            <p>Данные из шага 2: {step2Data}</p>
+            <p>Это последний шаг</p>
+        </div>
+    );
+};
+
+export default MyComponent;

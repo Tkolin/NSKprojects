@@ -4,8 +4,9 @@ import { useQuery } from "@apollo/client";
 import { GET_TEMPLATES_TASKS_TYPE_PROJECTS } from "../../graphql/queriesSearch";
 import { StyledBlockBig } from "../style/BlockStyles";
 import { StyledFormItem } from "../style/FormStyles";
+import {LoadingOutlined} from "@ant-design/icons";
 
-const TasksToProjectStageForm = ( ) => {
+const TasksToProjectStageForm = (stagesArray ) => {
     const [dataSource, setDataSource] = useState();
     const [formStages] = Form.useForm();
 
@@ -15,13 +16,6 @@ const TasksToProjectStageForm = ( ) => {
         variables: { typeProjectId: 1 },
     });
 
-    // Инициализация состояний
-    const stagesArray = [
-        { id: 1, name: 'Stage 1', number: 1 },
-        { id: 2, name: 'Stage 2', number: 2 },
-        { id: 3, name: 'Stage 2', number: 3 },
-        { id: 4, name: 'Stage 2', number: 4 },
-    ];
     const [selectedStage, setSelectedStage] = useState(1);
     const [selectedTasks, setSelectedTasks] = useState([]);
     const [selectedTasksToStage, setSelectedTasksToStage] = useState([{ stageId: 1, selectedTasksId: [] }]);
@@ -107,7 +101,13 @@ const TasksToProjectStageForm = ( ) => {
         });
         setSelectedTasksToStage(updatedSelectedTasksToStage);
     };
-
+    if(loading)
+        return <LoadingOutlined
+            style={{
+                fontSize: 24,
+            }}
+            spin
+        />
     return (
         <StyledBlockBig>
             <Form form={formStages} style={{ width: '50%' }}>

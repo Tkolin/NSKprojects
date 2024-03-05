@@ -45,26 +45,28 @@ const StyledFormSmall = ({ form, onFinish, children  }) => {
 
     );
 };
-const StyledFormRegular = ({form, onFinish, children, layout  }) => {
+const StyledFormRegular = ({form, onFinish, children, layout, disabled  }) => {
     return (
             <Form form={form} onFinish={onFinish}
                   labelAlign="left"
                   style={{maxWidth: 360}}
                   wrapperCol={{flex: 1}}
                   labelWrap
-                  layout={layout ? layout : "horizontal"}>
+                  layout={layout ? layout : "horizontal"}
+                  disabled={disabled}>
 
                 {children}
             </Form>
     );
 };
-const StyledFormBig = ({ form, onFinish, children  }) => {
+const StyledFormBig = ({ form, onFinish, children, disabled  }) => {
     return (
             <Form form={form}
                   onFinish={onFinish}
                   labelAlign="left"
                   labelWrap
                   layout="horizontal"
+                  disabled={disabled}
             >
                 {children}
             </Form>

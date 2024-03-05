@@ -29,6 +29,7 @@ import StageList from "./page/directory/StageList";
 import Test from "./test";
 import {ConfigProvider} from "antd";
 import ruRU from "antd/locale/ru_RU";
+import CreateNewProject from "./page/form/CreateNewProject";
 
 
 const App = () => {
@@ -70,7 +71,7 @@ const App = () => {
                                         <Route path="/contacts/new" element={<ContactForm />} />
 
                                         <Route path="/project" element={<ProjectList />} />
-                                        <Route path="/project/new" element={<ProjectForm />} />
+                                        <Route path="/project/new" element={<CreateNewProject />} />
                                         <Route path="/project/stage" element={<ProjectStageList />} />
                                         <Route path="/project/stage/new" element={<ProjectStageFrom />} />
                                         <Route path="/project/stage/task" element={<StageTaskList />}/>

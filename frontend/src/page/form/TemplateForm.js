@@ -90,19 +90,22 @@ const TemplateForm = ({project, onClose}) => {
                 <StyledBlockRegular label={'Этапы'}>
                     <StagesTemplateForm triggerMethod={triggerSaveStages}
                                         setTriggerMethod={setTriggerSaveStages}
-                                        typeProjectId={selectedTypeProject}/>
+                                        typeProjectId={selectedTypeProject}
+                                        disabled={!selectedTypeProject}/>
                 </StyledBlockRegular>
             </Col>
             <Col span={16}>
-                <StyledBlockBig label={'ИРД'}>
+                <StyledBlockBig label={'ИРД'} >
                     <IrdsTemplateForm triggerMethod={triggerSaveIrds}
                                       setTriggerMethod={setTriggerSaveIrds}
-                                      typeProjectId={selectedTypeProject}/>
+                                      typeProjectId={selectedTypeProject}
+                                      disabled={!selectedTypeProject}/>
                 </StyledBlockBig>
                 <StyledBlockBig label={'Задачи'}>
                     <TasksTemplateForm triggerMethod={triggerSaveTasks}
                                        setTriggerMethod={setTriggerSaveTasks}
-                                       typeProjectId={selectedTypeProject}/>
+                                       typeProjectId={selectedTypeProject}
+                                       disabled={!selectedTypeProject}/>
                 </StyledBlockBig>
             </Col>
         </Row>

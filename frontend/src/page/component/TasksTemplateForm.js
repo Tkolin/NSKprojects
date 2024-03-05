@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import {Button, Collapse, Divider, notification, Transfer, Tree} from 'antd';
+import {Button, Collapse, Divider, Modal, notification, Transfer, Tree} from 'antd';
 import {SEARCH_TASKS_QUERY, SEARCH_TEMPLATE_TASKS_OR_TYPE_PROJECT_QUERY} from '../../graphql/queriesSearch';
 import {useMutation, useQuery} from '@apollo/client';
 import {UPDATE_TASKS_TEMPLATE_MUTATION} from "../../graphql/mutationsTemplate";
+import {StyledButtonGreen} from "../style/ButtonStyles";
+import {LoadingOutlined, PlusOutlined} from "@ant-design/icons";
+import TasksToProjectStageForm from "./TasksToProjectStageForm";
 const { Panel } = Collapse;
 
-const App = ({ typeProjectId, triggerMethod, setTriggerMethod }) => {
-    const [dataTasks, setDataTasks] = useState(null);
+const App = ({ typeProjectId, triggerMethod, setTriggerMethod, disabled }) => {
     const [targetKeys, setTargetKeys] = useState([]);
     const [gData, setGData] = useState();
-    const {  } = useQuery(
-        SEARCH_TASKS_QUERY,
-        {
-            onCompleted: (data) => setDataTasks(data),
-        }
-    );
+
+
+    const handleViewListProjectTasksStage = () => {
+        setViewListProjectTasksStageModalVisible(false);
+    };
+    const { data: dataTasks, loading: loadingTasks } = useQuery(SEARCH_TASKS_QUERY);
 
 
     const handleChange = (newTargetKeys) => {
         setTargetKeys(newTargetKeys);
-
     };
-
     useEffect(() => {
         if (dataTasks && dataTasks.tasksTable) {
             const tasks = dataTasks.tasksTable.tasks.map((task) => ({
@@ -29,9 +29,15 @@ const App = ({ typeProjectId, triggerMethod, setTriggerMethod }) => {
                 title: task.name,
                 children: [],
             }));
-            setGData(tasks);
+            const updatedGData = tasks.filter(item => targetKeys.includes(item.key));
+
+            setGData(updatedGData);
         }
-    }, [dataTasks]);
+    }, [dataTasks, targetKeys]);
+
+
+
+
 
 
 
@@ -99,6 +105,7 @@ const App = ({ typeProjectId, triggerMethod, setTriggerMethod }) => {
         setGData(data);
     };
 
+    const [viewListProjectTasksStageModalVisible, setViewListProjectTasksStageModalVisible] = useState(false);
 
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
@@ -109,48 +116,47 @@ const App = ({ typeProjectId, triggerMethod, setTriggerMethod }) => {
     // Мутации для добавления и обновления
     const [updateTemplateTask] = useMutation(UPDATE_TASKS_TEMPLATE_MUTATION, {
         onCompleted: () => {
-            openNotification('topRight', 'success', 'Данные успешно обновлены tt!');
+            openNotification('topRight', 'success', 'Данные успешно обновлены tasks!');
         }, onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при обновлении данных: tt' + error.message);
+            openNotification('topRight', 'error', 'Ошибка при обновлении данных: tasks' + error.message);
         }
     });
     const {
         loading: loadingTemplate, error: errorTemplate, data: dataTemplate
     } = useQuery(SEARCH_TEMPLATE_TASKS_OR_TYPE_PROJECT_QUERY, {
-        onCompleted: (data) => loadTemplate(),
+        onCompleted: (data) => loadTemplate(data),
         variables: {typeProject: typeProjectId},
         fetchPolicy: 'network-only',
     });
     // Функция для извлечения данных из gData
-    const extractDataFromTree = (treeData) => {
+    const extractDataFromTree = (treeData, parentKey = null) => {
         const extractedData = [];
-        const extract = (data, parentNumbers = '') => {
-            data.forEach((item, index) => {
-                const numbers = parentNumbers ? `${parentNumbers}.${index + 1}` : `${index + 1}`;
+        const extract = (data, parentKey) => {
+            data.forEach((item) => {
+                const currentKey = item.key;
                 extractedData.push({
-                    task_id: item.key,
-                    up_task_id: parentNumbers,
-                    stage_number: numbers,
+                    task_id: currentKey,
+                    up_task_id: parentKey,
                 });
                 if (item.children) {
-                    extract(item.children, numbers);
+                    extract(item.children, currentKey);
                 }
             });
         };
-        extract(treeData);
+        extract(treeData, parentKey);
         return extractedData;
     };
 
 
+
     // Обработчик отправки формы
     const handleSubmit = () => {
-        const tasksData = extractDataFromTree(gData);
+        const tasksData = extractDataFromTree(gData.filter(item => targetKeys.includes(item.key)));
         updateTemplateTask({
             variables: {
                 typeProjectId: typeProjectId,
                 listTasks_id: tasksData && tasksData.map(task => parseInt(task.task_id)),
                 listInheritedTasks_id: tasksData && tasksData.map(task => parseInt(task.up_task_id)),
-                stageNumber: tasksData && tasksData.map(task => task.stage_number),
             }
         });
     };
@@ -177,9 +183,9 @@ const App = ({ typeProjectId, triggerMethod, setTriggerMethod }) => {
     };
 
 
-    const loadTemplate = () => {
-        if (dataTemplate) {
-            const tasks = dataTemplate && dataTemplate.templatesTasksTypeProjects;
+    const loadTemplate = (data) => {
+        if (data && data.templatesTasksTypeProjects) {
+            const tasks = data && data.templatesTasksTypeProjects;
             const ids = tasks && tasks.map(data => ({
                 key: data.task.id.toString(),
                 title: data.task.name,
@@ -191,11 +197,9 @@ const App = ({ typeProjectId, triggerMethod, setTriggerMethod }) => {
             }));
 
             setTargetKeys(ids.map(item => item.key));
-
-
             // Сначала сгруппируем tasks по inheritedTask.id
             const groupedTasks = tasks.reduce((acc, task) => {
-                const parentId = task.inheritedTask && task.inheritedTask.id;
+                const parentId = task.inheritedTask && task.inheritedTask.task && task.inheritedTask.task.id;
                 if (!acc[parentId]) {
                     acc[parentId] = [];
                 }
@@ -221,15 +225,27 @@ const App = ({ typeProjectId, triggerMethod, setTriggerMethod }) => {
                 children: createChildren(root.task.id),
             }));
 
-            setGData(importDataToTree(gd));
+
+
+
+            setGData(gd);
+            console.log(JSON.stringify(gd, null, 4));
+            console.log(JSON.stringify(gData, null, 4));
+
         }
     };
-
+    if(loadingTemplate)
+        return <LoadingOutlined
+            style={{
+                fontSize: 24,
+            }}
+            spin
+        />
     return (
         <>
             <div>
                 <Transfer
-
+                    disabled={disabled}
                     dataSource={dataTasks && dataTasks.tasksTable
                         ? dataTasks.tasksTable.tasks.map(task => ({
                             key: task.id.toString(),
@@ -250,18 +266,31 @@ const App = ({ typeProjectId, triggerMethod, setTriggerMethod }) => {
                 />
             </div>
             <Divider>Упорядочить</Divider>
-            <Collapse defaultActiveKey={['1']} >
-                <Panel header="Групировка задач" key="1">
+            <Collapse defaultActiveKey={['1']} disabled={disabled} >
+                <Panel header="Групировка задач" key="1" disabled={disabled}>
                     <Tree
+                        disabled={disabled}
                         style={{ margin: 15 }}
                         className="draggable-tree"
                         draggable
                         blockNode
                         onDrop={onDrop}
-                        treeData={gData && generateTreeData(gData.filter(item => targetKeys.includes(item.key)))}
+                        treeData={gData && generateTreeData(gData)}
                     />
                 </Panel>
             </Collapse>
+            <Modal
+                width={1200}
+                open={viewListProjectTasksStageModalVisible}
+                onCancel={() => setViewListProjectTasksStageModalVisible(false)}
+                footer={null}
+                onClose={handleViewListProjectTasksStage}>
+                <TasksToProjectStageForm />
+            </Modal>
+            <StyledButtonGreen
+                disabled={disabled}
+                type={"dashed"} style={{width: '100%', marginTop: 10}}
+                               onClick={() => setViewListProjectTasksStageModalVisible(true)}>Распределить задачи по этапам</StyledButtonGreen>
         </>
     );
 };

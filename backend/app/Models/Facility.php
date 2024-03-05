@@ -17,8 +17,9 @@ class Facility extends Model
     {
         return $this->belongsTo(TypeFacility::class, 'type_id');
     }
-    public function project(): HasMany
+
+    public function projects(): HasMany
     {
-        return $this->hasMany(Project::class);
+        return $this->hasMany(ProjectFacilities::class);
     }
 }

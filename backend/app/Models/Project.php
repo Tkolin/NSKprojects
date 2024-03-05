@@ -13,14 +13,12 @@ class Project extends Model
         'name',
         'organization_customer_id',
         'type_project_document_id',
-        'facility_id',
         'date_signing',
-        'duration',
         'date_end',
         'status_id',
         'date_completion',
-        'delegate_id'
-    ];
+        'price',
+        ];
 
     public function organization_customer(): BelongsTo
     {
@@ -30,18 +28,12 @@ class Project extends Model
     {
         return $this->belongsTo(TypeProjectDocument::class);
     }
-    public function facility(): BelongsTo
-    {
-        return $this->belongsTo(Facility::class);
-    }
+
     public function status(): BelongsTo
     {
         return $this->belongsTo(ProjectStatus::class);
     }
-    public function delegate(): BelongsTo
-    {
-        return $this->belongsTo(Contact::class);
-    }
+
     public function project_responsible_person(): HasMany
     {
         return $this->hasMany(ProjectResponsiblePerson::class);
@@ -53,6 +45,14 @@ class Project extends Model
     public function project_status(): HasMany
     {
         return $this->hasMany(ProjectStatus::class);
+    }
+    public function project_delegations(): HasMany
+    {
+        return $this->hasMany(ProjectDelegations::class);
+    }
+    public function project_facilitys(): HasMany
+    {
+        return $this->hasMany(ProjectFacilities::class);
     }
     public function project_irds(): HasMany
     {

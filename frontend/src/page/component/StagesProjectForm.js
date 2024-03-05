@@ -1,37 +1,28 @@
 import {StyledFormBig} from "../style/FormStyles";
 import {Button, Form,  InputNumber, Modal, notification, Select, Space} from "antd";
 import {LoadingOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
-import React, { useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
 import {
     SEARCH_STAGES_QUERY,
-
     SEARCH_TEMPLATE_STAGES_OR_TYPE_PROJECT_QUERY
 } from "../../graphql/queriesSearch";
 import {DatePicker} from "antd/lib";
 import {UPDATE_STAGES_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
-import {StyledButtonGreen} from "../style/ButtonStyles";
-import TasksToProjectStageForm from "./TasksToProjectStageForm";
+
+import LoadingSpinner from "./LoadingSpinner";
 
 const {RangePicker} = DatePicker;
-const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod,
-                               setTriggerMethod, price ,dateStart, dateEnd }) => {
-    // Триггер
-    if (triggerMethod) {
-        handleSubmit();
-        setTriggerMethod(false); // Reset the trigger
-    }
+const StagesProjectForm = ({ project, disable }) => {
 
+    useEffect(() => {
+        console.log(JSON.stringify(project, null, 4));
+    }, [project]);
     // Состояния
     const [formStage] = Form.useForm();
     const [autoCompleteStage, setAutoCompleteStage] = useState('');
     const [stageFormViewModalVisible, setStageFormViewModalVisible] = useState(false);
-    const [viewListProjectTasksStageModalVisible, setViewListProjectTasksStageModalVisible] = useState(false);
 
-
-    const handleViewListProjectTasksStage = () => {
-        setViewListProjectTasksStageModalVisible(false);
-    };
     const handleAutoCompleteStageSelect = (value) => {
         if (value == 'CREATE_NEW') {
             setStageFormViewModalVisible(true);
@@ -48,12 +39,12 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod,
                 if (index === 0) {
                     return {
                         ...stage,
-                        date_range: [dateStart, stage.date_range ? stage.date_range[1] : null],
+                        date_range: [project && project.date_signing, stage.date_range ? stage.date_range[1] : null],
                     };
                 } else if (index === stageList.length - 1) {
                     return {
                         ...stage,
-                        date_range: [stage.date_range ? stage.date_range[0] : null, dateEnd],
+                        date_range: [stage.date_range ? stage.date_range[0] : null, project.date_end],
                     };
                 } else {
                     const prevStageEndDate = stageList[index - 1].date_range ? stageList[index - 1].date_range[1] : null;
@@ -83,14 +74,13 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod,
     const {
         loading: loadingTemplate, error: errorTemplate, data: dataTemplate
     } = useQuery(SEARCH_TEMPLATE_STAGES_OR_TYPE_PROJECT_QUERY, {
-        variables: {typeProject: typeProjectId},
+        variables: {typeProject: project && project.type_project_document && project.type_project_document.id},
         fetchPolicy: 'network-only',
         onCompleted: (data) => addingStages(data),
     });
 
     const addingStages = (value) => {
         if (dataStages && value) {
-            console.log('addingStages');
             const newStages = value.templatesStagesTypeProjects.map(a => ({
                 id: a.stage ? a.stage.id : null, name: a.stage ? a.stage.name : null,
             }));
@@ -142,7 +132,7 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod,
         // Вызов мутаций для обновления данных
         updateStagesToProject({
             variables: {
-                typeProjectId: typeProjectId,
+                typeProjectId: project.type_project_document.id,
                 listStages_id: stagesData && stagesData.map(stage => parseInt(stage.stage_id)),
                 listPercent: stagesData && stagesData.map(stage => stage.procent)
             }
@@ -150,24 +140,22 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod,
     }
 
     if(loadingTemplate)
-       return <LoadingOutlined
-           style={{
-               fontSize: 24,
-           }}
-           spin
-       />
+       return <LoadingSpinner/>
 
     return (
-            <StyledFormBig  form={formStage} name="dynamic_form_nest_item" autoComplete="off">
-                <Space.Compact block>
+            <StyledFormBig  form={formStage}
+                            disabled={disable}
+                            name="dynamic_form_nest_item"
+                            autoComplete="off"
+                            >
+                <Space.Compact block >
                     <Form.Item label="Суммарный срок реализации">
-                        <RangePicker value={[dateStart, dateEnd]}  suffix={"₽"}/>
+                        <RangePicker value={[project && project.date_signing, project && project.date_end]}  disabled={disable}/>
                     </Form.Item>
                     <Button onClick={handleDateStageRebuild}>Уровнять</Button>
                 </Space.Compact>
                 <Space.Compact block>
-                <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>} style={{width: '50%'}}
-                                   onClick={() => setViewListProjectTasksStageModalVisible(true)}>Распределить задачи по этапам</StyledButtonGreen>
+
                 </Space.Compact>
                 <Form.List name="stageList">
                     {(fields, {add, remove}) => (<>
@@ -211,8 +199,9 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod,
                                 },]}
                             >
                                 <RangePicker
-                                    minDate={dateStart}
-                                    maxDate={dateEnd}
+                                    disabled={disable}
+                                    minDate={project.date_signing}
+                                    maxDate={project.date_end}
                                     onChange={handleDateStageRebuild}
                                     id={{
                                         start: 'date_start_item',
@@ -242,14 +231,7 @@ const StagesProjectForm = ({ typeProjectId, projectId, triggerMethod,
                     </>)}
                 </Form.List>
                 {/* распределение задач */}
-                <Modal
-                    width={1200}
-                    open={viewListProjectTasksStageModalVisible}
-                    onCancel={() => setViewListProjectTasksStageModalVisible(false)}
-                    footer={null}
-                    onClose={handleViewListProjectTasksStage}>
-                    <TasksToProjectStageForm />
-                </Modal>
+
             </StyledFormBig>
     );
 }

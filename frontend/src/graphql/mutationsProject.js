@@ -2,30 +2,39 @@ import {gql} from "@apollo/client";
 
 export const ADD_PROJECT_MUTATION = gql`
     mutation AddProject(
-        $number: String!,
-        $name: String!,
-        $organization_customer_id: ID,
-        $type_project_document_id: ID,
-        $facility_id: ID,
-        $date_signing: String,
-        $duration: Int,
-        $date_end: String,
-        $status_id: ID,
+        $number: String!
+        $name: String!
+        $organization_customer_id: ID
+        $type_project_document_id: ID
+        $date_signing: String
+        $date_end: String
+        $status_id: ID
         $date_completion: String
-        $delegate_id: ID
+        $price: Int
+    
+        $facilitys: [ID]
+        $delegates: [ID]
+    
+        $tasks: [ProjectTasksInput]
+        $stages: [ProjectStageInput]
+        $irds: [ProjectIrdInput]
     ) {
         addProject(
             number: $number
             name: $name
             organization_customer_id: $organization_customer_id
             type_project_document_id: $type_project_document_id
-            facility_id: $facility_id
             date_signing: $date_signing
-            duration: $duration
             date_end: $date_end
             status_id: $status_id
             date_completion: $date_completion
-            delegate_id:  $delegate_id
+            price: $price
+            facilitys: $facilitys
+            delegates: $delegates
+            tasks : $tasks
+            stages: $stages
+            irds: $irds
+            
         ) {
             id
             number
@@ -40,13 +49,12 @@ export const ADD_PROJECT_MUTATION = gql`
                 id
                 name
             }
-            facility
+            facilitys
             {
                 id
                 name
             }
             date_signing
-            duration
             date_end
             status
             {
@@ -54,12 +62,13 @@ export const ADD_PROJECT_MUTATION = gql`
                 name
             }
             date_completion
-            delegate {
+            delegates {
                 id
                 first_name
                 last_name
                 patronymic
             }
+            price
         }
     }
 `;
@@ -70,13 +79,10 @@ export const UPDATE_PROJECT_MUTATION = gql`
         $name: String!,
         $organization_customer_id: ID,
         $type_project_document_id: ID,
-        $facility_id: ID,
         $date_signing: String,
-        $duration: Int,
         $date_end: String,
         $status_id: ID,
         $date_completion: String
-        $delegate_id: ID
     ) {
         updateProject(
             id: $id
@@ -84,13 +90,10 @@ export const UPDATE_PROJECT_MUTATION = gql`
             name: $name
             organization_customer_id: $organization_customer_id
             type_project_document_id: $type_project_document_id
-            facility_id: $facility_id
             date_signing: $date_signing
-            duration: $duration
             date_end: $date_end
             status_id: $status_id
             date_completion: $date_completion
-            delegate_id:  $delegate_id
         ) {
             id
             number
@@ -105,13 +108,12 @@ export const UPDATE_PROJECT_MUTATION = gql`
                 id
                 name
             }
-            facility
+            facilitys
             {
                 id
                 name
             }
             date_signing
-            duration
             date_end
             status
             {
@@ -119,12 +121,13 @@ export const UPDATE_PROJECT_MUTATION = gql`
                 name
             }
             date_completion
-            delegate {
+            delegates {
                 id
                 first_name
                 last_name
                 patronymic
             }
+            price
         }
     }
 `;
@@ -135,10 +138,13 @@ export const UPDATE_IRDS_TO_PROJECT_MUTATION = gql`
         $listPercent: [Int],
         $listNumber: [Int],
     ) {
-        updateStagesToProject(
+        updateIrdsToProject(
             typeProjectId: $typeProjectId
+            listIrds_id: $listStages_id
+            listStageNumber: $listPercent
+            listAppNumber: $listNumber
         )
-    }
+    }                      
 `;
 
 export const UPDATE_STAGES_TO_PROJECT_MUTATION = gql`
@@ -148,7 +154,7 @@ export const UPDATE_STAGES_TO_PROJECT_MUTATION = gql`
         $listStageNumber: [Int],
         $listAppNumber: [Int],
     ) {
-        updateIrdsToProject(
+        updateStagesToProject(
             typeProjectId: $typeProjectId
             listIrds_id: $listIrds_id
             listStageNumber: $listStageNumber

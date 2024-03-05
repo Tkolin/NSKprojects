@@ -11,7 +11,7 @@ import {StyledFormBig} from "../style/FormStyles";
 import {UPDATE_IRDS_TEMPLATE_MUTATION} from "../../graphql/mutationsTemplate";
 import IrdForm from "../form/IrdForm";
 
-const IrdsTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod  }) => {
+const IrdsTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod, disabled  }) => {
     // Состояния
     const [formIRD] = Form.useForm();
     const [irdFormViewModalVisible, setIrdFormViewModalVisible] = useState(false);
@@ -123,6 +123,7 @@ const IrdsTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod  }) =>
                 name="dynamic_form_nest_itemы"
                 style={{maxWidth: 600}}
                 form={formIRD}
+                disabled={disabled}
             >
 
                 <Form.List name="irdList">

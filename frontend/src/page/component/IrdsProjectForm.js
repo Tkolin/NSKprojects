@@ -11,7 +11,8 @@ import {
 import {UPDATE_IRDS_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
 import {IRDS_QUERY} from "../../graphql/queries";
 import {ADD_IRD_MUTATION} from "../../graphql/mutationsIrd";
-const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMethod }) => {
+import LoadingSpinner from "./LoadingSpinner";
+const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMethod,disable }) => {
     // Триггер
     if (triggerMethod) {
         handleSubmit();
@@ -34,7 +35,6 @@ const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMe
     });
 
     const handleAutoCompleteIrdSelect = (value) => {
-        console.log("Стоп");
         if (value == 'CREATE_NEW') {
             addIrd({variables: {name: autoCompleteIrd}});
             refetchIrds({ search: autoCompleteIrd });
@@ -59,7 +59,6 @@ const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMe
 
     const addingIrds = (value) => {
         if (dataIrds && value) {
-            console.log('addingIrds');
             const newIrds = value.templatesIrdsTypeProjects.map(a => ({
                 id: a.ird ? a.ird.id : null, name: a.ird ? a.ird.name : null,
             }));
@@ -113,21 +112,15 @@ const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMe
                 typeProjectId: typeProjectId,
                 listIrds_id: irdsData.map(ird => parseInt(ird.ird_id)),
                 listDateComplete: irdsData.map(ird => ird.date_complete),
-
             }
         });
     }
 
     if(loadingTemplate)
-        return <LoadingOutlined
-            style={{
-                fontSize: 24,
-            }}
-            spin
-        />
+        return  <LoadingSpinner/>
 
     return (
-            <StyledFormBig form={formIRD} name="dynamic_form_nest_item" autoComplete="off">
+            <StyledFormBig form={formIRD} name="dynamic_form_nest_item" autoComplete="off" disabled={disable}>
                 <Form.List name="irdList">
                     {(fields, {add, remove}) => (<>
                         {fields.map(({key, name, ...restField}) => (<Space
@@ -174,6 +167,7 @@ const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMe
                                 }}
                             >
                                 <DatePicker
+                                    disabled={disable}
                                     status={"warning"}
                                     placeholder="Получено"/>
                             </Form.Item>

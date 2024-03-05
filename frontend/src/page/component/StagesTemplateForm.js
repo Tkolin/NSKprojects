@@ -11,7 +11,7 @@ import {LoadingOutlined, MinusCircleOutlined, PlusOutlined, RetweetOutlined} fro
 import {StyledButtonGreen} from "../style/ButtonStyles";
 import StageForm from "../form/StageForm";
 
-const StagesTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod}) => {
+const StagesTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod, disabled}) => {
     // Состояния
     const [formStage] = Form.useForm();
     const [stageFormViewModalVisible, setStageFormViewModalVisible] = useState(false);
@@ -165,7 +165,9 @@ const StagesTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod}) =>
             spin
         />
     return (<>
-        <StyledFormRegular form={formStage} layout="vertical">
+        <StyledFormRegular form={formStage}
+                           layout="vertical"
+                           disabled={disabled}>
 
 
 

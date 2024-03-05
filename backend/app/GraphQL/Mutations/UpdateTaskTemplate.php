@@ -13,7 +13,7 @@ final readonly class UpdateTaskTemplate
         $typeProjectId = $args['typeProjectId'];
         $listTasksId = $args['listTasks_id'];
         $listInheritedTasksId = $args['listInheritedTasks_id'];
-        $stageNumber = $args['stageNumber'];
+        $stageNumber = $args['stageNumber'] ?? null;
 
         error_log('typeProjectId: ' . $typeProjectId);
         error_log('listTasksId: ' . json_encode($listTasksId));
@@ -27,15 +27,13 @@ final readonly class UpdateTaskTemplate
         $count = count($listTasksId);
 
         for ($i = 0; $i < $count; $i++) {
-
-
             TemplateTasksTypeProject::updateOrCreate(
                 [
                     'project_type_id' => $typeProjectId,
                     'task_id' => (string)$listTasksId[$i]
                 ],
                 [
-                    'stage_number' => (int)$stageNumber[$i],
+                    'stage_number' => $stageNumber && $stageNumber[$i] !== null ? (int)$stageNumber[$i] : null,
                 ]
             );
         }
@@ -46,12 +44,10 @@ final readonly class UpdateTaskTemplate
                 $task = TemplateTasksTypeProject::where('project_type_id', $typeProjectId)
                     ->where('task_id', $listTasksId[$i])
                     ->first();
-
                 if ($task) {
                     $inheritedTask = TemplateTasksTypeProject::where('project_type_id', $typeProjectId)
                         ->where('task_id', $listInheritedTasksId[$i])
                         ->first();
-
                     if ($inheritedTask) {
                         $task->inherited_task_id = $inheritedTask->id;
                         $task->save();
@@ -60,12 +56,10 @@ final readonly class UpdateTaskTemplate
                         throw new \Exception('Record not found for inherited_task_id: ' . $listInheritedTasksId[$i] . ' and project_type_id: ' . $typeProjectId);
                     }
                 } else {
-                    // Создать обработку случая, если запись не найдена
                     throw new \Exception('Record not found for task_id: ' . $listTasksId[$i] . ' and project_type_id: ' . $typeProjectId);
                 }
             }
         }
-
         // Удаление записей, которых нет в списке
         TemplateTasksTypeProject::where('project_type_id', $typeProjectId)
             ->whereNotIn('task_id', $listTasksId)

@@ -226,7 +226,7 @@ const ProjectList = () => {
             footer={null}
             onClose={handleClose}
         >
-            <ProjectForm project={selectedProject} onClose={handleClose}/>
+            <ProjectForm project={selectedProject} onClose={handleClose} />
         </Modal>
 
     </div>

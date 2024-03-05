@@ -1,5 +1,4 @@
 import {gql} from '@apollo/client';
-import {SEARCH_TASKS_QUERY} from "./queriesSearch";
 
 // Запросы данных
 export const BIK_QUERY = gql`
@@ -15,10 +14,11 @@ export const BIK_QUERY = gql`
 export const TASKS_QUERY = gql`
     query BikQuery {
         tasksTable {
-            id
-            BIK
-            name
-            correspondent_account
+            tasks {
+                id
+                name
+            }
+        count
         }
     }
 `;
@@ -91,7 +91,7 @@ export const TYPES_PROJECTS_QUERY = gql`
 `;
 export const PROJECT_QUERY = gql`
     query ProjectQuery {
-        projects {
+        projects{
             id
             number
             name
@@ -105,13 +105,12 @@ export const PROJECT_QUERY = gql`
                 id
                 name
             }
-            facility
+            facilitys
             {
                 id
                 name
             }
             date_signing
-            duration
             date_end
             status
             {
@@ -119,12 +118,32 @@ export const PROJECT_QUERY = gql`
                 name
             }
             date_completion
-            delegate{
+            delegates{
                 id
                 first_name
                 last_name
                 patronymic
             }
+            IRDs{
+                id
+                IRD{
+                    id
+                    name
+                }
+                received
+            }
+            stages{
+                id
+                stage{
+                    id
+                    name
+                }
+                date_start
+                date_end
+                persent
+                number
+            }
+            price
         }
     }
 `;
@@ -146,13 +165,12 @@ export const PROJECT_TABLE_QUERY = gql`
                     id
                     name
                 }
-                facility
+                facilitys
                 {
                     id
                     name
                 }
                 date_signing
-                duration
                 date_end
                 status
                 {
@@ -160,12 +178,13 @@ export const PROJECT_TABLE_QUERY = gql`
                     name
                 }
                 date_completion
-                delegate{
+                delegates{
                     id
                     first_name
                     last_name
                     patronymic
                 }
+                price
             }
             count
         }
@@ -383,9 +402,9 @@ export const PROJECT_STAGE_QUERY = gql`
                 id
                 name
             }
-            progress
+            persent
             date_start
-            duration
+            date_end
         }
     }
 `;
