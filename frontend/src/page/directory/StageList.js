@@ -30,11 +30,12 @@ const StageList = () => {
 
     const { loading, error, data } = useQuery(STAGES_QUERY, {
         variables: {
+            queryOptions: {
             page,
             limit,
             search,
             sortField,
-            sortOrder,
+            sortOrder}
         },
     });
 
@@ -157,11 +158,11 @@ const StageList = () => {
                     offsetHeader: 0,
                 }}
                 loading={loading}
-                dataSource={data.stagesTable.stages}
+                dataSource={data.stages.items}
                 columns={columns}
                 onChange={onChange}
                 pagination={{
-                    total: data.stagesTable.count,
+                    total: data.stages.count,
                     current: page,
                     limit,
                     onChange: (page, limit) => setPage(page),

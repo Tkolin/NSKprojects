@@ -3,17 +3,20 @@ import {
     SolutionOutlined,
     HomeOutlined,
     FormOutlined,
-    ProfileOutlined,
+    ProfileOutlined, LogoutOutlined,
 } from '@ant-design/icons';
-import {Layout, Menu, Button, Typography} from 'antd';
+import {Layout, Menu, Button, Typography, Space} from 'antd';
 import {useQuery} from "@apollo/client";
 import {CURRENT_USER_QUERY} from "../graphql/queries";
-import { useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {Cookies} from "react-cookie";
 import LoadingSpinner from "./component/LoadingSpinner";
+import {Header} from "antd/es/layout/layout";
+import {Content, Footer} from "antd/lib/layout/layout";
+import Logo from "../resursed/logo512.png";
 
 const {Text} = Typography;
-const { Content: Contents, Footer: Footers, Sider: Siders} = Layout;
+const {Content: Contents, Footer: Footers, Sider: Siders} = Layout;
 
 function getItem(label, key, icon, children, type) {
     return {
@@ -24,6 +27,45 @@ function getItem(label, key, icon, children, type) {
         type,
     };
 }
+const styles = {
+    header: {
+        position: 'fixed',
+        zIndex: 1,
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '0 24px',
+        background: '#fff',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+    },
+    logo: {
+        width: '50px',
+        height: '50px',
+        background: 'rgba(255, 255, 255, 0.2)',
+        margin: '16px 24px 16px 0',
+        float: 'left',
+    },
+    user: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+    welcomeText: {
+        color: 'silver',
+        marginRight: '10px',
+    },
+    logoutButton: {
+        marginLeft: '10px',
+    },
+    content: {
+        margin: '24px 16px 0',
+        overflow: 'initial',
+    },
+    footer: {
+        textAlign: 'center',
+    },
+};
+
 
 const CustomLayout = ({children}) => {
 
@@ -79,7 +121,8 @@ const CustomLayout = ({children}) => {
                     ])
                 );
                 break;
-            default: break;
+            default:
+                break;
         }
     } else {
         items.push(
@@ -154,51 +197,36 @@ const CustomLayout = ({children}) => {
     }
     // Вывод слоя
     return (
-        <Layout style={{minHeight: '100vh'}}>
-            <Siders
-                width={200}
-                style={{
-                    overflow: 'auto',
-                    height: '100vh',
-                    position: 'fixed',
-                    left: 0,
-                    top: 0,
-                    paddingTop: '20px',
-                }}
-            >
-                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+        <Layout style={{ minHeight: '100vh' }}>
+            <Header style={styles.header}>
+                <img src={Logo}  style={styles.logo}/>
+
+                <Menu onClick={onClick} mode="horizontal" style={{width: '100%'}} items={items}
+                          selectedKeys={[current]}/>
+
+                <div style={styles.user}>
                     {data && data.currentUser && (
                         <>
-                            <Text
-                                style={{display: 'block', textAlign: 'center', color: 'silver', marginBottom: '10px'}}>
-                                Добро пожаловать: {data.currentUser.name} !
-                            </Text>
-                            <Button type="primary" danger style={{width: '80%', marginTop: '10px'}}
-                                    onClick={handleLogout}>
+                            <Text style={styles.welcomeText}>Добро пожаловать: {data.currentUser.name} !</Text>
+                            <Button type="primary" danger onClick={handleLogout} style={styles.logoutButton}>
+                                <LogoutOutlined/>
                                 Выход
                             </Button>
                         </>
                     )}
                 </div>
-                <div className="demo-logo-vertical"/>
-                <Menu
-                    theme="dark"
-                    onClick={onClick}
-                    style={{width: '100%'}}
-                    mode="inline"
-                    items={items}
-                    selectedKeys={[current]}
-                />
-            </Siders>
-            <Layout style={{marginLeft: 200}}>
-                <Contents style={{margin: '24px 16px 0', overflow: 'initial'}}>
+            </Header>
+
+            <Layout style={{marginTop: 64, paddingRight: 20, paddingLeft: 20}}>
+                <Content style={styles.content}>
                     <div className="site-layout-content">{children}</div>
-                </Contents>
-                <Footers style={{textAlign: 'center'}}>
+                </Content>
+
+                <Footer style={styles.footer}>
                     ©2024 - {new Date().getFullYear()} ООО ПО "СИБНИПИ" Создал Tkolin
-                </Footers>
+                </Footer>
             </Layout>
         </Layout>
     );
-};
+}
 export default CustomLayout;

@@ -1,8 +1,5 @@
 import {useMutation, useQuery} from "@apollo/client";
-import {
-    SEARCH_IRDS_QUERY,
-    SEARCH_TEMPLATE_IRDS_OR_TYPE_PROJECT_QUERY,
-} from "../../graphql/queriesSearch";
+
 import React, {useState} from "react";
 import {Button, Form, InputNumber, Modal, notification, Select, Space} from "antd";
 import {LoadingOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
@@ -10,6 +7,7 @@ import {StyledButtonGreen} from "../style/ButtonStyles";
 import {StyledFormBig} from "../style/FormStyles";
 import {UPDATE_IRDS_TEMPLATE_MUTATION} from "../../graphql/mutationsTemplate";
 import IrdForm from "../form/IrdForm";
+import {IRDS_QUERY, TEMPLATE_IRDS_TYPE_PROJECTS_QUERY} from "../../graphql/queries";
 
 const IrdsTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod, disabled  }) => {
     // Состояния
@@ -39,12 +37,12 @@ const IrdsTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod, disab
 
     // Получение данных для выпадающих списков
     const [dataIrds, setDataIrds] = useState(null);
-    const {loading: loadingIrds, error: errorIrds, refetch: refetchIrds} = useQuery(SEARCH_IRDS_QUERY, {
-        variables: {search: autoCompleteIrd}, onCompleted: (data) => setDataIrds(data)
+    const {loading: loadingIrds, error: errorIrds, refetch: refetchIrds} = useQuery(IRDS_QUERY, {
+        variables: {queryOptions: {search: autoCompleteIrd, limit: 10, page: 1}}, onCompleted: (data) => setDataIrds(data)
     });
     const {
         loading: loadingTemplate, error: errorTemplate, data: dataTemplate
-    } = useQuery(SEARCH_TEMPLATE_IRDS_OR_TYPE_PROJECT_QUERY, {
+    } = useQuery(TEMPLATE_IRDS_TYPE_PROJECTS_QUERY, {
         variables: {typeProject: typeProjectId},
         fetchPolicy: 'network-only',
         onCompleted: (data) => addingIrds(data)
@@ -58,11 +56,11 @@ const IrdsTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod, disab
             }));
 
             refetchIrds({search: autoCompleteIrd}).then(({data}) => {
-                const existingIrds = dataIrds.irdsTable ? dataIrds.irdsTable.irds : [];
+                const existingIrds = dataIrds.irds ? dataIrds.irds.items : [];
                 const updatedIrds = [...existingIrds, ...newIrds];
                 setDataIrds({
-                    ...dataIrds, irdsTable: {
-                        ...dataIrds.irdsTable, irds: updatedIrds,
+                    ...dataIrds, irds: {
+                        ...dataIrds.irds, irds: updatedIrds,
                     },
                 });
             });
@@ -153,10 +151,10 @@ const IrdsTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod, disab
                                     showSearch
                                     loading={loadingIrds}
                                 >
-                                    {dataIrds && dataIrds.irdsTable && dataIrds.irdsTable.irds && dataIrds.irdsTable.irds.map(ird => (
+                                    {dataIrds && dataIrds.irds && dataIrds.irds.items && dataIrds.irds.items.map(ird => (
                                         <Select.Option key={ird.id}
                                                        value={ird.id}>{ird.name}</Select.Option>))}
-                                    {dataIrds && dataIrds.irdsTable && dataIrds.irdsTable.irds && dataIrds.irdsTable.irds.length === 0 && (
+                                    {dataIrds && dataIrds.irds && dataIrds.irds.items && dataIrds.irds.items.length === 0 && (
                                         <Select.Option value="CREATE_NEW">Создать новый
                                             ИРД?</Select.Option>)}
                                 </Select>

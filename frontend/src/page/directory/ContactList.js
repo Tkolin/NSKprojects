@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import {Button, Form, Modal, notification, Space, Table} from 'antd';
-import {CONTACTS_QUERY, CONTACTS_TABLE_QUERY} from '../../graphql/queries';
+import {CONTACTS_QUERY} from '../../graphql/queries';
 import {DELETE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
 import ContactForm from "../form/ContactForm";
 import LoadingSpinner from "../component/LoadingSpinner";
 import Search from "antd/es/input/Search";
-import {StyledFormLarge, StyledFormRegular} from "../style/FormStyles";
+import {StyledFormLarge} from "../style/FormStyles";
 import {StyledButtonGreen} from "../style/ButtonStyles";
 
 const ContactList = () => {
@@ -28,9 +28,11 @@ const ContactList = () => {
 
     const [search, setSearch] = useState('');
 
-    const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(CONTACTS_TABLE_QUERY, {
+    const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(CONTACTS_QUERY, {
         variables: {
-            page, limit, search, sortField: sortField, sortOrder,
+            queryOptions: {
+            page, limit, search, sortField: sortField, sortOrder
+            }
         }, fetchPolicy: 'network-only',
     });
 
@@ -50,7 +52,7 @@ const ContactList = () => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
             window.location.reload();
         }, update: (cache, {data: {deleteContact}}) => {
-            const {contacts} = cache.readQuery({query: CONTACTS_TABLE_QUERY});
+            const {contacts} = cache.readQuery({query: CONTACTS_QUERY});
             const updatedContacts = contacts.filter(contact => contact.id !== deleteContact.id);
             cache.writeQuery({
                 query: CONTACTS_QUERY, data: {contacts: updatedContacts},
@@ -64,7 +66,7 @@ const ContactList = () => {
         setEditModalVisible(false);
     };
     const handleEdit = (contactId) => {
-        const contact = data.contactsTable.contacts.find(contact => contact.id === contactId);
+        const contact = data.contacts.items.find(contact => contact.id === contactId);
         setSelectedContact(contact);
         setEditModalVisible(true);
     };
@@ -174,14 +176,14 @@ const ContactList = () => {
             <Table
                 size={'small'}
                 sticky={{
-                    offsetHeader: 0,
+                    offsetHeader: '64px',
                 }}
                 loading={loading}
-                dataSource={data.contactsTable.contacts.map((org, index) => ({...org, key: index}))}
+                dataSource={data.contacts.items.map((org, index) => ({...org, key: index}))}
                 columns={columns}
                 onChange={onChange}
                 pagination={{
-                    total: data.contactsTable.count,
+                    total: data.contacts.count,
                     current: page,
                     pageSize: limit,
                     onChange: (page, limit) => setPage(page),

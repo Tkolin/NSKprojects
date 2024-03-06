@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Form, Input, Select, Space, notification, Row, Col, Modal} from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
-import {ORGANIZATION_FORM_QUERY} from '../../graphql/queriesGroupData';
-import {ORGANIZATION_QUERY} from '../../graphql/queries';
 import {
     UPDATE_ORGANIZATION_MUTATION, ADD_ORGANIZATION_MUTATION,
 } from '../../graphql/mutationsOrganization';
@@ -15,10 +13,10 @@ import 'react-dadata/dist/react-dadata.css';
 import ContactForm from "./ContactForm";
 import BikForm from "./BikForm";
 import LoadingSpinner from "../component/LoadingSpinner";
-import {SEARCH_CONTACTS_QUERY} from "../../graphql/queriesSearch";
 import {StyledBlockBig} from "../style/BlockStyles";
 import { StyledButtonGreen} from "../style/ButtonStyles";
 import {PlusOutlined} from "@ant-design/icons";
+import {BIKS_QUERY, CONTACTS_QUERY, LEGAL_FORM_QUERY, ORGANIZATIONS_QUERY} from "../../graphql/queries";
 
 const OrganizationForm = ({organization, onClose}) => {
     // Состояния
@@ -28,15 +26,18 @@ const OrganizationForm = ({organization, onClose}) => {
     const [bikFormViewModalVisible, setBikFormViewModalVisible] = useState(false);
     const [contactFormViewModalVisible, setContactFormViewModalVisible] = useState(false);
     const [autoCompleteContacts, setAutoCompleteContacts] = useState('');
+    const [autoCompleteBiks, setAutoCompleteBiks] = useState('');
     const handleAutoCompleteContacts = (value) => {
         setAutoCompleteContacts(value)
+    };
+    const handleAutoCompleteBiks = (value) => {
+        setAutoCompleteBiks(value)
     };
     const handleBikFormView = () => {
 
         setBikFormViewModalVisible(false);
     };
     const handleContactFormView = () => {
-        refetch();
         setContactFormViewModalVisible(false);
     };
 
@@ -51,10 +52,15 @@ const OrganizationForm = ({organization, onClose}) => {
     };
 
     // Получение данных для выпадающих списков
-    const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(ORGANIZATION_FORM_QUERY);
-    const {loading: loadingContacts, error: errorContacts, data: dataContacts} = useQuery(SEARCH_CONTACTS_QUERY, {
+    const {loading: loadingLegalForm, error: errorLegalForm, data: dataLegalForm} = useQuery(LEGAL_FORM_QUERY);
+    const {loading: loadingBiks, error: errorBiks, data: dataBiks} = useQuery(BIKS_QUERY, {
         variables: {
-            searchContacts: autoCompleteContacts,
+            queryOptions: {search: autoCompleteBiks, limit: 10, page: 1}
+        },
+    });
+    const {loading: loadingContacts, error: errorContacts, data: dataContacts} = useQuery(CONTACTS_QUERY, {
+        variables: {
+            queryOptions: { search: autoCompleteContacts, limit: 10, page: 1}
         },
     });
 
@@ -78,7 +84,7 @@ const OrganizationForm = ({organization, onClose}) => {
 
     // Мутации для добавления и обновления
     const [addOrganization] = useMutation(ADD_ORGANIZATION_MUTATION, {
-        refetchQueries: [{query: ORGANIZATION_QUERY}], onCompleted: () => {
+        refetchQueries: [{query: ORGANIZATIONS_QUERY}], onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно добавлены!');
             form.resetFields();
         }, onError: (error) => {
@@ -87,7 +93,7 @@ const OrganizationForm = ({organization, onClose}) => {
     });
 
     const [updateOrganization] = useMutation(UPDATE_ORGANIZATION_MUTATION, {
-        refetchQueries: [{query: ORGANIZATION_QUERY}], onCompleted: () => {
+        refetchQueries: [{query: ORGANIZATIONS_QUERY}], onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно обновлены!');
             setEditingOrganization(null);
             onClose();
@@ -135,10 +141,6 @@ const OrganizationForm = ({organization, onClose}) => {
         setAddress2(suggestion?.unrestricted_value);
     };
 
-    // Обработка загрузки и ошибок
-    if (loading) return <LoadingSpinner/>;
-    if (error) return `Ошибка! ${error.message}`;
-
     return (<StyledBlockBig label={'Организация'}>
             <StyledFormBig form={form} onFinish={handleSubmit}>
                 <Space.Compact block>
@@ -149,9 +151,9 @@ const OrganizationForm = ({organization, onClose}) => {
                         <Input placeholder={"Наименование"}/>
                     </StyledFormItem>
                     <StyledFormItem name="legal_form">
-                        <Select placeholder={"Форма"} style={{maxWidth: 100}}>
-                            {data && data.legalForms && data.legalForms.map(data => (
-                                <Select.Option key={data.id} value={data.id}>{data.name}</Select.Option>))}
+                        <Select placeholder={"Форма"} style={{maxWidth: 100}} loading={loadingLegalForm}>
+                            {dataLegalForm && dataLegalForm.legalForms && dataLegalForm.legalForms.map(row => (
+                                <Select.Option key={row.id} value={row.id}>{row.name}</Select.Option>))}
                         </Select>
                     </StyledFormItem>
                 </Space.Compact>
@@ -164,15 +166,15 @@ const OrganizationForm = ({organization, onClose}) => {
                                     style={{width: '100%',}}>
                         <Select
                             popupMatchSelectWidth={false}
-                            filterOption={false}
-                            placeholder="Начните ввод..."
-                            onSearch={(value) => handleAutoCompleteContacts(value)}
                             allowClear
                             showSearch
-                            loading={loadingContacts}>
-                            {dataContacts && dataContacts.contactsTable && dataContacts.contactsTable.contacts && dataContacts.contactsTable.contacts.map(contact => (
-                                <Select.Option key={contact.id}
-                                               value={contact.id}>{contact.last_name} {contact.first_name} {contact.patronymic}</Select.Option>))}
+                            filterOption={false}
+                            onSearch={(value) => handleAutoCompleteContacts(value)}
+                            loading={loadingContacts}
+                            placeholder="Начните ввод...">
+                            {dataContacts && dataContacts.contacts && dataContacts.contacts.items && dataContacts.contacts.items.map(row => (
+                                <Select.Option key={row.id}
+                                               value={row.id}>{row.last_name} {row.first_name} {row.patronymic}</Select.Option>))}
                         </Select>
 
 
@@ -241,11 +243,16 @@ const OrganizationForm = ({organization, onClose}) => {
                             width: '100%',
                         }}>
 
-                                <Select placeholder="Бик"
-                                        popupMatchSelectWidth={false}>
-                                    {data && data.biks && data.biks.map(biks => (
-                                        <Select.Option key={biks.id}
-                                                       value={biks.id}>{biks.bik} {biks.name}</Select.Option>))}
+                                <Select popupMatchSelectWidth={false}
+                                        allowClear
+                                        showSearch
+                                        filterOption = {false}
+                                        onSearch={(value) => handleAutoCompleteBiks(value)}
+                                        loading={loadingBiks}
+                                        placeholder="Бик">
+                                    {dataBiks && dataBiks.biks && dataBiks.biks.items && dataBiks.biks.items.map(row => (
+                                        <Select.Option key={row.id}
+                                                       value={row.id}>{row.bik} {row.name}</Select.Option>))}
                                 </Select>
 
 

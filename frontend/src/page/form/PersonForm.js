@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Form, Input, Select, notification, Col, Row, Modal, Space} from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
-import {PERSON_QUERY} from '../../graphql/queries';
-import {PERSON_FORM_QUERY} from '../../graphql/queriesGroupData';
 import {
     ADD_PERSON_MUTATION, UPDATE_PERSON_MUTATION
 } from '../../graphql/mutationsPerson';
@@ -16,6 +14,7 @@ import LoadingSpinner from "../component/LoadingSpinner";
 import {StyledBlockBig} from "../style/BlockStyles";
 import {StyledButtonGreen} from "../style/ButtonStyles";
 import {PlusOutlined} from "@ant-design/icons";
+import {BANKS_QUERY, BIKS_QUERY, PASSPORTS_PLACE_ISSUES_QUERY, PERSONS_QUERY} from "../../graphql/queries";
 
 const PersonForm = ({person, onClose}) => {
 
@@ -37,15 +36,56 @@ const PersonForm = ({person, onClose}) => {
     };
 
     // Получение данных для выпадающих списков
-    const {loading, error, data} = useQuery(PERSON_FORM_QUERY);
+    const [autoCompletebiks, setAutoCompletebiks] = useState('');
+    const [autoCompleteBanks, setAutoCompleteBanks] = useState('');
+    const [autoCompletePPI, setAutoCompletePPI] = useState('');
+
+    const [databiks,setDatabiks] = useState('');
+    const [dataBanks,setDataBanks] = useState('');
+    const [dataPPI,setDataPPI] = useState('');
+    const handleAutoCompletebiks = (value) => {
+        setAutoCompletebiks(value);
+    };
+    const handleAutoCompleteBanks = (value) => {
+        setAutoCompleteBanks(value);
+    };
+    const handleAutoCompletePPI = (value) => {
+        setAutoCompletePPI(value);
+    };
+
+    const {loading: loadingbiks, error: errorbiks} = useQuery(BIKS_QUERY, {
+        variables: {
+            queryOptions: {  search: autoCompletebiks, limit: 10, page: 1}
+        },
+        onCompleted: ( data ) => setDatabiks(data)
+    });
+    const {loading: loadingBanks, error: errorBanks} = useQuery(BANKS_QUERY, {
+        variables: {
+            queryOptions: {  search: autoCompleteBanks, limit: 10, page: 1}
+        },
+        onCompleted: ( data ) => setDataBanks(data)
+    });
+    const {loading: loadingPPI, error: errorPPI} = useQuery(PASSPORTS_PLACE_ISSUES_QUERY, {
+        variables: {
+            queryOptions: {  search: autoCompletePPI, limit: 10, page: 1}
+        },
+        onCompleted: ( data ) => setDataPPI(data)
+    });
+
 
     // Заполнение формы данными контакта при его редактировании
     useEffect(() => {
         if (person) {
             setEditingPerson(person);
             form.setFieldsValue({
-                ...person, bank_id: person.bank ? person.bank.id : null, bik_id: person.BIK ? person.BIK.id : null,
+                ...person,
+                bank_id: person.bank ? person.bank.id : null,
+                bik_id: person.bik ? person.bik.id : null,
             });
+
+            person.bank ? setAutoCompleteBanks(person.bank.name) : setAutoCompleteBanks('');
+            person.bik ? setAutoCompletebiks(person.bik.name) : setAutoCompletebiks('');
+            person.passport.passport_place_issue ? setAutoCompletePPI(person.passport.passport_place_issue.name) : setAutoCompletePPI('');
 
             formPassport.setFieldsValue({
                 firstname: person.passport.firstname,
@@ -62,7 +102,7 @@ const PersonForm = ({person, onClose}) => {
 
     // Мутации для добавления и обновления
     const [addPerson] = useMutation(ADD_PERSON_MUTATION, {
-        refetchQueries: [{query: PERSON_QUERY}], onCompleted: () => {
+        refetchQueries: [{query: PERSONS_QUERY}], onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно добавлены!');
             form.resetFields();
         }, onError: (error) => {
@@ -71,7 +111,7 @@ const PersonForm = ({person, onClose}) => {
     });
 
     const [updatePerson] = useMutation(UPDATE_PERSON_MUTATION, {
-        refetchQueries: [{query: PERSON_QUERY}], onCompleted: () => {
+        refetchQueries: [{query: PERSONS_QUERY}], onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно обновлены!');
             setEditingPerson(null);
             onClose();
@@ -89,9 +129,6 @@ const PersonForm = ({person, onClose}) => {
         }
     };
 
-    // Обработка загрузки и ошибок
-    if (loading) return <LoadingSpinner/>;
-    if (error) return `Ошибка! ${error.message}`;
 
     return (
 
@@ -119,9 +156,17 @@ const PersonForm = ({person, onClose}) => {
                         <StyledFormItem name="passport_place_issue_id" label="Место выдачи"
                                         rules={[{required: true}]}>
 
-                                <Select style={{minWidth: 180}}>
-                                    {data && data.passportPlaceIssues && data.passportPlaceIssues.map(ppi => (
-                                        <Select.Option key={ppi.id} value={ppi.id}>{ppi.name}</Select.Option>))}
+                                <Select
+                                    popupMatchSelectWidth={false}
+                                    allowClear
+                                    showSearch
+                                    filterOption = {false}
+                                    onSearch={(value) => handleAutoCompletePPI(value)}
+                                    loading={loadingPPI}
+                                    placeholder="Начните ввод..."
+                                    style={{minWidth: 180}}>
+                                    {dataPPI && dataPPI.passportPlaceIssues && dataPPI.passportPlaceIssues.items && dataPPI.passportPlaceIssues.items.map(row => (
+                                        <Select.Option key={row.id} value={row.id}>{row.name}</Select.Option>))}
                                 </Select>
 
 
@@ -167,14 +212,30 @@ const PersonForm = ({person, onClose}) => {
                             <Input/>
                         </StyledFormItem>
                         <StyledFormItem name="bank_id" label="Банк">
-                            <Select style={{minWidth: 200}}>
-                                {data && data.banks && data.banks.map(bank => (
+                            <Select
+                                popupMatchSelectWidth={false}
+                                allowClear
+                                showSearch
+                                filterOption = {false}
+                                onSearch={(value) => handleAutoCompleteBanks(value)}
+                                loading={loadingBanks}
+                                placeholder="Начните ввод..."
+                                style={{minWidth: 200}}>
+                                {dataBanks && dataBanks.banks && dataBanks.banks.items && dataBanks.banks.items.map(bank => (
                                     <Select.Option key={bank.id} value={bank.id}>{bank.name}</Select.Option>))}
                             </Select>
                         </StyledFormItem>
                         <StyledFormItem name="bik_id" label="Бик">
-                            <Select style={{minWidth: 200}}>
-                                {data && data.biks && data.biks.map(bik => (
+                            <Select
+                                popupMatchSelectWidth={false}
+                                allowClear
+                                showSearch
+                                filterOption = {false}
+                                onSearch={(value) => handleAutoCompletebiks(value)}
+                                loading={loadingbiks}
+                                placeholder="Начните ввод..."
+                                style={{minWidth: 200}}>
+                                {databiks && databiks.biks && databiks.biks.items && databiks.biks.items.map(bik => (
                                     <Select.Option key={bik.id} value={bik.id}>{bik.name}</Select.Option>))}
                             </Select>
                         </StyledFormItem>

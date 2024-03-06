@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import {Button, Form, Modal, notification, Space, Table} from 'antd';
-import {PERSON_QUERY, PERSON_TABLE_QUERY} from '../../graphql/queries';
+import { PERSONS_QUERY} from '../../graphql/queries';
 import {DELETE_PERSON_MUTATION} from '../../graphql/mutationsPerson';
 import PersonForm from "../form/PersonForm";
 import LoadingSpinner from "../component/LoadingSpinner";
@@ -28,9 +28,9 @@ const PersonList = () => {
 
     const [search, setSearch] = useState('');
 
-    const {loading, error, data} = useQuery(PERSON_TABLE_QUERY, {
+    const {loading, error, data} = useQuery(PERSONS_QUERY, {
         variables: {
-            page, limit, search, sortField, sortOrder,
+            queryOptions: {page, limit, search, sortField, sortOrder}
         }, fetchPolicy: 'network-only',
     });
 
@@ -50,10 +50,10 @@ const PersonList = () => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
             window.location.reload();
         }, update: (cache, {data: {deletePerson}}) => {
-            const {persons} = cache.readQuery({query: PERSON_QUERY});
+            const {persons} = cache.readQuery({query: PERSONS_QUERY});
             const updatedPersons = persons.filter(person => person.id !== deletePerson.id);
             cache.writeQuery({
-                query: PERSON_QUERY, data: {persons: updatedPersons},
+                query: PERSONS_QUERY, data: {persons: updatedPersons},
             });
         },
     });
@@ -63,7 +63,7 @@ const PersonList = () => {
         setEditModalVisible(false);
     };
     const handleEdit = (personId) => {
-        const person = data.personsTable.persons.find(person => person.id === personId);
+        const person = data.persons.items.find(person => person.id === personId);
         setSelectedPerson(person);
         setEditModalVisible(true);
     };
@@ -127,9 +127,9 @@ const PersonList = () => {
         title: 'банк', dataIndex: 'bank', key: 'bank', render: (bank) => bank ? bank.name : null,
     }, {
         title: 'бик',
-        dataIndex: 'BIK',
-        key: 'BIK',
-        render: (BIK) => BIK ? BIK.name : null,
+        dataIndex: 'bik',
+        key: 'bik',
+        render: (bik) => bik ? bik.name : null,
     }, {
         title: 'Управление', key: 'edit', render: (text, record) => (<div>
                 <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
@@ -179,11 +179,11 @@ const PersonList = () => {
                     offsetHeader: 0,
                 }}
                 loading={loading}
-                dataSource={data.personsTable.persons}
+                dataSource={data.persons.items}
                 columns={columns}
                 onChange={onChange}
                 pagination={{
-                    total: data.personsTable.count,
+                    total: data.persons.count,
                     current: page,
                     pageSize: limit,
                     onChange: (page, limit) => setPage(page),

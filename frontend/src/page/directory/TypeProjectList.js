@@ -31,11 +31,12 @@ const TypeProjectList = () => {
 
     const { loading, error, data } = useQuery(TYPES_PROJECTS_QUERY, {
         variables: {
+            queryOptions: {
             page,
             limit,
             search,
             sortField,
-            sortOrder,
+            sortOrder}
         },
     });
 
@@ -72,7 +73,7 @@ const TypeProjectList = () => {
     // Обработчик событий
     const handleClose = () => {setEditModalVisible(false);};
     const handleEdit = (typeProjectId) => {
-        const typeProject = data.typeProjectsTable.typeProjects.find(typeProject => typeProject.id === typeProjectId);
+        const typeProject = data.typeProjects.items.find(typeProject => typeProject.id === typeProjectId);
         setSelectedTypeProject(typeProject);
         setEditModalVisible(true);
     };
@@ -166,11 +167,11 @@ const TypeProjectList = () => {
                     offsetHeader: 0,
                 }}
                 loading={loading}
-                dataSource={data.typeProjectsTable.typeProjects}
+                dataSource={data.typeProjects.items}
                 columns={columns}
                 onChange={onChange}
                 pagination={{
-                    total: data.typeProjectsTable.count,
+                    total: data.typeProjects.count,
                     current: page,
                     limit,
                     onChange: (page, limit) => setPage(page),

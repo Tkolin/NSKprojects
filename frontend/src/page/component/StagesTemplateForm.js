@@ -1,15 +1,12 @@
 import {Button, Divider, Form, Input, InputNumber, Modal, notification, Select, Space, Tooltip} from "antd";
 import React, {useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
-import {
-    SEARCH_STAGES_QUERY,
-    SEARCH_TEMPLATE_STAGES_OR_TYPE_PROJECT_QUERY
-} from "../../graphql/queriesSearch";
 import {UPDATE_STAGES_TEMPLATE_MUTATION} from "../../graphql/mutationsTemplate";
 import {StyledFormRegular} from "../style/FormStyles";
 import {LoadingOutlined, MinusCircleOutlined, PlusOutlined, RetweetOutlined} from "@ant-design/icons";
 import {StyledButtonGreen} from "../style/ButtonStyles";
 import StageForm from "../form/StageForm";
+import {STAGES_QUERY, TEMPLATE_STAGES_TYPE_PROJECTS_QUERY} from "../../graphql/queries";
 
 const StagesTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod, disabled}) => {
     // Состояния
@@ -39,12 +36,14 @@ const StagesTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod, dis
 
     // Получение данных для выпадающих списков
     const [dataStages, setDataStages] = useState(null);
-    const {loading: loadingStages, error: errorStages, refetch: refetchStages} = useQuery(SEARCH_STAGES_QUERY, {
-        variables: {search: autoCompleteStage}, onCompleted: (data) => setDataStages(data)
+    const {loading: loadingStages, error: errorStages, refetch: refetchStages} = useQuery(STAGES_QUERY, {
+        variables: {
+            queryOptions: { search: autoCompleteStage, limit: 10, page: 1}
+        }, onCompleted: (data) => setDataStages(data)
     });
     const {
         loading: loadingTemplate, error: errorTemplate, data: dataTemplate
-    } = useQuery(SEARCH_TEMPLATE_STAGES_OR_TYPE_PROJECT_QUERY, {
+    } = useQuery(TEMPLATE_STAGES_TYPE_PROJECTS_QUERY, {
         variables: {typeProject: typeProjectId},
         fetchPolicy: 'network-only',
         onCompleted: (data) => addingStages(data)
@@ -58,11 +57,11 @@ const StagesTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod, dis
             }));
 
             refetchStages({search: autoCompleteStage}).then(({data}) => {
-                const existingStages = dataStages.stagesTable ? dataStages.stagesTable.stages : [];
+                const existingStages = dataStages.stages ? dataStages.stages.items : [];
                 const updatedStages = [...existingStages, ...newStages];
                 setDataStages({
-                    ...dataStages, stagesTable: {
-                        ...dataStages.stagesTable, stages: updatedStages,
+                    ...dataStages, stages: {
+                        ...dataStages.stages, stages: updatedStages,
                     },
                 });
             });
@@ -168,9 +167,6 @@ const StagesTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod, dis
         <StyledFormRegular form={formStage}
                            layout="vertical"
                            disabled={disabled}>
-
-
-
             <Form.List name="stageList">
                 {(fields, {add, remove}) => (<>
                     {fields.map(({key, name, ...restField}) => (<Space
@@ -189,16 +185,16 @@ const StagesTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod, dis
                                 <Select
                                     style={{maxWidth: 200, minWidth: 200}}
                                     popupMatchSelectWidth={false}
+                                    allowClear
+                                    showSearch
                                     filterOption={false}
                                     onSearch={(value) => handleAutoCompleteStage(value)} // Передаем введенное значение
                                     onSelect={(value) => handleAutoCompleteStageSelect(value)}
                                     placeholder="Начните ввод..."
-                                    allowClear
-                                    showSearch
                                 >
-                                    {dataStages && dataStages.stagesTable && dataStages.stagesTable.stages.map(stage => (
+                                    {dataStages && dataStages.stages && dataStages.stages.items.map(stage => (
                                         <Select.Option key={stage.id} value={stage.id}>{stage.name}</Select.Option>))}
-                                    {dataStages && dataStages.stagesTable && dataStages.stagesTable.stages && dataStages.stagesTable.stages.length === 0 && (
+                                    {dataStages && dataStages.stages && dataStages.stages.items && dataStages.stages.items.length === 0 && (
                                         <Select.Option value="CREATE_NEW">Создать новый
                                             этап?</Select.Option>)}
                                 </Select>

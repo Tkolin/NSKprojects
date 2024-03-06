@@ -30,6 +30,7 @@ import Test from "./test";
 import {ConfigProvider} from "antd";
 import ruRU from "antd/locale/ru_RU";
 import CreateNewProject from "./page/form/CreateNewProject";
+import {createGlobalStyle} from "styled-components";
 
 
 const App = () => {
@@ -48,9 +49,14 @@ const App = () => {
 
     const currentUser = data?.currentUser;
 
-
+    const GlobalStyles = createGlobalStyle`
+    body {
+        margin: 0;
+    }
+`;
     return (
         <ConfigProvider locale={ruRU}>
+            <GlobalStyles />
             <Router>
                 <CustomLayout currentUser={currentUser}>
                     <Routes>

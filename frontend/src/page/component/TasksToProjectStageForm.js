@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Tree, Radio, Form } from 'antd';
 import { useQuery } from "@apollo/client";
-import { GET_TEMPLATES_TASKS_TYPE_PROJECTS } from "../../graphql/queriesSearch";
 import { StyledBlockBig } from "../style/BlockStyles";
 import { StyledFormItem } from "../style/FormStyles";
 import {LoadingOutlined} from "@ant-design/icons";
+import {TEMPLATE_TASKS_TYPE_PROJECTS_QUERY} from "../../graphql/queries";
 
 const TasksToProjectStageForm = (stagesArray ) => {
     const [dataSource, setDataSource] = useState();
     const [formStages] = Form.useForm();
 
     // Запрос данных с сервера
-    const { loading, error, data: dataTasks } = useQuery(GET_TEMPLATES_TASKS_TYPE_PROJECTS, {
+    const { loading, error, data: dataTasks } = useQuery(TEMPLATE_TASKS_TYPE_PROJECTS_QUERY, {
         onCompleted: (data) => setDataSource(renderTree(addNumbersToHierarchy(buildHierarchy(data.templatesTasksTypeProjects || [])))),
         variables: { typeProjectId: 1 },
     });

@@ -3,12 +3,11 @@
 namespace App\GraphQL\Queries;
 
 use App\GraphQL\Service\AuthorizationService;
-use App\Models\Stage;
 use App\Models\Task;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
-final readonly class TasksTable
+final readonly class Tasks
 {
     /** @param  array{}  $args */
     public function __invoke(null $_,array $args,  GraphQLContext $context)
@@ -21,8 +20,8 @@ final readonly class TasksTable
             $tasksQuery = Task::query();
             error_log("Вот так:");
             // Поиск
-            if (isset($args['search'])) {
-                $searchTerm = $args['search'];
+            if (isset($args['queryOptions']['search'])) {
+                $searchTerm = $args['queryOptions']['search'];
                 $tasksQuery = $tasksQuery
                     ->where('name', 'like', "%$searchTerm%");
             }
@@ -31,22 +30,22 @@ final readonly class TasksTable
             $count = $tasksQuery->count();
 
             // Сортировка
-            if (isset($args['sortField']) && isset($args['sortOrder'])) {
-                $sortField = $args['sortField'];
-                $sortOrder = $args['sortOrder'];
+            if (isset($args['queryOptions']['sortField']) && isset($args['queryOptions']['sortOrder'])) {
+                $sortField = $args['queryOptions']['sortField'];
+                $sortOrder = $args['queryOptions']['sortOrder'];
                 $tasksQuery = $tasksQuery->orderBy($sortField, $sortOrder);
             }
 
             // Пагинация
-            if (isset($args['page'])) {
-                $tasks = $tasksQuery->paginate($args['limit'], ['*'], 'page', $args['page']);
+            if (isset($args['queryOptions']['page'])) {
+                $tasks = $tasksQuery->paginate($args['queryOptions']['limit'], ['*'], 'page', $args['queryOptions']['page']);
             } else {
                 $tasks = $tasksQuery->get();
             }
 
 
 
-            return ['tasks' => $tasks, 'count' => $count];
+            return ['items' => $tasks, 'count' => $count];
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }

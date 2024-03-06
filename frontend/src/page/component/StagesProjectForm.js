@@ -1,16 +1,14 @@
 import {StyledFormBig} from "../style/FormStyles";
-import {Button, Form,  InputNumber, Modal, notification, Select, Space} from "antd";
-import {LoadingOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
+import {Button, Form,  InputNumber, notification, Select, Space} from "antd";
+import { MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
-import {
-    SEARCH_STAGES_QUERY,
-    SEARCH_TEMPLATE_STAGES_OR_TYPE_PROJECT_QUERY
-} from "../../graphql/queriesSearch";
+
 import {DatePicker} from "antd/lib";
 import {UPDATE_STAGES_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
 
 import LoadingSpinner from "./LoadingSpinner";
+import {STAGES_QUERY, TEMPLATE_STAGES_TYPE_PROJECTS_QUERY} from "../../graphql/queries";
 
 const {RangePicker} = DatePicker;
 const StagesProjectForm = ({ project, disable }) => {
@@ -68,12 +66,12 @@ const StagesProjectForm = ({ project, disable }) => {
 
     // Получение данных для выпадающих списков
     const [dataStages, setDataStages] = useState(null);
-    const {loading: loadingStages, error: errorStages, refetch: refetchStages} = useQuery(SEARCH_STAGES_QUERY, {
-        variables: {search: autoCompleteStage}, onCompleted: (data) => setDataStages(data)
+    const {loading: loadingStages, error: errorStages, refetch: refetchStages} = useQuery(STAGES_QUERY, {
+        variables: {queryOptions: {search: autoCompleteStage, limit: 10, page: 1}}, onCompleted: (data) => setDataStages(data)
     });
     const {
         loading: loadingTemplate, error: errorTemplate, data: dataTemplate
-    } = useQuery(SEARCH_TEMPLATE_STAGES_OR_TYPE_PROJECT_QUERY, {
+    } = useQuery(TEMPLATE_STAGES_TYPE_PROJECTS_QUERY, {
         variables: {typeProject: project && project.type_project_document && project.type_project_document.id},
         fetchPolicy: 'network-only',
         onCompleted: (data) => addingStages(data),
@@ -85,11 +83,11 @@ const StagesProjectForm = ({ project, disable }) => {
                 id: a.stage ? a.stage.id : null, name: a.stage ? a.stage.name : null,
             }));
             refetchStages({search: autoCompleteStage}).then(({data}) => {
-                const existingStages = dataStages.stagesTable ? dataStages.stagesTable.stages : [];
+                const existingStages = dataStages.stages ? dataStages.stages.items : [];
                 const updatedStages = [...existingStages, ...newStages];
                 setDataStages({
-                    ...dataStages, stagesTable: {
-                        ...dataStages.stagesTable, stages: updatedStages,
+                    ...dataStages, stages: {
+                        ...dataStages.stages, stages: updatedStages,
                     },
                 });
             });
@@ -183,9 +181,9 @@ const StagesProjectForm = ({ project, disable }) => {
                                     allowClear
                                     showSearch
                                 >
-                                    {dataStages && dataStages.stagesTable && dataStages.stagesTable.stages.map(stage => (
+                                    {dataStages && dataStages.stages && dataStages.stages.items.map(stage => (
                                         <Select.Option value={stage.id}>{stage.name}</Select.Option>))}
-                                    {dataStages && dataStages.stagesTable && dataStages.stagesTable.stages && dataStages.stagesTable.stages.length === 0 && (
+                                    {dataStages && dataStages.stages && dataStages.stages.items && dataStages.stages.items.length === 0 && (
                                         <Select.Option value="CREATE_NEW">Создать новый
                                             этап?</Select.Option>)}
                                 </Select>

@@ -23,7 +23,7 @@ export const DELETE_ORGANIZATION_MUTATION = gql`
             OGRN
             OKPO
             KPP
-            Bik{
+            bik{
                 id
                 name
             }
@@ -53,7 +53,7 @@ export const ADD_ORGANIZATION_MUTATION = gql`
         $OGRN: String,
         $OKPO: String,
         $KPP: String,
-        $BIK_id: ID,
+        $bik_id: ID,
         $payment_account: String,
         $director_id: ID
     ) {
@@ -72,7 +72,7 @@ export const ADD_ORGANIZATION_MUTATION = gql`
             OGRN: $OGRN
             OKPO: $OKPO
             KPP: $KPP
-            BIK_id: $BIK_id
+            bik_id: $bik_id
             payment_account: $payment_account
             director_id: $director_id
         ) {
@@ -93,7 +93,7 @@ export const ADD_ORGANIZATION_MUTATION = gql`
             OGRN
             OKPO
             KPP
-            Bik{
+             bik{
                 id
                 name
             }
@@ -124,7 +124,7 @@ export const UPDATE_ORGANIZATION_MUTATION = gql`
         $OGRN: String,
         $OKPO: String,
         $KPP: String,
-        $BIK_id: ID,
+        $bik_id: ID,
         $payment_account: String,
         $director_id: ID!
     ) {
@@ -144,7 +144,7 @@ export const UPDATE_ORGANIZATION_MUTATION = gql`
             OGRN: $OGRN
             OKPO: $OKPO
             KPP: $KPP
-            BIK_id: $BIK_id
+            bik_id: $bik_id
             payment_account: $payment_account
             director_id: $director_id
         ) {
@@ -165,7 +165,7 @@ export const UPDATE_ORGANIZATION_MUTATION = gql`
             OGRN
             OKPO
             KPP
-            Bik{
+             bik{
                 id
                 name
             }

@@ -47,7 +47,7 @@ const StyledBlockRegular = ({label, children  }) => {
 };
 const StyledBlockBig = ({label, children}) => {
     return (
-        <StyledBlockWrapperBig>
+        <StyledBlockWrapperBig >
             <Divider style={{ marginBottom: '20px', marginTop: '0px' }}  >
                 <Title level={3}>{label}</Title>
              </Divider>

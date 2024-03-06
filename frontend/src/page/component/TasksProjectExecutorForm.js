@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import {Table, Select, InputNumber, DatePicker} from 'antd';
-import {
-    GET_TEMPLATES_TASKS_TYPE_PROJECTS,
-    SEARCH_PERSONS_QUERY,
-} from "../../graphql/queriesSearch";
+
 import {LoadingOutlined} from "@ant-design/icons";
+import {PERSONS_QUERY, PERSONS_SHORT_QUERY, TEMPLATE_TASKS_TYPE_PROJECTS_QUERY} from "../../graphql/queries";
 
 
 const TasksProjectExecutorForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMethod }) => {
@@ -25,11 +23,11 @@ const TasksProjectExecutorForm = ({ typeProjectId, projectId, triggerMethod, set
         setAutoCompletePersons(value);
     };
 
-    const { loading, error, data } = useQuery(GET_TEMPLATES_TASKS_TYPE_PROJECTS, {
+    const { loading: loading, error, data: data } = useQuery(TEMPLATE_TASKS_TYPE_PROJECTS_QUERY, {
         variables: { typeProjectId: 1 },
     });
 
-    const { loading: loadingPersons, error: errorPersons, refetch: refetchPersons } = useQuery(SEARCH_PERSONS_QUERY, {
+    const { loading: loadingPersons, error: errorPersons, refetch: refetchPersons } = useQuery(PERSONS_SHORT_QUERY, {
         variables: { search: autoCompletePersons },
         onCompleted: (data) => setDataPersons(data),
     });
@@ -92,8 +90,8 @@ const TasksProjectExecutorForm = ({ typeProjectId, projectId, triggerMethod, set
                     showSearch
                     loading={loadingPersons}
                 >
-                    {dataPersons && dataPersons.personsTable && dataPersons.personsTable.persons && dataPersons.personsTable.persons.map(person => (
-                        <Select.Option key={person.id} value={person.id}>{person.passport.lastname} {person.passport.firstname}</Select.Option>
+                    {dataPersons && dataPersons.persons && dataPersons.persons.items && dataPersons.persons.items.map(row => (
+                        <Select.Option key={row.id} value={row.id}>{row.passport.lastname} {row.passport.firstname}</Select.Option>
                     ))}
                 </Select>
             ),

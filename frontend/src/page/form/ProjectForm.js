@@ -3,8 +3,13 @@ import {
     Form, Input, Button, Select, InputNumber, Col, Row, notification, Modal, Space, AutoComplete, Cascader,
 } from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
-import {PROJECT_QUERY, TYPES_PROJECTS_QUERY} from '../../graphql/queries';
-import {PROJECT_FORM_QUERY} from '../../graphql/queriesGroupData';
+import {
+    PROJECTS_QUERY,
+    PROJECT_STATUSES_QUERY,
+    TYPES_PROJECTS_QUERY,
+    ORGANIZATIONS_QUERY,
+    CONTACTS_QUERY, ORGANIZATIONS_SHORT_QUERY, CONTACTS_SHORT_QUERY, FACILITYS_QUERY
+} from '../../graphql/queries';
 import {
     ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION,
 } from '../../graphql/mutationsProject';
@@ -16,13 +21,10 @@ import {PlusOutlined} from '@ant-design/icons';
 import OrganizationForm from "./OrganizationForm";
 import moment from 'moment';
 import ContactForm from "./ContactForm";
-import {
-    SEARCH_DELEGATES_OR_ORGANIZATION_QUERY, SEARCH_ORGANIZATIONS_QUERY,
-} from "../../graphql/queriesSearch";
-import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../style/BlockStyles";
+
+import {StyledBlockRegular} from "../style/BlockStyles";
 import {StyledButtonGreen} from "../style/ButtonStyles";
-import IrdsProjectForm from "../component/IrdsProjectForm";
-import StagesProjectForm from "../component/StagesProjectForm";
+
 import dayjs from "dayjs";
 
 const {Option} = Select;
@@ -34,7 +36,6 @@ const ProjectForm = ({ project, setProject, onClose, onSubmit}) => {
     const [form] = Form.useForm();
     const [editingPrice, setEditingPrice] = useState(0);
 
-
     const [selectedTypeProject, setSelectedTypeProject] = useState(null);
 
     const [cascaderFacility, setCascaderFacility] = useState(null);
@@ -45,16 +46,12 @@ const ProjectForm = ({ project, setProject, onClose, onSubmit}) => {
     const [autoCompleteContacts, setAutoCompleteContacts] = useState('');
     const [autoCompleteTypeProjects, setAutoCompleteTypeProjects] = useState('');
     const [costumerFormViewModalVisible, setCostumerFormViewModalVisible] = useState(false);
-    const [facilityFormViewModalVisible, setFacilityFormViewModalVisible] = useState(false);
 
     const handleContactFormView = () => {
         setContactFormViewModalVisible(false);
     };
     const handleCostumerFormView = () => {
         setCostumerFormViewModalVisible(false);
-    };
-    const handleFacilityFormView = () => {
-        setFacilityFormViewModalVisible(false);
     };
     const handleAutoCompleteContacts = (value) => {
         setAutoCompleteContacts(value)
@@ -117,22 +114,25 @@ const ProjectForm = ({ project, setProject, onClose, onSubmit}) => {
 
 
     // Получение данных для выпадающих списков
-    const {loading: loadingAll, error: errorAll, data: dataAll} = useQuery(PROJECT_FORM_QUERY, {
+    const {loading: loadingFacility} = useQuery(FACILITYS_QUERY, {
         onCompleted: (data) => setCascaderFacility(sortFacilitysForCascader(data))
     });
+    const {loading: loadingStatuses, error: errorStatuses, data: dataStatuses} = useQuery(PROJECT_STATUSES_QUERY);
     const {
         loading: loadingTypeProject, error: errorTypeProject, data: dataTypeProject
-    } = useQuery(TYPES_PROJECTS_QUERY);
+    } = useQuery(TYPES_PROJECTS_QUERY, {
+        variables: {queryOptions: {limit: 10 , page: 1 ,search: autoCompleteTypeProjects}}
+    });
 
     const {
         loading: loadingDelegates, error: errorDelegates, data: dataDelegates
-    } = useQuery(SEARCH_DELEGATES_OR_ORGANIZATION_QUERY, {
-        variables: {searchOrganizationId: selectedOrganization},
+    } = useQuery(CONTACTS_SHORT_QUERY, {
+        variables: {organizationId: selectedOrganization},
     });
     const {
         loading: loadingOrganizations, error: errorOrganizations, data: dataOrganizations
-    } = useQuery(SEARCH_ORGANIZATIONS_QUERY, {
-        variables: {searchOrganizations: autoCompleteOrganization},
+    } = useQuery(ORGANIZATIONS_SHORT_QUERY, {
+        variables: {queryOptions: {limit: 10 , page: 1 ,search: autoCompleteOrganization}}
     });
 
     // Заполнение формы данными контакта при его редактировании
@@ -155,7 +155,7 @@ const ProjectForm = ({ project, setProject, onClose, onSubmit}) => {
     }, [editingProject, form]);
     // Мутации для добавления и обновления
     const [addProject] = useMutation(ADD_PROJECT_MUTATION, {
-        refetchQueries: [{query: PROJECT_QUERY}], onCompleted: (data) => {
+        refetchQueries: [{query: PROJECTS_QUERY}], onCompleted: (data) => {
             save(data);
             setProject(data);
             openNotification('topRight', 'success', 'Данные успешно добавлены!');
@@ -164,7 +164,7 @@ const ProjectForm = ({ project, setProject, onClose, onSubmit}) => {
         }
     });
     const [updateProject] = useMutation(UPDATE_PROJECT_MUTATION, {
-        refetchQueries: [{query: PROJECT_QUERY}], onCompleted: (data) => {
+        refetchQueries: [{query: PROJECTS_QUERY}], onCompleted: (data) => {
             openNotification('topRight', 'success', 'Данные успешно обновлены!');
             save(data);
             setProject(data);
@@ -215,10 +215,9 @@ const ProjectForm = ({ project, setProject, onClose, onSubmit}) => {
         }
     };
 
-    if (errorAll || errorAll || errorTypeProject || errorDelegates || errorOrganizations) return <>Ошибка загрузки
-        данных</>
+
     return (<>
-                    <StyledBlockRegular label={'Проект'}>
+
                         <StyledFormRegular form={form} layout="vertical">
                             <StyledFormItem name="number" label="Номер проекта" rules={[{required: true}]}>
                                 <Input/>
@@ -240,12 +239,10 @@ const ProjectForm = ({ project, setProject, onClose, onSubmit}) => {
                                         loading={loadingOrganizations}
                                         placeholder="Начните ввод..."
                                         onSearch={(value) => handleAutoCompleteOrganizations(value)}
-
                                     >
-
-                                    {dataOrganizations && dataOrganizations.organizationsTable && dataOrganizations.organizationsTable.organizations.map(organization => (
-                                    <Select.Option key={organization.id}
-                                                     value={organization.id}>{organization.name}</Select.Option>))}
+                                    {dataOrganizations && dataOrganizations.organizations && dataOrganizations.organizations.items.map(row => (
+                                    <Select.Option key={row.id}
+                                                     value={row.id}>{row.name}</Select.Option>))}
                                 </Select>
                                 </StyledFormItem>
                                 <StyledButtonGreen icon={<PlusOutlined/>}
@@ -266,9 +263,9 @@ const ProjectForm = ({ project, setProject, onClose, onSubmit}) => {
                                         placeholder="По компаниям"
                                         onSearch={(value) => handleAutoCompleteContacts(value)}
                                         loading={loadingDelegates}>
-                                        {dataDelegates && dataDelegates.contactsTable && dataDelegates.contactsTable.contacts.map(delegate => (
-                                            <Select.Option key={delegate.id}
-                                                           value={delegate.id}>{delegate.last_name} {delegate.first_name} {delegate.patronymic}</Select.Option>))}
+                                        {dataDelegates && dataDelegates.contacts && dataDelegates.contacts.items.map(row => (
+                                            <Select.Option key={row.id}
+                                                           value={row.id}>{row.last_name} {row.first_name} {row.patronymic}</Select.Option>))}
                                     </Select>
                                 </StyledFormItem>
                                 <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
@@ -287,7 +284,7 @@ const ProjectForm = ({ project, setProject, onClose, onSubmit}) => {
                                     placeholder="Начните ввод..."
                                     onSearch={(value) => handleAutoCompleteTypeProjects(value)}
                                     onSelect={handleEditingTemplate}>
-                                    {dataTypeProject && dataTypeProject.typeProjectsTable && dataTypeProject.typeProjectsTable.typeProjects.map(typeDocument => (
+                                    {dataTypeProject && dataTypeProject.typeProjects && dataTypeProject.typeProjects.items.map(typeDocument => (
                                         <Option key={typeDocument.id}
                                                 value={typeDocument.id}>{typeDocument.name}</Option>))}
                                 </Select>
@@ -306,8 +303,6 @@ const ProjectForm = ({ project, setProject, onClose, onSubmit}) => {
                                         maxTagCount="responsive"
                                     />
                                 </StyledFormItem>
-                                <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
-                                                   onClick={() => setFacilityFormViewModalVisible(true)}/>
                             </Space.Compact>
                             <Space.Compact block style={{alignItems: 'flex-end'}}>
                                 <StyledFormItem name="date_signing" label="Дата подписания">
@@ -330,8 +325,8 @@ const ProjectForm = ({ project, setProject, onClose, onSubmit}) => {
                                 </StyledFormItem>
                             </Space.Compact>
                             <StyledFormItem name="status_id" label="Статус проекта">
-                                <Select loading={loadingAll}>
-                                    {dataAll && dataAll.projectStatuses && dataAll.projectStatuses.map(status => (
+                                <Select loading={loadingStatuses}>
+                                    {dataStatuses && dataStatuses.projectStatuses && dataStatuses.projectStatuses.map(status => (
                                         <Select.Option key={status.id}
                                                        value={status.id}>{status.name}</Select.Option>))}
                                 </Select>
@@ -351,7 +346,7 @@ const ProjectForm = ({ project, setProject, onClose, onSubmit}) => {
                             </div>
 
                         </StyledFormRegular>
-                    </StyledBlockRegular>
+
         <Modal
             open={contactFormViewModalVisible}
             onCancel={() => setContactFormViewModalVisible(false)}

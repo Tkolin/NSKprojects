@@ -1,42 +1,40 @@
 type Query {
-    contactsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String, searchOrganizationId: String): ContactsResult
-    organizationsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): OrganizationsResult
-    positionsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): PositionsResult
-    irdsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): IrdsResult
-    stagesTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): StagesResult
-    tasksTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): TasksResult
-    typeProjectsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): TypeProjectsResult
-    projectsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): ProjectsResult
-    personsTable(page: Int, limit: Int, search: String, sortField: String, sortOrder: String): PersonsResult
-    contacts: [Contact]!
-    positionsNames: [PositionName!]!
-    currentUser: User!
+    contacts(queryOptions: QueryOptions, organizationId: ID): ContactsResult
+    organizations(queryOptions: QueryOptions): OrganizationsResult
+    positions(queryOptions: QueryOptions): PositionsResult
+    irds(queryOptions: QueryOptions): IrdsResult
+    stages(queryOptions: QueryOptions): StagesResult
+    tasks(queryOptions: QueryOptions): TasksResult
+    typeProjects(queryOptions: QueryOptions): TypeProjectsResult
+    projects(queryOptions: QueryOptions): ProjectsResult
+    persons(queryOptions: QueryOptions): PersonsResult
+    biks(queryOptions: QueryOptions): BikResult
+    passportPlaceIssues(queryOptions: QueryOptions): PassportPlaceIssueResult
+    banks(queryOptions: QueryOptions): BanksResult
 
-    organizations: [Organization]
-
-    paymentsProjects(project: ID): [projectPayment]
+    paymentsProjects(queryOptions: QueryOptions, projectId: ID): [projectPayment]
 
     templatesIrdsTypeProjects(typeProject: ID): [TemplateIRD]
     templatesStagesTypeProjects(typeProject: ID): [TemplateStage]
     templatesTasksTypeProjects(typeProject: ID): [TemplateTask]
 
+    currentUser: User!
+
+    legalForms: [LegalForm]!
+    facilitys: [Facility!]!
     TypePayments: [TypePayment]
     projectStatuses: [ProjectStatus!]!
-    typeProjectDocuments: [TypeProjectDocument]
-    facilitys: [Facility!]!
 
-    irds: [IRD]!
-    stages: [Stage]!
-
-    projects: [Project!]!
     projectStages: [ProjectStage]!
-    biks: [Bik!]!
-    legalForms: [LegalForm]!
-    persons: [Person]!
-    passportPlaceIssues: [PassportPlaceIssue]!
-    banks: [Bank]!
 }
-
+input QueryOptions {
+    page: Int
+    limit: Int
+    search: String
+    sortField: String
+    sortOrder: String
+    searchOrganizationId: String
+}
 type Mutation {
 
     addTask(
@@ -135,17 +133,17 @@ type Mutation {
     ): PassportPlaceIssue!
 
     addBik(
-        BIK: String!
+         bik: String!
         name: String!
         correspondent_account: String
-    ): Bik!
+    ):  bik!
 
     updateBik(
         id: ID!
-        BIK: String!
+         bik: String!
         name: String!
         correspondent_account: String
-    ): Bik!
+    ):  bik!
     addContact(
         first_name: String!
         last_name: String
@@ -200,7 +198,7 @@ type Mutation {
         OGRN: String
         OKPO: String
         KPP: String
-        BIK_id: ID
+        bik_id: ID
         payment_account: String
         director_id: ID
     ): Organization!
@@ -221,7 +219,7 @@ type Mutation {
         OGRN: String
         OKPO: String
         KPP: String
-        BIK_id: ID
+        bik_id: ID
         payment_account: String
         director_id: ID
     ): Organization!
@@ -348,32 +346,41 @@ input ProjectIrdInput {
     number: Int
 }
 
-type ContactsResult {
-    contacts: [Contact]
+type BikResult {
+    items: [bik]
+    count: Int
+}type PassportPlaceIssueResult {
+    items: [PassportPlaceIssue]
+    count: Int
+}type ContactsResult {
+    items: [Contact]
+    count: Int
+}type BanksResult {
+    items: [Bank]
     count: Int
 }type OrganizationsResult {
-    organizations: [Organization]
+    items: [Organization]
     count: Int
 }type PositionsResult {
-    positions: [Position]
+    items: [Position]
     count: Int
 }type ProjectsResult {
-    projects: [Project]
+    items: [Project]
     count: Int
 }type PersonsResult {
-    persons: [Person]
+    items: [Person]
     count: Int
 }type IrdsResult {
-    irds: [IRD]
+    items: [IRD]
     count: Int
 }type StagesResult {
-    stages: [Stage]
+    items: [Stage]
     count: Int
 }type TasksResult {
-    tasks: [Task]
+    items: [Task]
     count: Int
 }type TypeProjectsResult {
-    typeProjects: [TypeProjectDocument]
+    items: [TypeProjectDocument]
     count: Int
 }type Contact {
     id: ID!
@@ -445,15 +452,15 @@ type ContactsResult {
     OGRN: String
     OKPO: String
     KPP: String
-    Bik: Bik
+     bik:  bik
     payment_account: String
     director: Contact
 }type LegalForm{
     id: ID!
     name: String!
-}type Bik{
+}type  bik{
     id: ID!
-    BIK: String
+     bik: String
     name: String
     correspondent_account: String
 }type Person{
@@ -466,7 +473,7 @@ type ContactsResult {
     email: String
     email_sibnipi: String
     bank: Bank
-    BIK: Bik
+     bik:  bik
 }type Passport{
     id: ID!
     firstname: String

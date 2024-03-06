@@ -3,12 +3,11 @@
 namespace App\GraphQL\Queries;
 
 use App\GraphQL\Service\AuthorizationService;
-use App\Models\Organization;
 use App\Models\Position;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
-final readonly class PositionsTable
+final readonly class Positions
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args, GraphQLContext $context)
@@ -20,8 +19,8 @@ final readonly class PositionsTable
             $positionQuery = Position::query();
 
             // Поиск
-            if (isset($args['search'])) {
-                $searchTerm = $args['search'];
+            if (isset($args['queryOptions']['search'])) {
+                $searchTerm = $args['queryOptions']['search'];
                 $positionQuery = $positionQuery
                     ->where('name', 'like', "%$searchTerm%");
             }
@@ -29,13 +28,13 @@ final readonly class PositionsTable
             // Получаем количество записей
             $count = $positionQuery->count();
 
-            if (isset($args['page'])) {
-                $positions = $positionQuery->paginate($args['limit'], ['*'], 'page', $args['page']);
+            if (isset($args['queryOptions']['page'])) {
+                $positions = $positionQuery->paginate($args['queryOptions']['limit'], ['*'], 'page', $args['queryOptions']['page']);
             } else {
                 $positions = $positionQuery->get();
             }
 
-            return ['positions' => $positions, 'count' => $count];
+            return ['items' => $positions, 'count' => $count];
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }

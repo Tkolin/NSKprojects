@@ -27,9 +27,9 @@ export const DELETE_PERSON_MUTATION = gql`
             bank{
                 name
             }
-            BIK{
+            bik{
                 id
-                BIK
+                bik
                 name
             }
         }
@@ -97,10 +97,10 @@ export const ADD_PERSON_MUTATION = gql`
             bank{
                 name
             }
-            BIK{
+            bik{
                 id
                 name
-                BIK
+                bik
             }
         }
     }
@@ -168,10 +168,10 @@ export const UPDATE_PERSON_MUTATION = gql`
             bank{
                 name
             }
-            BIK{
+            bik{
                 id
                 name
-                BIK
+                bik
             }
         }
     }

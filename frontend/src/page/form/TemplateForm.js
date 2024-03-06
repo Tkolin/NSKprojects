@@ -25,8 +25,6 @@ const TemplateForm = ({project, onClose}) => {
     // Состояния
     const [form] = Form.useForm();
     const [typeProjectFormViewModalVisible, setTypeProjectFormViewModalVisible] = useState(false);
-    const [confirmTypeChangeModalVisible, setConfirmTypeChangeModalVisible] = useState(false);
-    const [editingTemplate, setEditingTemplate] = useState(null);
     const [selectedTypeProject, setSelectedTypeProject] = useState(null);
     const handleTypeProjectFormView = () => {
         setTypeProjectFormViewModalVisible(false);
@@ -35,20 +33,24 @@ const TemplateForm = ({project, onClose}) => {
     const [triggerSaveIrds, setTriggerSaveIrds] = useState(false);
     const [triggerSaveTasks, setTriggerSaveTasks] = useState(false);
     // Функции уведомлений
-    const openNotification = (placement, type, message) => {
-        notification[type]({
-            message: message, placement,
-        });
-    };
 
 
     // Получение данных для выпадающих списков
+    const [autoCompleteProjectType, setAutoCompleteProjectType] =useState('');
+    const handleAutoCompleteProjectType = (data) =>{
+        setAutoCompleteProjectType(data);
+    }
     const {
         loading: loadingTypeProject, error: errorTypeProject, data: dataTypeProject
-    } = useQuery(TYPES_PROJECTS_QUERY);
+    } = useQuery(TYPES_PROJECTS_QUERY, {
+        variables: {
+            queryOptions: {page: 1, limit: 20, search: autoCompleteProjectType}
+        },
+    });
 
     // Переключение типов документации
     const handleEditingTemplate = (value) => {
+        console.log(value);
         setSelectedTypeProject(value);
     };
 
@@ -57,7 +59,6 @@ const TemplateForm = ({project, onClose}) => {
         setTriggerSaveIrds(true);
         setTriggerSaveTasks(true);
     }
-    if (loadingTypeProject) return <LoadingSpinner/>
 
     return (<StyledBlockLarge>
         <Row gutter={8}>
@@ -70,11 +71,16 @@ const TemplateForm = ({project, onClose}) => {
                             }}>
                                 <Select
                                     popupMatchSelectWidth={false}
-                                    value={selectedTypeProject}
-                                    onSelect={handleEditingTemplate}>
-                                    {dataTypeProject && dataTypeProject.typeProjectsTable && dataTypeProject.typeProjectsTable.typeProjects.map(typeDocument => (
-                                        <Option key={typeDocument.id}
-                                                value={typeDocument.id}>{typeDocument.name}</Option>))}
+                                    allowClear
+                                    showSearch
+                                    filterOption = {false}
+                                    loading={loadingTypeProject}
+                                    onSearch={(value) => handleAutoCompleteProjectType(value)}
+                                    onSelect={(value) => handleEditingTemplate(value)} // Добавлен обработчик onSelect
+                                    placeholder="Начните ввод...">
+                                    {dataTypeProject && dataTypeProject.typeProjects && dataTypeProject.typeProjects.items && dataTypeProject.typeProjects.items.map(row => (
+                                        <Option key={row.id}
+                                                value={row.id}>{row.name}</Option>))}
                                 </Select>
                             </StyledFormItem>
                             <StyledButtonGreen    type={"dashed"} icon={<PlusOutlined/>}

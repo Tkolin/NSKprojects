@@ -69,7 +69,7 @@ const IrdList = () => {
     // Обработчик событий
     const handleClose = () => {setEditModalVisible(false);};
     const handleEdit = (irdId) => {
-        const ird = data.irdsTable.irds.find(ird => ird.id === irdId);
+        const ird = data.irds.items.find(ird => ird.id === irdId);
         setSelectedIrd(ird);
         setEditModalVisible(true);
     };
@@ -156,11 +156,11 @@ const IrdList = () => {
                     offsetHeader: 0,
                 }}
                 loading={loading}
-                dataSource={data.irdsTable.irds}
+                dataSource={data.irds.items}
                 columns={columns}
                 onChange={onChange}
                 pagination={{
-                    total: data.irdsTable.count,
+                    total: data.irds.count,
                     current: page,
                     limit,
                     onChange: (page, limit) => setPage(page),

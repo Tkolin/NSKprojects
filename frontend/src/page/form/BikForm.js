@@ -5,10 +5,10 @@ import {
     ADD_BIK_MUTATION,
     UPDATE_BIK_MUTATION
 } from '../../graphql/mutationsBik';
-import {BIK_QUERY} from '../../graphql/queries';
 import {StyledFormItem, StyledFormRegular} from "../style/FormStyles";
 import {StyledBlockRegular} from "../style/BlockStyles";
 import {StyledButtonGreen} from "../style/ButtonStyles";
+import {BIKS_QUERY} from "../../graphql/queries";
 
 const BikForm = ({ bik, onClose }) => {
 
@@ -36,7 +36,7 @@ const BikForm = ({ bik, onClose }) => {
 
     // Мутации для добавления и обновления
     const [addBik] = useMutation(ADD_BIK_MUTATION, {
-        refetchQueries: [{ query: BIK_QUERY }],
+        refetchQueries: [{ query: BIKS_QUERY }],
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно добавлены!');
             form.resetFields();
@@ -47,7 +47,7 @@ const BikForm = ({ bik, onClose }) => {
     });
 
     const [updateBik] = useMutation(UPDATE_BIK_MUTATION, {
-        refetchQueries: [{ query: BIK_QUERY }],
+        refetchQueries: [{ query: BIKS_QUERY }],
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно обновлены!');
             setEditingBik(null);

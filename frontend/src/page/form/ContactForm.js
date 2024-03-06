@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, notification, AutoComplete} from 'antd';
+import {Form, Input, notification, Select} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
-import {CONTACTS_QUERY} from '../../graphql/queries';
+import {CONTACTS_QUERY, ORGANIZATIONS_SHORT_QUERY, POSITIONS_QUERY} from '../../graphql/queries';
 import {
     ADD_CONTACT_MUTATION,
     UPDATE_CONTACT_MUTATION
@@ -9,7 +9,6 @@ import {
 import {StyledFormItem, StyledFormRegular} from '../style/FormStyles';
 import {DatePicker} from "antd/lib";
 import moment from 'moment';
-import {SEARCH_ORGANIZATIONS_QUERY, SEARCH_POSITIONS_QUERY} from "../../graphql/queriesSearch";
 import {StyledBlockRegular} from "../style/BlockStyles";
 import {StyledButtonGreen} from "../style/ButtonStyles";
 
@@ -19,13 +18,13 @@ const ContactForm = ({ contact, onClose }) => {
     const [editingContact, setEditingContact] = useState(null);
     const [form] = Form.useForm();
     const [ api,contextHolder] = notification.useNotification();
-    const [autoCompleteOrganization, setAutoCompleteOrganization] = useState({ id: '', name: '' });
-    const [autoCompletePositions, setAutoCompletePositions] = useState({ id: '', name: '' });
-    const handleAutoCompleteOrganization = (value, option) => {
-        setAutoCompleteOrganization({ id: option.key, name: value });
+    const [autoCompleteOrganization, setAutoCompleteOrganization] = useState('');
+    const [autoCompletePositions, setAutoCompletePositions] = useState('');
+    const handleAutoCompleteOrganization = (value) => {
+        setAutoCompleteOrganization(value);
     };
-    const handleAutoCompletePositions = (value, option) => {
-        setAutoCompletePositions({ id: option.key, name: value });
+    const handleAutoCompletePositions = (value) => {
+        setAutoCompletePositions(value);
     };
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
@@ -36,16 +35,20 @@ const ContactForm = ({ contact, onClose }) => {
     };
 
     // Получение данных для выпадающих списков
-    const { loading: loadingPositions, error: errorPositions, data: dataPositions } = useQuery(SEARCH_POSITIONS_QUERY, {
+    const [dataPositions, setDataPositions] = useState();
+    const [dataOrganizations, setDataOrganizations] = useState();
+    const { loading: loadingPositions, error: errorPositions } = useQuery(POSITIONS_QUERY, {
         variables: {
-            searchPositions: autoCompletePositions.name,
+            queryOptions: {  search: autoCompletePositions, limit: 10, page: 1}
         },
+        onCompleted: (data) => setDataPositions(data)
     });
 
-    const { loading: loadingOrganizations, error: errorOrganizations, data: dataOrganizations } = useQuery(SEARCH_ORGANIZATIONS_QUERY, {
+    const { loading: loadingOrganizations, error: errorOrganizations } = useQuery(ORGANIZATIONS_SHORT_QUERY, {
         variables: {
-            searchOrganizations: autoCompleteOrganization.name,
+            queryOptions: { search: autoCompleteOrganization, limit: 10, page: 1}
         },
+        onCompleted: (data) => setDataOrganizations(data)
     });
 
     // Заполнение формы данными контакта при его редактировании
@@ -57,12 +60,13 @@ const ContactForm = ({ contact, onClose }) => {
                 birth_day:  contact.birth_day ? moment(contact.birth_day): null
             });
 
-            contact.position ? setAutoCompletePositions({id: contact.position.id, name: contact.position.name}) : setAutoCompletePositions({id: "", name: ""});
-            contact.organization ? setAutoCompleteOrganization({id: contact.organization.id, name: contact.organization.name}) : setAutoCompleteOrganization({id: "", name: ""});
+            contact.position ? setAutoCompletePositions(contact.position.name) : setAutoCompletePositions('');
+            contact.organization ? setAutoCompleteOrganization(contact.organization.name) : setAutoCompleteOrganization('');
             form.setFieldsValue({
-                position_id:   contact.position ? contact.position.name : null,
-                organization_id: contact.organization ? contact.organization.name : null
+                position_id:   contact.position ? contact.position.id: null,
+                organization_id: contact.organization ? contact.organization.id : null
             });
+
         }
     }, [contact, form]);
 
@@ -93,9 +97,9 @@ const ContactForm = ({ contact, onClose }) => {
     // Обработчик отправки формы
     const handleSubmit = () => {
         if (editingContact) {
-            updateContact({ variables: { id: editingContact.id , ...form.getFieldsValue(), organization_id: autoCompleteOrganization.id , position_id: autoCompletePositions.id} });
+            updateContact({ variables: { id: editingContact.id , ...form.getFieldsValue()} });
         } else {
-            addContact({ variables: {...form.getFieldsValue(), organization_id: autoCompleteOrganization.id , position_id: autoCompletePositions.id} });
+            addContact({ variables: {...form.getFieldsValue()} });
         }
     };
 
@@ -152,28 +156,34 @@ const ContactForm = ({ contact, onClose }) => {
                     <Input        placeholder="Введите e-mail"/>
                 </StyledFormItem>
                 <StyledFormItem name="position_id" label="Должность" >
-                    <AutoComplete
+                    <Select
                         popupMatchSelectWidth={false}
+                        allowClear
+                        showSearch
                         filterOption = {false}
-                        options={dataPositions  && dataPositions.positionsTable && dataPositions.positionsTable.positions.map(position => ({
-                            key: position.id,
-                            value: position.name,
-                            label: position.name,
-                        }))}
-                        onChange={(value, option)=>handleAutoCompletePositions(value, option)} // Передаем введенное значение
-                        placeholder="Начните ввод..."/>
+                        loading={loadingPositions}
+                        onSearch={(value) => handleAutoCompletePositions(value)}
+                        placeholder="Начните ввод...">
+                        {dataPositions && dataPositions.positions && dataPositions.positions.items.map(row => (
+                            <Select.Option key={row.id}
+                                           value={row.id}>{row.name}</Select.Option>))}
+
+                    </Select>
                 </StyledFormItem>
                 <StyledFormItem name="organization_id" label="Организация" rules={[{ required: true }]}>
-                    <AutoComplete
+                    <Select
                         popupMatchSelectWidth={false}
+                        allowClear
+                        showSearch
                         filterOption = {false}
-                        options={dataOrganizations &&  dataOrganizations.organizationsTable && dataOrganizations.organizationsTable.organizations.map(organization => ({
-                            key: organization.id,
-                            value: organization.name,
-                            label: organization.name,
-                        }))}
-                        onChange={(value, option)=>handleAutoCompleteOrganization(value, option)} // Передаем введенное значение
-                        placeholder="Начните ввод..."/>
+                        onSearch={(value) => handleAutoCompleteOrganization(value)}
+                        loading={loadingOrganizations}
+                        placeholder="Начните ввод...">
+                        {dataOrganizations && dataOrganizations.organizations && dataOrganizations.organizations.items.map(row => (
+                            <Select.Option key={row.id}
+                                           value={row.id}>{row.name}</Select.Option>))}
+                    </Select>
+
                 </StyledFormItem>
                 <StyledFormItem>
                     <div style={{textAlign: 'center'}}>

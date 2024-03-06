@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { useQuery } from '@apollo/client';
 import {Button, Form, Modal, notification, Space, Table} from 'antd';
-import { PROJECT_TABLE_QUERY} from '../../graphql/queries';
+import {PROJECT_QUERY, PROJECT_TABLE_QUERY, PROJECTS_QUERY} from '../../graphql/queries';
 import ProjectForm from "../form/ProjectForm";
 import LoadingSpinner from "../component/LoadingSpinner";
 import Search from "antd/es/input/Search";
@@ -25,13 +25,14 @@ const ProjectList = () => {
 
     const [search, setSearch] = useState('');
 
-    const { loading, error, data } = useQuery(PROJECT_TABLE_QUERY, {
+    const { loading, error, data } = useQuery(PROJECTS_QUERY, {
         variables: {
+            queryOptions: {
             page,
             limit,
             search,
             sortField,
-            sortOrder,
+            sortOrder}
         },
     });
 
@@ -52,7 +53,7 @@ const ProjectList = () => {
         setEditModalVisible(false);
     };
     const handleEdit = (contactId) => {
-        const contact = data.projects.find(contact => contact.id === contactId);
+        const contact = data && data.projects && data.projects.items.find(contact => contact.id === contactId);
         setSelectedProject(contact);
         setEditModalVisible(true);
     };
@@ -204,13 +205,13 @@ const ProjectList = () => {
                    offsetHeader: 0,
                }}
                loading={loading}
-               dataSource={data.projectsTable.projects}
+               dataSource={data.projects.items}
                columns={columns}
                onChange={onChange}
                pagination={{
-                   total: data.irdsTable && data.irdsTable.count,
+                   total: data.projects && data.projects.count,
                    current: page,
-                   limit,
+                   size: limit,
                    onChange: (page, limit) => setPage(page),
                    onShowSizeChange: (current, size) => {
                        setPage(1);

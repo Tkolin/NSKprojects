@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import {Button, Collapse, Divider, Modal, notification, Transfer, Tree} from 'antd';
-import {SEARCH_TASKS_QUERY, SEARCH_TEMPLATE_TASKS_OR_TYPE_PROJECT_QUERY} from '../../graphql/queriesSearch';
+import { Collapse, Divider, Modal, notification, Transfer, Tree} from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
 import {UPDATE_TASKS_TEMPLATE_MUTATION} from "../../graphql/mutationsTemplate";
 import {StyledButtonGreen} from "../style/ButtonStyles";
-import {LoadingOutlined, PlusOutlined} from "@ant-design/icons";
+import {LoadingOutlined} from "@ant-design/icons";
 import TasksToProjectStageForm from "./TasksToProjectStageForm";
+import {TASKS_QUERY, TEMPLATE_TASKS_TYPE_PROJECTS_QUERY} from "../../graphql/queries";
 const { Panel } = Collapse;
 
 const App = ({ typeProjectId, triggerMethod, setTriggerMethod, disabled }) => {
@@ -16,15 +16,15 @@ const App = ({ typeProjectId, triggerMethod, setTriggerMethod, disabled }) => {
     const handleViewListProjectTasksStage = () => {
         setViewListProjectTasksStageModalVisible(false);
     };
-    const { data: dataTasks, loading: loadingTasks } = useQuery(SEARCH_TASKS_QUERY);
+    const { data: dataTasks, loading: loadingTasks } = useQuery(TASKS_QUERY);
 
 
     const handleChange = (newTargetKeys) => {
         setTargetKeys(newTargetKeys);
     };
     useEffect(() => {
-        if (dataTasks && dataTasks.tasksTable) {
-            const tasks = dataTasks.tasksTable.tasks.map((task) => ({
+        if (dataTasks && dataTasks.tasks) {
+            const tasks = dataTasks.tasks.items.map((task) => ({
                 key: task.id.toString(),
                 title: task.name,
                 children: [],
@@ -123,7 +123,7 @@ const App = ({ typeProjectId, triggerMethod, setTriggerMethod, disabled }) => {
     });
     const {
         loading: loadingTemplate, error: errorTemplate, data: dataTemplate
-    } = useQuery(SEARCH_TEMPLATE_TASKS_OR_TYPE_PROJECT_QUERY, {
+    } = useQuery(TEMPLATE_TASKS_TYPE_PROJECTS_QUERY, {
         onCompleted: (data) => loadTemplate(data),
         variables: {typeProject: typeProjectId},
         fetchPolicy: 'network-only',
@@ -246,8 +246,8 @@ const App = ({ typeProjectId, triggerMethod, setTriggerMethod, disabled }) => {
             <div>
                 <Transfer
                     disabled={disabled}
-                    dataSource={dataTasks && dataTasks.tasksTable
-                        ? dataTasks.tasksTable.tasks.map(task => ({
+                    dataSource={dataTasks && dataTasks.tasks
+                        ? dataTasks.tasks.items.map(task => ({
                             key: task.id.toString(),
                             title: task.name,
                             chosen: targetKeys.includes(task.id.toString()),

@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, Descriptions, FloatButton, Form, Modal, notification, Space, Table} from 'antd';
-import {CONTACTS_TABLE_QUERY, ORGANIZATION_QUERY, ORGANIZATIONS_TABLE_QUERY} from '../../graphql/queries';
+import {Button, Descriptions, FloatButton, Form, Modal, notification, Space} from 'antd';
 import {DELETE_ORGANIZATION_MUTATION} from '../../graphql/mutationsOrganization';
 import OrganizationForm from "../form/OrganizationForm";
 import LoadingSpinner from "../component/LoadingSpinner";
@@ -11,6 +10,7 @@ import {PlusSquareOutlined} from "@ant-design/icons";
 import {StyledTable} from "../style/TableStyles";
 import {StyledFormLarge} from "../style/FormStyles";
 import {StyledButtonGreen} from "../style/ButtonStyles";
+import {ORGANIZATIONS_QUERY} from "../../graphql/queries";
 
 const OrganizationList = () => {
     // Состояния
@@ -30,9 +30,9 @@ const OrganizationList = () => {
 
     const [search, setSearch] = useState('');
 
-    const {loading, error, data, refetch} = useQuery(ORGANIZATIONS_TABLE_QUERY, {
+    const {loading, error, data, refetch} = useQuery(ORGANIZATIONS_QUERY, {
         variables: {
-            page, limit, search, sortField: sortColum, sortOrder,
+            queryOptions: {page, limit, search, sortField: sortColum, sortOrder}
         }, fetchPolicy: 'network-only',
     });
 
@@ -52,10 +52,10 @@ const OrganizationList = () => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
             window.location.reload();
         }, update: (cache, {data: {deleteOrganization}}) => {
-            const {organizations} = cache.readQuery({query: ORGANIZATION_QUERY});
+            const {organizations} = cache.readQuery({query: ORGANIZATIONS_QUERY});
             const updatedOrganization = organizations.filter(organization => organization.id !== deleteOrganization.id);
             cache.writeQuery({
-                query: ORGANIZATION_QUERY, data: {contacts: updatedOrganization},
+                query: ORGANIZATIONS_QUERY, data: {contacts: updatedOrganization},
             });
         },
     });
@@ -66,7 +66,7 @@ const OrganizationList = () => {
         setEditModalVisible(false);
     };
     const handleEdit = (organizationId) => {
-        const organization = data.organizationsTable.organizations.find(organization => organization.id === organizationId);
+        const organization = data.organizations.items.find(organization => organization.id === organizationId);
         setSelectedOrganization(organization);
         setEditModalVisible(true);
     };
@@ -166,11 +166,11 @@ const OrganizationList = () => {
                 offsetHeader: 0,
             }}
             loading={loading}
-            dataSource={data.organizationsTable.organizations.map((org, index) => ({...org, key: index}))}
+            dataSource={data.organizations.items.map((org, index) => ({...org, key: index}))}
             columns={columns}
             onChange={onChange}
             pagination={{
-                total: data.organizationsTable.count,
+                total: data.organizations.count,
                 current: page,
                 pageSize: limit,
                 onChange: (page, limit) => setPage(page),
