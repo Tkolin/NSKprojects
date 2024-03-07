@@ -6,26 +6,38 @@ import { StyledFormItem } from "../style/FormStyles";
 import {LoadingOutlined} from "@ant-design/icons";
 import {TEMPLATE_TASKS_TYPE_PROJECTS_QUERY} from "../../graphql/queries";
 
-const TasksToProjectStageForm = (stagesArray ) => {
+const TasksToProjectStageForm = (project, onSubmit ) => {
+    const [stagesArray, setStagesArray] = useState(null);
+
+
     const [dataSource, setDataSource] = useState();
     const [formStages] = Form.useForm();
 
     // Запрос данных с сервера
     const { loading, error, data: dataTasks } = useQuery(TEMPLATE_TASKS_TYPE_PROJECTS_QUERY, {
-        onCompleted: (data) => setDataSource(renderTree(addNumbersToHierarchy(buildHierarchy(data.templatesTasksTypeProjects || [])))),
-        variables: { typeProjectId: 1 },
+        onCompleted: (data) => setDataSource(renderTree(addNumbersToHierarchy(buildHierarchy(data?.templatesTasksTypeProjects || [])))),
+        variables: { typeProjectId: project?.type_project_document?.id },
+    });
+    const { loading, error, data: dataTasks } = useQuery(TEMPLATE_TASKS_TYPE_PROJECTS_QUERY, {
+        onCompleted: (data) => setDataSource(renderTree(addNumbersToHierarchy(buildHierarchy(data?.templatesTasksTypeProjects || [])))),
+        variables: { typeProjectId: project?.type_project_document?.id },
     });
 
     const [selectedStage, setSelectedStage] = useState(1);
     const [selectedTasks, setSelectedTasks] = useState([]);
     const [selectedTasksToStage, setSelectedTasksToStage] = useState([{ stageId: 1, selectedTasksId: [] }]);
+
     useEffect(() => {
-        const initialSelectedTasksToStage = stagesArray.map(stage => ({
+
+    }, [project]);
+
+    useEffect(() => {
+        const initialSelectedTasksToStage = stagesArray?.map(stage => ({
             stageId: stage.id,
             selectedTasksId: []
         }));
         setSelectedTasksToStage(initialSelectedTasksToStage);
-    }, []);
+    }, [stagesArray]);
 
     // Логика для построения иерархии задач
     const buildHierarchy = (tasks, parentId = null) => {
@@ -111,7 +123,7 @@ const TasksToProjectStageForm = (stagesArray ) => {
     return (
         <StyledBlockBig>
             <Form form={formStages} style={{ width: '50%' }}>
-                {stagesArray.map(stage => (
+                {stagesArray?.map(stage => (
                     <StyledFormItem key={stage.id}>
                         <h3></h3>
                         <Radio

@@ -1,27 +1,23 @@
 import {StyledFormBig} from "../style/FormStyles";
-import {Button, Form, notification, Select, Space} from "antd";
+import {Button, Form, InputNumber, notification, Select, Space, Tooltip} from "antd";
 import {DatePicker} from "antd/lib";
-import { MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
+import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 import React, {useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
 import {UPDATE_IRDS_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
 import {IRDS_QUERY, TEMPLATE_IRDS_TYPE_PROJECTS_QUERY} from "../../graphql/queries";
 import {ADD_IRD_MUTATION} from "../../graphql/mutationsIrd";
 import LoadingSpinner from "./LoadingSpinner";
-const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMethod,disable }) => {
-    // Триггер
-    if (triggerMethod) {
-        handleSubmit();
-        setTriggerMethod(false); // Reset the trigger
-    }
+import {StyledButtonGreen} from "../style/ButtonStyles";
 
+const IrdsProjectForm = ({project, onSubmit, disable}) => {
     // Состояния
     const [formIRD] = Form.useForm();
     const [autoCompleteIrd, setAutoCompleteIrd] = useState('');
 
     //Мутация
     const [addIrd] = useMutation(ADD_IRD_MUTATION, {
-        refetchQueries: [{ query: IRDS_QUERY }],
+        refetchQueries: [{query: IRDS_QUERY}],
         onCompleted: () => {
             openNotification('topRight', 'success', 'ИРД успешно добавлено, произеведите выбор!');
         },
@@ -33,7 +29,7 @@ const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMe
     const handleAutoCompleteIrdSelect = (value) => {
         if (value == 'CREATE_NEW') {
             addIrd({variables: {name: autoCompleteIrd}});
-            refetchIrds({ search: autoCompleteIrd });
+            refetchIrds({search: autoCompleteIrd});
         }
     };
     const handleAutoCompleteIrd = (value) => {
@@ -43,12 +39,13 @@ const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMe
     // Получение данных для выпадающих списков
     const [dataIrds, setDataIrds] = useState(null);
     const {loading: loadingIrds, refetch: refetchIrds} = useQuery(IRDS_QUERY, {
-        variables: {queryOptions: {search: autoCompleteIrd, limit: 10, page: 1}}, onCompleted: (data) => setDataIrds(data)
+        variables: {queryOptions: {search: autoCompleteIrd, limit: 10, page: 1}},
+        onCompleted: (data) => setDataIrds(data)
     });
     const {
-        loading: loadingTemplate , data: dataTemplate
+        loading: loadingTemplate, data: dataTemplate
     } = useQuery(TEMPLATE_IRDS_TYPE_PROJECTS_QUERY, {
-        variables: {typeProject: typeProjectId},
+        variables: {typeProject: project?.type_project_document?.id},
         fetchPolicy: 'network-only',
         onCompleted: (data) => addingIrds(data),
     });
@@ -80,8 +77,8 @@ const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMe
     // Подгрузка формы
     const loadTemplate = () => {
         if (dataTemplate) {
-            const irds = dataTemplate && dataTemplate.templatesIrdsTypeProjects;
-            const initialValuesIrds = irds && irds.map(data => ({
+            const irds = dataTemplate?.templatesIrdsTypeProjects;
+            const initialValuesIrds = irds?.map(data => ({
                 ird_item: data.ird.id, stageNumber_item: data.stage_number, appNumber_item: data.application_to_project,
             }));
             formIRD.setFieldsValue({irdList: initialValuesIrds});
@@ -98,34 +95,68 @@ const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMe
     });
 
     const handleSubmit = () => {
-        const irdsData = formIRD.getFieldsValue().irdList.map(ird => ({
-            ird_id: ird.ird_item, date_complete: ird.date_complete_item
+        const irdToProject = formIRD.getFieldsValue().irdList.map(ird => ({
+            projectId: project?.id,
+            irdId: ird.ird_item,
+            stageNumber: ird.stageNumber_item,
+            applicationProject: ird.applicationProject_item,
+            receivedDate: ird.receivedDate,
         }));
 
         // Вызов мутаций для обновления данных
         updateIrdsToProject({
             variables: {
-                typeProjectId: typeProjectId,
-                listIrds_id: irdsData.map(ird => parseInt(ird.ird_id)),
-                listDateComplete: irdsData.map(ird => ird.date_complete),
+                irdToProject: irdToProject
             }
         });
+        if(onSubmit)
+            onSubmit();
     }
 
-    if(loadingTemplate)
-        return  <LoadingSpinner/>
+    if (loadingTemplate)
+        return <LoadingSpinner/>
 
     return (
-            <StyledFormBig form={formIRD} name="dynamic_form_nest_item" autoComplete="off" disabled={disable}>
-                <Form.List name="irdList">
-                    {(fields, {add, remove}) => (<>
-                        {fields.map(({key, name, ...restField}) => (<Space
-                            key={key}
-                            style={{
-                                display: 'flex', marginBottom: 2, marginTop: 2
-                            }}
-                            align="baseline"
-                        >
+        <StyledFormBig form={formIRD} name="dynamic_form_nest_item" autoComplete="off" disabled={disable}>
+            <Form.List name="irdList">
+                {(fields, {add, remove}) => (<>
+                    {fields.map(({key, name, ...restField}) => (<Space
+                        key={key}
+                        style={{
+                            display: 'flex', marginBottom: 2, marginTop: 2
+                        }}
+                        align="baseline"
+                    >
+                        <Tooltip title="Номер этапа">
+
+                            <Form.Item
+                                {...restField}
+                                name={[name, 'isChecked']}
+                                valuePropName="stageNumber"
+                                style={{
+                                    display: 'flex', marginBottom: 0, marginTop: 0
+                                }}
+                            >
+                                <InputNumber max={100} min={0} prefix={"№"}/>
+
+                            </Form.Item>
+                        </Tooltip>
+                        <Tooltip title="Номер в приложении">
+
+                            <Form.Item
+                                {...restField}
+                                name={[name, 'isChecked']}
+                                valuePropName="applicationProject"
+                                style={{
+                                    display: 'flex', marginBottom: 0, marginTop: 0
+                                }}
+                            >
+                                <InputNumber  max={100} min={0} prefix={"№"}/>
+
+                            </Form.Item>
+                        </Tooltip>
+                        <Tooltip title="Наименование ИРД">
+
                             <Form.Item
                                 {...restField}
                                 style={{width: 570, minWidth: 220, marginBottom: 0}}
@@ -142,18 +173,16 @@ const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMe
                                     showSearch
                                     loading={loadingIrds}
                                 >
-                                    {dataIrds && dataIrds.irds && dataIrds.irds.items && dataIrds.irds.items.map(ird => (
+                                    {dataIrds?.irds?.items?.map(ird => (
                                         <Select.Option key={ird.id}
                                                        value={ird.id}>
                                             {ird.name}
                                         </Select.Option>))}
-                                    {dataIrds && dataIrds.irds && dataIrds.irds.items && dataIrds.irds.items.length === 0 && (
-                                        <Select.Option value="CREATE_NEW" style={{ background: '#52c41a',
-                                            color: '#fff'}}>
-                                            Создать новый ИРД?
-                                        </Select.Option>)}
                                 </Select>
                             </Form.Item>
+                        </Tooltip>
+                        <Tooltip title="Дата получения">
+
                             <Form.Item
                                 {...restField}
                                 name={[name, 'isChecked']}
@@ -167,17 +196,25 @@ const IrdsProjectForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMe
                                     status={"warning"}
                                     placeholder="Получено"/>
                             </Form.Item>
-                            <MinusCircleOutlined onClick={() => remove(name)}/>
-                        </Space>))}
-                        <Form.Item>
-                            <Button type="dashed" onClick={() => add()} block
-                                    icon={<PlusOutlined/>}>
-                                Add field
-                            </Button>
-                        </Form.Item>
-                    </>)}
-                </Form.List>
-            </StyledFormBig>
+                        </Tooltip>
+                        <MinusCircleOutlined onClick={() => remove(name)}/>
+                    </Space>))}
+                    <Form.Item>
+                        <Button type="dashed" onClick={() => add()} block
+                                icon={<PlusOutlined/>}>
+                            Add field
+                        </Button>
+                    </Form.Item>
+                </>)}
+            </Form.List>
+            <div style={{textAlign: 'center'}}>
+                <Space>
+                    <StyledButtonGreen style={{marginBottom: 0}} type="dashed" onClick={handleSubmit}>
+                        Сохранить проект
+                    </StyledButtonGreen>
+                </Space>
+            </div>
+        </StyledFormBig>
     )
 };
 

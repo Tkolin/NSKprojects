@@ -239,7 +239,7 @@ const StagesTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod, dis
                         <Input
                             value={totalToPercent}
                             suffix={"%"}
-                            style={{
+                                                          style={{
                                 width: '100%',
                                 background: totalToPercent > 100 ? '#EE4848' : totalToPercent < 100 ? '#FFD700' : '#7DFF7D'
                             }}

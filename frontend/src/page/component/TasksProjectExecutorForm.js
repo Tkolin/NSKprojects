@@ -6,7 +6,7 @@ import {LoadingOutlined} from "@ant-design/icons";
 import {PERSONS_QUERY, PERSONS_SHORT_QUERY, TEMPLATE_TASKS_TYPE_PROJECTS_QUERY} from "../../graphql/queries";
 
 
-const TasksProjectExecutorForm = ({ typeProjectId, projectId, triggerMethod, setTriggerMethod }) => {
+const TasksProjectExecutorForm = ({ project, triggerMethod, setTriggerMethod }) => {
     const [dataPersons, setDataPersons] = useState(null);
     const [autoCompletePersons, setAutoCompletePersons] = useState('');
 
@@ -24,7 +24,7 @@ const TasksProjectExecutorForm = ({ typeProjectId, projectId, triggerMethod, set
     };
 
     const { loading: loading, error, data: data } = useQuery(TEMPLATE_TASKS_TYPE_PROJECTS_QUERY, {
-        variables: { typeProjectId: 1 },
+        variables: { typeProjectId: project?.type_project_document?.id },
     });
 
     const { loading: loadingPersons, error: errorPersons, refetch: refetchPersons } = useQuery(PERSONS_SHORT_QUERY, {
@@ -90,7 +90,7 @@ const TasksProjectExecutorForm = ({ typeProjectId, projectId, triggerMethod, set
                     showSearch
                     loading={loadingPersons}
                 >
-                    {dataPersons && dataPersons.persons && dataPersons.persons.items && dataPersons.persons.items.map(row => (
+                    {dataPersons?.persons?.items?.map(row => (
                         <Select.Option key={row.id} value={row.id}>{row.passport.lastname} {row.passport.firstname}</Select.Option>
                     ))}
                 </Select>

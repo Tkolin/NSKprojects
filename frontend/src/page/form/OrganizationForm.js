@@ -12,7 +12,6 @@ import {AddressSuggestions} from "react-dadata";
 import 'react-dadata/dist/react-dadata.css';
 import ContactForm from "./ContactForm";
 import BikForm from "./BikForm";
-import LoadingSpinner from "../component/LoadingSpinner";
 import {StyledBlockBig} from "../style/BlockStyles";
 import { StyledButtonGreen} from "../style/ButtonStyles";
 import {PlusOutlined} from "@ant-design/icons";

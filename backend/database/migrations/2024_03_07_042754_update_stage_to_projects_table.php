@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::table('project_stages', function (Blueprint $table) {
+            $table->integer('percent')->nullable();
+        });
     }
 
     /**
@@ -19,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('projects', function (Blueprint $table) {
+            //
+        });
     }
 };

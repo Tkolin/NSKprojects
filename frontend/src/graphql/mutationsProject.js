@@ -133,32 +133,20 @@ export const UPDATE_PROJECT_MUTATION = gql`
 `;
 export const UPDATE_IRDS_TO_PROJECT_MUTATION = gql`
     mutation UpdateStagesToProject(
-        $typeProjectId: ID!,
-        $listStages_id: [ID!]!,
-        $listPercent: [Int],
-        $listNumber: [Int],
+        $irdToProject: [IrdToProject]
     ) {
         updateIrdsToProject(
-            typeProjectId: $typeProjectId
-            listIrds_id: $listStages_id
-            listStageNumber: $listPercent
-            listAppNumber: $listNumber
+            irdToProject: $irdToProject
         )
     }                      
 `;
 
 export const UPDATE_STAGES_TO_PROJECT_MUTATION = gql`
     mutation UpdateIrdsToProject(
-        $typeProjectId: ID!,
-        $listIrds_id: [ID!]!,
-        $listStageNumber: [Int],
-        $listAppNumber: [Int],
+        $stageToProject: [StageToProject]
     ) {
         updateStagesToProject(
-            typeProjectId: $typeProjectId
-            listIrds_id: $listIrds_id
-            listStageNumber: $listStageNumber
-            listAppNumber: $listAppNumber
+            stageToProject: $stageToProject
         )
     }
 `;

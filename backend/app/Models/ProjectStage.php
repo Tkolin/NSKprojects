@@ -11,9 +11,13 @@ class ProjectStage extends Model
     protected $fillable = [
         'project_id',
         'stage_id',
+        'number',
         'progress',
         'date_start',
         'duration',
+        'date_end',
+        'percent',
+        'price',
     ];
 
     public function project(): BelongsTo

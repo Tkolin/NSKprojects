@@ -9,7 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ProjectIrds extends Model
 {
     protected $fillable = [
-        'received'
+        'stageNumber',
+        'applicationProject',
+        'receivedDate',
+        'project_id',
+        'ird_id',
     ];
 
     public function project(): BelongsTo

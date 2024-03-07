@@ -29,8 +29,8 @@ import dayjs from "dayjs";
 
 const {Option} = Select;
 
-const ProjectForm = ({ project, setProject, onClose, onSubmit}) => {
-    const [ editingProject, setEditingProject] = useState(null);
+const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
+    const [editingProject, setEditingProject] = useState(null);
 
     // Состояния
     const [form] = Form.useForm();
@@ -121,7 +121,7 @@ const ProjectForm = ({ project, setProject, onClose, onSubmit}) => {
     const {
         loading: loadingTypeProject, error: errorTypeProject, data: dataTypeProject
     } = useQuery(TYPES_PROJECTS_QUERY, {
-        variables: {queryOptions: {limit: 10 , page: 1 ,search: autoCompleteTypeProjects}}
+        variables: {queryOptions: {limit: 10, page: 1, search: autoCompleteTypeProjects}}
     });
 
     const {
@@ -132,7 +132,7 @@ const ProjectForm = ({ project, setProject, onClose, onSubmit}) => {
     const {
         loading: loadingOrganizations, error: errorOrganizations, data: dataOrganizations
     } = useQuery(ORGANIZATIONS_SHORT_QUERY, {
-        variables: {queryOptions: {limit: 10 , page: 1 ,search: autoCompleteOrganization}}
+        variables: {queryOptions: {limit: 10, page: 1, search: autoCompleteOrganization}}
     });
 
     // Заполнение формы данными контакта при его редактировании
@@ -210,7 +210,7 @@ const ProjectForm = ({ project, setProject, onClose, onSubmit}) => {
         } else {
             addProject({variables: {...form.getFieldsValue(), organization_customer_id: selectedOrganization}});
         }
-        if(onSubmit){
+        if (onSubmit) {
             onSubmit(true);
         }
     };
@@ -218,134 +218,134 @@ const ProjectForm = ({ project, setProject, onClose, onSubmit}) => {
 
     return (<>
 
-                        <StyledFormRegular form={form} layout="vertical">
-                            <StyledFormItem name="number" label="Номер проекта" rules={[{required: true}]}>
-                                <Input/>
-                            </StyledFormItem>
-                            <StyledFormItem name="name" label="Наименование проекта" rules={[{required: true}]}>
-                                <Input/>
-                            </StyledFormItem>
-                            <Space.Compact block style={{alignItems: 'flex-end'}}>
-                                <StyledFormItem name="organization_customer_id" label="Заказчик"
-                                                style={{
-                                                    width: '90%',
-                                                }}>
-                                    <Select
-                                        popupMatchSelectWidth={false}
-                                        allowClear
-                                        showSearch
-                                        onSelect={(value) => setSelectedOrganization(value)}
-                                        filterOption={false}
-                                        loading={loadingOrganizations}
-                                        placeholder="Начните ввод..."
-                                        onSearch={(value) => handleAutoCompleteOrganizations(value)}
-                                    >
-                                    {dataOrganizations && dataOrganizations.organizations && dataOrganizations.organizations.items.map(row => (
-                                    <Select.Option key={row.id}
-                                                     value={row.id}>{row.name}</Select.Option>))}
-                                </Select>
-                                </StyledFormItem>
-                                <StyledButtonGreen icon={<PlusOutlined/>}
-                                                   onClick={() => setCostumerFormViewModalVisible(true)}/>
-                            </Space.Compact>
-                            <Space.Compact block style={{alignItems: 'flex-end'}}>
-                                <StyledFormItem name="delegate_id"
-                                                label="Представитель компании"
-                                                style={{
-                                                    width: '90%',
-                                                }}>
-                                    <Select
-                                        popupMatchSelectWidth={false}
-                                        allowClear
-                                        showSearch
-                                        mode="multiple"
-                                        filterOption={false}
-                                        placeholder="По компаниям"
-                                        onSearch={(value) => handleAutoCompleteContacts(value)}
-                                        loading={loadingDelegates}>
-                                        {dataDelegates && dataDelegates.contacts && dataDelegates.contacts.items.map(row => (
-                                            <Select.Option key={row.id}
-                                                           value={row.id}>{row.last_name} {row.first_name} {row.patronymic}</Select.Option>))}
-                                    </Select>
-                                </StyledFormItem>
-                                <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
-                                                   onClick={() => setContactFormViewModalVisible(true)}/>
+        <StyledFormRegular form={form} layout="vertical">
+            <StyledFormItem name="number" label="Номер проекта" rules={[{required: true}]}>
+                <Input/>
+            </StyledFormItem>
+            <StyledFormItem name="name" label="Наименование проекта" rules={[{required: true}]}>
+                <Input/>
+            </StyledFormItem>
+            <Space.Compact block style={{alignItems: 'flex-end'}}>
+                <StyledFormItem name="organization_customer_id" label="Заказчик"
+                                style={{
+                                    width: '90%',
+                                }}>
+                    <Select
+                        popupMatchSelectWidth={false}
+                        allowClear
+                        showSearch
+                        onSelect={(value) => setSelectedOrganization(value)}
+                        filterOption={false}
+                        loading={loadingOrganizations}
+                        placeholder="Начните ввод..."
+                        onSearch={(value) => handleAutoCompleteOrganizations(value)}
+                    >
+                        {dataOrganizations && dataOrganizations.organizations && dataOrganizations.organizations.items.map(row => (
+                            <Select.Option key={row.id}
+                                           value={row.id}>{row.name}</Select.Option>))}
+                    </Select>
+                </StyledFormItem>
+                <StyledButtonGreen icon={<PlusOutlined/>}
+                                   onClick={() => setCostumerFormViewModalVisible(true)}/>
+            </Space.Compact>
+            <Space.Compact block style={{alignItems: 'flex-end'}}>
+                <StyledFormItem name="delegate_id"
+                                label="Представитель компании"
+                                style={{
+                                    width: '90%',
+                                }}>
+                    <Select
+                        popupMatchSelectWidth={false}
+                        allowClear
+                        showSearch
+                        mode="multiple"
+                        filterOption={false}
+                        placeholder="По компаниям"
+                        onSearch={(value) => handleAutoCompleteContacts(value)}
+                        loading={loadingDelegates}>
+                        {dataDelegates && dataDelegates.contacts && dataDelegates.contacts.items.map(row => (
+                            <Select.Option key={row.id}
+                                           value={row.id}>{row.last_name} {row.first_name} {row.patronymic}</Select.Option>))}
+                    </Select>
+                </StyledFormItem>
+                <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
+                                   onClick={() => setContactFormViewModalVisible(true)}/>
 
-                            </Space.Compact>
-                            <StyledFormItem name="type_project_document_id" label="Тип документа">
-                                <Select
-                                    popupMatchSelectWidth={false}
-                                    allowClear
-                                    showSearch
-                                    filterOption={false}
+            </Space.Compact>
+            <StyledFormItem name="type_project_document_id" label="Тип документа">
+                <Select
+                    popupMatchSelectWidth={false}
+                    allowClear
+                    showSearch
+                    filterOption={false}
 
-                                    value={selectedTypeProject}
-                                    loading={loadingTypeProject}
-                                    placeholder="Начните ввод..."
-                                    onSearch={(value) => handleAutoCompleteTypeProjects(value)}
-                                    onSelect={handleEditingTemplate}>
-                                    {dataTypeProject && dataTypeProject.typeProjects && dataTypeProject.typeProjects.items.map(typeDocument => (
-                                        <Option key={typeDocument.id}
-                                                value={typeDocument.id}>{typeDocument.name}</Option>))}
-                                </Select>
-                            </StyledFormItem>
-                            <Space.Compact block style={{alignItems: 'flex-end'}}>
-                                <StyledFormItem name="facility_id" label="Объект"
-                                                style={{
-                                                    width: '90%',
-                                                }}>
-                                    <Cascader
-                                        popupMatchSelectWidth={false}
-                                        style={{width: '100%'}}
-                                        options={cascaderFacility}
-                                        multiple
-                                        expandTrigger="hover"
-                                        maxTagCount="responsive"
-                                    />
-                                </StyledFormItem>
-                            </Space.Compact>
-                            <Space.Compact block style={{alignItems: 'flex-end'}}>
-                                <StyledFormItem name="date_signing" label="Дата подписания">
-                                    <DatePicker placeholder="Выберите дату"
-                                                onChange={(value) => handleDateSigningChange(value)}/>
-                                </StyledFormItem>
-                                <StyledFormItem name="duration" label="Срок" style={{width: '15%'}}>
-                                    <InputNumber
-                                        formatter={(value) => `${value}`.replace(/[^0-9]/g, '')}
-                                        parser={(value) => `${value}`.replace(/[^0-9]/g, '')}
-                                        style={{width: '100%'}}
-                                        onChange={(value) => handleDurationChange(value)}
-                                    />
-                                </StyledFormItem>
-                                <StyledFormItem name="date_end" label="Дата окончания">
-                                    <DatePicker minDate={dateSigning}
-                                                style={{width: '100%'}}
+                    value={selectedTypeProject}
+                    loading={loadingTypeProject}
+                    placeholder="Начните ввод..."
+                    onSearch={(value) => handleAutoCompleteTypeProjects(value)}
+                    onSelect={handleEditingTemplate}>
+                    {dataTypeProject && dataTypeProject.typeProjects && dataTypeProject.typeProjects.items.map(typeDocument => (
+                        <Option key={typeDocument.id}
+                                value={typeDocument.id}>{typeDocument.name}</Option>))}
+                </Select>
+            </StyledFormItem>
+            <Space.Compact block style={{alignItems: 'flex-end'}}>
+                <StyledFormItem name="facility_id" label="Объект"
+                                style={{
+                                    width: '90%',
+                                }}>
+                    <Cascader
+                        popupMatchSelectWidth={false}
+                        style={{width: '100%'}}
+                        options={cascaderFacility}
+                        multiple
+                        expandTrigger="hover"
+                        maxTagCount="responsive"
+                    />
+                </StyledFormItem>
+            </Space.Compact>
+            <Space.Compact block style={{alignItems: 'flex-end'}}>
+                <StyledFormItem name="date_signing" label="Дата подписания">
+                    <DatePicker placeholder="Выберите дату"
+                                onChange={(value) => handleDateSigningChange(value)}/>
+                </StyledFormItem>
+                <StyledFormItem name="duration" label="Срок" style={{width: '15%'}}>
+                    <InputNumber
+                        formatter={(value) => `${value}`.replace(/[^0-9]/g, '')}
+                        parser={(value) => `${value}`.replace(/[^0-9]/g, '')}
+                        style={{width: '100%'}}
+                        onChange={(value) => handleDurationChange(value)}
+                    />
+                </StyledFormItem>
+                <StyledFormItem name="date_end" label="Дата окончания">
+                    <DatePicker minDate={dateSigning}
+                                style={{width: '100%'}}
 
-                                                placeholder="Выберите дату" onChange={handleDateEndChange}/>
-                                </StyledFormItem>
-                            </Space.Compact>
-                            <StyledFormItem name="status_id" label="Статус проекта">
-                                <Select loading={loadingStatuses}>
-                                    {dataStatuses && dataStatuses.projectStatuses && dataStatuses.projectStatuses.map(status => (
-                                        <Select.Option key={status.id}
-                                                       value={status.id}>{status.name}</Select.Option>))}
-                                </Select>
-                            </StyledFormItem>
-                            <StyledFormItem name="price" label="Стоимость">
-                                <InputNumber
-                                    formatter={value => `${value}`.replace(/[^0-9]/g, '')}
-                                    parser={value => `${value}`.replace(/[^0-9]/g, '')}
-                                    onChange={(value) => setEditingPrice(value)}/>
-                            </StyledFormItem>
-                            <div style={{textAlign: 'center'}}>
-                                <Space>
-                                    <StyledButtonGreen style={{marginBottom: 0}} type="dashed" onClick={handleSubmit}>
-                                        Сохранить проект
-                                    </StyledButtonGreen>
-                                </Space>
-                            </div>
+                                placeholder="Выберите дату" onChange={handleDateEndChange}/>
+                </StyledFormItem>
+            </Space.Compact>
+            <StyledFormItem name="status_id" label="Статус проекта">
+                <Select loading={loadingStatuses}>
+                    {dataStatuses && dataStatuses.projectStatuses && dataStatuses.projectStatuses.map(status => (
+                        <Select.Option key={status.id}
+                                       value={status.id}>{status.name}</Select.Option>))}
+                </Select>
+            </StyledFormItem>
+            <StyledFormItem name="price" label="Стоимость">
+                <InputNumber
+                    formatter={value => `${value}`.replace(/[^0-9]/g, '')}
+                    parser={value => `${value}`.replace(/[^0-9]/g, '')}
+                    onChange={(value) => setEditingPrice(value)}/>
+            </StyledFormItem>
+            <div style={{textAlign: 'center'}}>
+                <Space>
+                    <StyledButtonGreen style={{marginBottom: 0}} type="dashed" onClick={handleSubmit}>
+                        Сохранить проект
+                    </StyledButtonGreen>
+                </Space>
+            </div>
 
-                        </StyledFormRegular>
+        </StyledFormRegular>
 
         <Modal
             open={contactFormViewModalVisible}
@@ -363,7 +363,7 @@ const ProjectForm = ({ project, setProject, onClose, onSubmit}) => {
         >
             <OrganizationForm/>
         </Modal>
-        </>)
+    </>)
 };
 
 export default ProjectForm;

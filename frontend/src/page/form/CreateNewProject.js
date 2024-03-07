@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Col, Row, Steps} from 'antd';
+import {Button, Col, Row, Steps} from 'antd';
 import TasksProjectExecutorForm from "../component/TasksProjectExecutorForm";
 import TasksToProjectStageForm from "../component/TasksToProjectStageForm";
 import ProjectForm from "../form/ProjectForm";
@@ -20,6 +20,12 @@ const MyComponent = () => {
     {
         setCurrentStep(currentStep+1);
     }
+    const onBack = () =>
+    {
+        if(currentStep <= 1){
+        setCurrentStep(currentStep-1);
+        }
+    }
 
     return (
 
@@ -32,8 +38,10 @@ const MyComponent = () => {
                         <Step title="Этапы"/>
                         <Step title="Ирд"/>
                         <Step title="Список задач"/>
-                        <Step title="Список задач"/>
+                        <Step title="Распределение задач"/>
                     </Steps>
+                    <Button disabled={(currentStep <= 0)} onClick={onBack}>Отменить шаг</Button>
+
                 </Col>
                 <Col span={20}>
                         {currentStep === 0 && (
@@ -42,16 +50,18 @@ const MyComponent = () => {
                             </StyledBlockRegular>
                         )}
                         {currentStep === 1 && (
-                            <StagesProjectForm project={project}/>
+                            <StagesProjectForm project={project}  onSubmit={onNext}/>
+                        )}
+                        {currentStep === 2 && (
+                            <IrdsProjectForm project={project}  onSubmit={onNext}/>
                         )}
                         {currentStep === 3 && (
-                            <IrdsProjectForm/>
+                            <TasksToProjectStageForm project={project}  onSubmit={onNext}/>
+
                         )}
                         {currentStep === 4 && (
-                            <TasksToProjectStageForm/>
-                        )}
-                        {currentStep === 5 && (
-                            <TasksProjectExecutorForm/>
+                            <TasksProjectExecutorForm project={project}  onSubmit={onNext}/>
+
                         )}
                 </Col>
             </Row>

@@ -426,4 +426,43 @@ export const BIKS_QUERY = gql`
         }
     }
 `;
+export const STAGES_TO_PROJECT_QUERY = gql`
+    query BiksForms ($queryOptions: QueryOptions){
+        biks(queryOptions: $queryOptions)   {
+            items {
+                id
+                name
+                bik
+                correspondent_account
+            }
+            count
+        }
+    }
+`;
+export const IRDS_TO_PROJECT_QUERY = gql`
+    query BiksForms ($queryOptions: QueryOptions){
+        biks(queryOptions: $queryOptions)   {
+            items {
+                id
+                name
+                bik
+                correspondent_account
+            }
+            count
+        }
+    }
+`;PROJECT
+export const TASKS_TO_PROJECT_QUERY = gql`
+    query BiksForms ($queryOptions: QueryOptions){
+        biks(queryOptions: $queryOptions)   {
+            items {
+                id
+                name
+                bik
+                correspondent_account
+            }
+            count
+        }
+    }
+`;
 

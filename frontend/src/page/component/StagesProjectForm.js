@@ -1,6 +1,6 @@
 import {StyledFormBig} from "../style/FormStyles";
-import {Button, Form,  InputNumber, notification, Select, Space} from "antd";
-import { MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
+import {Button, Form, Input, InputNumber, notification, Select, Space, Tooltip} from "antd";
+import {MinusCircleOutlined, PlusOutlined, RetweetOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
 
@@ -9,13 +9,10 @@ import {UPDATE_STAGES_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject"
 
 import LoadingSpinner from "./LoadingSpinner";
 import {STAGES_QUERY, TEMPLATE_STAGES_TYPE_PROJECTS_QUERY} from "../../graphql/queries";
+import {StyledButtonGreen} from "../style/ButtonStyles";
 
 const {RangePicker} = DatePicker;
-const StagesProjectForm = ({ project, disable }) => {
-
-    useEffect(() => {
-        console.log(JSON.stringify(project, null, 4));
-    }, [project]);
+const StagesProjectForm = ({project, disable, onSubmit}) => {
     // Состояния
     const [formStage] = Form.useForm();
     const [autoCompleteStage, setAutoCompleteStage] = useState('');
@@ -67,12 +64,13 @@ const StagesProjectForm = ({ project, disable }) => {
     // Получение данных для выпадающих списков
     const [dataStages, setDataStages] = useState(null);
     const {loading: loadingStages, error: errorStages, refetch: refetchStages} = useQuery(STAGES_QUERY, {
-        variables: {queryOptions: {search: autoCompleteStage, limit: 10, page: 1}}, onCompleted: (data) => setDataStages(data)
+        variables: {queryOptions: {search: autoCompleteStage, limit: 10, page: 1}},
+        onCompleted: (data) => setDataStages(data)
     });
     const {
         loading: loadingTemplate, error: errorTemplate, data: dataTemplate
     } = useQuery(TEMPLATE_STAGES_TYPE_PROJECTS_QUERY, {
-        variables: {typeProject: project && project.type_project_document && project.type_project_document.id},
+        variables: {typeProject: project?.type_project_document?.id},
         fetchPolicy: 'network-only',
         onCompleted: (data) => addingStages(data),
     });
@@ -104,10 +102,11 @@ const StagesProjectForm = ({ project, disable }) => {
     // Подгрузка формы
     const loadTemplate = () => {
         if (dataTemplate) {
-            const stages = dataTemplate && dataTemplate.templatesStagesTypeProjects;
-            const initialValuesStages = stages && stages.map(data => ({
+            const stages = dataTemplate?.templatesStagesTypeProjects;
+            const initialValuesStages = stages?.map(data => ({
                 stage_item: data.stage.id,
                 percent_item: data.percentage,
+                duration_item: data.duration,
             }));
             formStage.setFieldsValue({stageList: initialValuesStages});
         }
@@ -123,56 +122,141 @@ const StagesProjectForm = ({ project, disable }) => {
     });
 
     const handleSubmit = () => {
-        const stagesData = formStage.getFieldsValue().stageList.map(stage => ({
-            stage_id: stage.stage_item, dateStart: stage.data_range.date_start_item, dateEnd: stage.data_range.date_end_item, percent: stage.percent_item,
+        const stageToProject = formStage.getFieldsValue().stageList.map(stage => ({
+            projectId: project?.id,
+            stage_id: stage?.stage_item,
+            stageNumber: stage?.number_item,
+            dateStart: stage?.data_range?.date_start_item,
+            duration: stage?.duration_item,
+            dateEnd: stage?.data_range?.date_end_item,
+            percent: stage?.percent_item,
+            price: stage?.price_item,
         }));
 
         // Вызов мутаций для обновления данных
         updateStagesToProject({
             variables: {
-                typeProjectId: project.type_project_document.id,
-                listStages_id: stagesData && stagesData.map(stage => parseInt(stage.stage_id)),
-                listPercent: stagesData && stagesData.map(stage => stage.procent)
+                stageToProject: stageToProject
             }
         });
+        if (onSubmit)
+            onSubmit();
     }
+    // Подсчёт суммы процентов
+    const [totalToPercent, setTotalToPercent] = useState(0);
+    const recomputePricesAndPercentages = () => {
+        const stageList = formStage.getFieldValue('stageList');
+        if (Array.isArray(stageList)) {
+            const totalProcent = stageList.reduce((acc, item) => {
+                const procent = item.percent_item || 0;
+                return acc + procent;
+            }, 0);
+            setTotalToPercent(totalProcent);
 
-    if(loadingTemplate)
-       return <LoadingSpinner/>
+            const updatedStageList = stageList.map(row => ({
+                ...row,
+                price_item: (project.price * row.percent_item) / 100,
+            }));
+
+            formStage.setFieldsValue({
+                stageList: updatedStageList,
+            });
+        }
+    };
+    const handleChangeItemPercent = () => {
+        recomputePricesAndPercentages();
+    };
+
+
+    const [totalToDuration, setTotalToDuration] = useState(0);
+    const recomputeTotalToDuration = () => {
+        const stageList = formStage.getFieldValue('stageList');
+        if (Array.isArray(stageList)) {
+            const totalDuration = stageList.reduce((acc, item) => {
+                const duration = item.duration_item || 0;
+                return acc + duration;
+            }, 0);
+            setTotalToDuration(totalDuration);
+        }
+    };
+    const handleChangeItemDuration = () => {
+        recomputeTotalToDuration();
+    };
+
+
+    useEffect(() => {
+        recomputeTotalToDuration();
+        handleChangeItemPercent();
+    }, [formStage.getFieldValue('stageList')]);
+
+    if (loadingTemplate)
+        return <LoadingSpinner/>
 
     return (
-            <StyledFormBig  form={formStage}
-                            disabled={disable}
-                            name="dynamic_form_nest_item"
-                            autoComplete="off"
-                            >
-                <Space.Compact block >
-                    <Form.Item label="Суммарный срок реализации">
-                        <RangePicker value={[project && project.date_signing, project && project.date_end]}  disabled={disable}/>
-                    </Form.Item>
-                    <Button onClick={handleDateStageRebuild}>Уровнять</Button>
-                </Space.Compact>
-                <Space.Compact block>
+        <StyledFormBig form={formStage}
+                       disabled={disable}
+                       name="dynamic_form_nest_item"
+                       autoComplete="off"
+        >
 
-                </Space.Compact>
-                <Form.List name="stageList">
-                    {(fields, {add, remove}) => (<>
-                        {fields.map(({key, name, ...restField}) => (<Space
-                            key={key}
-                            style={{
-                                display: 'flex',
-                                marginBottom: 2,
-                                marginTop: 2
-                            }}
-                            align="baseline"
-                        >
+            <Space.Compact block>
+                <Form.Item label="Суммарный срок реализации">
+                    <RangePicker value={[project?.date_signing, project?.date_end]}
+                                 disabled={disable} suffix={"дни"}/>
+                </Form.Item>
+                <Button onClick={handleDateStageRebuild}>Уровнять</Button>
+            </Space.Compact>
+            <Space.Compact block>
+                <Form.Item label="Стоимость проекта">
+                    <InputNumber value={project?.price} disabled={disable} suffix={"₽"}/>
+                </Form.Item>
+            </Space.Compact>
+            <Space.Compact block>
+                <Form.Item label="Суммарная продолжительность">
+                    <InputNumber value={totalToDuration} disabled={disable} suffix={"дни"}/>
+                </Form.Item>
+            </Space.Compact>
+            <Space.Compact block style={{alignItems: 'flex-end'}}>
+                <Form.Item label="Сумма процентов">
+                    <Input
+                        value={totalToPercent}
+                        suffix={"%"}
+                        style={{
+                            width: '80px',
+                            background: totalToPercent > 100 ? '#EE4848' : totalToPercent < 100 ? '#FFD700' : '#7DFF7D'
+                        }}
+                    />
+                </Form.Item>
+            </Space.Compact>
+            <Form.List name="stageList">
+                {(fields, {add, remove}) => (<>
+                    {fields.map(({key, name, ...restField}) => (<Space
+                        key={key}
+                        style={{
+                            display: 'flex',
+                            marginBottom: 2,
+                            marginTop: 2
+                        }}
+                        align="baseline"
+                    >
+                        <Tooltip title="Номер этапа">
+
+                            <Form.Item
+                                {...restField}
+                                style={{marginBottom: 0, display: 'flex'}}
+                                name={[name, 'number_item']}
+                            >
+                                <InputNumber style={{width: 65}} prefix={"№"} min={1} max={25}/>
+                            </Form.Item>
+                        </Tooltip>
+                        <Tooltip title="Наименование этапа">
                             <Form.Item
                                 {...restField}
                                 style={{marginBottom: 0, display: 'flex'}}
                                 name={[name, 'stage_item']}
                             >
                                 <Select
-                                    style={{maxWidth: 260, minWidth: 260}}
+                                    style={{maxWidth: 360, minWidth: 360}}
                                     popupMatchSelectWidth={false}
                                     filterOption={false}
                                     onSearch={(value) => handleAutoCompleteStage(value)} // Передаем введенное значение
@@ -181,19 +265,30 @@ const StagesProjectForm = ({ project, disable }) => {
                                     allowClear
                                     showSearch
                                 >
-                                    {dataStages && dataStages.stages && dataStages.stages.items.map(stage => (
+                                    {dataStages?.stages?.items?.map(stage => (
                                         <Select.Option value={stage.id}>{stage.name}</Select.Option>))}
-                                    {dataStages && dataStages.stages && dataStages.stages.items && dataStages.stages.items.length === 0 && (
-                                        <Select.Option value="CREATE_NEW">Создать новый
-                                            этап?</Select.Option>)}
                                 </Select>
                             </Form.Item>
+                        </Tooltip>
+                        <Tooltip title="Продолжительность этапа (дни)">
+                            <Form.Item
+                                {...restField}
+                                style={{marginBottom: 0, display: 'flex'}}
+                                name={[name, 'duration_item']}
+                                rules={[{
+                                    required: true,
+                                },]}
+                            >
+                                <InputNumber onChange={handleChangeItemDuration} style={{width: 80}}/>
+                            </Form.Item>
+                        </Tooltip>
+                        <Tooltip title="Сроки этапа">
                             <Form.Item
                                 {...restField}
                                 style={{marginBottom: 0, display: 'flex'}}
                                 name={[name, 'date_range']}
                                 rules={[{
-                                    required: true, message: 'Missing last name',
+                                    required: true,
                                 },]}
                             >
                                 <RangePicker
@@ -207,30 +302,51 @@ const StagesProjectForm = ({ project, disable }) => {
                                     }}
                                 />
                             </Form.Item>
+                        </Tooltip>
+                        <Tooltip title="Процент от общей стоимости">
                             <Form.Item
                                 {...restField}
+
                                 style={{marginBottom: 0, display: 'flex'}}
                                 name={[name, 'percent_item']}
                                 rules={[{
-                                    required: true, message: 'Missing last name',
+                                    required: true,
                                 },]}
                             >
-                                <InputNumber/>
+                                <InputNumber onChange={handleChangeItemPercent} max={100} min={0} suffix={"%"}/>
                             </Form.Item>
+                        </Tooltip>
+                        <Tooltip title="Стоимость этапа">
+                            <Form.Item
+                                {...restField}
 
-                            <MinusCircleOutlined onClick={() => remove(name)}/>
-                        </Space>))}
-                        <Form.Item>
-                            <Button type="dashed" onClick={() => add()} block
-                                    icon={<PlusOutlined/>}>
-                                Добавить элемент
-                            </Button>
-                        </Form.Item>
-                    </>)}
-                </Form.List>
-                {/* распределение задач */}
-
-            </StyledFormBig>
+                                style={{marginBottom: 0, display: 'flex'}}
+                                name={[name, 'price_item']}
+                                rules={[{
+                                    required: true,
+                                },]}>
+                                <InputNumber style={{width: 200}} suffix={"₽"}/>
+                            </Form.Item>
+                        </Tooltip>
+                        <MinusCircleOutlined onClick={() => remove(name)}/>
+                    </Space>))}
+                    <Form.Item>
+                        <Button type="dashed" onClick={() => add()} block
+                                icon={<PlusOutlined/>}>
+                            Добавить элемент
+                        </Button>
+                    </Form.Item>
+                </>)}
+            </Form.List>
+            {/* распределение задач */}
+            <div style={{textAlign: 'center'}}>
+                <Space>
+                    <StyledButtonGreen style={{marginBottom: 0}} type="dashed" onClick={handleSubmit}>
+                        Сохранить проект
+                    </StyledButtonGreen>
+                </Space>
+            </div>
+        </StyledFormBig>
     );
 }
 export default StagesProjectForm;

@@ -3,7 +3,6 @@
 namespace App\GraphQL\Queries;
 
 use App\GraphQL\Service\AuthorizationService;
-use App\Models\Contents;
 use App\Models\InitialAuthorizationDocumentation;
 use App\Models\TemplateContentTypeProjects;
 use App\Models\TemplateIrdsTypeProjects;

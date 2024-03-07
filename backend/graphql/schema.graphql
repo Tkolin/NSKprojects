@@ -18,6 +18,10 @@ type Query {
     templatesStagesTypeProjects(typeProject: ID): [TemplateStage]
     templatesTasksTypeProjects(typeProject: ID): [TemplateTask]
 
+    projectIrds(queryOptions: QueryOptions, projectsId: ID): [ProjectIRD]
+    projectStages(queryOptions: QueryOptions ,projectsId: ID): [ProjectStage]
+    projectTasks(queryOptions: QueryOptions ,projectsId: ID): [ProjectTask]
+
     currentUser: User!
 
     legalForms: [LegalForm]!
@@ -35,6 +39,24 @@ input QueryOptions {
     sortOrder: String
     searchOrganizationId: String
 }
+input StageToProject {
+    projectId: ID!
+    stage_id: ID
+    stageNumber: Int
+    price: Float
+    percent: Int
+    dateStart: String
+    duration: Int
+    dateEnd: String
+    progress: Int
+}
+input IrdToProject {
+    projectId: ID!
+    irdId: ID
+    stageNumber: Int
+    applicationProject: Int
+    receivedDate: String
+}
 type Mutation {
 
     addTask(
@@ -46,16 +68,10 @@ type Mutation {
     ): IRD!
 
     updateIrdsToProject(
-        typeProjectId: ID!
-        listIrds_id: [ID!]!
-        listStageNumber: [Int]
-        listAppNumber: [Int]
+        irdToProject: [IrdToProject]
     ): Int
     updateStagesToProject(
-        typeProjectId: ID!
-        listIrds_id: [ID!]!
-        listStageNumber: [Int]
-        listAppNumber: [Int]
+        stageToProject: [StageToProject]
     ): Int
     updatePaymentsToProject(
         project: ID
@@ -133,14 +149,14 @@ type Mutation {
     ): PassportPlaceIssue!
 
     addBik(
-         bik: String!
+        bik: String!
         name: String!
         correspondent_account: String
     ):  bik!
 
     updateBik(
         id: ID!
-         bik: String!
+        bik: String!
         name: String!
         correspondent_account: String
     ):  bik!
@@ -452,7 +468,7 @@ type BikResult {
     OGRN: String
     OKPO: String
     KPP: String
-     bik:  bik
+    bik:  bik
     payment_account: String
     director: Contact
 }type LegalForm{
@@ -460,7 +476,7 @@ type BikResult {
     name: String!
 }type  bik{
     id: ID!
-     bik: String
+    bik: String
     name: String
     correspondent_account: String
 }type Person{
@@ -473,7 +489,7 @@ type BikResult {
     email: String
     email_sibnipi: String
     bank: Bank
-     bik:  bik
+    bik:  bik
 }type Passport{
     id: ID!
     firstname: String
@@ -515,17 +531,27 @@ type BikResult {
     stages: [ProjectStage]
 }type ProjectStage{
     id: ID!
+    projectId: ID!
+    stage_id: ID!
+    stageNumber: Int
+    price: Float
+    percent: Int
+    dateStart: String
+    duration: Int
+    dateEnd: String
+    progress: Int
+}type ProjectTask{
+    id: ID!
     project: Project
-    stage: Stage
-    persent: Int
-    date_start: String
-    date_end: String
-    number: Int
+    task: Task
+
 }type ProjectIRD{
     id: ID!
     project: Project
     IRD: IRD
-    received: String
+    receivedDate: String
+    stageNumber: String
+    applicationProject: String
 }type TypeProjectDocument{
     id: ID!
     name: String!
