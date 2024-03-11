@@ -2,16 +2,10 @@ import {gql} from "@apollo/client";
 
 export const UPDATE_STAGES_TEMPLATE_MUTATION = gql`
     mutation UpdateStagesTemplate(
-        $typeProjectId: ID!,
-        $listStages_id: [ID!]!,
-        $listPercent: [Int],
-        $listNumber: [Int],
+        $data: [TemplateStageToTypeProject]
     ) {
         updateStagesTemplate(
-            typeProjectId: $typeProjectId
-            listStages_id: $listStages_id
-            listPercent: $listPercent
-            listNumber: $listNumber
+            items: $data
         ) 
     }
 `;

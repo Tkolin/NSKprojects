@@ -11,31 +11,28 @@ final readonly class UpdateStagesTemplate
     /** @param  array{}  $args */
     public function __invoke($_, array $args)
     {
-        $typeProjectId = $args['typeProjectId'];
-        $listStagesId = $args['listStages_id'];
-        $listPercent = $args['listPercent'];
+        $stages = $args['items'];
 
-        if (count($listStagesId) !== count($listPercent)) {
-            throw new \Exception('Length of lists must be equal');
-        }
-
-        $count = count($listStagesId);
+        $count = count($stages);
         for ($i = 0; $i < $count; $i++) {
             TemplateStagesTypeProjects::updateOrCreate(
                 [
-                    'project_type_id' => $typeProjectId,
-                    'stage_id' => (string)$listStagesId[$i]
+                    'project_type_id' => $stages[$i]["project_type_id"],
+                    'stage_id' => (string)$stages[$i]["stage_id"]
                 ],
                 [
-                    'percentage' => (int)$listPercent[$i]
-                ]
+                   'duration' => $stages[$i]["duration"],
+                   'number' => $stages[$i]["stage_number"],
+                   'percentage' => isset($stages[$i]["percentage"]) ? (int)$stages[$i]["percentage"] : null,
+               ]
             );
         }
         // Удаление записей, которых нет в списке
-        TemplateStagesTypeProjects::where('project_type_id', $typeProjectId)
-            ->whereNotIn('stage_id', $listStagesId)
+        TemplateStagesTypeProjects::where('project_type_id', $stages[0]["project_type_id"])
+            ->whereNotIn('stage_id', array_column($stages, 'stage_id'))
             ->delete();
         return true;
+
     }
 
 }

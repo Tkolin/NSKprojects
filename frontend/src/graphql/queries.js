@@ -373,7 +373,7 @@ export const TEMPLATE_STAGES_TYPE_PROJECTS_QUERY = gql`
                 name
             }
             duration
-            stage_number
+            number
             percentage
         }
     }
@@ -455,13 +455,18 @@ export const STAGES_TO_PROJECT_QUERY = gql`
 export const IRDS_TO_PROJECT_QUERY = gql`
     query BiksForms ($queryOptions: QueryOptions){
         projectIrds(queryOptions: $queryOptions)   {
-            items {
+            id
+            project{
                 id
                 name
-                bik
-                correspondent_account
             }
-            count
+            IRD{
+                id
+                name
+            }
+            receivedDate
+            stageNumber
+            applicationProject
         }
     }
 `;
@@ -478,4 +483,3 @@ export const TASKS_TO_PROJECT_QUERY = gql`
         }
     }
 `;
-

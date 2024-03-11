@@ -58,9 +58,7 @@ export const ADD_PROJECT_MUTATION = gql`
 export const UPDATE_PROJECT_MUTATION = gql`
     mutation UpdateProject(
         $data: ProjectInput
-
-
-
+        
         $tasks: [ProjectTasksInput]
         $stages: [ProjectStageInput]
         $irds: [ProjectIrdInput]
@@ -112,29 +110,29 @@ export const UPDATE_PROJECT_MUTATION = gql`
 `;
 export const UPDATE_IRDS_TO_PROJECT_MUTATION = gql`
     mutation UpdateStagesToProject(
-        $irdToProject: [IrdToProject]
+        $data: [IrdToProject]
     ) {
         updateIrdsToProject(
-            irdToProject: $irdToProject
+            items: $data
         )
     }                      
 `;
 
 export const UPDATE_STAGES_TO_PROJECT_MUTATION = gql`
     mutation UpdateIrdsToProject(
-        $stageToProject: [StageToProject]
+        $data: [StageToProject]
     ) {
         updateStagesToProject(
-            stageToProject: $stageToProject
+            items: $data
         )
     }
 `;
 export const UPDATE_TASKS_TO_PROJECT_MUTATION = gql`
     mutation UpdateTasksToProject(
-        $tasksToProject: [TasksToProject]
+        $data: [TasksToProject]
     ) {
         updateTasksToProject(
-            taskToProject: $tasksToProject
+            items: $data
         )
     }
 `;

@@ -9,7 +9,7 @@ final readonly class UpdateStagesToProject
     /** @param  array{}  $args */
     public function __invoke($_, array $args)
     {
-        $stages = $args['stageToProject'];
+        $stages = $args['items'];
         error_log('nen');
         $count = count($stages);
         for ($i = 0; $i < $count; $i++) {

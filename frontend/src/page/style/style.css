@@ -1,0 +1,29 @@
+.redbutton {
+    background-color: red;
+    border-color: red; /* Добавляем это, чтобы граница кнопки также была красной */
+    color: white; /* Изменяем цвет текста на белый для лучшей видимости */
+
+    /* Определяем стили для состояния наведения */
+    &:hover {
+        background-color: darkred; /* Меняем фон при наведении на кнопку */
+        border-color: darkred; /* Также меняем цвет границы */
+    }
+}
+@keyframes rotate {
+    from {
+        transform: rotateY(0deg); /* Начальное положение вращения по оси Y (горизонтальная ось) */
+    }
+    to {
+        transform: rotateY(360deg); /* Заключительное положение вращения по оси Y (горизонтальная ось) */
+    }
+}
+
+.rotate-image {
+    max-width: 100%;
+    height: auto;
+    animation: rotate 19s linear infinite; /* Поворачивать картинку каждые 5 секунд */
+    transform-style: preserve-3d; /* Сохранять 3D трансформации для дочерних элементов */
+    border-radius: 50%; /* Делаем картинку круглой */
+    border: 2px solid black; /* Добавляем чёрную рамку толщиной 2px */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Добавляем тень для эффекта выступающего объекта */
+}

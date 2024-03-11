@@ -10,7 +10,7 @@ import {useQuery} from "@apollo/client";
 import {CURRENT_USER_QUERY} from "../graphql/queries";
 import {useNavigate} from "react-router-dom";
 import {Cookies} from "react-cookie";
-import LoadingSpinner from "./component/LoadingSpinner";
+import LoadingSpinnerStyles from "./style/LoadingSpinnerStyles";
 import {Header} from "antd/es/layout/layout";
 import {Content, Footer} from "antd/lib/layout/layout";
 import Logo from "../resursed/logo512.png";
@@ -81,7 +81,7 @@ const CustomLayout = ({children}) => {
     };
 
     // Обработка загрузки и ошибок
-    if (loading) return <LoadingSpinner/>;
+    if (loading) return <LoadingSpinnerStyles/>;
     if (data && error) return `Ошибка! ${error.message}`;
 
     // Меню

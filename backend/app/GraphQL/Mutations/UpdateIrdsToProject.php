@@ -11,26 +11,26 @@ final readonly class UpdateIrdsToProject
     public function __invoke(null $_, array $args)
     {
 
-        $stages = $args['irdToProject'];
+        $irds = $args['items'];
 
         error_log('nen');
-        $count = count($stages);
+        $count = count($irds);
         for ($i = 0; $i < $count; $i++) {
             ProjectIrds::updateOrCreate(
                 [
-                    'project_id' => $stages[$i]["projectId"],
-                    'ird_id' => (string)$stages[$i]["irdId"]
+                    'project_id' => $irds[$i]["projectId"],
+                    'ird_id' => (string)$irds[$i]["irdId"]
                 ],
                 [
-                    'stageNumber' => isset($stages[$i]["stageNumber"]) ? (int)$stages[$i]["stageNumber"] : null,
-                    'applicationProject' => isset($stages[$i]["applicationProject"]) ? (int)$stages[$i]["applicationProject"] : null,
-                    'receivedDate' => isset($stages[$i]["receivedDate"]) ? (int)$stages[$i]["receivedDate"] : null,
+                    'stageNumber' => isset($irds[$i]["stageNumber"]) ? (int)$irds[$i]["stageNumber"] : null,
+                    'applicationProject' => isset($irds[$i]["applicationProject"]) ? (int)$irds[$i]["applicationProject"] : null,
+                    'receivedDate' => isset($irds[$i]["receivedDate"]) ? (int)$irds[$i]["receivedDate"] : null,
                 ]
             );
         }
         // Удаление записей, которых нет в списке
-        ProjectIrds::where('project_id', $stages[0]["projectId"])
-            ->whereNotIn('ird_id', array_column($stages, 'irdId'))
+        ProjectIrds::where('project_id', $irds[0]["projectId"])
+            ->whereNotIn('ird_id', array_column($irds, 'irdId'))
             ->delete();
         return true;
     }

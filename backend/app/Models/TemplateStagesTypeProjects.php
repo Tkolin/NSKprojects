@@ -12,10 +12,9 @@ class TemplateStagesTypeProjects extends Model
     protected $fillable = [
         'project_type_id',
         'stage_id',
-        'date_start',
-        'date_end',
+        'duration',
         'percentage',
-        'stage_number',
+        'number',
     ];
     public function type_project(): BelongsTo
     {
@@ -26,4 +25,3 @@ class TemplateStagesTypeProjects extends Model
         return $this->belongsTo(Stage::class, 'stage_id');
     }
 }
-
