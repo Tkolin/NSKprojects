@@ -15,10 +15,19 @@ final readonly class ProjectStages
         $allowedRoles = ['admin']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            return ProjectStage
-                ::with('project:id,name')
-                ->with('stage')
-                ->get();
+
+            $projectsQuery = ProjectStage::with('project:id,name')
+                ->with('stage');
+
+            if (isset($args['projectId'])) {
+                $searchTerm = $args['projectId'];
+                $projectsQuery = $projectsQuery
+                    ->where('project_id', $searchTerm);
+            }
+            else
+                return null;
+
+            return $projectsQuery->get();
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }

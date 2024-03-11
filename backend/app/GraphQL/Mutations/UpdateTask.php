@@ -5,6 +5,7 @@ namespace App\GraphQL\Mutations;
 use App\GraphQL\Service\AuthorizationService;
 use App\Models\InitialAuthorizationDocumentation;
 use App\Models\Task;
+use App\Models\TemplateStagesTypeProjects;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
@@ -16,9 +17,24 @@ final readonly class UpdateTask
         $allowedRoles = ['admin']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            $task = Task::findOrFail($args['id']);
-            $task->update($args);
-            return $task;
+            // Проверка входных данных
+            if (empty($args['names'])) {
+                throw new \InvalidArgumentException('Names cannot be empty');
+            }
+
+            // Обновление или создание задач по массиву имен
+            $affectedTasks  = collect($args['names'])->map(function ($name) {
+                $task = Task::updateOrCreate(
+                    ['name' => $name],
+                    ['name' => $name]
+                );
+                // Возвращаем массив с идентификатором и именем задачи, если задача существует
+                return $task ? ['id' => $task->id, 'name' => $task->name] : null;
+            })->filter(); // Фильтруем null значения
+
+            error_log($affectedTasks . "fdfd" );
+
+            return $affectedTasks->all();
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }

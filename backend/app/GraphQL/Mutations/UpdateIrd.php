@@ -16,9 +16,7 @@ final readonly class UpdateIrd
         $allowedRoles = ['admin']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            $ird = InitialAuthorizationDocumentation::findOrFail($args['id']);
-            $ird->update($args);
-            return $ird;
+            return InitialAuthorizationDocumentation::findOrFail($args['id'])->update($args);
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }

@@ -79,9 +79,9 @@ const IrdsProjectForm = ({project, onSubmit, disable}) => {
         if (dataTemplate) {
             const irds = dataTemplate?.templatesIrdsTypeProjects;
             const initialValuesIrds = irds?.map(data => ({
-                ird_item: data.ird.id, stageNumber_item: data.stage_number, appNumber_item: data.application_to_project,
+                irdList: data.ird.id, stageNumber: data.stage_number, applicationProject: data.application_to_project,
             }));
-            formIRD.setFieldsValue({irdList: initialValuesIrds});
+            formIRD.setFieldsValue({initialValuesIrds});
         }
     };
 

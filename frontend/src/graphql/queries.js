@@ -322,9 +322,13 @@ export const PROJECT_STAGE_QUERY = gql`
                 id
                 name
             }
-            persent
-            date_start
-            date_end
+            stageNumber
+            price
+            percent
+            dateStart
+            duration
+            dateEnd
+            progress
         }
     }
 `;
@@ -427,8 +431,30 @@ export const BIKS_QUERY = gql`
     }
 `;
 export const STAGES_TO_PROJECT_QUERY = gql`
+    query StageToProjectQuery ($projectId: ID){
+        projectStages(projectId: $projectId)   {
+            id
+            project{
+                id
+                name
+            }
+            stage{
+                id
+                name
+            }
+            stageNumber
+            price
+            percent
+            dateStart
+            duration
+            dateEnd
+            progress
+        }
+    }
+`;
+export const IRDS_TO_PROJECT_QUERY = gql`
     query BiksForms ($queryOptions: QueryOptions){
-        biks(queryOptions: $queryOptions)   {
+        projectIrds(queryOptions: $queryOptions)   {
             items {
                 id
                 name
@@ -439,19 +465,6 @@ export const STAGES_TO_PROJECT_QUERY = gql`
         }
     }
 `;
-export const IRDS_TO_PROJECT_QUERY = gql`
-    query BiksForms ($queryOptions: QueryOptions){
-        biks(queryOptions: $queryOptions)   {
-            items {
-                id
-                name
-                bik
-                correspondent_account
-            }
-            count
-        }
-    }
-`;PROJECT
 export const TASKS_TO_PROJECT_QUERY = gql`
     query BiksForms ($queryOptions: QueryOptions){
         biks(queryOptions: $queryOptions)   {

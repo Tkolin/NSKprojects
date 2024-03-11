@@ -1,14 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {
-    Form, Input, Button, Select, InputNumber, Col, Row, notification, Modal, Space, AutoComplete, Cascader,
+    Form, Input, Select, InputNumber,  notification, Modal, Space, Cascader,
 } from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
 import {
     PROJECTS_QUERY,
     PROJECT_STATUSES_QUERY,
     TYPES_PROJECTS_QUERY,
-    ORGANIZATIONS_QUERY,
-    CONTACTS_QUERY, ORGANIZATIONS_SHORT_QUERY, CONTACTS_SHORT_QUERY, FACILITYS_QUERY
+    ORGANIZATIONS_SHORT_QUERY, CONTACTS_SHORT_QUERY, FACILITYS_QUERY
 } from '../../graphql/queries';
 import {
     ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION,
@@ -21,13 +20,12 @@ import {PlusOutlined} from '@ant-design/icons';
 import OrganizationForm from "./OrganizationForm";
 import moment from 'moment';
 import ContactForm from "./ContactForm";
-
-import {StyledBlockRegular} from "../style/BlockStyles";
 import {StyledButtonGreen} from "../style/ButtonStyles";
 
 import dayjs from "dayjs";
 
 const {Option} = Select;
+const { SHOW_CHILD } = Cascader;
 
 const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
     const [editingProject, setEditingProject] = useState(null);
@@ -144,11 +142,11 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                 date_signing: editingProject.date_signing ? moment(editingProject.date_signing, 'YYYY-MM-DD') : null,
                 date_end: editingProject.date_end ? moment(editingProject.date_end, 'YYYY-MM-DD') : null,
                 date_completion: editingProject.date_completion ? moment(editingProject.date_completion, 'YYYY-MM-DD') : null,
-                organization_customer_id: editingProject.organization_customer ? editingProject.organization_customer.id : null,
-                delegate_id: editingProject.delegate ? editingProject.delegate.id : null,
-                type_project_document_id: editingProject.type_project_document ? editingProject.type_project_document.id : null,
-                facility_id: editingProject.facility ? editingProject.facility.id : null,
-                status_id: editingProject.status ? editingProject.status.id : null,
+                organization_customer_id: editingProject?.organization_customer?.id ?? null,
+                delegate_id:  editingProject?.delegate?.id ?? null,
+                type_project_document_id:  editingProject?.type_project_document?.id ?? null,
+                facility_id:  editingProject?.facility?.id ?? null,
+                status_id: editingProject?.status?.id ?? null,
             });
 
         }
@@ -203,12 +201,19 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
         if (editingProject) {
             updateProject({
                 variables: {
-                    id: editingProject.id, ...form.getFieldsValue(),
-                    organization_customer_id: autoCompleteOrganization.id
+                    data: {
+                        ...form.getFieldsValue(),
+                        facilitys_id: form.getFieldValue('facilitys_id') ? form.getFieldValue('facilitys_id').map(pair => pair[1]) : null,
+                        id: editingProject?.id,
+                        organization_customer_id: autoCompleteOrganization?.id
+                    }
                 }
             });
         } else {
-            addProject({variables: {...form.getFieldsValue(), organization_customer_id: selectedOrganization}});
+            addProject({variables: {data: {
+                ...form.getFieldsValue(),
+                        facilitys_id: form.getFieldValue('facilitys_id') ? form.getFieldValue('facilitys_id').map(pair => pair[1]) : null,
+                        organization_customer_id: selectedOrganization}}});
         }
         if (onSubmit) {
             onSubmit(true);
@@ -249,7 +254,7 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                                    onClick={() => setCostumerFormViewModalVisible(true)}/>
             </Space.Compact>
             <Space.Compact block style={{alignItems: 'flex-end'}}>
-                <StyledFormItem name="delegate_id"
+                <StyledFormItem name="delegates_id"
                                 label="Представитель компании"
                                 style={{
                                     width: '90%',
@@ -290,11 +295,12 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                 </Select>
             </StyledFormItem>
             <Space.Compact block style={{alignItems: 'flex-end'}}>
-                <StyledFormItem name="facility_id" label="Объект"
+                <StyledFormItem name="facilitys_id" label="Объект"
                                 style={{
                                     width: '90%',
                                 }}>
                     <Cascader
+                        showCheckedStrategy={SHOW_CHILD}
                         popupMatchSelectWidth={false}
                         style={{width: '100%'}}
                         options={cascaderFacility}

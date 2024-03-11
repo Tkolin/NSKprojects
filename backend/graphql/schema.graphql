@@ -18,9 +18,9 @@ type Query {
     templatesStagesTypeProjects(typeProject: ID): [TemplateStage]
     templatesTasksTypeProjects(typeProject: ID): [TemplateTask]
 
-    projectIrds(queryOptions: QueryOptions, projectsId: ID): [ProjectIRD]
-    projectStages(queryOptions: QueryOptions ,projectsId: ID): [ProjectStage]
-    projectTasks(queryOptions: QueryOptions ,projectsId: ID): [ProjectTask]
+    projectIrds(queryOptions: QueryOptions, projectId: ID): [ProjectIRD]
+    projectStages(queryOptions: QueryOptions ,projectId: ID): [ProjectStage]
+    projectTasks(queryOptions: QueryOptions ,projectId: ID): [ProjectTask]
 
     currentUser: User!
 
@@ -28,8 +28,6 @@ type Query {
     facilitys: [Facility!]!
     TypePayments: [TypePayment]
     projectStatuses: [ProjectStatus!]!
-
-    projectStages: [ProjectStage]!
 }
 input QueryOptions {
     page: Int
@@ -40,6 +38,19 @@ input QueryOptions {
     searchOrganizationId: String
 }
 input StageToProject {
+    id: ID
+    projectId: ID!
+    stage_id: ID
+    stageNumber: Int
+    price: Float
+    percent: Int
+    dateStart: String
+    duration: Int
+    dateEnd: String
+    progress: Int
+}
+input TasksToProject {
+    id: ID
     projectId: ID!
     stage_id: ID
     stageNumber: Int
@@ -57,21 +68,36 @@ input IrdToProject {
     applicationProject: Int
     receivedDate: String
 }
+input ProjectInput {
+    id: ID
+    number: String
+    name: String
+    organization_customer_id: ID
+    type_project_document_id: ID
+    date_signing: String
+    duration: Int
+    date_end: String
+    status_id: ID
+    date_completion: String
+    price: Int
+    facilitys_id: [String]
+    delegates_id: [String]
+}
 type Mutation {
 
-    addTask(
-        name: String!
-    ): IRD!
+
     updateTask(
-        id: ID!
-        name: String!
-    ): IRD!
+        names: [String]
+    ): [Task]
 
     updateIrdsToProject(
         irdToProject: [IrdToProject]
     ): Int
     updateStagesToProject(
         stageToProject: [StageToProject]
+    ): Int
+    updateTasksToProject(
+        taskToProject: [TasksToProject]
     ): Int
     updatePaymentsToProject(
         project: ID
@@ -291,34 +317,16 @@ type Mutation {
     ): Facility!
 
     updateProject(
-        id: ID!
-        number: String!
-        name: String!
-        organization_customer_id: ID
-        type_project_document_id: ID
-        date_signing: String
-        date_end: String
-        status_id: ID
-        date_completion: String
-        price: Int
+        data: ProjectInput
 
-        facilitys: [Int]
-        stages: [Int]
-        irds: [Int]
+
+        tasks: [ProjectTasksInput]
+        stages: [ProjectStageInput]
+        irds: [ProjectIrdInput]
     ): Project!
     addProject(
-        number: String!
-        name: String!
-        organization_customer_id: ID
-        type_project_document_id: ID
-        date_signing: String
-        date_end: String
-        status_id: ID
-        date_completion: String
-        price: Int
+        data: ProjectInput
 
-        facilitys: [ID]
-        delegates: [ID]
 
         tasks: [ProjectTasksInput]
         stages: [ProjectStageInput]
@@ -531,8 +539,8 @@ type BikResult {
     stages: [ProjectStage]
 }type ProjectStage{
     id: ID!
-    projectId: ID!
-    stage_id: ID!
+    project: Project
+    stage: Stage
     stageNumber: Int
     price: Float
     percent: Int

@@ -15,9 +15,8 @@ final readonly class UpdateFacility
         $allowedRoles = ['admin']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            $facility = Facility::findOrFail($args['id']);
-            $facility->update($args);
-            return $facility;
+ 
+            return Facility::findOrFail($args['id'])->update($args);
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }

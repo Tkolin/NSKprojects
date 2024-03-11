@@ -1,15 +1,16 @@
-import {StyledFormBig} from "../style/FormStyles";
+import {StyledFormBig, StyledFormItem} from "../style/FormStyles";
 import {Button, Form, Input, InputNumber, notification, Select, Space, Tooltip} from "antd";
 import {MinusCircleOutlined, PlusOutlined, RetweetOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
 
 import {DatePicker} from "antd/lib";
-import {UPDATE_STAGES_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
+import {UPDATE_PROJECT_MUTATION, UPDATE_STAGES_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
 
 import LoadingSpinner from "./LoadingSpinner";
 import {STAGES_QUERY, TEMPLATE_STAGES_TYPE_PROJECTS_QUERY} from "../../graphql/queries";
 import {StyledButtonGreen} from "../style/ButtonStyles";
+import moment from "moment";
 
 const {RangePicker} = DatePicker;
 const StagesProjectForm = ({project, disable, onSubmit}) => {
@@ -17,7 +18,7 @@ const StagesProjectForm = ({project, disable, onSubmit}) => {
     const [formStage] = Form.useForm();
     const [autoCompleteStage, setAutoCompleteStage] = useState('');
     const [stageFormViewModalVisible, setStageFormViewModalVisible] = useState(false);
-
+const [totalPrice, setTotalPrice] = useState(0);
     const handleAutoCompleteStageSelect = (value) => {
         if (value == 'CREATE_NEW') {
             setStageFormViewModalVisible(true);
@@ -31,23 +32,25 @@ const StagesProjectForm = ({project, disable, onSubmit}) => {
 
         if (Array.isArray(stageList)) {
             const updatedStageList = stageList.map((stage, index) => {
+                let dateRangeStart = null;
+                let dateRangeEnd = null;
+
                 if (index === 0) {
-                    return {
-                        ...stage,
-                        date_range: [project && project.date_signing, stage.date_range ? stage.date_range[1] : null],
-                    };
+                    dateRangeStart = project?.date_signing ? moment(project.date_signing) : null;
+                    dateRangeEnd = stage.date_range && stage.date_range[1] ? moment(stage.date_range[1]) : null;
                 } else if (index === stageList.length - 1) {
-                    return {
-                        ...stage,
-                        date_range: [stage.date_range ? stage.date_range[0] : null, project.date_end],
-                    };
+                    dateRangeStart = stage.date_range && stage.date_range[0] ? moment(stage.date_range[0]) : null;
+                    dateRangeEnd = project?.date_end ? moment(project.date_end) : null;
                 } else {
-                    const prevStageEndDate = stageList[index - 1].date_range ? stageList[index - 1].date_range[1] : null;
-                    return {
-                        ...stage,
-                        date_range: [prevStageEndDate, stage.date_range ? stage.date_range[1] : null],
-                    };
+                    const prevStageEndDate = stageList[index - 1].date_range && stageList[index - 1].date_range[1];
+                    dateRangeStart = prevStageEndDate ? moment(prevStageEndDate) : null;
+                    dateRangeEnd = stage.date_range && stage.date_range[1] ? moment(stage.date_range[1]) : null;
                 }
+
+                return {
+                    ...stage,
+                    date_range: [dateRangeStart, dateRangeEnd],
+                };
             });
 
             formStage.setFieldsValue({
@@ -73,6 +76,14 @@ const StagesProjectForm = ({project, disable, onSubmit}) => {
         variables: {typeProject: project?.type_project_document?.id},
         fetchPolicy: 'network-only',
         onCompleted: (data) => addingStages(data),
+    });
+    // Мутации для добавления и обновления
+    const [updateProject] = useMutation(UPDATE_PROJECT_MUTATION, {
+        onCompleted: () => {
+            openNotification('topRight', 'success', 'Данные об проекте успешно обновлены!');
+        }, onError: (error) => {
+            openNotification('topRight', 'error', 'Ошибка при обновлении данных  об проекте : ' + error.message);
+        }
     });
 
     const addingStages = (value) => {
@@ -107,6 +118,8 @@ const StagesProjectForm = ({project, disable, onSubmit}) => {
                 stage_item: data.stage.id,
                 percent_item: data.percentage,
                 duration_item: data.duration,
+                date_start_item: data?.dateStart ? moment(data.dateStart )  : null,
+                date_end_item: data?.dateEnd ? moment(data.dateEnd) : null
             }));
             formStage.setFieldsValue({stageList: initialValuesStages});
         }
@@ -139,6 +152,28 @@ const StagesProjectForm = ({project, disable, onSubmit}) => {
                 stageToProject: stageToProject
             }
         });
+
+        const dateRangeValue = formStage.getFieldValue('totalRange_item');
+        const projectData = {
+            id: project?.id,
+            number: project?.number,
+            name: project?.name,
+            organization_customer_id: project?.organization_customer?.id,
+            type_project_document_id: project?.type_project_document?.id,
+            status_id: project?.status.id,
+            date_completion: project?.date_completion,
+
+
+            price: totalPrice,
+            duration: totalToDuration,
+            date_signing: dateRangeValue && dateRangeValue.length > 0 ? dateRangeValue[0] : null,
+            date_end: dateRangeValue && dateRangeValue.length > 1 ? dateRangeValue[1] : null,
+        };
+
+        updateProject({variables: {
+                data: projectData
+            }})
+
         if (onSubmit)
             onSubmit();
     }
@@ -155,7 +190,7 @@ const StagesProjectForm = ({project, disable, onSubmit}) => {
 
             const updatedStageList = stageList.map(row => ({
                 ...row,
-                price_item: (project.price * row.percent_item) / 100,
+                price_item: (totalPrice * row.percent_item) / 100,
             }));
 
             formStage.setFieldsValue({
@@ -182,12 +217,19 @@ const StagesProjectForm = ({project, disable, onSubmit}) => {
     const handleChangeItemDuration = () => {
         recomputeTotalToDuration();
     };
-
+    const handleChangePrice = (value) => {
+        setTotalPrice(value);
+        recomputePricesAndPercentages();
+    };
 
     useEffect(() => {
         recomputeTotalToDuration();
         handleChangeItemPercent();
     }, [formStage.getFieldValue('stageList')]);
+
+    useEffect(() => {
+        setTotalPrice(project?.price);
+    }, [project]);
 
     if (loadingTemplate)
         return <LoadingSpinner/>
@@ -200,24 +242,24 @@ const StagesProjectForm = ({project, disable, onSubmit}) => {
         >
 
             <Space.Compact block>
-                <Form.Item label="Суммарный срок реализации">
-                    <RangePicker value={[project?.date_signing, project?.date_end]}
+                <StyledFormItem label="Суммарный срок реализации" name="totalRange_item">
+                    <RangePicker value={[project.date_signing ? moment(project.date_signing) : null, project?.date_end ? moment(project.date_end) : null]}
                                  disabled={disable} suffix={"дни"}/>
-                </Form.Item>
+                </StyledFormItem>
                 <Button onClick={handleDateStageRebuild}>Уровнять</Button>
             </Space.Compact>
             <Space.Compact block>
-                <Form.Item label="Стоимость проекта">
-                    <InputNumber value={project?.price} disabled={disable} suffix={"₽"}/>
-                </Form.Item>
+                <StyledFormItem label="Стоимость проекта" name="totalPrice_item">
+                    <InputNumber onChange={handleChangePrice} value={totalPrice} defaultValue={project?.price} disabled={disable} suffix={"₽"}/>
+                </StyledFormItem>
             </Space.Compact>
             <Space.Compact block>
-                <Form.Item label="Суммарная продолжительность">
+                <StyledFormItem label="Суммарная продолжительность">
                     <InputNumber value={totalToDuration} disabled={disable} suffix={"дни"}/>
-                </Form.Item>
+                </StyledFormItem>
             </Space.Compact>
             <Space.Compact block style={{alignItems: 'flex-end'}}>
-                <Form.Item label="Сумма процентов">
+                <StyledFormItem label="Сумма процентов">
                     <Input
                         value={totalToPercent}
                         suffix={"%"}
@@ -226,8 +268,9 @@ const StagesProjectForm = ({project, disable, onSubmit}) => {
                             background: totalToPercent > 100 ? '#EE4848' : totalToPercent < 100 ? '#FFD700' : '#7DFF7D'
                         }}
                     />
-                </Form.Item>
+                </StyledFormItem>
             </Space.Compact>
+
             <Form.List name="stageList">
                 {(fields, {add, remove}) => (<>
                     {fields.map(({key, name, ...restField}) => (<Space

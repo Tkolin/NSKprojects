@@ -2,35 +2,18 @@ import {gql} from "@apollo/client";
 
 export const ADD_PROJECT_MUTATION = gql`
     mutation AddProject(
-        $number: String!
-        $name: String!
-        $organization_customer_id: ID
-        $type_project_document_id: ID
-        $date_signing: String
-        $date_end: String
-        $status_id: ID
-        $date_completion: String
-        $price: Int
+        $data: ProjectInput
     
-        $facilitys: [ID]
-        $delegates: [ID]
+ 
     
         $tasks: [ProjectTasksInput]
         $stages: [ProjectStageInput]
         $irds: [ProjectIrdInput]
     ) {
         addProject(
-            number: $number
-            name: $name
-            organization_customer_id: $organization_customer_id
-            type_project_document_id: $type_project_document_id
-            date_signing: $date_signing
-            date_end: $date_end
-            status_id: $status_id
-            date_completion: $date_completion
-            price: $price
-            facilitys: $facilitys
-            delegates: $delegates
+            data: $data
+            
+        
             tasks : $tasks
             stages: $stages
             irds: $irds
@@ -74,26 +57,22 @@ export const ADD_PROJECT_MUTATION = gql`
 `;
 export const UPDATE_PROJECT_MUTATION = gql`
     mutation UpdateProject(
-        $id: ID!,
-        $number: String!,
-        $name: String!,
-        $organization_customer_id: ID,
-        $type_project_document_id: ID,
-        $date_signing: String,
-        $date_end: String,
-        $status_id: ID,
-        $date_completion: String
+        $data: ProjectInput
+
+
+
+        $tasks: [ProjectTasksInput]
+        $stages: [ProjectStageInput]
+        $irds: [ProjectIrdInput]
     ) {
         updateProject(
-            id: $id
-            number: $number
-            name: $name
-            organization_customer_id: $organization_customer_id
-            type_project_document_id: $type_project_document_id
-            date_signing: $date_signing
-            date_end: $date_end
-            status_id: $status_id
-            date_completion: $date_completion
+            data: $data
+
+
+
+            tasks : $tasks
+            stages: $stages
+            irds: $irds
         ) {
             id
             number
@@ -147,6 +126,15 @@ export const UPDATE_STAGES_TO_PROJECT_MUTATION = gql`
     ) {
         updateStagesToProject(
             stageToProject: $stageToProject
+        )
+    }
+`;
+export const UPDATE_TASKS_TO_PROJECT_MUTATION = gql`
+    mutation UpdateTasksToProject(
+        $tasksToProject: [TasksToProject]
+    ) {
+        updateTasksToProject(
+            taskToProject: $tasksToProject
         )
     }
 `;

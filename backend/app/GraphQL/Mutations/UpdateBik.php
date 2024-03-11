@@ -15,9 +15,7 @@ final readonly class UpdateBik
         $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            $bik = Bik::findOrFail($args['id']);
-            $bik->update($args);
-            return $bik;
+            return Bik::findOrFail($args['id'])->update($args);
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }

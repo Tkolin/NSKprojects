@@ -15,19 +15,19 @@ final readonly class UpdateProject
         $allowedRoles = ['admin']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            $project = Project::findOrFail($args['id']);
+            $project = Project::findOrFail($args['data']['id']);
             $project->update([
-                'number' => $args['number'],
-                'name' => $args['name'] ?? null,
-                'organization_customer_id' => $args['organization_customer_id'] ?? null,
-                'delegate_id' => $args['delegate_id'] ?? null,
-                'type_project_document_id' => $args['type_project_document_id'] ?? null,
-                'facility_id' => $args['facility_id'] ?? null,
-                'date_signing' => isset($args['date_signing']) ? substr((string) $args['date_signing'], 0, 10) : null,
-                'duration' => $args['duration'] ?? null,
-                'date_end' => isset($args['date_end']) ? substr((string) $args['date_end'], 0, 10) : null,
-                'status_id' => $args['status_id'] ?? null,
-                'date_completion' => isset($args['date_completion']) ? substr((string) $args['date_completion'], 0, 10) : null,
+                'number' => $args['data']['number'],
+                'name' => $args['data']['name'] ?? null,
+                'organization_customer_id' => $args['data']['organization_customer_id'] ?? null,
+                'delegate_id' => $args['data']['delegate_id'] ?? null,
+                'type_project_document_id' => $args['data']['type_project_document_id'] ?? null,
+                'facility_id' => $args['data']['facility_id'] ?? null,
+                'date_signing' => isset($args['data']['date_signing']) ? substr((string) $args['data']['date_signing'], 0, 10) : null,
+                'duration' => $args['data']['duration'] ?? null,
+                'date_end' => isset($args['data']['date_end']) ? substr((string) $args['data']['date_end'], 0, 10) : null,
+                'status_id' => $args['data']['status_id'] ?? null,
+                'date_completion' => isset($args['data']['date_completion']) ? substr((string) $args['data']['date_completion'], 0, 10) : null,
             ]);
             return $project;
         } else {

@@ -15,8 +15,7 @@ final readonly class AddProjectStage
         $allowedRoles = ['admin']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            $projectStage = ProjectStage::create($args);
-            return $projectStage;
+            return ProjectStage::create($args);
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }

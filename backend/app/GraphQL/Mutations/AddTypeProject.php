@@ -16,8 +16,7 @@ final readonly class AddTypeProject
         $allowedRoles = ['admin']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            $typeProject = TypeProjectDocument::create($args);
-            return $typeProject;
+            return TypeProjectDocument::create($args);
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }
