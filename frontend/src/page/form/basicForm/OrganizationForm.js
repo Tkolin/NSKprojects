@@ -222,8 +222,8 @@ const OrganizationForm = ({organization, onClose}) => {
                             <Input placeholder="Введите номер факса"/>
                         </StyledFormItem>
                         <StyledFormItem name="email" label="e-mail" rules={[{
-                            type: "email", message: 'Пожалуйста, введите корректный почтовый адресс',},]}>
-                            <Input placeholder="Введите почтовый адресс"/>
+                            type: "email", message: 'Пожалуйста, введите корректный почтовый адрес',},]}>
+                            <Input placeholder="Введите почтовый адрес"/>
                         </StyledFormItem>
                         <StyledFormItem name="payment_account" label="Расчётынй счёт">
                             <Input placeholder="Введите номер расчётного счёта"/>

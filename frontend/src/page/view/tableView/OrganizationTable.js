@@ -110,7 +110,7 @@ const OrganizationTable = () => {
         title: 'email', dataIndex: 'email', key: 'email',
         sorter: true, ellipsis: true,
     },  {
-        title: 'номер телеофна', dataIndex: 'phone_number', key: 'phone_number',
+        title: 'номер телефона', dataIndex: 'phone_number', key: 'phone_number',
         sorter: true, ellipsis: true,
             render: (phone_number) => phone_number ? "+7" + phone_number : '',
     },
@@ -167,11 +167,11 @@ const OrganizationTable = () => {
                 offsetHeader: 0,
             }}
             loading={loading}
-            dataSource={data.organizations.items.map((org, index) => ({...org, key: index}))}
+            dataSource={data?.organizations?.items?.map((org, index) => ({...org, key: index}))}
             columns={columns}
             onChange={onChange}
             pagination={{
-                total: data.organizations.count,
+                total: data?.organizations?.count,
                 current: page,
                 pageSize: limit,
                 onChange: (page, limit) => setPage(page),

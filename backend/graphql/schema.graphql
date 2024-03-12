@@ -28,6 +28,7 @@ type Query {
     facilitys: [Facility!]!
     TypePayments: [TypePayment]
     projectStatuses: [ProjectStatus!]!
+
 }
 input QueryOptions {
     page: Int
@@ -91,6 +92,9 @@ input ProjectInput {
     delegates_id: [String]
 }
 type Mutation {
+    personOrderFileDownload(
+        personId: ID
+    ): File!
 
 
     updateTask(
@@ -455,7 +459,10 @@ type BikResult {
 }input LoginInput {
     email: String
     password: String
-}type AuthPayload {
+}type File {
+    url: String
+}
+type AuthPayload {
     user: User
     access_token: String!
 }type Organization{

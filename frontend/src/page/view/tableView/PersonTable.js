@@ -75,6 +75,9 @@ const PersonTable = () => {
     const handleDelete = (personId) => {
         deletePerson({variables: {id: personId}});
     };
+    const handleDownloadOrder = (personId) => {
+        //downloadOrder({variables: {id: personId}});
+    };
     const onSearch = (value) => {
         setSearch(value);
     }
@@ -133,9 +136,11 @@ const PersonTable = () => {
         key: 'bik',
         render: (bik) => bik ? bik.name : null,
     }, {
-        title: 'Управление', key: 'edit', render: (text, record) => (<div>
-                <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
-                <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
+        title: 'Управление', key: 'edit', render: (text, record) => (
+            <div style={{textAlign: "justify"}}>
+                <Button size={"small"} onClick={() => handleEdit(record.id)}>Изменить</Button>
+                <Button  size={"small"} danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
+                <StyledButtonGreen size={"small"} onClick={() => handleDelete(record.id)}>Сгенерировать шаблон договора</StyledButtonGreen>
             </div>),
     },];
     const onChange = (pagination, filters, sorter) => {

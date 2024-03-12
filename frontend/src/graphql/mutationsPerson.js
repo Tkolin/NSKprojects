@@ -209,3 +209,14 @@ export const UPDATE_PPI_MUTATION = gql`
         }
     }
 `;
+export const CONTRACT_PERSON_MUTATION = gql`
+    mutation PersonOrderFileDownload(
+        $id: ID!
+    ) {
+        personOrderFileDownload(
+            personId: $id
+        ) {
+            url
+        }
+    }
+`;
