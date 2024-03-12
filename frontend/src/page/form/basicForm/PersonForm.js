@@ -140,17 +140,21 @@ const PersonForm = ({person, onClose}) => {
         <StyledBlockBig label={'Сотрудник'}>
             <Row gutter={8}>
                 <Col span={12}>
-                    <StyledFormRegular form={formPassport} layout="horizontal">
+                    <StyledFormRegular form={formPassport} layout="horizontal"
+                                       labelCol={{ span: 8 }}
+                                       labelAlign="right"
+                                       wrapperCol={{ span: 16 }}>
                         <Divider>Основные данные</Divider>
                         <StyledFormItem name="firstname" label="Имя" rules={[{required: true}]}>
-                            <Input/>
-                        </StyledFormItem>
-                        <StyledFormItem name="lastname" label="Фамилия" rules={[{required: true}]}>
                             <Input/>
                         </StyledFormItem>
                         <StyledFormItem name="patronymic" label="Отчество">
                             <Input/>
                         </StyledFormItem>
+                        <StyledFormItem name="lastname" label="Фамилия" rules={[{required: true}]}>
+                            <Input/>
+                        </StyledFormItem>
+
                         <StyledFormItem name="birth_date" label="Дата рождения" >
                             <DatePicker/>
                         </StyledFormItem>
@@ -158,25 +162,26 @@ const PersonForm = ({person, onClose}) => {
                         <StyledFormItem name="date" label="Дата выдачи">
                             <DatePicker/>
                         </StyledFormItem>
-                        <Space.Compact block>
-                            <StyledFormItem name="passport_place_issue_id" label="Место выдачи">
+                            <Space.Compact  block>
+                                <StyledFormItem labelCol={{ span: 12 }}
+                                                labelAlign="right"
+                                                name="passport_place_issue_id" label="Место выдачи">
 
-                                <Select
-                                    popupMatchSelectWidth={false}
-                                    allowClear
-                                    showSearch
-                                    filterOption={false}
-                                    onSearch={(value) => handleAutoCompletePPI(value)}
-                                    loading={loadingPPI}
-                                    placeholder="Начните ввод..."
-                                    style={{minWidth: 180}}>
-                                    {dataPPI?.passportPlaceIssues?.items?.map(row => (
-                                        <Select.Option key={row.id} value={row.id}>{row.name}</Select.Option>))}
-                                </Select>
-                            </StyledFormItem>
-                            <StyledButtonGreen icon={<PlusOutlined/>}
-                                               onClick={() => setPpiFormViewModalVisible(true)}/>
-                        </Space.Compact>
+                                    <Select
+                                        popupMatchSelectWidth={false}
+                                        allowClear
+                                        showSearch
+                                        filterOption={false}
+                                        onSearch={(value) => handleAutoCompletePPI(value)}
+                                        loading={loadingPPI}
+                                        placeholder="Начните ввод..." >
+                                        {dataPPI?.passportPlaceIssues?.items?.map(row => (
+                                            <Select.Option key={row.id} value={row.id}>{row.name}</Select.Option>))}
+                                    </Select>
+                                </StyledFormItem>
+                                <StyledButtonGreen icon={<PlusOutlined/>}
+                                                   onClick={() => setPpiFormViewModalVisible(true)}/>
+                            </Space.Compact>
                         <StyledFormItem name="serial" label="Серия">
                             <Input/>
                         </StyledFormItem>

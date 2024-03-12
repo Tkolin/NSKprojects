@@ -88,12 +88,12 @@ const PersonTable = () => {
         title: 'ФИО',
         dataIndex: 'passport',
         key: 'fio_name',
-        render: (passport) => passport ? `${passport.lastname} ${passport.firstname} ${passport.patronymic}` : "",
+        render: (passport) => passport ? `${passport.firstname} ${passport.patronymic} ${passport.lastname}  ` : "",
     }, {
         title: 'Даные паспорта',
         dataIndex: 'passport',
         key: 'passport_data',
-        render: (passport) => passport ?  `${passport.serial} ${passport.number} ${passport.date}` : "",
+        render: (passport) => passport ?  `${passport.serial ?? ""} ${passport.number ?? ""} ${passport.date ?? ""}` : "",
 
     }, {
         title: 'Дата рождения',

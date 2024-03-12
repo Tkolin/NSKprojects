@@ -23,6 +23,7 @@ export const StyledFormWrapperLarge = styled(Form)`
 export const StyledFormItem = styled(Form.Item)`
   margin-bottom: 10px;
 `;
+
 const StyledForm = ({form, onFinish, children  }) => {
     return (
         <Form form={form} onFinish={onFinish}
@@ -45,13 +46,14 @@ const StyledFormSmall = ({ form, onFinish, children  }) => {
 
     );
 };
-const StyledFormRegular = ({form, onFinish, children, layout, disabled  }) => {
+const StyledFormRegular = ({form, onFinish, children, layout, disabled,labelAlign,wrapperCol,labelCol  }) => {
     return (
             <Form form={form} onFinish={onFinish}
-                  labelAlign="left"
+                  labelAlign={labelAlign ? labelAlign : "left"}
                   style={{maxWidth: 360}}
-                  wrapperCol={{flex: 1}}
+                  wrapperCol={wrapperCol ? wrapperCol : {flex: 1}}
                   labelWrap
+                  labelCol={labelCol ? labelCol : null}
                   layout={layout ? layout : "horizontal"}
                   disabled={disabled}>
 

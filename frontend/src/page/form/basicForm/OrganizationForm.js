@@ -164,7 +164,7 @@ const OrganizationForm = ({organization, onClose}) => {
                             placeholder="Начните ввод...">
                             {dataContacts?.contacts?.items?.map(row => (
                                 <Select.Option key={row.id}
-                                               value={row.id}>{row.last_name} {row.first_name} {row.patronymic}</Select.Option>))}
+                                               value={row.id}>{row.first_name} {row.patronymic} {row.last_name}</Select.Option>))}
                         </Select>
 
 
@@ -240,7 +240,7 @@ const OrganizationForm = ({organization, onClose}) => {
                                         onSearch={(value) => handleAutoCompleteBiks(value)}
                                         loading={loadingBiks}
                                         placeholder="Бик">
-                                    {dataBiks && dataBiks.biks && dataBiks.biks.items && dataBiks.biks.items.map(row => (
+                                    {dataBiks?.biks?.items?.map(row => (
                                         <Select.Option key={row.id}
                                                        value={row.id}>{row.bik} {row.name}</Select.Option>))}
                                 </Select>

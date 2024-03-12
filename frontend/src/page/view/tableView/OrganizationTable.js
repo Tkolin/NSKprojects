@@ -101,7 +101,7 @@ const OrganizationTable = () => {
         key: 'director',
         render: (director) => {
             if (director) {
-                return `${director.last_name} ${director.first_name} ${director.patronymic}`;
+                return `${director.last_name ?? ""} ${director.first_name ?? ""} ${director.patronymic ?? ""}`;
             } else {
                 return '';
             }
