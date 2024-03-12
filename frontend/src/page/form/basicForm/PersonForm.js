@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Select, notification, Col, Row, Modal, Space} from 'antd';
+import {Form, Input, Select, notification, Col, Row, Modal, Space, Divider} from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
 import {
     ADD_PERSON_MUTATION, UPDATE_PERSON_MUTATION
@@ -10,23 +10,25 @@ import {
 import {DatePicker} from "antd/lib";
 import moment from 'moment';
 import PassportPlaceIssuesForm from "../simpleForm/passportPlaceIssuesForm";
-import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import {StyledBlockBig} from "../../style/BlockStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {PlusOutlined} from "@ant-design/icons";
 import {BANKS_QUERY, BIKS_QUERY, PASSPORTS_PLACE_ISSUES_QUERY, PERSONS_QUERY} from "../../../graphql/queries";
+import BikForm from "../simpleForm/BikForm";
 
 const PersonForm = ({person, onClose}) => {
 
     // Состояния
+    const [bikFormViewModalVisible, setBikFormViewModalVisible] = useState(false);
+
     const [editingPerson, setEditingPerson] = useState(null);
     const [form] = Form.useForm();
     const [formPassport] = Form.useForm();
     const [,] = notification.useNotification();
     const [ppiFormViewModalVisible, setPpiFormViewModalVisible] = useState(false);
-    const handlePpiFormView = () => {
-        setPpiFormViewModalVisible(false);
-    };
+    const handlePpiFormView = () => {setPpiFormViewModalVisible(false);};
+    const handleBikFormView = () => {setBikFormViewModalVisible(false);};
+
     // Получение данных для выпадающих списков
     const [autoCompletebiks, setAutoCompletebiks] = useState('');
     const [autoCompleteBanks, setAutoCompleteBanks] = useState('');
@@ -35,15 +37,9 @@ const PersonForm = ({person, onClose}) => {
     const [databiks, setDatabiks] = useState('');
     const [dataBanks, setDataBanks] = useState('');
     const [dataPPI, setDataPPI] = useState('');
-    const handleAutoCompletebiks = (value) => {
-        setAutoCompletebiks(value);
-    };
-    const handleAutoCompleteBanks = (value) => {
-        setAutoCompleteBanks(value);
-    };
-    const handleAutoCompletePPI = (value) => {
-        setAutoCompletePPI(value);
-    };
+    const handleAutoCompletebiks = (value) => {setAutoCompletebiks(value);};
+    const handleAutoCompleteBanks = (value) => {setAutoCompleteBanks(value);};
+    const handleAutoCompletePPI = (value) => {setAutoCompletePPI(value);};
 
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
@@ -75,7 +71,12 @@ const PersonForm = ({person, onClose}) => {
     const [addPerson] = useMutation(ADD_PERSON_MUTATION, {
         refetchQueries: [{query: PERSONS_QUERY}], onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно добавлены!');
+            if(onClose ){
+                console.log("Закрыл")
+                onClose()}
             form.resetFields();
+            formPassport.resetFields();
+
         }, onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при добавлении данных: ' + error.message);
         }
@@ -84,13 +85,21 @@ const PersonForm = ({person, onClose}) => {
     const [updatePerson] = useMutation(UPDATE_PERSON_MUTATION, {
         refetchQueries: [{query: PERSONS_QUERY}], onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно обновлены!');
+            if(onClose ){
+                console.log("Закрыл")
+                onClose()}
+            form.resetFields();
+            formPassport.resetFields();
             setEditingPerson(null);
-            onClose();
+
         }, onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при обновлении данных: ' + error.message);
         }
     });
-
+    useEffect(() =>{
+        form.resetFields();
+        formPassport.resetFields();
+    }, []);
     // Заполнение формы данными контакта при его редактировании
     useEffect(() => {
         if (person) {
@@ -132,24 +141,25 @@ const PersonForm = ({person, onClose}) => {
             <Row gutter={8}>
                 <Col span={12}>
                     <StyledFormRegular form={formPassport} layout="horizontal">
+                        <Divider>Основные данные</Divider>
                         <StyledFormItem name="firstname" label="Имя" rules={[{required: true}]}>
                             <Input/>
                         </StyledFormItem>
                         <StyledFormItem name="lastname" label="Фамилия" rules={[{required: true}]}>
                             <Input/>
                         </StyledFormItem>
-                        <StyledFormItem name="patronymic" label="Отчество" rules={[{required: true}]}>
+                        <StyledFormItem name="patronymic" label="Отчество">
                             <Input/>
                         </StyledFormItem>
-                        <StyledFormItem name="birth_date" label="Дата рождения" rules={[{required: true}]}>
+                        <StyledFormItem name="birth_date" label="Дата рождения" >
                             <DatePicker/>
                         </StyledFormItem>
-                        <StyledFormItem name="date" label="Дата выдачи" rules={[{required: true}]}>
+                        <Divider>Данные паспорта</Divider>
+                        <StyledFormItem name="date" label="Дата выдачи">
                             <DatePicker/>
                         </StyledFormItem>
                         <Space.Compact block>
-                            <StyledFormItem name="passport_place_issue_id" label="Место выдачи"
-                                            rules={[{required: true}]}>
+                            <StyledFormItem name="passport_place_issue_id" label="Место выдачи">
 
                                 <Select
                                     popupMatchSelectWidth={false}
@@ -160,23 +170,24 @@ const PersonForm = ({person, onClose}) => {
                                     loading={loadingPPI}
                                     placeholder="Начните ввод..."
                                     style={{minWidth: 180}}>
-                                    {dataPPI && dataPPI.passportPlaceIssues && dataPPI.passportPlaceIssues.items && dataPPI.passportPlaceIssues.items.map(row => (
+                                    {dataPPI?.passportPlaceIssues?.items?.map(row => (
                                         <Select.Option key={row.id} value={row.id}>{row.name}</Select.Option>))}
                                 </Select>
                             </StyledFormItem>
                             <StyledButtonGreen icon={<PlusOutlined/>}
                                                onClick={() => setPpiFormViewModalVisible(true)}/>
                         </Space.Compact>
-                        <StyledFormItem name="serial" label="Серия" rules={[{required: true}]}>
+                        <StyledFormItem name="serial" label="Серия">
                             <Input/>
                         </StyledFormItem>
-                        <StyledFormItem name="number" label="Номер" rules={[{required: true}]}>
+                        <StyledFormItem name="number" label="Номер">
                             <Input/>
                         </StyledFormItem>
                     </StyledFormRegular>
                 </Col>
                 <Col span={12}>
                     <StyledFormRegular form={form} layout="horizontal">
+                        <Divider>Дополнительная информация</Divider>
                         <StyledFormItem name="SHILS" label="Снилс">
                             <Input/>
                         </StyledFormItem>
@@ -213,10 +224,11 @@ const PersonForm = ({person, onClose}) => {
                                 loading={loadingBanks}
                                 placeholder="Начните ввод..."
                                 style={{minWidth: 200}}>
-                                {dataBanks && dataBanks.banks && dataBanks.banks.items && dataBanks.banks.items.map(bank => (
+                                {dataBanks?.banks?.items?.map(bank => (
                                     <Select.Option key={bank.id} value={bank.id}>{bank.name}</Select.Option>))}
                             </Select>
                         </StyledFormItem>
+                        <Space.Compact>
                         <StyledFormItem name="bik_id" label="Бик">
                             <Select
                                 popupMatchSelectWidth={false}
@@ -227,10 +239,17 @@ const PersonForm = ({person, onClose}) => {
                                 loading={loadingbiks}
                                 placeholder="Начните ввод..."
                                 style={{minWidth: 200}}>
-                                {databiks && databiks.biks && databiks.biks.items && databiks.biks.items.map(bik => (
+                                {databiks?.biks?.items?.map(bik => (
                                     <Select.Option key={bik.id} value={bik.id}>{bik.name}</Select.Option>))}
                             </Select>
                         </StyledFormItem>
+
+                        <StyledFormItem>
+                            <StyledButtonGreen icon={<PlusOutlined/>}
+                                               onClick={() => setBikFormViewModalVisible(true)}/>
+                        </StyledFormItem>
+
+                        </Space.Compact>
                     </StyledFormRegular>
                 </Col>
             </Row>
@@ -250,6 +269,14 @@ const PersonForm = ({person, onClose}) => {
                 footer={null}
                 onClose={handlePpiFormView}>
                 <PassportPlaceIssuesForm/>
+            </Modal>
+            <Modal
+                open={bikFormViewModalVisible}
+                title="Бик"
+                onCancel={() => setBikFormViewModalVisible(false)}
+                footer={null}
+                onClose={handleBikFormView}>
+                <BikForm/>
             </Modal>
         </StyledBlockBig>);
 };

@@ -53,6 +53,9 @@ const OrganizationForm = ({organization, onClose}) => {
         },});
 
     // Заполнение формы данными контакта при его редактировании
+    useEffect(() =>{
+        form.resetFields();
+    }, []);
     useEffect(() => {
         if (organization) {
             setEditingOrganization(organization);
@@ -75,6 +78,8 @@ const OrganizationForm = ({organization, onClose}) => {
         refetchQueries: [{query: ORGANIZATIONS_QUERY}], onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно добавлены!');
             form.resetFields();
+            if(onClose())
+                onClose()
         }, onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при добавлении данных:' + error.message);
         }
@@ -84,7 +89,8 @@ const OrganizationForm = ({organization, onClose}) => {
         refetchQueries: [{query: ORGANIZATIONS_QUERY}], onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно обновлены!');
             setEditingOrganization(null);
-            if(onClose) onClose();
+            if(onClose())
+                onClose()
         }, onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при обновлении данных:' + error.message);
         }

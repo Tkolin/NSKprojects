@@ -436,9 +436,9 @@ type BikResult {
     price: Int
 }type User {
     id: ID!
-    name: String!
-    email: String!
-    role: Role!
+    name: String
+    email: String
+    role: Role
 }type Role {
     id: ID!
     name: String!
@@ -453,10 +453,10 @@ type BikResult {
     email: String!
     password: String!
 }input LoginInput {
-    email: String!
-    password: String!
+    email: String
+    password: String
 }type AuthPayload {
-    user: User!
+    user: User
     access_token: String!
 }type Organization{
     id: ID!

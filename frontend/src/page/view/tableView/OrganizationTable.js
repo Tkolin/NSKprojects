@@ -64,6 +64,7 @@ const OrganizationTable = () => {
     const handleClose = () => {
         refetch();
         setEditModalVisible(false);
+        setAddModalVisible(false);
     };
     const handleEdit = (organizationId) => {
         const organization = data.organizations.items.find(organization => organization.id === organizationId);

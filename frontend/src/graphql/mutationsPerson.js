@@ -40,21 +40,21 @@ export const ADD_PERSON_MUTATION = gql`
     mutation AddPerson(
         $firstname: String!
         $lastname: String!
-        $patronymic: String!
-        $serial: String!
-        $number: String!
-        $passport_place_issue_id: ID!
-        $birth_date: String!
-        $date: String!
+        $patronymic: String
+        $serial: String
+        $number: String
+        $passport_place_issue_id: ID
+        $birth_date: String
+        $date: String
     
-        $SHILS: String!
-        $INN: String!
-        $payment_account: String!
-        $phone_number: String!
-        $email: String!
-        $email_sibnipi: String!
-        $bank_id: ID!
-        $bik_id: ID!
+        $SHILS: String
+        $INN: String
+        $payment_account: String
+        $phone_number: String
+        $email: String
+        $email_sibnipi: String
+        $bank_id: ID
+        $bik_id: ID
     ) {
         addPerson(
             firstname: $firstname
@@ -110,21 +110,21 @@ export const UPDATE_PERSON_MUTATION = gql`
         $id: ID!,
         $firstname: String!
         $lastname: String!
-        $patronymic: String!
-        $serial: String!
-        $number: String!
-        $passport_place_issue_id: ID!
-        $birth_date: String!
-        $date: String!
+        $patronymic: String
+        $serial: String
+        $number: String
+        $passport_place_issue_id: ID
+        $birth_date: String
+        $date: String
 
-        $SHILS: String!
-        $INN: String!
-        $payment_account: String!
-        $phone_number: String!
-        $email: String!
-        $email_sibnipi: String!
-        $bank_id: ID!
-        $bik_id: ID!
+        $SHILS: String
+        $INN: String
+        $payment_account: String
+        $phone_number: String
+        $email: String
+        $email_sibnipi: String
+        $bank_id: ID
+        $bik_id: ID
     ) {
         updatePerson(
             id: $id

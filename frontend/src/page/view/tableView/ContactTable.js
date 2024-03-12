@@ -64,6 +64,7 @@ const ContactTable = () => {
     const handleClose = () => {
         refetch();
         setEditModalVisible(false);
+        setAddModalVisible(false);
     };
     const handleEdit = (contactId) => {
         const contact = data.contacts.items.find(contact => contact.id === contactId);

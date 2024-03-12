@@ -28,7 +28,7 @@ const PersonTable = () => {
 
     const [search, setSearch] = useState('');
 
-    const {loading, error, data} = useQuery(PERSONS_QUERY, {
+    const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(PERSONS_QUERY, {
         variables: {
             queryOptions: {page, limit, search, sortField, sortOrder}
         }, fetchPolicy: 'network-only',
@@ -60,7 +60,9 @@ const PersonTable = () => {
 
     // Обработчик событий
     const handleClose = () => {
+        refetch();
         setEditModalVisible(false);
+        setAddModalVisible(false);
     };
     const handleEdit = (personId) => {
         const person = data.persons.items.find(person => person.id === personId);

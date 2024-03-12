@@ -56,6 +56,8 @@ const ContactForm = ({ contact, onClose }) => {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно добавлены!');
             form.resetFields();
+            if(onClose())
+                onClose()
         },
         onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при добавлении данных:' + error.message);
@@ -67,13 +69,16 @@ const ContactForm = ({ contact, onClose }) => {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно обновлены!');
             setEditingContact(null);
-            onClose();
+            if(onClose())
+                onClose()
         },
         onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при обновлении данных:' + error.message);
         }
     });
-
+    useEffect(() =>{
+        form.resetFields();
+    }, []);
     // Заполнение формы данными контакта при его редактировании
     useEffect(() => {
         if (contact) {
@@ -106,10 +111,10 @@ const ContactForm = ({ contact, onClose }) => {
     return (
         <StyledBlockRegular label={'Контакт'}>
             <StyledFormRegular form={form}   onFinish={handleSubmit}>
-                <StyledFormItem name="first_name" label="Имя" rules={[{ required: true }]}>
+                <StyledFormItem name="first_name" label="Имя" rules={[{ required: true, message: 'Пожалуйста, заполните имя' }]}>
                     <Input />
                 </StyledFormItem>
-                <StyledFormItem name="last_name" label="Фамилия"  rules={[{ required: true }]}>
+                <StyledFormItem name="last_name" label="Фамилия"  rules={[{ required: true, message: 'Пожалуйста, заполните фамилию' }]}>
                     <Input />
                 </StyledFormItem>
                 <StyledFormItem name="patronymic" label="Отчество" >

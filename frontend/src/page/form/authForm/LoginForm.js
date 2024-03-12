@@ -38,14 +38,14 @@ const LoginForm = () => {
             >
                 <StyledFormItem
                     name="email"
-                    rules={[{ required: true, message: 'Please input your email!' }]}
+                    rules={[{ required: true, message: 'Пожалуйста введите email!' }]}
                 >
                     <Input placeholder="Email" />
                 </StyledFormItem>
 
                 <StyledFormItem
                     name="password"
-                    rules={[{ required: true, message: 'Please input your password!' }]}
+                    rules={[{ required: true, message: 'Пожалуйста введите пароль!' }]}
                 >
                     <Input.Password placeholder="Password" />
                 </StyledFormItem>
