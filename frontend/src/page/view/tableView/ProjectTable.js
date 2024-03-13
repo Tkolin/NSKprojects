@@ -25,7 +25,7 @@ const ProjectTable = () => {
 
     const [search, setSearch] = useState('');
 
-    const { loading, error, data } = useQuery(PROJECTS_QUERY, {
+    const { loading, error, data, refetch } = useQuery(PROJECTS_QUERY, {
         variables: {
             queryOptions: {
             page,
@@ -155,7 +155,7 @@ const ProjectTable = () => {
             title: 'Управление',
             key: 'edit',
             render: (text, record) => (
-                <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
+                <Button size={"small"} onClick={() => handleEdit(record.id)}>Изменить</Button>
             ),
         },
     ];

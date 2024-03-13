@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Divider, Form, Input, notification, Select} from 'antd';
+import {Divider, Form, Input, Modal, notification, Select, Space} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
 import {CONTACTS_QUERY, ORGANIZATIONS_SHORT_QUERY, POSITIONS_QUERY} from '../../../graphql/queries';
 import {
@@ -11,6 +11,8 @@ import {DatePicker} from "antd/lib";
 import moment from 'moment';
 import {StyledBlockRegular} from "../../style/BlockStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
+import {PlusOutlined} from "@ant-design/icons";
+import OrganizationForm from "./OrganizationForm";
 
 const ContactForm = ({ contact, onClose }) => {
 
@@ -20,6 +22,7 @@ const ContactForm = ({ contact, onClose }) => {
     const [ api,contextHolder] = notification.useNotification();
     const [autoCompleteOrganization, setAutoCompleteOrganization] = useState('');
     const [autoCompletePositions, setAutoCompletePositions] = useState('');
+    const [addOrganizationModalVisible,setAddOrganizationModalVisible]= useState(false);
     const handleAutoCompleteOrganization = (value) => {
         setAutoCompleteOrganization(value);
     };
@@ -44,7 +47,7 @@ const ContactForm = ({ contact, onClose }) => {
         onCompleted: (data) => setDataPositions(data)
     });
 
-    const { loading: loadingOrganizations, error: errorOrganizations } = useQuery(ORGANIZATIONS_SHORT_QUERY, {
+    const { loading: loadingOrganizations, error: errorOrganizations, refetch: orgRefetch } = useQuery(ORGANIZATIONS_SHORT_QUERY, {
         variables: {
             queryOptions: { search: autoCompleteOrganization, limit: 10, page: 1}
         },
@@ -97,7 +100,10 @@ const ContactForm = ({ contact, onClose }) => {
 
         }
     }, [contact, form]);
-
+    const handleClose = () => {
+        orgRefetch();
+        setAddOrganizationModalVisible(false);
+    };
     // Обработчик отправки формы
     const handleSubmit = () => {
         if (editingContact) {
@@ -112,24 +118,23 @@ const ContactForm = ({ contact, onClose }) => {
         <StyledBlockRegular label={'Контакт'}>
             <StyledFormRegular form={form}   onFinish={handleSubmit}
                                labelCol={{ span: 8 }}
-                               labelAlign="right"
+                               labelAlign="left"
                                wrapperCol={{ span: 16 }}>
-
+                <Divider orientation={"left"}>ФИО:</Divider>
+                <StyledFormItem   name="last_name" label="Фамилия"  rules={[{ required: true, message: 'Пожалуйста, заполните фамилию' }]}>
+                    <Input />
+                </StyledFormItem>
                 <StyledFormItem  name="first_name" label="Имя" rules={[{ required: true, message: 'Пожалуйста, заполните имя' }]}>
                     <Input />
                 </StyledFormItem>
                 <StyledFormItem     name="patronymic" label="Отчество" >
                     <Input />
                 </StyledFormItem>
-                <StyledFormItem   name="last_name" label="Фамилия"  rules={[{ required: true, message: 'Пожалуйста, заполните фамилию' }]}>
-                    <Input />
-                </StyledFormItem>
-                <StyledFormItem name="birth_day" label="Дата рождения">
-                    <DatePicker placeholder="Выберите дату" />
-                </StyledFormItem>
-                <Divider>Контактные данные:</Divider>
 
-                <StyledFormItem name="work_phone" label="Рабочий"  rules={[
+
+                <Divider orientation={"left"}>Персональные данные:</Divider>
+
+                <StyledFormItem name="work_phone" label="Рабочий тел."  rules={[
                     {
                         pattern: /^[\d\s()-]+$/,
                         message: 'Пожалуйста, введите в формате 9003001234',
@@ -138,24 +143,22 @@ const ContactForm = ({ contact, onClose }) => {
                 >
                     <Input
                         placeholder="Введите номер телефона"
-                        addonBefore="+7"
-                        maxLength={10}
+                        maxLength={16}
                         minLength={10}
                         pattern="\d*"
                     />
 
                 </StyledFormItem>
-                <StyledFormItem name="mobile_phone" label="Мобильный"  rules={[
+                <StyledFormItem name="mobile_phone" label="Личный тел."  rules={[
                     {
                         pattern: /^[\d\s()-]+$/,
-                        message: 'Пожалуйста, введите в формате 9003001234',
+                        message: 'Пожалуйста, введите в формате +79003001234',
                     },
                 ]}
                 >
                     <Input
                         placeholder="Введите номер телефона"
-                        addonBefore="+7"
-                        maxLength={11}
+                        maxLength={16}
                         minLength={10}
                         pattern="\d*"/>
                 </StyledFormItem>
@@ -165,23 +168,30 @@ const ContactForm = ({ contact, onClose }) => {
                 <StyledFormItem name="work_email" label="Рабочий e-mail" rules={[{  type: 'email', message: 'Пожалуйста, введите корректный почтовый адресс', }]}>
                     <Input        placeholder="Введите e-mail"/>
                 </StyledFormItem>
-
-                <Divider>Организация:</Divider>
-                <StyledFormItem  labelCol={{ span: 24 }} wrapperCol={{span: 24}} name="organization_id"   rules={[{ required: true }]}>
-                    <Select
-                        popupMatchSelectWidth={false}
-                        allowClear
-                        showSearch
-                        filterOption = {false}
-                        onSearch={(value) => handleAutoCompleteOrganization(value)}
-                        loading={loadingOrganizations}
-                        placeholder="Выберите организацию...">
-                        {dataOrganizations?.organizations?.items?.map(row => (
-                            <Select.Option key={row.id}
-                                           value={row.id}>{row.name}</Select.Option>))}
-                    </Select>
-
+                <StyledFormItem name="birth_day" label="Дата рождения">
+                    <DatePicker placeholder="Выберите дату" />
                 </StyledFormItem>
+                <Divider orientation={"left"}>Данные организации:</Divider>
+                <Space.Compact style={{width: "100%"}}>
+                    <StyledFormItem style={{width: "100%"}} name="organization_id"   rules={[{ required: true }]}>
+                        <Select
+                            style={{width: "150%"}}
+                            popupMatchSelectWidth={false}
+                            allowClear
+                            showSearch
+                            filterOption = {false}
+                            onSearch={(value) => handleAutoCompleteOrganization(value)}
+                            loading={loadingOrganizations}
+                            placeholder="Выберите организацию...">
+                            {dataOrganizations?.organizations?.items?.map(row => (
+                                <Select.Option key={row.id}
+                                               value={row.id}>{row.name}</Select.Option>))}
+                        </Select>
+                    </StyledFormItem>
+                    <StyledButtonGreen icon={<PlusOutlined/>}
+                                       onClick={() => setAddOrganizationModalVisible(true)}/>
+                </Space.Compact>
+
                 <StyledFormItem name="position_id" labelCol={{ span: 6 }} wrapperCol={{span: 18}}  label="Должность" >
                     <Select
                         popupMatchSelectWidth={false}
@@ -191,7 +201,7 @@ const ContactForm = ({ contact, onClose }) => {
                         loading={loadingPositions}
                         onSearch={(value) => handleAutoCompletePositions(value)}
                         placeholder="Начните ввод...">
-                        {dataPositions && dataPositions.positions && dataPositions.positions.items.map(row => (
+                        {dataPositions?.positions?.items?.map(row => (
                             <Select.Option key={row.id}
                                            value={row.id}>{row.name}</Select.Option>))}
 
@@ -206,6 +216,15 @@ const ContactForm = ({ contact, onClose }) => {
                     </div>
                 </StyledFormItem>
             </StyledFormRegular>
+            <Modal
+                open={addOrganizationModalVisible}
+                width={900}
+                onCancel={() => setAddOrganizationModalVisible(false)}
+                footer={null}
+                onClose={handleClose}
+            >
+                <OrganizationForm contact={null} onClose={handleClose}/>
+            </Modal>
         </StyledBlockRegular>
     );
 };

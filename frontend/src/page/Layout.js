@@ -67,7 +67,7 @@ const styles = {
 };
 
 
-const CustomLayout = ({children}) => {
+const CustomLayout = ({children, currentUser, la}) => {
 
     // Логика
     const navigate = useNavigate();
@@ -106,7 +106,7 @@ const CustomLayout = ({children}) => {
                         getItem('Контакт', '2-1', null, null),
                         getItem('Создание нового договора', '2-2', null, null),
                         getItem('Организация', '2-3', null, null),
-                        getItem('Исполнитель', '2-4', null, null),
+                        getItem('Подрятчик', '2-4', null, null),
                         getItem('Шаблоны по типу проекта', '2-5', null, null),
                     ]),
                     getItem('Отчёты', '3', <SolutionOutlined/>, [])
@@ -117,7 +117,7 @@ const CustomLayout = ({children}) => {
                     getItem('Справочники', '1', <ProfileOutlined/>, [
                         getItem('Контакты', '1-1', null, null),
                         getItem('Организации', '1-4', null, null),
-                        getItem('Исполнители', '1-3', null, null),
+                        getItem('Подрятчики', '1-3', null, null),
                     ])
                 );
                 break;

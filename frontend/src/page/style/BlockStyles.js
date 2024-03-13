@@ -7,6 +7,7 @@ const StyledBlockWrapper = styled.div`
   margin: 10px auto;
   background-color: #f8fafc;
   padding: 15px;
+  padding-top: 0px;
   border-radius: 8px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 `;
@@ -37,8 +38,8 @@ const StyledBlockSmall = ({ label, children  }) => {
 const StyledBlockRegular = ({label, children  }) => {
     return (
         <StyledBlockWrapperRegular>
-            <Divider style={{ marginBottom: '20px', marginTop: '0px' }}  >
-                <Title level={3}>{label}</Title>
+            <Divider style={{ marginBottom: '0px', marginTop: '0px' }}  >
+                <Title level={3} style={{marginBottom: 0}}>{label}</Title>
             </Divider>
             {children}
             <Divider style={{ marginBottom: '0px', marginTop: '20px' }} />
@@ -48,7 +49,7 @@ const StyledBlockRegular = ({label, children  }) => {
 const StyledBlockBig = ({label, children}) => {
     return (
         <StyledBlockWrapperBig >
-            <Divider style={{ marginBottom: '20px', marginTop: '0px' }}  >
+            <Divider style={{ marginBottom: '0px', marginTop: '0px' }}  >
                 <Title level={3}>{label}</Title>
              </Divider>
             {children}

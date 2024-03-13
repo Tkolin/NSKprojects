@@ -36,9 +36,9 @@ class Organization extends Model
     {
         return $this->belongsTo(LegalForm::class);
     }
-    public function BIK(): BelongsTo
+    public function bik(): BelongsTo
     {
-        return $this->belongsTo(Bik::class);
+        return $this->belongsTo(Bik::class, "BIK_id");
     }
     public function director(): BelongsTo
     {

@@ -30,10 +30,7 @@ final readonly class PersonOrderFileDownload
             $contractGenerator = new ContractGeneratorService();
             $contractFilePath = $contractGenerator->generateContractPerson($personData);
 
-            // Ссылка на файл
-            $fileUrl = '/path/to/generated/files/' . basename($contractFilePath);
-
-            return ['url' => $fileUrl];
+            return ['url' => $contractFilePath];
 
 
         } else {

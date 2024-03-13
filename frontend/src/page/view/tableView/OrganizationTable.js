@@ -47,10 +47,10 @@ const OrganizationTable = () => {
     const [deleteOrganization] = useMutation(DELETE_ORGANIZATION_MUTATION, {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно удалены!');
-            window.location.reload();
+            refetch();
         }, onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
-            window.location.reload();
+            refetch();
         }, update: (cache, {data: {deleteOrganization}}) => {
             const {organizations} = cache.readQuery({query: ORGANIZATIONS_QUERY});
             const updatedOrganization = organizations.filter(organization => organization.id !== deleteOrganization.id);
@@ -90,7 +90,7 @@ const OrganizationTable = () => {
         {
         title: 'Тип',
         dataIndex: 'legal_form',
-        key: 'legal_form',
+        key: 'legal_form', width: 60,
         render: (legal_form) => legal_form ? legal_form.name : '',
     }, {
         title: 'Название организации', dataIndex: 'name', key: 'name',
@@ -107,18 +107,17 @@ const OrganizationTable = () => {
             }
         },
     },  {
-        title: 'email', dataIndex: 'email', key: 'email',
+        title: 'email', dataIndex: 'email', key: 'email',  width: 300,
         sorter: true, ellipsis: true,
     },  {
-        title: 'номер телефона', dataIndex: 'phone_number', key: 'phone_number',
-        sorter: true, ellipsis: true,
-            render: (phone_number) => phone_number ? "+7" + phone_number : '',
-    },
+        title: 'номер телефона', dataIndex: 'phone_number', key: 'phone_number', width: 140,
+        sorter: true, ellipsis: true},
         {
-        title: 'Управление', key: 'edit', render: (text, record) => (<div>
-                <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
-                <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
-            </div>),
+        title: 'Управление', key: 'edit', render: (text, record) => (
+            <Space size="middle">
+                <Button size={"small"} onClick={() => handleEdit(record.id)}>Изменить</Button>
+                <Button size={"small"}  danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
+            </Space>),
     },
 
     ];

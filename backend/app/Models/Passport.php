@@ -16,6 +16,8 @@ class Passport extends Model
         'serial',
         'number',
         'passport_place_issue_id',
+        'address_registration',
+        'address_residential ',
         'birth_date',
         'date',
     ];

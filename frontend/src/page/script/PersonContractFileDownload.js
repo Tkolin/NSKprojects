@@ -1,11 +1,12 @@
 import 'react-phone-number-input/style.css';
-import { useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { CONTRACT_PERSON_MUTATION } from './graphql/mutationsPerson';
-import { notification } from 'antd';
-import axios from 'axios';
+import { CONTRACT_PERSON_MUTATION } from '../../graphql/mutationsPerson';
+import {Button, notification} from 'antd';
+import {DownloadOutlined} from "@ant-design/icons";
 
-const Example = ({LaravelURL}) => {
+const PersonContractFileDownload = ({personId}) => {
+    const LaravelURL = process.env.REACT_APP_API_URL;
+
 
     const openNotification = (placement, type, message) => {
         notification[type]({
@@ -25,13 +26,14 @@ const Example = ({LaravelURL}) => {
     });
 
     const handleDownload = () => {
-        downloadContract({ variables: { id: 2 } });
+        console.log(personId);
+        downloadContract({ variables: { id: personId } });
     };
 
     const handleDownloadClick = async (downloadedFileUrl) => {
         try {
-            // Скачивание файла по прямой ссылке
             const link = document.createElement('a');
+            console.log(link);
             link.href = `${LaravelURL}download-contract/${downloadedFileUrl}`;
             link.download = 'contract.docx';
             document.body.appendChild(link);
@@ -43,12 +45,9 @@ const Example = ({LaravelURL}) => {
     };
 
     return (
-        <div>
-            <h1>Example</h1>
-            <button onClick={handleDownload}>Скачать договор</button>
-        </div>
+            <Button onClick={handleDownload}  icon={<DownloadOutlined />}/>
     );
 };
 
-export default Example;
+export default PersonContractFileDownload;
 

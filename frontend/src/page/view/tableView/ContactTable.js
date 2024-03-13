@@ -31,7 +31,7 @@ const ContactTable = () => {
     const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(CONTACTS_QUERY, {
         variables: {
             queryOptions: {
-            page, limit, search, sortField: sortField, sortOrder
+                page, limit, search, sortField: sortField, sortOrder
             }
         }, fetchPolicy: 'network-only',
     });
@@ -47,10 +47,9 @@ const ContactTable = () => {
     const [deleteContact] = useMutation(DELETE_CONTACT_MUTATION, {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно удалены!');
-            window.location.reload();
+            refetch();
         }, onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
-            window.location.reload();
         }, update: (cache, {data: {deleteContact}}) => {
             const {contacts} = cache.readQuery({query: CONTACTS_QUERY});
             const updatedContacts = contacts.filter(contact => contact.id !== deleteContact.id);
@@ -88,57 +87,43 @@ const ContactTable = () => {
     // Формат таблицы
     const columns = [
         {
-        title: 'Имя', dataIndex: 'first_name', key: 'first_name',
+            title: 'ФИО', key: 'FIO',
 
-        sorter: true, ellipsis: true,
-    },
-        {
-            title: 'Отчество', dataIndex: 'patronymic', key: 'patronymic',
-
-            sorter: true, ellipsis: true,
+            sorter: true,
+            render: (text, record) => `${record.last_name}  ${record.first_name} ${record.patronymic}`
+        }, {
+            title: 'Личный тел.', dataIndex: 'mobile_phone', key: 'mobile_phone',
+            sorter: true,
+        }, {
+            title: 'Рабочий тел.', dataIndex: 'work_phone', key: 'work_phone',
+            sorter: true,
+        }, {
+            title: 'Личный E-mail', dataIndex: 'email', key: 'email',
+            sorter: true,
+        }, {
+            title: 'Рабочий E-mail', dataIndex: 'work_email', key: 'work_email',
+            sorter: true,
+        },  {
+            title: 'Дата рождения', dataIndex: 'birth_day', key: 'birth_day',
+            sorter: true,
+        }, {
+            title: 'Должность',
+            dataIndex: 'position',
+            key: 'position',
+            render: (position) => position?.name ?? null,
+        }, {
+            title: 'Организация',
+            dataIndex: 'organization',
+            key: 'organization',
+            render: (organization) => organization?.name ?? null,
         },
-        {
-        title: 'Фамилия', dataIndex: 'last_name', key: 'last_name',
-
-        sorter: true, ellipsis: true,
-    }, {
-        title: 'Дата рождения', dataIndex: 'birth_day', key: 'birth_day',
-
-        sorter: true, ellipsis: true,
-    }, {
-        title: 'Номер телефона', dataIndex: 'mobile_phone', key: 'mobile_phone',
-            render: (mobile_phone) => mobile_phone ? "+7" + mobile_phone : '',
-
-        sorter: true, ellipsis: true,
-    }, {
-        title: 'Рабочий Номер телефона', dataIndex: 'work_phone', key: 'work_phone',
-            render: (work_phone) => work_phone ? "+7" + work_phone : '',
-
-        sorter: true, ellipsis: true,
-    }, {
-        title: 'Личный E-mail', dataIndex: 'email', key: 'email',
-
-        sorter: true, ellipsis: true,
-    }, {
-        title: 'Рабочий E-mail', dataIndex: 'work_email', key: 'work_email',
-
-        sorter: true, ellipsis: true,
-    }, {
-        title: 'Должность',
-        dataIndex: 'position',
-        key: 'position',
-        render: (position) => position ? position.name : null,
-    }, {
-        title: 'Организация',
-        dataIndex: 'organization',
-        key: 'organization',
-        render: (organization) => organization ? organization.name : null,
-    }, {
-        title: 'Управление', key: 'edit', render: (text, record) => (<div>
-                <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
-                <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
-            </div>),
-    },];
+       {
+            title: 'Управление', key: 'edit', render: (text, record) => (
+                <Space size="middle">
+                    <Button size={"small"} onClick={() => handleEdit(record.id)}>Изменить</Button>
+                    <Button size={"small"} danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
+                </Space>),
+        },];
 
     const onChange = (pagination, filters, sorter) => {
         if ((sorter.field !== undefined) && currentSort !== sorter) {
@@ -163,57 +148,58 @@ const ContactTable = () => {
         } else console.log("Фильтры сохранены");
     };
     return (<div>
-            <StyledFormLarge form={formSearch} layout="horizontal">
-                <Form.Item label="Поиск:" name="search">
-                    <Space>
-                        <Search
-                            placeholder="Найти..."
-                            allowClear
-                            enterButton="Найти"
-                            onSearch={onSearch}
-                        />
-                        <StyledButtonGreen   style={{    marginBottom: 0}} onClick={() => handleAdd()}>Создать новую запись</StyledButtonGreen>
-                    </Space>
-                </Form.Item>
-            </StyledFormLarge>
-            <Table
-                size={'small'}
-                sticky={{
-                    offsetHeader: '64px',
-                }}
-                loading={loading}
-                dataSource={data.contacts.items.map((org, index) => ({...org, key: index}))}
-                columns={columns}
-                onChange={onChange}
-                pagination={{
-                    total: data.contacts.count,
-                    current: page,
-                    pageSize: limit,
-                    onChange: (page, limit) => setPage(page),
-                    onShowSizeChange: (current, size) => {
-                        setPage(1);
-                        setLimit(size);
-                    },
-                    showSizeChanger: true,
-                    pageSizeOptions: ['50', '100', '200'],
-                }}
-            />
-            <Modal
-                open={editModalVisible}
-                onCancel={() => setEditModalVisible(false)}
-                footer={null}
-                onClose={handleClose}
-            >
-                <ContactForm contact={selectedContact} onClose={handleClose}/>
-            </Modal>
-            <Modal
-                open={addModalVisible}
-                onCancel={() => setAddModalVisible(false)}
-                footer={null}
-                onClose={handleClose}
-            >
-                <ContactForm contact={null} onClose={handleClose}/>
-            </Modal>
-        </div>);
+        <StyledFormLarge form={formSearch} layout="horizontal">
+            <Form.Item label="Поиск:" name="search">
+                <Space>
+                    <Search
+                        placeholder="Найти..."
+                        allowClear
+                        enterButton="Найти"
+                        onSearch={onSearch}
+                    />
+                    <StyledButtonGreen style={{marginBottom: 0}} onClick={() => handleAdd()}>Создать новую
+                        запись</StyledButtonGreen>
+                </Space>
+            </Form.Item>
+        </StyledFormLarge>
+        <Table
+            size={'small'}
+            sticky={{
+                offsetHeader: '64px',
+            }}
+            loading={loading}
+            dataSource={data.contacts.items.map((org, index) => ({...org, key: index}))}
+            columns={columns}
+            onChange={onChange}
+            pagination={{
+                total: data.contacts.count,
+                current: page,
+                pageSize: limit,
+                onChange: (page, limit) => setPage(page) && setLimit(limit),
+                onShowSizeChange: (current, size) => {
+                    setPage(1);
+                    setLimit(size);
+                },
+                showSizeChanger: true,
+                pageSizeOptions: ['50', '100', '200'],
+            }}
+        />
+        <Modal
+            open={editModalVisible}
+            onCancel={() => setEditModalVisible(false)}
+            footer={null}
+            onClose={handleClose}
+        >
+            <ContactForm contact={selectedContact} onClose={handleClose}/>
+        </Modal>
+        <Modal
+            open={addModalVisible}
+            onCancel={() => setAddModalVisible(false)}
+            footer={null}
+            onClose={handleClose}
+        >
+            <ContactForm contact={null} onClose={handleClose}/>
+        </Modal>
+    </div>);
 };
 export default ContactTable;

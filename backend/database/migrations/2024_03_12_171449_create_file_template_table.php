@@ -16,7 +16,11 @@ return new class extends Migration
             $table->timestamps();
             $table->string("name");
             $table->foreignId('type_file_id')->constrained('type_files');
+
+
         });
+        \Illuminate\Support\Facades\DB::statement("ALTER TABLE template_files ADD file LONGBLOB");
+
     }
 
     /**

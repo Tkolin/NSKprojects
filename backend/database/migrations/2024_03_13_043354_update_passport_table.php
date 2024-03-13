@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('template_files', function (Blueprint $table) {
-            $table->binary("file");
+        Schema::table('passports', function (Blueprint $table) {
+            $table->string("address_registration")->nullable();
+            $table->string("address_residential")->nullable();
         });
     }
 

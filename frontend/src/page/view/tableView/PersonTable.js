@@ -8,6 +8,8 @@ import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import Search from "antd/es/input/Search";
 import {StyledFormLarge} from "../../style/FormStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
+import {DownloadOutlined} from "@ant-design/icons";
+import PersonContractFileDownload from "../../script/PersonContractFileDownload";
 
 const PersonTable = () => {
 
@@ -28,7 +30,7 @@ const PersonTable = () => {
 
     const [search, setSearch] = useState('');
 
-    const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(PERSONS_QUERY, {
+    const {loading: loading, error: error, data: data, refetch: refetchTable} = useQuery(PERSONS_QUERY, {
         variables: {
             queryOptions: {page, limit, search, sortField, sortOrder}
         }, fetchPolicy: 'network-only',
@@ -45,22 +47,17 @@ const PersonTable = () => {
     const [deletePerson] = useMutation(DELETE_PERSON_MUTATION, {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно удалены!');
-            window.location.reload();
+            refetchTable();
         }, onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
-            window.location.reload();
-        }, update: (cache, {data: {deletePerson}}) => {
-            const {persons} = cache.readQuery({query: PERSONS_QUERY});
-            const updatedPersons = persons.filter(person => person.id !== deletePerson.id);
-            cache.writeQuery({
-                query: PERSONS_QUERY, data: {persons: updatedPersons},
-            });
+            refetchTable();
         },
+
     });
 
     // Обработчик событий
     const handleClose = () => {
-        refetch();
+        refetchTable();
         setEditModalVisible(false);
         setAddModalVisible(false);
     };
@@ -75,9 +72,7 @@ const PersonTable = () => {
     const handleDelete = (personId) => {
         deletePerson({variables: {id: personId}});
     };
-    const handleDownloadOrder = (personId) => {
-        //downloadOrder({variables: {id: personId}});
-    };
+
     const onSearch = (value) => {
         setSearch(value);
     }
@@ -91,7 +86,7 @@ const PersonTable = () => {
         title: 'ФИО',
         dataIndex: 'passport',
         key: 'fio_name',
-        render: (passport) => passport ? `${passport.firstname} ${passport.patronymic} ${passport.lastname}  ` : "",
+        render: (passport) => passport ? `${passport.lastname}  ${passport.firstname} ${passport.patronymic}  ` : "",
     }, {
         title: 'Даные паспорта',
         dataIndex: 'passport',
@@ -99,12 +94,24 @@ const PersonTable = () => {
         render: (passport) => passport ?  `${passport.serial ?? ""} ${passport.number ?? ""} ${passport.date ?? ""}` : "",
 
     }, {
+        title: 'Личный тел.', dataIndex: 'phone_number', key: 'phone_number',
+
+        sorter: true, ellipsis: true,
+    }, {
+        title: 'Личный e-mail', dataIndex: 'email', key: 'email',
+
+        sorter: true, ellipsis: true,
+    }, {
+        title: 'e-mail СибНИПИ', dataIndex: 'email_sibnipi', key: 'email_sibnipi',
+
+        sorter: true, ellipsis: true,
+    }, {
         title: 'Дата рождения',
         dataIndex: 'passport',
         key: 'birth_day',
         render: (passport) => passport ? passport.birth_date : null,
 
-    }, {
+    },{
         title: 'СНИЛС', dataIndex: 'SHILS', key: 'SHILS',
 
         sorter: true, ellipsis: true,
@@ -116,32 +123,26 @@ const PersonTable = () => {
         title: 'Расчётный счёт', dataIndex: 'payment_account', key: 'payment_account',
 
         sorter: true, ellipsis: true,
-    }, {
-        title: 'Номер телефона', dataIndex: 'phone_number', key: 'phone_number',
-
-        sorter: true, ellipsis: true,
-    }, {
-        title: 'email', dataIndex: 'email', key: 'email',
-
-        sorter: true, ellipsis: true,
-    }, {
-        title: 'email Сибнипи', dataIndex: 'email_sibnipi', key: 'email_sibnipi',
-
-        sorter: true, ellipsis: true,
-    }, {
+    },  {
         title: 'банк', dataIndex: 'bank', key: 'bank', render: (bank) => bank ? bank.name : null,
-    }, {
+    },{
         title: 'бик',
         dataIndex: 'bik',
         key: 'bik',
         render: (bik) => bik ? bik.name : null,
     }, {
-        title: 'Управление', key: 'edit', render: (text, record) => (
-            <div style={{textAlign: "justify"}}>
+        title: 'Договор', key: 'btnContract',  width: 80, align: 'center',
+        render: (text, record) => (
+
+                <PersonContractFileDownload personId={record.id}/>
+
+        ),
+    }, {
+        title: 'Управление', key: 'edit',  align: 'center', render: (text, record) => (
+            <Space size="middle">
                 <Button size={"small"} onClick={() => handleEdit(record.id)}>Изменить</Button>
                 <Button  size={"small"} danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
-                <StyledButtonGreen size={"small"} onClick={() => handleDelete(record.id)}>Сгенерировать шаблон договора</StyledButtonGreen>
-            </div>),
+            </Space>),
     },];
     const onChange = (pagination, filters, sorter) => {
         if ((sorter.field !== undefined) && currentSort !== sorter) {

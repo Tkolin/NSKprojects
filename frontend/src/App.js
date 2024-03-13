@@ -40,6 +40,7 @@ const App = () => {
             }
         }
     });
+
     // Обработка загрузки и ошибок
     if (loading) return <LoadingSpinnerStyles/>;
     if (data) if (error) return `Ошибка! ${error.message}`;
@@ -52,10 +53,10 @@ const App = () => {
     }
 `;
     return (
-        <ConfigProvider locale={ruRU}>
+        <ConfigProvider locale={ruRU} >
             <GlobalStyles />
             <Router>
-                <CustomLayout currentUser={currentUser}>
+                <CustomLayout currentUser={currentUser}  >
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/t" element={<Test />} />

@@ -2,10 +2,11 @@ import React, { useMemo } from 'react';
 import { ApolloClient, InMemoryCache, ApolloProvider as ApolloHooksProvider, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { Cookies } from 'react-cookie';
-
 const httpLink = createHttpLink({
-    uri: 'http://localhost:8000/graphql/',
+
+    uri: `${process.env.REACT_APP_API_URL}graphql/`,
 });
+console.log(process.env.REACT_APP_API_URL);
 
 const createApolloClient = () => {
     const authLink = setContext((_, { headers }) => {

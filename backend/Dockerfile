@@ -27,6 +27,7 @@ RUN composer install --no-dev
 
 RUN composer require laravel/passport
 # Создание директории для сохранения ключей OAuth
+RUN composer require phpoffice/phpword
 
 RUN php artisan optimize:clear
 
