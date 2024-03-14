@@ -37,6 +37,7 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
         }
     }, [project]);
     // Состояния
+
     const [form] = Form.useForm();
     const [selectedTypeProject, setSelectedTypeProject] = useState(null);
     const [cascaderFacility, setCascaderFacility] = useState(null);
@@ -325,7 +326,7 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
             </Space.Compact>
             <StyledFormItem name="status_id" label="Статус проекта">
                 <Select loading={loadingStatuses}>
-                    {dataStatuses && dataStatuses.projectStatuses && dataStatuses.projectStatuses.map(status => (
+                    {dataStatuses?.projectStatuses?.map(status => (
                         <Select.Option key={status.id}
                                        value={status.id}>{status.name}</Select.Option>))}
                 </Select>

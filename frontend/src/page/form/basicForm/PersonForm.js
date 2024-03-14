@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Select, notification, Col, Row, Modal, Space, Divider} from 'antd';
+import {Form, Input, Select, notification, Col, Row, Modal, Space, Divider, Button} from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
 import {
     ADD_PERSON_MUTATION, UPDATE_PERSON_MUTATION
@@ -15,9 +15,10 @@ import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {PlusOutlined} from "@ant-design/icons";
 import {BANKS_QUERY, BIKS_QUERY, PASSPORTS_PLACE_ISSUES_QUERY, PERSONS_QUERY} from "../../../graphql/queries";
 import BikForm from "../simpleForm/BikForm";
+import {AddressSuggestions} from "react-dadata";
+import {StyledAddressSuggestions, StyledAddressSuggestionsInput} from "../../style/InputStyles";
 
 const PersonForm = ({person, onClose}) => {
-
     // Состояния
     const [bikFormViewModalVisible, setBikFormViewModalVisible] = useState(false);
 
@@ -26,14 +27,14 @@ const PersonForm = ({person, onClose}) => {
     const [formPassport] = Form.useForm();
     const [,] = notification.useNotification();
     const [ppiFormViewModalVisible, setPpiFormViewModalVisible] = useState(false);
-    const handlePpiFormView = () => {
-        setPpiFormViewModalVisible(false);
-    };
-    const handleBikFormView = () => {
-        setBikFormViewModalVisible(false);
-    };
+    const handlePpiFormView = () => {setPpiFormViewModalVisible(false);};
+    const handleBikFormView = () => {setBikFormViewModalVisible(false);};
 
     // Получение данных для выпадающих списков
+    const [address1, setAddress1] = useState();
+    const [address2, setAddress2] = useState();
+
+
     const [autoCompletebiks, setAutoCompletebiks] = useState('');
     const [autoCompleteBanks, setAutoCompleteBanks] = useState('');
     const [autoCompletePPI, setAutoCompletePPI] = useState('');
@@ -41,15 +42,11 @@ const PersonForm = ({person, onClose}) => {
     const [databiks, setDatabiks] = useState('');
     const [dataBanks, setDataBanks] = useState('');
     const [dataPPI, setDataPPI] = useState('');
-    const handleAutoCompletebiks = (value) => {
-        setAutoCompletebiks(value);
-    };
-    const handleAutoCompleteBanks = (value) => {
-        setAutoCompleteBanks(value);
-    };
-    const handleAutoCompletePPI = (value) => {
-        setAutoCompletePPI(value);
-    };
+    const handleAutoCompletebiks = (value) => {setAutoCompletebiks(value);};
+    const handleAutoCompleteBanks = (value) => {setAutoCompleteBanks(value);};
+    const handleAutoCompletePPI = (value) => {setAutoCompletePPI(value);};
+    const addresChange1 = (suggestion) => {setAddress1(suggestion?.unrestricted_value);};
+    const addresChange2 = (suggestion) => {setAddress2(suggestion?.unrestricted_value);};
 
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
@@ -111,6 +108,8 @@ const PersonForm = ({person, onClose}) => {
     useEffect(() => {
         form.resetFields();
         formPassport.resetFields();
+        setAddress1("");
+        setAddress2("");
     }, []);
     // Заполнение формы данными контакта при его редактировании
     useEffect(() => {
@@ -136,20 +135,36 @@ const PersonForm = ({person, onClose}) => {
                 serial: person.passport.serial,
                 number: person.passport.number,
             });
+
+            setAddress1(person.passport.address_registration);
+            setAddress2(person.passport.address_residential);
         }
     }, [person, form, formPassport]);
 
     // Обработчик отправки формы
     const handleSubmit = () => {
+        const { address_registration, address_residential, ...formPassportValues } = formPassport.getFieldsValue();
+        const restrictedValue1 = address_registration?.unrestricted_value ?? address1;
+        const restrictedValue2 = address_residential?.unrestricted_value ?? address2;
+
+        const variables = {
+            ...form.getFieldsValue(),
+            ...formPassportValues,
+            address_registration: restrictedValue1,
+            address_residential: restrictedValue2,
+        };
+
         if (editingPerson) {
-            updatePerson({variables: {id: editingPerson.id, ...form.getFieldsValue(), ...formPassport.getFieldsValue(),}});
+            updatePerson({ variables: { id: editingPerson.id, ...variables } });
         } else {
-            addPerson({variables: {...form.getFieldsValue(), ...formPassport.getFieldsValue()}});
+            addPerson({ variables });
         }
     };
 
+    const TokenDADATA = process.env.REACT_APP_TOKEN_DADATAADDRESS;
+
     return (
-        <StyledBlockBig label={'Подрятчик'}>
+        <StyledBlockBig label={'Подрядчик'}>
             <Row gutter={8}>
                 <Col span={12}>
                     <StyledFormRegular form={formPassport}
@@ -174,12 +189,13 @@ const PersonForm = ({person, onClose}) => {
                         <StyledFormItem name="date" label="Дата выдачи">
                             <DatePicker/>
                         </StyledFormItem>
-                        <Space.Compact block style={{width: "100%"}}>
-                            <StyledFormItem
-                                style={{width: "100%"}}
-                                            name="passport_place_issue_id" label="Место выдачи">
+                        <Space.Compact style={{width: "calc(100% + 32px)"}}>
+                            <Form.Item style={{width: "calc(100% - 32px)", marginBottom: 0}}
+                                       labelAlign="left"
+                                       name="passport_place_issue_id"
+                                       label="Место выдачи">
                                 <Select
-                                    style={{width: "100%"}}
+                                    style={{width: "calc(100% - 32px)"}}
                                     popupMatchSelectWidth={false}
                                     allowClear
                                     showSearch
@@ -190,24 +206,51 @@ const PersonForm = ({person, onClose}) => {
                                     {dataPPI?.passportPlaceIssues?.items?.map(row => (
                                         <Select.Option key={row.id} value={row.id}>{row.name}</Select.Option>))}
                                 </Select>
-                            </StyledFormItem>
-                            <StyledButtonGreen icon={<PlusOutlined/>}
+                            </Form.Item>
+                            <StyledButtonGreen style={{marginLeft: "-32px"}} icon={<PlusOutlined/>}
                                                onClick={() => setPpiFormViewModalVisible(true)}/>
                         </Space.Compact>
+
                         <StyledFormItem name="serial" label="Серия">
                             <Input/>
                         </StyledFormItem>
                         <StyledFormItem name="number" label="Номер">
                             <Input/>
                         </StyledFormItem>
+                        <StyledFormItem name="address_registration" label="Адрес регистрации" minchars={3}
+                                        delay={50}
+                                        style={{
+                                            width: '100%',
+                                        }}>
+                            <AddressSuggestions token={TokenDADATA}
+                                                inputProps={{
+                                                    placeholder: 'Введите адрес',
+                                                    style: StyledAddressSuggestionsInput,
+                                                }}
+                                                defaultQuery={address1}
+                                                onChange={addresChange1}/>
+                        </StyledFormItem>
+                        <StyledFormItem name="address_residential" label="Адрес проживания" minchars={3}
+                                        delay={50}
+                                        style={{
+                                            width: '100%',
+                                        }}>
+                            <AddressSuggestions token={TokenDADATA}
+                                                inputProps={{
+                                                    placeholder: 'Введите адрес',
+                                                    style: StyledAddressSuggestionsInput,
+                                                }}
+                                                defaultQuery={address2}
+                                                onChange={addresChange2}/>
+                        </StyledFormItem>
                     </StyledFormRegular>
                 </Col>
                 <Col span={12}>
                     <StyledFormRegular form={form}
                                        layout="horizontal"
-                                       labelCol={{span: 4}}
+                                       labelCol={{span: 9}}
                                        labelAlign="left"
-                                       wrapperCol={{span: 20}}>
+                                       wrapperCol={{span: 15}}>
                         <Divider orientation={"left"}>Персональные данные</Divider>
 
 
@@ -229,6 +272,9 @@ const PersonForm = ({person, onClose}) => {
                         <StyledFormItem name="email_sibnipi" label="e-mail СибНИПИ" rules={[{type: 'email'}]}>
                             <Input/>
                         </StyledFormItem>
+
+
+
                         <Divider orientation={"left"}>Реквизиты:</Divider>
                         <StyledFormItem name="payment_account" label="Расчётный счёт">
                             <Input/>
@@ -246,35 +292,36 @@ const PersonForm = ({person, onClose}) => {
                                     <Select.Option key={bank.id} value={bank.id}>{bank.name}</Select.Option>))}
                             </Select>
                         </StyledFormItem>
-                        <Space.Compact block style={{width: "100%"}}>
-                            <StyledFormItem name="bik_id" label="Бик" style={{width: "100%"}}>
+                        <Space.Compact style={{width: "calc(100% + 32px)"}}>
+
+                            <StyledFormItem name="bik_id" label="Бик"
+                                            style={{width: "calc(100% - 32px)", marginBottom: 0}}>
                                 <Select
-                                    style={{width: "100%"}}
+                                    style={{width: "calc(100% - 32px)"}}
                                     popupMatchSelectWidth={false}
                                     allowClear
                                     showSearch
                                     filterOption={false}
                                     onSearch={(value) => handleAutoCompletebiks(value)}
                                     loading={loadingbiks}
-                                    placeholder="Начните ввод..." >
+                                    placeholder="Начните ввод...">
                                     {databiks?.biks?.items?.map(bik => (
                                         <Select.Option key={bik.id} value={bik.id}>{bik.name}</Select.Option>))}
                                 </Select>
-                            </StyledFormItem>
 
-                            <StyledFormItem>
-                                <StyledButtonGreen icon={<PlusOutlined/>}
-                                                   onClick={() => setBikFormViewModalVisible(true)}/>
                             </StyledFormItem>
+                            <StyledButtonGreen style={{marginLeft: "-32px"}} icon={<PlusOutlined/>}
+                                               onClick={() => setBikFormViewModalVisible(true)}/>
 
                         </Space.Compact>
+
+
                         <StyledFormItem name="INN" label="Инн">
                             <Input/>
                         </StyledFormItem>
                         <StyledFormItem name="SHILS" label="Снилс">
                             <Input/>
                         </StyledFormItem>
-
 
 
                     </StyledFormRegular>

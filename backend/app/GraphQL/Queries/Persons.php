@@ -33,6 +33,8 @@ final readonly class Persons
                             $query->where('firstname', 'like', "%$searchTerm%")
                                 ->orWhere('lastname', 'like', "%$searchTerm%")
                                 ->orWhere('patronymic', 'like', "%$searchTerm%")
+                                ->orWhere('address_residential', 'like', "%$searchTerm%")
+                                ->orWhere('address_registration', 'like', "%$searchTerm%")
                                 ->orWhere('serial', 'like', "%$searchTerm%")
                                 ->orWhere('number', 'like', "%$searchTerm%");
                         });

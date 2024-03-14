@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, Form, Modal, notification, Space, Table} from 'antd';
+import {Button, Col, Descriptions, Divider, Form, Modal, notification, Row, Space, Table} from 'antd';
 import { PERSONS_QUERY} from '../../../graphql/queries';
 import {DELETE_PERSON_MUTATION} from '../../../graphql/mutationsPerson';
 import PersonForm from "../../form/basicForm/PersonForm";
@@ -18,6 +18,7 @@ const PersonTable = () => {
     const [selectedPerson, setSelectedPerson] = useState(null);
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [addModalVisible, setAddModalVisible] = useState(false);
+    const [expandedRowKeys, setExpandedRowKeys] = useState([]);
 
     // Данные
     const [page, setPage] = useState(1);
@@ -88,12 +89,6 @@ const PersonTable = () => {
         key: 'fio_name',
         render: (passport) => passport ? `${passport.lastname}  ${passport.firstname} ${passport.patronymic}  ` : "",
     }, {
-        title: 'Даные паспорта',
-        dataIndex: 'passport',
-        key: 'passport_data',
-        render: (passport) => passport ?  `${passport.serial ?? ""} ${passport.number ?? ""} ${passport.date ?? ""}` : "",
-
-    }, {
         title: 'Личный тел.', dataIndex: 'phone_number', key: 'phone_number',
 
         sorter: true, ellipsis: true,
@@ -109,28 +104,9 @@ const PersonTable = () => {
         title: 'Дата рождения',
         dataIndex: 'passport',
         key: 'birth_day',
-        render: (passport) => passport ? passport.birth_date : null,
+        render: (passport) =>  passport?.birth_date ?? null,
 
-    },{
-        title: 'СНИЛС', dataIndex: 'SHILS', key: 'SHILS',
-
-        sorter: true, ellipsis: true,
-    }, {
-        title: 'ИНН', dataIndex: 'INN', key: 'INN',
-
-        sorter: true, ellipsis: true,
-    }, {
-        title: 'Расчётный счёт', dataIndex: 'payment_account', key: 'payment_account',
-
-        sorter: true, ellipsis: true,
     },  {
-        title: 'банк', dataIndex: 'bank', key: 'bank', render: (bank) => bank ? bank.name : null,
-    },{
-        title: 'бик',
-        dataIndex: 'bik',
-        key: 'bik',
-        render: (bik) => bik ? bik.name : null,
-    }, {
         title: 'Договор', key: 'btnContract',  width: 80, align: 'center',
         render: (text, record) => (
 
@@ -187,20 +163,51 @@ const PersonTable = () => {
                     offsetHeader: 0,
                 }}
                 loading={loading}
-                dataSource={data.persons.items}
+                dataSource={data?.persons?.items?.map((person, index) => ({...person, key: index}))}
                 columns={columns}
                 onChange={onChange}
                 pagination={{
-                    total: data.persons.count,
+                    total: data?.persons?.count,
                     current: page,
                     pageSize: limit,
-                    onChange: (page, limit) => setPage(page),
+                    onChange: (page, limit) => setPage(page) && setLimit(limit),
                     onShowSizeChange: (current, size) => {
                         setPage(1);
                         setLimit(size);
                     },
                     showSizeChanger: true,
                     pageSizeOptions: ['10', '20', '50', '100'],
+                }}
+                expandable={{
+                    expandedRowKeys,
+                    onExpand: (expanded, record) => {
+                        const keys = expanded ? [record.key] : [];
+                        setExpandedRowKeys(keys);
+                    },
+                    expandedRowRender: (record) => (<>
+                            <Row style={{width: "100%"}}>
+                                <Col span={7}>
+                                    <Descriptions bordered size={"small"} column={1} title="Паспортные данные:">
+                                        <Descriptions.Item label="Серия и номер">{record?.passport?.serial} №{record?.passport?.number}</Descriptions.Item>
+                                        <Descriptions.Item label="Адрес проживания">{record?.passport?.address_residential}</Descriptions.Item>
+                                        <Descriptions.Item label="Адрес регистрации">{record?.passport?.address_registration}</Descriptions.Item>
+                                        <Descriptions.Item label="Дата и место выдачи">{record?.passport?.date} - {record?.passport?.passport_place_issue?.name}</Descriptions.Item>
+                                    </Descriptions>
+                                </Col>
+                                <Col span={17}>
+                                    <Descriptions bordered size={"small"} column={2} title="Реквизиты:">
+                                        <Descriptions.Item label="Расчётный счёт">{record?.payment_account}</Descriptions.Item>
+                                        <Descriptions.Item label="Банк>">{record?.bank?.name}</Descriptions.Item>
+                                        <Descriptions.Item label="Бик">{record?.bik?.BIK} - {record?.bik?.name}</Descriptions.Item>
+
+                                        <Descriptions.Item label="Инн">{record?.INN}</Descriptions.Item>
+                                        <Descriptions.Item label="Снилс">{record?.SHILS}</Descriptions.Item>
+
+                                    </Descriptions>
+                                </Col>
+                            </Row>
+                        </>
+                    ),
                 }}
             />
             <Modal

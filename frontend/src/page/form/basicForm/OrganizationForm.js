@@ -16,9 +16,12 @@ import {StyledBlockBig} from "../../style/BlockStyles";
 import { StyledButtonGreen} from "../../style/ButtonStyles";
 import {PlusOutlined} from "@ant-design/icons";
 import {BIKS_QUERY, CONTACTS_QUERY, LEGAL_FORM_QUERY, ORGANIZATIONS_QUERY} from "../../../graphql/queries";
+import {StyledAddressSuggestionsInput} from "../../style/InputStyles";
 
 const OrganizationForm = ({organization, onClose}) => {
     // Состояния
+    const TokenDADATA = process.env.REACT_APP_TOKEN_DADATAADDRESS;
+
     const [editingOrganization, setEditingOrganization] = useState(null);
     const [form] = Form.useForm();
     const [api, contextHolder] = notification.useNotification();
@@ -55,6 +58,8 @@ const OrganizationForm = ({organization, onClose}) => {
     // Заполнение формы данными контакта при его редактировании
     useEffect(() =>{
         form.resetFields();
+        setAddress1("");
+        setAddress2("");
     }, []);
     useEffect(() => {
         if (organization) {
@@ -100,8 +105,8 @@ const OrganizationForm = ({organization, onClose}) => {
     const handleSubmit = () => {
         const formValues = form.getFieldsValue();
         const {address_legal, address_mail, director, BIK_id, legal_form, ...rest} = formValues;
-        const restrictedValue1 =  address_legal?.unrestricted_value ?? address_legal;
-        const restrictedValue2 =  address_mail?.unrestricted_value ?? address_mail;
+        const restrictedValue1 =  address_legal?.unrestricted_value ?? address1;
+        const restrictedValue2 =  address_mail?.unrestricted_value ?? address2;
 
         if (editingOrganization) {
             updateOrganization({
@@ -179,8 +184,12 @@ const OrganizationForm = ({organization, onClose}) => {
                                     style={{
                                         width: '100%',
                                     }}>
-                        <AddressSuggestions token="5c988a1a82dc2cff7f406026fbc3e8d04f2a168e"
+                        <AddressSuggestions token={TokenDADATA}
                                             defaultQuery={address1}
+                                            inputProps={{
+                                                placeholder: 'Введите адрес',
+                                                style: StyledAddressSuggestionsInput,
+                                            }}
                                             onChange={addresChange1}/>
                     </StyledFormItem>
                     <StyledFormItem name="office_number_legal" style={{width: 100,}}>
@@ -193,8 +202,12 @@ const OrganizationForm = ({organization, onClose}) => {
                                     style={{
                                         width: '100%',
                                     }}>
-                        <AddressSuggestions token="5c988a1a82dc2cff7f406026fbc3e8d04f2a168e"
+                        <AddressSuggestions token={TokenDADATA}
                                             defaultQuery={address2}
+                                            inputProps={{
+                                                placeholder: 'Введите адрес',
+                                                style: StyledAddressSuggestionsInput,
+                                            }}
                                             onChange={addresChange2}
                                             style={{textFontSize: 10}}/>
                     </StyledFormItem>
@@ -232,7 +245,6 @@ const OrganizationForm = ({organization, onClose}) => {
                         <StyledFormItem name="BIK_id" label="Бик" style={{
                             width: '100%',
                         }}>
-
                                 <Select popupMatchSelectWidth={false}
                                         allowClear
                                         showSearch

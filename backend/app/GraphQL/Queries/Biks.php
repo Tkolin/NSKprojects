@@ -25,7 +25,7 @@ final readonly class Biks
                 $biksQuery = $biksQuery
                     ->where('id', 'like', "%$searchTerm%")
                     ->orWhere('name', 'like', "%$searchTerm%")
-                    ->orWhere('bik', 'like', "%$searchTerm%")
+                    ->orWhere('BIK', 'like', "%$searchTerm%")
                     ->orWhere('correspondent_account', 'like', "%$searchTerm%");
             }
 

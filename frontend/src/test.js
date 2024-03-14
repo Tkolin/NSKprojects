@@ -1,52 +1,42 @@
 import 'react-phone-number-input/style.css';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { CONTRACT_PERSON_MUTATION } from './graphql/mutationsPerson';
-import { notification } from 'antd';
+import {Form, Input, notification} from 'antd';
 import axios from 'axios';
+import {AddressSuggestions} from "react-dadata";
 
-const Example = ({LaravelURL}) => {
+const Example = () => {
+    const TokenDADATA = process.env.REACT_APP_TOKEN_DADATAADDRESS;
 
-    const openNotification = (placement, type, message) => {
-        notification[type]({
-            message: message,
-            placement,
-        });
-    };
-
-    const [downloadContract] = useMutation(CONTRACT_PERSON_MUTATION, {
-        onCompleted: (data) => {
-            handleDownloadClick(data.personOrderFileDownload.url);
-            openNotification('topRight', 'success', 'Договор сгенерирован!');
-        },
-        onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при генерации договора: ' + error.message);
-        },
-    });
-
-    const handleDownload = () => {
-        downloadContract({ variables: { id: 2 } });
-    };
-
-    const handleDownloadClick = async (downloadedFileUrl) => {
-        try {
-            // Скачивание файла по прямой ссылке
-            const link = document.createElement('a');
-            link.href = `${LaravelURL}download-contract/${downloadedFileUrl}`;
-            link.download = 'contract.docx';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (error) {
-            console.error('Ошибка при скачивании файла:', error);
-        }
-    };
-
+    const onchange = () =>{
+        console.log(TokenDADATA);
+    }
     return (
-        <div>
-            <h1>Example</h1>
-            <button onClick={handleDownload}>Скачать договор</button>
-        </div>
+        <Form>
+            <AddressSuggestions
+                inputProps={{
+                    placeholder: 'Введите адрес',
+                    style: {
+                        width: '100%',
+                        height: '32px',
+                        padding: '4px 11px',
+                        fontSize: '14px',
+                        lineHeight: '1.5',
+                        color: '#495057',
+                        backgroundColor: '#fff',
+                        backgroundImage: 'none',
+                        border: '1px solid #ced4da',
+                        borderRadius: '4px',
+                        boxShadow: 'inset 0 1px 1px rgba(0, 0, 0, 0.075)',
+                        transition: 'border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s',
+                    },
+                }}
+                token={TokenDADATA} onChange={onchange}/>
+
+            <Input></Input>
+        </Form>
+
     );
 };
 

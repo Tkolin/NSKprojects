@@ -49,7 +49,8 @@ class ContractGeneratorService
         $templateProcessor->setValue('day', $day);
         $templateProcessor->setValue('mount', $mount);
         $templateProcessor->setValue('year', $year);
-        $templateProcessor->setValue('myOrg.name', $myOrg['full_name']);
+        $templateProcessor->setValue('myOrg.name', $myOrg['name']);
+        $templateProcessor->setValue('myOrg.full_name', $myOrg['full_name']);
         $templateProcessor->setValue('myOrg.director.FullName', $myOrg['director']['last_name'] . ' ' . $myOrg['director']['first_name'] . ' ' . $myOrg['director']['patronymic']);
         $templateProcessor->setValue('myOrg.INN', $myOrg['INN']);
         $templateProcessor->setValue('myOrg.payment_account', $myOrg['payment_account']);
@@ -63,13 +64,17 @@ class ContractGeneratorService
         $templateProcessor->setValue('person.passport.serial', $personData['passport']['serial']);
         $templateProcessor->setValue('person.passport.number', $personData['passport']['number']);
         $templateProcessor->setValue('person.passport.date', $personData['passport']['date']);
+        $templateProcessor->setValue('person.passport.birth_date', $personData['passport']['birth_date']);
         $templateProcessor->setValue('person.passport.passport_place_issue.name', $personData['passport']['passport_place_issue']['name']);
         $templateProcessor->setValue('person.passport.address_registration', $personData['passport']['address_registration']);
         $templateProcessor->setValue('person.INN', $personData['INN']);
         $templateProcessor->setValue('person.SNILS', $personData['SHILS']);
+        $templateProcessor->setValue('person.BIK.name', $personData['BIK']['name']);
+        $templateProcessor->setValue('person.BIK.bik', $personData['BIK']['BIK']);
+        $templateProcessor->setValue('person.BIK.correspondent_account', $personData['BIK']['correspondent_account']);
         $templateProcessor->setValue('person.payment_account', $personData['payment_account']);
         $templateProcessor->setValue('myOrg.director.ShortFullName', $shortFullNameDirector );
-        $templateProcessor->setValue('person.FullName', $personData['passport']['last_name'] . ' ' . $personData['passport']['first_name'] . ' ' . $personData['passport']['patronymic']);
+        $templateProcessor->setValue('person.FullName', $personData['passport']['lastname'] . ' ' . $personData['passport']['firstname'] . ' ' . $personData['passport']['patronymic']);
         $templateProcessor->setValue('person.ShortFullName', $shortFullNamePerson);
 
 

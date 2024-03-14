@@ -96,7 +96,7 @@ const CustomLayout = ({children, currentUser, la}) => {
                     getItem('Справочники', '1', <ProfileOutlined/>, [
                         getItem('Контакты', '1-1', null, null),
                         getItem('Проекты', '1-2', null, null),
-                        getItem('Исполнители', '1-3', null, null),
+                        getItem('Подрядчики', '1-3', null, null),
                         getItem('Организации', '1-4', null, null),
                         getItem('ИРД', '1-5', null, null),
                         getItem('Типы документации', '1-6', null, null),
@@ -117,7 +117,7 @@ const CustomLayout = ({children, currentUser, la}) => {
                     getItem('Справочники', '1', <ProfileOutlined/>, [
                         getItem('Контакты', '1-1', null, null),
                         getItem('Организации', '1-4', null, null),
-                        getItem('Подрятчики', '1-3', null, null),
+                        getItem('Подрядчики', '1-3', null, null),
                     ])
                 );
                 break;

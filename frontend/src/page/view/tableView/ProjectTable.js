@@ -53,7 +53,7 @@ const ProjectTable = () => {
         setEditModalVisible(false);
     };
     const handleEdit = (contactId) => {
-        const contact = data && data.projects && data.projects.items.find(contact => contact.id === contactId);
+        const contact =  data?.projects?.items?.find(contact => contact.id === contactId);
         setSelectedProject(contact);
         setEditModalVisible(true);
     };
@@ -209,7 +209,7 @@ const ProjectTable = () => {
                columns={columns}
                onChange={onChange}
                pagination={{
-                   total: data.projects && data.projects.count,
+                   total: data?.projects?.count,
                    current: page,
                    size: limit,
                    onChange: (page, limit) => setPage(page),

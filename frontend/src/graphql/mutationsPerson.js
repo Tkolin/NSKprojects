@@ -29,7 +29,7 @@ export const DELETE_PERSON_MUTATION = gql`
             }
             bik{
                 id
-                bik
+                BIK
                 name
             }
         }
@@ -44,6 +44,9 @@ export const ADD_PERSON_MUTATION = gql`
         $serial: String
         $number: String
         $passport_place_issue_id: ID
+        $address_registration: String
+        $address_residential: String
+        
         $birth_date: String
         $date: String
     
@@ -63,6 +66,9 @@ export const ADD_PERSON_MUTATION = gql`
             serial: $serial
             number: $number
             passport_place_issue_id: $passport_place_issue_id
+            address_registration: $address_registration
+            address_residential: $address_residential
+            
             birth_date: $birth_date
             date: $date
     
@@ -81,6 +87,8 @@ export const ADD_PERSON_MUTATION = gql`
                 patronymic
                 serial
                 number
+                address_registration
+                address_residential
                 passport_place_issue{
                     id
                     name
@@ -100,7 +108,7 @@ export const ADD_PERSON_MUTATION = gql`
             bik{
                 id
                 name
-                bik
+                BIK
             }
         }
     }
@@ -114,6 +122,9 @@ export const UPDATE_PERSON_MUTATION = gql`
         $serial: String
         $number: String
         $passport_place_issue_id: ID
+        $address_registration: String
+        $address_residential: String
+        
         $birth_date: String
         $date: String
 
@@ -134,6 +145,9 @@ export const UPDATE_PERSON_MUTATION = gql`
             serial: $serial
             number: $number
             passport_place_issue_id: $passport_place_issue_id
+            address_registration: $address_registration
+            address_residential: $address_residential            
+            
             birth_date: $birth_date
             date: $date
 
@@ -152,6 +166,8 @@ export const UPDATE_PERSON_MUTATION = gql`
                 patronymic
                 serial
                 number
+                address_registration
+                address_residential
                 passport_place_issue{
                     id
                     name
@@ -171,7 +187,7 @@ export const UPDATE_PERSON_MUTATION = gql`
             bik{
                 id
                 name
-                bik
+                BIK
             }
         }
     }

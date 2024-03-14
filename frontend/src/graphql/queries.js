@@ -74,7 +74,7 @@ export const ORGANIZATIONS_QUERY = gql`
                 KPP
                 bik{
                     id
-                    bik
+                    BIK
                     name
                 }
                 payment_account
@@ -192,6 +192,8 @@ export const PERSONS_QUERY = gql`
                     patronymic
                     serial
                     number
+                    address_registration
+                    address_residential
                     passport_place_issue{
                         id
                         name
@@ -211,7 +213,7 @@ export const PERSONS_QUERY = gql`
                 }
                 bik{
                     id
-                    bik
+                    BIK
                     name
                 }
 
@@ -424,7 +426,7 @@ export const BIKS_QUERY = gql`
             items {
                 id
                 name
-                bik
+                BIK
                 correspondent_account
             }
             count
@@ -477,7 +479,7 @@ export const TASKS_TO_PROJECT_QUERY = gql`
             items {
                 id
                 name
-                bik
+                BIK
                 correspondent_account
             }
             count

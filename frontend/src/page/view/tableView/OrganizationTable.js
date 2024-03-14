@@ -173,7 +173,7 @@ const OrganizationTable = () => {
                 total: data?.organizations?.count,
                 current: page,
                 pageSize: limit,
-                onChange: (page, limit) => setPage(page),
+                onChange: (page, limit) => setPage(page) && setLimit(limit),
                 onShowSizeChange: (current, size) => {
                     setPage(1);
                     setLimit(size);
@@ -198,7 +198,7 @@ const OrganizationTable = () => {
                         <Descriptions.Item label="ОГРН">{record.OGRN}</Descriptions.Item>
                         <Descriptions.Item label="ОКПО">{record.OKPO}</Descriptions.Item>
                         <Descriptions.Item label="КПП">{record.KPP}</Descriptions.Item>
-                        <Descriptions.Item label="БИК">{record.BIK}</Descriptions.Item>
+                        <Descriptions.Item label="БИК">{record.bik.BIK} - {record?.bik?.name}</Descriptions.Item>
                         <Descriptions.Item label="Расчетный счет">{record.payment_account}</Descriptions.Item>
                     </Descriptions>
                 ),
