@@ -137,15 +137,16 @@ const OrganizationForm = ({organization, onClose}) => {
 
     return (<StyledBlockBig label={'Организация'}>
             <StyledFormBig form={form} onFinish={handleSubmit}>
-                <Space.Compact block>
+                <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
                     <StyledFormItem name="name"
                                     label={"Наименование компании"}
                                     rules={[{required: true, message: "Укажите наименование компании"}]}
-                                    style={{width: '100%',}}>
-                        <Input placeholder={"Наименование"}/>
+                                    style={{width: "90%" }}>
+                        <Input                          style={{width: "100%)"}}
+                                                         placeholder={"Наименование"}/>
                     </StyledFormItem>
-                    <StyledFormItem name="legal_form" rules={[{required: true, message: "Укажите тип организации"}]}>
-                        <Select placeholder={"Форма"} style={{maxWidth: 100}} loading={loadingLegalForm}>
+                    <StyledFormItem  style={{width: "10%" }} name="legal_form" rules={[{required: true, message: "Укажите тип организации"}]}>
+                        <Select placeholder={"Форма"} style={{width: "100%)"}} loading={loadingLegalForm}>
                             {dataLegalForm?.legalForms?.map(row => (
                                 <Select.Option key={row.id} value={row.id}>{row.name}</Select.Option>))}
                         </Select>
@@ -154,12 +155,12 @@ const OrganizationForm = ({organization, onClose}) => {
                 <StyledFormItem name="full_name" label="Полное наименование" rules={[{required: true, message: "Укажите полное наименование компании"}]}>
                     <Input/>
                 </StyledFormItem>
-                <Space.Compact block>
+                <Space.Compact style={{width: "calc(100% + 32px)", alignItems: 'flex-end'}}>
                     <StyledFormItem name="director"
                                     label="Руководитель"
-                                    style={{width: '100%',}}
-                                    >
+                                    style={{width: "calc(100% - 32px)" }}>
                         <Select
+                            style={{width: "calc(100% - 32px)"}}
                             popupMatchSelectWidth={false}
                             allowClear
                             showSearch
@@ -174,34 +175,31 @@ const OrganizationForm = ({organization, onClose}) => {
 
 
                     </StyledFormItem>
-                    <StyledButtonGreen type={"dashed"} icon={<PlusOutlined/>}
+                    <StyledButtonGreen style={{marginLeft: "-32px"}} type={"dashed"} icon={<PlusOutlined/>}
                                        onClick={() => setContactFormViewModalVisible(true)}/>
 
                 </Space.Compact>
-                <Space.Compact block>
+                <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
                     <StyledFormItem name="address_legal" label="Юридический адрес" minchars={3}
                                     delay={50}
-                                    style={{
-                                        width: '100%',
-                                    }}>
+                                    style={{width: '90%'}}>
                         <AddressSuggestions token={TokenDADATA}
                                             defaultQuery={address1}
                                             inputProps={{
                                                 placeholder: 'Введите адрес',
                                                 style: StyledAddressSuggestionsInput,
                                             }}
-                                            onChange={addresChange1}/>
+                                            onChange={addresChange1}
+                                            style={{width: '100%'}}/>
                     </StyledFormItem>
-                    <StyledFormItem name="office_number_legal" style={{width: 100,}}>
-                        <Input placeholder="Офис"/>
+                    <StyledFormItem name="office_number_legal" style={{width: "10%"}}>
+                        <Input placeholder="Офис" style={{width: '100%'}}/>
                     </StyledFormItem>
                 </Space.Compact>
-                <Space.Compact block>
+                <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
                     <StyledFormItem name="address_mail" label="Почтовый адрес" minchars={3}
                                     delay={50}
-                                    style={{
-                                        width: '100%',
-                                    }}>
+                                    style={{width: '90%'}}>
                         <AddressSuggestions token={TokenDADATA}
                                             defaultQuery={address2}
                                             inputProps={{
@@ -209,14 +207,12 @@ const OrganizationForm = ({organization, onClose}) => {
                                                 style: StyledAddressSuggestionsInput,
                                             }}
                                             onChange={addresChange2}
-                                            style={{textFontSize: 10}}/>
+                                            style={{width: '100%'}}/>
                     </StyledFormItem>
                     <StyledFormItem
                         name="office_number_mail"
-                        style={{
-                            width: 100,
-                        }}>
-                        <Input placeholder="Офис"/>
+                        style={{width: "10%"}}>
+                        <Input placeholder="Офис" style={{width: '100%'}}/>
                     </StyledFormItem>
                 </Space.Compact>
                 <Row gutter={8}>
@@ -241,11 +237,13 @@ const OrganizationForm = ({organization, onClose}) => {
                         <StyledFormItem name="payment_account" label="Расчётынй счёт">
                             <Input placeholder="Введите номер расчётного счёта"/>
                         </StyledFormItem>
-                        <Space.Compact block>
-                        <StyledFormItem name="BIK_id" label="Бик" style={{
-                            width: '100%',
-                        }}>
+                        <Space.Compact style={{width: "calc(100% + 32px)", alignItems: 'flex-end'}}>
+                        <StyledFormItem name="BIK_id" label="Бик"
+                                        style={{width: "calc(100% - 32px)" }}>
+
                                 <Select popupMatchSelectWidth={false}
+                                        style={{width: "calc(100% - 32px)"}}
+
                                         allowClear
                                         showSearch
                                         filterOption = {false}
@@ -259,7 +257,7 @@ const OrganizationForm = ({organization, onClose}) => {
 
 
                         </StyledFormItem>
-                            <StyledButtonGreen icon={<PlusOutlined/>}
+                            <StyledButtonGreen style={{marginLeft: "-32px"}} icon={<PlusOutlined/>}
                                                onClick={() => setBikFormViewModalVisible(true)}/>
                         </Space.Compact>
 

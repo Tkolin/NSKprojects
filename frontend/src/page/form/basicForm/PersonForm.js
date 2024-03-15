@@ -190,7 +190,7 @@ const PersonForm = ({person, onClose}) => {
                             <DatePicker/>
                         </StyledFormItem>
                         <Space.Compact style={{width: "calc(100% + 32px)"}}>
-                            <Form.Item style={{width: "calc(100% - 32px)", marginBottom: 0}}
+                            <StyledFormItem style={{width: "calc(100% - 32px)", marginBottom: 0}}
                                        labelAlign="left"
                                        name="passport_place_issue_id"
                                        label="Место выдачи">
@@ -206,7 +206,7 @@ const PersonForm = ({person, onClose}) => {
                                     {dataPPI?.passportPlaceIssues?.items?.map(row => (
                                         <Select.Option key={row.id} value={row.id}>{row.name}</Select.Option>))}
                                 </Select>
-                            </Form.Item>
+                            </StyledFormItem>
                             <StyledButtonGreen style={{marginLeft: "-32px"}} icon={<PlusOutlined/>}
                                                onClick={() => setPpiFormViewModalVisible(true)}/>
                         </Space.Compact>

@@ -85,6 +85,7 @@ input ProjectInput {
     date_signing: String
     duration: Int
     date_end: String
+    date_create: String
     status_id: ID
     date_completion: String
     price: Int
@@ -95,7 +96,15 @@ type Mutation {
     personOrderFileDownload(
         personId: ID
     ): File!
-
+    projectOrderFileDownload(
+        projectId: ID
+    ): File!
+    projectIrdsFileDownload(
+        projectId: ID
+    ): File!
+    projectStagesFileDownload(
+        projectId: ID
+    ): File!
 
     updateTask(
         names: [String]

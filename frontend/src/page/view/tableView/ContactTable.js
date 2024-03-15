@@ -47,8 +47,7 @@ const ContactTable = () => {
     const [deleteContact] = useMutation(DELETE_CONTACT_MUTATION, {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно удалены!');
-            refetch();
-        }, onError: (error) => {
+                          }, onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
         }, update: (cache, {data: {deleteContact}}) => {
             const {contacts} = cache.readQuery({query: CONTACTS_QUERY});

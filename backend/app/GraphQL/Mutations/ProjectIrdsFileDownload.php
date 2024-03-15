@@ -5,30 +5,33 @@ namespace App\GraphQL\Mutations;
 use App\GraphQL\Service\AuthorizationService;
 use App\GraphQL\Service\ContractGeneratorService;
 use App\Models\Person;
-use Exception;
+use App\Models\Project;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
-final readonly class PersonOrderFileDownload
+final readonly class ProjectIrdsFileDownload
 {
-    /** @param  array{}  $args */
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
         $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
 
-            $personData = Person::with(['passport', 'passport.passport_place_issue'])
-                ->with('bank')
-                ->with('BIK')
+            $projectData = Project::with('organization_customer')
+                ->with('type_project_document')
+                ->with('project_facilitys')
+                ->with('status')
+                ->with('project_delegations')
+                ->with('project_irds.IRD')
+                ->with('project_stage.stage')
                 ->find($args["personId"]);
 
-            if (!$personData) {
+            if (!$projectData) {
                 throw new Exception('Сотрудник не найден');
             }
 
-            $contractGenerator = new ContractGeneratorService();
-            $contractFilePath = $contractGenerator->generate($personData);
+            $irdGenerator = new ProjectIrdsFileDownload();
+            $contractFilePath = $irdGenerator->generate($projectData);
 
             return ['url' => $contractFilePath];
 

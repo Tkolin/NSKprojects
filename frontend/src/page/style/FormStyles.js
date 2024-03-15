@@ -50,7 +50,7 @@ const StyledFormRegular = ({form, onFinish, children, layout, disabled,labelAlig
     return (
             <Form form={form} onFinish={onFinish}
                   labelAlign={labelAlign ? labelAlign : "left"}
-                  style={{maxWidth: 360}}
+                  style={{minWidth: 360}}
                   wrapperCol={wrapperCol ? wrapperCol : {flex: 1}}
                   labelWrap
                   labelCol={labelCol ? labelCol : null}

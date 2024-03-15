@@ -6,6 +6,7 @@ import ProjectForm from "../basicForm/ProjectForm";
 import StagesProjectForm from "../aggregateComponent/projectForm/StagesProjectForm";
 import IrdsProjectForm from "../aggregateComponent/projectForm/IrdsProjectForm";
 import { StyledBlockRegular} from "../../style/BlockStyles";
+import ProjectDetails from "../../view/detailsView/ProjectDetails";
 
 const {Step} = Steps;
 
@@ -33,11 +34,13 @@ const MyComponent = () => {
                 <Col span={4}>
                     <Steps current={currentStep} labelPlacement={"vertical"} style={{height: 400, marginTop: 40}}
                            direction="vertical">
-                        <Step title="Первичное заполнение"/>
-                        <Step title="Этапы"/>
-                        <Step title="Ирд"/>
+                        <Step title="Заполнения основных данных"/>
+                        <Step title="Заполнение Этапы"/>
+                        <Step title="Заполнение Ирд"/>
+                        <Step title="Проверка данных"/>
                     </Steps>
                     <Button disabled={(currentStep <= 0)} onClick={onBack}>Отменить шаг</Button>
+                    <Button  onClick={onNext}>----</Button>
                 </Col>
                 <Col span={20}>
                     {currentStep === 0 && (
@@ -56,7 +59,7 @@ const MyComponent = () => {
                         <IrdsProjectForm project={project} onSubmit={onNext}/>
                     )}
                     {currentStep === 3 && (
-                        <IrdsProjectForm project={project} onSubmit={onNext}/>
+                        <ProjectDetails project={project} onSubmit={onNext}/>
                     )}
                 </Col>
             </Row>

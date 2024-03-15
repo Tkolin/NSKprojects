@@ -1,4 +1,7 @@
 import {gql} from "@apollo/client";
+import ProjectFileDownload from "../page/script/ProjectFileDownload";
+import StagesProjectFileDownload from "../page/script/StagesProjectFileDownload";
+import React from "react";
 
 export const ADD_PROJECT_MUTATION = gql`
     mutation AddProject(
@@ -143,5 +146,39 @@ export const UPDATE_PAYMENTS_TO_PROJECT_MUTATION = gql`
         updatePaymentsToProject(
             project: $ProjectId
         )
+    }
+`;
+export const IRDS_PROJECT_DOWNLOAD = gql`
+    mutation IrdsProjectFileDownload(
+        $id: ID!,
+    ) {
+        projectIrdsFileDownload(
+            projectId: $id
+        )
+        {
+            url
+        }
+    }
+`;export const STAGE_PROJECT_DOWNLOAD = gql`
+    mutation ProjectFileDownload(
+        $id: ID!,
+    ) {
+        projectStagesFileDownload(
+            projectId: $id
+        )
+        {
+            url
+        }
+    }
+`;export const CONTRACT_PROJECT_DOWNLOAD = gql`
+    mutation StagesProjectFileDownload(
+        $id: ID!,
+    ) {
+        projectOrderFileDownload(
+            projectId: $id
+        )
+        {
+            url
+        }
     }
 `;

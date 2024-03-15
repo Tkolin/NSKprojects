@@ -11,30 +11,17 @@ use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\TemplateProcessor;
 
-class ContractGeneratorService
+class ProjectGeneratorService
 {
-    private static  function getOrganizationData()
-    {
-        return Organization
-        ::with('legal_form')
-        ->with('contacts')
-        ->with('bik')
-        ->find(0);
-    }
-
     public static function generate($personData)
     {
         // Получение данных об организации
-        $myOrg = self::getOrganizationData();
-
-
+        $myOrg = GeneratorService::getOrganizationData();
         // Получение пути к шаблону документа
         $templateFilePath = storage_path('app/templates/PersonContract.docx');
-
         // Создание временного файла копии шаблона
         $tempFilePath = tempnam(sys_get_temp_dir(), 'contract');
         copy($templateFilePath, $tempFilePath);
-
         // Загрузка шаблона в PhpWord
         $templateProcessor = new TemplateProcessor($tempFilePath);
         $id = "___";

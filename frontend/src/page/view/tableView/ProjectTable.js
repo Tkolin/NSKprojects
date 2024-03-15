@@ -6,6 +6,10 @@ import ProjectForm from "../../form/basicForm/ProjectForm";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import Search from "antd/es/input/Search";
 import {StyledFormLarge} from "../../style/FormStyles";
+import PersonContractFileDownload from "../../script/PersonContractFileDownload";
+import StagesProjectFileDownload from "../../script/StagesProjectFileDownload";
+import ProjectFileDownload from "../../script/ProjectFileDownload";
+import IrdsProjectFileDownload from "../../script/IrdsProjectFileDownload";
 
 const ProjectTable = () => {
 
@@ -152,6 +156,16 @@ const ProjectTable = () => {
             ellipsis: true,
         },
         {
+            title: 'Договор', key: 'btnContract',  width: 80, align: 'center',
+            render: (text, record) => (
+                <>
+<                IrdsProjectFileDownload/>
+        <           ProjectFileDownload/>
+        <           StagesProjectFileDownload/>
+    </>
+            ),
+        },
+        {
             title: 'Управление',
             key: 'edit',
             render: (text, record) => (
@@ -212,7 +226,7 @@ const ProjectTable = () => {
                    total: data?.projects?.count,
                    current: page,
                    size: limit,
-                   onChange: (page, limit) => setPage(page),
+                   onChange: (page, limit) => setPage(page) && setLimit(limit),
                    onShowSizeChange: (current, size) => {
                        setPage(1);
                        setLimit(size);
