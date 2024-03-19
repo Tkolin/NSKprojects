@@ -1,5 +1,5 @@
 import {StyledFormBig, StyledFormItem} from "../../../style/FormStyles";
-import {Button, Form, Input, InputNumber, notification, Select, Space, Tooltip} from "antd";
+import {Button, Divider, Form, Input, InputNumber, notification, Select, Space, Tooltip} from "antd";
 import {MinusCircleOutlined, PlusOutlined, RetweetOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
@@ -19,8 +19,12 @@ const StagesProjectForm = ({project, disable, onSubmit}) => {
     const [autoCompleteStage, setAutoCompleteStage] = useState('');
     const [stageFormViewModalVisible, setStageFormViewModalVisible] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
-    const handleAutoCompleteStageSelect = (value) => {setAutoCompleteStage('');};
-    const handleAutoCompleteStage = (value) => {setAutoCompleteStage(value);    };
+    const handleAutoCompleteStageSelect = (value) => {
+        setAutoCompleteStage('');
+    };
+    const handleAutoCompleteStage = (value) => {
+        setAutoCompleteStage(value);
+    };
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
         notification[type]({
@@ -65,14 +69,16 @@ const StagesProjectForm = ({project, disable, onSubmit}) => {
     const [dataStages, setDataStages] = useState(null);
     const {loading: loadingStages, error: errorStages, refetch: refetchStages} = useQuery(STAGES_QUERY, {
         variables: {queryOptions: {search: autoCompleteStage, limit: 10, page: 1}},
-        onCompleted: (data) => setDataStages(data)
-    });
+        onCompleted: (data) => setDataStages(data)  });
     const {
         loading: loadingTemplate, error: errorTemplate, data: dataTemplate
     } = useQuery(TEMPLATE_STAGES_TYPE_PROJECTS_QUERY, {
         variables: {typeProject: project?.type_project_document?.id},
         fetchPolicy: 'network-only',
-        onCompleted: (data) => addingStages(data),});
+        onCompleted: (data) =>
+            // project?.project_stage? addingStages(project.project_stage) :
+                addingStages(data?.templatesStagesTypeProjects),
+    });
 
     // Мутации для добавления и обновления
     const [updateProject] = useMutation(UPDATE_PROJECT_MUTATION, {
@@ -80,11 +86,12 @@ const StagesProjectForm = ({project, disable, onSubmit}) => {
             openNotification('topRight', 'success', 'Данные об проекте успешно обновлены!');
         }, onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при обновлении данных  об проекте : ' + error.message);
-        }});
+        }
+    });
 
     const addingStages = (value) => {
         if (dataStages && value) {
-            const newStages = value.templatesStagesTypeProjects.map(a => ({
+            const newStages = value.map(a => ({
                 id: a.stage ? a.stage.id : null, name: a.stage ? a.stage.name : null,
             }));
             refetchStages({search: autoCompleteStage}).then(({data}) => {
@@ -96,11 +103,27 @@ const StagesProjectForm = ({project, disable, onSubmit}) => {
                     },
                 });
             });
-            loadTemplate();}}
+            loadTemplate();
+        }
+    }
 
     // Подгрузка формы
     const loadTemplate = () => {
-        if (dataTemplate) {
+        // if(project?.project_stage){
+        //     console.log("А");
+        //     const stages = project?.project_stage;
+        //     const initialValuesStages = stages?.map(data => ({
+        //         number_item: data.number,
+        //         stage_item: data.stage.id,
+        //         percent_item: data.percentage,
+        //         duration_item: data.duration,
+        //         date_start_item: data?.dateStart ? moment(data.dateStart) : null,
+        //         date_end_item: data?.dateEnd ? moment(data.dateEnd) : null
+        //     }));
+        //     formStage.setFieldsValue({stageList: initialValuesStages});
+        // }else
+          if (dataTemplate) {
+            console.log("Б");
             const stages = dataTemplate?.templatesStagesTypeProjects;
             const initialValuesStages = stages?.map(data => ({
                 number_item: data.number,
@@ -145,7 +168,9 @@ const StagesProjectForm = ({project, disable, onSubmit}) => {
             });
         }
     };
-    const handleChangeItemPercent = () => {recomputePricesAndPercentages();};
+    const handleChangeItemPercent = () => {
+        recomputePricesAndPercentages();
+    };
 
 
     const [totalToDuration, setTotalToDuration] = useState(0);
@@ -229,44 +254,13 @@ const StagesProjectForm = ({project, disable, onSubmit}) => {
                        autoComplete="off"
         >
 
-            <Space.Compact block>
-                <StyledFormItem label="Суммарный срок реализации" name="totalRange_item">
-                    <RangePicker
-                        value={[project?.date_signing? moment(project.date_signing) : null, project?.date_end? moment(project.date_end) : null]}
-                        disabled={disable} suffix={"дни"}/>
-                </StyledFormItem>
-                <Button onClick={handleDateStageRebuild}>Уровнять</Button>
-            </Space.Compact>
-            <Space.Compact block>
-                <StyledFormItem label="Стоимость проекта" name="totalPrice_item">
-                    <InputNumber onChange={handleChangePrice} value={totalPrice} defaultValue={project?.price}
-                                 disabled={disable} suffix={"₽"}/>
-                </StyledFormItem>
-            </Space.Compact>
-            <Space.Compact block>
-                <StyledFormItem label="Суммарная продолжительность">
-                    <InputNumber value={totalToDuration} disabled={disable} suffix={"дни"}/>
-                </StyledFormItem>
-            </Space.Compact>
-            <Space.Compact block style={{alignItems: 'flex-end'}}>
-                <StyledFormItem label="Сумма процентов">
-                    <Input
-                        value={totalToPercent}
-                        suffix={"%"}
-                        style={{
-                            width: '80px',
-                            background: totalToPercent > 100 ? '#EE4848' : totalToPercent < 100 ? '#FFD700' : '#7DFF7D'
-                        }}
-                    />
-                </StyledFormItem>
-            </Space.Compact>
 
             <Form.List name="stageList">
                 {(fields, {add, remove}) => (<>
                     {fields.map(({key, name, ...restField}) => (<Space
                         key={key}
                         style={{
-                            display: 'flex',
+                            width: "100%",
                             marginBottom: 2,
                             marginTop: 2
                         }}
@@ -312,7 +306,7 @@ const StagesProjectForm = ({project, disable, onSubmit}) => {
                                     required: true,
                                 },]}
                             >
-                                <InputNumber onChange={handleChangeItemDuration} style={{width: 80}}/>
+                                <InputNumber onChange={handleChangeItemDuration} style={{width: 80}} suffix={"дня"}/>
                             </Form.Item>
                         </Tooltip>
                         <Tooltip title="Сроки этапа">
@@ -363,6 +357,54 @@ const StagesProjectForm = ({project, disable, onSubmit}) => {
                         </Tooltip>
                         <MinusCircleOutlined onClick={() => remove(name)}/>
                     </Space>))}
+
+
+                    <Space style={{
+                        width: "100%",
+                        marginBottom: 2,
+                        marginTop: 2,
+                        alignContent: "end"
+                    }}>
+
+
+                        <Divider style={{maxWidth: 435, minWidth: 435}} disabled={true}
+                                 value={"Итоги:"}>Итоги:</Divider>
+                        <Tooltip title="Суммарная продолжительность">
+                            <InputNumber value={totalToDuration} disabled={disable} suffix={"дней"}
+                                         style={{width: 80}}/>
+                        </Tooltip>
+                        <Tooltip title="Суммарный срок реализации">
+                            <Form.Item
+                                style={{marginBottom: 0, display: 'flex'}} name="totalRange_item">
+                                <RangePicker
+                                    value={[project?.date_signing ? moment(project.date_signing) : null, project?.date_end ? moment(project.date_end) : null]}
+                                    disabled={disable || true} suffix={"дни"}/>
+                            </Form.Item>
+                            {/*<Button onClick={handleDateStageRebuild} disabled={true}>Уровнять</Button>*/}
+                        </Tooltip>
+                        <Tooltip title="Сумма процентов">
+                            <Input
+                                value={totalToPercent}
+                                suffix={"%"}
+
+                                style={{
+                                    marginBottom: 0, width: 90,
+                                    background: totalToPercent > 100 ? '#EE4848' : totalToPercent < 100 ? '#FFD700' : '#7DFF7D'
+                                }}/>
+                        </Tooltip>
+
+
+                        <Tooltip title={"Итоговая стоимость"}>
+                            <StyledFormItem name="totalPrice_item" style={{marginRight: 25}}>
+                                <Input disabled={true}
+                                       value={project?.price}
+                                       defaultValue={project?.price}
+                                       suffix={"₽"} style={{width: 200}}/>
+                            </StyledFormItem>
+                        </Tooltip>
+
+
+                    </Space>
                     <Form.Item>
                         <Button type="dashed" onClick={() => add()} block
                                 icon={<PlusOutlined/>}>

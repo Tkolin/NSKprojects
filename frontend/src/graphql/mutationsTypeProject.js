@@ -9,7 +9,7 @@ export const DELETE_TYPE_PROJECT_MUTATION = gql`
     }
 `;
 
-export const ADD_TYPE_PROJECTS_MUTATIOM = gql`
+export const ADD_TYPE_PROJECTS_MUTATION = gql`
     mutation AddTypeProject(
         $name: String!,
         $code: String!,
@@ -24,7 +24,74 @@ export const ADD_TYPE_PROJECTS_MUTATIOM = gql`
         }
     }
 `;
-export const UPDATE_TYPE_PROJECTS_MUTATIOM = gql`
+export const UPDATE_TYPE_PROJECTS_MUTATION = gql`
+    mutation UpdateTypeProject(
+        $id: ID!,
+        $name: String!,
+        $code: String!,
+    ) {
+        updateTypeProject(
+            id: $id
+            name: $name
+            code: $code
+        ) {
+            id
+            name
+            code
+        }
+    }
+`;
+
+export const ADD_TECHNICAL_SPECIFICATION_MUTATION = gql`
+    mutation AddTypeProject(
+        $name: String!,
+        $code: String!,
+    ) {
+        addTypeProject(
+            name: $name
+            code: $code
+        ) {
+            id
+            name
+            code
+        }
+    }
+`;
+export const UPDATE_TECHNICAL_SPECIFICATION_MUTATION = gql`
+    mutation UpdateTypeProject(
+        $id: ID!,
+        $name: String!,
+        $code: String!,
+    ) {
+        updateTypeProject(
+            id: $id
+            name: $name
+            code: $code
+        ) {
+            id
+            name
+            code
+        }
+    }
+`;
+
+
+export const ADD_GROUP_TYPE_PROJECTS_MUTATION = gql`
+    mutation AddTypeProject(
+        $name: String!,
+        $code: String!,
+    ) {
+        addTypeProject(
+            name: $name
+            code: $code
+        ) {
+            id
+            name
+            code
+        }
+    }
+`;
+export const UPDATE_GROUP_TYPE_PROJECTS_MUTATION = gql`
     mutation UpdateTypeProject(
         $id: ID!,
         $name: String!,

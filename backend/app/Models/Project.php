@@ -4,7 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Project extends Model
 {
@@ -20,7 +22,10 @@ class Project extends Model
         'price',
         'date_create',
         ];
-
+    public function delegations(): BelongsToMany
+    {
+        return $this->belongsToMany(Contact::class, "project_delegations","project_id","delegation_id");
+    }
     public function organization_customer(): BelongsTo
     {
         return $this->belongsTo(Organization::class);

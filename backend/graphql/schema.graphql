@@ -5,12 +5,15 @@ type Query {
     irds(queryOptions: QueryOptions): IrdsResult
     stages(queryOptions: QueryOptions): StagesResult
     tasks(queryOptions: QueryOptions): TasksResult
-    typeProjects(queryOptions: QueryOptions): TypeProjectsResult
     projects(queryOptions: QueryOptions): ProjectsResult
     persons(queryOptions: QueryOptions): PersonsResult
     biks(queryOptions: QueryOptions): BikResult
     passportPlaceIssues(queryOptions: QueryOptions): PassportPlaceIssueResult
     banks(queryOptions: QueryOptions): BanksResult
+
+    typeProjects(queryOptions: QueryOptions): TypeProjectsResult
+    technicalSpecification: TechnicalSpecificationResult
+    groupTypeProjects: groupTypeProjecResult
 
     paymentsProjects(queryOptions: QueryOptions, projectId: ID): [projectPayment]
 
@@ -25,7 +28,7 @@ type Query {
     currentUser: User!
 
     legalForms: [LegalForm]!
-    facilitys: [Facility!]!
+    facilities: [Facility!]!
     TypePayments: [TypePayment]
     projectStatuses: [ProjectStatus!]!
 
@@ -142,7 +145,22 @@ type Mutation {
         items: [TemplateStageToTypeProject]
     ) : Int
 
-
+    addTechnicalSpecification(
+        name: String
+    ): TechnicalSpecification
+    updateTechnicalSpecification(
+        id: ID
+        name: String
+        techicalSpecification: ID
+    ): TechnicalSpecification
+    addGroupTypeProject(
+        name: String
+        techicalSpecification: ID
+    ): GroupTypeProjectDocument
+    updateGroupTypeProject(
+        id: ID
+        name: String
+    ): GroupTypeProjectDocument
 
     addTypeProject(
         name: String
@@ -423,6 +441,12 @@ type BikResult {
 }type TypeProjectsResult {
     items: [TypeProjectDocument]
     count: Int
+}type TechnicalSpecificationResult {
+    items: [TechnicalSpecification]
+    count: Int
+}type groupTypeProjecResult {
+    items: [GroupTypeProjectDocument]
+    count: Int
 }type Contact {
     id: ID!
     first_name: String!
@@ -541,7 +565,19 @@ type AuthPayload {
     id: ID!
     name: String!
     type_facility: TypeFacility
+    group: GroupFacility
 }type TypeFacility{
+    id: ID!
+    name: String!
+}type GroupFacility{
+    id: ID!
+    name: String!
+    subselectionFacility: SubselectionFacility
+}type SubselectionFacility{
+    id: ID!
+    name: String!
+    selectionFacility: SelectionFacility
+}type SelectionFacility{
     id: ID!
     name: String!
 }type Project{
@@ -555,10 +591,10 @@ type AuthPayload {
     date_end: String
     status: ProjectStatus
     date_completion: String
-    delegates: [Contact]
+    delegations: [Contact]
     price: Int
-    IRDs: [ProjectIRD]
-    stages: [ProjectStage]
+    project_irds: [ProjectIRD]
+    project_stage: [ProjectStage]
 }type ProjectStage{
     id: ID!
     project: Project

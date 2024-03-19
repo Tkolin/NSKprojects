@@ -159,12 +159,10 @@ const ProjectTable = () => {
             title: 'Договор', key: 'btnContract',  width: 80, align: 'center',
             render: (text, record) => (
                 <>
-
-{/*<                IrdsProjectFileDownload/>*/}
-{/*        <           ProjectFileDownload projectId={record.id}/>*/}
-        <           StagesProjectFileDownload projectId={record.id}/>
-
-    </>
+                    <IrdsProjectFileDownload/>
+                    <ProjectFileDownload projectId={record.id}/>
+                    <StagesProjectFileDownload projectId={record.id}/>
+                </>
             ),
         },
         {

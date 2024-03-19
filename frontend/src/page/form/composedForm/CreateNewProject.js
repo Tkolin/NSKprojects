@@ -5,7 +5,7 @@ import TasksToProjectStageForm from "../aggregateComponent/projectForm/TasksToPr
 import ProjectForm from "../basicForm/ProjectForm";
 import StagesProjectForm from "../aggregateComponent/projectForm/StagesProjectForm";
 import IrdsProjectForm from "../aggregateComponent/projectForm/IrdsProjectForm";
-import { StyledBlockRegular} from "../../style/BlockStyles";
+import {StyledBlockLarge, StyledBlockRegular} from "../../style/BlockStyles";
 import ProjectDetails from "../../view/detailsView/ProjectDetails";
 
 const {Step} = Steps;
@@ -44,7 +44,7 @@ const MyComponent = () => {
                 </Col>
                 <Col span={20}>
                     {currentStep === 0 && (
-                        <StyledBlockRegular>
+                        <StyledBlockRegular label={"Основные даннные об проекте"}>
                             {project ? (
                                 <ProjectForm project={project} setProject={handleProject} onSubmit={onNext}/>
                                 ):(
@@ -53,10 +53,14 @@ const MyComponent = () => {
                         </StyledBlockRegular>
                     )}
                     {currentStep === 1 && (
-                        <StagesProjectForm project={project} onSubmit={onNext}/>
+                        <StyledBlockLarge label={"Этапы"}>
+                            <StagesProjectForm project={project} onSubmit={onNext}/>
+                        </StyledBlockLarge>
                     )}
                     {currentStep === 2 && (
-                        <IrdsProjectForm project={project} onSubmit={onNext}/>
+                        <StyledBlockLarge label={"Список ИРД"}>
+                            <IrdsProjectForm project={project} onSubmit={onNext}/>
+                        </StyledBlockLarge>
                     )}
                     {currentStep === 3 && (
                         <ProjectDetails project={project} onSubmit={onNext}/>

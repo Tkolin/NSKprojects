@@ -33,6 +33,9 @@ const TemplateForm = ({project, onClose}) => {
     const [triggerSaveIrds, setTriggerSaveIrds] = useState(false);
     const [triggerSaveTasks, setTriggerSaveTasks] = useState(false);
     // Функции уведомлений
+    const handleGroupTypeProject = () => {
+
+    }
 
 
     // Получение данных для выпадающих списков
@@ -78,7 +81,7 @@ const TemplateForm = ({project, onClose}) => {
                                     onSearch={(value) => handleAutoCompleteProjectType(value)}
                                     onSelect={(value) => handleEditingTemplate(value)} // Добавлен обработчик onSelect
                                     placeholder="Начните ввод...">
-                                    {dataTypeProject && dataTypeProject.typeProjects && dataTypeProject.typeProjects.items && dataTypeProject.typeProjects.items.map(row => (
+                                    {dataTypeProject?.typeProjects?.items?.map(row => (
                                         <Option key={row.id}
                                                 value={row.id}>{row.name}</Option>))}
                                 </Select>
@@ -87,6 +90,7 @@ const TemplateForm = ({project, onClose}) => {
                                                onClick={() => setTypeProjectFormViewModalVisible(true)}/>
 
                         </Space.Compact>
+
                         <div style={{textAlign: 'center'}}>
                             <StyledButtonForm type="primary" onClick={() => handleSubmit()}>Сохранить
                                 настройки</StyledButtonForm>

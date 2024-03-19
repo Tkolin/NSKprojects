@@ -15,10 +15,10 @@ class ProjectDelegations extends Model
 
     public function project(): BelongsTo
     {
-        return $this->belongsTo(Project::class);
+        return $this->belongsTo(Project::class, "project_id");
     }
     public function contacts(): BelongsTo
     {
-        return $this->belongsTo(Contact::class);
+        return $this->belongsTo(Contact::class, "delegation_id");
     }
 }

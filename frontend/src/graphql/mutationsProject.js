@@ -48,11 +48,34 @@ export const ADD_PROJECT_MUTATION = gql`
                 name
             }
             date_completion
-            delegates {
+            delegations {
                 id
                 first_name
                 last_name
                 patronymic
+            }
+            project_stage {
+                id
+                stageNumber
+                stage {
+                    id
+                    name
+                }
+                dateStart
+                duration
+                dateEnd
+                percent
+                price
+            }
+            project_irds {
+                id
+                stageNumber
+                applicationProject
+                IRD {
+                    id
+                    name
+                }
+                receivedDate
             }
             price
         }
@@ -101,11 +124,34 @@ export const UPDATE_PROJECT_MUTATION = gql`
                 name
             }
             date_completion
-            delegates {
+            delegations {
                 id
                 first_name
                 last_name
                 patronymic
+            }
+            project_stage {
+                id
+                stageNumber
+                stage {
+                    id
+                    name
+                }
+                dateStart
+                duration
+                dateEnd
+                percent
+                price
+            }
+            project_irds {
+                id
+                stageNumber
+                applicationProject
+                IRD {
+                    id
+                    name
+                }
+                receivedDate
             }
             price
         }

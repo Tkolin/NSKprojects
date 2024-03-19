@@ -11,6 +11,28 @@ export const TASKS_QUERY = gql`
         }
     }
 `;
+export const TECHNICAL_SPECIFICATION_QUERY = gql`
+    query TechnicalSpecificationQuery {
+        technicalSpecification  {
+            items{
+                id
+                name
+            }
+            count
+        }
+    }
+`;
+export const GROUP_TYPE_PROJECTS_QUERY = gql`
+    query BikQuery {
+        groupTypeProjects  {
+            items{
+                id
+                name
+            }
+            count
+        }
+    }
+`;
 export const BANKS_QUERY  = gql`
     query BanksQuery ($queryOptions: QueryOptions)  {
         banks (queryOptions: $queryOptions) 
@@ -166,11 +188,34 @@ export const PROJECTS_QUERY = gql`
                     name
                 }
                 date_completion
-                delegates{
+                delegations{
                     id
                     first_name
                     last_name
                     patronymic
+                }
+                project_stage {
+                    id
+                    stageNumber
+                    stage {
+                        id
+                        name
+                    }
+                    dateStart
+                    duration
+                    dateEnd
+                    percent
+                    price
+                }
+                project_irds {
+                    id
+                    stageNumber
+                    applicationProject
+                    IRD {
+                        id
+                        name
+                    }
+                    receivedDate
                 }
                 price
             }
@@ -310,7 +355,7 @@ export const CONTACTS_SHORT_QUERY = gql`
 `;
 export const FACILITYS_QUERY = gql`
     query ContactsQuery  {
-        facilitys {
+        facility {
             id
             name
             type_facility {

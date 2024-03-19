@@ -32,11 +32,11 @@ class Contact extends Model
     }
     public function directors(): HasMany
     {
-        return $this->HasMany(Organization::class);
+        return $this->hasMany(Organization::class);
     }
 
-    public function delegates(): HasMany
+    public function project_delegations(): HasMany
     {
-        return $this->HasMany(ProjectDelegations::class);
+        return $this->hasMany(ProjectDelegations::class);
     }
 }

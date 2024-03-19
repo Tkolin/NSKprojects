@@ -7,7 +7,7 @@ use App\Models\TypeProjectDocument;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
-final readonly class TypeProjectDocuments
+final readonly class TechnicalSpecification
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args, GraphQLContext $context)
@@ -15,7 +15,7 @@ final readonly class TypeProjectDocuments
         $allowedRoles = ['admin']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            return TypeProjectDocument::with(['group', 'group.technical_specification']);
+            return TechnicalSpecification::all();
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }

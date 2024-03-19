@@ -12,10 +12,15 @@ class Facility extends Model
     protected $fillable = [
         'name',
         'type_id',
+        'group_id',
     ];
     public function type_facility(): BelongsTo
     {
         return $this->belongsTo(TypeFacility::class, 'type_id');
+    }
+    public function group_facility(): BelongsTo
+    {
+        return $this->belongsTo(GroupFacilities::class, 'group_id');
     }
 
     public function projects(): HasMany

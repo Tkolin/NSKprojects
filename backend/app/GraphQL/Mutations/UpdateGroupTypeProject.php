@@ -1,21 +1,24 @@
 <?php declare(strict_types=1);
 
-namespace App\GraphQL\Queries;
+namespace App\GraphQL\Mutations;
 
 use App\GraphQL\Service\AuthorizationService;
-use App\Models\TypeProjectDocument;
+use App\Models\GroupTypeProjectDocument;
+use App\Models\TechnicalSpecification;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
-final readonly class TypeProjectDocuments
+final readonly class UpdateGroupTypeProject
 {
     /** @param  array{}  $args */
-    public function __invoke(null $_, array $args, GraphQLContext $context)
+    public function __invoke(null $_, array $args, GraphQLContext $context): GroupTypeProjectDocument
     {
         $allowedRoles = ['admin']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            return TypeProjectDocument::with(['group', 'group.technical_specification']);
+            $data = GroupTypeProjectDocument::findOrFail($args['id']);
+            $data->update($args);
+            return $data;
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }
