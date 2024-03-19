@@ -12,9 +12,13 @@ class TypeProjectDocument extends Model
     protected $fillable = [
         'code',
         'name',
+        'group_id',
     ];
 
-
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(GroupTypeProjectDocument::class);
+    }
     public function template_content_type_project(): BelongsTo
     {
         return $this->belongsTo(TemplateIrdsTypeProjects::class);

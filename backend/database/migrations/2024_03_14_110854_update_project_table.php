@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('projects', function (Blueprint $table) {
+<<<<<<< HEAD
+            $table->date("date_create")->nullable();
+=======
             $table->date("date_create");
+>>>>>>> origin/master
         });
     }
 

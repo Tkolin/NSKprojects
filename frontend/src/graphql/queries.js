@@ -123,6 +123,14 @@ export const TYPES_PROJECTS_QUERY = gql`
                 id
                 name
                 code
+                group {
+                    id
+                    name
+                    technicalSpecification {
+                        id
+                        name
+                    }
+                }
             }
             count
         }

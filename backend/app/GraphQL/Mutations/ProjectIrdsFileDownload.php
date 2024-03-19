@@ -24,7 +24,7 @@ final readonly class ProjectIrdsFileDownload
                 ->with('project_delegations')
                 ->with('project_irds.IRD')
                 ->with('project_stage.stage')
-                ->find($args["personId"]);
+                ->find($args["projectId"]);
 
             if (!$projectData) {
                 throw new Exception('Сотрудник не найден');

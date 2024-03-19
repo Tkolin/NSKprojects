@@ -136,31 +136,29 @@ const ContactForm = ({ contact, onClose }) => {
 
                 <StyledFormItem name="work_phone" label="Рабочий тел."  rules={[
                     {
-                        pattern: /^[\d\s()-]+$/,
-                        message: 'Пожалуйста, введите в формате 9003001234',
-                    },
-                ]}
-                >
-                    <Input
-                        placeholder="Введите номер телефона"
-                        maxLength={16}
-                        minLength={10}
-                        pattern="\d*"
-                    />
-
-                </StyledFormItem>
-                <StyledFormItem name="mobile_phone" label="Личный тел."  rules={[
-                    {
-                        pattern: /^[\d\s()-]+$/,
+                        pattern: /^\+[0-9\s()-]+$/,
                         message: 'Пожалуйста, введите в формате +79003001234',
                     },
                 ]}
                 >
                     <Input
-                        placeholder="Введите номер телефона"
+                        placeholder="+790031001234"
                         maxLength={16}
                         minLength={10}
-                        pattern="\d*"/>
+                    />
+
+                </StyledFormItem>
+                <StyledFormItem name="mobile_phone" label="Личный тел."  rules={[
+                    {
+                        pattern: /^\+[0-9\s()-]+$/,
+                        message: 'Пожалуйста, введите в формате +79003001234',
+                    },
+                ]}
+                >
+                    <Input
+                        placeholder="+790031001234"
+                        maxLength={16}
+                        minLength={10}/>
                 </StyledFormItem>
                 <StyledFormItem name="email" label="Личный e-mail" rules={[{ type: 'email', message: 'Пожалуйста, введите корректный почтовый адресс', }]} >
                     <Input        placeholder="Введите e-mail"/>

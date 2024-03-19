@@ -16,7 +16,7 @@ final readonly class TypeProjects
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
 
-            $tpds = TypeProjectDocument::query();
+            $tpds = TypeProjectDocument::with(['group', 'group.technical_specification']);
 
             // Поиск
             if (isset($args['queryOptions']['search'])) {

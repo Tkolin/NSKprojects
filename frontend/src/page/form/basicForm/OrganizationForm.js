@@ -218,13 +218,12 @@ const OrganizationForm = ({organization, onClose}) => {
                 <Row gutter={8}>
                     <Col span={12}>
                         <StyledFormItem name="phone_number" label="Телефон" rules={[{
-                            pattern: /^[\d\s()-]+$/, message: 'Пожалуйста, введите корректный номер телефона в формате 9003001234',},]}>
+                            pattern: /^\+[0-9\s()-]+$/,
+                            message: 'Пожалуйста, введите в формате +79003001234',},]}>
                             <Input
-                                placeholder="Введите номер телефона"
-                                addonBefore="+7"
+                                placeholder="+790031001234"
                                 maxLength={11}
                                 minLength={10}
-                                pattern="\d*"
                             />
                         </StyledFormItem>
                         <StyledFormItem name="fax_number" label="Факс">

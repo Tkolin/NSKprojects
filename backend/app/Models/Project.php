@@ -18,6 +18,7 @@ class Project extends Model
         'status_id',
         'date_completion',
         'price',
+        'date_create',
         ];
 
     public function organization_customer(): BelongsTo

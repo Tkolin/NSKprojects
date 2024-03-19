@@ -586,7 +586,15 @@ type AuthPayload {
     id: ID!
     name: String!
     code: String!
+    group: GroupTypeProjectDocument
 }type IRD{
+    id: ID!
+    name: String!
+}type GroupTypeProjectDocument{
+    id: ID!
+    name: String!
+    technicalSpecification: TechnicalSpecification
+}type TechnicalSpecification{
     id: ID!
     name: String!
 }type Stage{

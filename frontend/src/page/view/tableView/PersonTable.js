@@ -10,6 +10,7 @@ import {StyledFormLarge} from "../../style/FormStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {DownloadOutlined} from "@ant-design/icons";
 import PersonContractFileDownload from "../../script/PersonContractFileDownload";
+import Title from "antd/es/typography/Title";
 
 const PersonTable = () => {
 
@@ -145,6 +146,9 @@ const PersonTable = () => {
     };
     return (<div>
         <StyledFormLarge form={formSearch} layout="horizontal">
+            <Divider style={{marginTop: 0}} >
+                <Title style={{marginTop: 0}} level={2}>Справочник Подрядчиков</Title>
+            </Divider>
             <Form.Item label="Поиск:" name="search">
                 <Space>
                     <Search

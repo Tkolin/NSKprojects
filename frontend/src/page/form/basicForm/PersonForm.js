@@ -255,15 +255,14 @@ const PersonForm = ({person, onClose}) => {
 
 
                         <StyledFormItem name="phone_number" label="Личный тел." rules={[{
-                            pattern: /^[\d\s()-]+$/,
+                            pattern: /^\+[0-9\s()-]+$/,
                             message: 'Пожалуйста, введите в формате +79003001234',
                         },]}
                         >
                             <Input
-                                placeholder="Введите номер телефона"
+                                placeholder="+790031001234"
                                 maxLength={13}
                                 minLength={11}
-                                pattern="\d*"
                             />
                         </StyledFormItem>
                         <StyledFormItem name="email" label="e-mail" rules={[{type: 'email'}]}>

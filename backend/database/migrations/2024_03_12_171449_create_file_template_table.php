@@ -19,7 +19,6 @@ return new class extends Migration
 
 
         });
-        \Illuminate\Support\Facades\DB::statement("ALTER TABLE template_files ADD file LONGBLOB");
 
     }
 

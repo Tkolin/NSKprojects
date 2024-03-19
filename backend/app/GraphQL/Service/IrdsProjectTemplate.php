@@ -13,7 +13,7 @@ use PhpOffice\PhpWord\TemplateProcessor;
 
 class IrdsProjectTemplate
 {
-    public static function generate($projectIrds)
+    public static function generate($project)
     {
         // Получение данных об организации
         $myOrg = GeneratorService::getOrganizationData();
@@ -26,32 +26,63 @@ class IrdsProjectTemplate
         copy($templateFilePath, $tempFilePath);
         // Загрузка шаблона в PhpWord
         $templateProcessor = new TemplateProcessor($tempFilePath);
-        $id = "___";
-        $day = "__";
-        $mount = "__";
-        $year = "____";
+        $date = $project["date_create"];
+
+        $dateComponents = explode('-', $date);
+
+        $year = $dateComponents[0];
+        $month = $dateComponents[1];
+        $day = $dateComponents[2];
+
+        $projectIrds = $project->project_irds;
+
+        // Формируем массив для отображения в таблице
+        $table = [];
+        $irdNumber = 1;
+        foreach ($projectIrds as $projectIrd) {
+            $table[] = [
+                'project_irds.number' => $irdNumber++,
+                'project_irds.ird.name' => $projectIrd->ird->name,
+            ];
+        }
         $replacements = [
-            'day' => $day,
-            'mount' => $mount,
-            'year' => $year,
-            'project.number' => $projectData['number'],
-            'project.date_create' => $projectData['date_create'],
-            'project.name' => $projectData['name'],
-            'myOrg.nameOrType'=> $myOrg['name'],
-            'myOrg.name'=> $myOrg['name'],
-            'myOrg.director.short_full_name'=> $myOrg['name'],
-            'project.organization.director.short_full_name' => $projectDirector['last_name'] . ' ' . substr((string)$projectDirector['first_name'], 0,2) . '.' . substr((string)$projectDirector['patronymic'], 0,2) . '.',
-            'project.organization.nameOrType' => $projectData['name']['name'],
-            'project.organization.name' => $projectData['name']['name'],
-            'project_irds.ird.name' => $projectIrds['ird']['name'],
-            'project_irds.number' => $projectIrds['number'],
-            'myOrg.director.position.name' => $myOrg['director']['position']['name'],
-            'project.organization.director.position.name' => $projectDirector['position']['name'],
+            'project.number' => $project['number'] ?? '(данные отсутвуют)',
+            'project.name' => $project['name'] ?? '(данные отсутвуют)',
+
+
+            'dayCreate' => $day,
+            'mountCreate' => $month,
+            'yearCreate' => $year,
+
+            'myOrg.director.position' => $myOrg['director']['position']['name'] ?? '(данные отсутвуют)',
+            'myOrg.nameOrType' =>$myOrg["legal_form"]['name'] ." ". $myOrg['name']  ,
+            'myOrg.director.ShortFullName' => $myOrg['director']['last_name'] . ' ' . substr((string)$myOrg['director']['first_name'], 0,2) . '.' . substr((string)$myOrg['director']['patronymic'], 0,2) . '.',
+            'projectOrganization.director.ShortFullName' => isset($project["organization_customer"]['director']) ?
+                $project["organization_customer"]['director']['last_name'] . ' ' . substr((string)$project["organization_customer"]['director']['first_name'], 0,2) . '.' . substr((string)$project["organization_customer"]['director']['patronymic'], 0,2) . '.' : '',
+            'projectOrganization.nameOrType' =>isset($project["organization_customer"]) ? $project["organization_customer"]["legal_form"]['name'] ." ". $project["organization_customer"]['name'] : "(данные отсутвуют)"  ,
+            'projectOrganization.director.position' => $project["organization_customer"]['director']['position']['name'] ?? '(данные отсутвуют)',
+
+
+//
+//            'project.date_create' => $projectData['date_create'],
+//
+//            'myOrg.name'=> $myOrg['name'],
+//            'myOrg.director.short_full_name'=> $myOrg['name'],
+//            'project.organization.director.short_full_name' => $projectDirector['last_name'] . ' ' . substr((string)$projectDirector['first_name'], 0,2) . '.' . substr((string)$projectDirector['patronymic'], 0,2) . '.',
+//            'project.organization.nameOrType' => $projectData['name']['name'],
+//            'project.organization.name' => $projectData['name']['name'],
+//            'project_irds.ird.name' => $projectIrds['ird']['name'],
+//            'project_irds.number' => $projectIrds['number'],
+//            'myOrg.director.position.name' => $myOrg['director']['position']['name'],
+//            'project.organization.director.position.name' => $projectDirector['position']['name'],
         ];
 
         foreach ($replacements as $key => $value) {
             $templateProcessor->setValue($key, $value);
         }
+        $templateProcessor->cloneRowAndSetValues('projectStages.number' , $table);
+        // Сохранение отредактированного документа
+        $fileName = 'irdsProject.docx';
 
         // Сохранение отредактированного документа
         $fileName = 'contract.docx';

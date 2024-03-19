@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, Form, Modal, notification, Space, Table} from 'antd';
+import {Button, Divider, Form, Modal, notification, Space, Table} from 'antd';
 import { IRDS_QUERY, STAGES_QUERY} from '../../../graphql/queries';
 import { DELETE_IRD_MUTATION} from '../../../graphql/mutationsIrd';
 import IrdForm from "../../form/simpleForm/IrdForm";
@@ -8,6 +8,7 @@ import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import Search from "antd/es/input/Search";
 import {StyledFormLarge} from "../../style/FormStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
+import Title from "antd/es/typography/Title";
 
 const IrdTable = () => {
 
@@ -138,6 +139,9 @@ const IrdTable = () => {
     return (
         <div>
             <StyledFormLarge form={formSearch} layout="horizontal">
+                <Divider style={{marginTop: 0}} >
+                    <Title style={{marginTop: 0}} level={2}>Справочник наименования ИРД</Title>
+                </Divider>
                 <Form.Item label="Поиск:" name="search">
                     <Space>
                         <Search

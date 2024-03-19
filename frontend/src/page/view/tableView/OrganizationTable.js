@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, Descriptions, FloatButton, Form, Modal, notification, Space} from 'antd';
+import {Button, Descriptions, Divider, FloatButton, Form, Modal, notification, Space} from 'antd';
 import {DELETE_ORGANIZATION_MUTATION} from '../../../graphql/mutationsOrganization';
 import OrganizationForm from "../../form/basicForm/OrganizationForm";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
@@ -11,6 +11,7 @@ import {StyledTable} from "../../style/TableStyles";
 import {StyledFormLarge} from "../../style/FormStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {ORGANIZATIONS_QUERY} from "../../../graphql/queries";
+import Title from "antd/es/typography/Title";
 
 const OrganizationTable = () => {
     // Состояния
@@ -107,11 +108,11 @@ const OrganizationTable = () => {
             }
         },
     },  {
-        title: 'email', dataIndex: 'email', key: 'email',  width: 300,
-        sorter: true, ellipsis: true,
+        title: 'email', dataIndex: 'email', key: 'email',  width: 200,
+        sorter: true,
     },  {
-        title: 'номер телефона', dataIndex: 'phone_number', key: 'phone_number', width: 140,
-        sorter: true, ellipsis: true},
+        title: 'номер телефона', dataIndex: 'phone_number', key: 'phone_number', width: 200,
+        sorter: true, },
         {
         title: 'Управление', key: 'edit', render: (text, record) => (
             <Space size="middle">
@@ -148,6 +149,9 @@ const OrganizationTable = () => {
 
     return <>
         <StyledFormLarge form={formSearch} layout="horizontal">
+            <Divider style={{marginTop: 0}} >
+                <Title style={{marginTop: 0}} level={2}>Справочник Организаций</Title>
+            </Divider>
             <Form.Item label="Поиск:" name="search">
                 <Space>
                     <Search

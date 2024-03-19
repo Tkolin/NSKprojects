@@ -35,8 +35,10 @@ const StagesProjectFileDownload = ({projectId}) => {
         try {
             const link = document.createElement('a');
             console.log(link);
-            link.href = `${LaravelURL}download-project/${downloadedFileUrl}`;
-            link.download = 'contract.docx';
+
+            link.href = `${LaravelURL}download-projectStages/${downloadedFileUrl}`;
+            link.download = 'contractStage.docx';
+
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
