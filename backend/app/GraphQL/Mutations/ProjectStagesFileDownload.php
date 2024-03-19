@@ -27,7 +27,6 @@ final readonly class ProjectStagesFileDownload
                 ->with('project_irds.IRD')
                 ->with('project_stage.stage')
                 ->find($args["projectId"]);
-                ->find($args["personId"]);
 
             if (!$projectData) {
                 throw new Exception('Сотрудник не найден');
