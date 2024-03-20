@@ -15,7 +15,7 @@ class ProjectController extends Controller
             abort(404);
         }
 
-        return response()->download($filePath, 'project.docx')->deleteFileAfterSend(true);
+        return response()->download($filePath, 'Договор_подряда.docx')->deleteFileAfterSend(true);
     }
     public function downloadIrdsProject($filename)
     {
@@ -24,7 +24,7 @@ class ProjectController extends Controller
             abort(404);
         }
 
-        return response()->download($filePath, 'irdsProject.docx')->deleteFileAfterSend(true);
+        return response()->download($filePath, 'Список_ИРД.docx')->deleteFileAfterSend(true);
     }
     public function downloadStageProject($filename)
     {
@@ -33,6 +33,6 @@ class ProjectController extends Controller
             abort(404);
         }
 
-        return response()->download($filePath, 'stageProject.docx')->deleteFileAfterSend(true);
+        return response()->download($filePath, 'График_работ.docx')->deleteFileAfterSend(true);
     }
 }

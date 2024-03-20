@@ -24,8 +24,13 @@ final readonly class Projects
                 ->with('status')
                 ->with('delegations')
                 ->with('project_irds.IRD')
-                ->with('project_stage.stage');
+                ->with('project_stages.stage');
             // Поиск
+
+            if(isset($args["projectID"])){
+                $projectsQuery::find($args["projectID"]);
+
+            }
             if (isset($args['queryOptions']['search'])) {
                 $searchTerm = $args['queryOptions']['search'];
                 $projectsQuery = $projectsQuery->where('number', 'like', "%$searchTerm%")
@@ -53,11 +58,11 @@ final readonly class Projects
 
             // Пагинация
             if (isset($args['queryOptions']['page'])) {
-                $projects = $projectsQuery->paginate(1, ['*'], 'page', $args['queryOptions']['page']);
+                $projects = $projectsQuery->paginate($args['queryOptions']['limit'], ['*'], 'page', $args['queryOptions']['page']);
             } else {
                 $projects = $projectsQuery->get();
             }
-
+            error_log("sdaf ".$projects["project_stages"]);
 
             return ['items' => $projects, 'count' =>  $count];
         } else {

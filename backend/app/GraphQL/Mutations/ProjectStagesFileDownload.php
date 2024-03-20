@@ -25,7 +25,7 @@ final readonly class ProjectStagesFileDownload
                 ->with('status')
                 ->with('project_delegations')
                 ->with('project_irds.IRD')
-                ->with('project_stage.stage')
+                ->with('project_stages.stage')
                 ->find($args["projectId"]);
 
             if (!$projectData) {
@@ -33,8 +33,7 @@ final readonly class ProjectStagesFileDownload
             }
 
             $projectGenerator = new StagesProjectTemplate();
-            $projectGenerator = new ProjectGeneratorService();
-            $contractFilePath = $projectGenerator->generate($projectData);
+             $contractFilePath = $projectGenerator->generate($projectData);
 
             return ['url' => $contractFilePath];
 

@@ -16,6 +16,7 @@ class Project extends Model
         'organization_customer_id',
         'type_project_document_id',
         'date_signing',
+        'duration',
         'date_end',
         'status_id',
         'date_completion',
@@ -44,7 +45,7 @@ class Project extends Model
     {
         return $this->hasMany(ProjectResponsiblePerson::class);
     }
-    public function project_stage(): HasMany
+    public function project_stages(): HasMany
     {
         return $this->hasMany(ProjectStage::class);
     }

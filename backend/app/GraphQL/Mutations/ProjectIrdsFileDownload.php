@@ -4,6 +4,8 @@ namespace App\GraphQL\Mutations;
 
 use App\GraphQL\Service\AuthorizationService;
 use App\GraphQL\Service\ContractGeneratorService;
+use App\GraphQL\Service\IrdsProjectTemplate;
+use App\GraphQL\Service\ProjectGeneratorService;
 use App\Models\Person;
 use App\Models\Project;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
@@ -23,14 +25,14 @@ final readonly class ProjectIrdsFileDownload
                 ->with('status')
                 ->with('project_delegations')
                 ->with('project_irds.IRD')
-                ->with('project_stage.stage')
+                ->with('project_stages.stage')
                 ->find($args["projectId"]);
 
             if (!$projectData) {
                 throw new Exception('Сотрудник не найден');
             }
 
-            $irdGenerator = new ProjectIrdsFileDownload();
+            $irdGenerator = new IrdsProjectTemplate();
             $contractFilePath = $irdGenerator->generate($projectData);
 
             return ['url' => $contractFilePath];

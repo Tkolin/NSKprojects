@@ -1,12 +1,16 @@
 import React, {useState} from 'react';
-import {Button, Col, Row, Steps} from 'antd';
+import {Button, Col, Descriptions, Row, Space, Steps} from 'antd';
 import TasksProjectExecutorForm from "../aggregateComponent/projectForm/TasksProjectExecutorForm";
 import TasksToProjectStageForm from "../aggregateComponent/projectForm/TasksToProjectStageForm";
 import ProjectForm from "../basicForm/ProjectForm";
 import StagesProjectForm from "../aggregateComponent/projectForm/StagesProjectForm";
 import IrdsProjectForm from "../aggregateComponent/projectForm/IrdsProjectForm";
-import {StyledBlockLarge, StyledBlockRegular} from "../../style/BlockStyles";
+import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular, StyledBlockSmall} from "../../style/BlockStyles";
 import ProjectDetails from "../../view/detailsView/ProjectDetails";
+import PersonContractFileDownload from "../../script/PersonContractFileDownload";
+import ProjectFileDownload from "../../script/ProjectFileDownload";
+import StagesProjectFileDownload from "../../script/StagesProjectFileDownload";
+import IrdsProjectFileDownload from "../../script/IrdsProjectFileDownload";
 
 const {Step} = Steps;
 
@@ -15,16 +19,16 @@ const MyComponent = () => {
     const [project, setProject] = useState(null);
 
     const handleProject = (data) => {
+        setProject(null);
         setProject(data);
+        console.log("hancldeProjectCreater ", data);
     };
     const onNext = () => {
-        console.log("Вперёд");
-        console.log(project);
+
         setCurrentStep(currentStep + 1);
     }
     const onBack = () => {
-        console.log("Назад");
-        console.log(project);
+
        setCurrentStep(currentStep - 1);
     }
 
@@ -37,7 +41,8 @@ const MyComponent = () => {
                         <Step title="Заполнения основных данных"/>
                         <Step title="Заполнение Этапы"/>
                         <Step title="Заполнение Ирд"/>
-                        <Step title="Проверка данных"/>
+                        <Step title="Документы"/>
+                        {/*<Step title="Проверка данных"/>*/}
                     </Steps>
                     <Button disabled={(currentStep <= 0)} onClick={onBack}>Отменить шаг</Button>
                     <Button  onClick={onNext}>----</Button>
@@ -54,16 +59,29 @@ const MyComponent = () => {
                     )}
                     {currentStep === 1 && (
                         <StyledBlockLarge label={"Этапы"}>
-                            <StagesProjectForm project={project} onSubmit={onNext}/>
+                            <StagesProjectForm setProject={handleProject} project={project} onSubmit={onNext}/>
                         </StyledBlockLarge>
                     )}
                     {currentStep === 2 && (
                         <StyledBlockLarge label={"Список ИРД"}>
-                            <IrdsProjectForm project={project} onSubmit={onNext}/>
+                            <IrdsProjectForm setProject={handleProject} project={project} onSubmit={onNext}/>
                         </StyledBlockLarge>
                     )}
                     {currentStep === 3 && (
-                        <ProjectDetails project={project} onSubmit={onNext}/>
+                        <StyledBlockBig label={"Сформированная документация:"}>
+                            <Descriptions>
+                                <Descriptions.Item label="Договор с заказчиком">
+                                    <ProjectFileDownload projectId={project.id}/>
+                                </Descriptions.Item>
+                                <Descriptions.Item label="График работ">
+                                    <StagesProjectFileDownload projectId={project.id}/>
+                                </Descriptions.Item>
+                                <Descriptions.Item label="Список ИРД">
+                                    <IrdsProjectFileDownload projectId={project.id}/>
+                                </Descriptions.Item>
+                            </Descriptions>
+                        </StyledBlockBig>
+                        // <ProjectDetails project={project} onSubmit={onNext}/>
                     )}
                 </Col>
             </Row>

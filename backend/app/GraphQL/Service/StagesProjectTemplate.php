@@ -22,25 +22,39 @@ class StagesProjectTemplate
 
         $templateFilePath = storage_path('app/templates/StagesProjectTemplate.docx');
         // Создание временного файла копии шаблона
-        $tempFilePath = tempnam(sys_get_temp_dir(), 'fad');
+        $tempFilePath = tempnam(sys_get_temp_dir(), 'lolp');
         copy($templateFilePath, $tempFilePath);
         // Загрузка шаблона в PhpWord
+        error_log("Этапы");
         $templateProcessor = new TemplateProcessor($tempFilePath);
-        $date = $project["date_create"];
+    //    $date = $project["date_create"];
 
-        $dateComponents = explode('-', $date);
+      //  $dateComponents = explode('-', $date);
 
-        $year = $dateComponents[0];
-        $month = $dateComponents[1];
-        $day = $dateComponents[2];
-        $projectStages = $project->project_stage;
+//        $year = $dateComponents[0];
+//        $month = $dateComponents[1];
+//        $day = $dateComponents[2];
+
+        $year = "__";
+        $month = "__";
+        $day = "__";
+        $projectStages = $project->project_stages;
 
         // Формируем массив для отображения в таблице
         $table = [];
         $irdNumber = 1;
+        error_log("fadf ". $projectStages);
+
+        //TODO: Ошибка мол пустое
         foreach ($projectStages as $projectStage) {
             $table[] = [
-                'projectStages.number' =>$irdNumber
+                'projectStages.number' => $projectStage["number"],
+                "projectStages.stage.name" => $projectStage["stage"]["name"],
+                "projectStages.stage.duration" => $projectStage["duration"],
+                "projectStages.stage.price" => $projectStage["price"]."р.",
+                "projectStages.stage.endPrice" => $projectStage["price"]."р.",
+                "projectStages.payDay" =>  "В течение 5 банковских дней с даты подписания договора",
+
             ];
         }
         $replacements = [
@@ -111,9 +125,9 @@ class StagesProjectTemplate
             $templateProcessor->setValue($key, $value);
         }
 
-        $templateProcessor->cloneRowAndSetValues('stageProject.number' , $table);
+        $templateProcessor->cloneRowAndSetValues('projectStages.number' , $table);
         // Сохранение отредактированного документа
-        $fileName = 'contractStage.docx';
+        $fileName = 'График_работ.docx';
 
 
 

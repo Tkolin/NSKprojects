@@ -5,7 +5,7 @@ type Query {
     irds(queryOptions: QueryOptions): IrdsResult
     stages(queryOptions: QueryOptions): StagesResult
     tasks(queryOptions: QueryOptions): TasksResult
-    projects(queryOptions: QueryOptions): ProjectsResult
+    projects(queryOptions: QueryOptions, projectId: ID): ProjectsResult
     persons(queryOptions: QueryOptions): PersonsResult
     biks(queryOptions: QueryOptions): BikResult
     passportPlaceIssues(queryOptions: QueryOptions): PassportPlaceIssueResult
@@ -588,23 +588,24 @@ type AuthPayload {
     type_project_document: TypeProjectDocument
     facilitys: [Facility]
     date_signing: String
+    duration: Int
     date_end: String
     status: ProjectStatus
     date_completion: String
     delegations: [Contact]
     price: Int
     project_irds: [ProjectIRD]
-    project_stage: [ProjectStage]
+    project_stages: [ProjectStage]
 }type ProjectStage{
     id: ID!
     project: Project
     stage: Stage
-    stageNumber: Int
+    number: Int
     price: Float
     percent: Int
-    dateStart: String
+    date_start: String
     duration: Int
-    dateEnd: String
+    date_end: String
     progress: Int
 }type ProjectTask{
     id: ID!

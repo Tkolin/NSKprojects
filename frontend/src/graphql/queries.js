@@ -159,12 +159,13 @@ export const TYPES_PROJECTS_QUERY = gql`
     }
 `;
 export const PROJECTS_QUERY = gql`
-    query ProjectQuery($queryOptions: QueryOptions) {
-        projects (queryOptions: $queryOptions) {
+    query ProjectQuery($queryOptions: QueryOptions, $id: ID) {
+        projects (queryOptions: $queryOptions, projectId: $id) {
             items{
                 id
                 number
                 name
+                duration
                 organization_customer
                 {
                     id
@@ -194,16 +195,16 @@ export const PROJECTS_QUERY = gql`
                     last_name
                     patronymic
                 }
-                project_stage {
+                project_stages {
                     id
-                    stageNumber
+                    number
                     stage {
                         id
                         name
                     }
-                    dateStart
+                    date_start
                     duration
-                    dateEnd
+                    date_end
                     percent
                     price
                 }
@@ -498,12 +499,12 @@ export const STAGES_TO_PROJECT_QUERY = gql`
                 id
                 name
             }
-            stageNumber
+            number
             price
             percent
-            dateStart
+            date_start
             duration
-            dateEnd
+            date_end
             progress
         }
     }
