@@ -105,12 +105,13 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
     };
 
     const handleEditingTemplate = (value, option) => {
-        const createNumber = shortenString(option.children);
         setSelectedTypeProject(value);
-        setProjectNumber(createNumber);
-        form.setFieldsValue({
-            number: createNumber
-        });
+        //TODO: Получать из туда суда типа дока до группы
+        // setProjectNumber(createNumber);
+        //
+        // form.setFieldsValue({
+        //     number: createNumber
+        // });
         console.log(shortenString(option.children));
     };
 
@@ -148,7 +149,8 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
 
     // Мутации для добавления и обновления
     const [addProject] = useMutation(ADD_PROJECT_MUTATION, {
-        refetchQueries: [{query: PROJECTS_QUERY}], onCompleted: (data) => {
+        refetchQueries: [{query: PROJECTS_QUERY}],
+        onCompleted: (data) => {
             save(data);
             setProject(data.addProject);
 
@@ -181,7 +183,6 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
     useEffect(() => {
         if (editingProject) {
             save(editingProject);
-            console.log(editingProject);
             form.setFieldsValue({
                 ...editingProject,
                 date_signing: editingProject.date_signing ? moment(editingProject.date_signing, 'YYYY-MM-DD') : null,

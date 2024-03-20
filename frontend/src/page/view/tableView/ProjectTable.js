@@ -159,9 +159,21 @@ const ProjectTable = () => {
             title: 'Договор', key: 'btnContract',  width: 80, align: 'center',
             render: (text, record) => (
                 <>
-                    <IrdsProjectFileDownload/>
-                    <ProjectFileDownload projectId={record.id}/>
-                    <StagesProjectFileDownload projectId={record.id}/>
+                     <ProjectFileDownload projectId={record.id}/>
+                 </>
+            ),
+        },     {
+            title: 'Список ИРД', key: 'btnIrd',  width: 80, align: 'center',
+            render: (text, record) => (
+                <>
+                    <IrdsProjectFileDownload projectId={record.id}/>
+                 </>
+            ),
+        },     {
+            title: 'График этапов', key: 'btnStage',  width: 80, align: 'center',
+            render: (text, record) => (
+                <>
+                      <StagesProjectFileDownload projectId={record.id}/>
                 </>
             ),
         },

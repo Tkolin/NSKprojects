@@ -29,9 +29,14 @@ class ProjectGeneratorService
 
         $dateComponents = explode('-', $date);
 
-        $year = $dateComponents[0];
-        $month = $dateComponents[1];
-        $day = $dateComponents[2];
+//        $year = $dateComponents[0];
+//        $month = $dateComponents[1];
+//        $day = $dateComponents[2];
+        error_log("Договор");
+
+        $year = "__";
+        $month = "__";
+        $day = "__";
 
         $myOrgPhone = $myOrg["phone_number"];
         $formattedPhone = preg_replace('/\+(\d{1,2})?(\d{3})(\d{3})(\d{2})(\d{2})/', '+$1 ($2) $3-$4-$5', $myOrgPhone);
@@ -122,7 +127,7 @@ class ProjectGeneratorService
             $templateProcessor->setValue($key, $value);
         }
 
-        $fileName = 'project.docx';
+        $fileName = 'Договор_подряда.docx';
 
         $filePath = storage_path('app/' . $fileName);
         $templateProcessor->saveAs($filePath);

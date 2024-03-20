@@ -15,24 +15,26 @@ class IrdsProjectTemplate
 {
     public static function generate($project)
     {
-        // Получение данных об организации
         $myOrg = GeneratorService::getOrganizationData();
-        $projectData = $projectIrds["project"];
-        $projectDirector = $projectData['organization']['director'];
+
+
+
         // Получение пути к шаблону документа
-        $templateFilePath = storage_path('app/templates/PersonContract.docx');
+        $templateFilePath = storage_path('app/templates/IrdsProjectTemplate.docx');
+
         // Создание временного файла копии шаблона
         $tempFilePath = tempnam(sys_get_temp_dir(), 'contract');
         copy($templateFilePath, $tempFilePath);
-        // Загрузка шаблона в PhpWord
         $templateProcessor = new TemplateProcessor($tempFilePath);
-        $date = $project["date_create"];
 
-        $dateComponents = explode('-', $date);
+        //   $dateComponents = explode('-', $date);
+        //   $year = $dateComponents[0];
+        //   $month = $dateComponents[1];
+        //   $day = $dateComponents[2];
 
-        $year = $dateComponents[0];
-        $month = $dateComponents[1];
-        $day = $dateComponents[2];
+        $year = "__";
+        $month = "__";
+        $day = "__";
 
         $projectIrds = $project->project_irds;
 
@@ -80,12 +82,10 @@ class IrdsProjectTemplate
         foreach ($replacements as $key => $value) {
             $templateProcessor->setValue($key, $value);
         }
-        $templateProcessor->cloneRowAndSetValues('projectStages.number' , $table);
-        // Сохранение отредактированного документа
-        $fileName = 'irdsProject.docx';
+        $templateProcessor->cloneRowAndSetValues('project_irds.number' , $table);
 
         // Сохранение отредактированного документа
-        $fileName = 'contract.docx';
+        $fileName = 'Список_ИРД.docx';
         $filePath = storage_path('app/' . $fileName);
         $templateProcessor->saveAs($filePath);
 

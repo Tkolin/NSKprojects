@@ -80,7 +80,7 @@ class ContractGeneratorService
         }
 
         // Сохранение отредактированного документа
-        $fileName = 'contract.docx';
+        $fileName = 'Договор с исполнителем.docx';
         $filePath = storage_path('app/' . $fileName);
         $templateProcessor->saveAs($filePath);
 

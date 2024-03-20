@@ -41,6 +41,7 @@ export const ADD_PROJECT_MUTATION = gql`
                 name
             }
             date_signing
+            duration
             date_end
             status
             {
@@ -54,16 +55,16 @@ export const ADD_PROJECT_MUTATION = gql`
                 last_name
                 patronymic
             }
-            project_stage {
+            project_stages {
                 id
-                stageNumber
+                number
                 stage {
                     id
                     name
                 }
-                dateStart
+                date_start
                 duration
-                dateEnd
+                date_end
                 percent
                 price
             }
@@ -118,6 +119,7 @@ export const UPDATE_PROJECT_MUTATION = gql`
             }
             date_signing
             date_end
+            duration
             status
             {
                 id
@@ -130,16 +132,16 @@ export const UPDATE_PROJECT_MUTATION = gql`
                 last_name
                 patronymic
             }
-            project_stage {
+            project_stages {
                 id
-                stageNumber
+                number
                 stage {
                     id
                     name
                 }
-                dateStart
+                date_start
                 duration
-                dateEnd
+                date_end
                 percent
                 price
             }
