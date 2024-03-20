@@ -61,11 +61,13 @@ const OrganizationForm = ({organization, onClose}) => {
         setAddress1("");
         setAddress2("");
     }, []);
+
     useEffect(() => {
-        if (organization) {
+        if (organization ) {
+
+
             setEditingOrganization(organization);
             form.resetFields();
-
             form.setFieldsValue({
                 ...organization,
                 director: organization?.director?.id ??  null,
@@ -73,8 +75,8 @@ const OrganizationForm = ({organization, onClose}) => {
                 BIK_id: organization?.BiK?.id ?? null,
             });
 
-            setAddress1(organization.address_mail);
-            setAddress2(organization.address_legal);
+            setAddress1(organization?.address_mail);
+            setAddress2(organization?.address_legal);
         }
     }, [organization, form]);
 

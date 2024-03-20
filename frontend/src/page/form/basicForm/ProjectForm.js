@@ -7,7 +7,7 @@ import {
     PROJECTS_QUERY,
     PROJECT_STATUSES_QUERY,
     TYPES_PROJECTS_QUERY,
-    ORGANIZATIONS_SHORT_QUERY, CONTACTS_SHORT_QUERY, FACILITYS_QUERY
+    ORGANIZATIONS_SHORT_QUERY, CONTACTS_SHORT_QUERY, FACILITYS_QUERY, ORGANIZATIONS_QUERY
 } from '../../../graphql/queries';
 import {
     ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION,
@@ -40,18 +40,20 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
     const [form] = Form.useForm();
     const [selectedTypeProject, setSelectedTypeProject] = useState(null);
     const [cascaderFacility, setCascaderFacility] = useState(null);
-    const [contactFormViewModalVisible, setContactFormViewModalVisible] = useState(false);
+    const [addContactModalVisibleMode, setAddContactModalVisibleMode] = useState(false);
     const [autoCompleteOrganization, setAutoCompleteOrganization] = useState('');
     const [selectedOrganization, setSelectedOrganization] = useState('')
+    const [selectedOrganizationData, setSelectedOrganizationData] = useState('')
     const [autoCompleteTypeProjects, setAutoCompleteTypeProjects] = useState('');
-    const [costumerFormViewModalVisible, setCostumerFormViewModalVisible] = useState(false);
+    const [addOrganizationModalVisibleMode, setAddOrganizationModalVisibleMode] = useState(false);
+    const [editOrganizationModalVisibleMode, setEditOrganizationModalVisibleMode] = useState(false);
     const [projectStatus, setProjectStatus] = useState({key: 4});
     const [projectNumber, setProjectNumber] = useState('');
-    const handleContactFormView = () => {
-        setContactFormViewModalVisible(false);
-    };
-    const handleCostumerFormView = () => {
-        setCostumerFormViewModalVisible(false);
+
+    const handleCloseModalFormView = () => {
+        setAddContactModalVisibleMode(false);
+        setAddOrganizationModalVisibleMode(false);
+        setEditOrganizationModalVisibleMode(false);
     };
     const handleAutoCompleteOrganizations = (value) => {
         setAutoCompleteOrganization(value)
@@ -74,7 +76,11 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
             calculateEndDate(dateSigning, value);
         }
     };
-
+    const handleSelectedOrganization = (value, option) =>{
+        setSelectedOrganization(value);
+        console.log("Пельмени", dataOrganizations?.organizations?.items?.find(org => org.id === value))
+        setSelectedOrganizationData(dataOrganizations?.organizations?.items?.find(org => org.id === value))
+    }
     const handleDateEndChange = (value) => {
         setDateEnd(value);
         calculateDuration(dateSigning, value);
@@ -143,7 +149,7 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
     });
     const {
         loading: loadingOrganizations, error: errorOrganizations, data: dataOrganizations
-    } = useQuery(ORGANIZATIONS_SHORT_QUERY, {
+    } = useQuery(ORGANIZATIONS_QUERY, {
         variables: {queryOptions: {limit: 10, page: 1, search: autoCompleteOrganization}}
     });
 
@@ -167,9 +173,8 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
             openNotification('topRight', 'success', 'Данные успешно обновлены!');
             save(data);
             console.log("data.updateProject");
-
-            console.log(data.updateProject);
-            setProject(data.updateProject);
+            if(setProject)
+                setProject (data.updateProject);
 
             if (onSubmit) {
                 onSubmit(true);
@@ -272,7 +277,7 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                         popupMatchSelectWidth={false}
                         allowClear
                         showSearch
-                        onSelect={(value) => setSelectedOrganization(value)}
+                        onSelect={(value, option) => handleSelectedOrganization(value, option)}
                         filterOption={false}
                         loading={loadingOrganizations}
                         placeholder="Начните ввод..."
@@ -284,16 +289,19 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                     </Select>
                 </StyledFormItem>
                 <StyledButtonGreen style={{marginLeft: "-64px"}} icon={<PlusOutlined/>}
-                                   onClick={() => setCostumerFormViewModalVisible(true)}/>
-                <Button      style={{marginLeft: "0px", marginBottom: 10}}         type={"dashed"} icon={<EditOutlined/>}
-                             disabled={true} />
+                                   onClick={() => setAddOrganizationModalVisibleMode(true)}/>
+                <Button      style={{marginLeft: "0px", marginBottom: 10}}
+                             onClick={() => setEditOrganizationModalVisibleMode(true)}
+                             type={"dashed"}
+                             icon={<EditOutlined/>}
+                             disabled={!selectedOrganization} />
             </Space.Compact>
-            <Space.Compact style={{width: "calc(100% + 64px)", alignItems: 'flex-end'}}>
+            <Space.Compact style={{width: "calc(100% + 32px)", alignItems: 'flex-end'}}>
                 <StyledFormItem name="delegates_id"
                                 label="Представители компании"
-                                style={{width: "calc(100% - 64px)"}}>
+                                style={{width: "calc(100% - 32px)"}}>
                     <Select
-                        style={{width: "calc(100% - 64px)"}}
+                        style={{width: "calc(100% - 32px)"}}
                         popupMatchSelectWidth={false}
                         allowClear
                         showSearch
@@ -308,11 +316,12 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                                            value={row.id}>{row.last_name} {row.first_name} {row.patronymic}</Select.Option>))}
                     </Select>
                 </StyledFormItem>
-                <StyledButtonGreen style={{marginLeft: "-64px"}} type={"dashed"} icon={<PlusOutlined/>}
-                                   onClick={() => setContactFormViewModalVisible(true)}/>
+                <StyledButtonGreen style={{marginLeft: "-32px"}}
+                                   type={"dashed"}
+                                   icon={<PlusOutlined/>}
+                                   onClick={() => setAddContactModalVisibleMode(true)}/>
 
-                <Button      style={{marginLeft: "0px", marginBottom: 10}}         type={"dashed"} icon={<EditOutlined/>}
-                             disabled={true} />
+
 
             </Space.Compact>
             <StyledFormItem name="type_project_document_id" label="Тип документа">
@@ -394,20 +403,28 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
         </StyledFormRegular>
 
         <Modal
-            open={contactFormViewModalVisible}
-            onCancel={() => setContactFormViewModalVisible(false)}
+            open={addContactModalVisibleMode}
+            onCancel={() => setAddContactModalVisibleMode(false)}
             footer={null}
-            onClose={handleContactFormView}
+            onClose={handleCloseModalFormView}
         >
-            <ContactForm/>
+            <ContactForm onClose={handleCloseModalFormView}/>
         </Modal>
         <Modal
-            open={costumerFormViewModalVisible}
-            onCancel={() => setCostumerFormViewModalVisible(false)}
+            open={addOrganizationModalVisibleMode}
+            onCancel={() => setAddOrganizationModalVisibleMode(false)}
             footer={null}
-            onClose={handleCostumerFormView}
+            onClose={handleCloseModalFormView}
         >
-            <OrganizationForm/>
+            <OrganizationForm onClose={handleCloseModalFormView}/>
+        </Modal>
+        <Modal
+            open={editOrganizationModalVisibleMode}
+            onCancel={() => setEditOrganizationModalVisibleMode(false)}
+            footer={null}
+            onClose={handleCloseModalFormView}
+        >
+            <OrganizationForm onClose={handleCloseModalFormView} organization={selectedOrganizationData}/>
         </Modal>
     </>)
 };

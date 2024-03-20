@@ -73,8 +73,8 @@ export const TYPES_PAYMENT_QUERY = gql`
     }
 `;
 export const ORGANIZATIONS_QUERY = gql`
-    query OrganizationsQuery {
-        organizations {
+    query OrganizationsQuery ($queryOptions: QueryOptions, $organizationId: ID) {
+        organizations (queryOptions: $queryOptions, organizationId: $organizationId){
             items {
                 id
                 name

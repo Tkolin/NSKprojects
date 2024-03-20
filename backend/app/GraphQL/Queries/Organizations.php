@@ -21,6 +21,13 @@ final readonly class Organizations
                 ->with('contacts')
                 ->with('Bik');
 
+            // Поиск по организации
+            if (isset($args['organizationId'])) {
+                $searchTerm = $args['organizationId'];
+                $organizationsQuery = $organizationsQuery
+                    ->where('id', '=', "%$searchTerm%");
+            }
+
             // Поиск
             if (isset($args['queryOptions']['search'])) {
                 $searchTerm = $args['queryOptions']['search'];
