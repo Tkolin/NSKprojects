@@ -25,14 +25,14 @@ final readonly class Contacts
             if (isset($args['queryOptions']['search'])) {
                 $searchTerm = $args['queryOptions']['search'];
                 $contactsQuery = $contactsQuery
-                    ->where('first_name', 'like', "%$searchTerm%")
+                    ->where('id', 'like', "$searchTerm")
+                    ->orWhere('first_name', 'like', "%$searchTerm%")
                     ->orWhere('last_name', 'like', "%$searchTerm%")
                     ->orWhere('patronymic', 'like', "%$searchTerm%")
                     ->orWhere('work_phone', 'like', "%$searchTerm%")
                     ->orWhere('work_email', 'like', "%$searchTerm%")
                     ->orWhere('mobile_phone', 'like', "%$searchTerm%")
-                    ->orWhere('email', 'like', "%$searchTerm%")
-                    ->orWhere('id', 'like', "%$searchTerm%");
+                    ->orWhere('email', 'like', "%$searchTerm%");
             }
             // Поиск по организации
             if (isset($args['organizationId'])) {

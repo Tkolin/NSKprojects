@@ -182,6 +182,7 @@ export const PROJECTS_QUERY = gql`
                     name
                 }
                 date_signing
+                date_create
                 date_end
                 status
                 {

@@ -43,6 +43,7 @@ export const ADD_PROJECT_MUTATION = gql`
             date_signing
             duration
             date_end
+            date_create
             status
             {
                 id
@@ -119,6 +120,7 @@ export const UPDATE_PROJECT_MUTATION = gql`
             }
             date_signing
             date_end
+            date_create
             duration
             status
             {

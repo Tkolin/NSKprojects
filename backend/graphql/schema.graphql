@@ -588,6 +588,7 @@ type AuthPayload {
     type_project_document: TypeProjectDocument
     facilitys: [Facility]
     date_signing: String
+    date_create: String
     duration: Int
     date_end: String
     status: ProjectStatus

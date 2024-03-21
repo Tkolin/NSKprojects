@@ -32,7 +32,8 @@ final readonly class Organizations
             if (isset($args['queryOptions']['search'])) {
                 $searchTerm = $args['queryOptions']['search'];
                 $organizationsQuery = $organizationsQuery
-                    ->where('name', 'like', "%$searchTerm%")
+                    ->Where('id', 'like', "$searchTerm")
+                    ->orwhere('name', 'like', "%$searchTerm%")
                     ->orWhere('full_name', 'like', "%$searchTerm%");
             }
 

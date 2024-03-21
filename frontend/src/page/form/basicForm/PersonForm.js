@@ -17,6 +17,7 @@ import {BANKS_QUERY, BIKS_QUERY, PASSPORTS_PLACE_ISSUES_QUERY, PERSONS_QUERY} fr
 import BikForm from "../simpleForm/BikForm";
 import {AddressSuggestions} from "react-dadata";
 import {StyledAddressSuggestions, StyledAddressSuggestionsInput} from "../../style/InputStyles";
+import {StyledFormItemSelectAndCreate, StyledFormItemSelectAndCreateWitchEdit} from "../../style/SelectStyles";
 
 const PersonForm = ({person, onClose}) => {
     // Состояния
@@ -189,28 +190,16 @@ const PersonForm = ({person, onClose}) => {
                         <StyledFormItem name="date" label="Дата выдачи">
                             <DatePicker/>
                         </StyledFormItem>
-                        <Space.Compact style={{width: "calc(100% + 32px)"}}>
-                            <StyledFormItem style={{width: "calc(100% - 32px)", marginBottom: 0}}
-                                       labelAlign="left"
-                                       name="passport_place_issue_id"
-                                       label="Место выдачи">
-                                <Select
-                                    style={{width: "calc(100% - 32px)"}}
-                                    popupMatchSelectWidth={false}
-                                    allowClear
-                                    showSearch
-                                    filterOption={false}
-                                    onSearch={(value) => handleAutoCompletePPI(value)}
-                                    loading={loadingPPI}
-                                    placeholder="Начните ввод...">
-                                    {dataPPI?.passportPlaceIssues?.items?.map(row => (
-                                        <Select.Option key={row.id} value={row.id}>{row.name}</Select.Option>))}
-                                </Select>
-                            </StyledFormItem>
-                            <StyledButtonGreen style={{marginLeft: "-32px"}} icon={<PlusOutlined/>}
-                                               onClick={() => setPpiFormViewModalVisible(true)}/>
-                        </Space.Compact>
-
+                        <StyledFormItemSelectAndCreate
+                            formName={"passport_place_issue_id"}
+                            formLabel={"Место выдачи"}
+                            onSearch={handleAutoCompletePPI}
+                            placeholder={"Начните ввод..."}
+                            loading={loadingPPI}
+                            items={dataPPI?.passportPlaceIssues?.items}
+                            firstBtnOnClick={setPpiFormViewModalVisible}
+                            formatOptionText={(row) => `${row.name}`}
+                        />
                         <StyledFormItem name="serial" label="Серия">
                             <Input/>
                         </StyledFormItem>
@@ -291,30 +280,16 @@ const PersonForm = ({person, onClose}) => {
                                     <Select.Option key={bank.id} value={bank.id}>{bank.name}</Select.Option>))}
                             </Select>
                         </StyledFormItem>
-                        <Space.Compact style={{width: "calc(100% + 32px)"}}>
-
-                            <StyledFormItem name="bik_id" label="Бик"
-                                            style={{width: "calc(100% - 32px)", marginBottom: 0}}>
-                                <Select
-                                    style={{width: "calc(100% - 32px)"}}
-                                    popupMatchSelectWidth={false}
-                                    allowClear
-                                    showSearch
-                                    filterOption={false}
-                                    onSearch={(value) => handleAutoCompletebiks(value)}
-                                    loading={loadingbiks}
-                                    placeholder="Начните ввод...">
-                                    {databiks?.biks?.items?.map(bik => (
-                                        <Select.Option key={bik.id} value={bik.id}>{bik.name}</Select.Option>))}
-                                </Select>
-
-                            </StyledFormItem>
-                            <StyledButtonGreen style={{marginLeft: "-32px"}} icon={<PlusOutlined/>}
-                                               onClick={() => setBikFormViewModalVisible(true)}/>
-
-                        </Space.Compact>
-
-
+                        <StyledFormItemSelectAndCreate
+                            formName={"bik_id"}
+                            formLabel={"Бик"}
+                            onSearch={handleAutoCompletebiks}
+                            placeholder={"Начните ввод..."}
+                            loading={loadingbiks}
+                            items={databiks?.biks?.items}
+                            firstBtnOnClick={setBikFormViewModalVisible}
+                            formatOptionText={(row) => `${row.BIK} ${row.name}`}
+                        />
                         <StyledFormItem name="INN" label="Инн">
                             <Input/>
                         </StyledFormItem>
@@ -337,7 +312,6 @@ const PersonForm = ({person, onClose}) => {
             {/* Места выдачи */}
             <Modal
                 open={ppiFormViewModalVisible}
-                title="Бик"
                 onCancel={() => setPpiFormViewModalVisible(false)}
                 footer={null}
                 onClose={handlePpiFormView}>
@@ -345,7 +319,6 @@ const PersonForm = ({person, onClose}) => {
             </Modal>
             <Modal
                 open={bikFormViewModalVisible}
-                title="Бик"
                 onCancel={() => setBikFormViewModalVisible(false)}
                 footer={null}
                 onClose={handleBikFormView}>

@@ -17,6 +17,7 @@ import { StyledButtonGreen} from "../../style/ButtonStyles";
 import {PlusOutlined} from "@ant-design/icons";
 import {BIKS_QUERY, CONTACTS_QUERY, LEGAL_FORM_QUERY, ORGANIZATIONS_QUERY} from "../../../graphql/queries";
 import {StyledAddressSuggestionsInput} from "../../style/InputStyles";
+import {StyledFormItemSelectAndCreate, StyledFormItemSelectAndCreateWitchEdit} from "../../style/SelectStyles";
 
 const OrganizationForm = ({organization, onClose}) => {
     // Состояния
@@ -26,7 +27,9 @@ const OrganizationForm = ({organization, onClose}) => {
     const [form] = Form.useForm();
     const [api, contextHolder] = notification.useNotification();
     const [bikFormViewModalVisible, setBikFormViewModalVisible] = useState(false);
-    const [contactFormViewModalVisible, setContactFormViewModalVisible] = useState(false);
+    const [editContactModalVisible, setEditContactModalVisible] = useState(false);
+    const [addContactModalVisible, setAddContactModalVisible] = useState(false);
+    const [selectedContactData, setSelectedContactData] = useState();
     const [autoCompleteContacts, setAutoCompleteContacts] = useState('');
     const [autoCompleteBiks, setAutoCompleteBiks] = useState('');
     const [address1, setAddress1] = useState();
@@ -36,8 +39,14 @@ const OrganizationForm = ({organization, onClose}) => {
     const handleAutoCompleteContacts = (value) => {setAutoCompleteContacts(value)};
     const handleAutoCompleteBiks = (value) => {setAutoCompleteBiks(value)};
     const handleBikFormView = () => {setBikFormViewModalVisible(false);};
-    const handleContactFormView = () => {setContactFormViewModalVisible(false);};
+    const handleCloseModalFormView = () => {
+        setAddContactModalVisible(false);
+        setEditContactModalVisible(false);
 
+    };
+    const handleSelectedContact = (value, option) => {
+        setSelectedContactData(dataContacts?.contacts?.items?.find(org => org.id === value))
+    }
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
         notification[type]({
@@ -63,9 +72,8 @@ const OrganizationForm = ({organization, onClose}) => {
     }, []);
 
     useEffect(() => {
+        console.log(organization)
         if (organization ) {
-
-
             setEditingOrganization(organization);
             form.resetFields();
             form.setFieldsValue({
@@ -157,30 +165,20 @@ const OrganizationForm = ({organization, onClose}) => {
                 <StyledFormItem name="full_name" label="Полное наименование" rules={[{required: true, message: "Укажите полное наименование компании"}]}>
                     <Input/>
                 </StyledFormItem>
-                <Space.Compact style={{width: "calc(100% + 32px)", alignItems: 'flex-end'}}>
-                    <StyledFormItem name="director"
-                                    label="Руководитель"
-                                    style={{width: "calc(100% - 32px)" }}>
-                        <Select
-                            style={{width: "calc(100% - 32px)"}}
-                            popupMatchSelectWidth={false}
-                            allowClear
-                            showSearch
-                            filterOption={false}
-                            onSearch={(value) => handleAutoCompleteContacts(value)}
-                            loading={loadingContacts}
-                            placeholder="Начните ввод...">
-                            {dataContacts?.contacts?.items?.map(row => (
-                                <Select.Option key={row.id}
-                                               value={row.id}>{row.first_name} {row.patronymic} {row.last_name}</Select.Option>))}
-                        </Select>
+                <StyledFormItemSelectAndCreateWitchEdit
+                                               formName={"director"}
+                                               formLabel={"Руководитель"}
+                                               onSearch={handleAutoCompleteContacts}
+                                               placeholder={"Начните ввод..."}
+                                               loading={loadingContacts}
+                                               items={dataContacts?.contacts?.items}
+                                               onSelect={handleSelectedContact}
+                                               secondDisable={!selectedContactData}
+                                               firstBtnOnClick={setAddContactModalVisible}
+                                               secondBtnOnClick={setEditContactModalVisible}
+                                               formatOptionText={(row) => `${row.first_name} ${row.patronymic} ${row.last_name}`}
+                />
 
-
-                    </StyledFormItem>
-                    <StyledButtonGreen style={{marginLeft: "-32px"}} type={"dashed"} icon={<PlusOutlined/>}
-                                       onClick={() => setContactFormViewModalVisible(true)}/>
-
-                </Space.Compact>
                 <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
                     <StyledFormItem name="address_legal" label="Юридический адрес" minchars={3}
                                     delay={50}
@@ -238,30 +236,15 @@ const OrganizationForm = ({organization, onClose}) => {
                         <StyledFormItem name="payment_account" label="Расчётынй счёт">
                             <Input placeholder="Введите номер расчётного счёта"/>
                         </StyledFormItem>
-                        <Space.Compact style={{width: "calc(100% + 32px)", alignItems: 'flex-end'}}>
-                        <StyledFormItem name="BIK_id" label="Бик"
-                                        style={{width: "calc(100% - 32px)" }}>
-
-                                <Select popupMatchSelectWidth={false}
-                                        style={{width: "calc(100% - 32px)"}}
-
-                                        allowClear
-                                        showSearch
-                                        filterOption = {false}
-                                        onSearch={(value) => handleAutoCompleteBiks(value)}
-                                        loading={loadingBiks}
-                                        placeholder="Бик">
-                                    {dataBiks?.biks?.items?.map(row => (
-                                        <Select.Option key={row.id}
-                                                       value={row.id}>{row.bik} {row.name}</Select.Option>))}
-                                </Select>
-
-
-                        </StyledFormItem>
-                            <StyledButtonGreen style={{marginLeft: "-32px"}} icon={<PlusOutlined/>}
-                                               onClick={() => setBikFormViewModalVisible(true)}/>
-                        </Space.Compact>
-
+                        <StyledFormItemSelectAndCreate formName={"BIK_id"}
+                                                       formLabel={"Бик"}
+                                                       onSearch={handleAutoCompleteBiks}
+                                                       placeholder={"Начните ввод..."}
+                                                       loading={loadingBiks}
+                                                       items={dataBiks?.biks?.items}
+                                                       firstBtnOnClick={setBikFormViewModalVisible}
+                                                       formatOptionText={(row) => `${row.BIK} ${row.name}`}
+                        />
                     </Col>
                     <Col span={12}>
                         <StyledFormItem name="INN" label="ИНН" rules={[{
@@ -321,7 +304,6 @@ const OrganizationForm = ({organization, onClose}) => {
             {/* Бики */}
             <Modal
                 open={bikFormViewModalVisible}
-                title="Бик"
                 onCancel={() => setBikFormViewModalVisible(false)}
                 footer={null}
                 onClose={handleBikFormView}>
@@ -329,12 +311,18 @@ const OrganizationForm = ({organization, onClose}) => {
             </Modal>
             {/* контакты */}
             <Modal
-                open={contactFormViewModalVisible}
-                title="Контакт"
-                onCancel={() => setContactFormViewModalVisible(false)}
+                open={addContactModalVisible}
+                onCancel={() => setAddContactModalVisible(false)}
                 footer={null}
-                onClose={handleContactFormView}>
-                <ContactForm/>
+                onClose={handleCloseModalFormView}>
+                <ContactForm contact={null}/>
+            </Modal>
+            <Modal
+                open={editContactModalVisible}
+                onCancel={() => setEditContactModalVisible(false)}
+                footer={null}
+                onClose={handleCloseModalFormView}>
+                <ContactForm contact={selectedContactData}/>
             </Modal>
         </StyledBlockBig>
 

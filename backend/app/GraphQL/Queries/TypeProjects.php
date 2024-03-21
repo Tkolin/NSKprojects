@@ -15,20 +15,20 @@ final readonly class TypeProjects
         $allowedRoles = ['admin']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-
             $tpds = TypeProjectDocument::with(['group', 'group.technical_specification']);
-
             // Поиск
             if (isset($args['queryOptions']['search'])) {
                 $searchTerm = $args['queryOptions']['search'];
                 $tpds = $tpds
-                    ->where('name', 'like', "%$searchTerm%")
-                    ->orWhere('code', 'like', "%$searchTerm%");
+                    ->where(function($query) use ($searchTerm) {
+                        $query->where('id', 'like', "$searchTerm")
+                            ->orWhere('name', 'like', "%$searchTerm%")
+                            ->orWhere('code', 'like', "%$searchTerm%");
+                    });
             }
 
             // Получаем количество записей
             $count = $tpds->count();
-
             // Сортировка
             if (isset($args['queryOptions']['sortField']) && isset($args['queryOptions']['sortOrder'])) {
                 $sortField = $args['queryOptions']['sortField'];

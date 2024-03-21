@@ -2,13 +2,6 @@
 
 namespace App\GraphQL\Service;
 
-use App\Models\Organization;
-use App\Models\Person;
-use App\Models\TemplateFile;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use PhpOffice\PhpWord\IOFactory;
-use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 class ProjectGeneratorService
@@ -26,64 +19,60 @@ class ProjectGeneratorService
         $templateProcessor = new TemplateProcessor($tempFilePath);
 
         $date = $project["date_create"];
-
         $dateComponents = explode('-', $date);
 
-//        $year = $dateComponents[0];
-//        $month = $dateComponents[1];
-//        $day = $dateComponents[2];
+        $year = $dateComponents[0] ?? "__";
+        $month = $dateComponents[1] ? MonthEnum::getMonthName($dateComponents[1]) : "__";
+        $day = $dateComponents[2] ?? "__";
         error_log("Договор");
 
-        $year = "__";
-        $month = "__";
-        $day = "__";
+
 
         $myOrgPhone = $myOrg["phone_number"];
         $formattedPhone = preg_replace('/\+(\d{1,2})?(\d{3})(\d{3})(\d{2})(\d{2})/', '+$1 ($2) $3-$4-$5', $myOrgPhone);
 
 
-        $replacements = [
-            'myOrg.full_name' => $myOrg['full_name'] ?? '(данные отсутвуют)',
-            'myOrg.nameOrType' =>$myOrg["legal_form"]['name'] ." ". $myOrg['name']  ,
-            'myOrg.director.full_name' => $myOrg['director']['last_name'] . ' ' . $myOrg['director']['first_name'] . ' ' . $myOrg['director']['patronymic'] ?? '',
-            'myOrg.director.position.name' => $myOrg['director']['position']['name'] ?? '(данные отсутвуют)','project.name' => $project['name'] ?? '',
-            'myOrg.INN' => $myOrg['INN'] ?? '(данные отсутвуют)',
-            'myOrg.KPP' => $myOrg['KPP'] ?? '(данные отсутвуют)',
-            'myOrg.address_legal' => $myOrg['address_legal'] ?? '(данные отсутвуют)',
-            'myOrg.OGRN' => $myOrg['OGRN'] ?? '(данные отсутвуют)',
-            'myOrg.legal_form' => $myOrg['legal_form']['group']['specification'] ?? '(данные отсутвуют)',
+            $replacements = [
+                'myOrg.full_name' => $myOrg['full_name'] ?? '(данные отсутвуют)',
+                'myOrg.nameOrType' => $myOrg["legal_form"]['name'] . " " . $myOrg['name'],
+                'myOrg.director.full_name' => $myOrg['director']['last_name'] . ' ' . $myOrg['director']['first_name'] . ' ' . $myOrg['director']['patronymic'] ?? '',
+                'myOrg.director.position.name' => $myOrg['director']['position']['name'] ?? '(данные отсутвуют)', 'project.name' => $project['name'] ?? '',
+                'myOrg.INN' => $myOrg['INN'] ?? '(данные отсутвуют)',
+                'myOrg.KPP' => $myOrg['KPP'] ?? '(данные отсутвуют)',
+                'myOrg.address_legal' => $myOrg['address_legal'] ?? '(данные отсутвуют)',
+                'myOrg.OGRN' => $myOrg['OGRN'] ?? '(данные отсутвуют)',
+                'myOrg.legal_form' => $myOrg['legal_form']['group']['specification'] ?? '(данные отсутвуют)',
 
-            'myOrg.email' => $myOrg['email'] ?? '(данные отсутвуют)',
-            'myOrg.styled_phone' => $formattedPhone ?? '(данные отсутвуют)',
-            'myOrg.BIK.bik' => $myOrg['bik']['BIK'] ?? '(данные отсутвуют)',
-            'myOrg.BIK.name' => $myOrg['bik']['name'] ?? '(данные отсутвуют)',
-            'myOrg.BIK.correspondent_account' => $myOrg['BIK']['correspondent_account'] ?? '(данные отсутвуют)',
-            'myOrg.payment_account' => $myOrg['payment_account'] ?? '(данные отсутвуют)',
+                'myOrg.email' => $myOrg['email'] ?? '(данные отсутвуют)',
+                'myOrg.styled_phone' => $formattedPhone ?? '(данные отсутвуют)',
+                'myOrg.BIK.bik' => $myOrg['bik']['BIK'] ?? '(данные отсутвуют)',
+                'myOrg.BIK.name' => $myOrg['bik']['name'] ?? '(данные отсутвуют)',
+                'myOrg.BIK.correspondent_account' => $myOrg['BIK']['correspondent_account'] ?? '(данные отсутвуют)',
+                'myOrg.payment_account' => $myOrg['payment_account'] ?? '(данные отсутвуют)',
 
 
-
-            'project.price' => $project['price'] ?? '(данные отсутвуют)',
-            'project.number' => $project['number'] ?? '(данные отсутвуют)',
-            'dayCreate' => $day,
-            'mountCreate' => $month,
-            'yearCreate' => $year,
-            "project.typeProject.Specification" => $project["type_project_document"]["group"]["technical_specification"]['name'] ?? '(данные отсутвуют)',
-            'projectOrganization.director.full_name' => isset($project["organization_customer"]['director']) ?
-                ($project["organization_customer"]['director']['last_name'] . ' ' .
-                    $project["organization_customer"]['director']['first_name'] . ' ' .
-                    $project["organization_customer"]['director']['patronymic']) : '',
-            'projectOrganization.director.position' => $project["organization_customer"]['director']['position']['name'] ?? '(данные отсутвуют)',
-            'projectOrganization.INN' => $project["organization_customer"]['INN'] ?? '(данные отсутвуют)',
-            'projectOrganization.full_name' => $project["organization_customer"]['full_name'] ?? '(данные отсутвуют)',
-            'projectOrganization.nameOrType' =>$project["organization_customer"]["legal_form"]['name'] ." ". $project["organization_customer"]['name']  ,
-            'projectOrganization.KPP' => $project["organization_customer"]['KPP'] ?? '(данные отсутвуют)',
-            'projectOrganization.address_legal' => $project["organization_customer"]['address_legal'] ?? '(данные отсутвуют)',
-            'projectOrganization.OGRN' => $project["organization_customer"]['OGRN'] ?? '',
-            'projectOrganization.payment_account' => $project["organization_customer"]['payment_account'] ?? '(данные отсутвуют)',
-            'projectOrganization.BIK.bik' => $project["organization_customer"]['bik']['BIK'] ?? '(данные отсутвуют)',
-            'projectOrganization.BIK.name' => $project["organization_customer"]['bik']['name'] ?? '(данные отсутвуют)',
-            'projectOrganization.BIK.correspondent_account' => $project["organization_customer"]['BIK']['correspondent_account'] ?? '(данные отсутвуют)'
-        ];
+                'project.price' => $project['price'] ?? '(данные отсутвуют)',
+                'project.number' => $project['number'] ?? '(данные отсутвуют)',
+                'dayCreate' => $day,
+                'mountCreate' => $month,
+                'yearCreate' => $year,
+                "project.typeProject.Specification" => $project["type_project_document"]["group"]["technical_specification"]['name'] ?? '(данные отсутвуют)',
+                'projectOrganization.director.full_name' => isset($project["organization_customer"]['director']) ?
+                    ($project["organization_customer"]['director']['last_name'] . ' ' .
+                        $project["organization_customer"]['director']['first_name'] . ' ' .
+                        $project["organization_customer"]['director']['patronymic']) : '',
+                'projectOrganization.director.position' => $project["organization_customer"]['director']['position']['name'] ?? '(данные отсутвуют)',
+                'projectOrganization.INN' => $project["organization_customer"]['INN'] ?? '(данные отсутвуют)',
+                'projectOrganization.full_name' => $project["organization_customer"]['full_name'] ?? '(данные отсутвуют)',
+                'projectOrganization.nameOrType' => $project["organization_customer"]["legal_form"]['name'] . " " . $project["organization_customer"]['name'],
+                'projectOrganization.KPP' => $project["organization_customer"]['KPP'] ?? '(данные отсутвуют)',
+                'projectOrganization.address_legal' => $project["organization_customer"]['address_legal'] ?? '(данные отсутвуют)',
+                'projectOrganization.OGRN' => $project["organization_customer"]['OGRN'] ?? '',
+                'projectOrganization.payment_account' => $project["organization_customer"]['payment_account'] ?? '(данные отсутвуют)',
+                'projectOrganization.BIK.bik' => $project["organization_customer"]['bik']['BIK'] ?? '(данные отсутвуют)',
+                'projectOrganization.BIK.name' => $project["organization_customer"]['bik']['name'] ?? '(данные отсутвуют)',
+                'projectOrganization.BIK.correspondent_account' => $project["organization_customer"]['BIK']['correspondent_account'] ?? '(данные отсутвуют)'
+            ];
 
 //=======
 //        $day = "__";
