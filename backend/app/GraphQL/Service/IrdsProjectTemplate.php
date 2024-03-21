@@ -31,10 +31,12 @@ class IrdsProjectTemplate
         //   $year = $dateComponents[0];
         //   $month = $dateComponents[1];
         //   $day = $dateComponents[2];
+        $date = $project["date_create"];
+        $dateComponents = explode('-', $date);
 
-        $year = "__";
-        $month = "__";
-        $day = "__";
+        $year = $dateComponents[0] ?? "__";
+        $month = $dateComponents[1] ? MonthEnum::getMonthName($dateComponents[1]) : "__";
+        $day = $dateComponents[2] ?? "__";
 
         $projectIrds = $project->project_irds;
 

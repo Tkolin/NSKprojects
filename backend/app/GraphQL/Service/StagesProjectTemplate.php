@@ -35,9 +35,12 @@ class StagesProjectTemplate
 //        $month = $dateComponents[1];
 //        $day = $dateComponents[2];
 
-        $year = "__";
-        $month = "__";
-        $day = "__";
+        $date = $project["date_create"];
+        $dateComponents = explode('-', $date);
+
+        $year = $dateComponents[0] ?? "__";
+        $month = $dateComponents[1] ? MonthEnum::getMonthName($dateComponents[1]) : "__";
+        $day = $dateComponents[2] ?? "__";
         $projectStages = $project->project_stages;
 
         // Формируем массив для отображения в таблице

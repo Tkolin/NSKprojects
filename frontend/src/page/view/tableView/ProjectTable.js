@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { useQuery } from '@apollo/client';
-import {Button, Form, Modal, notification, Space, Table} from 'antd';
+import {Button, Divider, Form, Modal, notification, Space, Table} from 'antd';
 import {PROJECT_QUERY, PROJECT_TABLE_QUERY, PROJECTS_QUERY} from '../../../graphql/queries';
 import ProjectForm from "../../form/basicForm/ProjectForm";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
@@ -10,6 +10,7 @@ import PersonContractFileDownload from "../../script/PersonContractFileDownload"
 import StagesProjectFileDownload from "../../script/StagesProjectFileDownload";
 import ProjectFileDownload from "../../script/ProjectFileDownload";
 import IrdsProjectFileDownload from "../../script/IrdsProjectFileDownload";
+import Title from "antd/es/typography/Title";
 
 const ProjectTable = () => {
 
@@ -211,6 +212,9 @@ const ProjectTable = () => {
     };
     return(
     <div>
+        <Divider style={{marginTop: 0}} >
+            <Title style={{marginTop: 0}} level={2}>Справочник Проекты</Title>
+        </Divider>
 
             <StyledFormLarge form={formSearch} layout="horizontal">
                 <Form.Item label="Поиск:" name="search">
@@ -237,7 +241,7 @@ const ProjectTable = () => {
                pagination={{
                    total: data?.projects?.count,
                    current: page,
-                   size: limit,
+                   pageSize: limit,
                    onChange: (page, limit) => setPage(page) && setLimit(limit),
                    onShowSizeChange: (current, size) => {
                        setPage(1);

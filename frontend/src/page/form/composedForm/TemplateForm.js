@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {
-    Form, Select, Col, Row, notification, Modal, Space
+    Form, Select, Col, Row, notification, Modal, Space, Button
 } from 'antd';
 import {useQuery} from '@apollo/client';
 import {TYPES_PROJECTS_QUERY} from '../../../graphql/queries';
@@ -92,8 +92,8 @@ const TemplateForm = ({project, onClose}) => {
                         </Space.Compact>
 
                         <div style={{textAlign: 'center'}}>
-                            <StyledButtonForm type="primary" onClick={() => handleSubmit()}>Сохранить
-                                настройки</StyledButtonForm>
+                            <Button type="primary" onClick={() => handleSubmit()}>Сохранить
+                                настройки</Button>
                         </div>
                     </StyledFormRegular>
                 </StyledBlockRegular>

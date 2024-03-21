@@ -53,7 +53,6 @@ const StagesTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod, dis
             const newStages = value.templatesStagesTypeProjects.map(a => ({
                 id: a?.stage?.id ?? null, name: a?.stage?.name ?? null,
             }));
-
             refetchStages({search: autoCompleteStage}).then(({data}) => {
                 const existingStages = dataStages?.stages?.items ?? [];
                 const updatedStages = [...existingStages, ...newStages];

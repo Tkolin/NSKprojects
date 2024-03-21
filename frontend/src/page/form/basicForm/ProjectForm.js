@@ -7,7 +7,7 @@ import {
     PROJECTS_QUERY,
     PROJECT_STATUSES_QUERY,
     TYPES_PROJECTS_QUERY,
-    ORGANIZATIONS_SHORT_QUERY, CONTACTS_SHORT_QUERY, FACILITYS_QUERY
+    ORGANIZATIONS_SHORT_QUERY, CONTACTS_SHORT_QUERY, FACILITYS_QUERY, ORGANIZATIONS_QUERY
 } from '../../../graphql/queries';
 import {
     ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION,
@@ -23,6 +23,8 @@ import ContactForm from "./ContactForm";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 
 import dayjs from "dayjs";
+import {StyledFormItemSelectAndCreate, StyledFormItemSelectAndCreateWitchEdit} from "../../style/SelectStyles";
+import organizationForm from "./OrganizationForm";
 
 const {Option} = Select;
 const {SHOW_CHILD} = Cascader;
@@ -40,18 +42,20 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
     const [form] = Form.useForm();
     const [selectedTypeProject, setSelectedTypeProject] = useState(null);
     const [cascaderFacility, setCascaderFacility] = useState(null);
-    const [contactFormViewModalVisible, setContactFormViewModalVisible] = useState(false);
+    const [addContactModalVisibleMode, setAddContactModalVisibleMode] = useState(false);
     const [autoCompleteOrganization, setAutoCompleteOrganization] = useState('');
     const [selectedOrganization, setSelectedOrganization] = useState('')
+    const [selectedOrganizationData, setSelectedOrganizationData] = useState('')
     const [autoCompleteTypeProjects, setAutoCompleteTypeProjects] = useState('');
-    const [costumerFormViewModalVisible, setCostumerFormViewModalVisible] = useState(false);
+    const [addOrganizationModalVisibleMode, setAddOrganizationModalVisibleMode] = useState(false);
+    const [editOrganizationModalVisibleMode, setEditOrganizationModalVisibleMode] = useState(false);
     const [projectStatus, setProjectStatus] = useState({key: 4});
     const [projectNumber, setProjectNumber] = useState('');
-    const handleContactFormView = () => {
-        setContactFormViewModalVisible(false);
-    };
-    const handleCostumerFormView = () => {
-        setCostumerFormViewModalVisible(false);
+
+    const handleCloseModalFormView = () => {
+        setAddContactModalVisibleMode(false);
+        setAddOrganizationModalVisibleMode(false);
+        setEditOrganizationModalVisibleMode(false);
     };
     const handleAutoCompleteOrganizations = (value) => {
         setAutoCompleteOrganization(value)
@@ -74,11 +78,15 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
             calculateEndDate(dateSigning, value);
         }
     };
-
-    const handleDateEndChange = (value) => {
-        setDateEnd(value);
-        calculateDuration(dateSigning, value);
-    };
+    const handleSelectedOrganization = (value, option) => {
+        setSelectedOrganization(value);
+        setSelectedOrganizationData(dataOrganizations?.organizations?.items?.find(org => org.id === value));
+        console.log(dataOrganizations?.organizations?.items?.find(org => org.id === value));
+    }
+    // const handleDateEndChange = (value) => {
+    //     setDateEnd(value);
+    //     calculateDuration(dateSigning, value);
+    // };
 
     const calculateEndDate = (dateSigning, duration) => {
         if (dateSigning && duration) {
@@ -103,7 +111,23 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
         const abbreviation = filteredWords.map(word => word.charAt(0)).join('');
         return abbreviation.toUpperCase();
     };
-
+    // const addingOrganization = (value) => {
+    //     if (dataOrganizations && value) {
+    //         const newOrganizations = value.map(a => ({
+    //             id: a?.stage?.id ?? null, name: a?.stage?.name ?? null,
+    //         }));
+    //         refetchOrganizations({search: autoCompleteStage}).then(({data}) => {
+    //             const existingStages = dataStages?.stages?.items ?? [];
+    //             const updatedStages = [...existingStages, ...newStages];
+    //             setDataStages({
+    //                 ...dataStages, stages: {
+    //                     ...dataStages.stages, stages: updatedStages,
+    //                 },
+    //             });
+    //         });
+    //         loadTemplate();
+    //     }
+    // }
     const handleEditingTemplate = (value, option) => {
         setSelectedTypeProject(value);
         //TODO: Получать из туда суда типа дока до группы
@@ -142,8 +166,8 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
         variables: {organizationId: selectedOrganization},
     });
     const {
-        loading: loadingOrganizations, error: errorOrganizations, data: dataOrganizations
-    } = useQuery(ORGANIZATIONS_SHORT_QUERY, {
+        loading: loadingOrganizations, error: errorOrganizations, data: dataOrganizations, refetch: refetchOrganizations
+    } = useQuery(ORGANIZATIONS_QUERY, {
         variables: {queryOptions: {limit: 10, page: 1, search: autoCompleteOrganization}}
     });
 
@@ -167,9 +191,8 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
             openNotification('topRight', 'success', 'Данные успешно обновлены!');
             save(data);
             console.log("data.updateProject");
-
-            console.log(data.updateProject);
-            setProject(data.updateProject);
+            if (setProject)
+                setProject(data.updateProject);
 
             if (onSubmit) {
                 onSubmit(true);
@@ -183,11 +206,17 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
     useEffect(() => {
         if (editingProject) {
             save(editingProject);
+            setSelectedTypeProject(editingProject?.type_project_document?.id);
+            setAutoCompleteTypeProjects(editingProject?.type_project_document?.id);
+            setSelectedOrganization(editingProject?.organization_customer?.id);
+            setAutoCompleteOrganization(editingProject?.organization_customer?.id)
+            console.log(editingProject);
             form.setFieldsValue({
                 ...editingProject,
                 date_signing: editingProject.date_signing ? moment(editingProject.date_signing, 'YYYY-MM-DD') : null,
                 date_end: editingProject.date_end ? moment(editingProject.date_end, 'YYYY-MM-DD') : null,
                 date_completion: editingProject.date_completion ? moment(editingProject.date_completion, 'YYYY-MM-DD') : null,
+                date_create: editingProject.date_create ? moment(editingProject.date_create, 'YYYY-MM-DD') : null,
                 organization_customer_id: editingProject?.organization_customer?.id ?? null,
                 delegates_id: editingProject?.delegations?.map(delegations => delegations.id),
                 type_project_document_id: editingProject?.type_project_document?.id ?? null,
@@ -228,6 +257,7 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                 variables: {
                     data: {
                         ...form.getFieldsValue(),
+                        date_create: form.getFieldValue("date_create").toISOString(),
                         facilitys_id: form.getFieldValue('facilitys_id') ? form.getFieldValue('facilitys_id').map(pair => pair[1]) : null,
                         id: editingProject?.id,
                         organization_customer_id: selectedOrganization
@@ -239,6 +269,8 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                 variables: {
                     data: {
                         ...form.getFieldsValue(),
+                        date_create: form.getFieldValue("date_create").toISOString(),
+
                         facilitys_id: form.getFieldValue('facilitys_id') ? form.getFieldValue('facilitys_id').map(pair => pair[1]) : null,
                         organization_customer_id: selectedOrganization,
                         status_id: 4
@@ -263,58 +295,30 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
             <StyledFormItem name="name" label="Наименование проекта" rules={[{required: true}]}>
                 <Input/>
             </StyledFormItem>
-            <Space.Compact style={{width: "calc(100% + 64px)", alignItems: 'flex-end'}}>
-                <StyledFormItem name="organization_customer_id" label="Заказчик"
-                                style={{width: "calc(100% - 64px)"}}>
-                    <Select
-                        style={{width: "calc(100% - 64px)"}}
+            <StyledFormItemSelectAndCreateWitchEdit
+                formName={"organization_customer_id"}
+                formLabel={"Заказчик"}
+                onSearch={handleAutoCompleteOrganizations}
+                onSelect={handleSelectedOrganization}
+                placeholder={"Начните ввод..."}
+                loading={loadingOrganizations}
+                items={dataOrganizations?.organizations?.items}
+                firstBtnOnClick={setAddOrganizationModalVisibleMode}
+                secondBtnOnClick={ setEditOrganizationModalVisibleMode}
+                secondDisable={!selectedOrganization}
+                formatOptionText={(row) => `${row.name}`}
+            />
+            <StyledFormItemSelectAndCreate
+                formName={"delegates_id"}
+                formLabel={"Представители компании"}
+                onSelect={checkSelectDelegates}
+                placeholder={"По компаниям"}
+                loading={loadingDelegates}
+                items={dataDelegates?.contacts?.items}
+                firstBtnOnClick={setAddContactModalVisibleMode}
+                formatOptionText={(row) => `${row.last_name} ${row.first_name} ${row.patronymic}`}
+            />
 
-                        popupMatchSelectWidth={false}
-                        allowClear
-                        showSearch
-                        onSelect={(value) => setSelectedOrganization(value)}
-                        filterOption={false}
-                        loading={loadingOrganizations}
-                        placeholder="Начните ввод..."
-                        onSearch={(value) => handleAutoCompleteOrganizations(value)}
-                    >
-                        {dataOrganizations?.organizations?.items?.map(row => (
-                            <Select.Option key={row.id}
-                                           value={row.id}>{row.name}</Select.Option>))}
-                    </Select>
-                </StyledFormItem>
-                <StyledButtonGreen style={{marginLeft: "-64px"}} icon={<PlusOutlined/>}
-                                   onClick={() => setCostumerFormViewModalVisible(true)}/>
-                <Button      style={{marginLeft: "0px", marginBottom: 10}}         type={"dashed"} icon={<EditOutlined/>}
-                             disabled={true} />
-            </Space.Compact>
-            <Space.Compact style={{width: "calc(100% + 64px)", alignItems: 'flex-end'}}>
-                <StyledFormItem name="delegates_id"
-                                label="Представители компании"
-                                style={{width: "calc(100% - 64px)"}}>
-                    <Select
-                        style={{width: "calc(100% - 64px)"}}
-                        popupMatchSelectWidth={false}
-                        allowClear
-                        showSearch
-
-                        mode="multiple"
-                        onSelect={(value, option) => checkSelectDelegates(value, option)}
-                        filterOption={false}
-                        placeholder="По компаниям"
-                        loading={loadingDelegates}>
-                        {dataDelegates?.contacts?.items?.map(row => (
-                            <Select.Option key={row.id}
-                                           value={row.id}>{row.last_name} {row.first_name} {row.patronymic}</Select.Option>))}
-                    </Select>
-                </StyledFormItem>
-                <StyledButtonGreen style={{marginLeft: "-64px"}} type={"dashed"} icon={<PlusOutlined/>}
-                                   onClick={() => setContactFormViewModalVisible(true)}/>
-
-                <Button      style={{marginLeft: "0px", marginBottom: 10}}         type={"dashed"} icon={<EditOutlined/>}
-                             disabled={true} />
-
-            </Space.Compact>
             <StyledFormItem name="type_project_document_id" label="Тип документа">
                 <Select
                     popupMatchSelectWidth={false}
@@ -332,40 +336,44 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                 </Select>
             </StyledFormItem>
 
-                <StyledFormItem name="facilitys_id" label="Объект" style={{width: "100%"}}>
-                    <Cascader
-                        style={{width: "100%"}}
-                        disabled={!editingProject}
-                        showCheckedStrategy={SHOW_CHILD}
-                        popupMatchSelectWidth={false}
-                        options={cascaderFacility}
-                        multiple
-                        expandTrigger="hover"
-                        maxTagCount="responsive"
-                    />
-                </StyledFormItem>
+            <StyledFormItem name="facilitys_id" label="Объект" style={{width: "100%"}}>
+                <Cascader
+                    style={{width: "100%"}}
+                    disabled={!editingProject}
+                    showCheckedStrategy={SHOW_CHILD}
+                    popupMatchSelectWidth={false}
+                    options={cascaderFacility}
+                    multiple
+                    expandTrigger="hover"
+                    maxTagCount="responsive"
+                />
+            </StyledFormItem>
 
             <Space.Compact block style={{alignItems: 'flex-end'}}>
-                <StyledFormItem name="date_signing" label="Дата подписания">
-                    <DatePicker placeholder="Выберите дату" disabled={!editingProject}
-                                onChange={(value) => handleDateSigningChange(value)}/>
-                </StyledFormItem>
-                <StyledFormItem name="duration" label="Срок" style={{width: '25%'}}>
+                {/*<StyledFormItem name="date_signing" label="Дата подписания">*/}
+                {/*    <DatePicker placeholder="Выберите дату" disabled={!editingProject}*/}
+                {/*                onChange={(value) => handleDateSigningChange(value)}/>*/}
+                {/*</StyledFormItem>*/}
+                <StyledFormItem name="duration" label="Срок (в днях)" style={{width: '50%'}}>
                     <InputNumber
                         formatter={(value) => `${value}`.replace(/[^0-9]/g, '')}
                         parser={(value) => `${value}`.replace(/[^0-9]/g, '')}
                         style={{width: '100%'}}
-                        disabled={!editingProject}
-                        suffix={"дни"}
+                        disabled={editingProject}
                         onChange={(value) => handleDurationChange(value)}
                     />
-                </StyledFormItem>
-                <StyledFormItem name="date_end" label="Дата окончания">
-                    <DatePicker minDate={dateSigning} disabled={!editingProject}
-                                style={{width: '100%'}}
 
-                                placeholder="Выберите дату" onChange={handleDateEndChange}/>
                 </StyledFormItem>
+                <StyledFormItem name="date_create" label="Дата создания договора" style={{width: '50%'}}>
+                    <DatePicker placeholder="Выберите дату" style={{width: '100%'}}/>
+                </StyledFormItem>
+                {/*<StyledFormItem name="date_end" label="Дата окончания" >*/}
+                {/*    <DatePicker minDate={dateSigning} disabled={!editingProject}*/}
+                {/*                style={{width: '100%'}}*/}
+
+                {/*                placeholder="Выберите дату" onChange={handleDateEndChange}/>*/}
+                {/*</StyledFormItem>*/}
+
             </Space.Compact>
             <StyledFormItem name="status_id" label="Статус проекта">
                 <Select loading={loadingStatuses} disabled={!editingProject} placeholder={"В разработке"}
@@ -375,13 +383,11 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                                        value={status.id}>{status.name}</Select.Option>))}
                 </Select>
             </StyledFormItem>
-            <StyledFormItem name="date_create" label="Дата создания договора">
-                <DatePicker placeholder="Выберите дату"/>
-            </StyledFormItem>
+
             <StyledFormItem name="price" label="Стоимость">
                 <InputNumber suffix={"₽"}
-                    formatter={value => `${value}`.replace(/[^0-9]/g, '')}
-                    parser={value => `${value}`.replace(/[^0-9]/g, '')}/>
+                             formatter={value => `${value}`.replace(/[^0-9]/g, '')}
+                             parser={value => `${value}`.replace(/[^0-9]/g, '')}/>
             </StyledFormItem>
             <div style={{textAlign: 'center'}}>
                 <Space>
@@ -394,20 +400,28 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
         </StyledFormRegular>
 
         <Modal
-            open={contactFormViewModalVisible}
-            onCancel={() => setContactFormViewModalVisible(false)}
+            open={addContactModalVisibleMode}
+            onCancel={() => setAddContactModalVisibleMode(false)}
             footer={null}
-            onClose={handleContactFormView}
+            onClose={handleCloseModalFormView}
         >
-            <ContactForm/>
+            <ContactForm onClose={handleCloseModalFormView}/>
         </Modal>
         <Modal
-            open={costumerFormViewModalVisible}
-            onCancel={() => setCostumerFormViewModalVisible(false)}
+            open={addOrganizationModalVisibleMode}
+            onCancel={() => setAddOrganizationModalVisibleMode(false)}
             footer={null}
-            onClose={handleCostumerFormView}
+            onClose={handleCloseModalFormView}
         >
-            <OrganizationForm/>
+            <OrganizationForm onClose={handleCloseModalFormView} organization={null}/>
+        </Modal>
+        <Modal
+            open={editOrganizationModalVisibleMode}
+            onCancel={() => setEditOrganizationModalVisibleMode(false)}
+            footer={null}
+            onClose={handleCloseModalFormView}
+        >
+            <OrganizationForm onClose={handleCloseModalFormView} organization={selectedOrganizationData}/>
         </Modal>
     </>)
 };
