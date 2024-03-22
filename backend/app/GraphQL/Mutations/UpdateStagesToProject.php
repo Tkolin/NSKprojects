@@ -25,6 +25,7 @@ final readonly class UpdateStagesToProject
                     'date_end' => isset($stages[$i]["dateEnd"]) ? substr((string) $stages[$i]["dateEnd"], 0, 10) : null,
                     'percent' => isset($stages[$i]["percent"]) ? (int)$stages[$i]["percent"] : null,
                     'price' => isset($stages[$i]["price"]) ? (int)$stages[$i]["price"] : null,
+                    'price_to_paid' => isset($stages[$i]["price"]) ? (int)$stages[$i]["price_to_paid"] : null,
                 ]
             );
         }

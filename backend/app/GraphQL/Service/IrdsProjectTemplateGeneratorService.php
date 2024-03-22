@@ -11,7 +11,7 @@ use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\TemplateProcessor;
 
-class IrdsProjectTemplate
+class IrdsProjectTemplateGeneratorService
 {
     public static function generate($project)
     {
@@ -65,20 +65,6 @@ class IrdsProjectTemplate
                 $project["organization_customer"]['director']['last_name'] . ' ' . substr((string)$project["organization_customer"]['director']['first_name'], 0,2) . '.' . substr((string)$project["organization_customer"]['director']['patronymic'], 0,2) . '.' : '',
             'projectOrganization.nameOrType' =>isset($project["organization_customer"]) ? $project["organization_customer"]["legal_form"]['name'] ." ". $project["organization_customer"]['name'] : "(данные отсутвуют)"  ,
             'projectOrganization.director.position' => $project["organization_customer"]['director']['position']['name'] ?? '(данные отсутвуют)',
-
-
-//
-//            'project.date_create' => $projectData['date_create'],
-//
-//            'myOrg.name'=> $myOrg['name'],
-//            'myOrg.director.short_full_name'=> $myOrg['name'],
-//            'project.organization.director.short_full_name' => $projectDirector['last_name'] . ' ' . substr((string)$projectDirector['first_name'], 0,2) . '.' . substr((string)$projectDirector['patronymic'], 0,2) . '.',
-//            'project.organization.nameOrType' => $projectData['name']['name'],
-//            'project.organization.name' => $projectData['name']['name'],
-//            'project_irds.ird.name' => $projectIrds['ird']['name'],
-//            'project_irds.number' => $projectIrds['number'],
-//            'myOrg.director.position.name' => $myOrg['director']['position']['name'],
-//            'project.organization.director.position.name' => $projectDirector['position']['name'],
         ];
 
         foreach ($replacements as $key => $value) {

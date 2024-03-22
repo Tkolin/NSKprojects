@@ -5,7 +5,7 @@ namespace App\GraphQL\Mutations;
 use App\GraphQL\Service\AuthorizationService;
 use App\GraphQL\Service\ContractGeneratorService;
 
-use App\GraphQL\Service\ProjectGeneratorService;
+use App\GraphQL\Service\ProjectOrderGeneratorService;
 
 use App\Models\Person;
 use App\Models\Project;
@@ -35,11 +35,11 @@ final readonly class ProjectOrderFileDownload
 
 
             if (!$projectData) {
-                throw new Exception('Сотрудник не найден');
+                throw new Exception('Проект не найден');
             }
 
 
-            $projectGenerator = new ProjectGeneratorService();
+            $projectGenerator = new ProjectOrderGeneratorService();
             $contractFilePath = $projectGenerator->generate($projectData);
 
             return ['url' => $contractFilePath];

@@ -28,8 +28,9 @@ final readonly class Projects
             // Поиск
 
             if(isset($args["projectID"])){
-                $projectsQuery::find($args["projectID"]);
-
+                $projectsQuery->find($args["projectID"]);
+            } else if(isset($args['queryOptions']['id'])){
+                $projectsQuery->find($args['queryOptions']['id']);
             }
             if (isset($args['queryOptions']['search'])) {
                 $searchTerm = $args['queryOptions']['search'];
@@ -62,7 +63,6 @@ final readonly class Projects
             } else {
                 $projects = $projectsQuery->get();
             }
-            error_log("sdaf ".$projects["project_stages"]);
 
             return ['items' => $projects, 'count' =>  $count];
         } else {

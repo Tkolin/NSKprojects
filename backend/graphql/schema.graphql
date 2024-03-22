@@ -34,6 +34,7 @@ type Query {
 
 }
 input QueryOptions {
+    id: Int
     page: Int
     limit: Int
     search: String
@@ -52,6 +53,7 @@ input StageToProject {
     duration: Int
     dateEnd: String
     progress: Int
+    price_to_paid: Float
 }
 input TasksToProject {
     id: ID
@@ -98,6 +100,14 @@ input ProjectInput {
 type Mutation {
     personOrderFileDownload(
         personId: ID
+    ): File!
+    projectPaymentInvoiceFileDownload(
+        projectId: ID
+        stageNumber: ID
+    ): File!
+    projectActRenderingFileDownload(
+        projectId: ID
+        stageNumber: ID
     ): File!
     projectOrderFileDownload(
         projectId: ID

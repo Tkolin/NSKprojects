@@ -95,7 +95,6 @@ const CustomLayout = ({children, currentUser, la}) => {
                 items.push(
                     getItem('Справочники', '1', <ProfileOutlined/>, [
                         getItem('Контакты', '1-1', null, null),
-                        getItem('Проекты', '1-2', null, null),
                         getItem('Подрядчики', '1-3', null, null),
                         getItem('Организации', '1-4', null, null),
                         getItem('ИРД', '1-5', null, null),
@@ -106,10 +105,12 @@ const CustomLayout = ({children, currentUser, la}) => {
                         getItem('Контакт', '2-1', null, null),
                         getItem('Создание нового договора', '2-2', null, null),
                         getItem('Организация', '2-3', null, null),
-                        getItem('Подрятчик', '2-4', null, null),
+                        getItem('Подрядчик', '2-4', null, null),
                         getItem('Шаблоны по типу проекта', '2-5', null, null),
                     ]),
-                    getItem('Отчёты', '3', <SolutionOutlined/>, [])
+                    getItem('Отчёты', '3', <SolutionOutlined/>, [
+                        getItem('Проекты', '3-1', null, null)
+                    ])
                 );
                 break;
             case "bookkeeper":
@@ -138,7 +139,7 @@ const CustomLayout = ({children, currentUser, la}) => {
             case '1-1':
                 navigate('/contacts');
                 break;
-            case '1-2':
+            case '3-1':
                 navigate('/project');
                 break;
             case '1-3':

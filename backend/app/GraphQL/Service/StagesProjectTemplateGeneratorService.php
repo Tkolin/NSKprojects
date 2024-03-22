@@ -11,7 +11,7 @@ use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\TemplateProcessor;
 
-class StagesProjectTemplate
+class StagesProjectTemplateGeneratorService
 {
 
     public static function generate($project)
@@ -19,6 +19,7 @@ class StagesProjectTemplate
         // Получение данных об организации
         $myOrg = GeneratorService::getOrganizationData();
         // Получение пути к шаблону документа
+
 
         $templateFilePath = storage_path('app/templates/StagesProjectTemplate.docx');
         // Создание временного файла копии шаблона

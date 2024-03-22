@@ -3,9 +3,9 @@ import { useMutation } from '@apollo/client';
 import { CONTRACT_PERSON_MUTATION } from '../../graphql/mutationsPerson';
 import {Button, notification} from 'antd';
 import {DownloadOutlined} from "@ant-design/icons";
-import {CONTRACT_PROJECT_DOWNLOAD} from "../../graphql/mutationsProject";
+import {IRDS_PROJECT_DOWNLOAD, PAYMENT_INVOICE_PROJECT_DOWNLOAD} from "../../graphql/mutationsProject";
 
-const ProjectFileDownload  = ({projectId}) => {
+const PaymentInvoiceProjectDownload = ({projectId, stageNumber}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
 
 
@@ -16,9 +16,9 @@ const ProjectFileDownload  = ({projectId}) => {
         });
     };
 
-    const [downloadProjectContract] = useMutation(CONTRACT_PROJECT_DOWNLOAD, {
+    const [downloadProjectPaymentInvoice] = useMutation(PAYMENT_INVOICE_PROJECT_DOWNLOAD, {
         onCompleted: (data) => {
-            handleDownloadClick(data.projectOrderFileDownload.url);
+            handleDownloadClick(data.projectPaymentInvoiceFileDownload.url);
             openNotification('topRight', 'success', 'Загрузка начата!');
         },
         onError: (error) => {
@@ -28,7 +28,7 @@ const ProjectFileDownload  = ({projectId}) => {
 
     const handleDownload = () => {
         console.log(projectId);
-        downloadProjectContract({ variables: { id: projectId } });
+        downloadProjectPaymentInvoice({ variables: { id: projectId, stageNumber: stageNumber } });
     };
 
     const handleDownloadClick = async (downloadedFileUrl) => {
@@ -36,9 +36,9 @@ const ProjectFileDownload  = ({projectId}) => {
             const link = document.createElement('a');
             console.log(link);
 
-            link.href = `${LaravelURL}download-projectIrds/${downloadedFileUrl}`;
+            link.href = `${LaravelURL}download-projectPaymentInvoice/${downloadedFileUrl}`;
+            link.download = 'Счёт на оплату.docx';
 
-            link.download = 'contract.docx';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -52,5 +52,5 @@ const ProjectFileDownload  = ({projectId}) => {
     );
 };
 
-export default ProjectFileDownload;
+export default PaymentInvoiceProjectDownload;
 

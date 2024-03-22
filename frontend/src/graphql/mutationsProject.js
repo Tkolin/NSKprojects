@@ -209,6 +209,35 @@ export const IRDS_PROJECT_DOWNLOAD = gql`
             url
         }
     }
+`;export const PAYMENT_INVOICE_PROJECT_DOWNLOAD = gql`
+    mutation IrdsProjectFileDownload(
+        $id: ID!,
+        $stageNumber: ID!
+
+    ) {
+        projectPaymentInvoiceFileDownload(
+            projectId: $id
+            stageNumber: $stageNumber
+
+        )
+        {
+            url
+        }
+    }
+`;export const ACT_RENDERING_PROJECT_DOWNLOAD = gql`
+    mutation IrdsProjectFileDownload(
+        $id: ID!,
+        $stageNumber: ID!
+    ) {
+        projectActRenderingFileDownload(
+            projectId: $id
+            stageNumber: $stageNumber
+
+        )
+        {
+            url
+        }
+    }
 `;export const STAGE_PROJECT_DOWNLOAD = gql`
     mutation ProjectFileDownload(
         $id: ID!,

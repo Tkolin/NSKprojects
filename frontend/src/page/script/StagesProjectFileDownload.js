@@ -19,10 +19,10 @@ const StagesProjectFileDownload = ({projectId}) => {
     const [downloadProjectStage] = useMutation(STAGE_PROJECT_DOWNLOAD, {
         onCompleted: (data) => {
             handleDownloadClick(data.projectStagesFileDownload.url);
-            openNotification('topRight', 'success', 'Договор сгенерирован!');
+            openNotification('topRight', 'success', 'Загрузка начата!');
         },
         onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при генерации договора: ' + error.message);
+            openNotification('topRight', 'error', 'Ошибка при загрузке: ' + error.message);
         },
     });
 
@@ -37,7 +37,7 @@ const StagesProjectFileDownload = ({projectId}) => {
             console.log(link);
 
             link.href = `${LaravelURL}download-projectStages/${downloadedFileUrl}`;
-            link.download = 'contractStage.docx';
+            link.download = 'График работ.docx';
 
             document.body.appendChild(link);
             link.click();

@@ -13,3 +13,7 @@ Route::get('/download-projectIrds/{filename}', [ProjectController::class, 'downl
 Route::get('/download-projectStages/{filename}', [ProjectController::class, 'downloadStageProject']);
 
 
+Route::get('/download-projectActRender/{filename}', [ProjectController::class, 'downloadIrdsProject']);
+Route::get('/download-projectPaymentInvoice/{filename}', [ProjectController::class, 'downloadStageProject']);
+
+

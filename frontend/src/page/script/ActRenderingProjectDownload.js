@@ -3,9 +3,9 @@ import { useMutation } from '@apollo/client';
 import { CONTRACT_PERSON_MUTATION } from '../../graphql/mutationsPerson';
 import {Button, notification} from 'antd';
 import {DownloadOutlined} from "@ant-design/icons";
-import {CONTRACT_PROJECT_DOWNLOAD} from "../../graphql/mutationsProject";
+import {ACT_RENDERING_PROJECT_DOWNLOAD, IRDS_PROJECT_DOWNLOAD} from "../../graphql/mutationsProject";
 
-const ProjectFileDownload  = ({projectId}) => {
+const ActRenderingProjectDownload = ({projectId, stageNumber}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
 
 
@@ -16,9 +16,10 @@ const ProjectFileDownload  = ({projectId}) => {
         });
     };
 
-    const [downloadProjectContract] = useMutation(CONTRACT_PROJECT_DOWNLOAD, {
+    const [downloadProjectActRendering] = useMutation(ACT_RENDERING_PROJECT_DOWNLOAD, {
         onCompleted: (data) => {
-            handleDownloadClick(data.projectOrderFileDownload.url);
+            console.log("data" + data);
+            handleDownloadClick(data.projectActRenderingFileDownload.url);
             openNotification('topRight', 'success', 'Загрузка начата!');
         },
         onError: (error) => {
@@ -28,7 +29,7 @@ const ProjectFileDownload  = ({projectId}) => {
 
     const handleDownload = () => {
         console.log(projectId);
-        downloadProjectContract({ variables: { id: projectId } });
+        downloadProjectActRendering({ variables: { id: projectId, stageNumber: stageNumber } });
     };
 
     const handleDownloadClick = async (downloadedFileUrl) => {
@@ -36,9 +37,9 @@ const ProjectFileDownload  = ({projectId}) => {
             const link = document.createElement('a');
             console.log(link);
 
-            link.href = `${LaravelURL}download-projectIrds/${downloadedFileUrl}`;
+            link.href = `${LaravelURL}download-projectActRender/${downloadedFileUrl}`;
+            link.download = 'contractIrds.docx';
 
-            link.download = 'contract.docx';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -52,5 +53,5 @@ const ProjectFileDownload  = ({projectId}) => {
     );
 };
 
-export default ProjectFileDownload;
+export default ActRenderingProjectDownload;
 

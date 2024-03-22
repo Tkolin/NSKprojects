@@ -15,25 +15,22 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
     const [formIRD] = Form.useForm();
     const [autoCompleteIrd, setAutoCompleteIrd] = useState('');
     const [dataIrds, setDataIrds] = useState(null);
+    const [actualityProjectData, setActualityProjectData] = useState(null);
     const handleAutoCompleteIrd = (value) => {
         setAutoCompleteIrd(value)
     };
-
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
         notification[type]({
             message: message, placement,
         });
     };
-
-
     const handleAutoCompleteIrdSelect = (value) => {
         if (value == 'CREATE_NEW') {
             addIrd({variables: {name: autoCompleteIrd}});
             refetchIrds({search: autoCompleteIrd});
         }
     };
-
     // Получение данных для выпадающих списков
     const {loading: loadingIrds, refetch: refetchIrds} = useQuery(IRDS_QUERY, {
         variables: {queryOptions: {search: autoCompleteIrd, limit: 10, page: 1}},
@@ -42,12 +39,13 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
     const {
         loading: loadingTemplate, data: dataTemplate
     } = useQuery(TEMPLATE_IRDS_TYPE_PROJECTS_QUERY, {
-        variables: {typeProject: project?.type_project_document?.id},
+        variables: {typeProject: actualityProjectData?.type_project_document?.id},
         fetchPolicy: 'network-only',
-        onCompleted: (data) =>
-            addingIrds(project?.project_irds?.length > 0 ? project.project_irds :
+        onCompleted: (data) =>{
+            loadTemplate();
+            addingIrds(actualityProjectData?.project_irds?.length > 0 ? actualityProjectData.project_irds :
                 (data?.templatesIrdsTypeProjects?.length > 0 ? data.templatesIrdsTypeProjects
-                    : null))
+                    : null))}
     });
     //Мутация
     const [addIrd] = useMutation(ADD_IRD_MUTATION, {
@@ -61,28 +59,26 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
     });
 
     const addingIrds = (value) => {
-        if (dataIrds && value) {
-            const newIrds = value.map(a => ({
-                id: a?.ird?.id ?? null, name: a?.ird?.name ?? null,
-            }));
-            refetchIrds({search: autoCompleteIrd}).then(({data}) => {
-                const existingIrds = dataIrds.irds ? dataIrds.irds.items : [];
-                const updatedIrds = [...existingIrds, ...newIrds];
-                setDataIrds({
-                    ...dataIrds, irds: {
-                        ...dataIrds.irds, irds: updatedIrds,
-                    },
-                });
-            });
-            loadTemplate();
-        }
-    }
-
+        if (!dataIrds || !value) return;
+        const newIrds = value.map(a => ({
+            id: a?.ird?.id ?? null, name: a?.ird?.name ?? null,
+        }));
+        const existingIrds = dataIrds.irds ? dataIrds.irds.items : [];
+        const updatedIrds = [...existingIrds, ...newIrds];
+        setDataIrds({
+            ...dataIrds,
+            irds: {
+                ...dataIrds.irds,
+                items: updatedIrds,
+            },
+        });
+    };
     // Подгрузка формы
     const loadTemplate = () => {
-        const irds = project?.project_irds?.length > 0 ? project.project_irds :
+        const irds = actualityProjectData?.project_irds?.length > 0 ? actualityProjectData.project_irds :
             (dataTemplate?.templatesIrdsTypeProjects?.length > 0 ? dataTemplate.templatesIrdsTypeProjects
                 : null);
+        console.log("irds"+irds);
         if (irds) {
             const initialValuesIrds = irds?.map(data => ({
                 ird_item: data.ird ? data.ird.id  :  data.IRD.id,
@@ -95,25 +91,32 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
     };
     useEffect(() => {
         if (project?.id) {
-            refetchProject({ queryOptions: { id: project?.id }});
+            refetchProject({ queryOptions: { id: Number(project?.id) }});
         }
-    }, [project?.id]);
-    const { data: projectData, refetch: refetchProject} = useQuery(PROJECTS_QUERY, {
+
+    }, []);
+    useEffect(() => {
+        loadTemplate();
+    }, [actualityProjectData]);
+    const { data: projectData, refetch: refetchProject, loading: projectLoading} = useQuery(PROJECTS_QUERY, {
         variables: { queryOptions: { id: project?.id } },
         fetchPolicy: 'network-only',
         onCompleted: (data) => {
-            console.log("Проект обновлен и данные ИРД перезагружены:", data.items[0]);
-            if (data.items[0]) {
-                setProject(data.items[0]); // Обновляем проект в вашем стейте
+             if (data.projects.items[0]) {
+                console.log("data.items[0] ", data.projects.items[0]);
+                setProject(data.projects.items[0]);
+                setActualityProjectData(data.projects.items[0])
+
             }
-            openNotification('topRight', 'success', 'Данные ИРД успешно обновлены !');
+            openNotification('topRight', 'success', 'Данные проекта подргужены!');
+        },
+            onError: (error) => {
+                openNotification('topRight', 'error', 'Ошибка при загрузки проекта: ' + error.message);
 
-        }});
+            }});
     // Мутации для добавления и обновления
-
     const [updateIrdsToProject] = useMutation(UPDATE_IRDS_TO_PROJECT_MUTATION, {
         onCompleted:() => {
-            refetchProject({ queryOptions: { id: project?.id }});
             if (onSubmit)
                 onSubmit();
             openNotification('topRight', 'success', 'Данные ИРД успешно обновлены !');
@@ -121,28 +124,23 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
             openNotification('topRight', 'error', 'Ошибка при добавлении данных ird: ' + error.message);
         }
     });
-
     const handleSubmit = () => {
         const irdToProject = formIRD.getFieldsValue().irdList.map(ird => ({
-            projectId: project?.id,
+            projectId: actualityProjectData?.id,
             irdId: ird.ird_item,
             stageNumber: parseInt(ird.stage_number_item),
             applicationProject: parseInt(ird.application_project_item),
             receivedDate: ird.date_complite_item,
         }));
-
         // Вызов мутаций для обновления данных
         updateIrdsToProject({
             variables: {
                 data: irdToProject
             }
         });
-
     };
-
-    if (loadingTemplate)
+    if (loadingTemplate || loadingIrds || projectLoading)
         return <LoadingSpinnerStyles/>
-
     return (
         <StyledFormBig form={formIRD} name="dynamic_form_nest_item" autoComplete="off" disabled={disable}>
             <Form.List name="irdList">
