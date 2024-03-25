@@ -26,6 +26,24 @@ class ProjectController extends Controller
 
         return response()->download($filePath, 'Список_ИРД.docx')->deleteFileAfterSend(true);
     }
+    public function downloadPaymentInvoiceProject($filename)
+    {
+        $filePath = storage_path('app/' . $filename);
+        if (!file_exists($filePath)) {
+            abort(404);
+        }
+
+        return response()->download($filePath, 'Счёт_на_оплату.docx')->deleteFileAfterSend(true);
+    }
+    public function downloadActRenderingServicesProject($filename)
+    {
+        $filePath = storage_path('app/' . $filename);
+        if (!file_exists($filePath)) {
+            abort(404);
+        }
+
+        return response()->download($filePath, 'Список_ИРД.docx')->deleteFileAfterSend(true);
+    }
     public function downloadStageProject($filename)
     {
         $filePath = storage_path('app/' . $filename);
@@ -33,6 +51,6 @@ class ProjectController extends Controller
             abort(404);
         }
 
-        return response()->download($filePath, 'График_работ.docx')->deleteFileAfterSend(true);
+        return response()->download($filePath, 'Акт_об_оказании_услуг.docx')->deleteFileAfterSend(true);
     }
 }

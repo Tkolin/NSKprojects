@@ -16,3 +16,6 @@ Route::get('/download-project/{filename}', [ProjectController::class, 'downloadP
 Route::get('/download-projectIrds/{filename}', [ProjectController::class, 'downloadIrdsProject']);
 Route::get('/download-projectStages/{filename}', [ProjectController::class, 'downloadStageProject']);
 
+Route::get('/download-projectIrds/{filename}', [ProjectController::class, 'downloadIrdsProject']);
+Route::get('/download-projectStages/{filename}', [ProjectController::class, 'downloadStageProject']);
+

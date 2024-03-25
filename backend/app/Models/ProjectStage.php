@@ -18,6 +18,7 @@ class ProjectStage extends Model
         'date_end',
         'percent',
         'price',
+        'price_to_paid',
     ];
 
     public function project(): BelongsTo

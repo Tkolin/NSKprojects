@@ -19,10 +19,10 @@ const IrdsProjectFileDownload = ({projectId}) => {
     const [downloadProjectIrds] = useMutation(IRDS_PROJECT_DOWNLOAD, {
         onCompleted: (data) => {
             handleDownloadClick(data.projectIrdsFileDownload.url);
-            openNotification('topRight', 'success', 'Договор сгенерирован!');
+            openNotification('topRight', 'success', 'Загрузка начата!');
         },
         onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при генерации договора: ' + error.message);
+            openNotification('topRight', 'error', 'Ошибка при загрузке: ' + error.message);
         },
     });
 

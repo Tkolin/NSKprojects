@@ -18,10 +18,10 @@ const PersonContractFileDownload = ({personId}) => {
     const [downloadContract] = useMutation(CONTRACT_PERSON_MUTATION, {
         onCompleted: (data) => {
             handleDownloadClick(data.personOrderFileDownload.url);
-            openNotification('topRight', 'success', 'Договор сгенерирован!');
+            openNotification('topRight', 'success', 'Загрузка начата!');
         },
         onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при генерации договора: ' + error.message);
+            openNotification('topRight', 'error', 'Ошибка при загрузке: ' + error.message);
         },
     });
 

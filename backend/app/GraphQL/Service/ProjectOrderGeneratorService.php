@@ -4,7 +4,7 @@ namespace App\GraphQL\Service;
 
 use PhpOffice\PhpWord\TemplateProcessor;
 
-class ProjectGeneratorService
+class ProjectOrderGeneratorService
 {
 
     public static function generate($project)
@@ -71,7 +71,11 @@ class ProjectGeneratorService
                 'projectOrganization.payment_account' => $project["organization_customer"]['payment_account'] ?? '(данные отсутвуют)',
                 'projectOrganization.BIK.bik' => $project["organization_customer"]['bik']['BIK'] ?? '(данные отсутвуют)',
                 'projectOrganization.BIK.name' => $project["organization_customer"]['bik']['name'] ?? '(данные отсутвуют)',
-                'projectOrganization.BIK.correspondent_account' => $project["organization_customer"]['BIK']['correspondent_account'] ?? '(данные отсутвуют)'
+                'projectOrganization.BIK.correspondent_account' => $project["organization_customer"]['BIK']['correspondent_account'] ?? '(данные отсутвуют)',
+                 'projectOrganization.director.ShortFullName' => isset($project["organization_customer"]['director']) ?
+        $project["organization_customer"]['director']['last_name'] . ' ' . substr((string)$project["organization_customer"]['director']['first_name'], 0,2) . '.' . substr((string)$project["organization_customer"]['director']['patronymic'], 0,2) . '.' : '',
+                'myOrg.director.ShortFullName' => $myOrg['director']['last_name'] . ' ' . substr((string)$myOrg['director']['first_name'], 0,2) . '.' . substr((string)$myOrg['director']['patronymic'], 0,2) . '.',
+
             ];
 
 //=======

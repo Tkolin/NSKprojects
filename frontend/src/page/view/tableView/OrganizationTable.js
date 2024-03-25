@@ -12,7 +12,6 @@ import {StyledFormLarge} from "../../style/FormStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {ORGANIZATIONS_QUERY} from "../../../graphql/queries";
 import Title from "antd/es/typography/Title";
-
 const OrganizationTable = () => {
     // Состояния
     const [selectedOrganization, setSelectedOrganization] = useState(null);

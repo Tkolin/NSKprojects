@@ -11,6 +11,8 @@ import PersonContractFileDownload from "../../script/PersonContractFileDownload"
 import ProjectFileDownload from "../../script/ProjectFileDownload";
 import StagesProjectFileDownload from "../../script/StagesProjectFileDownload";
 import IrdsProjectFileDownload from "../../script/IrdsProjectFileDownload";
+import ActRenderingProjectDownload from "../../script/ActRenderingProjectDownload";
+import PaymentInvoiceProjectDownload from "../../script/PaymentInvoiceProjectDownload";
 
 const {Step} = Steps;
 
@@ -79,6 +81,16 @@ const MyComponent = () => {
                                 <Descriptions.Item label="Список ИРД">
                                     <IrdsProjectFileDownload projectId={project.id}/>
                                 </Descriptions.Item>
+
+                                    <Descriptions.Item label="Акты и счета">
+                                        <ActRenderingProjectDownload projectId={project.id} stageNumber={1}/>
+                                        <PaymentInvoiceProjectDownload projectId={project.id} stageNumber={2}/>
+                                    </Descriptions.Item>
+                                    <Descriptions.Item label="Акты и счета">
+                                        <ActRenderingProjectDownload projectId={project.id} stageNumber={1}/>
+                                        <PaymentInvoiceProjectDownload projectId={project.id} stageNumber={2}/>
+                                    </Descriptions.Item>
+
                             </Descriptions>
                         </StyledBlockBig>
                         // <ProjectDetails project={project} onSubmit={onNext}/>

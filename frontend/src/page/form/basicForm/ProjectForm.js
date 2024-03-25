@@ -25,6 +25,7 @@ import {StyledButtonGreen} from "../../style/ButtonStyles";
 import dayjs from "dayjs";
 import {StyledFormItemSelectAndCreate, StyledFormItemSelectAndCreateWitchEdit} from "../../style/SelectStyles";
 import organizationForm from "./OrganizationForm";
+import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 
 const {Option} = Select;
 const {SHOW_CHILD} = Cascader;
@@ -227,9 +228,7 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
         }
     }, [editingProject, form]);
 
-    const save = (data) => {
-        setEditingProject(data);
-    }
+    const save = (data) => {setEditingProject(data);}
 
     const sortFacilitysForCascader = (data) => {
         const groupedFacilitys = data.facilitys.reduce((acc, facility) => {
@@ -257,7 +256,7 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                 variables: {
                     data: {
                         ...form.getFieldsValue(),
-                        date_create: form.getFieldValue("date_create").toISOString(),
+                        date_create: form.getFieldValue("date_create")?.toISOString() ?? null,
                         facilitys_id: form.getFieldValue('facilitys_id') ? form.getFieldValue('facilitys_id').map(pair => pair[1]) : null,
                         id: editingProject?.id,
                         organization_customer_id: selectedOrganization
@@ -269,7 +268,7 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                 variables: {
                     data: {
                         ...form.getFieldsValue(),
-                        date_create: form.getFieldValue("date_create").toISOString(),
+                        date_create: form.getFieldValue("date_create")?.toISOString() ?? null,
 
                         facilitys_id: form.getFieldValue('facilitys_id') ? form.getFieldValue('facilitys_id').map(pair => pair[1]) : null,
                         organization_customer_id: selectedOrganization,
@@ -385,8 +384,8 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
             </StyledFormItem>
 
             <StyledFormItem name="price" label="Стоимость">
-                <InputNumber suffix={"₽"}
-                             formatter={value => `${value}`.replace(/[^0-9]/g, '')}
+                <InputNumber suffix={"₽"} width={"100%"}
+                             formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                              parser={value => `${value}`.replace(/[^0-9]/g, '')}/>
             </StyledFormItem>
             <div style={{textAlign: 'center'}}>
