@@ -13,6 +13,7 @@ import {StyledButtonGreen} from "../../../style/ButtonStyles";
 
 const {RangePicker} = DatePicker;
 const prepaymentTemplate = {
+    index: 1,
     stage_item: 0,
     percent_item: 20,
     duration_item: 0,
@@ -253,10 +254,12 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
         }
     };
     const handleSubmit = () => {
+        const faae=formStage.getFieldsValue().stageList;
+        console.log("faae ",faae);
         const stageToProject = formStage.getFieldsValue().stageList.map(stage => ({
             projectId: actualityProjectData?.id,
             stage_id: stage?.stage_item,
-            stageNumber: stage?.index + 1,
+            stageNumber: stage?.index,
             dateStart: stage?.data_range?.date_start_item,
             duration: stage?.duration_item,
             dateEnd: stage?.data_range?.date_end_item,
@@ -276,6 +279,7 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
         formStage.setFieldsValue({
             stageList: [prepaymentTemplate, ...formStage.getFieldValue('stageList').map(stage => ({
                 ...stage,
+                index: ++stage.index,
                 percent_item: parseInt(stage.percent_item - (prepaymentTemplate.percent_item / countStageItems)),
             }))]
         });
@@ -287,6 +291,7 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
         formStage.setFieldsValue({
             stageList: filteredStages.map(stage => ({
                 ...stage,
+                index: --stage.index,
                 percent_item: parseInt(stage.percent_item + (prepaymentTemplate.percent_item / filteredStages.length)),
             })),
         });

@@ -14,7 +14,7 @@ use PhpOffice\PhpWord\TemplateProcessor;
 class PaymentInvoiceTemplateGeneratorService
 {
 
-    public static function generate($project,$stageNumber)
+    public static function generate($project, $stageNumber)
     {
         $myOrg = GeneratorService::getOrganizationData();
 
@@ -32,16 +32,9 @@ class PaymentInvoiceTemplateGeneratorService
         $month = $dateComponents[1];
         $monthName = $dateComponents[1] ? MonthEnum::getMonthName($dateComponents[1]) : "__";
         $day = $dateComponents[2] ?? "__";
-         $projectStage = $project->project_stages->where('number', $stageNumber)->first();
+        $projectStage = $project->project_stages->where('number', $stageNumber)->first();
+        $TranslatorNumberToName = new TranslatorNumberToName();
 
-        // Формируем массив для отображения в таблице
-//        $table = [];
-//         error_log("fadf ". $projectStages);
-//        foreach ($projectStages as $projectStage) {
-//            $table[] = [
-//
-//            ];
-//        }
         $myOrgPhone = $myOrg["phone_number"];
         $formattedPhone = preg_replace('/\+(\d{1,2})?(\d{3})(\d{3})(\d{2})(\d{2})/', '+$1 ($2) $3-$4-$5', $myOrgPhone);
 
@@ -66,13 +59,15 @@ class PaymentInvoiceTemplateGeneratorService
             'projectOrganization.director.position' => $project["organization_customer"]['director']['position']['name'] ?? '(данные отсутвуют)',
 
             'projectStages.stage.finalPrice' => number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
-            'projectStages.stage.name' => $projectStage['name'] ?? '(данные отсутвуют)',
-            'projectStages.stage.percent' =>  $projectStage['percent'] ?? '(данные отсутвуют)',
+
+            'projectStages.stage.name' => ($projectStage['stage']['id'] == 0) ? $projectStage['stage']['name'] : 'Выполнение работ ',
+            'projectStages.stage.percent' => ($projectStage['stage']['id'] == 0) ? $projectStage['percent'] . '% ' : '',
 
             'projectStages.stage.price' => number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
             'projectStages.stage.endPrice' =>  number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
             'projectStages.stage.sumEndPrice' =>  number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
 
+            'projectStages.stage.finalPriceToString' => $TranslatorNumberToName->num2str($projectStage['price']),
 
 
             'projectOrganization.INN' => $project["organization_customer"]['INN'] ?? '(данные отсутвуют)',
@@ -96,7 +91,9 @@ class PaymentInvoiceTemplateGeneratorService
         }
 
         //        $templateProcessor->cloneRowAndSetValues('projectStages.number' , $table);
-        $fileName = 'Счёт_на_оплату.docx';
+        $currentDate = date('Ymd');
+
+        $fileName = 'Счёт_на_оплату_'.$project['id'].'_'.$projectStage['stage']['id'].'_'.$currentDate.'_'.'.docx';
 
         $filePath = storage_path('app/' . $fileName);
         $templateProcessor->saveAs($filePath);

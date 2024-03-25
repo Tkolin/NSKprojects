@@ -38,7 +38,7 @@ const ActRenderingProjectDownload = ({projectId, stageNumber}) => {
             console.log(link);
 
             link.href = `${LaravelURL}download-projectActRender/${downloadedFileUrl}`;
-            link.download = 'contractIrds.docx';
+            link.download = '${downloadedFileUrl}';
 
             document.body.appendChild(link);
             link.click();

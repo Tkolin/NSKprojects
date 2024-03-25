@@ -37,7 +37,7 @@ const PaymentInvoiceProjectDownload = ({projectId, stageNumber}) => {
             console.log(link);
 
             link.href = `${LaravelURL}download-projectPaymentInvoice/${downloadedFileUrl}`;
-            link.download = 'Счёт на оплату.docx';
+            link.download = '${downloadedFileUrl}';
 
             document.body.appendChild(link);
             link.click();

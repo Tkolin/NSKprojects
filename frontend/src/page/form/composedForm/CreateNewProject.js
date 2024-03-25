@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Col, Descriptions, Row, Space, Steps} from 'antd';
+import {Button, Col, Descriptions, Row, Space, Steps, Typography} from 'antd';
 import TasksProjectExecutorForm from "../aggregateComponent/projectForm/TasksProjectExecutorForm";
 import TasksToProjectStageForm from "../aggregateComponent/projectForm/TasksToProjectStageForm";
 import ProjectForm from "../basicForm/ProjectForm";
@@ -15,6 +15,7 @@ import ActRenderingProjectDownload from "../../script/ActRenderingProjectDownloa
 import PaymentInvoiceProjectDownload from "../../script/PaymentInvoiceProjectDownload";
 
 const {Step} = Steps;
+const { Text } = Typography;
 
 const MyComponent = () => {
     const [currentStep, setCurrentStep] = useState(0);
@@ -70,7 +71,7 @@ const MyComponent = () => {
                         </StyledBlockLarge>
                     )}
                     {currentStep === 3 && (
-                        <StyledBlockBig label={"Сформированная документация:"}>
+                        <StyledBlockBig  bordered size={"small"}  label={"Сформированная документация:"}>
                             <Descriptions>
                                 <Descriptions.Item label="Договор с заказчиком">
                                     <ProjectFileDownload projectId={project.id}/>
@@ -82,13 +83,24 @@ const MyComponent = () => {
                                     <IrdsProjectFileDownload projectId={project.id}/>
                                 </Descriptions.Item>
 
-                                    <Descriptions.Item label="Акты и счета">
-                                        <ActRenderingProjectDownload projectId={project.id} stageNumber={1}/>
-                                        <PaymentInvoiceProjectDownload projectId={project.id} stageNumber={2}/>
+                                    <Descriptions.Item column={1} label="Акты выполненных работ" span={3}>
+                                        {project?.project_stages?.map(psid => (
+                                            psid.stage.id !== 0 && (
+                                            <div>
+                                                <Text style={{marginRight: 20}}>Этап №{psid.number} ({psid.stage.name}):   </Text>
+                                                <PaymentInvoiceProjectDownload stageNumber={psid.number} projectId={project.id} type="acts"/>
+                                            </div>)
+                                        ) )}
                                     </Descriptions.Item>
-                                    <Descriptions.Item label="Акты и счета">
-                                        <ActRenderingProjectDownload projectId={project.id} stageNumber={1}/>
-                                        <PaymentInvoiceProjectDownload projectId={project.id} stageNumber={2}/>
+                                    <Descriptions.Item column={2} label="Счета на оплату" span={3}>
+                                        {project?.project_stages?.map(psid => (
+
+                                                <div>
+                                                    <Text style={{marginRight: 20}}>Этап №{psid.number} ({psid.stage.name}):   </Text>
+                                                    <ActRenderingProjectDownload stageNumber={psid.number}
+                                                                                 projectId={project.id} type="acts"/>
+                                                </div>
+                                        ))}
                                     </Descriptions.Item>
 
                             </Descriptions>
