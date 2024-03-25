@@ -84,10 +84,7 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
         setSelectedOrganizationData(dataOrganizations?.organizations?.items?.find(org => org.id === value));
         console.log(dataOrganizations?.organizations?.items?.find(org => org.id === value));
     }
-    // const handleDateEndChange = (value) => {
-    //     setDateEnd(value);
-    //     calculateDuration(dateSigning, value);
-    // };
+
 
     const calculateEndDate = (dateSigning, duration) => {
         if (dateSigning && duration) {
@@ -112,23 +109,7 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
         const abbreviation = filteredWords.map(word => word.charAt(0)).join('');
         return abbreviation.toUpperCase();
     };
-    // const addingOrganization = (value) => {
-    //     if (dataOrganizations && value) {
-    //         const newOrganizations = value.map(a => ({
-    //             id: a?.stage?.id ?? null, name: a?.stage?.name ?? null,
-    //         }));
-    //         refetchOrganizations({search: autoCompleteStage}).then(({data}) => {
-    //             const existingStages = dataStages?.stages?.items ?? [];
-    //             const updatedStages = [...existingStages, ...newStages];
-    //             setDataStages({
-    //                 ...dataStages, stages: {
-    //                     ...dataStages.stages, stages: updatedStages,
-    //                 },
-    //             });
-    //         });
-    //         loadTemplate();
-    //     }
-    // }
+
     const handleEditingTemplate = (value, option) => {
         setSelectedTypeProject(value);
         //TODO: Получать из туда суда типа дока до группы
@@ -230,22 +211,46 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
 
     const save = (data) => {setEditingProject(data);}
 
+
     const sortFacilitysForCascader = (data) => {
         const groupedFacilitys = data.facilitys.reduce((acc, facility) => {
-            const {id, name, type_facility} = facility;
-            const {id: typeId, name: typeName} = type_facility;
+            const { id, name, type_facility, group } = facility;
+            const { id: typeId, name: typeName, subselectionFacility } = type_facility;
+            const { id: groupId, name: groupName, subselection_facility: groupSubselectionFacility } = group;
 
             if (!acc[typeId]) {
-                acc[typeId] = {value: typeId, label: typeName, children: []};
+                acc[typeId] = { value: typeId, label: typeName, children: [] };
             }
-            acc[typeId].children.push({value: id, label: name});
+            const typeNode = acc[typeId];
+
+            if (!typeNode.children[groupId]) {
+                typeNode.children[groupId] = { value: groupId, label: groupName, children: [] };
+            }
+            const groupNode = typeNode.children[groupId];
+
+            if (!groupNode.children[subselectionFacility.id]) {
+                groupNode.children[subselectionFacility.id] = { value: subselectionFacility.id, label: subselectionFacility.name, children: [] };
+            }
+            const subselectionNode = groupNode.children[subselectionFacility.id];
+
+            subselectionNode.children.push({ value: id, label: name });
 
             return acc;
         }, {});
-        // Преобразуем объект в массив и сортируем по названию type_facility
-        const sortedOptions = Object.values(groupedFacilitys).sort((a, b) => {
-            return a.label.localeCompare(b.label);
+
+        const sortedOptions = Object.values(groupedFacilitys).map((typeNode) => {
+            typeNode.children = Object.values(typeNode.children).map((groupNode) => {
+                groupNode.children = Object.values(groupNode.children).map((subselectionNode) => {
+                    subselectionNode.children.sort((a, b) => a.label.localeCompare(b.label));
+                    return subselectionNode;
+                });
+                groupNode.children.sort((a, b) => a.label.localeCompare(b.label));
+                return groupNode;
+            });
+            typeNode.children.sort((a, b) => a.label.localeCompare(b.label));
+            return typeNode;
         });
+
         return sortedOptions;
     };
 
@@ -310,6 +315,7 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
             <StyledFormItemSelectAndCreate
                 formName={"delegates_id"}
                 formLabel={"Представители компании"}
+                mode={'multiple'}
                 onSelect={checkSelectDelegates}
                 placeholder={"По компаниям"}
                 loading={loadingDelegates}
@@ -338,8 +344,7 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
             <StyledFormItem name="facilitys_id" label="Объект" style={{width: "100%"}}>
                 <Cascader
                     style={{width: "100%"}}
-                    disabled={!editingProject}
-                    showCheckedStrategy={SHOW_CHILD}
+                     showCheckedStrategy={SHOW_CHILD}
                     popupMatchSelectWidth={false}
                     options={cascaderFacility}
                     multiple

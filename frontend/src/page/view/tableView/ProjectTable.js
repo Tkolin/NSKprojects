@@ -1,12 +1,11 @@
 import React, {useState} from 'react';
 import {useQuery} from '@apollo/client';
 import {Button, Descriptions, Divider, Form, Modal, notification, Space, Table, Typography} from 'antd';
-import {PROJECT_QUERY, PROJECT_TABLE_QUERY, PROJECTS_QUERY} from '../../../graphql/queries';
+import {PROJECTS_QUERY} from '../../../graphql/queries';
 import ProjectForm from "../../form/basicForm/ProjectForm";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import Search from "antd/es/input/Search";
 import {StyledFormLarge} from "../../style/FormStyles";
-import PersonContractFileDownload from "../../script/PersonContractFileDownload";
 import StagesProjectFileDownload from "../../script/StagesProjectFileDownload";
 import ProjectFileDownload from "../../script/ProjectFileDownload";
 import IrdsProjectFileDownload from "../../script/IrdsProjectFileDownload";
@@ -171,21 +170,7 @@ const ProjectTable = () => {
                     <ProjectFileDownload projectId={record.id}/>
                 </>
             ),
-        }, {
-            title: 'Акт об работе', key: 'btnContract', width: 80, align: 'center',
-            render: (text, record) => (
-                <>
-                    <ActRenderingProjectDownload projectId={record.id} stageNumber={1}/>
-                </>
-            ),
-        }, {
-            title: 'Счёт', key: 'btnContract', width: 80, align: 'center',
-            render: (text, record) => (
-                <>
-                    <PaymentInvoiceProjectDownload projectId={record.id} stageNumber={2}/>
-                </>
-            ),
-        }, {
+        },  {
             title: 'Список ИРД', key: 'btnIrd', width: 80, align: 'center',
             render: (text, record) => (
                 <>

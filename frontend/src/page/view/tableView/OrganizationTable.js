@@ -51,13 +51,7 @@ const OrganizationTable = () => {
         }, onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
             refetch();
-        }, update: (cache, {data: {deleteOrganization}}) => {
-            const {organizations} = cache.readQuery({query: ORGANIZATIONS_QUERY});
-            const updatedOrganization = organizations.filter(organization => organization.id !== deleteOrganization.id);
-            cache.writeQuery({
-                query: ORGANIZATIONS_QUERY, data: {contacts: updatedOrganization},
-            });
-        },
+        }
     });
 
     // Обработчик событий
@@ -201,7 +195,7 @@ const OrganizationTable = () => {
                         <Descriptions.Item label="ОГРН">{record.OGRN}</Descriptions.Item>
                         <Descriptions.Item label="ОКПО">{record.OKPO}</Descriptions.Item>
                         <Descriptions.Item label="КПП">{record.KPP}</Descriptions.Item>
-                        <Descriptions.Item label="БИК">{record.bik.BIK} - {record?.bik?.name}</Descriptions.Item>
+                        <Descriptions.Item label="БИК">{record?.bik?.BIK} - {record?.bik?.name}</Descriptions.Item>
                         <Descriptions.Item label="Расчетный счет">{record.payment_account}</Descriptions.Item>
                     </Descriptions>
                 ),

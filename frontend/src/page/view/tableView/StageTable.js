@@ -29,7 +29,7 @@ const StageTable = () => {
 
     const [search, setSearch] = useState('');
 
-    const { loading, error, data } = useQuery(STAGES_QUERY, {
+    const { loading, error, data, refetch: refetch } = useQuery(STAGES_QUERY, {
         variables: {
             queryOptions: {
             page,
@@ -52,26 +52,16 @@ const StageTable = () => {
     const [deleteStage] = useMutation(DELETE_STAGE_MUTATION, {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно удалены!');
-            window.location.reload();
-
+            refetch();
         },
         onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
-            window.location.reload();
-
-        },
-        update: (cache, { data: { deleteStage } }) => {
-            const { stages } = cache.readQuery({ query: STAGES_QUERY });
-            const updatedStages = stages.filter(stage => stage.id !== deleteStage.id);
-            cache.writeQuery({
-                query: STAGES_QUERY,
-                data: { stages: updatedStages },
-            });
+            refetch();
         },
     });
 
     // Обработчик событий
-    const handleClose = () => {setEditModalVisible(false);};
+    const handleClose = () => {refetch(); setEditModalVisible(false);};
     const handleEdit = (stageId) => {
         const stage = data.stagesTable.stages.find(stage => stage.id === stageId);
         setSelectedStage(stage);

@@ -29,7 +29,7 @@ const TypeProjectTable = () => {
 
     const [search, setSearch] = useState('');
 
-    const { loading, error, data } = useQuery(TYPES_PROJECTS_QUERY, {
+    const { loading, error, data, refetch } = useQuery(TYPES_PROJECTS_QUERY, {
         variables: {
             queryOptions: {
             page,
@@ -52,26 +52,16 @@ const TypeProjectTable = () => {
     const [deleteTypeProject] = useMutation(DELETE_TYPE_PROJECT_MUTATION, {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно удалены!');
-            window.location.reload();
-
-        },
+            refetch();
+            },
         onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
-            window.location.reload();
-
-        },
-        update: (cache, { data: { deleteTypeProject } }) => {
-            const { typeProjects } = cache.readQuery({ query: TYPES_PROJECTS_QUERY });
-            const updatedTypeProjects = typeProjects.filter(typeProject => typeProject.id !== deleteTypeProject.id);
-            cache.writeQuery({
-                query: TYPES_PROJECTS_QUERY,
-                data: { typeProjects: updatedTypeProjects },
-            });
-        },
+            refetch();
+        }
     });
 
     // Обработчик событий
-    const handleClose = () => {setEditModalVisible(false);};
+    const handleClose = () => {refetch();setEditModalVisible(false);};
     const handleEdit = (typeProjectId) => {
         const typeProject = data.typeProjects.items.find(typeProject => typeProject.id === typeProjectId);
         setSelectedTypeProject(typeProject);

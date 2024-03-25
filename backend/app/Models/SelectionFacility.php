@@ -11,7 +11,7 @@ class SelectionFacility extends Model
     protected $fillable = [
         'name',
     ];
-    public function selection_facilities(): HasMany
+    public function selectionFacilities(): HasMany
     {
         return $this->hasMany(SubselectionFacility::class);
     }

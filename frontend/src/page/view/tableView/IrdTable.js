@@ -29,7 +29,7 @@ const IrdTable = () => {
 
     const [search, setSearch] = useState('');
 
-    const { loading, error, data } = useQuery(IRDS_QUERY, {
+    const { loading, error, data, refetch } = useQuery(IRDS_QUERY, {
         variables: {
             page,
             limit,
@@ -51,24 +51,14 @@ const IrdTable = () => {
     const [deleteIrd] = useMutation(DELETE_IRD_MUTATION, {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно удалены!');
-            window.location.reload();
-        },
+            refetch();        },
         onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
-            window.location.reload();
-        },
-        update: (cache, { data: { deleteIrd } }) => {
-            const { irds } = cache.readQuery({ query: STAGES_QUERY });
-            const updatedIrds = irds.filter(ird => ird.id !== deleteIrd.id);
-            cache.writeQuery({
-                query: STAGES_QUERY,
-                data: { irds: updatedIrds },
-            });
-        },
+            refetch();        },
     });
 
     // Обработчик событий
-    const handleClose = () => {setEditModalVisible(false);};
+    const handleClose = () => { refetch(); setEditModalVisible(false);};
     const handleEdit = (irdId) => {
         const ird = data.irds.items.find(ird => ird.id === irdId);
         setSelectedIrd(ird);
@@ -167,7 +157,7 @@ const IrdTable = () => {
                     total: data.irds.count,
                     current: page,
                     limit,
-                    onChange: (page, limit) => setPage(page),
+                    onChange: (page, limit) => setPage(page) && setLimit(limit),
                     onShowSizeChange: (current, size) => {
                         setPage(1);
                         setLimit(size);

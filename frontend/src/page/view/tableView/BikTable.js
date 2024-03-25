@@ -24,26 +24,16 @@ const BikTable = () => {
     const [deleteContact] = useMutation(DELETE_CONTACT_MUTATION, {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно удалены!');
-            window.location.reload();
-
+            refetch();
         },
         onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
-            window.location.reload();
-
-        },
-        update: (cache, { data: { deleteContact } }) => {
-            const { contacts } = cache.readQuery({ query: CONTACTS_QUERY });
-            const updatedContacts = contacts.filter(contact => contact.id !== deleteContact.id);
-            cache.writeQuery({
-                query: CONTACTS_QUERY,
-                data: { contacts: updatedContacts },
-            });
+            refetch();
         },
     });
 
     // Обработчик событий
-    const handleClose = () => {setEditModalVisible(false);};
+    const handleClose = () => {       refetch(); setEditModalVisible(false);};
     const handleEdit = (contactId) => {
         const contact = data.contacts.find(contact => contact.id === contactId);
         setSelectedContact(contact);

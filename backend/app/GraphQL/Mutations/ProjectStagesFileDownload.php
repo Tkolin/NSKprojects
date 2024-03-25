@@ -21,11 +21,15 @@ final readonly class ProjectStagesFileDownload
 
             $projectData = Project::with('organization_customer')
                 ->with('type_project_document')
+                ->with('type_project_document.group')
+                ->with('type_project_document.group.technical_specification')
+
                 ->with('project_facilitys')
                 ->with('status')
                 ->with('project_delegations')
                 ->with('project_irds.IRD')
                 ->with('project_stages.stage')
+
                 ->find($args["projectId"]);
 
             if (!$projectData) {
@@ -33,7 +37,7 @@ final readonly class ProjectStagesFileDownload
             }
 
             $projectGenerator = new StagesProjectTemplateGeneratorService();
-             $contractFilePath = $projectGenerator->generate($projectData, $args["stageNumber"]);
+            $contractFilePath = $projectGenerator->generate($projectData);
 
             return ['url' => $contractFilePath];
 

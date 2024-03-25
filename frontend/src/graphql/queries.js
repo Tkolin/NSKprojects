@@ -356,13 +356,25 @@ export const CONTACTS_SHORT_QUERY = gql`
     }
 `;
 export const FACILITYS_QUERY = gql`
-    query ContactsQuery  {
-        facility {
+    query FaclitiysQuery  {
+        facilities {
             id
             name
             type_facility {
                 id
                 name
+            }
+            group_facility {
+                id
+                name
+                subselection_facility {
+                    id
+                    name
+                    selection_facility {
+                        id
+                        name
+                    }
+                }
             }
         }
     }

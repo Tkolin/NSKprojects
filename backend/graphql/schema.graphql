@@ -575,18 +575,18 @@ type AuthPayload {
     id: ID!
     name: String!
     type_facility: TypeFacility
-    group: GroupFacility
+    group_facility: GroupFacility
 }type TypeFacility{
     id: ID!
     name: String!
 }type GroupFacility{
     id: ID!
     name: String!
-    subselectionFacility: SubselectionFacility
+    subselection_facility: SubselectionFacility
 }type SubselectionFacility{
     id: ID!
     name: String!
-    selectionFacility: SelectionFacility
+    selection_facility: SelectionFacility
 }type SelectionFacility{
     id: ID!
     name: String!

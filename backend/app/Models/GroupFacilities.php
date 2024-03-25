@@ -15,7 +15,7 @@ class GroupFacilities extends Model
     ];
     public function subselection_facility(): BelongsTo
     {
-        return $this->belongsTo(SubselectionFacility::class, 'subselection_facility_id');
+        return $this->belongsTo(SubselectionFacility::class);
     }
 
     public function facility(): HasMany

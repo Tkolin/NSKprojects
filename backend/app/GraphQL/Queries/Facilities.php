@@ -14,11 +14,13 @@ final readonly class Facilities
         $allowedRoles = ['admin']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            return Facility::with('type_facility')
-                ->with('group_facility',
-                    'group_facility.selection_facility',
-                    'group_facility.selection_facility.selection_facility')
+            $data = Facility::with(  'group_facility.subselection_facility')
+                ->with('group_facility.subselection_facility')
                 ->get();
+
+            error_log("dsad ".$data[43]);
+
+            return $data;
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }
