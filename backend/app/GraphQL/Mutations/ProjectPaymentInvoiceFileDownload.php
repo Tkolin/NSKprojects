@@ -38,7 +38,7 @@ final readonly class ProjectPaymentInvoiceFileDownload
 
 
             $projectGenerator = new PaymentInvoiceTemplateGeneratorService();
-            $contractFilePath = $projectGenerator->generate($projectData);
+            $contractFilePath = $projectGenerator->generate($projectData, $args["stageNumber"] );
 
             return ['url' => $contractFilePath];
 

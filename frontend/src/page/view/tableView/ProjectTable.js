@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useQuery} from '@apollo/client';
-import {Button, Descriptions, Divider, Form, Modal, notification, Space, Table} from 'antd';
+import {Button, Descriptions, Divider, Form, Modal, notification, Space, Table, Typography} from 'antd';
 import {PROJECT_QUERY, PROJECT_TABLE_QUERY, PROJECTS_QUERY} from '../../../graphql/queries';
 import ProjectForm from "../../form/basicForm/ProjectForm";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
@@ -13,6 +13,7 @@ import IrdsProjectFileDownload from "../../script/IrdsProjectFileDownload";
 import Title from "antd/es/typography/Title";
 import ActRenderingProjectDownload from "../../script/ActRenderingProjectDownload";
 import PaymentInvoiceProjectDownload from "../../script/PaymentInvoiceProjectDownload";
+const { Text } = Typography;
 
 const ProjectTable = () => {
 
@@ -100,10 +101,13 @@ const ProjectTable = () => {
         },
         {
             title: 'Представитель',
-            dataIndex: 'delegate',
-            key: 'delegate',
-            render: (delegate) => delegate ?
-                delegate.first_name + " " + delegate.last_name + " " + delegate.patronymic : "",
+            dataIndex: 'delegations',
+            key: 'delegations',
+            render: (delegations) => (
+                delegations.map(delegate => (
+                    <span key={delegate.id}>{delegate.last_name} {delegate.first_name} {delegate.patronymic}</span>
+                ))
+            )
         },
         {
             title: 'Тип документации',
@@ -124,15 +128,16 @@ const ProjectTable = () => {
             title: 'Дата подписания',
             dataIndex: 'date_signing',
             key: 'date_signing',
-
-            sorter: true,
-            ellipsis: true,
-
         },
         {
             title: 'Продолжительность',
             dataIndex: 'duration',
             key: 'duration',
+        },
+        {
+            title: 'Дата начала',
+            dataIndex: 'date_end',
+            key: 'date_end',
 
             sorter: true,
             ellipsis: true,
@@ -146,19 +151,18 @@ const ProjectTable = () => {
             ellipsis: true,
         },
         {
+            title: 'Стоимость',
+            dataIndex: 'price',
+            key: 'price',
+            render: (price) => price ?
+                price.name : ""
+        },
+        {
             title: 'Статус',
             dataIndex: 'status',
             key: 'status',
             render: (status) => status ?
                 status.name : ""
-        },
-        {
-            title: 'Дата фактического окончания',
-            dataIndex: 'date_completion',
-            key: 'date_completion',
-
-            sorter: true,
-            ellipsis: true,
         },
         {
             title: 'Договор', key: 'btnContract', width: 80, align: 'center',
@@ -275,17 +279,27 @@ const ProjectTable = () => {
                     },
                     expandedRowRender: (record) => (
                         <>
-                            <Descriptions>
-                                <Descriptions.Item label="Акты и счета">
-                                    <Text>Этапы: </Text>
-                                    <ActRenderingProjectDownload projectId={record.id} stageNumber={1}/>
-                                    <PaymentInvoiceProjectDownload projectId={record.id} stageNumber={2}/>
-                                </Descriptions.Item>
-                                <Descriptions.Item label="Акты и счета">
-                                    <ActRenderingProjectDownload projectId={record.id} stageNumber={1}/>
-                                    <PaymentInvoiceProjectDownload projectId={record.id} stageNumber={2}/>
-                                </Descriptions.Item>
+                            <Descriptions bordered size={"small"} style={{width: "40%"}}>
 
+                                         <Descriptions.Item column={1} label="Акты выполненных работ" span={3}>
+                                            {record.project_stages.map(psid => (
+                                                psid.stage.id !== 0 && (
+                                                <div>
+                                                    <Text style={{marginRight: 20}}>Этап №{psid.number} ({psid.stage.name}):   </Text>
+                                            <ActRenderingProjectDownload  stageNumber={psid.number} projectId={record.id} type="acts"/>
+                                                </div>)
+                                            ) )}
+                                        </Descriptions.Item>
+                                <Descriptions.Item column={2} label="Счета на оплату" span={3}>
+                                    {record.project_stages.map(psid => (
+
+                                            <div>
+                                                <Text style={{marginRight: 20}}>Этап №{psid.number} ({psid.stage.name}):   </Text>
+                                                <PaymentInvoiceProjectDownload stageNumber={psid.number}
+                                                                               projectId={record.id} type="acts"/>
+                                            </div>
+                                    ))}
+                                </Descriptions.Item>
                             </Descriptions>
                         </>
                     ),

@@ -32,14 +32,7 @@ class TheActRenderingServicesTemplateGeneratorService
         $day = $dateComponents[2] ?? "__";
         $projectStage = $project->project_stages->where('number', $stageNumber)->first();
 
-        // Формируем массив для отображения в таблице
-//        $table = [];
-//         error_log("fadf ". $projectStages);
-//        foreach ($projectStages as $projectStage) {
-//            $table[] = [
-//
-//            ];
-//        }
+        $TranslatorNumberToName = new TranslatorNumberToName();
         $myOrgPhone = $myOrg["phone_number"];
         $formattedPhone = preg_replace('/\+(\d{1,2})?(\d{3})(\d{3})(\d{2})(\d{2})/', '+$1 ($2) $3-$4-$5', $myOrgPhone);
 
@@ -50,7 +43,7 @@ class TheActRenderingServicesTemplateGeneratorService
 
             'dayCreate' => $day,
             'mountCreate' => $month,
-            'mountName' => $monthName,
+            'mountCreateName' => $monthName,
             'yearCreate' => $year,
             'projectStages.stage.priceTotal' => $project['price'] ?? '(данные отсутвуют)',
             'projectStages.stage.endPriceTotal' => $project['price'] ?? '(данные отсутвуют)',
@@ -64,7 +57,7 @@ class TheActRenderingServicesTemplateGeneratorService
             'projectOrganization.director.position' => $project["organization_customer"]['director']['position']['name'] ?? '(данные отсутвуют)',
 
             'projectStages.stage.finalPrice' => number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
-            'projectStages.stage.name' => $projectStage['name'] ?? '(данные отсутвуют)',
+            'projectStages.stage.name' => $projectStage['stage']['name'] ?? '(данные отсутвуют)',
             'projectStages.stage.percent' =>  $projectStage['percent'] ?? '(данные отсутвуют)',
 
             'projectStages.stage.price' => number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
@@ -81,7 +74,7 @@ class TheActRenderingServicesTemplateGeneratorService
             'projectOrganization.KPP' => $project["organization_customer"]['KPP'] ?? '(данные отсутвуют)',
             'projectOrganization.address_legal' => $project["organization_customer"]['address_legal'] ?? '(данные отсутвуют)',
 
-
+            'projectStages.stage.finalPriceToString' => $TranslatorNumberToName->num2str($projectStage['price']),
             'myOrg.INN' => $myOrg['INN'] ?? '(данные отсутвуют)',
             'myOrg.KPP' => $myOrg['KPP'] ?? '(данные отсутвуют)',
             'myOrg.address_legal' => $myOrg['address_legal'] ?? '(данные отсутвуют)',
@@ -97,14 +90,13 @@ class TheActRenderingServicesTemplateGeneratorService
         foreach ($replacements as $key => $value) {
             $templateProcessor->setValue($key, $value);
         }
+        $currentDate = date('Ymd');
 
-        // $templateProcessor->cloneRowAndSetValues('projectStages.number' , $table);
-        $fileName = 'Акт_об_оказании_услуг.docx';
+        $fileName = 'Акт_об_оказании_услуг_'.$project['id'].'_'.$projectStage['stage']['id'].'_'.$currentDate.'_'.'.docx';
 
         $filePath = storage_path('app/' . $fileName);
         $templateProcessor->saveAs($filePath);
 
-        // Удаление временного файла
         unlink($tempFilePath);
 
         return $fileName;

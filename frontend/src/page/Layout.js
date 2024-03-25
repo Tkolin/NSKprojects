@@ -3,7 +3,7 @@ import {
     SolutionOutlined,
     HomeOutlined,
     FormOutlined,
-    ProfileOutlined, LogoutOutlined,
+    ProfileOutlined, LogoutOutlined, BarChartOutlined, CalculatorOutlined,
 } from '@ant-design/icons';
 import {Layout, Menu, Button, Typography, Space} from 'antd';
 import {useQuery} from "@apollo/client";
@@ -110,6 +110,10 @@ const CustomLayout = ({children, currentUser, la}) => {
                     ]),
                     getItem('Отчёты', '3', <SolutionOutlined/>, [
                         getItem('Проекты', '3-1', null, null)
+                    ]),
+                    getItem('Расчёты', '4', <CalculatorOutlined />, [
+                    ]),
+                    getItem('Экономика', '5', <BarChartOutlined />, [
                     ])
                 );
                 break;
