@@ -49,15 +49,39 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
     const [selectedOrganizationData, setSelectedOrganizationData] = useState('')
     const [autoCompleteTypeProjects, setAutoCompleteTypeProjects] = useState('');
     const [addOrganizationModalVisibleMode, setAddOrganizationModalVisibleMode] = useState(false);
+    const [dateCreate, setDateCreate] = useState(null);
+    const [facilitysList, setFacilitysList] = useState(null);
     const [editOrganizationModalVisibleMode, setEditOrganizationModalVisibleMode] = useState(false);
     const [projectStatus, setProjectStatus] = useState({key: 4});
-    const [projectNumber, setProjectNumber] = useState('');
-
+    const [projectNumber, setProjectNumber] = useState({typeDocument: 'xxx', year: 'xx', organizationId: 'xx', selectFacilitiCode: 'xx', subSelectFaciliiCode: 'xx',
+    groupFacilitiCode: 'xxx', facilitiCode: 'xxx'});
     const handleCloseModalFormView = () => {
         setAddContactModalVisibleMode(false);
         setAddOrganizationModalVisibleMode(false);
         setEditOrganizationModalVisibleMode(false);
     };
+    const getNumberString = () => {
+        return projectNumber.typeDocument + "–" + projectNumber.year + "–" + projectNumber.organizationId+"–"+  projectNumber.selectFacilitiCode+"–" +projectNumber.subSelectFaciliiCode+"–"+
+            projectNumber.groupFacilitiCode+"–"+projectNumber.facilitiCode;
+
+    }
+    useEffect(() => {
+
+        const facilitysId = form.getFieldValue('facilitys_id');
+        setProjectNumber({
+            ...projectNumber,
+            typeDocument: dataTypeProject?.typeProjects?.items?.find(d=>d.id === form.getFieldValue('type_project_document_id'))?.group?.name,
+            year: form.getFieldValue('date_create')?.$y?.toString()?.slice(-2),
+            organizationId: addLeadingZeros(form.getFieldValue('organization_customer_id'),3),
+            selectFacilitiCode: facilitysId?.[0]?.[0] != null ? addLeadingZeros(facilitysId[0][0], 2) : null,
+            subSelectFaciliiCode: facilitysId?.[0]?.[1] != null ? addLeadingZeros(facilitysId[0][1], 2) : null,
+            groupFacilitiCode: facilitysId?.[0]?.[2] != null ? addLeadingZeros(facilitysId[0][2], 3) : null,
+            facilitiCode: facilitysId?.[0]?.[3] != null ? addLeadingZeros(facilitysId[0][3], 3) : null,
+        })
+    }, [form.getFieldValue('facilitys_id'), form,form.getFieldValue,form.getFieldValue('organization_customer_id'), selectedTypeProject, form.getFieldValue('date_create'), dateCreate, facilitysList]);
+    function addLeadingZeros(number, length) {
+        return String(number).padStart(length, '0');
+    }
     const handleAutoCompleteOrganizations = (value) => {
         setAutoCompleteOrganization(value)
     };
@@ -82,7 +106,6 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
     const handleSelectedOrganization = (value, option) => {
         setSelectedOrganization(value);
         setSelectedOrganizationData(dataOrganizations?.organizations?.items?.find(org => org.id === value));
-        console.log(dataOrganizations?.organizations?.items?.find(org => org.id === value));
     }
 
 
@@ -103,12 +126,6 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
     };
 
     // Переключение типов документации
-    const shortenString = (str) => {
-        const words = str.split(' ');
-        const filteredWords = words.filter(word => word.length > 1 && !word.includes('(') && !word.includes(')'));
-        const abbreviation = filteredWords.map(word => word.charAt(0)).join('');
-        return abbreviation.toUpperCase();
-    };
 
     const handleEditingTemplate = (value, option) => {
         setSelectedTypeProject(value);
@@ -118,7 +135,6 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
         // form.setFieldsValue({
         //     number: createNumber
         // });
-        console.log(shortenString(option.children));
     };
 
     // Функции уведомлений
@@ -130,7 +146,7 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
 
     // Получение данных для выпадающих списков
     const {loading: loadingFacility} = useQuery(FACILITYS_QUERY, {
-        onCompleted: (data) => setCascaderFacility(sortFacilitysForCascader(data))
+        onCompleted: (data) => setCascaderFacility(sortFacilitysForCascader(data.facilities))
     });
     const {loading: loadingStatuses, error: errorStatuses, data: dataStatuses} =
         useQuery(PROJECT_STATUSES_QUERY, {
@@ -172,7 +188,6 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
         refetchQueries: [{query: PROJECTS_QUERY}], onCompleted: (data) => {
             openNotification('topRight', 'success', 'Данные успешно обновлены!');
             save(data);
-            console.log("data.updateProject");
             if (setProject)
                 setProject(data.updateProject);
 
@@ -192,7 +207,13 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
             setAutoCompleteTypeProjects(editingProject?.type_project_document?.id);
             setSelectedOrganization(editingProject?.organization_customer?.id);
             setAutoCompleteOrganization(editingProject?.organization_customer?.id)
-            console.log(editingProject);
+
+            const facilitys_id =  editingProject?.facilities?.map(facility => [
+                facility?.group_facility?.subselection_facility?.selection_facility?.code ?? null,
+                facility?.group_facility?.subselection_facility?.code ?? null,
+                facility?.group_facility?.code ?? null,
+                facility?.code ?? null
+            ]);
             form.setFieldsValue({
                 ...editingProject,
                 date_signing: editingProject.date_signing ? moment(editingProject.date_signing, 'YYYY-MM-DD') : null,
@@ -202,58 +223,49 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                 organization_customer_id: editingProject?.organization_customer?.id ?? null,
                 delegates_id: editingProject?.delegations?.map(delegations => delegations.id),
                 type_project_document_id: editingProject?.type_project_document?.id ?? null,
-                //TODO: facility_id: тут ключ пара родитель-дочерний
+                facilitys_id: facilitys_id,
                 status_id: editingProject?.status?.id ?? null
             });
-
         }
     }, [editingProject, form]);
 
     const save = (data) => {setEditingProject(data);}
 
 
-    const sortFacilitysForCascader = (data) => {
-        const groupedFacilitys = data.facilitys.reduce((acc, facility) => {
-            const { id, name, type_facility, group } = facility;
-            const { id: typeId, name: typeName, subselectionFacility } = type_facility;
-            const { id: groupId, name: groupName, subselection_facility: groupSubselectionFacility } = group;
+    const sortFacilitysForCascader = (facilities) => {
+        return facilities.map(facility => {
+            const subselectionFacilities = facility.subselection_facility.map(subFacility => {
+                const groupFacilities = subFacility.group_facility.map(groupFacility => {
+                    const facilities = groupFacility.facilities.map(facility => ({
+                        key: facility.id,
+                        label: facility.name,
+                        value: facility.code
+                    }));
 
-            if (!acc[typeId]) {
-                acc[typeId] = { value: typeId, label: typeName, children: [] };
-            }
-            const typeNode = acc[typeId];
-
-            if (!typeNode.children[groupId]) {
-                typeNode.children[groupId] = { value: groupId, label: groupName, children: [] };
-            }
-            const groupNode = typeNode.children[groupId];
-
-            if (!groupNode.children[subselectionFacility.id]) {
-                groupNode.children[subselectionFacility.id] = { value: subselectionFacility.id, label: subselectionFacility.name, children: [] };
-            }
-            const subselectionNode = groupNode.children[subselectionFacility.id];
-
-            subselectionNode.children.push({ value: id, label: name });
-
-            return acc;
-        }, {});
-
-        const sortedOptions = Object.values(groupedFacilitys).map((typeNode) => {
-            typeNode.children = Object.values(typeNode.children).map((groupNode) => {
-                groupNode.children = Object.values(groupNode.children).map((subselectionNode) => {
-                    subselectionNode.children.sort((a, b) => a.label.localeCompare(b.label));
-                    return subselectionNode;
+                    return {
+                        key: groupFacility.id,
+                        label: groupFacility.name,
+                        value: groupFacility.code,
+                        children: facilities
+                    };
                 });
-                groupNode.children.sort((a, b) => a.label.localeCompare(b.label));
-                return groupNode;
+
+                return {
+                    key: subFacility.id,
+                    label: subFacility.name,
+                    value: subFacility.code,
+                    children: groupFacilities
+                };
             });
-            typeNode.children.sort((a, b) => a.label.localeCompare(b.label));
-            return typeNode;
+
+            return {
+                key: facility.id,
+                label: facility.name,
+                value: facility.code,
+                children: subselectionFacilities
+            };
         });
-
-        return sortedOptions;
     };
-
     // Обработчик отправки формы
     const handleSubmit = () => {
         if (editingProject) {
@@ -261,8 +273,9 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                 variables: {
                     data: {
                         ...form.getFieldsValue(),
+                        number: getNumberString(),
                         date_create: form.getFieldValue("date_create")?.toISOString() ?? null,
-                        facilitys_id: form.getFieldValue('facilitys_id') ? form.getFieldValue('facilitys_id').map(pair => pair[1]) : null,
+                        facilitys_id: facilitysList?.map(cascad => cascad[3].key) ?? null,
                         id: editingProject?.id,
                         organization_customer_id: selectedOrganization
                     }
@@ -273,31 +286,29 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                 variables: {
                     data: {
                         ...form.getFieldsValue(),
+                        number: getNumberString(),
                         date_create: form.getFieldValue("date_create")?.toISOString() ?? null,
-
-                        facilitys_id: form.getFieldValue('facilitys_id') ? form.getFieldValue('facilitys_id').map(pair => pair[1]) : null,
+                        facilitys_id: facilitysList?.map(cascad => cascad[3].key) ?? null,
                         organization_customer_id: selectedOrganization,
                         status_id: 4
                     }
                 }
             });
         }
-
     };
-    const checkSelectDelegates = (value, option) => {
-        console.log(value);
-        console.log(option);
-        console.log(form.getFieldValue('delegates_id'));
-    }
-
     return (<>
         <StyledFormRegular form={form} layout="vertical">
             <Divider>:Данные:</Divider>
-            <StyledFormItem name="number" label="Номер проекта" rules={[{required: true}]}>
-                <Input defaultValue={projectNumber} value={projectNumber}></Input>
+            <StyledFormItem name="number" label="Номер проекта" rules={[{required: true}]} >
+                <div>
+                    {project?.number ?
+                        (<Input defaultValue={project?.number} value={project?.number}/>) :
+                        (<Input defaultValue={getNumberString()} value={getNumberString()}/>)
+                    }
+                </div>
             </StyledFormItem>
             <StyledFormItem name="name" label="Наименование проекта" rules={[{required: true}]}>
-                <Input/>
+            <Input/>
             </StyledFormItem>
             <StyledFormItemSelectAndCreateWitchEdit
                 formName={"organization_customer_id"}
@@ -316,7 +327,6 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                 formName={"delegates_id"}
                 formLabel={"Представители компании"}
                 mode={'multiple'}
-                onSelect={checkSelectDelegates}
                 placeholder={"По компаниям"}
                 loading={loadingDelegates}
                 items={dataDelegates?.contacts?.items}
@@ -330,24 +340,25 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                     allowClear
                     showSearch
                     filterOption={false}
-                    value={selectedTypeProject}
+                    value={selectedTypeProject?.id}
                     loading={loadingTypeProject}
                     placeholder="Начните ввод..."
                     onSearch={(value) => handleAutoCompleteTypeProjects(value)}
                     onSelect={(value, option) => handleEditingTemplate(value, option)}>
                     {dataTypeProject?.typeProjects?.items?.map(typeDocument => (
                         <Option key={typeDocument.id}
-                                value={typeDocument.id}>{typeDocument.name}</Option>))}
+                                value={typeDocument?.id}>{typeDocument.name}</Option>))}
                 </Select>
             </StyledFormItem>
 
             <StyledFormItem name="facilitys_id" label="Объект" style={{width: "100%"}}>
                 <Cascader
                     style={{width: "100%"}}
-                     showCheckedStrategy={SHOW_CHILD}
+                    showCheckedStrategy={SHOW_CHILD}
                     popupMatchSelectWidth={false}
                     options={cascaderFacility}
                     multiple
+                    onChange={(value, selectedOptions) => setFacilitysList(selectedOptions)}
                     expandTrigger="hover"
                     maxTagCount="responsive"
                 />
@@ -368,8 +379,8 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                     />
 
                 </StyledFormItem>
-                <StyledFormItem name="date_create" label="Дата создания договора" style={{width: '50%'}}>
-                    <DatePicker placeholder="Выберите дату" style={{width: '100%'}}/>
+                <StyledFormItem name="date_create" label="Дата создания договора" style={{width: '50%'}} >
+                    <DatePicker placeholder="Выберите дату" style={{width: '100%'}} onChange={(value) => setDateCreate(value)}/>
                 </StyledFormItem>
                 {/*<StyledFormItem name="date_end" label="Дата окончания" >*/}
                 {/*    <DatePicker minDate={dateSigning} disabled={!editingProject}*/}
@@ -388,8 +399,8 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                 </Select>
             </StyledFormItem>
 
-            <StyledFormItem name="price" label="Стоимость">
-                <InputNumber suffix={"₽"} width={"100%"}
+            <StyledFormItem name="price"  style={{width: '100%'}} label="Стоимость">
+                <InputNumber suffix={"₽"} style={{width: '100%'}}
                              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                              parser={value => `${value}`.replace(/[^0-9]/g, '')}/>
             </StyledFormItem>

@@ -28,7 +28,7 @@ type Query {
     currentUser: User!
 
     legalForms: [LegalForm]!
-    facilities: [Facility!]!
+    facilities: [SelectionFacility!]!
     TypePayments: [TypePayment]
     projectStatuses: [ProjectStatus!]!
 
@@ -574,6 +574,7 @@ type AuthPayload {
 }type Facility{
     id: ID!
     name: String!
+    code: Int
     type_facility: TypeFacility
     group_facility: GroupFacility
 }type TypeFacility{
@@ -582,21 +583,27 @@ type AuthPayload {
 }type GroupFacility{
     id: ID!
     name: String!
+    code: Int
+    facilities: [Facility]
     subselection_facility: SubselectionFacility
 }type SubselectionFacility{
     id: ID!
     name: String!
+    code: Int
+    group_facility: [GroupFacility]
     selection_facility: SelectionFacility
 }type SelectionFacility{
     id: ID!
     name: String!
+    code: Int
+    subselection_facility: [SubselectionFacility]
 }type Project{
     id: ID!
     number: String
     name: String
     organization_customer: Organization
     type_project_document: TypeProjectDocument
-    facilitys: [Facility]
+    facilities: [Facility]
     date_signing: String
     date_create: String
     duration: Int

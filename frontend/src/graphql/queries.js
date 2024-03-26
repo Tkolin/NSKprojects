@@ -176,10 +176,26 @@ export const PROJECTS_QUERY = gql`
                     id
                     name
                 }
-                facilitys
+                facilities
                 {
                     id
                     name
+                    code
+                    group_facility {
+                        id
+                        name
+                        code
+                        subselection_facility {
+                            id
+                            name
+                            code
+                            selection_facility {
+                                id
+                                name
+                                code
+                            }
+                        }
+                    }
                 }
                 date_signing
                 date_create
@@ -356,23 +372,23 @@ export const CONTACTS_SHORT_QUERY = gql`
     }
 `;
 export const FACILITYS_QUERY = gql`
-    query FaclitiysQuery  {
+    query FacilitiesQuery   {
         facilities {
             id
             name
-            type_facility {
+            code
+            subselection_facility {
                 id
                 name
-            }
-            group_facility {
-                id
-                name
-                subselection_facility {
+                code
+                group_facility {
                     id
                     name
-                    selection_facility {
+                    code
+                    facilities {
                         id
                         name
+                        code
                     }
                 }
             }

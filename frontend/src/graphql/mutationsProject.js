@@ -35,10 +35,25 @@ export const ADD_PROJECT_MUTATION = gql`
                 id
                 name
             }
-            facilitys
-            {
+            facilities {
                 id
                 name
+                code
+                group_facility {
+                    id
+                    name
+                    code
+                    subselection_facility {
+                        id
+                        name
+                        code
+                        selection_facility {
+                            id
+                            name
+                            code
+                        }
+                    }
+                }
             }
             date_signing
             duration
@@ -113,10 +128,25 @@ export const UPDATE_PROJECT_MUTATION = gql`
                 id
                 name
             }
-            facilitys
-            {
+            facilities {
                 id
                 name
+                code
+                group_facility {
+                    id
+                    name
+                    code
+                    subselection_facility {
+                        id
+                        name
+                        code
+                        selection_facility {
+                            id
+                            name
+                            code
+                        }
+                    }
+                }
             }
             date_signing
             date_end

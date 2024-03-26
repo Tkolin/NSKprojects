@@ -20,7 +20,7 @@ final readonly class Projects
             $projectsQuery = Project::with('organization_customer')
                 ->with('type_project_document')
                 ->with("delegations")
-                ->with('project_facilitys')
+                ->with('facilities')
                 ->with('status')
                 ->with('delegations')
                 ->with('project_irds.IRD')

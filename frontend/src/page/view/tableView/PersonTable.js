@@ -215,6 +215,7 @@ const PersonTable = () => {
                 }}
             />
             <Modal
+                key={selectedPerson?.id}
                 open={editModalVisible}
                 width={900}
                 onCancel={() => setEditModalVisible(false)}

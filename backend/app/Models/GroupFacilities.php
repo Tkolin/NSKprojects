@@ -11,6 +11,7 @@ class GroupFacilities extends Model
 {
     protected $fillable = [
         'name',
+        'code',
         'subselection_facility_id',
     ];
     public function subselection_facility(): BelongsTo
@@ -18,8 +19,8 @@ class GroupFacilities extends Model
         return $this->belongsTo(SubselectionFacility::class);
     }
 
-    public function facility(): HasMany
+    public function facilities(): HasMany
     {
-        return $this->hasMany(Facility::class);
+        return $this->hasMany(Facility::class, 'group_facility_id','id');
     }
 }

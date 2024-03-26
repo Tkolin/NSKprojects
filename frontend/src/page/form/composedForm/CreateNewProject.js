@@ -1,13 +1,9 @@
-import React, {useState} from 'react';
-import {Button, Col, Descriptions, Row, Space, Steps, Typography} from 'antd';
-import TasksProjectExecutorForm from "../aggregateComponent/projectForm/TasksProjectExecutorForm";
-import TasksToProjectStageForm from "../aggregateComponent/projectForm/TasksToProjectStageForm";
+import React, {useEffect, useState} from 'react';
+import {Button, Col, Descriptions, Row, Steps, Typography} from 'antd';
 import ProjectForm from "../basicForm/ProjectForm";
 import StagesProjectForm from "../aggregateComponent/projectForm/StagesProjectForm";
 import IrdsProjectForm from "../aggregateComponent/projectForm/IrdsProjectForm";
-import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular, StyledBlockSmall} from "../../style/BlockStyles";
-import ProjectDetails from "../../view/detailsView/ProjectDetails";
-import PersonContractFileDownload from "../../script/PersonContractFileDownload";
+import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../style/BlockStyles";
 import ProjectFileDownload from "../../script/ProjectFileDownload";
 import StagesProjectFileDownload from "../../script/StagesProjectFileDownload";
 import IrdsProjectFileDownload from "../../script/IrdsProjectFileDownload";
@@ -17,23 +13,20 @@ import PaymentInvoiceProjectDownload from "../../script/PaymentInvoiceProjectDow
 const {Step} = Steps;
 const { Text } = Typography;
 
-const MyComponent = () => {
+const ComposedProjectForm = ({editProject}) => {
     const [currentStep, setCurrentStep] = useState(0);
-    const [project, setProject] = useState(null);
+    const [project, setProject] = useState(editProject || null);
+    useEffect(() => {
+        console.log(project);
+        console.log(editProject);
+    }, [project]);
 
     const handleProject = (data) => {
         setProject(null);
         setProject(data);
-        console.log("hancldeProjectCreater ", data);
     };
-    const onNext = () => {
-
-        setCurrentStep(currentStep + 1);
-    }
-    const onBack = () => {
-
-       setCurrentStep(currentStep - 1);
-    }
+    const onNext = () => {setCurrentStep(currentStep + 1);}
+    const onBack = () => {setCurrentStep(currentStep - 1);}
 
     return (
         <div style={{display: 'flex', justifyContent: 'center'}}>
@@ -45,10 +38,9 @@ const MyComponent = () => {
                         <Step title="Заполнение Этапы"/>
                         <Step title="Заполнение Ирд"/>
                         <Step title="Документы"/>
-                        {/*<Step title="Проверка данных"/>*/}
                     </Steps>
                     <Button disabled={(currentStep <= 0)} onClick={onBack}>Отменить шаг</Button>
-                    <Button  onClick={onNext}>----</Button>
+                    <Button onClick={onNext}>----</Button>
                 </Col>
                 <Col span={20}>
                     {currentStep === 0 && (
@@ -82,7 +74,6 @@ const MyComponent = () => {
                                 <Descriptions.Item label="Список ИРД">
                                     <IrdsProjectFileDownload projectId={project.id}/>
                                 </Descriptions.Item>
-
                                     <Descriptions.Item column={1} label="Акты выполненных работ" span={3}>
                                         {project?.project_stages?.map(psid => (
                                             psid.stage.id !== 0 && (
@@ -94,7 +85,6 @@ const MyComponent = () => {
                                     </Descriptions.Item>
                                     <Descriptions.Item column={2} label="Счета на оплату" span={3}>
                                         {project?.project_stages?.map(psid => (
-
                                                 <div>
                                                     <Text style={{marginRight: 20}}>Этап №{psid.number} ({psid.stage.name}):   </Text>
                                                     <ActRenderingProjectDownload stageNumber={psid.number}
@@ -105,7 +95,6 @@ const MyComponent = () => {
 
                             </Descriptions>
                         </StyledBlockBig>
-                        // <ProjectDetails project={project} onSubmit={onNext}/>
                     )}
                 </Col>
             </Row>
@@ -114,4 +103,4 @@ const MyComponent = () => {
 };
 
 
-export default MyComponent;
+export default ComposedProjectForm;

@@ -174,6 +174,7 @@ const TypeProjectTable = () => {
                 }}
             />
             <Modal
+                key={selectedTypeProject?.id}
                 open={editModalVisible}
                 width={900}
                 onCancel={() => setEditModalVisible(false)}
@@ -189,7 +190,7 @@ const TypeProjectTable = () => {
                 footer={null}
                 onClose={handleClose}
             >
-                <TypeProjectForm onClose={handleClose}/>
+                <TypeProjectForm typeProject={null} onClose={handleClose}/>
             </Modal>
         </div>
     );

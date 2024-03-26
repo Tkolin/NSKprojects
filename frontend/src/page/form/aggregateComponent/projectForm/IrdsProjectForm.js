@@ -26,16 +26,18 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
         });
     };
     const handleAutoCompleteIrdSelect = (value) => {
-        if (value == 'CREATE_NEW') {
-            addIrd({variables: {name: autoCompleteIrd}});
             refetchIrds({search: autoCompleteIrd});
-        }
     };
+
     // Получение данных для выпадающих списков
-    const {loading: loadingIrds, refetch: refetchIrds} = useQuery(IRDS_QUERY, {
+    const {loading: loadingIrds, refetch: refetchIrds, data: dataIrdsQuery} = useQuery(IRDS_QUERY, {
+        fetchPolicy: 'network-only',
         variables: {queryOptions: {search: autoCompleteIrd, limit: 10, page: 1}},
         onCompleted: (data) => setDataIrds(data)
     });
+    useEffect((dataIrdsQuery) => {
+        dataIrdsQuery ?? setDataIrds(dataIrdsQuery);
+    }, [dataIrdsQuery]);
     const {
         loading: loadingTemplate, data: dataTemplate
     } = useQuery(TEMPLATE_IRDS_TYPE_PROJECTS_QUERY, {
@@ -43,9 +45,7 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
         fetchPolicy: 'network-only',
         onCompleted: (data) =>{
             loadTemplate();
-            addingIrds(actualityProjectData?.project_irds?.length > 0 ? actualityProjectData.project_irds :
-                (data?.templatesIrdsTypeProjects?.length > 0 ? data.templatesIrdsTypeProjects
-                    : null))}
+            addingIrds(data?.templatesIrdsTypeProjects?.map((titp) => titp.ird))}
     });
     //Мутация
     const [addIrd] = useMutation(ADD_IRD_MUTATION, {
@@ -61,7 +61,7 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
     const addingIrds = (value) => {
         if (!dataIrds || !value) return;
         const newIrds = value.map(a => ({
-            id: a?.ird?.id ?? null, name: a?.ird?.name ?? null,
+            id: a?.id ?? null, name: a?.name ?? null,
         }));
         const existingIrds = dataIrds.irds ? dataIrds.irds.items : [];
         const updatedIrds = [...existingIrds, ...newIrds];
@@ -92,6 +92,7 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
     useEffect(() => {
         if (project?.id) {
             refetchProject({ queryOptions: { id: Number(project?.id) }});
+            addingIrds( project?.project_irds?.map((pirds) => pirds.IRD));
         }
 
     }, []);
@@ -106,13 +107,11 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
                 console.log("data.items[0] ", data.projects.items[0]);
                 setProject(data.projects.items[0]);
                 setActualityProjectData(data.projects.items[0])
-
             }
             openNotification('topRight', 'success', 'Данные проекта подргужены!');
         },
             onError: (error) => {
                 openNotification('topRight', 'error', 'Ошибка при загрузки проекта: ' + error.message);
-
             }});
     // Мутации для добавления и обновления
     const [updateIrdsToProject] = useMutation(UPDATE_IRDS_TO_PROJECT_MUTATION, {
@@ -139,7 +138,7 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
             }
         });
     };
-    if (loadingTemplate || loadingIrds || projectLoading)
+    if (loadingTemplate || projectLoading)
         return <LoadingSpinnerStyles/>
     return (
         <StyledFormBig form={formIRD} name="dynamic_form_nest_item" autoComplete="off" disabled={disable}>
@@ -196,7 +195,6 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
                             </Form.Item>
                         </Tooltip>
                         <Tooltip title="Дата получения">
-
                             <Form.Item
                                 {...restField}
                                 name={[name, 'isChecked']}

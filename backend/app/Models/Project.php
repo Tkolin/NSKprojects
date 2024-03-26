@@ -27,6 +27,10 @@ class Project extends Model
     {
         return $this->belongsToMany(Contact::class, "project_delegations","project_id","delegation_id");
     }
+    public function facilities(): BelongsToMany
+    {
+        return $this->belongsToMany(Facility::class,"project_facilities","project_id","facility_id");
+    }
     public function organization_customer(): BelongsTo
     {
         return $this->belongsTo(Organization::class);

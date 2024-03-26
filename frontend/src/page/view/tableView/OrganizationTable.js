@@ -202,6 +202,7 @@ const OrganizationTable = () => {
             }}
         />
         <Modal
+            key={selectedOrganization?.id}
             open={editModalVisible}
             width={900}
             onCancel={() => setEditModalVisible(false)}

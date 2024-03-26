@@ -169,6 +169,7 @@ const StageTable = () => {
                 }}
             />
             <Modal
+                key={selectedStage?.id}
                 open={editModalVisible}
                 width={900}
                 onCancel={() => setEditModalVisible(false)}
@@ -184,7 +185,7 @@ const StageTable = () => {
                 footer={null}
                 onClose={handleClose}
             >
-                <StageForm onClose={handleClose}/>
+                <StageForm stage={null} onClose={handleClose}/>
             </Modal>
         </div>
     );

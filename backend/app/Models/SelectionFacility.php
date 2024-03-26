@@ -10,9 +10,10 @@ class SelectionFacility extends Model
 {
     protected $fillable = [
         'name',
+        'code',
     ];
-    public function selectionFacilities(): HasMany
+    public function subselection_facility(): HasMany
     {
-        return $this->hasMany(SubselectionFacility::class);
+        return $this->hasMany(SubselectionFacility::class, 'selection_facility_id', 'id');
     }
 }

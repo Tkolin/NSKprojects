@@ -184,6 +184,7 @@ const ContactTable = () => {
             }}
         />
         <Modal
+            key={selectedContact?.id}
             open={editModalVisible}
             onCancel={() => setEditModalVisible(false)}
             footer={null}

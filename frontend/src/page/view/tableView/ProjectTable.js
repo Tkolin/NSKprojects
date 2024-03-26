@@ -12,7 +12,9 @@ import IrdsProjectFileDownload from "../../script/IrdsProjectFileDownload";
 import Title from "antd/es/typography/Title";
 import ActRenderingProjectDownload from "../../script/ActRenderingProjectDownload";
 import PaymentInvoiceProjectDownload from "../../script/PaymentInvoiceProjectDownload";
-const { Text } = Typography;
+import CreateNewProject from "../../form/composedForm/CreateNewProject";
+
+const {Text} = Typography;
 
 const ProjectTable = () => {
 
@@ -61,12 +63,15 @@ const ProjectTable = () => {
     const handleClose = () => {
         setEditModalVisible(false);
     };
-    const handleEdit = (contactId) => {
-        const contact = data?.projects?.items?.find(contact => contact.id === contactId);
-        setSelectedProject(contact);
+    const handleEdit = (project) => {
+        console.log(project);
+        setSelectedProject(project);
         setEditModalVisible(true);
     };
 
+    function addLeadingZeros(number, length) {
+        return String(number).padStart(length, '0');
+    }
 
     // Обработка загрузки и ошибок
     if (!data)
@@ -104,7 +109,7 @@ const ProjectTable = () => {
             key: 'delegations',
             render: (delegations) => (
                 delegations.map(delegate => (
-                    <span key={delegate.id}>{delegate.last_name} {delegate.first_name} {delegate.patronymic}</span>
+                    <div key={delegate.id}>{delegate.last_name} {delegate.first_name} {delegate.patronymic}</div>
                 ))
             )
         },
@@ -117,49 +122,58 @@ const ProjectTable = () => {
         },
         {
             title: 'Объект',
-            dataIndex: 'facility',
-            key: 'facility',
-            render: (facility) => facility ?
-                facility.name : ""
-
+            dataIndex: 'facilities',
+            key: 'facilities',
+            render: (facilities) =>
+                facilities?.map(f => (
+                    <div key={f.id}>
+                        {addLeadingZeros(f?.group_facility?.subselection_facility?.selection_facility?.code, 2)}.
+                        {addLeadingZeros(f?.group_facility?.subselection_facility?.code, 2)}.
+                        {addLeadingZeros(f?.group_facility?.code, 3)}.
+                        {addLeadingZeros(f?.code, 3)}.
+                        {f?.name}</div>
+                ))
         },
         {
             title: 'Дата подписания',
             dataIndex: 'date_signing',
             key: 'date_signing',
+            width: 100,
         },
         {
             title: 'Продолжительность',
             dataIndex: 'duration',
             key: 'duration',
+            width: 100,
+
         },
         {
             title: 'Дата начала',
             dataIndex: 'date_end',
             key: 'date_end',
+            width: 100,
 
-            sorter: true,
-            ellipsis: true,
         },
         {
             title: 'Дата окончания',
             dataIndex: 'date_end',
             key: 'date_end',
+            width: 100,
 
-            sorter: true,
-            ellipsis: true,
         },
         {
             title: 'Стоимость',
             dataIndex: 'price',
             key: 'price',
-            render: (price) => price ?
-                price.name : ""
+            width: 160,
+            render: (price) =>
+                (price?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' ₽')
         },
         {
             title: 'Статус',
             dataIndex: 'status',
             key: 'status',
+            width: 220,
             render: (status) => status ?
                 status.name : ""
         },
@@ -170,7 +184,7 @@ const ProjectTable = () => {
                     <ProjectFileDownload projectId={record.id}/>
                 </>
             ),
-        },  {
+        }, {
             title: 'Список ИРД', key: 'btnIrd', width: 80, align: 'center',
             render: (text, record) => (
                 <>
@@ -188,8 +202,9 @@ const ProjectTable = () => {
         {
             title: 'Управление',
             key: 'edit',
+            width: 110,
             render: (text, record) => (
-                <Button size={"small"} onClick={() => handleEdit(record.id)}>Изменить</Button>
+                <Button size={"small"} onClick={() => handleEdit(record)}>Изменить</Button>
             ),
         },
     ];
@@ -219,7 +234,7 @@ const ProjectTable = () => {
     return (
         <div>
             <Divider style={{marginTop: 0}}>
-                <Title style={{marginTop: 0}} level={2}>Справочник Проекты</Title>
+                <Title style={{marginTop: 0}} level={2}>Отчёты по Проектам</Title>
             </Divider>
 
             <StyledFormLarge form={formSearch} layout="horizontal">
@@ -234,7 +249,6 @@ const ProjectTable = () => {
                     </Space>
                 </Form.Item>
             </StyledFormLarge>
-
             <Table
                 size={'small'}
                 sticky={{
@@ -266,23 +280,25 @@ const ProjectTable = () => {
                         <>
                             <Descriptions bordered size={"small"} style={{width: "40%"}}>
 
-                                         <Descriptions.Item column={1} label="Акты выполненных работ" span={3}>
-                                            {record.project_stages.map(psid => (
-                                                psid.stage.id !== 0 && (
-                                                <div>
-                                                    <Text style={{marginRight: 20}}>Этап №{psid.number} ({psid.stage.name}):   </Text>
-                                            <ActRenderingProjectDownload  stageNumber={psid.number} projectId={record.id} type="acts"/>
-                                                </div>)
-                                            ) )}
-                                        </Descriptions.Item>
+                                <Descriptions.Item column={1} label="Акты выполненных работ" span={3}>
+                                    {record.project_stages.map(psid => (
+                                        psid.stage.id !== 0 && (
+                                            <div>
+                                                <Text style={{marginRight: 20}}>Этап
+                                                    №{psid.number} ({psid.stage.name}): </Text>
+                                                <ActRenderingProjectDownload stageNumber={psid.number}
+                                                                             projectId={record.id} type="acts"/>
+                                            </div>)
+                                    ))}
+                                </Descriptions.Item>
                                 <Descriptions.Item column={2} label="Счета на оплату" span={3}>
                                     {record.project_stages.map(psid => (
-
-                                            <div>
-                                                <Text style={{marginRight: 20}}>Этап №{psid.number} ({psid.stage.name}):   </Text>
-                                                <PaymentInvoiceProjectDownload stageNumber={psid.number}
-                                                                               projectId={record.id} type="acts"/>
-                                            </div>
+                                        <div>
+                                            <Text style={{marginRight: 20}}>Этап
+                                                №{psid.number} ({psid.stage.name}): </Text>
+                                            <PaymentInvoiceProjectDownload stageNumber={psid.number}
+                                                                           projectId={record.id} type="acts"/>
+                                        </div>
                                     ))}
                                 </Descriptions.Item>
                             </Descriptions>
@@ -291,12 +307,15 @@ const ProjectTable = () => {
                 }}
             />
             <Modal
+                key={selectedProject?.id}
                 open={editModalVisible}
                 onCancel={() => setEditModalVisible(false)}
                 footer={null}
                 onClose={handleClose}
+                width={1300}
+                style={{width: 1200}}
             >
-                <ProjectForm project={selectedProject} onClose={handleClose}/>
+                <CreateNewProject editProject={selectedProject}  onClose={handleClose}/>
             </Modal>
 
         </div>
