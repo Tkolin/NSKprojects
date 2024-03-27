@@ -86,7 +86,6 @@ const ProjectTable = () => {
             key: 'number',
 
             sorter: true,
-            ellipsis: true,
         },
         {
             title: 'Название',
@@ -94,7 +93,6 @@ const ProjectTable = () => {
             key: 'name',
 
             sorter: true,
-            ellipsis: true,
         },
         {
             title: 'Заказчик',
@@ -252,7 +250,7 @@ const ProjectTable = () => {
             <Table
                 size={'small'}
                 sticky={{
-                    offsetHeader: 0,
+                    offsetHeader: '64px',
                 }}
                 loading={loading}
                 dataSource={data?.projects?.items?.map((org, index) => ({...org, key: index}))}
@@ -278,29 +276,31 @@ const ProjectTable = () => {
                     },
                     expandedRowRender: (record) => (
                         <>
-                            <Descriptions bordered size={"small"} style={{width: "40%"}}>
-
-                                <Descriptions.Item column={1} label="Акты выполненных работ" span={3}>
-                                    {record.project_stages.map(psid => (
-                                        psid.stage.id !== 0 && (
-                                            <div>
-                                                <Text style={{marginRight: 20}}>Этап
-                                                    №{psid.number} ({psid.stage.name}): </Text>
-                                                <ActRenderingProjectDownload stageNumber={psid.number}
-                                                                             projectId={record.id} type="acts"/>
-                                            </div>)
-                                    ))}
-                                </Descriptions.Item>
-                                <Descriptions.Item column={2} label="Счета на оплату" span={3}>
-                                    {record.project_stages.map(psid => (
-                                        <div>
-                                            <Text style={{marginRight: 20}}>Этап
-                                                №{psid.number} ({psid.stage.name}): </Text>
-                                            <PaymentInvoiceProjectDownload stageNumber={psid.number}
-                                                                           projectId={record.id} type="acts"/>
-                                        </div>
-                                    ))}
-                                </Descriptions.Item>
+                            <Descriptions layout={"vertical"} bordered size={"small"} style={{width: "550px"}}>
+                                <Descriptions column={1}>
+                                    <Text>Этапы</Text>
+                                </Descriptions>
+                                <Descriptions column={1}>
+                                    <Text>Акты</Text>
+                                </Descriptions>
+                                <Descriptions column={1}>
+                                    <Text>Счета</Text>
+                                </Descriptions>
+                                {record.project_stages.map(psid => (
+                                    psid.stage.id !== 0 && (
+                                        <>
+                                            <Descriptions title={`Этап №${psid.number} (${psid.stage.name})`} column={1}>
+                                                    <Text>Этап {psid.number} {psid.stage.name}</Text>
+                                            </Descriptions>
+                                            <Descriptions title={`Акт`} column={1}>
+                                                    <ActRenderingProjectDownload stageNumber={psid.number} projectId={record.id} type="acts"/>
+                                            </Descriptions>
+                                            <Descriptions title={`Счёт`}  column={1}>
+                                                    <PaymentInvoiceProjectDownload stageNumber={psid.number} projectId={record.id} type="acts"/>
+                                            </Descriptions>
+                                        </>
+                                    )
+                                ))}
                             </Descriptions>
                         </>
                     ),
@@ -315,7 +315,7 @@ const ProjectTable = () => {
                 width={1300}
                 style={{width: 1200}}
             >
-                <CreateNewProject editProject={selectedProject}  onClose={handleClose}/>
+                <CreateNewProject editProject={selectedProject} onClose={handleClose}/>
             </Modal>
 
         </div>

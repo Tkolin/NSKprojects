@@ -37,6 +37,7 @@ const ComposedProjectForm = ({editProject}) => {
                         <Step title="Заполнения основных данных"/>
                         <Step title="Заполнение Этапы"/>
                         <Step title="Заполнение Ирд"/>
+                        <Step title="Техническое задание"/>
                         <Step title="Документы"/>
                     </Steps>
                     <Button disabled={(currentStep <= 0)} onClick={onBack}>Отменить шаг</Button>
@@ -63,6 +64,11 @@ const ComposedProjectForm = ({editProject}) => {
                         </StyledBlockLarge>
                     )}
                     {currentStep === 3 && (
+                        <StyledBlockLarge label={"Техническоое задание"}>
+                            <IrdsProjectForm setProject={handleProject} project={project} onSubmit={onNext}/>
+                        </StyledBlockLarge>
+                    )}
+                    {currentStep === 4 && (
                         <StyledBlockBig  bordered size={"small"}  label={"Сформированная документация:"}>
                             <Descriptions>
                                 <Descriptions.Item label="Договор с заказчиком">

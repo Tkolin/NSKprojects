@@ -15,7 +15,7 @@ final readonly class TemplatesContentsTypeProjects
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
-        $allowedRoles = ['admin'];
+        $allowedRoles = ['admin','bookkeeper'];
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
             if (isset($args['typeProject'])) {

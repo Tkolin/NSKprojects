@@ -98,6 +98,13 @@ const App = () => {
 
                                         <Route path="/organization" element={<OrganizationTable />} />
                                         <Route path="/organization/new" element={<OrganizationForm />} />
+
+                                        <Route path="/project" element={<ProjectTable />} />
+                                        <Route path="/project/new" element={<CreateNewProject />} />
+                                        <Route path="/project/stage" element={<ProjectStageList />} />
+                                        <Route path="/project/stage/task" element={<StageTaskList />}/>
+                                        <Route path="/project/facility" element={<FacilityList />} />
+                                        <Route path="/project/facility/new" element={<FacilityForm />} />
                                     </>
                                 )}
                             </>

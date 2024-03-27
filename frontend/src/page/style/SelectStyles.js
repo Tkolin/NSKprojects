@@ -28,9 +28,11 @@ const BaseStyledFormItemSelect = ({
                                       loading,
                                       items,
                                       formatOptionText,
-                                      mode
+                                      mode,
+                                      labelCol,
+                                      wrapperCol
                                   }) => (
-    <StyledFormItem name={formName} label={formLabel} style={{width: width}}>
+    <StyledFormItem name={formName} labelCol={labelCol} wrapperCol={wrapperCol} label={formLabel} style={{width: width}}>
         <Select
             style={{width: width}}
             popupMatchSelectWidth={false}
@@ -120,7 +122,9 @@ const StyledFormItemSelectAndCreateWitchEdit = ({
                                            secondBtnOnClick,
                                            formatOptionText,
                                            mode,
-                                                    secondDisable
+                                           secondDisable,
+                                                    labelCol,
+                                                    wrapperCol
                                        }) => (
     <BaseStyledSpaceCompactFormItemSelect width={"calc(100% + 64px)"}>
         <BaseStyledFormItemSelect     formName={formName}
@@ -132,7 +136,9 @@ const StyledFormItemSelectAndCreateWitchEdit = ({
                                       items = {items}
                                       formatOptionText ={formatOptionText}
                                       mode = {mode}
-                                      width={"calc(100% - 64px)"}/>
+                                      width={"calc(100% - 64px)"}
+                                      labelCol={labelCol}
+                                      wrapperCol={wrapperCol}/>
         <BaseStyledButtonFormItemSelect  position={1} onClick={firstBtnOnClick}
                                          icon={<PlusOutlined/>}
                                          type={'dashed'}

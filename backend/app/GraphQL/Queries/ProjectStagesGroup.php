@@ -12,7 +12,7 @@ final readonly class ProjectStagesGroup
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
-        $allowedRoles = ['admin']; // Роли, которые разрешены
+        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
             $projects = Project::with('stages')->get();

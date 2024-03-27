@@ -1,18 +1,22 @@
 import React, {useEffect, useState} from 'react';
-import {Divider, Form, Input, Modal, notification, Select, Space} from 'antd';
+import {Divider, Form, Input, Modal, notification, Select} from 'antd';
 import { useMutation, useQuery } from '@apollo/client';
-import {CONTACTS_QUERY, ORGANIZATIONS_SHORT_QUERY, POSITIONS_QUERY} from '../../../graphql/queries';
+import {
+    CONTACTS_QUERY,
+    ORGANIZATIONS_QUERY,
+    POSITIONS_QUERY
+} from '../../../graphql/queries';
 import {
     ADD_CONTACT_MUTATION,
     UPDATE_CONTACT_MUTATION
 } from '../../../graphql/mutationsContact';
-import {FormItemHorizontal, StyledFormItem, StyledFormRegular} from '../../style/FormStyles';
+import {StyledFormItem, StyledFormRegular} from '../../style/FormStyles';
 import {DatePicker} from "antd/lib";
 import moment from 'moment';
 import {StyledBlockRegular} from "../../style/BlockStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
-import {PlusOutlined} from "@ant-design/icons";
 import OrganizationForm from "./OrganizationForm";
+import {StyledFormItemSelectAndCreateWitchEdit} from "../../style/SelectStyles";
 
 const ContactForm = ({ contact, onClose }) => {
 
@@ -23,6 +27,13 @@ const ContactForm = ({ contact, onClose }) => {
     const [autoCompleteOrganization, setAutoCompleteOrganization] = useState('');
     const [autoCompletePositions, setAutoCompletePositions] = useState('');
     const [addOrganizationModalVisible,setAddOrganizationModalVisible]= useState(false);
+    const [editOrganizationModalVisible,setEditOrganizationModalVisible]= useState(false);
+    const [selectedOrganizationData,setSelectedOrganizationData]= useState(null);
+    const handleSelectedOrganization = (value) => {
+        setAutoCompleteOrganization(null);
+        setSelectedOrganizationData(dataOrganizations?.organizations?.items?.find(org => org.id === value));
+        console.log(value);
+    };
     const handleAutoCompleteOrganization = (value) => {
         setAutoCompleteOrganization(value);
     };
@@ -47,7 +58,7 @@ const ContactForm = ({ contact, onClose }) => {
         onCompleted: (data) => setDataPositions(data)
     });
 
-    const { loading: loadingOrganizations, error: errorOrganizations, refetch: orgRefetch } = useQuery(ORGANIZATIONS_SHORT_QUERY, {
+    const { loading: loadingOrganizations, error: errorOrganizations, refetch: orgRefetch } = useQuery(ORGANIZATIONS_QUERY, {
         variables: {
             queryOptions: { search: autoCompleteOrganization, limit: 10, page: 1}
         },
@@ -100,9 +111,10 @@ const ContactForm = ({ contact, onClose }) => {
 
         }
     }, [contact, form]);
-    const handleClose = () => {
+    const handleCloseModalFormView = () => {
         orgRefetch();
         setAddOrganizationModalVisible(false);
+        setEditOrganizationModalVisible(false);
     };
     // Обработчик отправки формы
     const handleSubmit = () => {
@@ -170,27 +182,21 @@ const ContactForm = ({ contact, onClose }) => {
                     <DatePicker placeholder="Выберите дату" />
                 </StyledFormItem>
                 <Divider orientation={"left"}>Данные организации:</Divider>
-                <Space.Compact style={{width: "100%"}}>
-                    <StyledFormItem style={{width: "100%"}} name="organization_id"   rules={[{ required: true }]}>
-                        <Select
-                            style={{width: "150%"}}
-                            popupMatchSelectWidth={false}
-                            allowClear
-                            showSearch
-                            filterOption = {false}
-                            onSearch={(value) => handleAutoCompleteOrganization(value)}
-                            loading={loadingOrganizations}
-                            placeholder="Выберите организацию...">
-                            {dataOrganizations?.organizations?.items?.map(row => (
-                                <Select.Option key={row.id}
-                                               value={row.id}>{row.name}</Select.Option>))}
-                        </Select>
-                    </StyledFormItem>
-                    <StyledButtonGreen icon={<PlusOutlined/>}
-                                       onClick={() => setAddOrganizationModalVisible(true)}/>
-                </Space.Compact>
-
-                <StyledFormItem name="position_id" labelCol={{ span: 6 }} wrapperCol={{span: 18}}  label="Должность" >
+                <StyledFormItemSelectAndCreateWitchEdit
+                    formName={"organization_id"}
+                    onSearch={handleAutoCompleteOrganization}
+                    onSelect={handleSelectedOrganization}
+                    placeholder={"Выберите организацию..."}
+                    loading={loadingOrganizations}
+                    items={dataOrganizations?.organizations?.items}
+                    firstBtnOnClick={setAddOrganizationModalVisible}
+                    secondBtnOnClick={setEditOrganizationModalVisible}
+                    secondDisable={!selectedOrganizationData}
+                    formatOptionText={(row) => `${row.name}`}
+                    labelCol={{span: 0}}
+                    wrapperCol={{span:24 }}
+                />
+             <StyledFormItem name="position_id" labelCol={{ span: 6 }} wrapperCol={{span: 18}}  label="Должность" >
                     <Select
                         popupMatchSelectWidth={false}
                         allowClear
@@ -215,13 +221,22 @@ const ContactForm = ({ contact, onClose }) => {
                 </StyledFormItem>
             </StyledFormRegular>
             <Modal
+                key={selectedOrganizationData?.id}
                 open={addOrganizationModalVisible}
-                width={900}
                 onCancel={() => setAddOrganizationModalVisible(false)}
                 footer={null}
-                onClose={handleClose}
+                onClose={handleCloseModalFormView}
             >
-                <OrganizationForm contact={null} onClose={handleClose}/>
+                <OrganizationForm organization={null} onClose={handleCloseModalFormView}/>
+            </Modal>
+            <Modal
+                key={selectedOrganizationData?.id}
+                open={editOrganizationModalVisible}
+                onCancel={() => setEditOrganizationModalVisible(false)}
+                footer={null}
+                onClose={handleCloseModalFormView}
+            >
+                <OrganizationForm organization={selectedOrganizationData} onClose={handleCloseModalFormView}/>
             </Modal>
         </StyledBlockRegular>
     );

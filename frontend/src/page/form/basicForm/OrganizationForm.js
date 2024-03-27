@@ -42,7 +42,6 @@ const OrganizationForm = ({organization, onClose}) => {
     const handleCloseModalFormView = () => {
         setAddContactModalVisible(false);
         setEditContactModalVisible(false);
-
     };
     const handleSelectedContact = (value, option) => {
         setSelectedContactData(dataContacts?.contacts?.items?.find(org => org.id === value))
@@ -55,7 +54,7 @@ const OrganizationForm = ({organization, onClose}) => {
 
     // Получение данных для выпадающих списков
     const {loading: loadingLegalForm, error: errorLegalForm, data: dataLegalForm} = useQuery(LEGAL_FORM_QUERY);
-    const {loading: loadingBiks, error: errorBiks, data: dataBiks} = useQuery(BIKS_QUERY, {
+    const {loading: loadingBiks, error: errorBiks, data: dataBiks} = useQuery(BIKS_QUERY,{
         variables: {
             queryOptions: {search: autoCompleteBiks, limit: 10, page: 1}
         },});
@@ -74,15 +73,16 @@ const OrganizationForm = ({organization, onClose}) => {
     useEffect(() => {
         console.log(organization)
         if (organization ) {
+
+            setAutoCompleteBiks(organization?.bik?.id);
             setEditingOrganization(organization);
             form.resetFields();
             form.setFieldsValue({
                 ...organization,
                 director: organization?.director?.id ??  null,
                 legal_form: organization?.legal_form?.id ?? null,
-                BIK_id: organization?.BiK?.id ?? null,
+                BIK_id: organization?.bik?.id ?? null,
             });
-
             setAddress1(organization?.address_mail);
             setAddress2(organization?.address_legal);
         }

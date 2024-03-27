@@ -8,9 +8,9 @@ import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import Search from "antd/es/input/Search";
 import {StyledFormLarge} from "../../style/FormStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
-import {DownloadOutlined} from "@ant-design/icons";
 import PersonContractFileDownload from "../../script/PersonContractFileDownload";
 import Title from "antd/es/typography/Title";
+import {format} from "date-fns";
 
 const PersonTable = () => {
 
@@ -82,7 +82,9 @@ const PersonTable = () => {
     // Обработка загрузки и ошибок
     if (!data) if (loading) return <LoadingSpinnerStyles/>;
     if (error) return `Ошибка! ${error.message}`;
-
+    const formatDate = (date) => {
+        return format(new Date(date), 'dd.MM.yyyy');
+    };
     // Формат таблицы
     const columns = [{
         title: 'ФИО',
@@ -105,14 +107,12 @@ const PersonTable = () => {
         title: 'Дата рождения',
         dataIndex: 'passport',
         key: 'birth_day',
-        render: (passport) =>  passport?.birth_date ?? null,
+        render: (passport) =>  passport?.birth_date ? formatDate(passport?.birth_date) : null,
 
     },  {
         title: 'Договор', key: 'btnContract',  width: 80, align: 'center',
         render: (text, record) => (
-
                 <PersonContractFileDownload personId={record.id}/>
-
         ),
     }, {
         title: 'Управление', key: 'edit',  align: 'center', render: (text, record) => (
@@ -195,7 +195,7 @@ const PersonTable = () => {
                                         <Descriptions.Item label="Серия и номер">{record?.passport?.serial} №{record?.passport?.number}</Descriptions.Item>
                                         <Descriptions.Item label="Адрес проживания">{record?.passport?.address_residential}</Descriptions.Item>
                                         <Descriptions.Item label="Адрес регистрации">{record?.passport?.address_registration}</Descriptions.Item>
-                                        <Descriptions.Item label="Дата и место выдачи">{record?.passport?.date} - {record?.passport?.passport_place_issue?.name}</Descriptions.Item>
+                                        <Descriptions.Item label="Дата и место выдачи">{record?.passport?.date ? formatDate(record?.passport?.date) : ""} - {record?.passport?.passport_place_issue?.name}</Descriptions.Item>
                                     </Descriptions>
                                 </Col>
                                 <Col span={17}>

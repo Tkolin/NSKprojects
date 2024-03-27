@@ -9,6 +9,7 @@ import Search from "antd/es/input/Search";
 import {StyledFormLarge} from "../../style/FormStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import Title from "antd/es/typography/Title";
+import {format} from "date-fns";
 
 const ContactTable = () => {
 
@@ -78,7 +79,10 @@ const ContactTable = () => {
     // Обработка загрузки и ошибок
     if (!data) if (loading) return <LoadingSpinnerStyles/>;
     if (error) return `Ошибка! ${error.message}`;
-
+// Функция для форматирования даты
+    const formatDate = (date) => {
+        return format(new Date(date), 'dd.MM.yyyy');
+    };
     // Формат таблицы
     const columns = [
         {
@@ -101,6 +105,7 @@ const ContactTable = () => {
         },  {
             title: 'Дата рождения', dataIndex: 'birth_day', key: 'birth_day',
             sorter: true,
+            render: (birthDay) => birthDay ? formatDate(birthDay) : "",
         }, {
             title: 'Должность',
             dataIndex: 'position',
@@ -167,7 +172,7 @@ const ContactTable = () => {
                 offsetHeader: '64px',
             }}
             loading={loading}
-            dataSource={data.contacts.items.map((org, index) => ({...org, key: index}))}
+            dataSource={data?.contacts?.items?.map((org, index) => ({...org, key: index}))}
             columns={columns}
             onChange={onChange}
             pagination={{
@@ -193,6 +198,7 @@ const ContactTable = () => {
             <ContactForm contact={selectedContact} onClose={handleClose}/>
         </Modal>
         <Modal
+            key={selectedContact?.id}
             open={addModalVisible}
             onCancel={() => setAddModalVisible(false)}
             footer={null}

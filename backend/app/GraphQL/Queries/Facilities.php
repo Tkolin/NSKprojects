@@ -12,13 +12,12 @@ final readonly class Facilities
 {
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
-        $allowedRoles = ['admin']; // Роли, которые разрешены
+        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
             $data = SelectionFacility::with('subselection_facility.group_facility.facilities')
                 ->get();
-            error_log("fadf ". $data[2]);
-            return $data;
+             return $data;
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }

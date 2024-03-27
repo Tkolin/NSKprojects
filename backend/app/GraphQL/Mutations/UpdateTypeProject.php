@@ -13,7 +13,7 @@ final readonly class UpdateTypeProject
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args, GraphQLContext $context): TypeProjectDocument
     {
-        $allowedRoles = ['admin']; // Роли, которые разрешены
+        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
             $typeProjects = TypeProjectDocument::findOrFail($args['id']);

@@ -19,9 +19,9 @@ const prepaymentTemplate = {
     duration_item: 0,
 };
 
-const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
+const TechnicalSpecificationForm = ({project, setProject, disable, onSubmit}) => {
     // Состояния
-    const [formStage] = Form.useForm();
+    const [formTechnicalSpecification] = Form.useForm();
     const [autoCompleteStage, setAutoCompleteStage] = useState('');
     const [totalPrice, setTotalPrice] = useState(0);
     const [dataStages, setDataStages] = useState(null);
@@ -53,9 +53,9 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
 
     useEffect(() => {
         recomputePricesAndPercentages();
-    }, [formStage.getFieldValue('stageList')]);
+    }, [formTechnicalSpecification.getFieldValue('technicalSpecificationList')]);
     const handleDateStageRebuild = () => {
-        const stageList = formStage.getFieldValue('stageList');
+        const stageList = formTechnicalSpecification.getFieldValue('technicalSpecificationList');
         if (Array.isArray(stageList)) {
             const updatedStageList = stageList.map((stage, index) => {
                 let dateRangeStart = null;
@@ -76,7 +76,7 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
                     date_range: [dateRangeStart, dateRangeEnd],
                 };
             });
-            formStage.setFieldsValue({
+            formTechnicalSpecification.setFieldsValue({
                 stageList: updatedStageList,
             });
         }
@@ -184,14 +184,14 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
             totalPrice_item: price ?? null
         }));
         setPrepayment(initialValuesStages.find(({stage_item}) => stage_item === "0"));
-        formStage.setFieldsValue({stageList: initialValuesStages});
+        formTechnicalSpecification.setFieldsValue({stageList: initialValuesStages});
         setTotalToDuration(actualityProjectData.duration);
     };
 
     // Мутации для добавления и обновления
     const [updateStagesToProject] = useMutation(UPDATE_STAGES_TO_PROJECT_MUTATION, {
         onCompleted: () => {
-            const dateRangeValue = formStage.getFieldValue('totalRange_item');
+            const dateRangeValue = formTechnicalSpecification.getFieldValue('totalRange_item');
             const projectData = {
                 id: actualityProjectData?.id ?? null,
                 number: actualityProjectData?.number ?? null,
@@ -218,7 +218,7 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
 
     // Подсчёт суммы процентов
     const recomputePricesAndPercentages = () => {
-        const stageList = formStage.getFieldValue('stageList');
+        const stageList = formTechnicalSpecification.getFieldValue('stageList');
         if (Array.isArray(stageList)) {
             let countRow = 0;
             const totalProcent = stageList.reduce((acc, item) => {
@@ -237,14 +237,14 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
                     ? Number((totalPrice * row.percent_item / 100)?.toFixed(2))
                     : Number((totalPrice * row.percent_item / 100)?.toFixed(2)),
             }));
-            formStage.setFieldsValue({
+            formTechnicalSpecification.setFieldsValue({
                 stageList: updatedStageList,
             });
         }
     };
     const [totalToDuration, setTotalToDuration] = useState(0);
     const recomputeTotalToDuration = () => {
-        const stageList = formStage.getFieldValue('stageList');
+        const stageList = formTechnicalSpecification.getFieldValue('stageList');
         if (Array.isArray(stageList)) {
             const totalDuration = stageList.reduce((acc, item) => {
                 const duration = parseInt(item?.duration_item) || 0;
@@ -254,9 +254,9 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
         }
     };
     const handleSubmit = () => {
-        const faae=formStage.getFieldsValue().stageList;
+        const faae=formTechnicalSpecification.getFieldsValue().stageList;
         console.log("faae ",faae);
-        const stageToProject = formStage.getFieldsValue().stageList.map(stage => ({
+        const stageToProject = formTechnicalSpecification.getFieldsValue().stageList.map(stage => ({
             projectId: actualityProjectData?.id,
             stage_id: stage?.stage_item,
             stageNumber: stage?.index,
@@ -275,9 +275,9 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
     }
 
     const handleAddPrepaymentStage = () => {
-        const countStageItems = formStage.getFieldValue('stageList').length;
-        formStage.setFieldsValue({
-            stageList: [prepaymentTemplate, ...formStage.getFieldValue('stageList').map(stage => ({
+        const countStageItems = formTechnicalSpecification.getFieldValue('stageList').length;
+        formTechnicalSpecification.setFieldsValue({
+            stageList: [prepaymentTemplate, ...formTechnicalSpecification.getFieldValue('stageList').map(stage => ({
                 ...stage,
                 index: ++stage.index,
                 percent_item: parseInt(stage.percent_item - (prepaymentTemplate.percent_item / countStageItems)),
@@ -286,9 +286,9 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
         setPrepayment(prepaymentTemplate);
     };
     const handleDeletePrepaymentStage = () => {
-        const stages = formStage.getFieldValue('stageList');
+        const stages = formTechnicalSpecification.getFieldValue('stageList');
         const filteredStages = stages.filter((stage, index) => index !== 0);
-        formStage.setFieldsValue({
+        formTechnicalSpecification.setFieldsValue({
             stageList: filteredStages.map(stage => ({
                 ...stage,
                 index: --stage.index,
@@ -304,11 +304,11 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
         newArray.splice(toIndex, 0, item);
         return newArray;
     };
-    if (loadingTemplate  || projectLoading)
+    if (loadingTemplate || loadingStages || projectLoading)
         return <LoadingSpinnerStyles/>
 
     return (
-        <StyledFormLarge form={formStage}
+        <StyledFormLarge form={formTechnicalSpecification}
                          disabled={disable}
                          name="dynamic_form_nest_item"
                          autoComplete="off"
@@ -352,9 +352,9 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
                                         <CaretUpOutlined
                                             onClick={() => {
                                                 if (!(!prepayment || index !== 1)) return;
-                                                const items = formStage.getFieldValue('stageList');
+                                                const items = formTechnicalSpecification.getFieldValue('stageList');
                                                 const newItems = moveItem(items, index, index - 1);
-                                                formStage.setFieldsValue({stageList: newItems});
+                                                formTechnicalSpecification.setFieldsValue({stageList: newItems});
                                             }}
                                         />
                                     </Tooltip>
@@ -365,9 +365,9 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
                                         <CaretDownOutlined
                                             onClick={() => {
                                                 if (!(!prepayment || index !== 0)) return;
-                                                const items = formStage.getFieldValue('stageList');
+                                                const items = formTechnicalSpecification.getFieldValue('stageList');
                                                 const newItems = moveItem(items, index, index + 1);
-                                                formStage.setFieldsValue({stageList: newItems});
+                                                formTechnicalSpecification.setFieldsValue({stageList: newItems});
                                             }}
                                             style={{marginTop: "auto"}} // Размещение внизу
                                         />
@@ -569,4 +569,4 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
         </StyledFormLarge>
     );
 }
-export default StagesProjectForm;
+export default TechnicalSpecificationForm;

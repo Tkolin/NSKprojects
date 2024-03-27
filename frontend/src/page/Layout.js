@@ -123,7 +123,13 @@ const CustomLayout = ({children, currentUser, la}) => {
                         getItem('Контакты', '1-1', null, null),
                         getItem('Организации', '1-4', null, null),
                         getItem('Подрядчики', '1-3', null, null),
-                    ])
+                    ]),
+                    getItem('Отчёты', '3', <SolutionOutlined/>, [
+                        getItem('Проекты', '3-1', null, null)
+                    ]),
+                    getItem('Формы', '2', <FormOutlined/>, [
+                        getItem('Создание нового договора', '2-2', null, null),
+                    ]),
                 );
                 break;
             default:

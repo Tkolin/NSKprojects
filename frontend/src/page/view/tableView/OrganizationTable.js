@@ -160,7 +160,7 @@ const OrganizationTable = () => {
         <StyledTable
             size={'small'}
             sticky={{
-                offsetHeader: 0,
+                offsetHeader: '64px',
             }}
             loading={loading}
             dataSource={data?.organizations?.items?.map((org, index) => ({...org, key: index}))}
@@ -212,6 +212,7 @@ const OrganizationTable = () => {
             <OrganizationForm organization={selectedOrganization} onClose={handleClose}/>
         </Modal>
         <Modal
+            key={selectedOrganization?.id}
             open={addModalVisible}
             width={900}
             onCancel={() => setAddModalVisible(false)}
