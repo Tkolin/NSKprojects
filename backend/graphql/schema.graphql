@@ -13,6 +13,7 @@ type Query {
 
     typeProjects(queryOptions: QueryOptions): TypeProjectsResult
     technicalSpecification: TechnicalSpecificationResult
+    sectionReferences: SectionReferenceResult
     groupTypeProjects: groupTypeProjecResult
 
     paymentsProjects(queryOptions: QueryOptions, projectId: ID): [projectPayment]
@@ -20,10 +21,12 @@ type Query {
     templatesIrdsTypeProjects(typeProject: ID): [TemplateIRD]
     templatesStagesTypeProjects(typeProject: ID): [TemplateStage]
     templatesTasksTypeProjects(typeProject: ID): [TemplateTask]
+    templatesSectionReferencesTypeProjects(typeProject: ID): [TemplateSectionReference]
 
     projectIrds(queryOptions: QueryOptions, projectId: ID): [ProjectIRD]
     projectStages(queryOptions: QueryOptions ,projectId: ID): [ProjectStage]
     projectTasks(queryOptions: QueryOptions ,projectId: ID): [ProjectTask]
+    projectSectionReferences(queryOptions: QueryOptions ,projectId: ID): [ProjectSectionReference]
 
     currentUser: User!
 
@@ -73,6 +76,15 @@ input IrdToProject {
     stageNumber: Int
     applicationProject: Int
     receivedDate: String
+}input SectionReferencesToProject {
+    projectId: ID!
+    SectionReferencesId: ID
+    data: String
+}
+input SectionReferencesToTemplate {
+    projectTypeId: ID!
+    SectionReferencesId: ID
+    data: String
 }
 input TemplateStageToTypeProject {
     stage_id: ID
@@ -82,11 +94,11 @@ input TemplateStageToTypeProject {
     percentage: Int
 }
 input ProjectInput {
-    id: ID!
-    number: String!
+    id: ID
+    number: String
     name: String!
-    organization_customer_id: ID!
-    type_project_document_id: ID!
+    organization_customer_id: ID
+    type_project_document_id: ID
     date_signing: String
     duration: Int!
     date_end: String
@@ -94,7 +106,7 @@ input ProjectInput {
     status_id: ID
     date_completion: String
     price: Int
-    facilitys_id: [String]!
+    facilitys_id: [String]
     delegates_id: [String]
 }
 type Mutation {
@@ -123,8 +135,10 @@ type Mutation {
         names: [String]
     ): [Task]
 
-    updateIrdsToProject(
-        items: [IrdToProject]
+
+
+    updateSectionReferenceToProject(
+        items: [SectionReferencesToProject]
     ): Int
     updateStagesToProject(
         items: [StageToProject]
@@ -143,7 +157,9 @@ type Mutation {
         listStageNumber: [Int]
         listAppNumber: [Int]
     ) : Int
-
+    updateIrdsToProject(
+        items: [IrdToProject]
+    ): Int
     updateTaskTemplate(
         typeProjectId: ID,
         listTasks_id: [ID],
@@ -454,6 +470,9 @@ type BikResult {
 }type TechnicalSpecificationResult {
     items: [TechnicalSpecification]
     count: Int
+}type SectionReferenceResult {
+    items: [SectionReference]
+    count: Int
 }type groupTypeProjecResult {
     items: [GroupTypeProjectDocument]
     count: Int
@@ -630,6 +649,11 @@ type AuthPayload {
     project: Project
     task: Task
 
+}type ProjectSectionReference{
+    id: ID!
+    project: Project
+    section_reference: SectionReference
+    values: String
 }type ProjectIRD{
     id: ID!
     project: Project
@@ -652,6 +676,11 @@ type AuthPayload {
 }type TechnicalSpecification{
     id: ID!
     name: String!
+}type SectionReference{
+    id: ID!
+    name: String!
+    description: String!
+    values: String!
 }type Stage{
     id: ID!
     name: String
@@ -677,6 +706,11 @@ type AuthPayload {
     inheritedTask: TemplateTask
     inherited_task_id: ID
     stage_number: Int
+}type TemplateSectionReference{
+    id: ID!
+    project_type: TypeProjectDocument
+    section_reference: SectionReference
+    values: String
 }
 extend type Mutation {
     register(input: RegisterInput!): AuthPayload!

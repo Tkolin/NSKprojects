@@ -100,6 +100,7 @@ const CustomLayout = ({children, currentUser, la}) => {
                         getItem('ИРД', '1-5', null, null),
                         getItem('Типы документации', '1-6', null, null),
                         getItem('Этапы проекта', '1-7', null, null),
+                        getItem('Разделы технического задания', '1-8', null, null),
                     ]),
                     getItem('Формы', '2', <FormOutlined/>, [
                         getItem('Контакт', '2-1', null, null),
@@ -168,6 +169,10 @@ const CustomLayout = ({children, currentUser, la}) => {
             case '1-7':
                 // Этапы проекта
                 navigate('/stageProject');
+                break;
+                case '1-8':
+                // Этапы проекта
+                navigate('/SectionReferences');
                 break;
             case '2-1':
                 // Контакт

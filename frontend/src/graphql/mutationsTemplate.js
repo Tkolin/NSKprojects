@@ -40,3 +40,18 @@ export const UPDATE_TASKS_TEMPLATE_MUTATION = gql`
         ) 
     }
 `;
+export const UPDATE_SECTION_REFERENCES_TEMPLATE_MUTATION = gql`
+    mutation UpdateTaskTemplate(
+        $typeProjectId: ID!,
+        $listTasks_id: [ID!]!,      
+        $listInheritedTasks_id: [ID],   
+        $stageNumber: [Int],
+    ) {
+        updateTaskTemplate(
+            typeProjectId: $typeProjectId
+            listTasks_id: $listTasks_id
+            listInheritedTasks_id: $listInheritedTasks_id
+            stageNumber: $stageNumber
+        ) 
+    }
+`;

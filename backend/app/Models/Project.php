@@ -73,6 +73,9 @@ class Project extends Model
     {
         return $this->hasMany(ProjectPayment::class);
     }
-
+    public function project_sections_reference(): HasMany
+    {
+        return $this->hasMany(ProjectSectionsReference::class);
+    }
 }
 

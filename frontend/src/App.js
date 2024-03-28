@@ -28,6 +28,7 @@ import {ConfigProvider} from "antd";
 import ruRU from "antd/locale/ru_RU";
 import CreateNewProject from "./page/form/composedForm/CreateNewProject";
 import {createGlobalStyle} from "styled-components";
+import SectionReferenceTable from "./page/view/tableView/SectionReferenceTable";
 
 
 const App = () => {
@@ -73,6 +74,8 @@ const App = () => {
 
                                         <Route path="/contacts" element={<ContactTable />} />
                                         <Route path="/contacts/new" element={<ContactForm />} />
+
+                                        <Route path="/SectionReferences" element={<SectionReferenceTable />} />
 
                                         <Route path="/project" element={<ProjectTable />} />
                                         <Route path="/project/new" element={<CreateNewProject />} />

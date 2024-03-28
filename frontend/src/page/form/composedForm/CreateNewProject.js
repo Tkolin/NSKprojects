@@ -9,6 +9,7 @@ import StagesProjectFileDownload from "../../script/StagesProjectFileDownload";
 import IrdsProjectFileDownload from "../../script/IrdsProjectFileDownload";
 import ActRenderingProjectDownload from "../../script/ActRenderingProjectDownload";
 import PaymentInvoiceProjectDownload from "../../script/PaymentInvoiceProjectDownload";
+import TechnicalSpecificationForm from "../aggregateComponent/projectForm/SectionReferenceProjectForm.js";
 
 const {Step} = Steps;
 const { Text } = Typography;
@@ -65,7 +66,7 @@ const ComposedProjectForm = ({editProject}) => {
                     )}
                     {currentStep === 3 && (
                         <StyledBlockLarge label={"Техническоое задание"}>
-                            <IrdsProjectForm setProject={handleProject} project={project} onSubmit={onNext}/>
+                            <TechnicalSpecificationForm setProject={handleProject} project={project} onSubmit={onNext}/>
                         </StyledBlockLarge>
                     )}
                     {currentStep === 4 && (

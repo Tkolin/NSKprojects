@@ -1,4 +1,5 @@
 import {gql} from '@apollo/client';
+import SectionReferenceTable from "../page/view/tableView/SectionReferenceTable";
 
 export const TASKS_QUERY = gql`
     query BikQuery {
@@ -17,6 +18,19 @@ export const TECHNICAL_SPECIFICATION_QUERY = gql`
             items{
                 id
                 name
+            }
+            count
+        }
+    }
+`;
+export const SECTION_REFERENCES_QUERY = gql`
+    query SectionReferenceQuery {
+        sectionReferences  {
+            items{
+                id
+                name
+                description
+                values
             }
             count
         }
@@ -396,28 +410,7 @@ export const FACILITYS_QUERY = gql`
     }
 `;
 
-export const PROJECT_STAGE_QUERY = gql`
-    query ProjectStage {
-        projectStages{
-            id
-            project{
-                id
-                name
-            }
-            stage{
-                id
-                name
-            }
-            stageNumber
-            price
-            percent
-            dateStart
-            duration
-            dateEnd
-            progress
-        }
-    }
-`;
+
 export const PAYMENTS_QUERY = gql`
     query BikQuery {
         tasks  {
@@ -443,6 +436,23 @@ export const TEMPLATE_IRDS_TYPE_PROJECTS_QUERY = gql`
             }
             stage_number
             application_to_project
+        }
+    }
+`;export const TEMPLATE_SECTION_REFERENCES_TYPE_PROJECTS_QUERY = gql`
+    query SectionReferencesQuery ($typeProject: ID) {
+        templatesSectionReferencesTypeProjects(typeProject: $typeProject)  {
+            id
+            project_type{
+                id
+                name
+            }
+            section_reference{
+                id
+                name 
+                values
+                
+            }
+            values
         }
     }
 `;

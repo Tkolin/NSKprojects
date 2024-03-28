@@ -28,12 +28,13 @@ class TypeProjectDocument extends Model
         return $this->belongsTo(TemplateStagesTypeProjects::class);
     }
 
-    public function template_contents_type_project(): BelongsTo
-    {
-        return $this->belongsTo(TemplateContentTypeProjects::class);
-    }
+
     public function project(): HasMany
     {
         return $this->hasMany(Project::class);
+    }
+    public function template_sections_reference(): HasMany
+    {
+        return $this->hasMany(TemplateSectionReference::class);
     }
 }
