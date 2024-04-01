@@ -21,10 +21,7 @@ const IrdForm = ({ groupTypeProject, onClose }) => {
     const [editingGroupTypeProject, setEditingGroupTypeProject] = useState(null);
     const [form] = Form.useForm();
     const [ api,contextHolder] = notification.useNotification();
-    const [technicalDocumentationFormViewModalVisible, setTechnicalDocumentationFormViewModalVisible] = useState(false);
-    const handleTechnicalDocumentationFormView = () => {
-        setTechnicalDocumentationFormViewModalVisible(false);
-    };
+
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
         notification[type]({
@@ -90,9 +87,7 @@ const IrdForm = ({ groupTypeProject, onClose }) => {
                     <Input />
                 </StyledFormItem>
                 <Space.Compact block style={{alignItems: 'flex-end'}}>
-                    <StyledFormItem name="techinacl_specification_id" label="Тип документации" style={{
-                        width: '90%'
-                    }}>
+                    <StyledFormItem name="techinacl_specification_id" label="Тип документации" style={{width: '100%'}}>
                         <Select
                             popupMatchSelectWidth={false}
                             allowClear
@@ -100,14 +95,11 @@ const IrdForm = ({ groupTypeProject, onClose }) => {
                             filterOption = {false}
                             loading={loadingGroupTypeProject}
                             placeholder="Начните ввод...">
-                            {dataGroupTypeProject.groupTypeProjects.items.map(row => (
+                            {dataGroupTypeProject?.groupTypeProjects?.items?.map(row => (
                                 <Option key={row.id}
                                         value={row.id}>{row.name}</Option>))}
                         </Select>
                     </StyledFormItem>
-                    <StyledButtonGreen    type={"dashed"} icon={<PlusOutlined/>}
-                                          onClick={() => setTechnicalDocumentationFormViewModalVisible(true)}/>
-
                 </Space.Compact>
                 <StyledFormItem>
                     <Button type="primary" onClick={handleSubmit}>
@@ -115,14 +107,6 @@ const IrdForm = ({ groupTypeProject, onClose }) => {
                     </Button>
                 </StyledFormItem>
             </StyledFormLarge>
-            <Modal
-                open={technicalDocumentationFormViewModalVisible}
-                onCancel={() => setTechnicalDocumentationFormViewModalVisible(false)}
-                footer={null}
-                onClose={handleTechnicalDocumentationFormView}
-            >
-                <GroupTypeProjectForm/>
-            </Modal>
         </StyledBlockLarge>
     );
 };

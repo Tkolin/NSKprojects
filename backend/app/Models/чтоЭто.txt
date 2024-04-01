@@ -1,9 +1,0 @@
-tbl_klass_prom
-OKVED
-PD87
-PD87_codes_linear
-TPO218
-type_partition_number
-razd_project
-referens_isp
-tip_zakaz

@@ -12,10 +12,12 @@ export const DELETE_TYPE_PROJECT_MUTATION = gql`
 export const ADD_TYPE_PROJECTS_MUTATION = gql`
     mutation AddTypeProject(
         $name: String!,
-        $code: String!,
+        $code: String,
+        $group_id: ID,
     ) {
         addTypeProject(
             name: $name
+            group_id: $group_id
             code: $code
         ) {
             id
@@ -28,16 +30,19 @@ export const UPDATE_TYPE_PROJECTS_MUTATION = gql`
     mutation UpdateTypeProject(
         $id: ID!,
         $name: String!,
-        $code: String!,
-    ) {
+        $code: String,        
+        $group_id: ID,
+     ) {
         updateTypeProject(
             id: $id
             name: $name
+            group_id: $group_id
             code: $code
+
         ) {
             id
             name
-            code
+             
         }
     }
 `;

@@ -110,6 +110,35 @@ const StyledFormItemSelectAndCreate = ({
 </BaseStyledSpaceCompactFormItemSelect>
 
 );
+const StyledFormItemSelect = ({
+                                                    formName,
+                                                    formLabel,
+                                                    onSelect,
+                                                    placeholder,
+                                                    loading,
+                                                    items,
+                                                    onSearch,
+                                                    formatOptionText,
+                                                    mode,
+                                                    labelCol,
+                                                    wrapperCol
+                                                }) => (
+    <BaseStyledSpaceCompactFormItemSelect width={"100%"}>
+        <BaseStyledFormItemSelect     formName={formName}
+                                      formLabel ={formLabel}
+                                      onSelect ={onSelect}
+                                      onSearch = {onSearch}
+                                      placeholder = {placeholder}
+                                      loading = {loading}
+                                      items = {items}
+                                      formatOptionText ={formatOptionText}
+                                      mode = {mode}
+                                      width={"100%"}
+                                      labelCol={labelCol}
+                                      wrapperCol={wrapperCol}/>
+    </BaseStyledSpaceCompactFormItemSelect>
+
+);
 const StyledFormItemSelectAndCreateWitchEdit = ({
                                            formName,
                                            formLabel,
@@ -151,5 +180,5 @@ const StyledFormItemSelectAndCreateWitchEdit = ({
 
 );
 
-export {StyledFormItemSelectAndCreate, StyledFormItemSelectAndCreateWitchEdit};
+export {StyledFormItemSelectAndCreate, StyledFormItemSelectAndCreateWitchEdit, StyledFormItemSelect};
 

@@ -11,12 +11,13 @@ import {
 import {  PlusOutlined} from '@ant-design/icons';
 
 import TypeProjectForm from "../simpleForm/TypeProjectForm";
-import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
-import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../style/BlockStyles";
-import {StyledButtonForm, StyledButtonGreen} from "../../style/ButtonStyles";
+ import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../style/BlockStyles";
+import { StyledButtonGreen} from "../../style/ButtonStyles";
 import StagesTemplateForm from "../aggregateComponent/templateForm/StagesTemplateForm";
 import IrdsTemplateForm from "../aggregateComponent/templateForm/IrdsTemplateForm";
 import TasksTemplateForm from "../aggregateComponent/templateForm/TasksTemplateForm";
+import {StyledFormItemSelectAndCreate} from "../../style/SelectStyles";
+import SectionReferenceTemplateForm from "../aggregateComponent/templateForm/SectionReferenceTemplateForm";
 
 const {Option} = Select;
 
@@ -32,11 +33,6 @@ const TemplateForm = ({project, onClose}) => {
     const [triggerSaveStages, setTriggerSaveStages] = useState(false);
     const [triggerSaveIrds, setTriggerSaveIrds] = useState(false);
     const [triggerSaveTasks, setTriggerSaveTasks] = useState(false);
-    // Функции уведомлений
-    const handleGroupTypeProject = () => {
-
-    }
-
 
     // Получение данных для выпадающих списков
     const [autoCompleteProjectType, setAutoCompleteProjectType] =useState('');
@@ -59,38 +55,27 @@ const TemplateForm = ({project, onClose}) => {
 
     const handleSubmit = () => {
         setTriggerSaveStages(true);
-        setTriggerSaveIrds(true);
-        setTriggerSaveTasks(true);
+         setTriggerSaveIrds(true);
+         setTriggerSaveTasks(true);
     }
 
     return (<StyledBlockLarge>
         <Row gutter={8}>
-            <Col span={8}>
+                <Col span={8}>
                 <StyledBlockRegular label={'Тип проекта'}>
                     <StyledFormRegular form={form} layout="vertical">
-                        <Space.Compact block style={{alignItems: 'flex-end'}}>
-                            <StyledFormItem name="type_project_id" label="Тип документации" style={{
-                                width: '90%'
-                            }}>
-                                <Select
-                                    popupMatchSelectWidth={false}
-                                    allowClear
-                                    showSearch
-                                    filterOption = {false}
+
+                                <StyledFormItemSelectAndCreate
+                                    formLabel={"Тип документации"}
+                                    formName={"type_project_id"}
                                     loading={loadingTypeProject}
-                                    onSearch={(value) => handleAutoCompleteProjectType(value)}
-                                    onSelect={(value) => handleEditingTemplate(value)} // Добавлен обработчик onSelect
-                                    placeholder="Начните ввод...">
-                                    {dataTypeProject?.typeProjects?.items?.map(row => (
-                                        <Option key={row.id}
-                                                value={row.id}>{row.name}</Option>))}
-                                </Select>
-                            </StyledFormItem>
-                            <StyledButtonGreen    type={"dashed"} icon={<PlusOutlined/>}
-                                               onClick={() => setTypeProjectFormViewModalVisible(true)}/>
-
-                        </Space.Compact>
-
+                                    onSearch={handleAutoCompleteProjectType}
+                                    onSelect={handleEditingTemplate}
+                                    placeholder={"Начните ввод..."}
+                                    items={dataTypeProject?.typeProjects?.items}
+                                    formatOptionText={(row) => `${row.name}`}
+                                    firstBtnOnClick={setTypeProjectFormViewModalVisible}
+                                />
                         <div style={{textAlign: 'center'}}>
                             <Button type="primary" onClick={() => handleSubmit()}>Сохранить
                                 настройки</Button>
@@ -102,6 +87,9 @@ const TemplateForm = ({project, onClose}) => {
                                         setTriggerMethod={setTriggerSaveStages}
                                         typeProjectId={selectedTypeProject}
                                         disabled={!selectedTypeProject}/>
+                </StyledBlockRegular>
+                 <StyledBlockRegular label={'Состав техническое задание'}>
+                    <SectionReferenceTemplateForm disabled={true} />
                 </StyledBlockRegular>
             </Col>
             <Col span={16}>

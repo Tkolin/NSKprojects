@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class TypeProjectDocument extends Model
 {
     protected $fillable = [
+        'id',
         'code',
         'name',
         'group_id',

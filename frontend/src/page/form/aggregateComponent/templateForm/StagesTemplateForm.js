@@ -35,7 +35,9 @@ const StagesTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod, dis
     } = useQuery(TEMPLATE_STAGES_TYPE_PROJECTS_QUERY, {
         variables: {typeProject: typeProjectId},
         fetchPolicy: 'network-only',
-        onCompleted: (data) => addingStages(data)
+        onCompleted: (data) =>{
+            loadTemplate();
+            addingStages(data.templatesStagesTypeProjects)},
     });
 
     // Мутации для добавления и обновления
@@ -49,22 +51,20 @@ const StagesTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod, dis
 
     // Загрузка шаблонов при редактировании
     const addingStages = (value) => {
-        if (dataStages && value) {
-            const newStages = value.templatesStagesTypeProjects.map(a => ({
-                id: a?.stage?.id ?? null, name: a?.stage?.name ?? null,
-            }));
-            refetchStages({search: autoCompleteStage}).then(({data}) => {
-                const existingStages = dataStages?.stages?.items ?? [];
-                const updatedStages = [...existingStages, ...newStages];
-                setDataStages({
-                    ...dataStages, stages: {
-                        ...dataStages.stages, stages: updatedStages,
-                    },
-                });
-            });
-            loadTemplate();
-        }
-    }
+        if (!dataStages || !value) return;
+        const newStages = value.map(a => ({
+            id: a.stage ? a.stage.id : null, name: a.stage ? a.stage.name : null,
+        }));
+        const existingStages = dataStages.stages ? dataStages.stages.items : [];
+        const updatedStages = [...existingStages, ...newStages];
+        setDataStages({
+            ...dataStages,
+            stages: {
+                ...dataStages.stages,
+                items: updatedStages,
+            },
+        });
+    };
 
     // Обработчик отправки формы
     const handleSubmit = () => {

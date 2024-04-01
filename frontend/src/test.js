@@ -1,44 +1,39 @@
-import 'react-phone-number-input/style.css';
-import React, { useState } from 'react';
-import { useMutation } from '@apollo/client';
-import { CONTRACT_PERSON_MUTATION } from './graphql/mutationsPerson';
-import {Form, Input, notification} from 'antd';
-import axios from 'axios';
-import {AddressSuggestions} from "react-dadata";
+import React from "react";
+import {FrappeGantt} from "frappe-gantt-react";
 
-const Example = () => {
-    const TokenDADATA = process.env.REACT_APP_TOKEN_DADATAADDRESS;
+const App = () => {
 
-    const onchange = () =>{
-        console.log(TokenDADATA);
-    }
+    var tasks = [
+        {
+            id: 'Task 1',
+            name: 'Redesign website',
+            start: '2016-12-28',
+            end: '2016-12-31',
+            progress: 20,
+            dependencies: 'Task 2, Task 3'
+        },        {
+            id: 'Task 2',
+            name: 'Redesign website',
+            start: '2016-12-28',
+            end: '2016-12-31',
+            progress: 20,
+            dependencies: 'Task 2, Task 3'
+        },
+
+    ]
     return (
-        <Form>
-            <AddressSuggestions
-                inputProps={{
-                    placeholder: 'Введите адрес',
-                    style: {
-                        width: '100%',
-                        height: '32px',
-                        padding: '4px 11px',
-                        fontSize: '14px',
-                        lineHeight: '1.5',
-                        color: '#495057',
-                        backgroundColor: '#fff',
-                        backgroundImage: 'none',
-                        border: '1px solid #ced4da',
-                        borderRadius: '4px',
-                        boxShadow: 'inset 0 1px 1px rgba(0, 0, 0, 0.075)',
-                        transition: 'border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s',
-                    },
-                }}
-                token={TokenDADATA} onChange={onchange}/>
+    <div>
+        <FrappeGantt
+            tasks={tasks}
+            viewMode={this.state.mode}
+            onClick={task => console.log(task)}
+            onDateChange={(task, start, end) => console.log(task, start, end)}
+            onProgressChange={(task, progress) => console.log(task, progress)}
+            onTasksChange={tasks => console.log(tasks)}
+        />
+    </div>
 
-            <Input></Input>
-        </Form>
-
-    );
+)
 };
 
-export default Example;
-
+export default App;

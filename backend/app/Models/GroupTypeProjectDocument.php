@@ -9,8 +9,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GroupTypeProjectDocument extends Model
 {
+    protected $table = 'group_type_project_documents';
+
     protected $fillable = [
-        'code',
+        'id',
         'name',
         'technical_specification_id',
     ];

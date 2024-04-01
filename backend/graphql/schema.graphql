@@ -14,7 +14,7 @@ type Query {
     typeProjects(queryOptions: QueryOptions): TypeProjectsResult
     technicalSpecification: TechnicalSpecificationResult
     sectionReferences: SectionReferenceResult
-    groupTypeProjects: groupTypeProjecResult
+    groupTypeProjects: [GroupTypeProjectDocument]
 
     paymentsProjects(queryOptions: QueryOptions, projectId: ID): [projectPayment]
 
@@ -190,11 +190,13 @@ type Mutation {
 
     addTypeProject(
         name: String
+        group_id: ID
         code: String
     ): TypeProjectDocument
     updateTypeProject(
         id: ID
         name: String
+        group_id: ID
         code: String
     ): TypeProjectDocument
     deleteTypeProject (
@@ -670,9 +672,9 @@ type AuthPayload {
     id: ID!
     name: String!
 }type GroupTypeProjectDocument{
-    id: ID!
-    name: String!
-    technicalSpecification: TechnicalSpecification
+    id: ID
+    name: String
+    technical_specification: TechnicalSpecification
 }type TechnicalSpecification{
     id: ID!
     name: String!

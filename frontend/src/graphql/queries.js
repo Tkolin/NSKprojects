@@ -8,7 +8,7 @@ export const TASKS_QUERY = gql`
                 id
                 name
             }
-        count
+            count
         }
     }
 `;
@@ -37,25 +37,27 @@ export const SECTION_REFERENCES_QUERY = gql`
     }
 `;
 export const GROUP_TYPE_PROJECTS_QUERY = gql`
-    query BikQuery {
+    query GroupTypeProjectsQuery {
         groupTypeProjects  {
-            items{
+
+            id
+            name
+            technical_specification {
                 id
                 name
             }
-            count
         }
     }
 `;
-export const BANKS_QUERY  = gql`
+export const BANKS_QUERY = gql`
     query BanksQuery ($queryOptions: QueryOptions)  {
-        banks (queryOptions: $queryOptions) 
+        banks (queryOptions: $queryOptions)
         {
             items{
                 id
                 name
             }
-        count
+            count
         }
     }
 `;
@@ -66,7 +68,7 @@ export const PASSPORTS_PLACE_ISSUES_QUERY = gql`
                 id
                 name
             }
-        count
+            count
         }
     }
 `;
@@ -162,7 +164,7 @@ export const TYPES_PROJECTS_QUERY = gql`
                 group {
                     id
                     name
-                    technicalSpecification {
+                    technical_specification {
                         id
                         name
                     }
@@ -259,9 +261,9 @@ export const PPI_QUERY = gql`
     query PpiQuery($queryOptions: QueryOptions) {
         passportPlaceIssues(queryOptions: $queryOptions) {
             items{
-            id
-            name
-            code}
+                id
+                name
+                code}
             count
         }
     }
@@ -432,13 +434,14 @@ export const TEMPLATE_IRDS_TYPE_PROJECTS_QUERY = gql`
             }
             ird{
                 id
-                name 
+                name
             }
             stage_number
             application_to_project
         }
     }
-`;export const TEMPLATE_SECTION_REFERENCES_TYPE_PROJECTS_QUERY = gql`
+`;
+export const TEMPLATE_SECTION_REFERENCES_TYPE_PROJECTS_QUERY = gql`
     query SectionReferencesQuery ($typeProject: ID) {
         templatesSectionReferencesTypeProjects(typeProject: $typeProject)  {
             id
@@ -448,9 +451,9 @@ export const TEMPLATE_IRDS_TYPE_PROJECTS_QUERY = gql`
             }
             section_reference{
                 id
-                name 
+                name
                 values
-                
+
             }
             values
         }
@@ -497,10 +500,10 @@ export const TEMPLATE_TASKS_TYPE_PROJECTS_QUERY = gql`
 export const POSITIONS_QUERY = gql`
     query PositionsQuery ($queryOptions: QueryOptions) {
         positions(queryOptions: $queryOptions)  {
-           items {
-               id
-               name
-           }
+            items {
+                id
+                name
+            }
             count
         }
     }

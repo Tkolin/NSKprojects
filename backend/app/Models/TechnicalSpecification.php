@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class TechnicalSpecification extends Model
 {
     protected $fillable = [
-        'code',
+        'id',
         'name',
     ];
     public function group_type_project_documents(): HasMany

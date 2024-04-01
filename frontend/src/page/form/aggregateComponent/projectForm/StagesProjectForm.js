@@ -41,16 +41,12 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
     const handleItemDuration = () => {
         recomputeTotalToDuration();
     }
-
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
         notification[type]({
             message: message, placement,
         });
     };
-
-
-
     useEffect(() => {
         recomputePricesAndPercentages();
     }, [formStage.getFieldValue('stageList')]);

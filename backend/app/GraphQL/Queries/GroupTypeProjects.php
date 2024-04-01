@@ -16,7 +16,7 @@ final readonly class GroupTypeProjects
         $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            return GroupTypeProjectDocument::with('technical_specification');
+            return GroupTypeProjectDocument::with("technical_specification")->get();
         } else {
             throw new AuthenticationException('Отказано в доступе');
         }

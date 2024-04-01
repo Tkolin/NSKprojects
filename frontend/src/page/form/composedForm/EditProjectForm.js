@@ -5,20 +5,10 @@ import {
 import {useQuery} from '@apollo/client';
 import {TYPES_PROJECTS_QUERY} from '../../../graphql/queries';
 
-import {
-    StyledFormItem, StyledFormRegular
-} from '../../style/FormStyles';
-import {  PlusOutlined} from '@ant-design/icons';
-
 import TypeProjectForm from "../simpleForm/TypeProjectForm";
-import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../style/BlockStyles";
-import {StyledButtonForm, StyledButtonGreen} from "../../style/ButtonStyles";
 import StagesTemplateForm from "../aggregateComponent/templateForm/StagesTemplateForm";
 import IrdsTemplateForm from "../aggregateComponent/templateForm/IrdsTemplateForm";
-import TasksTemplateForm from "../aggregateComponent/templateForm/TasksTemplateForm";
-
-const {Option} = Select;
 
 const EditProjectForm = ({project, onClose}) => {
 
