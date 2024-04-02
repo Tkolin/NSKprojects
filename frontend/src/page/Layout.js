@@ -3,7 +3,7 @@ import {
     SolutionOutlined,
     HomeOutlined,
     FormOutlined,
-    ProfileOutlined, LogoutOutlined, BarChartOutlined, CalculatorOutlined,
+    ProfileOutlined, LogoutOutlined, BarChartOutlined, CalculatorOutlined, BugOutlined,
 } from '@ant-design/icons';
 import {Layout, Menu, Button, Typography, Space} from 'antd';
 import {useQuery} from "@apollo/client";
@@ -115,6 +115,11 @@ const CustomLayout = ({children, currentUser, la}) => {
                     getItem('Расчёты', '4', <CalculatorOutlined />, [
                     ]),
                     getItem('Экономика', '5', <BarChartOutlined />, [
+                    ])     ,
+                    getItem('', '6', <BugOutlined  />, [
+                        getItem('Тест 1', '6-1', null, null),
+                        getItem('Тест 2', '6-2', null, null),
+
                     ])
                 );
                 break;
@@ -193,6 +198,14 @@ const CustomLayout = ({children, currentUser, la}) => {
             case '2-5':
                 // Шаблоны по типу проекта
                 navigate('/template/new');
+                break;
+                case '6-1':
+                // Шаблоны по типу проекта
+                navigate('/t');
+                break;
+                case '6-2':
+                // Шаблоны по типу проекта
+                navigate('/tasks');
                 break;
             case '3':
                 // Отчёты

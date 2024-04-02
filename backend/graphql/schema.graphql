@@ -25,7 +25,7 @@ type Query {
 
     projectIrds(queryOptions: QueryOptions, projectId: ID): [ProjectIRD]
     projectStages(queryOptions: QueryOptions ,projectId: ID): [ProjectStage]
-    projectTasks(queryOptions: QueryOptions ,projectId: ID): [ProjectTask]
+    projectTasksQuery(queryOptions: QueryOptions ,projectId: ID): [ProjectTask]
     projectSectionReferences(queryOptions: QueryOptions ,projectId: ID): [ProjectSectionReference]
 
     currentUser: User!
@@ -648,9 +648,20 @@ type AuthPayload {
     progress: Int
 }type ProjectTask{
     id: ID!
-    project: Project
+    sub_tasks: [ProjectTask]
     task: Task
-
+    date_start: String
+    date_end: String
+    duration: Int
+    executors: [TaskExecutor]
+    price: Float
+    description: String
+}type TaskExecutor{
+    id: ID!
+    executor: Person
+    price_percentage: Int
+    duration: Int
+    description: String
 }type ProjectSectionReference{
     id: ID!
     project: Project

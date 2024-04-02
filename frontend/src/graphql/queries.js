@@ -570,15 +570,58 @@ export const IRDS_TO_PROJECT_QUERY = gql`
     }
 `;
 export const TASKS_TO_PROJECT_QUERY = gql`
-    query BiksForms ($queryOptions: QueryOptions){
-        biks(queryOptions: $queryOptions)   {
-            items {
+    query TasksToProjectQuery ($projectId: ID){
+        projectTasksQuery(projectId: $projectId) {
+            id
+            task {
                 id
                 name
-                BIK
-                correspondent_account
             }
-            count
+            date_start
+            date_end
+            duration
+            executors {
+                id
+                executor {
+                    id
+                    passport {
+                        firstname
+                        lastname
+                        patronymic
+                    }
+                }
+            }
+            price
+            description
+            sub_tasks {
+                id
+                ...SubTaskDetails
+            }
         }
+    }
+
+    fragment TaskDetails on ProjectTask {
+        id
+        date_start
+        date_end
+        duration
+        executors {
+            id
+            executor {
+                id
+                passport {
+                    firstname
+                    lastname
+                    patronymic
+                }
+            }
+        }
+        price
+        description
+    }
+
+    fragment SubTaskDetails on ProjectTask {
+        id
+        ...TaskDetails
     }
 `;

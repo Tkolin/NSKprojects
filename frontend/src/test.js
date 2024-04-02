@@ -1,39 +1,42 @@
-import React from "react";
-import {FrappeGantt} from "frappe-gantt-react";
-
+import React, { useState } from 'react';
+import {Button, Drawer, FloatButton} from 'antd';
 const App = () => {
-
-    var tasks = [
-        {
-            id: 'Task 1',
-            name: 'Redesign website',
-            start: '2016-12-28',
-            end: '2016-12-31',
-            progress: 20,
-            dependencies: 'Task 2, Task 3'
-        },        {
-            id: 'Task 2',
-            name: 'Redesign website',
-            start: '2016-12-28',
-            end: '2016-12-31',
-            progress: 20,
-            dependencies: 'Task 2, Task 3'
-        },
-
-    ]
+    const [openEditTaskDrawer, setOpenEditTaskDrawer] = useState(false);
+    const [childrenDrawer, setChildrenDrawer] = useState(false);
+    const showEditTasks = () => {
+        setOpenEditTaskDrawer(true);
+    };
+    const onClose = () => {
+        setOpenEditTaskDrawer(false);
+    };
+    const showChildrenDrawer = () => {
+        setChildrenDrawer(true);
+    };
+    const onChildrenDrawerClose = () => {
+        setChildrenDrawer(false);
+    };
     return (
-    <div>
-        <FrappeGantt
-            tasks={tasks}
-            viewMode={this.state.mode}
-            onClick={task => console.log(task)}
-            onDateChange={(task, start, end) => console.log(task, start, end)}
-            onProgressChange={(task, progress) => console.log(task, progress)}
-            onTasksChange={tasks => console.log(tasks)}
-        />
-    </div>
+        <>
 
-)
+            <FloatButton
+                shape="circle"
+                onClick={showEditTasks}
+            />
+            <Drawer title="Данные об задаче" width={520} closable={false} onClose={onClose} open={openEditTaskDrawer}>
+                <Button type="primary" onClick={showChildrenDrawer}>
+                    Two-level drawer
+                </Button>
+                <Drawer
+                    title="Two-level Drawer"
+                    width={320}
+                    closable={false}
+                    onClose={onChildrenDrawerClose}
+                    open={childrenDrawer}
+                >
+                    This is two-level drawer
+                </Drawer>
+            </Drawer>
+        </>
+    );
 };
-
 export default App;

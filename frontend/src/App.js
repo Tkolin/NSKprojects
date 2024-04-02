@@ -29,6 +29,7 @@ import ruRU from "antd/locale/ru_RU";
 import CreateNewProject from "./page/form/composedForm/CreateNewProject";
 import {createGlobalStyle} from "styled-components";
 import SectionReferenceTable from "./page/view/tableView/SectionReferenceTable";
+import TasksChartForm from "./page/form/TasksChartForm";
 
 
 const App = () => {
@@ -61,6 +62,7 @@ const App = () => {
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/t" element={<Test />} />
+                        <Route path="/tasks" element={<TasksChartForm />} />
 
                         {currentUser ? (
                             <>
