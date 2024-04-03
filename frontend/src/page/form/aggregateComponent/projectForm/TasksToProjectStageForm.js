@@ -11,12 +11,10 @@ import {
 import LoadingSpinnerStyles from "../../../style/LoadingSpinnerStyles";
 import {StyledButtonGreen} from "../../../style/ButtonStyles";
 import {UPDATE_STAGES_TO_PROJECT_MUTATION, UPDATE_TASKS_TO_PROJECT_MUTATION} from "../../../../graphql/mutationsProject";
-import {ADD_AND_UPDATE_TASK_MUTATION, ADD_TASK_MUTATION} from "../../../../graphql/mutationsTask";
+import {ADD_TASK_TO_PROJECT_MUTATION, ADD_TASK_MUTATION} from "../../../../graphql/mutationsTask";
 
 const TasksToProjectStageForm = ({project, onSubmit}) => {
     const [stagesArray, setStagesArray] = useState(null);
-
-
     const [dataSource, setDataSource] = useState();
     const [formStages] = Form.useForm();
 
@@ -148,7 +146,7 @@ const TasksToProjectStageForm = ({project, onSubmit}) => {
             openNotification('topRight', 'error', 'Ошибка при обновлении данных: ' + error.message);
         }
     });
-    const [addTasksToProject] = useMutation(ADD_AND_UPDATE_TASK_MUTATION, {
+    const [addTasksToProject] = useMutation(ADD_TASK_TO_PROJECT_MUTATION, {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Этапы зарегистрированны как задачи"!');
         }, onError: (error) => {

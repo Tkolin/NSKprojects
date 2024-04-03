@@ -4,17 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProjectTasks extends Model
 {
     protected $fillable = [
-        'project_executors_id',
         'task_id',
         'id',
-        'task_id',
         'project_id',
-        'inherited_task_id',
         'stage_number',
         'price',
         'date_start',
@@ -22,28 +20,23 @@ class ProjectTasks extends Model
         'duration',
     ];
 
-    public function projects_executors()
+    public function executors(): HasMany
     {
-        return $this->belongsTo(ProjectExecutors::class);
+        return $this->hasMany(ProjectTaskExecutor::class);
     }
 
-    public function inherited__project_tasks()
+    public function project_inherited_tasks(): HasMany
     {
-        return $this->belongsTo(ProjectTasks::class);
+        return $this->hasMany(ProjectTaskIngerited::class, 'project_tasks_id', 'id');
     }
 
     public function other_project_tasks(): HasMany
     {
-        return $this->hasMany(ProjectTasks::class);
+        return $this->hasMany(ProjectTaskIngerited::class, 'project_tasks_id', 'id');
     }
 
-    public function tasks()
+    public function task(): BelongsTo
     {
-        return $this->belongsTo(Task::class);
-    }
-
-    public function sub_tasks()
-    {
-        return $this->hasMany(ProjectTasks::class, 'inherited_task_id');
+        return $this->belongsTo(Task::class, 'task_id');
     }
 }

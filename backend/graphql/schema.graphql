@@ -659,9 +659,7 @@ type AuthPayload {
 }type TaskExecutor{
     id: ID!
     executor: Person
-    price_percentage: Int
-    duration: Int
-    description: String
+    price: Int
 }type ProjectSectionReference{
     id: ID!
     project: Project

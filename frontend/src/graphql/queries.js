@@ -582,6 +582,7 @@ export const TASKS_TO_PROJECT_QUERY = gql`
             duration
             executors {
                 id
+                price
                 executor {
                     id
                     passport {
@@ -607,8 +608,10 @@ export const TASKS_TO_PROJECT_QUERY = gql`
         duration
         executors {
             id
+            price
             executor {
                 id
+                
                 passport {
                     firstname
                     lastname

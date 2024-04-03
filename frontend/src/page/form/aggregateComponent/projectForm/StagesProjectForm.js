@@ -8,7 +8,7 @@ import {DatePicker} from "antd/lib";
 import {UPDATE_PROJECT_MUTATION, UPDATE_STAGES_TO_PROJECT_MUTATION} from "../../../../graphql/mutationsProject";
 import {PROJECTS_QUERY, STAGES_QUERY, TEMPLATE_STAGES_TYPE_PROJECTS_QUERY} from "../../../../graphql/queries";
 import LoadingSpinnerStyles from "../../../style/LoadingSpinnerStyles";
-import {StyledFormBig, StyledFormItem, StyledFormLarge} from "../../../style/FormStyles";
+import {StyledFormLarge} from "../../../style/FormStyles";
 import {StyledButtonGreen} from "../../../style/ButtonStyles";
 
 const {RangePicker} = DatePicker;

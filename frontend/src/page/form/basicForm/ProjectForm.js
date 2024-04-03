@@ -7,7 +7,7 @@ import {
     PROJECTS_QUERY,
     PROJECT_STATUSES_QUERY,
     TYPES_PROJECTS_QUERY,
-    ORGANIZATIONS_SHORT_QUERY, CONTACTS_SHORT_QUERY, FACILITYS_QUERY, ORGANIZATIONS_QUERY
+    CONTACTS_SHORT_QUERY, FACILITYS_QUERY, ORGANIZATIONS_QUERY
 } from '../../../graphql/queries';
 import {
     ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION,
@@ -16,16 +16,12 @@ import {
     StyledFormItem, StyledFormRegular
 } from '../../style/FormStyles';
 import {DatePicker} from "antd/lib";
-import {EditOutlined, PlusOutlined} from '@ant-design/icons';
 import OrganizationForm from "./OrganizationForm";
 import moment from 'moment';
 import ContactForm from "./ContactForm";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
-
 import dayjs from "dayjs";
 import {StyledFormItemSelectAndCreate, StyledFormItemSelectAndCreateWitchEdit} from "../../style/SelectStyles";
-import organizationForm from "./OrganizationForm";
-import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 
 const {Option} = Select;
 const {SHOW_CHILD} = Cascader;
