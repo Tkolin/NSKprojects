@@ -61,14 +61,19 @@ input StageToProject {
 input TasksToProject {
     id: ID
     projectId: ID!
-    stage_id: ID
-    stageNumber: Int
+    inherited_task_ids: [ID]
+    task_id: ID
+    date_start: String
+    date_end: String
+    duration: String
     price: Float
-    percent: Int
-    dateStart: String
-    duration: Int
-    dateEnd: String
-    progress: Int
+    executors: [TaskExecutor]
+    description: String
+}
+input TaskExecutor {
+    id: ID!
+    executor_id: ID
+    price: Int
 }
 input IrdToProject {
     projectId: ID!
@@ -143,8 +148,11 @@ type Mutation {
     updateStagesToProject(
         items: [StageToProject]
     ): Int
-    updateTasksToProject(
-        items: [TasksToProject]
+    updateTaskToProject(
+        data: TasksToProject
+    ): Int
+    addTaskToProject(
+        data: TasksToProject
     ): Int
     updatePaymentsToProject(
         project: ID
@@ -648,7 +656,7 @@ type AuthPayload {
     progress: Int
 }type ProjectTask{
     id: ID!
-    sub_tasks: [ProjectTask]
+    inherited_task_ids: [InheritedTask]
     task: Task
     date_start: String
     date_end: String
@@ -660,6 +668,9 @@ type AuthPayload {
     id: ID!
     executor: Person
     price: Int
+}type InheritedTask{
+    project_task_id: ID!
+    project_inherited_task_id: ID!
 }type ProjectSectionReference{
     id: ID!
     project: Project

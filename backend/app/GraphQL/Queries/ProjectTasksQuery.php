@@ -3,6 +3,7 @@
 namespace App\GraphQL\Queries;
 
 use App\Models\ProjectTasks;
+use App\Models\ProjectTasksInherited;
 
 final readonly class ProjectTasksQuery
 {
@@ -11,13 +12,15 @@ final readonly class ProjectTasksQuery
     {
         error_log("тут ProjectTasksQuery");
 
-        $pepa =  ProjectTasks::
-            with('task')
+         $projectTasks = ProjectTasks::with('task')
             ->with('executors.executor')
-            ->with('project_inherited_tasks')
-            ->where('project_id', 24)->get();
-        error_log("pepa ". $pepa);
-        return $pepa;
+             ->with('inherited_task_ids')
+            ->where('project_id', 24)
+            ->get();
+
+//        error_log("inheritedTaskIds ". $inheritedTaskIds);
+        error_log("projectTasks ". $projectTasks);
+        return $projectTasks;
 
     }
 }

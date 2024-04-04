@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Divider, Form, InputNumber, Modal, notification, Space, Tooltip} from 'antd';
+import {Button, Divider, Form, InputNumber, Modal, notification, Select, Space, Tooltip} from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
 import {
     PERSONS_QUERY, TASKS_QUERY,
@@ -15,6 +15,7 @@ import {StyledButtonGreen} from "../style/ButtonStyles";
 import PersonForm from "./basicForm/PersonForm";
 import TaskForm from "./simpleForm/TaskForm";
 import {
+    StyledFormItemSelect,
 
     StyledFormItemSelectAndCreateWitchEdit
 } from "../style/SelectStyles";
@@ -176,7 +177,7 @@ const TaskProjectForm = ({tasksProject, onClose}) => {
             );
         } else {
             addTask(
-                //{variables: {...form.getFieldsValue()}}
+
             );
         }
     };
@@ -197,7 +198,7 @@ const TaskProjectForm = ({tasksProject, onClose}) => {
                     firstBtnOnClick={setAddTaskModalVisible}
                     formatOptionText={(row) => `${row.name}`}
                 />
-                <FormItem name={"date_range"}>
+                <FormItem name={"date_range"} label={"Продолжительность"}>
                     <RangePicker
                         style={{width: "100%"}}
                         // minDate={actualityProjectData.date_signing}
@@ -234,19 +235,12 @@ const TaskProjectForm = ({tasksProject, onClose}) => {
                             align="baseline"
                         >
                             <Tooltip title="Исполнитель">
-                                <Form.Item
-                                    {...restField}
-                                    style={{marginBottom: 0, display: 'flex'}}
-                                    name={[name, 'procent_item']}>
-                                    <InputNumber
-                                        //onChange={handleChangeItemPercent}
-                                        size={"middle"}
-                                        min={1}
-                                        max={100}
-                                        style={{
-                                            width: 50
-                                        }}/>
-                                </Form.Item>
+                                <StyledFormItemSelect
+                                    formName={[name, 'executor_item']}
+                                    items={dataPersons}
+                                    formatOptionText={(row) => `${row?.password?.first_name}`}
+                                />
+
                             </Tooltip>
                             <Tooltip title="Продолжительность этапа">
                                 <Form.Item
@@ -268,7 +262,7 @@ const TaskProjectForm = ({tasksProject, onClose}) => {
                                 <Form.Item
                                     {...restField}
                                     style={{marginBottom: 0, display: 'flex'}}
-                                    name={[name, 'duration_item']}>
+                                    name={[name, 'price_item']}>
                                     <InputNumber
                                         //onChange={handleChangeItemDuration}
                                         size={"middle"}

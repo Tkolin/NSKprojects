@@ -577,6 +577,10 @@ export const TASKS_TO_PROJECT_QUERY = gql`
                 id
                 name
             }
+            inherited_task_ids{
+                project_task_id
+                project_inherited_task_id
+            }
             date_start
             date_end
             duration
@@ -594,37 +598,7 @@ export const TASKS_TO_PROJECT_QUERY = gql`
             }
             price
             description
-            sub_tasks {
-                id
-                ...SubTaskDetails
-            }
-        }
-    }
 
-    fragment TaskDetails on ProjectTask {
-        id
-        date_start
-        date_end
-        duration
-        executors {
-            id
-            price
-            executor {
-                id
-                
-                passport {
-                    firstname
-                    lastname
-                    patronymic
-                }
-            }
         }
-        price
-        description
-    }
-
-    fragment SubTaskDetails on ProjectTask {
-        id
-        ...TaskDetails
     }
 `;

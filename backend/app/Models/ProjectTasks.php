@@ -24,17 +24,10 @@ class ProjectTasks extends Model
     {
         return $this->hasMany(ProjectTaskExecutor::class);
     }
-
-    public function project_inherited_tasks(): HasMany
+    public function inherited_task_ids()
     {
-        return $this->hasMany(ProjectTaskIngerited::class, 'project_tasks_id', 'id');
+        return $this->hasMany(ProjectTasksInherited::class, 'project_task_id')->select('project_task_id','project_inherited_task_id');
     }
-
-    public function other_project_tasks(): HasMany
-    {
-        return $this->hasMany(ProjectTaskIngerited::class, 'project_tasks_id', 'id');
-    }
-
     public function task(): BelongsTo
     {
         return $this->belongsTo(Task::class, 'task_id');
