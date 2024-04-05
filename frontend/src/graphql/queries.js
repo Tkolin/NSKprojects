@@ -2,9 +2,9 @@ import {gql} from '@apollo/client';
 import SectionReferenceTable from "../page/view/tableView/SectionReferenceTable";
 
 export const TASKS_QUERY = gql`
-    query BikQuery {
-        tasks  {
-            items{
+    query TasksQuery  ($queryOptions: QueryOptions) {
+        tasks  (queryOptions: $queryOptions) {
+            items {
                 id
                 name
             }
@@ -250,6 +250,34 @@ export const PROJECTS_QUERY = gql`
                         name
                     }
                     receivedDate
+                }
+                project_tasks {
+                    id
+                    task {
+                        id
+                        name
+                    }
+                    inherited_task_ids{
+                        project_task_id
+                        project_inherited_task_id
+                    }
+                    date_start
+                    date_end
+                    duration
+                    executors {
+                        id
+                        price
+                        executor {
+                            id
+                            passport {
+                                firstname
+                                lastname
+                                patronymic
+                            }
+                        }
+                    }
+                    price
+                    description
                 }
                 price
             }

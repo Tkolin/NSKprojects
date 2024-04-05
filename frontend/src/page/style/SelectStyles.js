@@ -180,5 +180,5 @@ const StyledFormItemSelectAndCreateWitchEdit = ({
 
 );
 
-export {StyledFormItemSelectAndCreate, StyledFormItemSelectAndCreateWitchEdit, StyledFormItemSelect};
+export {StyledFormItemSelectAndCreate, StyledFormItemSelectAndCreateWitchEdit, StyledFormItemSelect,BaseStyledFormItemSelect};
 

@@ -31,6 +31,10 @@ class Project extends Model
     {
         return $this->belongsToMany(Facility::class,"project_facilities","project_id","facility_id");
     }
+    public function project_tasks(): HasMany
+    {
+        return $this->hasMany(ProjectTasks::class);
+    }
     public function organization_customer(): BelongsTo
     {
         return $this->belongsTo(Organization::class);

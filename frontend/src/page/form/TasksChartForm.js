@@ -2,25 +2,18 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Button, Drawer, Form, Input, InputNumber, Popconfirm, Row, Table, Typography } from 'antd';
 import { Chart } from 'react-google-charts';
 import { useQuery } from "@apollo/client";
-import { TASKS_TO_PROJECT_QUERY } from "../../graphql/queries";
+import {PROJECTS_QUERY, TASKS_TO_PROJECT_QUERY} from "../../graphql/queries";
 import TaskProjectForm from "./TaskProjectForm";
 
-const TasksChartForm = ({ projectId }) => {
+const TasksChartForm = ({ project, setProject }) => {
     const [originData, setOriginData] = useState();
     const [openTaskProjectForm, setOpenTaskProjectForm] = useState(false);
     const [addTasksProject, setAddTasksProject] = useState(false);
     const [editTask, setEditTask] = useState(null);
     const [form] = Form.useForm();
 
-    useEffect(() => {
-        console.log("editTask ", editTask);
-    }, [editTask]);
-
     const buildData = (data) => {
-        const { projectTasksQuery } = data;
-        console.log("buildData");
-
-        const rows = projectTasksQuery.map((task) => {
+        const rows = data.map((task) => {
             const { id, task: { name }, executors, date_start, date_end, duration, inherited_task_ids } = task;
             const inheritedIds = inherited_task_ids.map(({ project_inherited_task_id }) => project_inherited_task_id).join(", ");
             const row = [
@@ -50,18 +43,20 @@ const TasksChartForm = ({ projectId }) => {
             Dependencies: r[7]
         })));
     };
+    const [actualityProjectData, setActualityProjectData] = useState(null);
 
     const {
         loading: loadingTasks,
         error: errorTasks,
         refetch: refetchTasks,
         data: dataTasks
-    } = useQuery(TASKS_TO_PROJECT_QUERY, {
+    } = useQuery(PROJECTS_QUERY, {
         variables: { projectId: 24 },
         onCompleted: (data) => {
-            console.log("data ", data);
-            if (data)
-                buildData(data);
+            console.log("data ", data?.projects?.items[0]?.project_tasks);
+            if (data?.projects?.items[0]?.project_tasks)
+                buildData(data?.projects?.items[0]?.project_tasks);
+            setActualityProjectData(data?.projects?.items[0]);
         }
     });
 
@@ -120,7 +115,7 @@ const TasksChartForm = ({ projectId }) => {
             dataIndex: 'operation',
             render: (text, record) => (
                 <Typography.Link onClick={() => {
-                    setEditTask(dataTasks?.projectTasksQuery?.find(d => d.id === record.TaskID));
+                    setEditTask(actualityProjectData?.project_tasks?.find(d => d.id === record.TaskID));
                     setOpenTaskProjectForm(true);
                 }}>
                     Изменить
@@ -145,8 +140,8 @@ const TasksChartForm = ({ projectId }) => {
     }
 
     return (
-        <>
-            <Row style={{ width: "100%", height: '100%', overflow: 'visible' }} gutter={10}>
+        <div style={{width: '100%', margin: 10}}>
+            <div style={{ width: "100vh", height: '50vh', overflow: 'visible' }}>
                 {originData && (
                     <Chart
                         style={{ width: '100%', height: '100%' }}
@@ -171,6 +166,8 @@ const TasksChartForm = ({ projectId }) => {
                         }}
                     />
                 )}
+            </div>
+            <div style={{width: '100%'}}>
                 <Form form={form} component={false}>
                     <Table
                         style={{width: '100%'}}
@@ -182,14 +179,14 @@ const TasksChartForm = ({ projectId }) => {
                     />
                     <Button style={{ width: '100', margin: 10 }} onClick={() => newTask()}>Создать задачу</Button>
                 </Form>
-            </Row>
+            </div>
             <Drawer title="Данные об задаче" width={520} closable={false} onClose={onCloseTaskProjectForm} open={openTaskProjectForm}>
                 {addTasksProject ?
-                    (<TaskProjectForm projectId={projectId} />)
+                    (<TaskProjectForm project={actualityProjectData} />)
                 :
-                    (<TaskProjectForm tasksProject={editTask} />)}
+                    (<TaskProjectForm project={actualityProjectData} tasksProject={editTask} />)}
             </Drawer>
-        </>
+        </div>
     );
 };
 

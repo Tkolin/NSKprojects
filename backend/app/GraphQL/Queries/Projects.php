@@ -3,6 +3,7 @@
 namespace App\GraphQL\Queries;
 use App\Models\Project;
 use App\GraphQL\Service\AuthorizationService;
+use App\Models\ProjectTasks;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
@@ -23,10 +24,15 @@ final readonly class Projects
                 ->with('facilities')
                 ->with('status')
                 ->with('delegations')
+                ->with('project_tasks')
                 ->with('project_irds.IRD')
                 ->with('project_stages.stage');
             // Поиск
-
+            $projectTasks = ProjectTasks::with('task')
+                ->with('executors.executor')
+                ->with('inherited_task_ids')
+                ->where('project_id', 24)
+                ->get();
             if(isset($args["projectID"])){
                 $projectsQuery->find($args["projectID"]);
             } else if(isset($args['queryOptions']['id'])){
@@ -63,6 +69,8 @@ final readonly class Projects
             } else {
                 $projects = $projectsQuery->get();
             }
+
+            error_log("projects  " . $projects);
 
             return ['items' => $projects, 'count' =>  $count];
         } else {

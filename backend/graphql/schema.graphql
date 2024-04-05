@@ -643,6 +643,7 @@ type AuthPayload {
     price: Int
     project_irds: [ProjectIRD]
     project_stages: [ProjectStage]
+    project_tasks: [ProjectTask]
 }type ProjectStage{
     id: ID!
     project: Project
@@ -661,10 +662,10 @@ type AuthPayload {
     date_start: String
     date_end: String
     duration: Int
-    executors: [TaskExecutor]
+    executors: [TaskExecutorData]
     price: Float
     description: String
-}type TaskExecutor{
+}type TaskExecutorData{
     id: ID!
     executor: Person
     price: Int

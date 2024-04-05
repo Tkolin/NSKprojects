@@ -87,11 +87,12 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
     } = useQuery(TEMPLATE_STAGES_TYPE_PROJECTS_QUERY, {
         variables: {typeProject: actualityProjectData?.type_project_document?.id},
         fetchPolicy: 'network-only',
-        onCompleted: (data) =>{
+        onCompleted: (data) => {
             loadTemplate();
             addingStages(actualityProjectData?.project_stages?.length > 0 ? actualityProjectData.project_stages :
                 (data?.templatesStagesTypeProjects?.length > 0 ? data.templatesStagesTypeProjects
-                    : null))}
+                    : null))
+        }
         ,
     });
     // Мутации для добавления и обновления
@@ -108,8 +109,8 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
             openNotification('topRight', 'error', 'Ошибка при обновлении данных  об проекте : ' + error.message);
         }
     });
-    const { data: projectData, refetch: refetchProject, loading: projectLoading} = useQuery(PROJECTS_QUERY, {
-        variables: { queryOptions: { id: project?.id } },
+    const {data: projectData, refetch: refetchProject, loading: projectLoading} = useQuery(PROJECTS_QUERY, {
+        variables: {queryOptions: {id: project?.id}},
         fetchPolicy: 'network-only',
         onCompleted: (data) => {
             if (data.projects.items[0]) {
@@ -123,10 +124,11 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
         onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при загрузки проекта: ' + error.message);
 
-        }});
+        }
+    });
     useEffect(() => {
         if (project?.id) {
-            refetchProject({ queryOptions: { id: Number(project?.id) }});
+            refetchProject({queryOptions: {id: Number(project?.id)}});
         }
     }, []);
     useEffect(() => {
@@ -250,8 +252,8 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
         }
     };
     const handleSubmit = () => {
-        const faae=formStage.getFieldsValue().stageList;
-        console.log("faae ",faae);
+        const faae = formStage.getFieldsValue().stageList;
+        console.log("faae ", faae);
         const stageToProject = formStage.getFieldsValue().stageList.map(stage => ({
             projectId: actualityProjectData?.id,
             stage_id: stage?.stage_item,
@@ -300,7 +302,7 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
         newArray.splice(toIndex, 0, item);
         return newArray;
     };
-    if (loadingTemplate  || projectLoading)
+    if (loadingTemplate || projectLoading)
         return <LoadingSpinnerStyles/>
 
     return (

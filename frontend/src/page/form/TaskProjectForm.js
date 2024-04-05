@@ -15,6 +15,7 @@ import {StyledButtonGreen} from "../style/ButtonStyles";
 import PersonForm from "./basicForm/PersonForm";
 import TaskForm from "./simpleForm/TaskForm";
 import {
+    BaseStyledFormItemSelect,
     StyledFormItemSelect,
 
     StyledFormItemSelectAndCreateWitchEdit
@@ -26,7 +27,7 @@ import FormItem from "antd/es/form/FormItem";
 
 const {RangePicker} = DatePicker;
 
-const TaskProjectForm = ({tasksProject, onClose}) => {
+const TaskProjectForm = ({tasksProject, project, onClose}) => {
     // Состояния
     const [editingTasks, setEditingTasks] = useState(null);
     const [form] = Form.useForm();
@@ -40,7 +41,9 @@ const TaskProjectForm = ({tasksProject, onClose}) => {
 
     const [selectedTask, setSelectedTask] = useState(null);
     const [selectedPerson, setSelectedPerson] = useState(null);
-
+    useEffect(() => {
+        console.log('project' , project);
+    }, [project]);
     // События
     const handleAutoCompleteTask = (value) => {
         setAutoCompleteTask(value);
@@ -177,7 +180,7 @@ const TaskProjectForm = ({tasksProject, onClose}) => {
             );
         } else {
             addTask(
-
+                //{variables: {id: editingContact.id, ...form.getFieldsValue()}}
             );
         }
     };
@@ -216,14 +219,35 @@ const TaskProjectForm = ({tasksProject, onClose}) => {
                                  formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                  parser={value => `${value}`.replace(/[^0-9]/g, '')}/>
                 </StyledFormItem>
-                {/*<StyledFormItem*/}
-                {/*    formName={"inherited_task_id"}*/}
-                {/*    formLabel={"Наслудует от"}*/}
-                {/*    loading={loadingTasksProject}*/}
-                {/*    items={dataTasksProject?.tasks?.items}*/}
-                {/*    //firstBtnOnClick={setAddContactModalVisibleMode}*/}
-                {/*    //formatOptionText={(row) => `${row?.passport?.last_name} ${row?.passport?.first_name} ${row?.passport?.patronymic}`}*/}
-                {/*/>*/}
+                <StyledFormItem name="task_id" label="Задача">
+                    <Select
+                        popupMatchSelectWidth={false}
+                        allowClear
+                        showSearch
+                        onSearch={(value)=>handleAutoCompleteTask(value)}
+                        filterOption={false}
+                        loading={loadingTasks}
+                        placeholder="Начните ввод...">
+                        {dataTasks?.tasks?.items?.map(row => (
+                            <Select.Option key={row.id} value={row.id}>{row.name}</Select.Option>))}
+                    </Select>
+                </StyledFormItem>
+                <StyledFormItem name="inherited_task_id" label="Наслудует от">
+                    <Select
+                        popupMatchSelectWidth={false}
+                        allowClear
+                        showSearch
+                        mode={'multiple'}
+                        onSearch={(value)=>handleAutoCompleteTask(value)}
+                        filterOption={false}
+                        loading={loadingTasks}
+                        placeholder="Начните ввод...">
+                        {project?.project_tasks?.map(row => (
+                            <Select.Option key={row.id} value={row.id}>{row.task.name}</Select.Option>))}
+                    </Select>
+                </StyledFormItem>
+
+
                 <Divider>Исполнители: </Divider>
                 <Form.List name="stageList">
                     {(fields, {add, remove}) => (<>
