@@ -30,7 +30,7 @@ final readonly class AddPerson
                 'date' => isset($args['date']) ? substr((string) $args['date'], 0, 10) : null, // 'date' вместо 'birth_day'
             ]);
             $person = Person::create([
-                'passport_id' => $passport->id, // 'id' вместо ['id']
+                'passport_id' => $passport->id,
                 'SHILS' => $args['SHILS'] ?? null,
                 'INN' => $args['INN'] ?? null,
                 'payment_account' => $args['payment_account'] ?? null,

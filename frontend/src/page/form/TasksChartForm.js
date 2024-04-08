@@ -173,6 +173,7 @@ const TasksChartForm = ({ project, setProject }) => {
             </div>
             <div style={{width: '100%'}}>
                 <Form form={form} component={false}>
+                    <Button onClick={()=>refetchTasks}/>
                     <Table
                         style={{width: '100%'}}
                         size="small"
