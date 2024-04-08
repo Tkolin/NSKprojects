@@ -19,7 +19,7 @@ const TasksChartForm = ({ project, setProject }) => {
             const row = [
                 id.toString(),
                 name,
-                executors.map((executor) => executor.executor.passport.lastname).join(","),
+                executors.map((executor) => executor.executor.passport.lastname + " " + executor.executor.passport.firstname + " "+ executor.executor.passport.patronymic).join(", "),
                 new Date(date_start).toISOString().slice(0, 10),
                 new Date(date_end).toISOString().slice(0, 10),
                 duration,
@@ -163,7 +163,11 @@ const TasksChartForm = ({ project, setProject }) => {
                                 maxZoomIn: 10.0,
                                 maxZoomOut: 1.0,
                             },
+                            vAxis: {
+                                title: 'Задача',
+                            },
                         }}
+                        chartLanguage={"ru"}
                     />
                 )}
             </div>

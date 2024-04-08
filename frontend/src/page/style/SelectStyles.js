@@ -121,9 +121,10 @@ const StyledFormItemSelect = ({
                                                     formatOptionText,
                                                     mode,
                                                     labelCol,
-                                                    wrapperCol
+                                                    wrapperCol,
+                                                    width
                                                 }) => (
-    <BaseStyledSpaceCompactFormItemSelect width={"100%"}>
+    <BaseStyledSpaceCompactFormItemSelect width={width ?? "100%"}>
         <BaseStyledFormItemSelect     formName={formName}
                                       formLabel ={formLabel}
                                       onSelect ={onSelect}
@@ -133,7 +134,7 @@ const StyledFormItemSelect = ({
                                       items = {items}
                                       formatOptionText ={formatOptionText}
                                       mode = {mode}
-                                      width={"100%"}
+                                      width={width ?? "100%"}
                                       labelCol={labelCol}
                                       wrapperCol={wrapperCol}/>
     </BaseStyledSpaceCompactFormItemSelect>

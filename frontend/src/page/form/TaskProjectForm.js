@@ -42,7 +42,7 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
     const [selectedTask, setSelectedTask] = useState(null);
     const [selectedPerson, setSelectedPerson] = useState(null);
     useEffect(() => {
-        console.log('project' , project);
+        console.log('project', project);
     }, [project]);
     // События
     const handleAutoCompleteTask = (value) => {
@@ -53,7 +53,7 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
         handleAutoCompleteTask('');
     };
     const handleAutoCompletePerson = (value) => {
-        setAutoCompleteTask(value);
+        setAutoCompletePerson(value);
     };
     const handleSelectedPerson = (value) => {
         setSelectedPerson(value);
@@ -161,11 +161,17 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
     useEffect(() => {
         if (tasksProject) {
             setEditingTasks(tasksProject);
-            console.log(tasksProject);
+            console.log("tasksProject ", tasksProject);
             form.setFieldsValue({
                 task_id: tasksProject?.task?.id,
                 date_range: [moment(tasksProject?.date_start), moment(tasksProject?.date_end)],
-                price: tasksProject.price
+                price: tasksProject.price,
+                inherited_task_ids: tasksProject?.inherited_task_ids?.map(({project_inherited_task_id}) => project_inherited_task_id),
+                executorList: tasksProject?.executors?.map(executor => ({
+                    executor_item: executor?.executor?.id,
+                    price_item: executor.price,
+                    duration_item: 0,
+                }))
             });
         }
     }, [tasksProject, form]);
@@ -174,16 +180,47 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
 
     // Обработчик отправки формы
     const handleSubmit = () => {
+        const fieldsValue = form.getFieldsValue();
+        const executorList = fieldsValue.executorList || [];
+        const mappedExecutorList = executorList.map(executor => ({
+            executor_id: executor.executor_item,
+            price: executor.price_item
+        }));
+
         if (editingTasks) {
-            updateTask(
-                //{variables: {id: editingContact.id, ...form.getFieldsValue()}}
-            );
+            updateTask({
+                variables: {
+                    data: {
+                        id: tasksProject.id,
+                        projectId: project.id,
+                        inherited_task_ids: fieldsValue.inherited_task_ids,
+                        task_id: fieldsValue.task_id,
+                        date_start: fieldsValue.date_range[0],
+                        date_end: fieldsValue.date_range[1],
+                        duration: moment(fieldsValue.date_range[1]).diff(moment(fieldsValue.date_range[0]), 'days').toString(),
+                        price: fieldsValue.price,
+                        executors: mappedExecutorList,
+                    }
+                }
+            });
         } else {
-            addTask(
-                //{variables: {id: editingContact.id, ...form.getFieldsValue()}}
-            );
+            addTask({
+                variables: {
+                    data: {
+                        projectId: project.id,
+                        inherited_task_ids: fieldsValue.inherited_task_ids,
+                        task_id: fieldsValue.task_id,
+                        date_start: fieldsValue.date_range[0],
+                        date_end: fieldsValue.date_range[1],
+                        duration: moment(fieldsValue.date_range[1]).diff(moment(fieldsValue.date_range[0]), 'days').toString(),
+                        price: fieldsValue.price,
+                        executors: mappedExecutorList,
+                    }
+                }
+            });
         }
     };
+
 
     return (
         <>
@@ -192,15 +229,7 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
                                labelCol={{span: 8}}
                                labelAlign="left"
                                wrapperCol={{span: 16}}>
-                <StyledFormItemSelectAndCreateWitchEdit
-                    formName={"task_id"}
-                    formLabel={"Задача"}
-                    placeholder={"Задача"}
-                    loading={loadingTasks}
-                    //items={dataTasks?.tasks?.items}
-                    firstBtnOnClick={setAddTaskModalVisible}
-                    formatOptionText={(row) => `${row.name}`}
-                />
+
                 <FormItem name={"date_range"} label={"Продолжительность"}>
                     <RangePicker
                         style={{width: "100%"}}
@@ -224,7 +253,7 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
                         popupMatchSelectWidth={false}
                         allowClear
                         showSearch
-                        onSearch={(value)=>handleAutoCompleteTask(value)}
+                        onSearch={(value) => handleAutoCompleteTask(value)}
                         filterOption={false}
                         loading={loadingTasks}
                         placeholder="Начните ввод...">
@@ -232,13 +261,13 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
                             <Select.Option key={row.id} value={row.id}>{row.name}</Select.Option>))}
                     </Select>
                 </StyledFormItem>
-                <StyledFormItem name="inherited_task_id" label="Наслудует от">
+                <StyledFormItem name="inherited_task_ids" label="Наслудует от">
                     <Select
                         popupMatchSelectWidth={false}
                         allowClear
                         showSearch
                         mode={'multiple'}
-                        onSearch={(value)=>handleAutoCompleteTask(value)}
+                        onSearch={(value) => handleAutoCompleteTask(value)}
                         filterOption={false}
                         loading={loadingTasks}
                         placeholder="Начните ввод...">
@@ -249,24 +278,24 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
 
 
                 <Divider>Исполнители: </Divider>
-                <Form.List name="stageList">
+                <Form.List name="executorList" style={{width: '100%'}}>
                     {(fields, {add, remove}) => (<>
                         {fields.map(({key, name, ...restField}) => (<Space
                             key={key}
                             style={{
-                                display: 'flex', marginBottom: 0, marginTop: 0
+                                width: '100%', marginBottom: 0, marginTop: 0
                             }}
                             align="baseline"
                         >
                             <Tooltip title="Исполнитель">
                                 <StyledFormItemSelect
+                                    width={300}
                                     formName={[name, 'executor_item']}
-                                    items={dataPersons}
-                                    formatOptionText={(row) => `${row?.password?.first_name}`}
+                                    items={dataPersons?.persons?.items}
+                                    formatOptionText={(row) => `${row?.passport?.lastname} ${row?.passport?.firstname} ${row?.passport?.patronymic}`}
                                 />
-
                             </Tooltip>
-                            <Tooltip title="Продолжительность этапа">
+                            <Tooltip title="Продолжительность">
                                 <Form.Item
                                     {...restField}
                                     style={{marginBottom: 0, display: 'flex'}}
@@ -293,7 +322,7 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
                                         min={1}
                                         max={325}
                                         style={{
-                                            width: 50
+                                            width: 80
                                         }}
                                     />
                                 </Form.Item>
@@ -313,7 +342,7 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
 
                 <StyledFormItem labelCol={{span: 24}} wrapperCol={{span: 24}}>
                     <div style={{textAlign: 'center'}}>
-                        <StyledButtonGreen type="primary" htmlType={"submit"}>
+                        <StyledButtonGreen type="primary" onClick={()=>handleSubmit()}>
                             Сохранить изменения
                         </StyledButtonGreen>
                     </div>

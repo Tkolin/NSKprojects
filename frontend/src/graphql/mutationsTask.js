@@ -1,26 +1,20 @@
 import {gql} from "@apollo/client";
 export const UPDATE_TASK_TO_PROJECT_MUTATION = gql`
-    mutation AddAndUpdateTask(
-        $names: [String!]
+    mutation UpdateTaskToProject(
+        $data: TasksToProject
     ) {
-        updateTask(
-            names: $names
-        ) {
-            id
-            name
-        }
+        updateTaskToProject(
+            data: $data
+        ) 
     }
 `;
 export const ADD_TASK_TO_PROJECT_MUTATION = gql`
-    mutation AddAndUpdateTask(
-        $names: [String!]
+    mutation AddTaskToProject(
+        $data: TasksToProject
     ) {
-        updateTask(
-            names: $names
-        ) {
-            id
-            name
-        }
+        addTaskToProject(
+            data: $data
+        ) 
     }
 `;
 export const UPDATE_TASK_MUTATION = gql`

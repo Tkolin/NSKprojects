@@ -71,7 +71,7 @@ input TasksToProject {
     description: String
 }
 input TaskExecutor {
-    id: ID!
+    id: ID
     executor_id: ID
     price: Int
 }

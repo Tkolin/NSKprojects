@@ -20,7 +20,6 @@ final class AddTaskToProject
             $task_id = $args["task_id"];
             $date_start = $args["date_start"];
             $date_end = $args["date_end"];
-            $String = $args["String"];
             $duration = $args["duration"];
             $price = $args["price"];
             $executors = $args["executors"];
