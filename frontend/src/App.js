@@ -29,7 +29,7 @@ import ruRU from "antd/locale/ru_RU";
 import CreateNewProject from "./page/form/composedForm/CreateNewProject";
 import {createGlobalStyle} from "styled-components";
 import SectionReferenceTable from "./page/view/tableView/SectionReferenceTable";
-import TasksChartForm from "./page/form/TasksChartForm";
+import TasksChartForm from "./page/form/basicForm/TasksChartForm";
 
 
 const App = () => {

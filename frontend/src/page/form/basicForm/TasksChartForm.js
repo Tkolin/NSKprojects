@@ -2,8 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Button, Drawer, Form, Input, InputNumber, Popconfirm, Row, Table, Typography } from 'antd';
 import { Chart } from 'react-google-charts';
 import { useQuery } from "@apollo/client";
-import {PROJECTS_QUERY, TASKS_TO_PROJECT_QUERY} from "../../graphql/queries";
-import TaskProjectForm from "./TaskProjectForm";
+import {PROJECTS_QUERY, TASKS_TO_PROJECT_QUERY} from "../../../graphql/queries";
+import TaskProjectForm from "../aggregateComponent/projectForm/TaskProjectForm";
 
 const TasksChartForm = ({ project, setProject }) => {
     const [originData, setOriginData] = useState();
@@ -26,12 +26,10 @@ const TasksChartForm = ({ project, setProject }) => {
                 0, // Assuming this needs to be calculated based on sub-tasks or some other logic
                 inheritedIds, // Use dependenciesMap to get dependencies
             ];
-            console.log('row ', row);
-            return row;
+             return row;
         });
 
-        console.log("rows ", rows);
-        setOriginData(rows.map((r) => ({
+         setOriginData(rows.map((r) => ({
             key: r[0],
             TaskID: r[0],
             TaskName: r[1],
@@ -48,25 +46,34 @@ const TasksChartForm = ({ project, setProject }) => {
     const {
         loading: loadingTasks,
         error: errorTasks,
-        refetch: refetchTasks,
+         refetch,
         data: dataTasks
     } = useQuery(PROJECTS_QUERY, {
-        variables: { projectId: 24 },
+        variables: { projectId: project?.id || 24 },
+        fetchPolicy: 'network-only',
         onCompleted: (data) => {
-            console.log("data ", data?.projects?.items[0]?.project_tasks);
-            if (data?.projects?.items[0]?.project_tasks)
+            console.log("onCompleted ");
+             if (data?.projects?.items[0]?.project_tasks)
                 buildData(data?.projects?.items[0]?.project_tasks);
             setActualityProjectData(data?.projects?.items[0]);
-        }
+        },
+        onError: (data) =>
+        {
+            console.log("onError");
+        },
+        refetchWritePolicy: "overwrite"
     });
 
     const onCloseTaskProjectForm = () => {
         setOpenTaskProjectForm(false);
         setEditTask(null);
         setAddTasksProject(false);
+        refetch();
     };
 
-    const newTask = () => {};
+    const newTask = () => {
+
+    };
 
 
     const columns = [
@@ -173,7 +180,7 @@ const TasksChartForm = ({ project, setProject }) => {
             </div>
             <div style={{width: '100%'}}>
                 <Form form={form} component={false}>
-                    <Button onClick={()=>refetchTasks}/>
+                    <Button onClick={() => refetch({ projectId: 1 })}>Обновить</Button>
                     <Table
                         style={{width: '100%'}}
                         size="small"
@@ -187,9 +194,9 @@ const TasksChartForm = ({ project, setProject }) => {
             </div>
             <Drawer title="Данные об задаче" width={520} closable={false} onClose={onCloseTaskProjectForm} open={openTaskProjectForm}>
                 {addTasksProject ?
-                    (<TaskProjectForm project={actualityProjectData} />)
+                    (<TaskProjectForm project={actualityProjectData} onClose={() => onCloseTaskProjectForm()} />)
                 :
-                    (<TaskProjectForm project={actualityProjectData} tasksProject={editTask} />)}
+                    (<TaskProjectForm project={actualityProjectData} tasksProject={editTask}  onClose={() => onCloseTaskProjectForm()} />)}
             </Drawer>
         </div>
     );

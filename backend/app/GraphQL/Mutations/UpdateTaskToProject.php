@@ -41,22 +41,23 @@ final readonly class UpdateTaskToProject
                 );
             }
             // Update or create ProjectTaskExecutor for each executor
-//            foreach ($executors as $executor) {
-//                ProjectTaskExecutor::updateOrCreate(
-//                    ['task_id' => $task_id, 'project_id' => $projectId, 'executor_id' => $executor['executor_id']],
-//                    ['price' => $executor['price']]
-//                );
-//            }
+            foreach ($executors as $executor) {
+                ProjectTaskExecutor::updateOrCreate(
+                    ['project_tasks_id' => $task_id, 'executor_id' => $executor['executor_id']],
+                    ['price' => $executor['price']]
+                );
+            }
 
             // Удаление записей, которых нет в списке
             ProjectTasksInherited::where('project_task_id', $id)
-                ->whereNotIn('project_inherited_task_id', array_column($inherited_task_ids, 'project_inherited_task_id'))
+                ->whereNotIn('project_inherited_task_id', $inherited_task_ids)
                 ->delete();
 
             // Удаление записей, которых нет в списке
-//            ProjectTaskExecutor::where('project_id', $projectId)
-//                ->whereNotIn('executor_id', array_column($executors, 'executor_id'))
-//                ->delete();
+            $executorIdsToDelete = array_column($executors, 'executor_id');
+            ProjectTaskExecutor::where('project_tasks_id', $id)
+                ->whereNotIn('executor_id', $executorIdsToDelete)
+                ->delete();
 
             return 1;
         } else {
