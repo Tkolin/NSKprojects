@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import {Button, Form, Modal, notification, Space, Table} from 'antd';
-import { TYPES_PROJECTS_QUERY} from '../../../graphql/queries';
-import { DELETE_TYPE_PROJECT_MUTATION} from '../../../graphql/mutationsTypeProject';
+import {TYPES_PROJECTS_QUERY} from '../../../graphql/queries';
+import {DELETE_TYPE_PROJECT_MUTATION} from '../../../graphql/mutationsTypeProject';
 import TypeProjectForm from "../../form/simpleForm/TypeProjectForm";
 
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
@@ -29,14 +29,15 @@ const TypeProjectTable = () => {
 
     const [search, setSearch] = useState('');
 
-    const { loading, error, data, refetch } = useQuery(TYPES_PROJECTS_QUERY, {
+    const {loading, error, data, refetch} = useQuery(TYPES_PROJECTS_QUERY, {
         variables: {
             queryOptions: {
-            page,
-            limit,
-            search,
-            sortField,
-            sortOrder}
+                page,
+                limit,
+                search,
+                sortField,
+                sortOrder
+            }
         },
     });
 
@@ -53,7 +54,7 @@ const TypeProjectTable = () => {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно удалены!');
             refetch();
-            },
+        },
         onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
             refetch();
@@ -61,7 +62,10 @@ const TypeProjectTable = () => {
     });
 
     // Обработчик событий
-    const handleClose = () => {refetch();setEditModalVisible(false);};
+    const handleClose = () => {
+        refetch();
+        setEditModalVisible(false);
+    };
     const handleEdit = (typeProjectId) => {
         const typeProject = data.typeProjects.items.find(typeProject => typeProject.id === typeProjectId);
         setSelectedTypeProject(typeProject);
@@ -71,14 +75,12 @@ const TypeProjectTable = () => {
         setAddModalVisible(true);
     };
     const handleDelete = (typeProjectId) => {
-        deleteTypeProject({ variables: { id: typeProjectId}});
+        deleteTypeProject({variables: {id: typeProjectId}});
     };
-    const onSearch = (value) =>{
+    const onSearch = (value) => {
         setSearch(value);
     };
     // Обработка загрузки и ошибок
-    if(!data)
-        if (loading) return <LoadingSpinnerStyles/>;
     if (error) return `Ошибка! ${error.message}`;
 
     // Формат таблицы
@@ -104,7 +106,7 @@ const TypeProjectTable = () => {
             key: 'edit',
             render: (text, record) => (
                 <div>
-                    <Button  onClick={() => handleEdit(record.id)}>Изменить</Button>
+                    <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
                     <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
                 </div>
 
@@ -113,15 +115,14 @@ const TypeProjectTable = () => {
     ];
     const onChange = (pagination, filters, sorter) => {
 
-        if((sorter.field !== undefined) && currentSort !== sorter){
+        if ((sorter.field !== undefined) && currentSort !== sorter) {
             setCurrentSort(sorter);
             if (sortField !== sorter.field) {
                 setSortField(sorter.field);
                 setSortOrder("asc");
-            }
-            else {
+            } else {
                 setSortField(sortField);
-                switch (sortOrder){
+                switch (sortOrder) {
                     case ("asc"):
                         setSortOrder("desc");
                         break;
@@ -133,7 +134,7 @@ const TypeProjectTable = () => {
                         break;
                 }
             }
-        }else
+        } else
             console.log("Фильтры сохранены");
     };
     return (
@@ -147,24 +148,28 @@ const TypeProjectTable = () => {
                             enterButton="Найти"
                             onSearch={onSearch}
                         />
-                        <StyledButtonGreen   style={{    marginBottom: 0}} onClick={() => handleAdd()}>Создать новую запись</StyledButtonGreen>
+                        <StyledButtonGreen style={{marginBottom: 0}} onClick={() => handleAdd()}>Создать новую
+                            запись</StyledButtonGreen>
                     </Space>
                 </Form.Item>
             </StyledFormLarge>
             <Table
                 size={'small'}
                 sticky={{
-                    offsetHeader: 0,
+                    offsetHeader: '64px',
                 }}
                 loading={loading}
-                dataSource={data.typeProjects.items}
+                dataSource={data?.typeProjects?.items.map((org, index) => ({...org, key: index}))}
                 columns={columns}
                 onChange={onChange}
                 pagination={{
-                    total: data.typeProjects.count,
+                    total: data?.typeProjects?.count,
                     current: page,
-                    limit,
-                    onChange: (page, limit) => setPage(page),
+                    pageSize: limit,
+                    onChange: (page, limit) => {
+                        setPage(page);
+                        setLimit(limit)
+                    },
                     onShowSizeChange: (current, size) => {
                         setPage(1);
                         setLimit(size);

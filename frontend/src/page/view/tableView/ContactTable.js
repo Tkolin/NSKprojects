@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, Divider, Form, Modal, notification, Space, Table} from 'antd';
+import {Button, Divider, Form, Modal, notification, Popconfirm, Row, Space, Table, Typography} from 'antd';
 import {CONTACTS_QUERY} from '../../../graphql/queries';
 import {DELETE_CONTACT_MUTATION} from '../../../graphql/mutationsContact';
 import ContactForm from "../../form/basicForm/ContactForm";
@@ -10,6 +10,8 @@ import {StyledFormLarge} from "../../style/FormStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import Title from "antd/es/typography/Title";
 import {format} from "date-fns";
+import {QuestionCircleOutlined} from "@ant-design/icons";
+import StyledLinkManagingDataTable from "../../style/TableStyles";
 
 const ContactTable = () => {
 
@@ -21,7 +23,7 @@ const ContactTable = () => {
 
     // Данные
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(50);
+    const [limit, setLimit] = useState(10);
 
     const [currentSort, setCurrentSort] = useState({});
 
@@ -50,7 +52,7 @@ const ContactTable = () => {
         onCompleted: () => {
             refetch();
             openNotification('topRight', 'success', 'Данные успешно удалены!');
-                          }, onError: (error) => {
+        }, onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
         }
     });
@@ -77,9 +79,9 @@ const ContactTable = () => {
     };
 
     // Обработка загрузки и ошибок
-    if (!data) if (loading) return <LoadingSpinnerStyles/>;
     if (error) return `Ошибка! ${error.message}`;
-// Функция для форматирования даты
+
+    // Функция для форматирования даты
     const formatDate = (date) => {
         return format(new Date(date), 'dd.MM.yyyy');
     };
@@ -102,7 +104,7 @@ const ContactTable = () => {
         }, {
             title: 'Рабочий E-mail', dataIndex: 'work_email', key: 'work_email',
             sorter: true,
-        },  {
+        }, {
             title: 'Дата рождения', dataIndex: 'birth_day', key: 'birth_day',
             sorter: true,
             render: (birthDay) => birthDay ? formatDate(birthDay) : "",
@@ -117,13 +119,17 @@ const ContactTable = () => {
             key: 'organization',
             render: (organization) => organization?.name ?? null,
         },
-       {
-            title: 'Управление', key: 'edit', render: (text, record) => (
-                <Space size="middle">
-                    <Button size={"small"} onClick={() => handleEdit(record.id)}>Изменить</Button>
-                    <Button size={"small"} danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
-                </Space>),
-        },];
+        {
+            title: 'Управление', key: 'edit', width: 100, render: (text, record) => (
+                <StyledLinkManagingDataTable
+                    title={"Удаление контакта"}
+                    description={"Вы уверены, что нужно удалить этот контакт?"}
+                    handleEdit={() => {handleEdit(record.id)}}
+                    handleDelete={() => handleDelete(record.id)}
+                />
+            ),
+        },]
+    ;
 
     const onChange = (pagination, filters, sorter) => {
         if ((sorter.field !== undefined) && currentSort !== sorter) {
@@ -149,7 +155,7 @@ const ContactTable = () => {
     };
     return (<div>
         <StyledFormLarge form={formSearch} layout="horizontal">
-            <Divider style={{marginTop: 0}} >
+            <Divider style={{marginTop: 0}}>
                 <Title style={{marginTop: 0}} level={2}>Справочник Контактов</Title>
             </Divider>
 
@@ -176,16 +182,19 @@ const ContactTable = () => {
             columns={columns}
             onChange={onChange}
             pagination={{
-                total: data.contacts.count,
+                total: data?.contacts?.count,
                 current: page,
                 pageSize: limit,
-                onChange: (page, limit) => setPage(page) && setLimit(limit),
+                onChange: (page, limit) => {
+                    setPage(page);
+                    setLimit(limit)
+                },
                 onShowSizeChange: (current, size) => {
                     setPage(1);
                     setLimit(size);
                 },
                 showSizeChanger: true,
-                pageSizeOptions: ['50', '100', '200'],
+                pageSizeOptions: ['10', '50', '100'],
             }}
         />
         <Modal

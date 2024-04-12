@@ -44,8 +44,7 @@ const BikTable = () => {
     };
 
     // Обработка загрузки и ошибок
-    if (loading) return <LoadingSpinnerStyles/>;
-    if (error) return `Ошибка! ${error.message}`;
+     if (error) return `Ошибка! ${error.message}`;
 
     // Формат таблицы
     const columns = [
@@ -116,7 +115,30 @@ const BikTable = () => {
 
     return (
         <div>
-            <Table dataSource={data.contacts} columns={columns} />
+            <Table
+                   size={'small'}
+                   sticky={{
+                       offsetHeader: 0,
+                   }}
+                   loading={loading}
+                   dataSource={data?.irds?.items}
+                   columns={columns}
+                   onChange={onChange}
+                   pagination={{
+                       total: data?.irds?.count,
+                       current: page,
+                       limit: limit,
+                       onChange: (page, limit) => {
+                           setPage(page);
+                           setLimit(limit);},
+                       onShowSizeChange: (current, size) => {
+                           setPage(1);
+                           setLimit(size);
+                       },
+                       showSizeChanger: true,
+                       pageSizeOptions: ['10', '20', '50', '100'],
+                   }}
+            />
         </div>
     );
 };

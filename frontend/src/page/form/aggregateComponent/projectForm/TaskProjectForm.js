@@ -32,8 +32,10 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
     const [editingTasks, setEditingTasks] = useState(null);
     const [form] = Form.useForm();
     const [,] = notification.useNotification();
+
     const [autoCompleteTask, setAutoCompleteTask] = useState('');
     const [autoCompletePerson, setAutoCompletePerson] = useState('');
+
     const [addTaskModalVisible, setAddTaskModalVisible] = useState(false);
     const [addPersonModalVisible, setAddPersonModalVisible] = useState(false);
     const [editTaskModalVisible, setEditTaskModalVisible] = useState(false);
@@ -41,9 +43,11 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
 
     const [selectedTask, setSelectedTask] = useState(null);
     const [selectedPerson, setSelectedPerson] = useState(null);
+
     useEffect(() => {
-        console.log('project', project);
-    }, [project]);
+             form.resetFields();
+
+    }, [tasksProject]);
     // События
     const handleAutoCompleteTask = (value) => {
         setAutoCompleteTask(value);
@@ -179,6 +183,12 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
     if (errorTasks && errorPersons) return `Ошибка! ${errorTasks?.message} ${errorPersons?.message}`;
 
     // Обработчик отправки формы
+    const getLocalDate = (dateString) => {
+        const date = new Date(dateString);
+        const utcOffset = date.getTimezoneOffset();
+        const localDate = new Date(date.getTime() - (utcOffset * 60 * 1000));
+        return localDate.toISOString().slice(0, 10);
+    };
     const handleSubmit = () => {
         const fieldsValue = form.getFieldsValue();
         const executorList = fieldsValue.executorList || [];
@@ -187,7 +197,8 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
             price: executor.price_item
         }));
 
-        if (editingTasks) {
+        if (tasksProject) {
+            console.log("editingTasks");
             updateTask({
                 variables: {
                     data: {
@@ -195,8 +206,8 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
                         projectId: project.id,
                         inherited_task_ids: fieldsValue.inherited_task_ids,
                         task_id: fieldsValue.task_id,
-                        date_start: fieldsValue.date_range[0],
-                        date_end: fieldsValue.date_range[1],
+                        date_start: getLocalDate(fieldsValue.date_range[0]),
+                        date_end: getLocalDate(fieldsValue.date_range[1]),
                         duration: moment(fieldsValue.date_range[1]).diff(moment(fieldsValue.date_range[0]), 'days').toString(),
                         price: fieldsValue.price,
                         executors: mappedExecutorList,
@@ -204,14 +215,15 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
                 }
             });
         } else {
+            console.log("addTask");
             addTask({
                 variables: {
                     data: {
                         projectId: project.id,
                         inherited_task_ids: fieldsValue.inherited_task_ids,
                         task_id: fieldsValue.task_id,
-                        date_start: fieldsValue.date_range[0],
-                        date_end: fieldsValue.date_range[1],
+                        date_start: getLocalDate(fieldsValue.date_range[0]),
+                        date_end: getLocalDate(fieldsValue.date_range[1]),
                         duration: moment(fieldsValue.date_range[1]).diff(moment(fieldsValue.date_range[0]), 'days').toString(),
                         price: fieldsValue.price,
                         executors: mappedExecutorList,
@@ -289,28 +301,28 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
                         >
                             <Tooltip title="Исполнитель">
                                 <StyledFormItemSelect
-                                    width={300}
+                                    width={350}
                                     formName={[name, 'executor_item']}
                                     items={dataPersons?.persons?.items}
                                     formatOptionText={(row) => `${row?.passport?.lastname} ${row?.passport?.firstname} ${row?.passport?.patronymic}`}
                                 />
                             </Tooltip>
-                            <Tooltip title="Продолжительность">
-                                <Form.Item
-                                    {...restField}
-                                    style={{marginBottom: 0, display: 'flex'}}
-                                    name={[name, 'duration_item']}>
-                                    <InputNumber
-                                        //onChange={handleChangeItemDuration}
-                                        size={"middle"}
-                                        min={1}
-                                        max={325}
-                                        style={{
-                                            width: 50
-                                        }}
-                                    />
-                                </Form.Item>
-                            </Tooltip>
+                            {/*<Tooltip title="Продолжительность">*/}
+                            {/*    <Form.Item*/}
+                            {/*        {...restField}*/}
+                            {/*        style={{marginBottom: 0, display: 'flex'}}*/}
+                            {/*        name={[name, 'duration_item']}>*/}
+                            {/*        <InputNumber*/}
+                            {/*            //onChange={handleChangeItemDuration}*/}
+                            {/*            size={"middle"}*/}
+                            {/*            min={1}*/}
+                            {/*            max={325}*/}
+                            {/*            style={{*/}
+                            {/*                width: 50*/}
+                            {/*            }}*/}
+                            {/*        />*/}
+                            {/*    </Form.Item>*/}
+                            {/*</Tooltip>*/}
                             <Tooltip title="Стоимость">
                                 <Form.Item
                                     {...restField}
@@ -320,7 +332,6 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
                                         //onChange={handleChangeItemDuration}
                                         size={"middle"}
                                         min={1}
-                                        max={325}
                                         style={{
                                             width: 80
                                         }}

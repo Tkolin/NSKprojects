@@ -6,21 +6,18 @@ import React from "react";
 export const ADD_PROJECT_MUTATION = gql`
     mutation AddProject(
         $data: ProjectInput
-    
- 
-    
         $tasks: [ProjectTasksInput]
         $stages: [ProjectStageInput]
         $irds: [ProjectIrdInput]
     ) {
         addProject(
             data: $data
-            
-        
+
+
             tasks : $tasks
             stages: $stages
             irds: $irds
-            
+
         ) {
             id
             number
@@ -101,7 +98,7 @@ export const ADD_PROJECT_MUTATION = gql`
 export const UPDATE_PROJECT_MUTATION = gql`
     mutation UpdateProject(
         $data: ProjectInput
-        
+
         $tasks: [ProjectTasksInput]
         $stages: [ProjectStageInput]
         $irds: [ProjectIrdInput]
@@ -198,7 +195,7 @@ export const UPDATE_IRDS_TO_PROJECT_MUTATION = gql`
         updateIrdsToProject(
             items: $data
         )
-    }                      
+    }
 `;
 
 export const UPDATE_STAGES_TO_PROJECT_MUTATION = gql`
@@ -239,7 +236,8 @@ export const IRDS_PROJECT_DOWNLOAD = gql`
             url
         }
     }
-`;export const PAYMENT_INVOICE_PROJECT_DOWNLOAD = gql`
+`;
+export const PAYMENT_INVOICE_PROJECT_DOWNLOAD = gql`
     mutation IrdsProjectFileDownload(
         $id: ID!,
         $stageNumber: ID!
@@ -254,10 +252,11 @@ export const IRDS_PROJECT_DOWNLOAD = gql`
             url
         }
     }
-`;export const ACT_RENDERING_PROJECT_DOWNLOAD = gql`
+`;
+export const ACT_RENDERING_PROJECT_DOWNLOAD = gql`
     mutation IrdsProjectFileDownload(
         $id: ID!,
-        $stageNumber: ID!
+        $stageNumber: Int
     ) {
         projectActRenderingFileDownload(
             projectId: $id
@@ -267,8 +266,23 @@ export const IRDS_PROJECT_DOWNLOAD = gql`
         {
             url
         }
+    }`;
+export const TASK_EXECUTOR_CONTRACT_DOWNLOAD = gql`
+    mutation TaskExecutorContractDownload(
+        $projectId: ID!,
+        $executorId: ID!
+    ) {
+        taskExecutorContractFileDownload(
+            projectId: $projectId
+            executorId: $executorId
+
+        )
+        {
+            url
+        }
     }
-`;export const STAGE_PROJECT_DOWNLOAD = gql`
+`;
+export const STAGE_PROJECT_DOWNLOAD = gql`
     mutation ProjectFileDownload(
         $id: ID!,
     ) {
@@ -279,7 +293,8 @@ export const IRDS_PROJECT_DOWNLOAD = gql`
             url
         }
     }
-`;export const CONTRACT_PROJECT_DOWNLOAD = gql`
+`;
+export const CONTRACT_PROJECT_DOWNLOAD = gql`
     mutation StagesProjectFileDownload(
         $id: ID!,
     ) {

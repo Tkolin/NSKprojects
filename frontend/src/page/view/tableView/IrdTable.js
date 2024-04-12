@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import {Button, Divider, Form, Modal, notification, Space, Table} from 'antd';
-import { IRDS_QUERY, STAGES_QUERY} from '../../../graphql/queries';
-import { DELETE_IRD_MUTATION} from '../../../graphql/mutationsIrd';
+import {IRDS_QUERY, STAGES_QUERY} from '../../../graphql/queries';
+import {DELETE_IRD_MUTATION} from '../../../graphql/mutationsIrd';
 import IrdForm from "../../form/simpleForm/IrdForm";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import Search from "antd/es/input/Search";
@@ -29,13 +29,15 @@ const IrdTable = () => {
 
     const [search, setSearch] = useState('');
 
-    const { loading, error, data, refetch } = useQuery(IRDS_QUERY, {
+    const {loading, error, data, refetch} = useQuery(IRDS_QUERY, {
         variables: {
-            page,
-            limit,
-            search,
-            sortField,
-            sortOrder,
+            queryOptions: {
+                page,
+                limit,
+                search,
+                sortField,
+                sortOrder,
+            }
         },
     });
 
@@ -51,14 +53,19 @@ const IrdTable = () => {
     const [deleteIrd] = useMutation(DELETE_IRD_MUTATION, {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно удалены!');
-            refetch();        },
+            refetch();
+        },
         onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
-            refetch();        },
+            refetch();
+        },
     });
 
     // Обработчик событий
-    const handleClose = () => { refetch(); setEditModalVisible(false);};
+    const handleClose = () => {
+        refetch();
+        setEditModalVisible(false);
+    };
     const handleEdit = (irdId) => {
         const ird = data.irds.items.find(ird => ird.id === irdId);
         setSelectedIrd(ird);
@@ -68,15 +75,12 @@ const IrdTable = () => {
         setAddModalVisible(true);
     };
     const handleDelete = (irdId) => {
-        deleteIrd({ variables: { id: irdId}});
+        deleteIrd({variables: {id: irdId}});
     };
-    const onSearch = (value) =>{
+    const onSearch = (value) => {
         setSearch(value);
     };
-    // Обработка загрузки и ошибок
-    if(!data)
-        if (loading) return <LoadingSpinnerStyles/>;
-    if (error) return `Ошибка! ${error.message}`;
+
 
     // Формат таблицы
     const columns = [
@@ -103,15 +107,14 @@ const IrdTable = () => {
     ];
     const onChange = (pagination, filters, sorter) => {
 
-        if((sorter.field !== undefined) && currentSort !== sorter){
+        if ((sorter.field !== undefined) && currentSort !== sorter) {
             setCurrentSort(sorter);
             if (sortField !== sorter.field) {
                 setSortField(sorter.field);
                 setSortOrder("asc");
-            }
-            else {
+            } else {
                 setSortField(sortField);
-                switch (sortOrder){
+                switch (sortOrder) {
                     case ("asc"):
                         setSortOrder("desc");
                         break;
@@ -123,13 +126,13 @@ const IrdTable = () => {
                         break;
                 }
             }
-        }else
+        } else
             console.log("Фильтры сохранены");
     };
     return (
         <div>
             <StyledFormLarge form={formSearch} layout="horizontal">
-                <Divider style={{marginTop: 0}} >
+                <Divider style={{marginTop: 0}}>
                     <Title style={{marginTop: 0}} level={2}>Справочник наименования ИРД</Title>
                 </Divider>
                 <Form.Item label="Поиск:" name="search">
@@ -140,7 +143,8 @@ const IrdTable = () => {
                             enterButton="Найти"
                             onSearch={onSearch}
                         />
-                        <StyledButtonGreen   style={{    marginBottom: 0}} onClick={() => handleAdd()}>Создать новую запись</StyledButtonGreen>
+                        <StyledButtonGreen style={{marginBottom: 0}} onClick={() => handleAdd()}>Создать новую
+                            запись</StyledButtonGreen>
                     </Space>
                 </Form.Item>
             </StyledFormLarge>
@@ -150,14 +154,16 @@ const IrdTable = () => {
                     offsetHeader: 0,
                 }}
                 loading={loading}
-                dataSource={data.irds.items}
+                dataSource={data?.irds?.items}
                 columns={columns}
                 onChange={onChange}
                 pagination={{
-                    total: data.irds.count,
+                    total: data?.irds?.count,
                     current: page,
-                    limit,
-                    onChange: (page, limit) => setPage(page) && setLimit(limit),
+                    pageSize: limit,
+                    onChange: (page, limit) => {
+                        setPage(page);
+                        setLimit(limit);},
                     onShowSizeChange: (current, size) => {
                         setPage(1);
                         setLimit(size);

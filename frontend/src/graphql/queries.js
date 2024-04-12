@@ -175,8 +175,8 @@ export const TYPES_PROJECTS_QUERY = gql`
     }
 `;
 export const PROJECTS_QUERY = gql`
-    query ProjectQuery($queryOptions: QueryOptions, $id: ID) {
-        projects (queryOptions: $queryOptions, projectId: $id) {
+    query ProjectQuery($queryOptions: QueryOptions, $projectId: ID) {
+        projects (queryOptions: $queryOptions, projectId: $projectId) {
             items{
                 id
                 number

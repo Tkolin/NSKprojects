@@ -1,17 +1,18 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, Descriptions, Divider, FloatButton, Form, Modal, notification, Space} from 'antd';
+import {Button, Descriptions, Divider, FloatButton, Form, Modal, notification, Space, Table} from 'antd';
 import {DELETE_ORGANIZATION_MUTATION} from '../../../graphql/mutationsOrganization';
 import OrganizationForm from "../../form/basicForm/OrganizationForm";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import TypeProjectForm from "../../form/simpleForm/TypeProjectForm";
 import Search from "antd/es/input/Search";
 import {PlusSquareOutlined} from "@ant-design/icons";
-import {StyledTable} from "../../style/TableStyles";
+import StyledLinkManagingDataTable, {StyledTable} from "../../style/TableStyles";
 import {StyledFormLarge} from "../../style/FormStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {ORGANIZATIONS_QUERY} from "../../../graphql/queries";
 import Title from "antd/es/typography/Title";
+
 const OrganizationTable = () => {
     // Состояния
     const [selectedOrganization, setSelectedOrganization] = useState(null);
@@ -21,7 +22,7 @@ const OrganizationTable = () => {
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
     // Данные
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(50);
+    const [limit, setLimit] = useState(10);
 
     const [currentSort, setCurrentSort] = useState({});
 
@@ -75,45 +76,47 @@ const OrganizationTable = () => {
         setSearch(value);
     }
     // Обработка загрузки и ошибок
-    if (!data) if (loading) return <LoadingSpinnerStyles/>;
     if (error) return `Ошибка! ${error.message}`;
 
     // Формат таблицы
     const columns = [
 
         {
-        title: 'Тип',
-        dataIndex: 'legal_form',
-        key: 'legal_form', width: 60,
-        render: (legal_form) => legal_form ? legal_form.name : '',
-    }, {
-        title: 'Название организации', dataIndex: 'name', key: 'name',
-        sorter: true, ellipsis: true,
-    },  {
-        title: 'Директор',
-        dataIndex: 'director',
-        key: 'director',
-        render: (director) => {
-            if (director) {
-                return `${director.last_name ?? ""} ${director.first_name ?? ""} ${director.patronymic ?? ""}`;
-            } else {
-                return '';
-            }
+            title: 'Тип',
+            dataIndex: 'legal_form',
+            key: 'legal_form', width: 60,
+            render: (legal_form) => legal_form ? legal_form.name : '',
+        }, {
+            title: 'Название организации', dataIndex: 'name', key: 'name',
+            sorter: true, ellipsis: true,
+        }, {
+            title: 'Директор',
+            dataIndex: 'director',
+            key: 'director',
+            render: (director) => {
+                if (director) {
+                    return `${director.last_name ?? ""} ${director.first_name ?? ""} ${director.patronymic ?? ""}`;
+                } else {
+                    return '';
+                }
+            },
+        }, {
+            title: 'email', dataIndex: 'email', key: 'email', width: 200,
+            sorter: true,
+        }, {
+            title: 'номер телефона', dataIndex: 'phone_number', key: 'phone_number', width: 200,
+            sorter: true,
         },
-    },  {
-        title: 'email', dataIndex: 'email', key: 'email',  width: 200,
-        sorter: true,
-    },  {
-        title: 'номер телефона', dataIndex: 'phone_number', key: 'phone_number', width: 200,
-        sorter: true, },
         {
-        title: 'Управление', key: 'edit', render: (text, record) => (
-            <Space size="middle">
-                <Button size={"small"} onClick={() => handleEdit(record.id)}>Изменить</Button>
-                <Button size={"small"}  danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
-            </Space>),
-    },
-
+            title: 'Управление', key: 'edit', width: 100, render: (text, record) => (
+                <StyledLinkManagingDataTable
+                    title={"Удаление организации"}
+                    description={"Вы уверены, что нужно удалить эту организацию?"}
+                    handleEdit={() => handleEdit(record.id)}
+                    handleDelete={() => handleDelete(record.id)}
+                />
+            )
+        },
     ];
 
     const onChange = (pagination, filters, sorter) => {
@@ -142,7 +145,7 @@ const OrganizationTable = () => {
 
     return <>
         <StyledFormLarge form={formSearch} layout="horizontal">
-            <Divider style={{marginTop: 0}} >
+            <Divider style={{marginTop: 0}}>
                 <Title style={{marginTop: 0}} level={2}>Справочник Организаций</Title>
             </Divider>
             <Form.Item label="Поиск:" name="search">
@@ -153,11 +156,12 @@ const OrganizationTable = () => {
                         enterButton="Найти"
                         onSearch={onSearch}
                     />
-                    <StyledButtonGreen   style={{    marginBottom: 0}} onClick={() => handleAdd()}>Создать новую запись</StyledButtonGreen>
+                    <StyledButtonGreen style={{marginBottom: 0}} onClick={() => handleAdd()}>Создать новую
+                        запись</StyledButtonGreen>
                 </Space>
             </Form.Item>
         </StyledFormLarge>
-        <StyledTable
+        <Table
             size={'small'}
             sticky={{
                 offsetHeader: '64px',
@@ -176,7 +180,7 @@ const OrganizationTable = () => {
                     setLimit(size);
                 },
                 showSizeChanger: true,
-                pageSizeOptions: ['50', '100', '200'],
+                pageSizeOptions: ['10', '50', '100', '200'],
             }}
 
             expandable={{
@@ -188,8 +192,10 @@ const OrganizationTable = () => {
                 expandedRowRender: (record) => (
                     <Descriptions column={1}>
                         <Descriptions.Item label="Полное наименование">{record.full_name}</Descriptions.Item>
-                        <Descriptions.Item label="Юридический адрес">{record.address_legal} {record.office_number_legal}</Descriptions.Item>
-                        <Descriptions.Item label="Почтовый адрес">{record.address_mail} {record.office_number_mail}</Descriptions.Item>
+                        <Descriptions.Item
+                            label="Юридический адрес">{record.address_legal} {record.office_number_legal}</Descriptions.Item>
+                        <Descriptions.Item
+                            label="Почтовый адрес">{record.address_mail} {record.office_number_mail}</Descriptions.Item>
                         <Descriptions.Item label="Факс">{record.fax_number}</Descriptions.Item>
                         <Descriptions.Item label="ИНН">{record.INN}</Descriptions.Item>
                         <Descriptions.Item label="ОГРН">{record.OGRN}</Descriptions.Item>

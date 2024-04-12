@@ -77,8 +77,6 @@ const StageTable = () => {
         setSearch(value);
     };
     // Обработка загрузки и ошибок
-    if(!data)
-        if (loading) return <LoadingSpinnerStyles/>;
     if (error) return `Ошибка! ${error.message}`;
 
     // Формат таблицы
@@ -152,20 +150,24 @@ const StageTable = () => {
                     offsetHeader: 0,
                 }}
                 loading={loading}
-                dataSource={data.stages.items}
+                dataSource={data?.stages?.items}
                 columns={columns}
                 onChange={onChange}
                 pagination={{
-                    total: data.stages.count,
+                    total: data?.stages?.count,
                     current: page,
-                    limit,
-                    onChange: (page, limit) => setPage(page),
+                    pageSize: limit,
+                    onChange: (page, limit) =>
+                    {
+                        setPage(page);
+                        setLimit(limit)
+                    },
                     onShowSizeChange: (current, size) => {
                         setPage(1);
                         setLimit(size);
                     },
                     showSizeChanger: true,
-                    pageSizeOptions: ['10', '20', '50', '100'],
+                    pageSizeOptions: ['10', '50', '100'],
                 }}
             />
             <Modal

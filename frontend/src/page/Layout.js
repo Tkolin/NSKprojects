@@ -205,7 +205,7 @@ const CustomLayout = ({children, currentUser, la}) => {
                 break;
                 case '6-2':
                 // Шаблоны по типу проекта
-                navigate('/tasks');
+                navigate('/project/tasks');
                 break;
             case '3':
                 // Отчёты

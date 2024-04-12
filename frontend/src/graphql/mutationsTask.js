@@ -1,5 +1,13 @@
 import {gql} from "@apollo/client";
-export const UPDATE_TASK_TO_PROJECT_MUTATION = gql`
+export const DELETE_TASK_TO_PROJECT_MUTATION = gql`
+    mutation DeleteTaskToProject(
+        $id: ID!
+    ) {
+        deleteTaskToProject(
+            id: $id
+        ) 
+    }
+`;export const UPDATE_TASK_TO_PROJECT_MUTATION = gql`
     mutation UpdateTaskToProject(
         $data: TasksToProject
     ) {

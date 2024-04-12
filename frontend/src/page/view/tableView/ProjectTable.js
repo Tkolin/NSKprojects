@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useQuery} from '@apollo/client';
-import {Button, Descriptions, Divider, Form, Modal, notification, Space, Table, Typography} from 'antd';
+import {Button, Collapse, Descriptions, Divider, Form, Modal, notification, Row, Space, Table, Typography} from 'antd';
 import {PROJECTS_QUERY} from '../../../graphql/queries';
 import ProjectForm from "../../form/basicForm/ProjectForm";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
@@ -13,6 +13,9 @@ import Title from "antd/es/typography/Title";
 import ActRenderingProjectDownload from "../../script/ActRenderingProjectDownload";
 import PaymentInvoiceProjectDownload from "../../script/PaymentInvoiceProjectDownload";
 import CreateNewProject from "../../form/composedForm/CreateNewProject";
+import TaskExecutorContractDownload from "../../script/TaskExecutorContractDownload";
+import {useNavigate} from "react-router-dom";
+import TaskProjectForm from "../../form/aggregateComponent/projectForm/TaskProjectForm";
 
 const {Text} = Typography;
 
@@ -22,6 +25,7 @@ const ProjectTable = () => {
     const [formSearch] = Form.useForm();
     const [selectedProject, setSelectedProject] = useState(null);
     const [editModalVisible, setEditModalVisible] = useState(false);
+    const navigate = useNavigate();
 
     // Данные
     const [page, setPage] = useState(1);
@@ -73,9 +77,8 @@ const ProjectTable = () => {
         return String(number).padStart(length, '0');
     }
 
+
     // Обработка загрузки и ошибок
-    if (!data)
-        if (loading) return <LoadingSpinnerStyles/>;
     if (error) return `Ошибка! ${error.message}`;
 
     // Формат таблицы
@@ -84,14 +87,14 @@ const ProjectTable = () => {
             title: 'Номер',
             dataIndex: 'number',
             key: 'number',
-
+            width: 100,
             sorter: true,
         },
         {
             title: 'Название',
             dataIndex: 'name',
             key: 'name',
-
+            width: 200,
             sorter: true,
         },
         {
@@ -202,7 +205,10 @@ const ProjectTable = () => {
             key: 'edit',
             width: 110,
             render: (text, record) => (
-                <Button size={"small"} onClick={() => handleEdit(record)}>Изменить</Button>
+                <Row>
+                    <Typography.Link onClick={() => handleEdit(record)}>Изменить</Typography.Link>
+                    <Typography.Link onClick={() => navigate(`/project/tasks/${record.id}`)}>Распределение задач</Typography.Link>
+                 </Row>
             ),
         },
     ];
@@ -260,7 +266,11 @@ const ProjectTable = () => {
                     total: data?.projects?.count,
                     current: page,
                     pageSize: limit,
-                    onChange: (page, limit) => setPage(page) && setLimit(limit),
+                    onChange: (page, limit) =>
+                    {
+                        setPage(page);
+                        setLimit(limit)
+                    },
                     onShowSizeChange: (current, size) => {
                         setPage(1);
                         setLimit(size);
@@ -275,7 +285,7 @@ const ProjectTable = () => {
                         setExpandedRowKeys(keys);
                     },
                     expandedRowRender: (record) => (
-                        <>
+                        <Row>
                             <Descriptions layout={"vertical"} bordered size={"small"} style={{width: "550px"}}>
                                 <Descriptions column={1}>
                                     <Text>Этапы</Text>
@@ -289,20 +299,52 @@ const ProjectTable = () => {
                                 {record.project_stages.map(psid => (
                                     psid.stage.id !== 0 && (
                                         <>
-                                            <Descriptions title={`Этап №${psid.number} (${psid.stage.name})`} column={1}>
-                                                    <Text>Этап {psid.number} {psid.stage.name}</Text>
+                                            <Descriptions title={`Этап №${psid.number} (${psid.stage.name})`}
+                                                          column={1}>
+                                                <Text>Этап {psid.number} {psid.stage.name}</Text>
                                             </Descriptions>
                                             <Descriptions title={`Акт`} column={1}>
-                                                    <ActRenderingProjectDownload stageNumber={psid.number} projectId={record.id} type="acts"/>
+                                                <ActRenderingProjectDownload stageNumber={psid.number}
+                                                                             projectId={record.id} type="acts"/>
                                             </Descriptions>
-                                            <Descriptions title={`Счёт`}  column={1}>
-                                                    <PaymentInvoiceProjectDownload stageNumber={psid.number} projectId={record.id} type="acts"/>
+                                            <Descriptions title={`Счёт`} column={1}>
+                                                <PaymentInvoiceProjectDownload stageNumber={psid.number}
+                                                                               projectId={record.id} type="acts"/>
                                             </Descriptions>
                                         </>
                                     )
                                 ))}
                             </Descriptions>
-                        </>
+                            <Collapse style={{width: "550px", marginLeft: 10}}>
+                                <Collapse.Panel header="Исполнители" key="all-persons">
+                                    <Descriptions labelStyle={{height: 2333, margin:  0, padding: 0 }} layout={"vertical"} bordered size={"small"} column={2} style={{width: "100%"}}>
+                                        <Descriptions column={1}>
+                                            <Text>Исполнитель</Text>
+                                        </Descriptions>
+                                        <Descriptions column={1}>
+                                            <Text>Договор</Text>
+                                        </Descriptions>
+                                        {record.project_tasks?.reduce((acc, task) => {
+                                            task.executors.forEach((executor) => {
+                                                // Добавляем исполнителя в аккумулятор, если его еще нет
+                                                if (!acc.some((e) => e.id === executor.executor.id)) {
+                                                    acc.push(executor.executor);
+                                                }
+                                            });
+                                            return acc;
+                                        }, []).map((executor) => (
+                                            <>
+                                                <Descriptions title={"Исполнитель"}   column={1}>{executor.passport.lastname} {executor.passport.firstname} {executor.passport.patronymic}</Descriptions>
+                                                <Descriptions title={"Договор"}  column={1}>
+                                                    <TaskExecutorContractDownload executorId={executor.id} projectId={record.id} type="acts"/>
+                                                </Descriptions>
+                                            </>
+                                        ))}
+                                    </Descriptions>
+                                </Collapse.Panel>
+                            </Collapse>
+
+                        </Row>
                     ),
                 }}
             />

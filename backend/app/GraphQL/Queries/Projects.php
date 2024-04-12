@@ -15,9 +15,6 @@ final readonly class Projects
         $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-
-
-
             $projectsQuery = Project::with('organization_customer')
                 ->with('type_project_document')
                 ->with("delegations")
@@ -28,15 +25,16 @@ final readonly class Projects
                 ->with('project_irds.IRD')
                 ->with('project_stages.stage');
             // Поиск
-            $projectTasks = ProjectTasks::with('task')
-                ->with('executors.executor')
-                ->with('inherited_task_ids')
-                ->where('project_id', 24)
-                ->get();
-            if(isset($args["projectID"])){
-                $projectsQuery->find($args["projectID"]);
+//            $projectTasks = ProjectTasks::with('task')
+//                ->with('executors.executor')
+//                ->with('inherited_task_ids')
+//                ->where('project_id', $args["projectID"])
+//                ->get();
+
+            if(isset($args["projectId"])){
+                $projectsQuery->where('id', $args["projectId"]);
             } else if(isset($args['queryOptions']['id'])){
-                $projectsQuery->find($args['queryOptions']['id']);
+                $projectsQuery->where('id', $args['queryOptions']['id']);
             }
             if (isset($args['queryOptions']['search'])) {
                 $searchTerm = $args['queryOptions']['search'];
@@ -69,9 +67,7 @@ final readonly class Projects
             } else {
                 $projects = $projectsQuery->get();
             }
-
             error_log("projects  " . $projects);
-
             return ['items' => $projects, 'count' =>  $count];
         } else {
             throw new AuthenticationException('Отказано в доступе');

@@ -62,7 +62,6 @@ const App = () => {
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/t" element={<Test />} />
-                        <Route path="/tasks" element={<TasksChartForm />} />
 
                         {currentUser ? (
                             <>
@@ -78,6 +77,8 @@ const App = () => {
                                         <Route path="/contacts/new" element={<ContactForm />} />
 
                                         <Route path="/SectionReferences" element={<SectionReferenceTable />} />
+
+                                        <Route path="/project/tasks/:projectId" element={<TasksChartForm />} />
 
                                         <Route path="/project" element={<ProjectTable />} />
                                         <Route path="/project/new" element={<CreateNewProject />} />
@@ -103,6 +104,8 @@ const App = () => {
 
                                         <Route path="/organization" element={<OrganizationTable />} />
                                         <Route path="/organization/new" element={<OrganizationForm />} />
+
+                                        <Route path="/project/tasks/:projectId" element={<TasksChartForm />} />
 
                                         <Route path="/project" element={<ProjectTable />} />
                                         <Route path="/project/new" element={<CreateNewProject />} />

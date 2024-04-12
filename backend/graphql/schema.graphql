@@ -62,7 +62,7 @@ input TasksToProject {
     id: ID
     projectId: ID!
     inherited_task_ids: [ID]
-    task_id: ID
+    task_id: ID!
     date_start: String
     date_end: String
     duration: String
@@ -115,27 +115,6 @@ input ProjectInput {
     delegates_id: [String]
 }
 type Mutation {
-    personOrderFileDownload(
-        personId: ID
-    ): File!
-    projectPaymentInvoiceFileDownload(
-        projectId: ID
-        stageNumber: ID
-    ): File!
-    projectActRenderingFileDownload(
-        projectId: ID
-        stageNumber: ID
-    ): File!
-    projectOrderFileDownload(
-        projectId: ID
-    ): File!
-    projectIrdsFileDownload(
-        projectId: ID
-    ): File!
-    projectStagesFileDownload(
-        projectId: ID
-    ): File!
-
     updateTask(
         names: [String]
     ): [Task]
@@ -151,6 +130,9 @@ type Mutation {
     updateTaskToProject(
         data: TasksToProject
     ): Int
+    deleteTaskToProject(
+        id: ID!
+    ): String
     addTaskToProject(
         data: TasksToProject
     ): Int
@@ -738,4 +720,30 @@ type AuthPayload {
 extend type Mutation {
     register(input: RegisterInput!): AuthPayload!
     login(input:  LoginInput!): AuthPayload!
+}
+extend type Mutation {
+    personOrderFileDownload(
+        personId: ID
+    ): File!
+    projectPaymentInvoiceFileDownload(
+        projectId: ID
+        stageNumber: ID
+    ): File!
+    projectActRenderingFileDownload(
+        projectId: ID
+        stageNumber: Int
+    ): File!
+    projectOrderFileDownload(
+        projectId: ID
+    ): File!
+    projectIrdsFileDownload(
+        projectId: ID
+    ): File!
+    projectStagesFileDownload(
+        projectId: ID
+    ): File!
+    taskExecutorContractFileDownload(
+        projectId: ID
+        executorId: ID
+    ): File!
 }
