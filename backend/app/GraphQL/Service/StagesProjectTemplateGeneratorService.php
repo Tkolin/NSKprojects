@@ -53,8 +53,8 @@ class StagesProjectTemplateGeneratorService
                 'projectStages.number' => $projectStage["number"],
                 "projectStages.stage.name" => $projectStage["stage"]["name"],
                 "projectStages.stage.duration" => $projectStage["duration"],
-                "projectStages.stage.price" => $projectStage["price"]." р.",
-                "projectStages.stage.endPrice" => $projectStage["price_to_paid"]." р.",
+                "projectStages.stage.price" => number_format($projectStage["price"], 0, ',', ' ')." р.",
+                "projectStages.stage.endPrice" => number_format($projectStage["price_to_paid"], 0, ',', ' ')." р.",
                 "projectStages.payDay" =>  $projectStage->stage_id == 0 ? "В течение 5 банковских дней с даты подписания договора" : "В течение 5 банковских дней с даты подписания акта",
             ];
         }
@@ -66,8 +66,10 @@ class StagesProjectTemplateGeneratorService
             'dayCreate' => $day,
             'mountCreate' => $month,
             'yearCreate' => $year,
-            'projectStages.stage.priceTotal' => $project['price'] ?? '(данные отсутвуют)',
-            'projectStages.stage.endPriceTotal' => $project['price'] ?? '(данные отсутвуют)',
+            "projectStages.stage.price" => number_format($projectStage["price"], 0, ',', ' ')." р.",
+
+            'projectStages.stage.priceTotal' => number_format($project['price'], 0, ',', ' ')." р." ?? '(данные отсутвуют)',
+            'projectStages.stage.endPriceTotal' => number_format($project['price'], 0, ',', ' ')." р." ?? '(данные отсутвуют)',
             'projectStages.stage.priceTotalToName' => $TranslatorNumberToName->num2str($projectStage['price']),
             'projectStages.stage.endPriceTotalToName' => $TranslatorNumberToName->num2str($projectStage['price']),
             'myOrg.director.position' => $myOrg['director']['position']['name'] ?? '(данные отсутвуют)',
