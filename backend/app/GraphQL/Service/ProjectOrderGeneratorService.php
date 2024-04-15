@@ -26,7 +26,14 @@ class ProjectOrderGeneratorService
         $day = $dateComponents[2] ?? "__";
         error_log("Договор");
 
-
+        $avansPercent = false;
+        if(isset($project->project_stages)){
+            foreach ($project->project_stages as $project_stages){
+                if($project_stages->stage_id == 0){
+                    $avansPercent = $project_stages->percent;
+                }
+            }
+        }
 
         $myOrgPhone = $myOrg["phone_number"];
         $formattedPhone = preg_replace('/\+(\d{1,2})?(\d{3})(\d{3})(\d{2})(\d{2})/', '+$1 ($2) $3-$4-$5', $myOrgPhone);
@@ -49,6 +56,9 @@ class ProjectOrderGeneratorService
                 'myOrg.BIK.name' => $myOrg['bik']['name'] ?? '(данные отсутвуют)',
                 'myOrg.BIK.correspondent_account' => $myOrg['BIK']['correspondent_account'] ?? '(данные отсутвуют)',
                 'myOrg.payment_account' => $myOrg['payment_account'] ?? '(данные отсутвуют)',
+
+
+                'project.avansPecent' => $avansPercent,
 
 
                 'project.price' => $project['price'] ?? '(данные отсутвуют)',

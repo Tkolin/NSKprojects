@@ -42,6 +42,7 @@ class StagesProjectTemplateGeneratorService
         $month = $dateComponents[1] ? MonthEnum::getMonthName($dateComponents[1]) : "__";
         $day = $dateComponents[2] ?? "__";
         $projectStages = $project->project_stages;
+        $TranslatorNumberToName = new TranslatorNumberToName();
 
         // Формируем массив для отображения в таблице
         $table = [];
@@ -52,10 +53,9 @@ class StagesProjectTemplateGeneratorService
                 'projectStages.number' => $projectStage["number"],
                 "projectStages.stage.name" => $projectStage["stage"]["name"],
                 "projectStages.stage.duration" => $projectStage["duration"],
-                "projectStages.stage.price" => $projectStage["price"]."р.",
-                "projectStages.stage.endPrice" => $projectStage["price"]."р.",
-                "projectStages.payDay" =>  "В течение 5 банковских дней с даты подписания договора",
-
+                "projectStages.stage.price" => $projectStage["price"]." р.",
+                "projectStages.stage.endPrice" => $projectStage["price_to_paid"]." р.",
+                "projectStages.payDay" =>  $projectStage->stage_id == 0 ? "В течение 5 банковских дней с даты подписания договора" : "В течение 5 банковских дней с даты подписания акта",
             ];
         }
         $replacements = [
@@ -68,7 +68,8 @@ class StagesProjectTemplateGeneratorService
             'yearCreate' => $year,
             'projectStages.stage.priceTotal' => $project['price'] ?? '(данные отсутвуют)',
             'projectStages.stage.endPriceTotal' => $project['price'] ?? '(данные отсутвуют)',
-
+            'projectStages.stage.priceTotalToName' => $TranslatorNumberToName->num2str($projectStage['price']),
+            'projectStages.stage.endPriceTotalToName' => $TranslatorNumberToName->num2str($projectStage['price']),
             'myOrg.director.position' => $myOrg['director']['position']['name'] ?? '(данные отсутвуют)',
             'myOrg.nameOrType' =>$myOrg["legal_form"]['name'] ." ". $myOrg['name']  ,
             'myOrg.director.ShortFullName' => $myOrg['director']['last_name'] . ' ' . substr((string)$myOrg['director']['first_name'], 0,2) . '.' . substr((string)$myOrg['director']['patronymic'], 0,2) . '.',

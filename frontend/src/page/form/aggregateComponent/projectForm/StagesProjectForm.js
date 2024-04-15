@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
-import {Button, Col, Divider, Form, Input, InputNumber, notification, Row, Select, Space, Tooltip} from "antd";
+import {Button, Col, Divider, Form, Input, InputNumber, Modal, notification, Row, Select, Space, Tooltip} from "antd";
 import {CaretDownOutlined, CaretUpOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 import moment from "moment";
 
@@ -10,6 +10,8 @@ import {PROJECTS_QUERY, STAGES_QUERY, TEMPLATE_STAGES_TYPE_PROJECTS_QUERY} from 
 import LoadingSpinnerStyles from "../../../style/LoadingSpinnerStyles";
 import {StyledFormLarge} from "../../../style/FormStyles";
 import {StyledButtonGreen} from "../../../style/ButtonStyles";
+import IrdForm from "../../simpleForm/IrdForm";
+import StageForm from "../../simpleForm/StageForm";
 
 const {RangePicker} = DatePicker;
 const prepaymentTemplate = {
@@ -28,6 +30,7 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
     const [totalToPercent, setTotalToPercent] = useState(0);
     const [prepayment, setPrepayment] = useState(undefined);
     const [actualityProjectData, setActualityProjectData] = useState(null);
+    const [addModalVisible, setAddModalVisible] = useState(false);
 
     const handleAutoCompleteStageSelect = (value) => {
         setAutoCompleteStage('');
@@ -126,6 +129,10 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
 
         }
     });
+    const handleClose = () => {
+        refetchStages();
+        setAddModalVisible(false);
+    };
     useEffect(() => {
         if (project?.id) {
             refetchProject({queryOptions: {id: Number(project?.id)}});
@@ -338,12 +345,12 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
                 </Col>
                 <Col span={3} style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                     <Divider style={{margin: 0}}>
-                        Доля
+                        Сумма к оплате за этап
                     </Divider>
                 </Col>
                 <Col span={2} style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                     <Divider style={{margin: 0}}>
-                        Сумма
+                        Стоимость этапа
                     </Divider>
                 </Col>
             </Row>
@@ -484,7 +491,7 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
                                 </Tooltip>
                             </Col>
                             <Col span={3}>
-                                <Tooltip title="Стоимость этапа (итоговая)">
+                                <Tooltip title="Сумма к оплате за этап">
                                     <Form.Item
                                         {...restField}
                                         style={{marginBottom: 0, width: "100%"}}
@@ -556,11 +563,15 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
 
 
                     </Space>
-                    <Form.Item>
-                        <Button type="dashed" onClick={() => add()} block
-                                icon={<PlusOutlined/>}>
-                            Добавить элемент
-                        </Button>
+                    <Form.Item block style={{width: "100%"}}>
+                        <Space.Compact block style={{width: "100%"}}>
+                            <Button type="dashed" onClick={() => add()} block
+                                    icon={<PlusOutlined/>}>
+                                Добавить элемент
+                            </Button>
+                            <StyledButtonGreen style={{width: "100%"}} onClick={() => setAddModalVisible(true)}>Создать этап</StyledButtonGreen>
+                        </Space.Compact>
+
                     </Form.Item>
                 </>)}
             </Form.List>
@@ -572,6 +583,14 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
                     </StyledButtonGreen>
                 </Space>
             </div>
+            <Modal
+                open={addModalVisible}
+                onCancel={() => setAddModalVisible(false)}
+                footer={null}
+                onClose={handleClose}
+            >
+                <StageForm onClose={handleClose}/>
+            </Modal>
         </StyledFormLarge>
     );
 }

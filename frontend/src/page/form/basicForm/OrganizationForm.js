@@ -81,7 +81,7 @@ const OrganizationForm = ({organization, onClose}) => {
                 ...organization,
                 director: organization?.director?.id ??  null,
                 legal_form: organization?.legal_form?.id ?? null,
-                BIK_id: organization?.bik?.id ?? null,
+                bik_id: organization?.bik?.id ?? null,
             });
             setAddress1(organization?.address_mail);
             setAddress2(organization?.address_legal);
@@ -114,10 +114,10 @@ const OrganizationForm = ({organization, onClose}) => {
     // Обработчик отправки формы
     const handleSubmit = () => {
         const formValues = form.getFieldsValue();
-        const {address_legal, address_mail, director, BIK_id, legal_form, ...rest} = formValues;
+        const {address_legal, address_mail, director, bik_id, legal_form, ...rest} = formValues;
         const restrictedValue1 =  address_legal?.unrestricted_value ?? address1;
         const restrictedValue2 =  address_mail?.unrestricted_value ?? address2;
-
+    console.log(bik_id);
         if (editingOrganization) {
             updateOrganization({
                 variables: {
@@ -126,7 +126,7 @@ const OrganizationForm = ({organization, onClose}) => {
                     address_mail: restrictedValue2,
                     legal_form: legal_form,
                     director_id: director,
-                    BIK_id: BIK_id,
+                    bik_id: bik_id,
                     ...rest
                 }
             });
@@ -137,7 +137,7 @@ const OrganizationForm = ({organization, onClose}) => {
                     address_mail: restrictedValue2,
                     legal_form: legal_form,
                     director_id: director,
-                    BIK_id: BIK_id,
+                    bik_id: bik_id,
                     ...rest
                 }
             });
@@ -236,7 +236,7 @@ const OrganizationForm = ({organization, onClose}) => {
                         <StyledFormItem name="payment_account" label="Расчётынй счёт">
                             <Input placeholder="Введите номер расчётного счёта"/>
                         </StyledFormItem>
-                        <StyledFormItemSelectAndCreate formName={"BIK_id"}
+                        <StyledFormItemSelectAndCreate formName={"bik_id"}
                                                        formLabel={"Бик"}
                                                        onSearch={handleAutoCompleteBiks}
                                                        placeholder={"Начните ввод..."}

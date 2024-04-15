@@ -24,7 +24,7 @@ class Organization extends Model
         'OGRN',
         'OKPO',
         'KPP',
-        'BIK_id',
+        'bik_id',
         'payment_account',
         'director_id',
     ];

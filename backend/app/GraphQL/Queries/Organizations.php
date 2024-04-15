@@ -19,7 +19,7 @@ final readonly class Organizations
             $organizationsQuery = Organization
                 ::with('legal_form')
                 ->with('contacts')
-                ->with('Bik');
+                ->with('bik');
 
             // Поиск по организации
             if (isset($args['organizationId'])) {
