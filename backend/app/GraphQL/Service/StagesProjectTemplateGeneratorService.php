@@ -71,7 +71,7 @@ class StagesProjectTemplateGeneratorService
             'dayCreate' => $day,
             'mountCreate' => $month,
             'yearCreate' => $year,
-            "projectStages.stage.price" => number_format($projectStage["price"], 0, ',', ' ')." р.",
+            //"projectStages.stage.price" => number_format($projectStage["price"], 0, ',', ' ')." р.",
 
             'projectStages.stage.priceTotal' => number_format($project['price'], 0, ',', ' ')." р." ?? '(данные отсутвуют)',
             'projectStages.stage.endPriceTotal' => number_format($project['price'], 0, ',', ' ')." р." ?? '(данные отсутвуют)',
