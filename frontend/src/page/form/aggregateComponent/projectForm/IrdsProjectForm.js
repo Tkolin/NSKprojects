@@ -1,5 +1,5 @@
 import {StyledFormBig} from "../../../style/FormStyles";
-import {Button, Form, InputNumber, notification, Select, Space, Tooltip} from "antd";
+import {Button, Form, InputNumber, Modal, notification, Select, Space, Tooltip} from "antd";
 import {DatePicker} from "antd/lib";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
@@ -9,6 +9,7 @@ import {IRDS_QUERY, PROJECTS_QUERY, STAGES_QUERY, TEMPLATE_IRDS_TYPE_PROJECTS_QU
 import {ADD_IRD_MUTATION} from "../../../../graphql/mutationsIrd";
 import LoadingSpinnerStyles from "../../../style/LoadingSpinnerStyles";
 import {StyledButtonGreen} from "../../../style/ButtonStyles";
+import IrdForm from "../../simpleForm/IrdForm";
 
 const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
     // Состояния
@@ -16,8 +17,11 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
     const [autoCompleteIrd, setAutoCompleteIrd] = useState('');
     const [dataIrds, setDataIrds] = useState(null);
     const [actualityProjectData, setActualityProjectData] = useState(null);
+    const [addModalVisible, setAddModalVisible] = useState(false);
+
     const handleAutoCompleteIrd = (value) => {
-        setAutoCompleteIrd(value)
+        console.log(value);
+        setAutoCompleteIrd(value);
     };
     // Функции уведомлений
     const openNotification = (placement, type, message) => {
@@ -26,15 +30,23 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
         });
     };
     const handleAutoCompleteIrdSelect = (value) => {
-            refetchIrds({search: autoCompleteIrd});
+         setAutoCompleteIrd('');
     };
 
     // Получение данных для выпадающих списков
     const {loading: loadingIrds, refetch: refetchIrds, data: dataIrdsQuery} = useQuery(IRDS_QUERY, {
         fetchPolicy: 'network-only',
         variables: {queryOptions: {search: autoCompleteIrd, limit: 10, page: 1}},
-        onCompleted: (data) => setDataIrds(data)
+        onCompleted: (data) =>{ setDataIrds(data);
+        console.log(data);
+        },
+
+        onError: (error) => console.log(error)
     });
+    const handleClose = () => {
+        refetchIrds();
+        setAddModalVisible(false);
+    };
     useEffect((dataIrdsQuery) => {
         dataIrdsQuery ?? setDataIrds(dataIrdsQuery);
     }, [dataIrdsQuery]);
@@ -48,16 +60,6 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
             addingIrds(data?.templatesIrdsTypeProjects?.map((titp) => titp.ird))}
     });
     //Мутация
-    const [addIrd] = useMutation(ADD_IRD_MUTATION, {
-        refetchQueries: [{query: IRDS_QUERY}],
-        onCompleted: () => {
-            openNotification('topRight', 'success', 'ИРД успешно добавлено, произеведите выбор!');
-        },
-        onError: () => {
-            openNotification('topRight', 'error', 'Ошибка при добавлении ИРД.');
-        }
-    });
-
     const addingIrds = (value) => {
         if (!dataIrds || !value) return;
         const newIrds = value.map(a => ({
@@ -211,11 +213,15 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
                         </Tooltip>
                         <MinusCircleOutlined onClick={() => remove(name)}/>
                     </Space>))}
-                    <Form.Item>
-                        <Button type="dashed" onClick={() => add()} block
-                                icon={<PlusOutlined/>}>
-                            Add field
-                        </Button>
+                    <Form.Item block style={{width: "100%"}}>
+                        <Space.Compact block style={{width: "100%"}}>
+                            <Button style={{width: "100%"}} type="dashed" onClick={() => add()}
+                                    icon={<PlusOutlined/>}>
+                                Добавить ИРД
+                            </Button>
+                            <StyledButtonGreen style={{width: "100%"}} onClick={() => setAddModalVisible(true)}>Создать ИРД</StyledButtonGreen>
+                        </Space.Compact>
+
                     </Form.Item>
                 </>)}
             </Form.List>
@@ -226,6 +232,14 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
                     </StyledButtonGreen>
                 </Space>
             </div>
+            <Modal
+                open={addModalVisible}
+                onCancel={() => setAddModalVisible(false)}
+                footer={null}
+                onClose={handleClose}
+            >
+                <IrdForm onClose={handleClose}/>
+            </Modal>
         </StyledFormBig>
     )
 };

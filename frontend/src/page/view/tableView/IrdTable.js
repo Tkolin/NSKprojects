@@ -65,6 +65,8 @@ const IrdTable = () => {
     const handleClose = () => {
         refetch();
         setEditModalVisible(false);
+        setAddModalVisible(false);
+
     };
     const handleEdit = (irdId) => {
         const ird = data.irds.items.find(ird => ird.id === irdId);

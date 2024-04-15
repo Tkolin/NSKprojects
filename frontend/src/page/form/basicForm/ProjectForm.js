@@ -264,13 +264,15 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
     };
     // Обработчик отправки формы
     const handleSubmit = () => {
+        const currentDate = new Date();
+
         if (editingProject) {
             updateProject({
                 variables: {
                     data: {
                         ...form.getFieldsValue(),
                         number: getNumberString(),
-                        date_create: form.getFieldValue("date_create")?.toISOString() ?? null,
+                        date_create: form.getFieldValue("date_create")?.toISOString() ?? currentDate.toISOString(),
                         facilitys_id: facilitysList?.map(cascad => cascad[3].key) ?? null,
                         id: editingProject?.id,
                         organization_customer_id: selectedOrganization
@@ -283,7 +285,7 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                     data: {
                         ...form.getFieldsValue(),
                         number: getNumberString(),
-                        date_create: form.getFieldValue("date_create")?.toISOString() ?? null,
+                        date_create: form.getFieldValue("date_create")?.toISOString() ?? currentDate.toISOString(),
                         facilitys_id: facilitysList?.map(cascad => cascad[3].key) ?? null,
                         organization_customer_id: selectedOrganization,
                         status_id: 4

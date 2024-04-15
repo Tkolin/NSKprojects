@@ -220,21 +220,29 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
         if (Array.isArray(stageList)) {
             let countRow = 0;
             const totalProcent = stageList.reduce((acc, item) => {
-                const procent = item.percent_item || 0;
+                const procent = item?.percent_item ?? 0;
                 if (prepayment) countRow++;
                 return acc + procent;
             }, 0);
             setTotalToPercent(totalProcent);
             console.log(prepayment);
-            const updatedStageList = stageList.map(row => ({
-                ...row,
-                price_item: prepayment && row.stage_item !== 0
-                    ? Number((totalPrice * ((row.percent_item + (prepayment.percent_item) / (countRow - 1))) / 100)?.toFixed(2))
-                    : Number((totalPrice * row.percent_item / 100)?.toFixed(2)),
-                end_price_item: prepayment
-                    ? Number((totalPrice * row.percent_item / 100)?.toFixed(2))
-                    : Number((totalPrice * row.percent_item / 100)?.toFixed(2)),
-            }));
+            const updatedStageList = stageList.map(row => {
+                const percentItem = row?.percent_item ?? 1;
+                const prepaymentPercent = prepayment?.percent_item ?? 1;
+
+                const isPrepaymentStage = prepayment && row?.stage_item !== 0;
+                const priceItem = isPrepaymentStage
+                    ? Number((totalPrice * ((percentItem + prepaymentPercent) / (countRow - 1)) / 100)?.toFixed(2))
+                    : Number((totalPrice * percentItem / 100)?.toFixed(2));
+                const endPriceItem = prepayment
+                    ? Number((totalPrice * percentItem / 100)?.toFixed(2))
+                    : Number((totalPrice * percentItem / 100)?.toFixed(2));
+                return {
+                    ...row,
+                    price_item: priceItem,
+                    end_price_item: endPriceItem,
+                };
+            });
             formStage.setFieldsValue({
                 stageList: updatedStageList,
             });
@@ -261,7 +269,7 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
             dateStart: stage?.data_range?.date_start_item,
             duration: stage?.duration_item,
             dateEnd: stage?.data_range?.date_end_item,
-            percent: stage?.percent_item,
+            percent: stage?.percent_item ?? 1,
             price: stage?.price_item,
             price_to_paid: stage?.end_price_item,
         }));
@@ -275,11 +283,11 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
     const handleAddPrepaymentStage = () => {
         const countStageItems = formStage.getFieldValue('stageList').length;
         formStage.setFieldsValue({
-            stageList: [prepaymentTemplate, ...formStage.getFieldValue('stageList').map(stage => ({
+            stageList: [prepaymentTemplate, ...formStage.getFieldValue('stageList').map((stage, index) => ({
                 ...stage,
-                index: ++stage.index,
-                percent_item: parseInt(stage.percent_item - (prepaymentTemplate.percent_item / countStageItems)),
-            }))]
+                index: ++index,
+                percent_item: parseInt((stage.percent_item ?? 1) - ((prepaymentTemplate.percent_item ?? 1) / countStageItems)),
+            }))],
         });
         setPrepayment(prepaymentTemplate);
     };
@@ -287,10 +295,10 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
         const stages = formStage.getFieldValue('stageList');
         const filteredStages = stages.filter((stage, index) => index !== 0);
         formStage.setFieldsValue({
-            stageList: filteredStages.map(stage => ({
+            stageList: filteredStages.map((stage, index) => ({
                 ...stage,
-                index: --stage.index,
-                percent_item: parseInt(stage.percent_item + (prepaymentTemplate.percent_item / filteredStages.length)),
+                index: --index,
+                percent_item: parseInt((stage.percent_item ?? 1) + ((prepaymentTemplate.percent_item ?? 1) / filteredStages.length)),
             })),
         });
         setPrepayment(undefined);
@@ -454,7 +462,7 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
                                         },]}
                                     >
                                         <InputNumber onChange={handleItemPercentages} max={100} min={0} value={0}
-                                                     defaultValue={0} suffix={"%"}
+                                                     defaultValue={1} suffix={"%"}
                                                      style={{width: "100%"}}
                                         />
                                     </Form.Item>

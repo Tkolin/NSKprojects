@@ -22,7 +22,7 @@ final readonly class Irds
 
             // Поиск
             if (isset($args['queryOptions']['search'])) {
-                $searchTerm = $args['search'];
+                $searchTerm = $args['queryOptions']['search'];
                 $irdQuery = $irdQuery
                     ->where('name', 'like', "%$searchTerm%");
             }
@@ -44,7 +44,7 @@ final readonly class Irds
                 $irds = $irdQuery->get();
             }
 
-
+            error_log('irds' . $irds);
 
             return ['items' => $irds, 'count' => $count];
         } else {
