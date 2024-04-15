@@ -47,7 +47,7 @@ class ProjectOrderGeneratorService
             $replacements = [
                 'myOrg.full_name' => $myOrg['full_name'] ?? '(данные отсутвуют)',
                 'myOrg.nameOrType' => $myOrg["legal_form"]['name'] . " " . $myOrg['name'],
-                'myOrg.director.full_name' => $NCLNameCaseRu->q( $myOrg['director']['last_name'] . ' ' . $myOrg['director']['first_name'] . ' ' . $myOrg['director']['patronymic'],NCL::$RODITLN) ?? '',
+                'myOrg.director.full_name' => $NCLNameCaseRu->q( $myOrg['director']['last_name'] . ' ' . $myOrg['director']['first_name'] . ' ' . $myOrg['director']['patronymic'],NCL::$VINITELN) ?? '',
                 'myOrg.director.position.name' => $myOrg['director']['position']['name'] ?? '(данные отсутвуют)', 'project.name' => $project['name'] ?? '',
                 'myOrg.INN' => $myOrg['INN'] ?? '(данные отсутвуют)',
                 'myOrg.KPP' => $myOrg['KPP'] ?? '(данные отсутвуют)',
@@ -75,7 +75,7 @@ class ProjectOrderGeneratorService
                 'projectOrganization.director.full_name' => isset($project["organization_customer"]['director']) ?
                     $NCLNameCaseRu->q($project["organization_customer"]['director']['last_name'] . ' ' .
                         $project["organization_customer"]['director']['first_name'] . ' ' .
-                        $project["organization_customer"]['director']['patronymic'],NCL::$RODITLN) : '',
+                        $project["organization_customer"]['director']['patronymic'],NCL::$VINITELN) : '',
                 'projectOrganization.director.position' => $project["organization_customer"]['director']['position']['name'] ?? '(данные отсутвуют)',
                 'projectOrganization.INN' => $project["organization_customer"]['INN'] ?? '(данные отсутвуют)',
                 'projectOrganization.full_name' => $project["organization_customer"]['full_name'] ?? '(данные отсутвуют)',
