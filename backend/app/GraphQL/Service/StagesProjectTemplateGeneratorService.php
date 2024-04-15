@@ -75,8 +75,8 @@ class StagesProjectTemplateGeneratorService
 
             'projectStages.stage.priceTotal' => number_format($project['price'], 0, ',', ' ')." р." ?? '(данные отсутвуют)',
             'projectStages.stage.endPriceTotal' => number_format($project['price'], 0, ',', ' ')." р." ?? '(данные отсутвуют)',
-            'projectStages.stage.priceTotalToName' => $TranslatorNumberToName->num2str($projectStage['price']),
-            'projectStages.stage.endPriceTotalToName' => $TranslatorNumberToName->num2str($projectStage['price']),
+            'projectStages.stage.priceTotalToName' => $TranslatorNumberToName->num2str($project['price']),
+            'projectStages.stage.endPriceTotalToName' => $TranslatorNumberToName->num2str($project['price']),
             'myOrg.director.position' => $myOrg['director']['position']['name'] ?? '(данные отсутвуют)',
             'myOrg.nameOrType' =>$myOrg["legal_form"]['name'] ." ". $myOrg['name']  ,
             'myOrg.director.ShortFullName' => $myOrg['director']['last_name'] . ' ' . substr((string)$myOrg['director']['first_name'], 0,2) . '.' . substr((string)$myOrg['director']['patronymic'], 0,2) . '.',
