@@ -2,6 +2,8 @@
 
 namespace App\GraphQL\Service;
 
+use App\GraphQL\Service\NameCaseLib\NCL\NCL;
+use App\GraphQL\Service\NameCaseLib\NCLNameCaseRu;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 class ProjectOrderGeneratorService
@@ -35,6 +37,9 @@ class ProjectOrderGeneratorService
             }
         }
 
+        // Склонение имени
+        $NCLNameCaseRu = new NCLNameCaseRu();
+
         $myOrgPhone = $myOrg["phone_number"];
         $formattedPhone = preg_replace('/\+(\d{1,2})?(\d{3})(\d{3})(\d{2})(\d{2})/', '+$1 ($2) $3-$4-$5', $myOrgPhone);
 
@@ -42,7 +47,7 @@ class ProjectOrderGeneratorService
             $replacements = [
                 'myOrg.full_name' => $myOrg['full_name'] ?? '(данные отсутвуют)',
                 'myOrg.nameOrType' => $myOrg["legal_form"]['name'] . " " . $myOrg['name'],
-                'myOrg.director.full_name' => $myOrg['director']['last_name'] . ' ' . $myOrg['director']['first_name'] . ' ' . $myOrg['director']['patronymic'] ?? '',
+                'myOrg.director.full_name' => $NCLNameCaseRu->q( $myOrg['director']['last_name'] . ' ' . $myOrg['director']['first_name'] . ' ' . $myOrg['director']['patronymic'],NCL::$RODITLN) ?? '',
                 'myOrg.director.position.name' => $myOrg['director']['position']['name'] ?? '(данные отсутвуют)', 'project.name' => $project['name'] ?? '',
                 'myOrg.INN' => $myOrg['INN'] ?? '(данные отсутвуют)',
                 'myOrg.KPP' => $myOrg['KPP'] ?? '(данные отсутвуют)',
@@ -68,9 +73,9 @@ class ProjectOrderGeneratorService
                 'yearCreate' => $year,
                 "project.typeProject.Specification" => $project["type_project_document"]["group"]["technical_specification"]['name'] ?? '(данные отсутвуют)',
                 'projectOrganization.director.full_name' => isset($project["organization_customer"]['director']) ?
-                    ($project["organization_customer"]['director']['last_name'] . ' ' .
+                    $NCLNameCaseRu->q($project["organization_customer"]['director']['last_name'] . ' ' .
                         $project["organization_customer"]['director']['first_name'] . ' ' .
-                        $project["organization_customer"]['director']['patronymic']) : '',
+                        $project["organization_customer"]['director']['patronymic'],NCL::$RODITLN) : '',
                 'projectOrganization.director.position' => $project["organization_customer"]['director']['position']['name'] ?? '(данные отсутвуют)',
                 'projectOrganization.INN' => $project["organization_customer"]['INN'] ?? '(данные отсутвуют)',
                 'projectOrganization.full_name' => $project["organization_customer"]['full_name'] ?? '(данные отсутвуют)',

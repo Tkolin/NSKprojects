@@ -2,6 +2,7 @@
 
 namespace App\GraphQL\Service;
 
+use App\GraphQL\Service\NameCaseLib\NCLNameCaseRu;
 use App\Models\Organization;
 use App\Models\Person;
 use App\Models\TemplateFile;
@@ -47,7 +48,12 @@ class StagesProjectTemplateGeneratorService
         // Формируем массив для отображения в таблице
         $table = [];
         $irdNumber = 1;
-        //TODO: Ошибка мол пустое
+        # Указываем кодировку.
+
+        header('Content-type: text/html; charset=utf-8');
+
+
+
         foreach ($projectStages as $projectStage) {
             $table[] = [
                 'projectStages.number' => $projectStage["number"],
@@ -61,7 +67,6 @@ class StagesProjectTemplateGeneratorService
         $replacements = [
             'project.number' => $project['number'] ?? '(данные отсутвуют)',
             'project.name' => $project['name'] ?? '(данные отсутвуют)',
-
 
             'dayCreate' => $day,
             'mountCreate' => $month,
