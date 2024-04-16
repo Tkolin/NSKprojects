@@ -271,7 +271,7 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                 variables: {
                     data: {
                         ...form.getFieldsValue(),
-                        number: getNumberString(),
+                        number: editingProject.number,
                         date_create: form.getFieldValue("date_create")?.toISOString() ?? currentDate.toISOString(),
                         facilitys_id: facilitysList?.map(cascad => cascad[3].key) ?? null,
                         id: editingProject?.id,

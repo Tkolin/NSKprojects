@@ -37,8 +37,9 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
     const {loading: loadingIrds, refetch: refetchIrds, data: dataIrdsQuery} = useQuery(IRDS_QUERY, {
         fetchPolicy: 'network-only',
         variables: {queryOptions: {search: autoCompleteIrd, limit: 10, page: 1}},
-        onCompleted: (data) =>{ setDataIrds(data);
-        console.log(data);
+        onCompleted: (data) =>{
+            if(autoCompleteIrd)
+                setDataIrds(data);
         },
 
         onError: (error) => console.log(error)
@@ -48,7 +49,10 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
         setAddModalVisible(false);
     };
     useEffect((dataIrdsQuery) => {
-        dataIrdsQuery ?? setDataIrds(dataIrdsQuery);
+        // if(dataIrdsQuery)
+        //     addingIrds(dataIrdsQuery)
+        // else
+        //     dataIrdsQuery ?? setDataIrds(dataIrdsQuery);
     }, [dataIrdsQuery]);
     const {
         loading: loadingTemplate, data: dataTemplate
@@ -61,27 +65,29 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
     });
     //Мутация
     const addingIrds = (value) => {
-        if (!dataIrds || !value) return;
+        if (!value) return;
         const newIrds = value.map(a => ({
             id: a?.id ?? null, name: a?.name ?? null,
         }));
-        const existingIrds = dataIrds.irds ? dataIrds.irds.items : [];
+        const existingIrds = dataIrds?.irds ? dataIrds?.irds?.items : [];
         const updatedIrds = [...existingIrds, ...newIrds];
         setDataIrds({
             ...dataIrds,
             irds: {
-                ...dataIrds.irds,
+                ...dataIrds?.irds,
                 items: updatedIrds,
             },
         });
     };
+    useEffect(() => {
+        console.log("dataIrdsUpdate ", dataIrds);
+    }, [dataIrds]);
     // Подгрузка формы
     const loadTemplate = () => {
         const irds = actualityProjectData?.project_irds?.length > 0 ? actualityProjectData.project_irds :
             (dataTemplate?.templatesIrdsTypeProjects?.length > 0 ? dataTemplate.templatesIrdsTypeProjects
                 : null);
-        console.log("irds"+irds);
-        if (irds) {
+         if (irds) {
             const initialValuesIrds = irds?.map(data => ({
                 ird_item: data.ird ? data.ird.id  :  data.IRD.id,
                 stage_number_item: data.stage_number ?  data.stage_number : data.stageNumber,
@@ -92,8 +98,10 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
         }
     };
     useEffect(() => {
-        if (project?.id) {
+        console.log('useEffectStart', project);
+        if (project) {
             refetchProject({ queryOptions: { id: Number(project?.id) }});
+            console.log('useEffectStart',project?.project_irds?.map((pirds) => pirds.IRD));
             addingIrds( project?.project_irds?.map((pirds) => pirds.IRD));
         }
 
@@ -186,8 +194,7 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
                                     onSelect={(value) => handleAutoCompleteIrdSelect(value)}
                                     allowClear
                                     showSearch
-                                    loading={loadingIrds}
-                                >
+                                 >
                                     {dataIrds?.irds?.items?.map(ird => (
                                         <Select.Option key={ird.id}
                                                        value={ird.id}>
