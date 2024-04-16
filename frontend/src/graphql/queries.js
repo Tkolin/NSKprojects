@@ -216,6 +216,7 @@ export const PROJECTS_QUERY = gql`
                 date_signing
                 date_create
                 date_end
+                prepayment
                 status
                 {
                     id

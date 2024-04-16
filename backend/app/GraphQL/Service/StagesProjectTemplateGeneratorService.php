@@ -46,7 +46,14 @@ class StagesProjectTemplateGeneratorService
         $TranslatorNumberToName = new TranslatorNumberToName();
 
         // Формируем массив для отображения в таблице
-        $table = [];
+        $table[] =  [
+            'projectStages.number' => '',
+            "projectStages.stage.name" => 'Аванс',
+            "projectStages.stage.duration" => '0',
+            "projectStages.stage.price" => number_format(($project["price"] * $project["prepayment"] / 100), 0, ',', ' ')." р.",
+            "projectStages.stage.endPrice" => number_format(($project["price"] * $project["prepayment"] / 100), 0, ',', ' ')." р.",
+            "projectStages.payDay" =>  "В течение 5 банковских дней с даты подписания договора",
+        ];
         $irdNumber = 1;
         # Указываем кодировку.
 
@@ -61,7 +68,7 @@ class StagesProjectTemplateGeneratorService
                 "projectStages.stage.duration" => $projectStage["duration"],
                 "projectStages.stage.price" => number_format($projectStage["price"], 0, ',', ' ')." р.",
                 "projectStages.stage.endPrice" => number_format($projectStage["price_to_paid"], 0, ',', ' ')." р.",
-                "projectStages.payDay" =>  $projectStage->stage_id == 0 ? "В течение 5 банковских дней с даты подписания договора" : "В течение 5 банковских дней с даты подписания акта",
+                "projectStages.payDay" =>  "В течение 5 банковских дней с даты подписания акта",
             ];
         }
         $replacements = [

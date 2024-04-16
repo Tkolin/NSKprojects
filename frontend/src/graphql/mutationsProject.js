@@ -115,6 +115,7 @@ export const UPDATE_PROJECT_MUTATION = gql`
             id
             number
             name
+            prepayment
             organization_customer
             {
                 id

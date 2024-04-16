@@ -27,6 +27,7 @@ final readonly class AddProject
                 'date_end' => isset($args['data']['date_end']) ? substr((string) $args['data']['date_end'], 0, 10) : null,
                 'date_create' => isset($args['data']['date_create']) ? substr((string) $args['data']['date_create'], 0, 10) : null,
                 'status_id' => $args['data']['status_id'] ?? null,
+                'prepayment' => $args['data']['prepayment'] ?? null,
                 'date_completion' => isset($args['data']['date_completion']) ? substr((string) $args['data']['date_completion'], 0, 10) : null,
                 'price' => $args['data']['price'] ?? null,
             ]);

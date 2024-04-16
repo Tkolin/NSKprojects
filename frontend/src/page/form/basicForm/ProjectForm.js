@@ -49,16 +49,18 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
     const [facilitysList, setFacilitysList] = useState(null);
     const [editOrganizationModalVisibleMode, setEditOrganizationModalVisibleMode] = useState(false);
     const [projectStatus, setProjectStatus] = useState({key: 4});
-    const [projectNumber, setProjectNumber] = useState({typeDocument: 'xxx', year: 'xx', organizationId: 'xx', selectFacilitiCode: 'xx', subSelectFaciliiCode: 'xx',
-    groupFacilitiCode: 'xxx', facilitiCode: 'xxx'});
+    const [projectNumber, setProjectNumber] = useState({
+        typeDocument: 'xxx', year: 'xx', organizationId: 'xx', selectFacilitiCode: 'xx', subSelectFaciliiCode: 'xx',
+        groupFacilitiCode: 'xxx', facilitiCode: 'xxx'
+    });
     const handleCloseModalFormView = () => {
         setAddContactModalVisibleMode(false);
         setAddOrganizationModalVisibleMode(false);
         setEditOrganizationModalVisibleMode(false);
     };
     const getNumberString = () => {
-        return projectNumber.typeDocument + "–" + projectNumber.year + "–" + projectNumber.organizationId+"–"+  projectNumber.selectFacilitiCode+"–" +projectNumber.subSelectFaciliiCode+"–"+
-            projectNumber.groupFacilitiCode+"–"+projectNumber.facilitiCode;
+        return projectNumber.typeDocument + "–" + projectNumber.year + "–" + projectNumber.organizationId + "–" + projectNumber.selectFacilitiCode + "–" + projectNumber.subSelectFaciliiCode + "–" +
+            projectNumber.groupFacilitiCode + "–" + projectNumber.facilitiCode;
 
     }
     useEffect(() => {
@@ -66,18 +68,20 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
         const facilitysId = form.getFieldValue('facilitys_id');
         setProjectNumber({
             ...projectNumber,
-            typeDocument: dataTypeProject?.typeProjects?.items?.find(d=>d.id === form.getFieldValue('type_project_document_id'))?.group?.name,
+            typeDocument: dataTypeProject?.typeProjects?.items?.find(d => d.id === form.getFieldValue('type_project_document_id'))?.group?.name,
             year: form.getFieldValue('date_create')?.$y?.toString()?.slice(-2),
-            organizationId: addLeadingZeros(form.getFieldValue('organization_customer_id'),3),
+            organizationId: addLeadingZeros(form.getFieldValue('organization_customer_id'), 3),
             selectFacilitiCode: facilitysId?.[0]?.[0] != null ? addLeadingZeros(facilitysId[0][0], 2) : null,
             subSelectFaciliiCode: facilitysId?.[0]?.[1] != null ? addLeadingZeros(facilitysId[0][1], 2) : null,
             groupFacilitiCode: facilitysId?.[0]?.[2] != null ? addLeadingZeros(facilitysId[0][2], 3) : null,
             facilitiCode: facilitysId?.[0]?.[3] != null ? addLeadingZeros(facilitysId[0][3], 3) : null,
         })
-    }, [form.getFieldValue('facilitys_id'), form,form.getFieldValue,form.getFieldValue('organization_customer_id'), selectedTypeProject, form.getFieldValue('date_create'), dateCreate, facilitysList]);
+    }, [form.getFieldValue('facilitys_id'), form, form.getFieldValue, form.getFieldValue('organization_customer_id'), selectedTypeProject, form.getFieldValue('date_create'), dateCreate, facilitysList]);
+
     function addLeadingZeros(number, length) {
         return String(number).padStart(length, '0');
     }
+
     const handleAutoCompleteOrganizations = (value) => {
         setAutoCompleteOrganization(value)
     };
@@ -204,7 +208,7 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
             setSelectedOrganization(editingProject?.organization_customer?.id);
             setAutoCompleteOrganization(editingProject?.organization_customer?.id)
 
-            const facilitys_id =  editingProject?.facilities?.map(facility => [
+            const facilitys_id = editingProject?.facilities?.map(facility => [
                 facility?.group_facility?.subselection_facility?.selection_facility?.code ?? null,
                 facility?.group_facility?.subselection_facility?.code ?? null,
                 facility?.group_facility?.code ?? null,
@@ -225,7 +229,9 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
         }
     }, [editingProject, form]);
 
-    const save = (data) => {setEditingProject(data);}
+    const save = (data) => {
+        setEditingProject(data);
+    }
 
 
     const sortFacilitysForCascader = (facilities) => {
@@ -297,7 +303,7 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
     return (<>
         <StyledFormRegular form={form} layout="vertical">
             <Divider>:Данные:</Divider>
-            <StyledFormItem name="number" label="Номер проекта" rules={[{required: true}]} >
+            <StyledFormItem name="number" label="Номер проекта" rules={[{required: true}]}>
                 <div>
                     {project?.number ?
                         (<Input defaultValue={project?.number} value={project?.number}/>) :
@@ -306,32 +312,8 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                 </div>
             </StyledFormItem>
             <StyledFormItem name="name" label="Наименование проекта" rules={[{required: true}]}>
-            <Input/>
+                <Input/>
             </StyledFormItem>
-            <StyledFormItemSelectAndCreateWitchEdit
-                formName={"organization_customer_id"}
-                formLabel={"Заказчик"}
-                onSearch={handleAutoCompleteOrganizations}
-                onSelect={handleSelectedOrganization}
-                placeholder={"Начните ввод..."}
-                loading={loadingOrganizations}
-                items={dataOrganizations?.organizations?.items}
-                firstBtnOnClick={setAddOrganizationModalVisibleMode}
-                secondBtnOnClick={ setEditOrganizationModalVisibleMode}
-                secondDisable={!selectedOrganization}
-                formatOptionText={(row) => `${row.name}`}
-            />
-            <StyledFormItemSelectAndCreate
-                formName={"delegates_id"}
-                formLabel={"Представители компании"}
-                mode={'multiple'}
-                placeholder={"По компаниям"}
-                loading={loadingDelegates}
-                items={dataDelegates?.contacts?.items}
-                firstBtnOnClick={setAddContactModalVisibleMode}
-                formatOptionText={(row) => `${row.last_name} ${row.first_name} ${row.patronymic}`}
-            />
-
             <StyledFormItem name="type_project_document_id" label="Тип документа">
                 <Select
                     popupMatchSelectWidth={false}
@@ -348,7 +330,29 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                                 value={typeDocument?.id}>{typeDocument.name}</Option>))}
                 </Select>
             </StyledFormItem>
-
+            <StyledFormItemSelectAndCreateWitchEdit
+                formName={"organization_customer_id"}
+                formLabel={"Заказчик"}
+                onSearch={handleAutoCompleteOrganizations}
+                onSelect={handleSelectedOrganization}
+                placeholder={"Начните ввод..."}
+                loading={loadingOrganizations}
+                items={dataOrganizations?.organizations?.items}
+                firstBtnOnClick={setAddOrganizationModalVisibleMode}
+                secondBtnOnClick={setEditOrganizationModalVisibleMode}
+                secondDisable={!selectedOrganization}
+                formatOptionText={(row) => `${row.name}`}
+            />
+            <StyledFormItemSelectAndCreate
+                formName={"delegates_id"}
+                formLabel={"Представители компании"}
+                mode={'multiple'}
+                placeholder={"По компаниям"}
+                loading={loadingDelegates}
+                items={dataDelegates?.contacts?.items}
+                firstBtnOnClick={setAddContactModalVisibleMode}
+                formatOptionText={(row) => `${row.last_name} ${row.first_name} ${row.patronymic}`}
+            />
             <StyledFormItem name="facilitys_id" label="Объект" style={{width: "100%"}}>
                 <Cascader
                     style={{width: "100%"}}
@@ -377,8 +381,9 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                     />
 
                 </StyledFormItem>
-                <StyledFormItem name="date_create" label="Дата создания договора" style={{width: '50%'}} >
-                    <DatePicker placeholder="Выберите дату" style={{width: '100%'}} onChange={(value) => setDateCreate(value)}/>
+                <StyledFormItem name="date_create" label="Дата создания договора" style={{width: '50%'}}>
+                    <DatePicker placeholder="Выберите дату" style={{width: '100%'}}
+                                onChange={(value) => setDateCreate(value)}/>
                 </StyledFormItem>
                 {/*<StyledFormItem name="date_end" label="Дата окончания" >*/}
                 {/*    <DatePicker minDate={dateSigning} disabled={!editingProject}*/}
@@ -396,12 +401,18 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
                                        value={status.id}>{status.name}</Select.Option>))}
                 </Select>
             </StyledFormItem>
+            <Space.Compact style={{width: '100%'}}>
+                <StyledFormItem name="price" style={{width: '100%'}} label="Стоимость">
+                    <InputNumber suffix={"₽"} style={{width: '100%'}}
+                                 formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                 parser={value => `${value}`.replace(/[^0-9]/g, '')}/>
+                </StyledFormItem>
+                <StyledFormItem name="prepayment" style={{width: '150px'}} label="Аванс">
+                    <InputNumber suffix={"%"} style={{width: '100%'}}
+                                 min={0} max={100}/>
+                </StyledFormItem>
+            </Space.Compact>
 
-            <StyledFormItem name="price"  style={{width: '100%'}} label="Стоимость">
-                <InputNumber suffix={"₽"} style={{width: '100%'}}
-                             formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                             parser={value => `${value}`.replace(/[^0-9]/g, '')}/>
-            </StyledFormItem>
             <div style={{textAlign: 'center'}}>
                 <Space>
                     <StyledButtonGreen style={{marginBottom: 0}} type="dashed" onClick={handleSubmit}>

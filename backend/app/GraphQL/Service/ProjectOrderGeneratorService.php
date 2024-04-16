@@ -63,7 +63,7 @@ class ProjectOrderGeneratorService
                 'myOrg.payment_account' => $myOrg['payment_account'] ?? '(данные отсутвуют)',
 
 
-                'project.avansPecent' => $avansPercent,
+                'project.avansPecent' => $project['prepayment'],
 
 
                 'project.price' => $project['price'] ?? '(данные отсутвуют)',
