@@ -40,7 +40,7 @@ class StagesProjectTemplateGeneratorService
         $dateComponents = explode('-', $date);
 
         $year = $dateComponents[0] ?? "__";
-        $month = $dateComponents[1] ? MonthEnum::getMonthName($dateComponents[1]) : "__";
+        $month = $dateComponents[1] ? MonthEnum::getMonthRodName($dateComponents[1]) : "__";
         $day = $dateComponents[2] ?? "__";
         $projectStages = $project->project_stages;
         $TranslatorNumberToName = new TranslatorNumberToName();
