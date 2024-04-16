@@ -14,7 +14,7 @@ use PhpOffice\PhpWord\TemplateProcessor;
 class PaymentInvoiceTemplateGeneratorService
 {
 
-    public static function generate($project, $stageNumber)
+    public static function generate($project, $stageNumber, $isPrepayment)
     {
         $myOrg = GeneratorService::getOrganizationData();
 
@@ -32,9 +32,16 @@ class PaymentInvoiceTemplateGeneratorService
         $month = $dateComponents[1];
         $monthName = $dateComponents[1] ? MonthEnum::getMonthName($dateComponents[1]) : "__";
         $day = $dateComponents[2] ?? "__";
-        $projectStage = $project->project_stages->where('number', $stageNumber)->first();
         $TranslatorNumberToName = new TranslatorNumberToName();
-
+        $projectStage = $isPrepayment ?
+            [
+                'price' => ($project["price"] * $project["prepayment"] / 100),
+                'stage' => ['name' => 'Аванс', 'id' => 0],
+                'percent' => $project['prepayment'],
+                'number' => ' '
+            ]
+            :$project->project_stages->where('number', $stageNumber)->first()
+           ;
         $myOrgPhone = $myOrg["phone_number"];
         $formattedPhone = preg_replace('/\+(\d{1,2})?(\d{3})(\d{3})(\d{2})(\d{2})/', '+$1 ($2) $3-$4-$5', $myOrgPhone);
 

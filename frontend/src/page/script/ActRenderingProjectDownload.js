@@ -1,11 +1,10 @@
 import 'react-phone-number-input/style.css';
 import { useMutation } from '@apollo/client';
-import { CONTRACT_PERSON_MUTATION } from '../../graphql/mutationsPerson';
-import {Button, notification} from 'antd';
-import {DownloadOutlined} from "@ant-design/icons";
+import {notification, Typography} from 'antd';
 import {ACT_RENDERING_PROJECT_DOWNLOAD, IRDS_PROJECT_DOWNLOAD} from "../../graphql/mutationsProject";
+const {Text, Link} = Typography;
 
-const ActRenderingProjectDownload = ({projectId, stageNumber}) => {
+const ActRenderingProjectDownload = ({projectId, stageNumber, text}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
 
 
@@ -49,7 +48,7 @@ const ActRenderingProjectDownload = ({projectId, stageNumber}) => {
     };
 
     return (
-            <Button onClick={handleDownload}  icon={<DownloadOutlined />}/>
+        <Link onClick={handleDownload}>{text ?? 'скачать'}</Link>
     );
 };
 

@@ -286,7 +286,7 @@ const ProjectTable = () => {
                     },
                     expandedRowRender: (record) => (
                         <Row>
-                            <Descriptions layout={"vertical"} bordered size={"small"} style={{width: "550px"}}>
+                            <Descriptions layout={"vertical"} bordered size={"small"} style={{width: "600px"}}>
                                 <Descriptions column={1}>
                                     <Text>Этапы</Text>
                                 </Descriptions>
@@ -296,8 +296,20 @@ const ProjectTable = () => {
                                 <Descriptions column={1}>
                                     <Text>Счета</Text>
                                 </Descriptions>
+                                <>
+                                    <Descriptions title={'Аванс'}
+                                                  column={1}>
+                                        <Text>Аванс</Text>
+                                    </Descriptions>
+                                    <Descriptions title={`Акт`} column={1}>
+                                        <>X</>
+                                    </Descriptions>
+                                    <Descriptions title={`Счёт`} column={1}>
+                                        <PaymentInvoiceProjectDownload isPrepayment={true}
+                                                                       projectId={record.id} type="acts"/>
+                                    </Descriptions>
+                                </>
                                 {record.project_stages.map(psid => (
-                                    psid.stage.id !== 0 && (
                                         <>
                                             <Descriptions title={`Этап №${psid.number} (${psid.stage.name})`}
                                                           column={1}>
@@ -312,7 +324,7 @@ const ProjectTable = () => {
                                                                                projectId={record.id} type="acts"/>
                                             </Descriptions>
                                         </>
-                                    )
+
                                 ))}
                             </Descriptions>
                             <Collapse style={{width: "550px", marginLeft: 10}}>
@@ -354,8 +366,8 @@ const ProjectTable = () => {
                 onCancel={() => setEditModalVisible(false)}
                 footer={null}
                 onClose={handleClose}
-                width={1300}
-                style={{width: 1200}}
+                width={1840}
+                style={{width: 1840}}
             >
                 <CreateNewProject editProject={selectedProject} onClose={handleClose}/>
             </Modal>

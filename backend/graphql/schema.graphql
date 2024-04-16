@@ -728,8 +728,9 @@ extend type Mutation {
         personId: ID
     ): File!
     projectPaymentInvoiceFileDownload(
-        projectId: ID
+        projectId: ID!
         stageNumber: ID
+        isPrepayment: Boolean
     ): File!
     projectActRenderingFileDownload(
         projectId: ID

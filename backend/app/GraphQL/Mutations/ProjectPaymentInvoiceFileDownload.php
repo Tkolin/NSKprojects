@@ -11,10 +11,10 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final readonly class ProjectPaymentInvoiceFileDownload
 {
-    /** @param  array{}  $args */
+    /** @param array{} $args */
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
-        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
+        $allowedRoles = ['admin', 'bookkeeper']; // Роли, которые разрешены
         $accessToken = $context->request()->header('Authorization');
         if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
 
@@ -22,13 +22,11 @@ final readonly class ProjectPaymentInvoiceFileDownload
                 ->with('type_project_document')
                 ->with('type_project_document.group')
                 ->with('type_project_document.group.technical_specification')
-
                 ->with('project_facilitys')
                 ->with('status')
                 ->with('project_delegations')
                 ->with('project_irds.IRD')
                 ->with('project_stages.stage')
-
                 ->find($args["projectId"]);
 
 
@@ -38,7 +36,10 @@ final readonly class ProjectPaymentInvoiceFileDownload
 
 
             $projectGenerator = new PaymentInvoiceTemplateGeneratorService();
-            $contractFilePath = $projectGenerator->generate($projectData, $args["stageNumber"] );
+            if (isset($args['isPrepayment']))
+                $contractFilePath = $projectGenerator->generate($projectData, null, true);
+            else
+                $contractFilePath = $projectGenerator->generate($projectData, $args["stageNumber"], false);
 
             return ['url' => $contractFilePath];
 

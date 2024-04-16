@@ -14,7 +14,12 @@ import IrdForm from "../../simpleForm/IrdForm";
 import StageForm from "../../simpleForm/StageForm";
 
 const {RangePicker} = DatePicker;
-
+const prepaymentTemplate = {
+    index: 1,
+    stage_item: 0,
+    percent_item: 20,
+    duration_item: 0,
+};
 
 const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
     // Состояния
@@ -23,6 +28,7 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
     const [totalPrice, setTotalPrice] = useState(0);
     const [dataStages, setDataStages] = useState(null);
     const [totalToPercent, setTotalToPercent] = useState(0);
+    const [prepayment, setPrepayment] = useState(undefined);
     const [actualityProjectData, setActualityProjectData] = useState(null);
     const [addModalVisible, setAddModalVisible] = useState(false);
 
@@ -46,7 +52,7 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
     };
     useEffect(() => {
         recomputePricesAndPercentages();
-     }, [formStage.getFieldValue('stageList')]);
+    }, [formStage.getFieldValue('stageList')]);
     const handleDateStageRebuild = () => {
         const stageList = formStage.getFieldValue('stageList');
         if (Array.isArray(stageList)) {
@@ -75,7 +81,7 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
         }
     };
     // Получение данных для выпадающих списков
-    const {refetch: refetchStages} = useQuery(STAGES_QUERY, {
+    const {loading: loadingStages, error: errorStages, refetch: refetchStages} = useQuery(STAGES_QUERY, {
         variables: {queryOptions: {search: autoCompleteStage, limit: 10, page: 1}},
         onCompleted: (data) => setDataStages(data)
     });
@@ -93,20 +99,20 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
         ,
     });
     // Мутации для добавления и обновления
-    // const [updateProject] = useMutation(UPDATE_PROJECT_MUTATION, {
-    //     onCompleted: (data) => {
-    //         console.log("Проект обновлен и данные ЭТАПОВ перезагружены:", data.updateProject);
-    //         if (data && data.updateProject) {
-    //             setProject(data.updateProject);
-    //         }
-    //         if (onSubmit) onSubmit();
-    //         openNotification('topRight', 'success', 'Данные этапов успешно обновлены !');
-    //     },
-    //     onError: (error) => {
-    //         openNotification('topRight', 'error', 'Ошибка при обновлении данных  об проекте : ' + error.message);
-    //     }
-    // });
-    const { refetch: refetchProject, loading: projectLoading} = useQuery(PROJECTS_QUERY, {
+    const [updateProject] = useMutation(UPDATE_PROJECT_MUTATION, {
+        onCompleted: (data) => {
+            console.log("Проект обновлен и данные ЭТАПОВ перезагружены:", data.updateProject);
+            if (data && data.updateProject) {
+                setProject(data.updateProject);
+            }
+            if (onSubmit) onSubmit();
+            openNotification('topRight', 'success', 'Данные этапов успешно обновлены !');
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', 'Ошибка при обновлении данных  об проекте : ' + error.message);
+        }
+    });
+    const {data: projectData, refetch: refetchProject, loading: projectLoading} = useQuery(PROJECTS_QUERY, {
         variables: {queryOptions: {id: project?.id}},
         fetchPolicy: 'network-only',
         onCompleted: (data) => {
@@ -182,6 +188,7 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
             date_end_item: dateEnd ? moment(dateEnd) : null,
             totalPrice_item: price ?? null
         }));
+        setPrepayment(initialValuesStages.find(({stage_item}) => stage_item === "0"));
         formStage.setFieldsValue({stageList: initialValuesStages});
         setTotalToDuration(actualityProjectData.duration);
     };
@@ -189,29 +196,26 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
     // Мутации для добавления и обновления
     const [updateStagesToProject] = useMutation(UPDATE_STAGES_TO_PROJECT_MUTATION, {
         onCompleted: () => {
-            // const dateRangeValue = formStage.getFieldValue('totalRange_item');
-            // const projectData = {
-            //     id: actualityProjectData?.id ?? null,
-            //     number: actualityProjectData?.number ?? null,
-            //     name: actualityProjectData?.name ?? null,
-            //     organization_customer_id: actualityProjectData?.organization_customer?.id ?? null,
-            //     type_project_document_id: actualityProjectData?.type_project_document?.id ?? null,
-            //     status_id: actualityProjectData?.status?.id ?? null,
-            //     date_completion: actualityProjectData?.date_completion ?? null,
-            //     date_create: actualityProjectData?.date_create ?? null,
-            //     price: actualityProjectData?.price,
-            //     prepayment: actualityProjectData?.prepayment,
-            //     duration: totalToDuration,
-            //     date_signing: dateRangeValue?.length > 0 ? dateRangeValue[0] : null,
-            //     date_end: dateRangeValue?.length > 1 ? dateRangeValue[1] : null,
-            // };
-            // updateProject({
-            //     variables: {
-            //         data: projectData
-            //     }
-            // });
-            if (onSubmit) onSubmit();
-
+            const dateRangeValue = formStage.getFieldValue('totalRange_item');
+            const projectData = {
+                id: actualityProjectData?.id ?? null,
+                number: actualityProjectData?.number ?? null,
+                name: actualityProjectData?.name ?? null,
+                organization_customer_id: actualityProjectData?.organization_customer?.id ?? null,
+                type_project_document_id: actualityProjectData?.type_project_document?.id ?? null,
+                status_id: actualityProjectData?.status?.id ?? null,
+                date_completion: actualityProjectData?.date_completion ?? null,
+                date_create: actualityProjectData?.date_create ?? null,
+                price: actualityProjectData?.price,
+                duration: totalToDuration,
+                date_signing: dateRangeValue?.length > 0 ? dateRangeValue[0] : null,
+                date_end: dateRangeValue?.length > 1 ? dateRangeValue[1] : null,
+            };
+            updateProject({
+                variables: {
+                    data: projectData
+                }
+            });
         }, onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при обновлении данных: ' + error.message);
         }
@@ -219,22 +223,27 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
 
     // Подсчёт суммы процентов
     const recomputePricesAndPercentages = () => {
-        console.log('recomputePricesAndPercentages');
-
         const stageList = formStage.getFieldValue('stageList');
-
         if (Array.isArray(stageList)) {
             let countRow = 0;
             const totalProcent = stageList.reduce((acc, item) => {
                 const procent = item?.percent_item ?? 0;
+                if (prepayment) countRow++;
                 return acc + procent;
             }, 0);
             setTotalToPercent(totalProcent);
-
+            console.log(prepayment);
             const updatedStageList = stageList.map(row => {
                 const percentItem = row?.percent_item ?? 1;
-                const priceItem =  Number((totalPrice * percentItem / 100)?.toFixed(2));
-                const endPriceItem = priceItem - priceItem/100*project.prepayment;
+                const prepaymentPercent = prepayment?.percent_item ?? 1;
+
+                const isPrepaymentStage = prepayment && row?.stage_item !== 0;
+                const priceItem = isPrepaymentStage
+                    ? Number((totalPrice * ((percentItem + prepaymentPercent) / (countRow - 1)) / 100)?.toFixed(2))
+                    : Number((totalPrice * percentItem / 100)?.toFixed(2));
+                const endPriceItem = prepayment
+                    ? Number((totalPrice * percentItem / 100)?.toFixed(2))
+                    : Number((totalPrice * percentItem / 100)?.toFixed(2));
                 return {
                     ...row,
                     price_item: priceItem,
@@ -263,7 +272,7 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
         const stageToProject = formStage.getFieldsValue().stageList.map(stage => ({
             projectId: actualityProjectData?.id,
             stage_id: stage?.stage_item,
-            stageNumber: stage?.index - 1,
+            stageNumber: stage?.index,
             dateStart: stage?.data_range?.date_start_item,
             duration: stage?.duration_item,
             dateEnd: stage?.data_range?.date_end_item,
@@ -278,6 +287,29 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
         });
     }
 
+    const handleAddPrepaymentStage = () => {
+        const countStageItems = formStage.getFieldValue('stageList').length;
+        formStage.setFieldsValue({
+            stageList: [prepaymentTemplate, ...formStage.getFieldValue('stageList').map((stage, index) => ({
+                ...stage,
+                index: ++index,
+                percent_item: parseInt((stage.percent_item ?? 1) - ((prepaymentTemplate.percent_item ?? 1) / countStageItems)),
+            }))],
+        });
+        setPrepayment(prepaymentTemplate);
+    };
+    const handleDeletePrepaymentStage = () => {
+        const stages = formStage.getFieldValue('stageList');
+        const filteredStages = stages.filter((stage, index) => index !== 0);
+        formStage.setFieldsValue({
+            stageList: filteredStages.map((stage, index) => ({
+                ...stage,
+                index: --index,
+                percent_item: parseInt((stage.percent_item ?? 1) + ((prepaymentTemplate.percent_item ?? 1) / filteredStages.length)),
+            })),
+        });
+        setPrepayment(undefined);
+    };
     const moveItem = (array, fromIndex, toIndex) => {
         const newArray = [...array];
         const item = newArray[fromIndex];
@@ -302,7 +334,11 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
                     <Divider style={{margin: 0}}>№</Divider>
                 </Col>
                 <Col span={10} style={{display: 'flex', alignItems: 'center'}}>
-                    <Divider style={{margin: 0}}>Этапы</Divider>
+                    <Divider style={{margin: 0}}>Этапы {!prepayment ?
+                        (<Button onClick={handleAddPrepaymentStage}>Создать Аванс</Button>)
+                        :
+                        (<Button onClick={handleDeletePrepaymentStage}>Удалить Аванс</Button>)
+                    } </Divider>
                 </Col>
                 <Col span={7} style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                     <Divider style={{margin: 0}}>Продолжительность</Divider>
@@ -328,6 +364,7 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
                                     <Tooltip title="Переместить вверх">
                                         <CaretUpOutlined
                                             onClick={() => {
+                                                if (!(!prepayment || index !== 1)) return;
                                                 const items = formStage.getFieldValue('stageList');
                                                 const newItems = moveItem(items, index, index - 1);
                                                 formStage.setFieldsValue({stageList: newItems});
@@ -340,6 +377,7 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
                                     <Tooltip title="Переместить вниз">
                                         <CaretDownOutlined
                                             onClick={() => {
+                                                if (!(!prepayment || index !== 0)) return;
                                                 const items = formStage.getFieldValue('stageList');
                                                 const newItems = moveItem(items, index, index + 1);
                                                 formStage.setFieldsValue({stageList: newItems});
@@ -351,7 +389,7 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
                             </Col>
                             <Col span={1}>
                                 <Tooltip title="Номер этапа">
-                                    <InputNumber disabled={true} value={index} style={{width: "100%"}}
+                                    <InputNumber disabled={true} value={index + 1} style={{width: "100%"}}
                                                  min={1}
                                                  max={25}/>
                                 </Tooltip>

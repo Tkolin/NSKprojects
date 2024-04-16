@@ -4,7 +4,7 @@ import { CONTRACT_PERSON_MUTATION } from '../../graphql/mutationsPerson';
 import {Button, notification} from 'antd';
 import {DownloadOutlined} from "@ant-design/icons";
 
-const PersonContractFileDownload = ({personId}) => {
+const PersonContractFileDownload = ({personId, text}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
 
 
@@ -45,7 +45,7 @@ const PersonContractFileDownload = ({personId}) => {
     };
 
     return (
-            <Button onClick={handleDownload}  icon={<DownloadOutlined />}/>
+        <a onClick={handleDownload}>{text ?? 'скачать'}</a>
     );
 };
 

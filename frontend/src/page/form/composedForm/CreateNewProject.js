@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Col, Descriptions, Row, Steps, Typography} from 'antd';
+import {Button, Col, Descriptions, Divider, Row, Steps, Typography} from 'antd';
 import ProjectForm from "../basicForm/ProjectForm";
 import StagesProjectForm from "../aggregateComponent/projectForm/StagesProjectForm";
 import IrdsProjectForm from "../aggregateComponent/projectForm/IrdsProjectForm";
@@ -12,7 +12,7 @@ import PaymentInvoiceProjectDownload from "../../script/PaymentInvoiceProjectDow
 import TechnicalSpecificationForm from "../aggregateComponent/projectForm/SectionReferenceProjectForm.js";
 
 const {Step} = Steps;
-const { Text } = Typography;
+const {Text} = Typography;
 
 const ComposedProjectForm = ({editProject}) => {
     const [currentStep, setCurrentStep] = useState(0);
@@ -26,8 +26,12 @@ const ComposedProjectForm = ({editProject}) => {
         setProject(null);
         setProject(data);
     };
-    const onNext = () => {setCurrentStep(currentStep + 1);}
-    const onBack = () => {setCurrentStep(currentStep - 1);}
+    const onNext = () => {
+        setCurrentStep(currentStep + 1);
+    }
+    const onBack = () => {
+        setCurrentStep(currentStep - 1);
+    }
 
     return (
         <div style={{display: 'flex', justifyContent: 'center'}}>
@@ -49,9 +53,9 @@ const ComposedProjectForm = ({editProject}) => {
                         <StyledBlockRegular label={"Основные даннные об проекте"}>
                             {project ? (
                                 <ProjectForm project={project} setProject={handleProject} onSubmit={onNext}/>
-                                ):(
+                            ) : (
                                 <ProjectForm setProject={handleProject} onSubmit={onNext}/>
-                                )}
+                            )}
                         </StyledBlockRegular>
                     )}
                     {currentStep === 1 && (
@@ -70,37 +74,44 @@ const ComposedProjectForm = ({editProject}) => {
                         </StyledBlockLarge>
                     )}
                     {currentStep === 4 && (
-                        <StyledBlockBig  bordered size={"small"}  label={"Сформированная документация:"}>
-                            <Descriptions>
-                                <Descriptions.Item label="Договор с заказчиком">
-                                    <ProjectFileDownload projectId={project.id}/>
-                                </Descriptions.Item>
-                                <Descriptions.Item label="График работ">
-                                    <StagesProjectFileDownload projectId={project.id}/>
-                                </Descriptions.Item>
-                                <Descriptions.Item label="Список ИРД">
-                                    <IrdsProjectFileDownload projectId={project.id}/>
-                                </Descriptions.Item>
-                                    <Descriptions.Item column={1} label="Акты выполненных работ" span={3}>
-                                        {project?.project_stages?.map(psid => (
-                                            psid.stage.id !== 0 && (
-                                            <div>
-                                                <Text style={{marginRight: 20}}>Этап №{psid.number} ({psid.stage.name}):   </Text>
-                                                <PaymentInvoiceProjectDownload stageNumber={psid.number} projectId={project.id} type="acts"/>
-                                            </div>)
-                                        ) )}
-                                    </Descriptions.Item>
-                                    <Descriptions.Item column={2} label="Счета на оплату" span={3}>
-                                        {project?.project_stages?.map(psid => (
-                                                <div>
-                                                    <Text style={{marginRight: 20}}>Этап №{psid.number} ({psid.stage.name}):   </Text>
-                                                    <ActRenderingProjectDownload stageNumber={psid.number}
-                                                                                 projectId={project.id} type="acts"/>
-                                                </div>
-                                        ))}
-                                    </Descriptions.Item>
+                        <StyledBlockBig bordered size={"small"} label={"Сформированная документация:"}>
+                            <ul>
+                                <Divider>Основные</Divider>
 
-                            </Descriptions>
+                                <li>
+                                    <ProjectFileDownload projectId={project.id} text={'Договор с заказчиком'}/>
+                                </li>
+                                <li>
+                                    <StagesProjectFileDownload projectId={project.id} text={'График работ'}/>
+                                </li>
+                                <li>
+                                    <IrdsProjectFileDownload projectId={project.id} text={'Список ИРД'}/>
+                                </li>
+                                <Divider>Акты выполненных работ</Divider>
+                                <li>
+                                    <PaymentInvoiceProjectDownload projectId={project.id} isPrepayment={true} text={'Аванс'}/>
+                                </li>
+                                {project?.project_stages?.map(psid => (
+                                    psid.stage.id !== 0 && (
+                                        <li>
+                                            <PaymentInvoiceProjectDownload stageNumber={psid.number}
+                                                                           projectId={project.id}
+                                                                           text={`Этап №${psid.number} (${psid.stage.name})`}
+                                                                           type="acts"/>
+                                        </li>
+                                    )
+                                ))}
+                                <Divider>Счета на оплату</Divider>
+
+                                {project?.project_stages?.map(psid => (
+                                    <li>
+                                        <ActRenderingProjectDownload stageNumber={psid.number}
+                                                                     text={`Этап №${psid.number} (${psid.stage.name})`}
+                                                                     projectId={project.id} type="acts"/>
+                                    </li>
+                                ))}
+                            </ul>
+
                         </StyledBlockBig>
                     )}
                 </Col>

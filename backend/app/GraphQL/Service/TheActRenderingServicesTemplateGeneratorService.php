@@ -30,7 +30,7 @@ class TheActRenderingServicesTemplateGeneratorService
         $month = $dateComponents[1];
         $monthName = $dateComponents[1] ? MonthEnum::getMonthName($dateComponents[1]) : "__";
         $day = $dateComponents[2] ?? "__";
-        $projectStage = $project->project_stages->where('number', $stageNumber)->first();
+        $projectStage =   $project->project_stages->where('number', $stageNumber)->first();
 
         $TranslatorNumberToName = new TranslatorNumberToName();
         $myOrgPhone = $myOrg["phone_number"];
@@ -56,14 +56,14 @@ class TheActRenderingServicesTemplateGeneratorService
             'projectOrganization.nameOrType' => isset($project["organization_customer"]) ? $project["organization_customer"]["legal_form"]['name'] . " " . $project["organization_customer"]['name'] : "(данные отсутвуют)",
             'projectOrganization.director.position' => $project["organization_customer"]['director']['position']['name'] ?? '(данные отсутвуют)',
 
-            'projectStages.stage.finalPrice' => number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
-            'projectStages.stage.name' => $projectStage['stage']['name'] ?? '(данные отсутвуют)',
-            'projectStages.stage.percent' =>  $projectStage['percent'] ?? '(данные отсутвуют)',
+            'projectStages.stage.finalPrice' =>   number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
+            'projectStages.stage.name' =>   $projectStage['stage']['name'] ?? '(данные отсутвуют)',
+            'projectStages.stage.percent' =>    $projectStage['percent'] ?? '(данные отсутвуют)',
 
-            'projectStages.stage.price' => number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
-            'projectStages.number' => $projectStage['number']  ?? '(данные отсутвуют)',
-            'projectStages.stage.endPrice' =>  number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
-            'projectStages.stage.sumEndPrice' =>  number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
+            'projectStages.stage.price' =>   number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
+            'projectStages.number' =>   $projectStage['number']  ?? '(данные отсутвуют)',
+            'projectStages.stage.endPrice' =>   number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
+            'projectStages.stage.sumEndPrice' =>    number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
 
                  'projectOrganization.payment_account' => $project["organization_customer"]['payment_account'] ?? '(данные отсутвуют)',
                 'projectOrganization.BIK.name' => $project["organization_customer"]['bik']['name'] ?? '(данные отсутвуют)',

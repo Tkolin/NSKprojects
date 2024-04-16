@@ -241,13 +241,13 @@ export const IRDS_PROJECT_DOWNLOAD = gql`
 export const PAYMENT_INVOICE_PROJECT_DOWNLOAD = gql`
     mutation IrdsProjectFileDownload(
         $id: ID!,
-        $stageNumber: ID!
-
+        $stageNumber: ID
+        $isPrepayment: Boolean
     ) {
         projectPaymentInvoiceFileDownload(
             projectId: $id
             stageNumber: $stageNumber
-
+            isPrepayment: $isPrepayment
         )
         {
             url
@@ -262,7 +262,6 @@ export const ACT_RENDERING_PROJECT_DOWNLOAD = gql`
         projectActRenderingFileDownload(
             projectId: $id
             stageNumber: $stageNumber
-
         )
         {
             url
