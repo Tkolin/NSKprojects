@@ -1,7 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
 import {Button, Col, Divider, Form, Input, InputNumber, Modal, notification, Row, Select, Space, Tooltip} from "antd";
-import {CaretDownOutlined, CaretUpOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
+import {
+    CaretDownOutlined,
+    CaretUpOutlined,
+    CloudUploadOutlined,
+    MinusCircleOutlined,
+    PlusOutlined, SaveOutlined
+} from "@ant-design/icons";
 import moment from "moment";
 
 import {DatePicker} from "antd/lib";
@@ -277,7 +283,9 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
             }
         });
     }
-
+    const saveTemplate = () => {
+        console.log("saveTemplate");
+    }
     const moveItem = (array, fromIndex, toIndex) => {
         const newArray = [...array];
         const item = newArray[fromIndex];
@@ -309,7 +317,8 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
                 </Col>
                 <Col span={3} style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                     <Divider style={{margin: 0}}>
-                        Сумма к оплате за этап
+                        Сумма к
+                        оплате за этап
                     </Divider>
                 </Col>
                 <Col span={2} style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
@@ -531,7 +540,9 @@ const StagesProjectForm = ({project, setProject, disable, onSubmit}) => {
                                     icon={<PlusOutlined/>}>
                                 Добавить элемент
                             </Button>
-                            <StyledButtonGreen style={{width: "100%"}} onClick={() => setAddModalVisible(true)}>Создать этап</StyledButtonGreen>
+                            <StyledButtonGreen   icon={<SaveOutlined />} onClick={() => setAddModalVisible(true)}>Создать этап</StyledButtonGreen>
+                            <Button type={"primary"} onClick={() => saveTemplate()}   icon={<CloudUploadOutlined/>}>Сохранить
+                                в шаблоне</Button>
                         </Space.Compact>
 
                     </Form.Item>

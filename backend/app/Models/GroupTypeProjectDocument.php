@@ -22,6 +22,6 @@ class GroupTypeProjectDocument extends Model
     }
     public function technical_specification(): BelongsTo
     {
-        return $this->belongsTo(TechnicalSpecification::class);
+        return $this->belongsTo(TypeTechnicalSpecification::class);
     }
 }

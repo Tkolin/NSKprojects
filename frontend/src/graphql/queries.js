@@ -12,14 +12,32 @@ export const TASKS_QUERY = gql`
         }
     }
 `;
-export const TECHNICAL_SPECIFICATION_QUERY = gql`
-    query TechnicalSpecificationQuery {
-        technicalSpecification  {
-            items{
+export const FORMULA_BY_KEY_QUERY = gql`
+    query FormulaByKey  ($keys: [String!]) {
+        formulaByKey  (keys: $keys) {
+            items {
                 id
+                original_formula
+                rpn_formula
+                name_key
                 name
+                description
+                variable_data {
+                    description
+                    name_key
+                    name
+                    formula_id
+                    id
+                }
             }
             count
+        }
+    }
+`;
+export const TECHNICAL_SPECIFICATION_QUERY = gql`
+    query TechnicalSpecificationQuery {
+        typeTechnicalSpecification  {
+            id
         }
     }
 `;

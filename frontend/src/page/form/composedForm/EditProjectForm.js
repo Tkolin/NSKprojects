@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {
-    Form, Select, Col, Row, notification, Modal, Space
+    Form, Col, Row, Modal
 } from 'antd';
 import {useQuery} from '@apollo/client';
 import {TYPES_PROJECTS_QUERY} from '../../../graphql/queries';

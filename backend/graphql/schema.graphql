@@ -1,3 +1,9 @@
+#import auth.graphql
+#import file_downloads.graphql
+#import projects.graphql
+#import result.graphql
+#import templates.graphql
+#import formula.graphql
 type Query {
     contacts(queryOptions: QueryOptions, organizationId: ID): ContactsResult
     organizations(queryOptions: QueryOptions, organizationId: ID): OrganizationsResult
@@ -13,10 +19,9 @@ type Query {
 
     typeProjects(queryOptions: QueryOptions): TypeProjectsResult
     technicalSpecification: TechnicalSpecificationResult
+    typeTechnicalSpecification: TypeTechnicalSpecification
     sectionReferences: SectionReferenceResult
     groupTypeProjects: [GroupTypeProjectDocument]
-
-    paymentsProjects(queryOptions: QueryOptions, projectId: ID): [projectPayment]
 
     templatesIrdsTypeProjects(typeProject: ID): [TemplateIRD]
     templatesStagesTypeProjects(typeProject: ID): [TemplateStage]
@@ -28,6 +33,8 @@ type Query {
     projectTasksQuery(queryOptions: QueryOptions ,projectId: ID): [ProjectTask]
     projectSectionReferences(queryOptions: QueryOptions ,projectId: ID): [ProjectSectionReference]
 
+    formulaByKey(keys: [String!]): FormulaResult
+
     currentUser: User!
 
     legalForms: [LegalForm]!
@@ -35,6 +42,7 @@ type Query {
     TypePayments: [TypePayment]
     projectStatuses: [ProjectStatus!]!
 
+    # paymentsProjects(queryOptions: QueryOptions, projectId: ID): [projectPayment]
 }
 input QueryOptions {
     id: Int
@@ -45,131 +53,21 @@ input QueryOptions {
     sortOrder: String
     searchOrganizationId: String
 }
-input StageToProject {
-    id: ID
-    projectId: ID!
-    stage_id: ID
-    stageNumber: Int
-    price: Float
-    percent: Int
-    dateStart: String
-    duration: Int
-    dateEnd: String
-    progress: Int
-    price_to_paid: Float
-}
-input TasksToProject {
-    id: ID
-    projectId: ID!
-    inherited_task_ids: [ID]
-    task_id: ID!
-    date_start: String
-    date_end: String
-    duration: String
-    price: Float
-    executors: [TaskExecutor]
-    description: String
-}
-input TaskExecutor {
-    id: ID
-    executor_id: ID
-    price: Int
-}
-input IrdToProject {
-    projectId: ID!
-    irdId: ID
-    stageNumber: Int
-    applicationProject: Int
-    receivedDate: String
-}input SectionReferencesToProject {
-    projectId: ID!
-    SectionReferencesId: ID
-    data: String
-}
-input SectionReferencesToTemplate {
-    projectTypeId: ID!
-    SectionReferencesId: ID
-    data: String
-}
-input TemplateStageToTypeProject {
-    stage_id: ID
-    project_type_id: ID
-    duration: Int
-    stage_number: Int
-    percentage: Int
-}
-input ProjectInput {
-    id: ID
-    number: String
-    name: String!
-    organization_customer_id: ID
-    type_project_document_id: ID
-    date_signing: String
-    duration: Int!
-    date_end: String
-    date_create: String!
-    status_id: ID
-    date_completion: String
-    price: Int
-    prepayment: Int
-    facilitys_id: [String]
-    delegates_id: [String]
-}
+
 type Mutation {
     updateTask(
         names: [String]
     ): [Task]
 
-
-
-    updateSectionReferenceToProject(
-        items: [SectionReferencesToProject]
-    ): Int
-    updateStagesToProject(
-        items: [StageToProject]
-    ): Int
-    updateTaskToProject(
-        data: TasksToProject
-    ): Int
-    deleteTaskToProject(
-        id: ID!
-    ): String
-    addTaskToProject(
-        data: TasksToProject
-    ): Int
-    updatePaymentsToProject(
-        project: ID
-    ): Int
-
-
-    updateIrdsTemplate(
-        typeProjectId: ID
-        listIrds_id: [ID]
-        listStageNumber: [Int]
-        listAppNumber: [Int]
-    ) : Int
-    updateIrdsToProject(
-        items: [IrdToProject]
-    ): Int
-    updateTaskTemplate(
-        typeProjectId: ID,
-        listTasks_id: [ID],
-        listInheritedTasks_id: [ID],
-        stageNumber: [Int],
-    ) : Int
-
-    updateStagesTemplate(
-        items: [TemplateStageToTypeProject]
-    ) : Int
-
-    addTechnicalSpecification(
+    addTypeTechnicalSpecification(
         name: String
-    ): TechnicalSpecification
-    updateTechnicalSpecification(
+    ): TypeTechnicalSpecification
+    updateTypeTechnicalSpecification(
         id: ID
         name: String
         techicalSpecification: ID
-    ): TechnicalSpecification
+    ): TypeTechnicalSpecification
+
     addGroupTypeProject(
         name: String
         techicalSpecification: ID
@@ -216,12 +114,10 @@ type Mutation {
         id: ID!
     ): String
 
-
     addPpi(
         name: String!
         code: String!
     ): PassportPlaceIssue!
-
     updatePpi(
         id: ID!
         name: String!
@@ -233,13 +129,13 @@ type Mutation {
         name: String!
         correspondent_account: String
     ):  bik!
-
     updateBik(
         id: ID!
         bik: String!
         name: String!
         correspondent_account: String
     ):  bik!
+
     addContact(
         first_name: String!
         last_name: String
@@ -252,7 +148,6 @@ type Mutation {
         position_id: ID
         organization_id: ID
     ): Contact!
-
     updateContact(
         id: ID!
         first_name: String!
@@ -269,13 +164,8 @@ type Mutation {
     deleteContact (
         id: ID!
     ): Contact
-    deletePerson (
-        id: ID!
-    ): Person
 
-    deleteOrganization (
-        id: ID!
-    ): Organization
+
     addOrganization(
         legal_form_id: ID!
         name: String!
@@ -295,7 +185,6 @@ type Mutation {
         payment_account: String
         director_id: ID
     ): Organization!
-
     updateOrganization(
         id: ID!
         legal_form_id: ID!
@@ -316,7 +205,30 @@ type Mutation {
         payment_account: String
         director_id: ID
     ): Organization!
+    deleteOrganization (
+        id: ID!
+    ): Organization
 
+    addPerson(
+        firstname: String
+        lastname: String
+        patronymic: String
+        serial: String
+        number: String
+        passport_place_issue_id: ID
+        address_registration: String
+        address_residential: String
+        birth_date: String
+        date: String
+        SHILS: String
+        INN: String
+        payment_account: String
+        phone_number: String
+        email: String
+        email_sibnipi: String
+        bank_id: ID
+        bik_id: ID
+    ): Person!
     updatePerson(
         id: ID!
         firstname: String
@@ -327,10 +239,8 @@ type Mutation {
         passport_place_issue_id: ID
         address_registration: String
         address_residential: String
-
-        birth_date: String
+        brth_date: String
         date: String
-
         SHILS: String
         INN: String
         payment_account: String
@@ -340,28 +250,9 @@ type Mutation {
         bank_id: ID
         bik_id: ID
     ): Person!
-    addPerson(
-        firstname: String
-        lastname: String
-        patronymic: String
-        serial: String
-        number: String
-        passport_place_issue_id: ID
-        address_registration: String
-        address_residential: String
-
-        birth_date: String
-        date: String
-
-        SHILS: String
-        INN: String
-        payment_account: String
-        phone_number: String
-        email: String
-        email_sibnipi: String
-        bank_id: ID
-        bik_id: ID
-    ): Person!
+    deletePerson (
+        id: ID!
+    ): Person
 
     updateFacility(
         id: ID!
@@ -372,104 +263,8 @@ type Mutation {
         name: String!
         type: ID!
     ): Facility!
-
-    updateProject(
-        data: ProjectInput
-        tasks: [ProjectTasksInput]
-        stages: [ProjectStageInput]
-        irds: [ProjectIrdInput]
-    ): Project!
-    addProject(
-        data: ProjectInput
-
-        tasks: [ProjectTasksInput]
-        stages: [ProjectStageInput]
-        irds: [ProjectIrdInput]
-
-    ): Project!
-
-    updateProjectStage(
-        id: ID!
-        project_id: ID!
-        stage_id: ID!
-        progress: String!
-        date_start: String!
-        duration: String!
-    ): ProjectStage!
-    addProjectStage(
-        project_id: ID!
-        stage_id: ID!
-        progress: String!
-        date_start: String!
-        duration: String!
-    ): ProjectStage!
 }
-input ProjectIrdInput {
-    stage: ID
-    persent: Int
-    date_start: String
-    date_end: String
-    number: Int
-}input ProjectStageInput {
-    stage: ID
-    persent: Int
-    date_start: String
-    date_end: String
-    number: Int
-}input ProjectTasksInput {
-    stage: ID
-    persent: Int
-    date_start: String
-    date_end: String
-    number: Int
-}
-
-type BikResult {
-    items: [bik]
-    count: Int
-}type PassportPlaceIssueResult {
-    items: [PassportPlaceIssue]
-    count: Int
-}type ContactsResult {
-    items: [Contact]
-    count: Int
-}type BanksResult {
-    items: [Bank]
-    count: Int
-}type OrganizationsResult {
-    items: [Organization]
-    count: Int
-}type PositionsResult {
-    items: [Position]
-    count: Int
-}type ProjectsResult {
-    items: [Project]
-    count: Int
-}type PersonsResult {
-    items: [Person]
-    count: Int
-}type IrdsResult {
-    items: [IRD]
-    count: Int
-}type StagesResult {
-    items: [Stage]
-    count: Int
-}type TasksResult {
-    items: [Task]
-    count: Int
-}type TypeProjectsResult {
-    items: [TypeProjectDocument]
-    count: Int
-}type TechnicalSpecificationResult {
-    items: [TechnicalSpecification]
-    count: Int
-}type SectionReferenceResult {
-    items: [SectionReference]
-    count: Int
-}type groupTypeProjecResult {
-    items: [GroupTypeProjectDocument]
-    count: Int
-}type Contact {
+type Contact {
     id: ID!
     first_name: String!
     last_name: String
@@ -481,52 +276,49 @@ type BikResult {
     email: String
     position: Position
     organization: Organization
-}type ProjectStatus{
+}
+type ProjectStatus{
     id: ID!
     name: String!
-}type PositionName {
+}
+type PositionName {
     id: ID!
     name: String!
-}type CurrentUser {
+}
+type CurrentUser {
     user: User!
     access_token: String!
-}type TypePayment {
+}
+type TypePayment {
     id: ID!
     name: String!
-}type projectPayment {
+}
+type projectPayment {
     id: ID!
     date_time_payment: String
     project: Project
     type_payment: TypePayment
     price: Int
-}type User {
+}
+type User {
     id: ID!
     name: String
     email: String
     role: Role
-}type Role {
-    id: ID!
-    name: String!
-}type Content {
-    id: ID!
-    name: String!
-}type Position {
-    id: ID!
-    name: String!
-}input RegisterInput {
-    name: String!
-    email: String!
-    password: String!
-}input LoginInput {
-    email: String
-    password: String
-}type File {
-    url: String
 }
-type AuthPayload {
-    user: User
-    access_token: String!
-}type Organization{
+type Role {
+    id: ID!
+    name: String!
+}
+type Content {
+    id: ID!
+    name: String!
+}
+type Position {
+    id: ID!
+    name: String!
+}
+type Organization{
     id: ID!
     legal_form: LegalForm!
     name: String!
@@ -545,15 +337,18 @@ type AuthPayload {
     bik:  bik
     payment_account: String
     director: Contact
-}type LegalForm{
+}
+type LegalForm{
     id: ID!
     name: String!
-}type  bik{
+}
+type  bik{
     id: ID!
     BIK: String
     name: String
     correspondent_account: String
-}type Person{
+}
+type Person{
     id: ID!
     passport: Passport!
     SHILS: String
@@ -564,7 +359,8 @@ type AuthPayload {
     email_sibnipi: String
     bank: Bank
     bik:  bik
-}type Passport{
+}
+type Passport{
     id: ID!
     firstname: String
     lastname: String
@@ -576,177 +372,86 @@ type AuthPayload {
     passport_place_issue: PassportPlaceIssue
     birth_date: String
     date: String
-}type PassportPlaceIssue{
+}
+type PassportPlaceIssue{
     id: ID!
     name: String!
     code: String!
-}type Bank{
+}
+type Bank{
     id: ID!
     name: String!
-}type Facility{
+}
+type Facility{
     id: ID!
     name: String!
     code: Int
     type_facility: TypeFacility
     group_facility: GroupFacility
-}type TypeFacility{
+}
+type TypeFacility{
     id: ID!
     name: String!
-}type GroupFacility{
+}
+type GroupFacility{
     id: ID!
     name: String!
     code: Int
     facilities: [Facility]
     subselection_facility: SubselectionFacility
-}type SubselectionFacility{
+}
+type SubselectionFacility{
     id: ID!
     name: String!
     code: Int
     group_facility: [GroupFacility]
     selection_facility: SelectionFacility
-}type SelectionFacility{
+}
+type SelectionFacility{
     id: ID!
     name: String!
     code: Int
     subselection_facility: [SubselectionFacility]
-}type Project{
-    id: ID!
-    number: String
-    name: String
-    prepayment: Int
-    organization_customer: Organization
-    type_project_document: TypeProjectDocument
-    facilities: [Facility]
-    date_signing: String
-    date_create: String
-    duration: Int
-    date_end: String
-    status: ProjectStatus
-    date_completion: String
-    delegations: [Contact]
-    price: Int
-    project_irds: [ProjectIRD]
-    project_stages: [ProjectStage]
-    project_tasks: [ProjectTask]
-}type ProjectStage{
-    id: ID!
-    project: Project
-    stage: Stage
-    number: Int
-    price: Float
-    percent: Int
-    date_start: String
-    duration: Int
-    date_end: String
-    progress: Int
-}type ProjectTask{
-    id: ID!
-    inherited_task_ids: [InheritedTask]
-    task: Task
-    date_start: String
-    date_end: String
-    duration: Int
-    executors: [TaskExecutorData]
-    price: Float
-    description: String
-}type TaskExecutorData{
-    id: ID!
-    executor: Person
-    price: Int
-}type InheritedTask{
-    project_task_id: ID!
-    project_inherited_task_id: ID!
-}type ProjectSectionReference{
+}
+type ProjectSectionReference{
     id: ID!
     project: Project
     section_reference: SectionReference
     values: String
-}type ProjectIRD{
-    id: ID!
-    project: Project
-    IRD: IRD
-    receivedDate: String
-    stageNumber: String
-    applicationProject: String
-}type TypeProjectDocument{
+}
+type TypeProjectDocument{
     id: ID!
     name: String!
     code: String!
     group: GroupTypeProjectDocument
-}type IRD{
+}
+type IRD{
     id: ID!
     name: String!
-}type GroupTypeProjectDocument{
+}
+type GroupTypeProjectDocument{
     id: ID
     name: String
-    technical_specification: TechnicalSpecification
-}type TechnicalSpecification{
+    technical_specification: TypeTechnicalSpecification
+}
+type TypeTechnicalSpecification{
     id: ID!
     name: String!
-}type SectionReference{
+}
+type SectionReference{
     id: ID!
     name: String!
     description: String!
     values: String!
-}type Stage{
+}
+type Stage{
     id: ID!
     name: String
-}type Task{
+}
+type Task{
     id: ID!
     name: String
-}type TemplateIRD {
-    id: ID!
-    project_type: TypeProjectDocument
-    ird: IRD
-    stage_number: Int
-    application_to_project: Int
-}type TemplateStage{
-    id: ID!
-    stage: Stage
-    project_type: TypeProjectDocument
-    duration: Int
-    number: Int
-    percentage: Int
-}type TemplateTask{
-    id: ID!
-    task: Task
-    inheritedTask: TemplateTask
-    inherited_task_id: ID
-    stage_number: Int
-}type TemplateSectionReference{
-    id: ID!
-    project_type: TypeProjectDocument
-    section_reference: SectionReference
-    values: String
 }
-extend type Mutation {
-    register(input: RegisterInput!): AuthPayload!
-    login(input:  LoginInput!): AuthPayload!
-}
-extend type Mutation {
-    personOrderFileDownload(
-        personId: ID
-    ): File!
-    projectPaymentInvoiceFileDownload(
-        projectId: ID!
-        stageNumber: ID
-        isPrepayment: Boolean
-    ): File!
-    projectActRenderingFileDownload(
-        projectId: ID
-        stageNumber: Int
-    ): File!
-    projectOrderFileDownload(
-        projectId: ID
-    ): File!
-    projectIrdsFileDownload(
-        projectId: ID
-    ): File!
-    projectStagesFileDownload(
-        projectId: ID
-    ): File!
-    taskExecutorContractFileDownload(
-        projectId: ID
-        executorId: ID
-    ): File!
-}
+
+
+

@@ -1,7 +1,7 @@
 import {StyledFormBig} from "../../../style/FormStyles";
 import {Button, Form, InputNumber, Modal, notification, Select, Space, Tooltip} from "antd";
 import {DatePicker} from "antd/lib";
-import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
+import {CloudUploadOutlined, MinusCircleOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
 import {UPDATE_IRDS_TO_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION} from "../../../../graphql/mutationsProject";
@@ -11,7 +11,7 @@ import LoadingSpinnerStyles from "../../../style/LoadingSpinnerStyles";
 import {StyledButtonGreen} from "../../../style/ButtonStyles";
 import IrdForm from "../../simpleForm/IrdForm";
 
-const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
+const IrdsProjectForm = ({project, setProject, onSubmit, disable}) => {
     // Состояния
     const [formIRD] = Form.useForm();
     const [autoCompleteIrd, setAutoCompleteIrd] = useState('');
@@ -30,15 +30,15 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
         });
     };
     const handleAutoCompleteIrdSelect = (value) => {
-         setAutoCompleteIrd('');
+        setAutoCompleteIrd('');
     };
 
     // Получение данных для выпадающих списков
     const {loading: loadingIrds, refetch: refetchIrds, data: dataIrdsQuery} = useQuery(IRDS_QUERY, {
         fetchPolicy: 'network-only',
         variables: {queryOptions: {search: autoCompleteIrd, limit: 10, page: 1}},
-        onCompleted: (data) =>{
-            if(autoCompleteIrd)
+        onCompleted: (data) => {
+            if (autoCompleteIrd)
                 setDataIrds(data);
         },
 
@@ -59,9 +59,10 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
     } = useQuery(TEMPLATE_IRDS_TYPE_PROJECTS_QUERY, {
         variables: {typeProject: actualityProjectData?.type_project_document?.id},
         fetchPolicy: 'network-only',
-        onCompleted: (data) =>{
+        onCompleted: (data) => {
             loadTemplate();
-            addingIrds(data?.templatesIrdsTypeProjects?.map((titp) => titp.ird))}
+            addingIrds(data?.templatesIrdsTypeProjects?.map((titp) => titp.ird))
+        }
     });
     //Мутация
     const addingIrds = (value) => {
@@ -87,45 +88,46 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
         const irds = actualityProjectData?.project_irds?.length > 0 ? actualityProjectData.project_irds :
             (dataTemplate?.templatesIrdsTypeProjects?.length > 0 ? dataTemplate.templatesIrdsTypeProjects
                 : null);
-         if (irds) {
+        if (irds) {
             const initialValuesIrds = irds?.map(data => ({
-                ird_item: data.ird ? data.ird.id  :  data.IRD.id,
-                stage_number_item: data.stage_number ?  data.stage_number : data.stageNumber,
+                ird_item: data.ird ? data.ird.id : data.IRD.id,
+                stage_number_item: data.stage_number ? data.stage_number : data.stageNumber,
                 application_project_item: data.application_to_project ? data.application_to_project : data.applicationProject,
                 date_complite_item: data.receivedDate,
             }));
-            formIRD.setFieldsValue({ irdList: initialValuesIrds });
+            formIRD.setFieldsValue({irdList: initialValuesIrds});
         }
     };
     useEffect(() => {
         console.log('useEffectStart', project);
         if (project) {
-            refetchProject({ queryOptions: { id: Number(project?.id) }});
-            console.log('useEffectStart',project?.project_irds?.map((pirds) => pirds.IRD));
-            addingIrds( project?.project_irds?.map((pirds) => pirds.IRD));
+            refetchProject({queryOptions: {id: Number(project?.id)}});
+            console.log('useEffectStart', project?.project_irds?.map((pirds) => pirds.IRD));
+            addingIrds(project?.project_irds?.map((pirds) => pirds.IRD));
         }
 
     }, []);
     useEffect(() => {
         loadTemplate();
     }, [actualityProjectData]);
-    const { data: projectData, refetch: refetchProject, loading: projectLoading} = useQuery(PROJECTS_QUERY, {
-        variables: { queryOptions: { id: project?.id } },
+    const {data: projectData, refetch: refetchProject, loading: projectLoading} = useQuery(PROJECTS_QUERY, {
+        variables: {queryOptions: {id: project?.id}},
         fetchPolicy: 'network-only',
         onCompleted: (data) => {
-             if (data.projects.items[0]) {
+            if (data.projects.items[0]) {
                 console.log("data.items[0] ", data.projects.items[0]);
                 setProject(data.projects.items[0]);
                 setActualityProjectData(data.projects.items[0])
             }
             openNotification('topRight', 'success', 'Данные проекта подргужены!');
         },
-            onError: (error) => {
-                openNotification('topRight', 'error', 'Ошибка при загрузки проекта: ' + error.message);
-            }});
+        onError: (error) => {
+            openNotification('topRight', 'error', 'Ошибка при загрузки проекта: ' + error.message);
+        }
+    });
     // Мутации для добавления и обновления
     const [updateIrdsToProject] = useMutation(UPDATE_IRDS_TO_PROJECT_MUTATION, {
-        onCompleted:() => {
+        onCompleted: () => {
             if (onSubmit)
                 onSubmit();
             openNotification('topRight', 'success', 'Данные ИРД успешно обновлены !');
@@ -150,6 +152,11 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
     };
     if (loadingTemplate || projectLoading)
         return <LoadingSpinnerStyles/>
+
+    const saveTemplate = () => {
+        console.log("saveTemplate");
+    }
+
     return (
         <StyledFormBig form={formIRD} name="dynamic_form_nest_item" autoComplete="off" disabled={disable}>
             <Form.List name="irdList">
@@ -165,7 +172,7 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
                             <Form.Item
                                 {...restField}
                                 name={[name, 'stage_number_item']}
-                                style={{ display: 'flex', marginBottom: 0  }}
+                                style={{display: 'flex', marginBottom: 0}}
                             >
                                 <InputNumber max={100} min={0} prefix={"№"}/>
                             </Form.Item>
@@ -174,7 +181,7 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
                             <Form.Item
                                 {...restField}
                                 name={[name, 'application_project_item']}
-                                style={{ display: 'flex', marginBottom: 0  }}
+                                style={{display: 'flex', marginBottom: 0}}
                             >
                                 <InputNumber max={100} min={0} prefix={"№"}/>
                             </Form.Item>
@@ -194,7 +201,7 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
                                     onSelect={(value) => handleAutoCompleteIrdSelect(value)}
                                     allowClear
                                     showSearch
-                                 >
+                                >
                                     {dataIrds?.irds?.items?.map(ird => (
                                         <Select.Option key={ird.id}
                                                        value={ird.id}>
@@ -226,7 +233,11 @@ const IrdsProjectForm = ({project, setProject , onSubmit, disable}) => {
                                     icon={<PlusOutlined/>}>
                                 Добавить ИРД
                             </Button>
-                            <StyledButtonGreen style={{width: "100%"}} onClick={() => setAddModalVisible(true)}>Создать ИРД</StyledButtonGreen>
+                            <StyledButtonGreen icon={<SaveOutlined/>}
+                                               onClick={() => setAddModalVisible(true)}>Создать ИРД</StyledButtonGreen>
+                            <Button type={"primary"} onClick={() => saveTemplate()} icon={<CloudUploadOutlined/>}>Сохранить
+                                в шаблоне</Button>
+
                         </Space.Compact>
 
                     </Form.Item>

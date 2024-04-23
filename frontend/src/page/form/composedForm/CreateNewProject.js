@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Col, Descriptions, Divider, Row, Steps, Typography} from 'antd';
+import {Button, Col, Divider, Row, Steps, Typography} from 'antd';
 import ProjectForm from "../basicForm/ProjectForm";
 import StagesProjectForm from "../aggregateComponent/projectForm/StagesProjectForm";
 import IrdsProjectForm from "../aggregateComponent/projectForm/IrdsProjectForm";
@@ -9,10 +9,9 @@ import StagesProjectFileDownload from "../../script/StagesProjectFileDownload";
 import IrdsProjectFileDownload from "../../script/IrdsProjectFileDownload";
 import ActRenderingProjectDownload from "../../script/ActRenderingProjectDownload";
 import PaymentInvoiceProjectDownload from "../../script/PaymentInvoiceProjectDownload";
-import TechnicalSpecificationForm from "../aggregateComponent/projectForm/SectionReferenceProjectForm.js";
+import TechnicalSpecificationProjectForm from "../aggregateComponent/projectForm/TechnicalSpecificationProjectForm";
 
 const {Step} = Steps;
-const {Text} = Typography;
 
 const ComposedProjectForm = ({editProject}) => {
     const [currentStep, setCurrentStep] = useState(0);
@@ -70,7 +69,7 @@ const ComposedProjectForm = ({editProject}) => {
                     )}
                     {currentStep === 3 && (
                         <StyledBlockLarge label={"Техническоое задание"}>
-                            <TechnicalSpecificationForm setProject={handleProject} project={project} onSubmit={onNext}/>
+                            <TechnicalSpecificationProjectForm setProject={handleProject} project={project} onSubmit={onNext}/>
                         </StyledBlockLarge>
                     )}
                     {currentStep === 4 && (

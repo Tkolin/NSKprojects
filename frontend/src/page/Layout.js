@@ -27,6 +27,7 @@ function getItem(label, key, icon, children, type) {
         type,
     };
 }
+
 const styles = {
     header: {
         position: 'fixed',
@@ -112,11 +113,12 @@ const CustomLayout = ({children, currentUser, la}) => {
                     getItem('Отчёты', '3', <SolutionOutlined/>, [
                         getItem('Проекты', '3-1', null, null)
                     ]),
-                    getItem('Расчёты', '4', <CalculatorOutlined />, [
+                    getItem('Расчёты', '4', <CalculatorOutlined/>, [
+                        getItem('Вывод', '4-1', null, null),
+
                     ]),
-                    getItem('Экономика', '5', <BarChartOutlined />, [
-                    ])     ,
-                    getItem('', '6', <BugOutlined  />, [
+                    getItem('Экономика', '5', <BarChartOutlined/>, []),
+                    getItem('', '6', <BugOutlined/>, [
                         getItem('Тест 1', '6-1', null, null),
                         getItem('Тест 2', '6-2', null, null),
 
@@ -175,7 +177,7 @@ const CustomLayout = ({children, currentUser, la}) => {
                 // Этапы проекта
                 navigate('/stageProject');
                 break;
-                case '1-8':
+            case '1-8':
                 // Этапы проекта
                 navigate('/SectionReferences');
                 break;
@@ -199,13 +201,13 @@ const CustomLayout = ({children, currentUser, la}) => {
                 // Шаблоны по типу проекта
                 navigate('/template/new');
                 break;
-                case '6-1':
+            case '6-1':
                 // Шаблоны по типу проекта
-                navigate('/t');
+                navigate('/test1');
                 break;
-                case '6-2':
+            case '6-2':
                 // Шаблоны по типу проекта
-                navigate('/project/tasks');
+                navigate('/test2');
                 break;
             case '3':
                 // Отчёты
@@ -219,6 +221,10 @@ const CustomLayout = ({children, currentUser, la}) => {
                 // Авторизация
                 navigate('/auth/login');
                 break;
+            case '4-1':
+                // Авторизация
+                navigate('/math');
+                break;
             default:
                 break;
         }
@@ -226,12 +232,12 @@ const CustomLayout = ({children, currentUser, la}) => {
     }
     // Вывод слоя
     return (
-        <Layout style={{ minHeight: '100vh' }}>
+        <Layout style={{minHeight: '100vh'}}>
             <Header style={styles.header}>
-                <img src={Logo}  style={styles.logo}/>
+                <img src={Logo} style={styles.logo}/>
 
                 <Menu onClick={onClick} mode="horizontal" style={{width: '100%'}} items={items}
-                          selectedKeys={[current]}/>
+                      selectedKeys={[current]}/>
 
                 <div style={styles.user}>
                     {data && data.currentUser && (

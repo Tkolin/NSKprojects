@@ -30,6 +30,8 @@ import CreateNewProject from "./page/form/composedForm/CreateNewProject";
 import {createGlobalStyle} from "styled-components";
 import SectionReferenceTable from "./page/view/tableView/SectionReferenceTable";
 import TasksChartForm from "./page/form/basicForm/TasksChartForm";
+import FormulaOutput from "./page/form/aggregateComponent/matchForm/script/FormulaOutputScript";
+import FormulaUsabilityForm from "./page/form/aggregateComponent/matchForm/FormulaUsabilityForm";
 
 
 const App = () => {
@@ -61,7 +63,9 @@ const App = () => {
                 <CustomLayout currentUser={currentUser}  >
                     <Routes>
                         <Route path="/" element={<Home />} />
-                        <Route path="/t" element={<Test />} />
+                        <Route path="/test1" element={<Test />} />
+                        <Route path="/test2" element={<Test />} />
+                        <Route path="/math" element={<FormulaUsabilityForm />} />
 
                         {currentUser ? (
                             <>

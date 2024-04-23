@@ -35,8 +35,7 @@ const PersonForm = ({person, onClose}) => {
     const [address1, setAddress1] = useState();
     const [address2, setAddress2] = useState();
 
-
-    const [autoCompletebiks, setAutoCompletebiks] = useState('');
+     const [autoCompletebiks, setAutoCompletebiks] = useState('');
     const [autoCompleteBanks, setAutoCompleteBanks] = useState('');
     const [autoCompletePPI, setAutoCompletePPI] = useState('');
 

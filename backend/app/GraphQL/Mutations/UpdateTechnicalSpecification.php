@@ -13,14 +13,14 @@ final readonly class UpdateTechnicalSpecification
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args, GraphQLContext $context): TechnicalSpecification
     {
-        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            $data = TechnicalSpecification::findOrFail($args['id']);
-            $data->update($args);
-            return $data;
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
-        }
+//        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
+//        $accessToken = $context->request()->header('Authorization');
+//        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
+//            $data = TechnicalSpecification::findOrFail($args['id']);
+//            $data->update($args);
+//            return $data;
+//        } else {
+//            throw new AuthenticationException('Отказано в доступе');
+//        }
     }
 }
