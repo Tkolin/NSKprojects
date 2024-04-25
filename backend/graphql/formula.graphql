@@ -1,0 +1,36 @@
+extend type Mutation{
+    addFormula(data: FormulaInput): Int
+    updateFormula(data: FormulaInput): Int
+
+    computeFormula(formula: String!): Float
+}
+input FormulaInput{
+    id: ID
+    original_formula: String
+    rpn_formula: String
+    name: String!
+    description: String!
+    variable_data: [VariableInput]
+}
+input VariableInput{
+    id: ID
+    name: String
+    name_key: String!
+    description: String
+}
+type Formula {
+    id: ID
+    latex_formula: String
+    original_formula: String
+    rpn_formula: String
+    name_key: String!
+    name: String!
+    description: String!
+    variable_data: [FormulaVariable]
+}type FormulaVariable {
+    description: String
+    name_key: String
+    name: String
+    formula_id: ID
+    id: ID
+}

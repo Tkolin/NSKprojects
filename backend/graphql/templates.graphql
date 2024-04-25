@@ -1,0 +1,56 @@
+# Мутации с основными данными
+extend type Mutation {
+    updateIrdsTemplate(
+        typeProjectId: ID
+        listIrds_id: [ID]
+        listStageNumber: [Int]
+        listAppNumber: [Int]
+    ) : Int
+    updateTaskTemplate(
+        typeProjectId: ID,
+        listTasks_id: [ID],
+        listInheritedTasks_id: [ID],
+        stageNumber: [Int],
+    ) : Int
+    updateStagesTemplate(
+        items: [TemplateStageToTypeProject]
+    ) : Int
+}
+# Данные для мутаций
+input TemplateStageToTypeProject {
+    stage_id: ID
+    project_type_id: ID
+    duration: Int
+    stage_number: Int
+    percentage: Int
+}
+#
+type TemplateIRD {
+    id: ID!
+    project_type: TypeProjectDocument
+    ird: IRD
+    stage_number: Int
+    application_to_project: Int
+}
+type TemplateStage{
+    id: ID!
+    stage: Stage
+    project_type: TypeProjectDocument
+    duration: Int
+    number: Int
+    percentage: Int
+}
+type TemplateTask{
+    id: ID!
+    task: Task
+    inheritedTask: TemplateTask
+    inherited_task_id: ID
+    stage_number: Int
+}
+type TemplateSectionReference{
+    id: ID!
+    project_type: TypeProjectDocument
+    section_reference: SectionReference
+    values: String
+}
+#

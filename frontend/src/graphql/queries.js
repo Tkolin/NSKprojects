@@ -17,6 +17,7 @@ export const FORMULA_BY_KEY_QUERY = gql`
         formulaByKey  (keys: $keys) {
             items {
                 id
+                latex_formula
                 original_formula
                 rpn_formula
                 name_key

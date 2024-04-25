@@ -1,6 +1,7 @@
+# Используем образ с PHP
 FROM php:8.2-alpine
 
-# Установка необходимых пакетов и зависимостей
+# Устанавливаем необходимые пакеты
 RUN apk update && apk add --no-cache \
     curl \
     git \
@@ -12,27 +13,31 @@ RUN apk update && apk add --no-cache \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_mysql gd zip
 
-# Установка Composer
+# Устанавливаем Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Настройка рабочей директории
-WORKDIR /var/www/html
+# Установка virtualenv
+RUN pip3 install virtualenv
 
-# Копируем файлы проекта в контейнер
+# Настройка рабочей директории
+WORKDIR /var/www/html/backend
+
+# Создание и активация виртуального окружения
+RUN virtualenv venv
+RUN . venv/Scripts/activate \
+    && pip install --no-cache-dir -r requirements.txt
+
+    # Копируем файлы проекта в контейнер
 COPY . .
 
 # Устанавливаем зависимости Laravel
-# Устанавливаем зависимости Laravel
 RUN composer install --no-dev
 
-RUN composer require laravel/passport
-# Создание директории для сохранения ключей OAuth
-RUN composer require phpoffice/phpword
+# Устанавливаем библиотеку SymPy
+RUN apk add --no-cache py3-pip
+RUN pip3 install sympy
 
-RUN php artisan optimize:clear
-
-RUN php artisan vendor:publish --tag=passport-config
-    # Открываем порт для веб-сервера (по умолчанию 8000)
+# Открываем порт для веб-сервера (по умолчанию 8000)
 EXPOSE 8000
 
 # Команда запуска сервера Laravel

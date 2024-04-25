@@ -1,0 +1,169 @@
+# Мутации с основными данными
+extend type Mutation{
+    addExcavator(
+        data: ProjectInput
+        tasks: [ProjectTasksInput]
+        stages: [ProjectStageInput]
+        irds: [ProjectIrdInput]
+    ): Project!
+    addExcavatorBucketType(
+        data: ProjectInput
+        tasks: [ProjectTasksInput]
+        stages: [ProjectStageInput]
+        irds: [ProjectIrdInput]
+    ): Project!
+    addManufacturer(
+        name: ID
+    ): Int
+    addManufacturer(
+        name: ID
+    ): Int
+}
+
+# Основная модель проекта
+type Project{
+    id: ID!
+    number: String
+    name: String
+    prepayment: Int
+    organization_customer: Organization
+    type_project_document: TypeProjectDocument
+    facilities: [Facility]
+    date_signing: String
+    date_create: String
+    duration: Int
+    date_end: String
+    status: ProjectStatus
+    date_completion: String
+    delegations: [Contact]
+    price: Int
+    project_irds: [ProjectIRD]
+    project_stages: [ProjectStage]
+    project_tasks: [ProjectTask]
+}
+
+# Перечисления внутри основной модели
+type ProjectIRD{
+    id: ID!
+    project: Project
+    IRD: IRD
+    receivedDate: String
+    stageNumber: String
+    applicationProject: String
+}
+type ProjectStage{
+    id: ID!
+    project: Project
+    stage: Stage
+    number: Int
+    price: Float
+    percent: Int
+    date_start: String
+    duration: Int
+    date_end: String
+    progress: Int
+}
+type ProjectTask{
+    id: ID!
+    inherited_task_ids: [InheritedTask]
+    task: Task
+    date_start: String
+    date_end: String
+    duration: Int
+    executors: [TaskExecutorData]
+    price: Float
+    description: String
+}
+type TaskExecutorData{
+    id: ID!
+    executor: Person
+    price: Int
+}
+type InheritedTask{
+    project_task_id: ID!
+    project_inherited_task_id: ID!
+}
+
+# Данные для запроса
+input ProjectInput {
+    id: ID
+    number: String
+    name: String!
+    organization_customer_id: ID
+    type_project_document_id: ID
+    date_signing: String
+    duration: Int!
+    date_end: String
+    date_create: String!
+    status_id: ID
+    date_completion: String
+    price: Int
+    prepayment: Int
+    facilitys_id: [String]
+    delegates_id: [String]
+}
+
+# побочные
+input SectionReferencesToProject {
+    projectId: ID!
+    SectionReferencesId: ID
+    data: String
+}
+input ProjectIrdInput {
+    stage: ID
+    persent: Int
+    date_start: String
+    date_end: String
+    number: Int
+}input ProjectStageInput {
+    stage: ID
+    persent: Int
+    date_start: String
+    date_end: String
+    number: Int
+}input ProjectTasksInput {
+    stage: ID
+    persent: Int
+    date_start: String
+    date_end: String
+    number: Int
+}
+#
+input StageToProject {
+    id: ID
+    projectId: ID!
+    stage_id: ID
+    stageNumber: Int
+    price: Float
+    percent: Int
+    dateStart: String
+    duration: Int
+    dateEnd: String
+    progress: Int
+    price_to_paid: Float
+}
+input TasksToProject {
+    id: ID
+    projectId: ID!
+    inherited_task_ids: [ID]
+    task_id: ID!
+    date_start: String
+    date_end: String
+    duration: String
+    price: Float
+    executors: [TaskExecutor]
+    description: String
+}
+input TaskExecutor {
+    id: ID
+    executor_id: ID
+    price: Int
+}
+input IrdToProject {
+    projectId: ID!
+    irdId: ID
+    stageNumber: Int
+    applicationProject: Int
+    receivedDate: String
+}
+

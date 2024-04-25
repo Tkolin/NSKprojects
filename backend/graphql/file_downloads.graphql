@@ -1,0 +1,30 @@
+extend type Mutation {
+    personOrderFileDownload(
+        personId: ID
+    ): File!
+    projectPaymentInvoiceFileDownload(
+        projectId: ID!
+        stageNumber: ID
+        isPrepayment: Boolean
+    ): File!
+    projectActRenderingFileDownload(
+        projectId: ID
+        stageNumber: Int
+    ): File!
+    projectOrderFileDownload(
+        projectId: ID
+    ): File!
+    projectIrdsFileDownload(
+        projectId: ID
+    ): File!
+    projectStagesFileDownload(
+        projectId: ID
+    ): File!
+    taskExecutorContractFileDownload(
+        projectId: ID
+        executorId: ID
+    ): File!
+}
+type File {
+    url: String
+}

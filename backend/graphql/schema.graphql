@@ -33,7 +33,7 @@ type Query {
     projectTasksQuery(queryOptions: QueryOptions ,projectId: ID): [ProjectTask]
     projectSectionReferences(queryOptions: QueryOptions ,projectId: ID): [ProjectSectionReference]
 
-    formulaByKey(keys: [String!]): FormulaResult
+    formulaByKey(queryOptions: QueryOptions ,keys: [String!]): FormulaResult
 
     currentUser: User!
 

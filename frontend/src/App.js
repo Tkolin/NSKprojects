@@ -32,6 +32,7 @@ import SectionReferenceTable from "./page/view/tableView/SectionReferenceTable";
 import TasksChartForm from "./page/form/basicForm/TasksChartForm";
 import FormulaOutput from "./page/form/aggregateComponent/matchForm/script/FormulaOutputScript";
 import FormulaUsabilityForm from "./page/form/aggregateComponent/matchForm/FormulaUsabilityForm";
+import Test2 from "./test2";
 
 
 const App = () => {
@@ -64,7 +65,7 @@ const App = () => {
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/test1" element={<Test />} />
-                        <Route path="/test2" element={<Test />} />
+                        <Route path="/test2" element={<Test2 />} />
                         <Route path="/math" element={<FormulaUsabilityForm />} />
 
                         {currentUser ? (

@@ -51,10 +51,6 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
     },
-    welcomeText: {
-        color: 'silver',
-        marginRight: '10px',
-    },
     logoutButton: {
         marginLeft: '10px',
     },
@@ -241,13 +237,13 @@ const CustomLayout = ({children, currentUser, la}) => {
 
                 <div style={styles.user}>
                     {data && data.currentUser && (
-                        <>
-                            <Text style={styles.welcomeText}>Добро пожаловать: {data.currentUser.name} !</Text>
+                        <Space>
+                            {data.currentUser.name}
                             <Button type="primary" danger onClick={handleLogout} style={styles.logoutButton}>
                                 <LogoutOutlined/>
                                 Выход
                             </Button>
-                        </>
+                        </Space>
                     )}
                 </div>
             </Header>
