@@ -2,11 +2,13 @@
 
 namespace App\GraphQL\Mutations;
 
-final readonly class DeletePerson
+use App\Models\ProjectStage;
+
+final readonly class CreateProjectStage
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        // TODO implement the resolver
+        return ProjectStage::create($args);
     }
 }

@@ -10,7 +10,7 @@ export const ADD_PROJECT_MUTATION = gql`
         $stages: [ProjectStageInput]
         $irds: [ProjectIrdInput]
     ) {
-        addProject(
+        createProject(
             data: $data
 
 

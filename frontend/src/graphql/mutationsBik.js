@@ -7,7 +7,7 @@ export const ADD_BIK_MUTATION = gql`
         $bik:String!,
         $correspondent_account: String!
     ) {
-        addBik(
+        createBik(
             bik: $bik
             name: $name
             correspondent_account: $correspondent_account

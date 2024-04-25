@@ -1,8 +1,8 @@
 extend type Mutation{
-    addFormula(data: FormulaInput): Int
-    updateFormula(data: FormulaInput): Int
+    createFormula(data: FormulaInput): Int @checkRole(roles: ["admin"])
+    updateFormula(data: FormulaInput): Int @checkRole(roles: ["admin"])
 
-    computeFormula(formula: String!): Float
+    computeFormula(formula: String!): Float @checkRole(roles: ["admin"])
 }
 input FormulaInput{
     id: ID

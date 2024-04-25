@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Nuwave\Lighthouse\GraphQL;
 
+
 Route::get('/download-contract/{filename}', [ExecutorContractController::class, 'downloadExecutorContract']);
 Route::get('/download-taskExecutorContract/{filename}', [ExecutorContractController::class, 'TaskExecutorContract']);
 

@@ -10,17 +10,10 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final readonly class UpdateTypeTechnicalSpecification
 {
-    /** @param  array{}  $args */
-    public function __invoke(null $_, array $args, GraphQLContext $context): TechnicalSpecification
+    /** @param array{} $args */
+    public function __invoke(null $_, array $args): TechnicalSpecification
     {
-        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            $data = TypeTechnicalSpecification::findOrFail($args['id']);
-            $data->update($args);
-            return $data;
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
-        }
+        return TypeTechnicalSpecification::findOrFail($args['id'])->update($args);
+
     }
 }

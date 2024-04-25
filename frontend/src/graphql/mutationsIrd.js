@@ -14,7 +14,7 @@ export const ADD_IRD_MUTATION = gql`
     mutation AddIrd(
         $name: String!,
     ) {
-        addIrd(
+        createIrd(
             name: $name
         ) {
             id

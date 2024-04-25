@@ -44,8 +44,8 @@ export const ADD_PERSON_MUTATION = gql`
         $serial: String
         $number: String
         $passport_place_issue_id: ID
-        $address_registration: String
-        $address_residential: String
+        $createress_registration: String
+        $createress_residential: String
         
         $birth_date: String
         $date: String
@@ -59,15 +59,15 @@ export const ADD_PERSON_MUTATION = gql`
         $bank_id: ID
         $bik_id: ID
     ) {
-        addPerson(
+        createPerson(
             firstname: $firstname
             lastname: $lastname
             patronymic: $patronymic
             serial: $serial
             number: $number
             passport_place_issue_id: $passport_place_issue_id
-            address_registration: $address_registration
-            address_residential: $address_residential
+            createress_registration: $createress_registration
+            createress_residential: $createress_residential
             
             birth_date: $birth_date
             date: $date
@@ -87,8 +87,8 @@ export const ADD_PERSON_MUTATION = gql`
                 patronymic
                 serial
                 number
-                address_registration
-                address_residential
+                createress_registration
+                createress_residential
                 passport_place_issue{
                     id
                     name
@@ -122,8 +122,8 @@ export const UPDATE_PERSON_MUTATION = gql`
         $serial: String
         $number: String
         $passport_place_issue_id: ID
-        $address_registration: String
-        $address_residential: String
+        $createress_registration: String
+        $createress_residential: String
         
         $birth_date: String
         $date: String
@@ -145,8 +145,8 @@ export const UPDATE_PERSON_MUTATION = gql`
             serial: $serial
             number: $number
             passport_place_issue_id: $passport_place_issue_id
-            address_registration: $address_registration
-            address_residential: $address_residential            
+            createress_registration: $createress_registration
+            createress_residential: $createress_residential            
             
             birth_date: $birth_date
             date: $date
@@ -166,8 +166,8 @@ export const UPDATE_PERSON_MUTATION = gql`
                 patronymic
                 serial
                 number
-                address_registration
-                address_residential
+                createress_registration
+                createress_residential
                 passport_place_issue{
                     id
                     name
@@ -198,7 +198,7 @@ export const ADD_PPI_MUTATION = gql`
         $name: String!,
         $code: String!,
     ) {
-        addPpi(
+        createPpi(
             name: $name
             code: $code
         ) {

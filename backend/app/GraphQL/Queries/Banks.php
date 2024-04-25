@@ -13,9 +13,6 @@ final readonly class Banks
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
-        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
             $banksQuery = Bank::query();
 
             // Поиск
@@ -44,9 +41,6 @@ final readonly class Banks
             }
 
             return ['items' => $banks, 'count' => $count];
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
-        }
 
     }
 }

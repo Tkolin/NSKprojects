@@ -1,29 +1,29 @@
 extend type Mutation {
     personOrderFileDownload(
         personId: ID
-    ): File!
+    ): File! @checkRole(roles: ["admin"])
     projectPaymentInvoiceFileDownload(
         projectId: ID!
         stageNumber: ID
         isPrepayment: Boolean
-    ): File!
+    ): File! @checkRole(roles: ["admin"])
     projectActRenderingFileDownload(
         projectId: ID
         stageNumber: Int
-    ): File!
+    ): File! @checkRole(roles: ["admin"])
     projectOrderFileDownload(
         projectId: ID
-    ): File!
+    ): File! @checkRole(roles: ["admin"])
     projectIrdsFileDownload(
         projectId: ID
-    ): File!
+    ): File! @checkRole(roles: ["admin"])
     projectStagesFileDownload(
         projectId: ID
-    ): File!
+    ): File! @checkRole(roles: ["admin"])
     taskExecutorContractFileDownload(
         projectId: ID
         executorId: ID
-    ): File!
+    ): File! @checkRole(roles: ["admin"])
 }
 type File {
     url: String

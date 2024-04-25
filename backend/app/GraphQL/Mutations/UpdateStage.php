@@ -11,17 +11,8 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 final readonly class UpdateStage
 {
     /** @param  array{}  $args */
-    public function __invoke(null $_, array $args, GraphQLContext $context)
+    public function __invoke(null $_, array $args)
     {
-        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            $stage = Stage::findOrFail($args['id']);
-            $stage->update($args);
-            return $stage;
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
-        }
-
+        return Stage::findOrFail($args['id'])->update($args);
     }
 }

@@ -9,17 +9,10 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final readonly class DeleteOrganization
 {
-    /** @param  array{}  $args */
-    public function __invoke(null $_, array $args, GraphQLContext $context)
+    /** @param array{} $args */
+    public function __invoke(null $_, array $args): bool
     {
-        $allowedRoles = ['admin']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            $organization = Organization::destroy($args['id']);
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
-        }
-
-
+        Organization::destroy($args['id']);
+        return true;
     }
 }

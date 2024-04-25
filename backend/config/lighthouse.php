@@ -367,7 +367,9 @@ return [
     | as well their required configuration options.
     |
     */
-
+    'directives' => [
+        'checkRole' => \App\GraphQL\Directives\CheckRoleDirective::class,
+    ],
     'subscriptions' => [
         /*
          * Determines if broadcasts should be queued by default.

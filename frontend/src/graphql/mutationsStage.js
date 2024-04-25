@@ -12,7 +12,7 @@ export const ADD_STAGE_MUTATION = gql`
     mutation AddStage(
         $name: String!,
     ) {
-        addStage(
+        createStage(
             name: $name
         ) {
             id

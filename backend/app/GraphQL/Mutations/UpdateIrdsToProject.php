@@ -4,13 +4,15 @@ namespace App\GraphQL\Mutations;
 
 use App\Models\ProjectIrds;
 use App\Models\ProjectStage;
+use Illuminate\Support\Facades\Log;
 
 final readonly class UpdateIrdsToProject
 {
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
-
+        //TODO: УСТАРЕЛО, НУЖНО ОБНОВИТЬ
+        Log::warning('UpdateIrdsToProject УСТАРЕЛО, НУЖНО ОБНОВИТЬ');
         $irds = $args['items'];
 
         error_log('nen');

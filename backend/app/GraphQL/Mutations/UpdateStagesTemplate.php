@@ -32,7 +32,6 @@ final readonly class UpdateStagesTemplate
             ->whereNotIn('stage_id', array_column($stages, 'stage_id'))
             ->delete();
         return true;
-
     }
 
 }

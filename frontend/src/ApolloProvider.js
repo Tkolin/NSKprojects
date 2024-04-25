@@ -12,10 +12,13 @@ const createApolloClient = () => {
     const authLink = setContext((_, { headers }) => {
         const cookies = new Cookies();
         const token = cookies.get('accessToken');
+        const CsrfToken = localStorage.getItem('csrf_token'); // Предположим, что ваш CSRF токен хранится в localStorage
+
         return {
             headers: {
                 ...headers,
                 Authorization: token ? `Bearer ${token}` : '',
+                'X-CSRF-TOKEN': CsrfToken,
             },
         };
     });

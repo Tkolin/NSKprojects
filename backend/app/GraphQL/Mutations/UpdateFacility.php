@@ -9,17 +9,9 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final readonly class UpdateFacility
 {
-    /** @param  array{}  $args */
-    public function __invoke(null $_, array $args, GraphQLContext $context): Facility
+    /** @param array{} $args */
+    public function __invoke(null $_, array $args): Facility
     {
-        $allowedRoles = ['admin']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
- 
-            return Facility::findOrFail($args['id'])->update($args);
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
-        }
-
+        return Facility::findOrFail($args['id'])->update($args);
     }
 }

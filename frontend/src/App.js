@@ -39,12 +39,16 @@ const App = () => {
     const cookies = new Cookies();
     const accessToken = cookies.get('accessToken');
     const {loading, error, data} = useQuery(CURRENT_USER_QUERY, {
-        context: {
-            headers: {
-                Authorization: accessToken ? `Bearer ${accessToken}` : '',
-            }
+        onCompleted: (data) => {console.log(data);}
         }
-    });
+    //     , {
+    //     context: {
+    //         headers: {
+    //             Authorization: accessToken ? `Bearer ${accessToken}` : '',
+    //         }
+    //     }
+    // }
+    );
 
     // Обработка загрузки и ошибок
     if (loading) return <LoadingSpinnerStyles/>;

@@ -38,7 +38,7 @@ export const ADD_CONTACT_MUTATION = gql`
         $organization_id: ID,
  
     ) {
-        addContact(
+        createContact(
             first_name: $first_name
             last_name: $last_name
             patronymic: $patronymic

@@ -9,15 +9,9 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final readonly class DeleteContact
 {
-    public function __invoke($_, array $args, GraphQLContext $context)
+    public function __invoke($_, array $args): bool
     {
-        $allowedRoles = ['admin']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            $contact = Contact::destroy($args['id']);
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
-        }
-
+        Contact::destroy($args['id']);
+        return true;
     }
 }

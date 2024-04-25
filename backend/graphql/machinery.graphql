@@ -1,23 +1,23 @@
 # Мутации с основными данными
 extend type Mutation{
-    addExcavator(
+    createExcavator(
         data: ProjectInput
         tasks: [ProjectTasksInput]
         stages: [ProjectStageInput]
         irds: [ProjectIrdInput]
-    ): Project!
-    addExcavatorBucketType(
+    ): Project! @checkRole(roles: ["admin"])
+    createExcavatorBucketType(
         data: ProjectInput
         tasks: [ProjectTasksInput]
         stages: [ProjectStageInput]
         irds: [ProjectIrdInput]
-    ): Project!
-    addManufacturer(
+    ): Project! @checkRole(roles: ["admin"])
+    createManufacturer(
         name: ID
-    ): Int
-    addManufacturer(
+    ): Int @checkRole(roles: ["admin"])
+    createManufacturer(
         name: ID
-    ): Int
+    ): Int @checkRole(roles: ["admin"])
 }
 
 # Основная модель проекта

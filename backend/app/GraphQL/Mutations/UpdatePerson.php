@@ -11,11 +11,9 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 final readonly class UpdatePerson
 {
     /** @param  array{}  $args */
-    public function __invoke(null $_, array $args, GraphQLContext $context): Person
+    public function __invoke(null $_, array $args): Person
     {
-        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
+
             $passportData = [
                 'firstname' => $args['firstname'] ?? null,
                 'lastname' => $args['lastname'] ?? null,
@@ -46,9 +44,5 @@ final readonly class UpdatePerson
             $passport = $person->passport; // Получить связанный паспорт
             $passport->update($passportData); // Обновить информацию о паспорте
             return $person;
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
-        }
-
     }
 }

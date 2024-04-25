@@ -15,7 +15,7 @@ export const ADD_TYPE_PROJECTS_MUTATION = gql`
         $code: String,
         $group_id: ID,
     ) {
-        addTypeProject(
+        createTypeProject(
             name: $name
             group_id: $group_id
             code: $code
@@ -52,7 +52,7 @@ export const ADD_TECHNICAL_SPECIFICATION_MUTATION = gql`
         $name: String!,
         $code: String!,
     ) {
-        addTypeProject(
+        createTypeProject(
             name: $name
             code: $code
         ) {
@@ -86,7 +86,7 @@ export const ADD_GROUP_TYPE_PROJECTS_MUTATION = gql`
         $name: String!,
         $code: String!,
     ) {
-        addTypeProject(
+        createTypeProject(
             name: $name
             code: $code
         ) {

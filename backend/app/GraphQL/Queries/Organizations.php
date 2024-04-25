@@ -9,55 +9,48 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final readonly class Organizations
 {
-    /** @param  array{}  $args */
+    /** @param array{} $args */
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
-        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
+        $organizationsQuery = Organization
+            ::with('legal_form')
+            ->with('contacts')
+            ->with('bik');
 
-            $organizationsQuery = Organization
-                ::with('legal_form')
-                ->with('contacts')
-                ->with('bik');
-
-            // Поиск по организации
-            if (isset($args['organizationId'])) {
-                $searchTerm = $args['organizationId'];
-                $organizationsQuery = $organizationsQuery
-                    ->where('id', '=', "%$searchTerm%");
-            }
-
-            // Поиск
-            if (isset($args['queryOptions']['search'])) {
-                $searchTerm = $args['queryOptions']['search'];
-                $organizationsQuery = $organizationsQuery
-                    ->Where('id', 'like', "$searchTerm")
-                    ->orwhere('name', 'like', "%$searchTerm%")
-                    ->orWhere('full_name', 'like', "%$searchTerm%");
-            }
-
-            // Получаем количество записей
-            $count = $organizationsQuery->count();
-
-            // Сортировка
-            if (isset($args['queryOptions']['sortField']) && isset($argsv['sortOrder'])) {
-                $sortField = $args['queryOptions']['sortField'];
-                $sortOrder = $args['queryOptions']['sortOrder'];
-                $organizationsQuery = $organizationsQuery->orderBy($sortField, $sortOrder);
-            }
-
-            if (isset($args['queryOptions']['page'])) {
-                $organizations = $organizationsQuery->paginate($args['queryOptions']['limit'], ['*'], 'page', $args['queryOptions']['page']);
-            } else {
-                $organizations = $organizationsQuery->get();
-            }
-
-            return ['items' => $organizations, 'count' => $count];
-
-
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
+        // Поиск по организации
+        if (isset($args['organizationId'])) {
+            $searchTerm = $args['organizationId'];
+            $organizationsQuery = $organizationsQuery
+                ->where('id', '=', "%$searchTerm%");
         }
+
+        // Поиск
+        if (isset($args['queryOptions']['search'])) {
+            $searchTerm = $args['queryOptions']['search'];
+            $organizationsQuery = $organizationsQuery
+                ->Where('id', 'like', "$searchTerm")
+                ->orwhere('name', 'like', "%$searchTerm%")
+                ->orWhere('full_name', 'like', "%$searchTerm%");
+        }
+
+        // Получаем количество записей
+        $count = $organizationsQuery->count();
+
+        // Сортировка
+        if (isset($args['queryOptions']['sortField']) && isset($argsv['sortOrder'])) {
+            $sortField = $args['queryOptions']['sortField'];
+            $sortOrder = $args['queryOptions']['sortOrder'];
+            $organizationsQuery = $organizationsQuery->orderBy($sortField, $sortOrder);
+        }
+
+        if (isset($args['queryOptions']['page'])) {
+            $organizations = $organizationsQuery->paginate($args['queryOptions']['limit'], ['*'], 'page', $args['queryOptions']['page']);
+        } else {
+            $organizations = $organizationsQuery->get();
+        }
+
+        return ['items' => $organizations, 'count' => $count];
+
+
     }
 }

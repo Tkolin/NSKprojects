@@ -9,18 +9,9 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final readonly class UpdatePpi
 {
-    /** @param  array{}  $args */
-    public function __invoke(null $_, array $args, GraphQLContext $context)
+    /** @param array{} $args */
+    public function __invoke(null $_, array $args)
     {
-        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            $ppi = PasspotPlaceIssue::findOrFail($args['id']);
-            $ppi->update($args);
-            return $ppi;
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
-        }
-
+        return PasspotPlaceIssue::findOrFail($args['id'])->update($args);
     }
 }

@@ -4,12 +4,15 @@ namespace App\GraphQL\Mutations;
 
 use App\Models\TemplateStagesTypeProjects;
 use App\Models\TemplateTasksTypeProject;
+use Illuminate\Support\Facades\Log;
 
 final readonly class UpdateTaskTemplate
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
+        //TODO: УСТАРЕЛО, НУЖНО ОБНОВИТЬ
+        Log::warning('UpdateTaskTemplate УСТАРЕЛО, НУЖНО ОБНОВИТЬ');
         $typeProjectId = $args['typeProjectId'];
         $listTasksId = $args['listTasks_id'];
         $listInheritedTasksId = $args['listInheritedTasks_id'];

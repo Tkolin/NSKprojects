@@ -5,16 +5,16 @@ extend type Mutation{
         tasks: [ProjectTasksInput]
         stages: [ProjectStageInput]
         irds: [ProjectIrdInput]
-    ): Project!
-    addProject(
+    ): Project! @checkRole(roles: ["admin"])
+    createProject(
         data: ProjectInput
         tasks: [ProjectTasksInput]
         stages: [ProjectStageInput]
         irds: [ProjectIrdInput]
-    ): Project!
+    ): Project! @checkRole(roles: ["admin"])
     updateSectionReferenceToProject(
         items: [SectionReferencesToProject]
-    ): Int
+    ): Int @checkRole(roles: ["admin"])
 
     updateProjectStage(
         id: ID!
@@ -24,32 +24,32 @@ extend type Mutation{
         date_start: String!
         duration: String!
     ): ProjectStage!
-    addProjectStage(
+    createProjectStage(
         project_id: ID!
         stage_id: ID!
         progress: String!
         date_start: String!
         duration: String!
-    ): ProjectStage!
+    ): ProjectStage! @checkRole(roles: ["admin"])
 
     updateIrdsToProject(
         items: [IrdToProject]
-    ): Int
+    ): Int @checkRole(roles: ["admin"])
     updateStagesToProject(
         items: [StageToProject]
-    ): Int
+    ): Int @checkRole(roles: ["admin"])
     updateTaskToProject(
         data: TasksToProject
-    ): Int
+    ): Int @checkRole(roles: ["admin"])
     deleteTaskToProject(
         id: ID!
-    ): String
-    addTaskToProject(
+    ): String @checkRole(roles: ["admin"])
+    createTaskToProject(
         data: TasksToProject
-    ): Int
+    ): Int @checkRole(roles: ["admin"])
     updatePaymentsToProject(
         project: ID
-    ): Int
+    ): Int @checkRole(roles: ["admin"])
 }
 
 # Основная модель проекта

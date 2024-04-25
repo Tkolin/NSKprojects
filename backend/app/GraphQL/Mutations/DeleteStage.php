@@ -10,16 +10,10 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final readonly class DeleteStage
 {
-    /** @param  array{}  $args */
-    public function __invoke(null $_, array $args, GraphQLContext $context)
+    /** @param array{} $args */
+    public function __invoke(null $_, array $args): bool
     {
-        $allowedRoles = ['admin']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            $stage = Stage::destroy($args['id']);
-            return "Успех";
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
-        }
+        Stage::destroy($args['id']);
+        return true;
     }
 }

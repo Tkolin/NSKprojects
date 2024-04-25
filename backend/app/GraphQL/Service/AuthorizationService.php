@@ -10,13 +10,13 @@ class AuthorizationService
     public static function checkAuthorization($accessToken, $allowedRoles)
     {
         if ($accessToken) {
-            if (Auth::guard('api')->check()) {
-                $role = User::with('role')->find(Auth::guard('api')->id())->role->name;
-                if (in_array($role, $allowedRoles)) {
-                    return true;
-                }
+            $user = Auth::guard('api')->user();
+
+            if ($user && in_array($user->role->name, $allowedRoles)) {
+                return true;
             }
         }
+
         return false;
     }
 }

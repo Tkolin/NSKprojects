@@ -20,7 +20,7 @@ export const ADD_TASK_TO_PROJECT_MUTATION = gql`
     mutation AddTaskToProject(
         $data: TasksToProject
     ) {
-        addTaskToProject(
+        createTaskToProject(
             data: $data
         ) 
     }

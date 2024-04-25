@@ -4,12 +4,16 @@ namespace App\GraphQL\Mutations;
 
 use App\Models\TemplateIrdsTypeProjects;
 use App\Models\TemplateStagesTypeProjects;
+use Illuminate\Support\Facades\Log;
 
 final readonly class UpdateIrdsTemplate
 {
     /** @param  array{}  $args */
     public function __invoke($_, array $args)
     {
+        //TODO: УСТАРЕЛО, НУЖНО ОБНОВИТЬ
+        Log::warning('UpdateIrdsTemplate УСТАРЕЛО, НУЖНО ОБНОВИТЬ');
+
         $typeProjectId = $args['typeProjectId'];
         $listIrdsIds = $args['listIrds_id'];
         $listStageNumbers = $args['listStageNumber'];

@@ -5,35 +5,35 @@
 #import templates.graphql
 #import formula.graphql
 type Query {
-    contacts(queryOptions: QueryOptions, organizationId: ID): ContactsResult
-    organizations(queryOptions: QueryOptions, organizationId: ID): OrganizationsResult
-    positions(queryOptions: QueryOptions): PositionsResult
-    irds(queryOptions: QueryOptions): IrdsResult
-    stages(queryOptions: QueryOptions): StagesResult
-    tasks(queryOptions: QueryOptions): TasksResult
+    contacts(queryOptions: QueryOptions, organizationId: ID): ContactsResult @checkRole(roles: ["admin"])
+    organizations(queryOptions: QueryOptions, organizationId: ID): OrganizationsResult @checkRole(roles: ["admin"])
+    positions(queryOptions: QueryOptions): PositionsResult @checkRole(roles: ["admin"])
+    irds(queryOptions: QueryOptions): IrdsResult @checkRole(roles: ["admin"])
+    stages(queryOptions: QueryOptions): StagesResult @checkRole(roles: ["admin"])
+    tasks(queryOptions: QueryOptions): TasksResult @checkRole(roles: ["admin"])
     projects(queryOptions: QueryOptions, projectId: ID): ProjectsResult
-    persons(queryOptions: QueryOptions): PersonsResult
-    biks(queryOptions: QueryOptions): BikResult
-    passportPlaceIssues(queryOptions: QueryOptions): PassportPlaceIssueResult
-    banks(queryOptions: QueryOptions): BanksResult
+    persons(queryOptions: QueryOptions): PersonsResult @checkRole(roles: ["admin"])
+    biks(queryOptions: QueryOptions): BikResult @checkRole(roles: ["admin"])
+    passportPlaceIssues(queryOptions: QueryOptions): PassportPlaceIssueResult @checkRole(roles: ["admin"])
+    banks(queryOptions: QueryOptions): BanksResult @checkRole(roles: ["admin"])
 
-    typeProjects(queryOptions: QueryOptions): TypeProjectsResult
-    technicalSpecification: TechnicalSpecificationResult
-    typeTechnicalSpecification: TypeTechnicalSpecification
-    sectionReferences: SectionReferenceResult
-    groupTypeProjects: [GroupTypeProjectDocument]
+    typeProjects(queryOptions: QueryOptions): TypeProjectsResult @checkRole(roles: ["admin"])
+    technicalSpecification: TechnicalSpecificationResult @checkRole(roles: ["admin"])
+    typeTechnicalSpecification: TypeTechnicalSpecification @checkRole(roles: ["admin"])
+    sectionReferences: SectionReferenceResult @checkRole(roles: ["admin"])
+    groupTypeProjects: [GroupTypeProjectDocument] @checkRole(roles: ["admin"])
 
-    templatesIrdsTypeProjects(typeProject: ID): [TemplateIRD]
-    templatesStagesTypeProjects(typeProject: ID): [TemplateStage]
-    templatesTasksTypeProjects(typeProject: ID): [TemplateTask]
-    templatesSectionReferencesTypeProjects(typeProject: ID): [TemplateSectionReference]
+    templatesIrdsTypeProjects(typeProject: ID): [TemplateIRD] @checkRole(roles: ["admin"])
+    templatesStagesTypeProjects(typeProject: ID): [TemplateStage] @checkRole(roles: ["admin"])
+    templatesTasksTypeProjects(typeProject: ID): [TemplateTask] @checkRole(roles: ["admin"])
+    templatesSectionReferencesTypeProjects(typeProject: ID): [TemplateSectionReference] @checkRole(roles: ["admin"])
 
-    projectIrds(queryOptions: QueryOptions, projectId: ID): [ProjectIRD]
-    projectStages(queryOptions: QueryOptions ,projectId: ID): [ProjectStage]
-    projectTasksQuery(queryOptions: QueryOptions ,projectId: ID): [ProjectTask]
-    projectSectionReferences(queryOptions: QueryOptions ,projectId: ID): [ProjectSectionReference]
+    projectIrds(queryOptions: QueryOptions, projectId: ID): [ProjectIRD] @checkRole(roles: ["admin"])
+    projectStages(queryOptions: QueryOptions ,projectId: ID): [ProjectStage] @checkRole(roles: ["admin"])
+    projectTasksQuery(queryOptions: QueryOptions ,projectId: ID): [ProjectTask] @checkRole(roles: ["admin"])
+    projectSectionReferences(queryOptions: QueryOptions ,projectId: ID): [ProjectSectionReference] @checkRole(roles: ["admin"])
 
-    formulaByKey(queryOptions: QueryOptions ,keys: [String!]): FormulaResult
+    formulaByKey(queryOptions: QueryOptions ,keys: [String!]): FormulaResult @checkRole(roles: ["admin"])
 
     currentUser: User!
 
@@ -41,9 +41,9 @@ type Query {
     facilities: [SelectionFacility!]!
     TypePayments: [TypePayment]
     projectStatuses: [ProjectStatus!]!
-
-    # paymentsProjects(queryOptions: QueryOptions, projectId: ID): [projectPayment]
 }
+directive @checkRole(roles: [String!]) on FIELD_DEFINITION | FIELD
+
 input QueryOptions {
     id: Int
     page: Int
@@ -51,92 +51,91 @@ input QueryOptions {
     search: String
     sortField: String
     sortOrder: String
-    searchOrganizationId: String
 }
 
 type Mutation {
     updateTask(
         names: [String]
-    ): [Task]
+    ): [Task] @checkRole(roles: ["admin"])
 
-    addTypeTechnicalSpecification(
+    createTypeTechnicalSpecification(
         name: String
     ): TypeTechnicalSpecification
     updateTypeTechnicalSpecification(
         id: ID
         name: String
         techicalSpecification: ID
-    ): TypeTechnicalSpecification
+    ): TypeTechnicalSpecification @checkRole(roles: ["admin"])
 
-    addGroupTypeProject(
+    createGroupTypeProject(
         name: String
         techicalSpecification: ID
-    ): GroupTypeProjectDocument
+    ): GroupTypeProjectDocument @checkRole(roles: ["admin"])
     updateGroupTypeProject(
         id: ID
         name: String
-    ): GroupTypeProjectDocument
+    ): GroupTypeProjectDocument @checkRole(roles: ["admin"])
 
-    addTypeProject(
+    createTypeProject(
         name: String
         group_id: ID
         code: String
-    ): TypeProjectDocument
+    ): TypeProjectDocument @checkRole(roles: ["admin"])
     updateTypeProject(
         id: ID
         name: String
         group_id: ID
         code: String
-    ): TypeProjectDocument
+    ): TypeProjectDocument @checkRole(roles: ["admin"])
     deleteTypeProject (
         id: ID
-    ): String
+    ): String @checkRole(roles: ["admin"])
 
-    addIrd(
+    createIrd(
         name: String
-    ): IRD!
+    ): IRD! @checkRole(roles: ["admin"])
     updateIrd(
         id: ID!
         name: String!
-    ): IRD!
+    ): IRD! @checkRole(roles: ["admin"])
     deleteIrd (
         id: ID!
-    ): String
+    ): String @checkRole(roles: ["admin"])
 
-    addStage(
+    createStage(
         name: String!
-    ): Stage!
+    ): Stage! @checkRole(roles: ["admin"])
     updateStage(
         id: ID!
         name: String!
-    ): Stage!
+    ): Stage! @checkRole(roles: ["admin"])
     deleteStage (
         id: ID!
-    ): String
+    ): String @checkRole(roles: ["admin"])
 
-    addPpi(
+    createPpi(
         name: String!
         code: String!
-    ): PassportPlaceIssue!
+    ): PassportPlaceIssue! @checkRole(roles: ["admin"])
     updatePpi(
         id: ID!
         name: String!
         code: String!
-    ): PassportPlaceIssue!
+    ): PassportPlaceIssue! @checkRole(roles: ["admin"])
 
-    addBik(
+    createBik(
         bik: String!
         name: String!
         correspondent_account: String
-    ):  bik!
+    ):  bik! @checkRole(roles: ["admin"])
     updateBik(
         id: ID!
         bik: String!
         name: String!
         correspondent_account: String
-    ):  bik!
+    ):  bik! @checkRole(roles: ["admin"])
 
-    addContact(
+    createContact(
         first_name: String!
         last_name: String
         patronymic: String
@@ -147,7 +146,7 @@ type Mutation {
         email: String
         position_id: ID
         organization_id: ID
-    ): Contact!
+    ): Contact! @checkRole(roles: ["admin"])
     updateContact(
         id: ID!
         first_name: String!
@@ -160,13 +159,13 @@ type Mutation {
         email: String
         position_id: ID
         organization_id: ID
-    ): Contact!
+    ): Contact! @checkRole(roles: ["admin"])
     deleteContact (
         id: ID!
-    ): Contact
+    ): Contact @checkRole(roles: ["admin"])
 
 
-    addOrganization(
+    createOrganization(
         legal_form_id: ID!
         name: String!
         full_name: String!
@@ -184,7 +183,7 @@ type Mutation {
         bik_id: ID
         payment_account: String
         director_id: ID
-    ): Organization!
+    ): Organization! @checkRole(roles: ["admin"])
     updateOrganization(
         id: ID!
         legal_form_id: ID!
@@ -204,12 +203,12 @@ type Mutation {
         bik_id: ID
         payment_account: String
         director_id: ID
-    ): Organization!
+    ): Organization! @checkRole(roles: ["admin"])
     deleteOrganization (
         id: ID!
-    ): Organization
+    ): Organization @checkRole(roles: ["admin"])
 
-    addPerson(
+    createPerson(
         firstname: String
         lastname: String
         patronymic: String
@@ -228,7 +227,7 @@ type Mutation {
         email_sibnipi: String
         bank_id: ID
         bik_id: ID
-    ): Person!
+    ): Person! @checkRole(roles: ["admin"])
     updatePerson(
         id: ID!
         firstname: String
@@ -249,20 +248,20 @@ type Mutation {
         email_sibnipi: String
         bank_id: ID
         bik_id: ID
-    ): Person!
+    ): Person! @checkRole(roles: ["admin"])
     deletePerson (
         id: ID!
-    ): Person
+    ): Person @checkRole(roles: ["admin"])
 
     updateFacility(
         id: ID!
         name: String!
         type: ID!
-    ): Facility!
-    addFacility(
+    ): Facility! @checkRole(roles: ["admin"])
+    createFacility(
         name: String!
         type: ID!
-    ): Facility!
+    ): Facility! @checkRole(roles: ["admin"])
 }
 type Contact {
     id: ID!

@@ -44,8 +44,6 @@ final readonly class Irds
                 $irds = $irdQuery->get();
             }
 
-            error_log('irds' . $irds);
-
             return ['items' => $irds, 'count' => $count];
         } else {
             throw new AuthenticationException('Отказано в доступе');

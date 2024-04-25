@@ -2,11 +2,13 @@
 
 namespace App\GraphQL\Mutations;
 
-final readonly class UpdatePaymentsToProject
+use App\Models\GroupTypeProjectDocument;
+
+final readonly class CreateGroupTypeProject
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        // TODO implement the resolver
+        return GroupTypeProjectDocument::create($args);
     }
 }

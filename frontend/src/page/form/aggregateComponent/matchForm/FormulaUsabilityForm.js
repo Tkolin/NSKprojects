@@ -33,13 +33,13 @@ const FormulaUsabilityForm = () => {
     const addingInformation = (data) => {
         setInformationData([...informationData, data]);
     }
-    const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(CONTACTS_QUERY, {
-        variables: {
-            queryOptions: {
-                page, limit, search, sortField: sortField, sortOrder
-            }
-        }, fetchPolicy: 'network-only',
-    });
+    // const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(CONTACTS_QUERY, {
+    //     variables: {
+    //         queryOptions: {
+    //             page, limit, search, sortField: sortField, sortOrder
+    //         }
+    //     }, fetchPolicy: 'network-only',
+    // });
     const handleChange = (selectedOptions) => {
         setSelectedFormulas(selectedOptions);
     };
