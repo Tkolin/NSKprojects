@@ -2,11 +2,7 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\GraphQL\Service\AuthorizationService;
-use App\Models\InitialAuthorizationDocumentation;
 use App\Models\Stage;
-use Nuwave\Lighthouse\Exceptions\AuthenticationException;
-use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final readonly class UpdateStage
 {

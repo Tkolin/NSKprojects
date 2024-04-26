@@ -1,15 +1,10 @@
 <?php
 
-namespace App\GraphQL\Service;
+namespace App\Services\FileGenerate;
 
-use App\GraphQL\Service\NameCaseLib\NCLNameCaseRu;
-use App\Models\Organization;
-use App\Models\Person;
-use App\Models\TemplateFile;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use PhpOffice\PhpWord\IOFactory;
-use PhpOffice\PhpWord\PhpWord;
+use App\Services\GeneratorService;
+use App\Services\MonthEnum;
+use App\Services\TranslatorNumberToName;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 class StagesProjectTemplateGeneratorService

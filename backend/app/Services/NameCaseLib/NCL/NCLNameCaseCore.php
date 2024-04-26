@@ -9,9 +9,9 @@
  *
  */
 
-namespace App\GraphQL\Service\NameCaseLib\NCL;
+namespace App\Services\NameCaseLib\NCL;
 
-use App\GraphQL\Service\NameCaseLib\NCLNameCaseRu;
+use App\Services\NameCaseLib\NCLNameCaseRu;
 
 if (!defined('NCL_DIR')) {
     define('NCL_DIR', dirname(__FILE__));

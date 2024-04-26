@@ -2,55 +2,26 @@
 
 namespace App\GraphQL\Queries;
 
-use App\GraphQL\Service\AuthorizationService;
 use App\Models\Organization;
-use Nuwave\Lighthouse\Exceptions\AuthenticationException;
+use App\Services\GrpahQL\QueryService;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final readonly class Organizations
 {
     /** @param array{} $args */
-    public function __invoke(null $_, array $args, GraphQLContext $context)
+    public function __invoke(null $_, array $args)
     {
         $organizationsQuery = Organization
             ::with('legal_form')
             ->with('contacts')
             ->with('bik');
 
-        // Поиск по организации
-        if (isset($args['organizationId'])) {
-            $searchTerm = $args['organizationId'];
-            $organizationsQuery = $organizationsQuery
-                ->where('id', '=', "%$searchTerm%");
-        }
+        $queryService = new QueryService();
+        $searchColumns = ['id','name','full_name'];
+        $organizationsQuery = $queryService->buildQueryOptions($organizationsQuery, $args['queryOptions'],$searchColumns);
 
-        // Поиск
-        if (isset($args['queryOptions']['search'])) {
-            $searchTerm = $args['queryOptions']['search'];
-            $organizationsQuery = $organizationsQuery
-                ->Where('id', 'like', "$searchTerm")
-                ->orwhere('name', 'like', "%$searchTerm%")
-                ->orWhere('full_name', 'like', "%$searchTerm%");
-        }
-
-        // Получаем количество записей
         $count = $organizationsQuery->count();
-
-        // Сортировка
-        if (isset($args['queryOptions']['sortField']) && isset($argsv['sortOrder'])) {
-            $sortField = $args['queryOptions']['sortField'];
-            $sortOrder = $args['queryOptions']['sortOrder'];
-            $organizationsQuery = $organizationsQuery->orderBy($sortField, $sortOrder);
-        }
-
-        if (isset($args['queryOptions']['page'])) {
-            $organizations = $organizationsQuery->paginate($args['queryOptions']['limit'], ['*'], 'page', $args['queryOptions']['page']);
-        } else {
-            $organizations = $organizationsQuery->get();
-        }
-
+        $organizations = $queryService->paginate($organizationsQuery, $args['queryOptions']['limit'], $args['queryOptions']['page']);
         return ['items' => $organizations, 'count' => $count];
-
-
     }
 }

@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Person;
-use App\GraphQL\Service\ContractGeneratorService;
-use Illuminate\Http\Request;
-
 class ExecutorContractController extends Controller
 {
     public function downloadExecutorContract($filename)

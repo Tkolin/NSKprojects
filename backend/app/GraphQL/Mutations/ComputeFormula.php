@@ -2,13 +2,11 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\GraphQL\Service\AuthorizationService;
-use App\GraphQL\Service\FormulaComputeService;
+use App\Services\GrpahQL\AuthorizationService;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
-use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use function Laravel\Prompts\warning;
+use Symfony\Component\Process\Process;
 
 final readonly class ComputeFormula
 {

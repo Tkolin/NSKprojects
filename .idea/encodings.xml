@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/backend/app/Services/GrpahQL/QueryService.php" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/backend/storage/logs/laravel.log" charset="windows-1251" />
     <file url="PROJECT" charset="windows-1251" />
   </component>

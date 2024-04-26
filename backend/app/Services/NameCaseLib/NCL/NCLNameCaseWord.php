@@ -4,7 +4,7 @@
  * @package NameCaseLib
  */
 
-namespace App\GraphQL\Service\NameCaseLib\NCL;
+namespace App\Services\NameCaseLib\NCL;
 
 /**
  * NCLNameCaseWord - класс, который служит для хранения всей информации о каждом слове

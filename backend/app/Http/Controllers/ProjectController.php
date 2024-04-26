@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Person;
-use App\GraphQL\Service\ContractGeneratorService;
-use Illuminate\Http\Request;
-
 class ProjectController extends Controller
 {
     public function downloadProject($filename)

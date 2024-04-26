@@ -2,22 +2,13 @@
 
 namespace App\GraphQL\Queries;
 
-use App\GraphQL\Service\AuthorizationService;
-use App\Models\TypeProjectDocument;
-use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final readonly class TechnicalSpecification
 {
-    /** @param  array{}  $args */
+    /** @param array{} $args */
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
-        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            return TechnicalSpecification::all();
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
-        }
+        return TechnicalSpecification::all();
     }
 }

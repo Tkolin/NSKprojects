@@ -2,24 +2,12 @@
 
 namespace App\GraphQL\Queries;
 
-use App\GraphQL\Service\AuthorizationService;
-use App\Models\Facility;
 use App\Models\SelectionFacility;
-use Nuwave\Lighthouse\Exceptions\AuthenticationException;
-use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final readonly class Facilities
 {
-    public function __invoke(null $_, array $args, GraphQLContext $context)
+    public function __invoke(null $_, array $args)
     {
-        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            $data = SelectionFacility::with('subselection_facility.group_facility.facilities')
-                ->get();
-             return $data;
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
-        }
+        return SelectionFacility::with('subselection_facility.group_facility.facilities')->get();
     }
 }

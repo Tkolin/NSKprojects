@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GraphQL\Service;
+namespace App\Services;
 
 class TranslatorNumberToName
 {

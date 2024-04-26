@@ -2,8 +2,8 @@
 
 namespace App\GraphQL\Queries;
 
-use App\GraphQL\Service\AuthorizationService;
 use App\Models\Person;
+use App\Services\GrpahQL\AuthorizationService;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
@@ -11,13 +11,10 @@ final readonly class Persons
 {
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
-        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-
             $personQuery = Person::with(['passport', 'passport.passport_place_issue'])
                 ->with('bank')
                 ->with('BIK');
+
 
             // Поиск
             if (isset($args['search'])) {
@@ -57,8 +54,5 @@ final readonly class Persons
                 $persons = $personQuery->get();
             }
             return ['items' => $persons, 'count' => $count];
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
-        }
     }
 }

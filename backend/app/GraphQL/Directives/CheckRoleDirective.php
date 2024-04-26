@@ -2,12 +2,11 @@
 
 namespace App\GraphQL\Directives;
 
-use App\GraphQL\Service\AuthorizationService;
+use App\Services\GrpahQL\AuthorizationService;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Schema\Directives\BaseDirective;
 use Nuwave\Lighthouse\Schema\Values\FieldValue;
 use Nuwave\Lighthouse\Support\Contracts\FieldMiddleware;
-use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class CheckRoleDirective extends BaseDirective implements FieldMiddleware
 {

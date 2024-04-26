@@ -1,14 +1,8 @@
 <?php
 
-namespace App\GraphQL\Service;
+namespace App\Services\FileGenerate;
 
 use App\Models\Organization;
-use App\Models\Person;
-use App\Models\TemplateFile;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use PhpOffice\PhpWord\IOFactory;
-use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 class ContractGeneratorService

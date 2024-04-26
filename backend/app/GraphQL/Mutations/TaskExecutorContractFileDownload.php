@@ -2,14 +2,10 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\GraphQL\Service\AuthorizationService;
-use App\GraphQL\Service\StagesProjectTemplateGeneratorService;
-use App\GraphQL\Service\TaskExecutorContractGeneratorService;
 use App\Models\Person;
 use App\Models\Project;
+use App\Services\FileGenerate\TaskExecutorContractGeneratorService;
 use Exception;
-use Nuwave\Lighthouse\Exceptions\AuthenticationException;
-use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final readonly class TaskExecutorContractFileDownload
 {

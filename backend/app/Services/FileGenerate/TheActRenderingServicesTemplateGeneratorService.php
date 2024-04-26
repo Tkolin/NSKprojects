@@ -1,29 +1,23 @@
 <?php
 
-namespace App\GraphQL\Service;
+namespace App\Services\FileGenerate;
 
-use App\Models\Organization;
-use App\Models\Person;
-use App\Models\TemplateFile;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use PhpOffice\PhpWord\IOFactory;
-use PhpOffice\PhpWord\PhpWord;
+use App\Services\GeneratorService;
+use App\Services\MonthEnum;
+use App\Services\TranslatorNumberToName;
 use PhpOffice\PhpWord\TemplateProcessor;
 
-class PaymentInvoiceTemplateGeneratorService
+class TheActRenderingServicesTemplateGeneratorService
 {
 
-    public static function generate($project, $stageNumber, $isPrepayment)
+    public static function generate($project, $stageNumber)
     {
         $myOrg = GeneratorService::getOrganizationData();
 
-        $templateFilePath = storage_path('app/templates/PaymentInvoiceTemplate.docx');
+        $templateFilePath = storage_path('app/templates/TheActRenderingServicesTemplate.docx');
         $tempFilePath = tempnam(sys_get_temp_dir(), 'lolp');
         copy($templateFilePath, $tempFilePath);
-        error_log("Этапы");
         $templateProcessor = new TemplateProcessor($tempFilePath);
-
 
         $date = $project["date_create"];
         $dateComponents = explode('-', $date);
@@ -32,16 +26,9 @@ class PaymentInvoiceTemplateGeneratorService
         $month = $dateComponents[1];
         $monthName = $dateComponents[1] ? MonthEnum::getMonthName($dateComponents[1]) : "__";
         $day = $dateComponents[2] ?? "__";
+        $projectStage =   $project->project_stages->where('number', $stageNumber)->first();
+
         $TranslatorNumberToName = new TranslatorNumberToName();
-        $projectStage = $isPrepayment ?
-            [
-                'price' => ($project["price"] * $project["prepayment"] / 100),
-                'stage' => ['name' => 'Аванс', 'id' => 0],
-                'percent' => $project['prepayment'],
-                'number' => ' '
-            ]
-            :$project->project_stages->where('number', $stageNumber)->first()
-           ;
         $myOrgPhone = $myOrg["phone_number"];
         $formattedPhone = preg_replace('/\+(\d{1,2})?(\d{3})(\d{3})(\d{2})(\d{2})/', '+$1 ($2) $3-$4-$5', $myOrgPhone);
 
@@ -52,7 +39,7 @@ class PaymentInvoiceTemplateGeneratorService
 
             'dayCreate' => $day,
             'mountCreate' => $month,
-            'mountName' => $monthName,
+            'mountCreateName' => $monthName,
             'yearCreate' => $year,
             'projectStages.stage.priceTotal' => $project['price'] ?? '(данные отсутвуют)',
             'projectStages.stage.endPriceTotal' => $project['price'] ?? '(данные отсутвуют)',
@@ -65,51 +52,49 @@ class PaymentInvoiceTemplateGeneratorService
             'projectOrganization.nameOrType' => isset($project["organization_customer"]) ? $project["organization_customer"]["legal_form"]['name'] . " " . $project["organization_customer"]['name'] : "(данные отсутвуют)",
             'projectOrganization.director.position' => $project["organization_customer"]['director']['position']['name'] ?? '(данные отсутвуют)',
 
-            'projectStages.stage.finalPrice' => number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
+            'projectStages.stage.finalPrice' =>   number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
+            'projectStages.stage.name' =>   $projectStage['stage']['name'] ?? '(данные отсутвуют)',
+            'projectStages.stage.percent' =>    $projectStage['percent'] ?? '(данные отсутвуют)',
 
-            'projectStages.stage.name' => ($projectStage['stage']['id'] == 0) ? $projectStage['stage']['name'] : 'Выполнение работ ',
-            'projectStages.stage.percent' => ($projectStage['stage']['id'] == 0) ? $projectStage['percent'] . '% ' : '',
+            'projectStages.stage.price' =>   number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
+            'projectStages.number' =>   $projectStage['number']  ?? '(данные отсутвуют)',
+            'projectStages.stage.endPrice' =>   number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
+            'projectStages.stage.sumEndPrice' =>    number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
 
-            'projectStages.stage.price' => number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
-            'projectStages.stage.endPrice' =>  number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
-            'projectStages.stage.sumEndPrice' =>  number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
-
-            'projectStages.stage.finalPriceToString' => $TranslatorNumberToName->num2str($projectStage['price']),
-
+                 'projectOrganization.payment_account' => $project["organization_customer"]['payment_account'] ?? '(данные отсутвуют)',
+                'projectOrganization.BIK.name' => $project["organization_customer"]['bik']['name'] ?? '(данные отсутвуют)',
+                'projectOrganization.BIK.bik' => $project["organization_customer"]['bik']['BIK'] ?? '(данные отсутвуют)',
+                'projectOrganization.BIK.correspondent_account' => $project["organization_customer"]['BIK']['correspondent_account'] ?? '(данные отсутвуют)',
 
             'projectOrganization.INN' => $project["organization_customer"]['INN'] ?? '(данные отсутвуют)',
-                'projectOrganization.KPP' => $project["organization_customer"]['KPP'] ?? '(данные отсутвуют)',
+            'projectOrganization.KPP' => $project["organization_customer"]['KPP'] ?? '(данные отсутвуют)',
             'projectOrganization.address_legal' => $project["organization_customer"]['address_legal'] ?? '(данные отсутвуют)',
 
-
+            'projectStages.stage.finalPriceToString' => $TranslatorNumberToName->num2str($projectStage['price']),
             'myOrg.INN' => $myOrg['INN'] ?? '(данные отсутвуют)',
             'myOrg.KPP' => $myOrg['KPP'] ?? '(данные отсутвуют)',
             'myOrg.address_legal' => $myOrg['address_legal'] ?? '(данные отсутвуют)',
             'myOrg.styled_phone' => $formattedPhone ?? '(данные отсутвуют)',
-              'myOrg.BIK.bik' => $myOrg['bik']['BIK'] ?? '(данные отсутвуют)',
+            'myOrg.BIK.bik' => $myOrg['bik']['BIK'] ?? '(данные отсутвуют)',
             'myOrg.BIK.name' => $myOrg['bik']['name'] ?? '(данные отсутвуют)',
             'myOrg.BIK.correspondent_account' => $myOrg['BIK']['correspondent_account'] ?? '(данные отсутвуют)',
             'myOrg.payment_account' => $myOrg['payment_account'] ?? '(данные отсутвуют)']
 
         ;
 
+
         foreach ($replacements as $key => $value) {
             $templateProcessor->setValue($key, $value);
         }
-
-        //        $templateProcessor->cloneRowAndSetValues('projectStages.number' , $table);
         $currentDate = date('Ymd');
 
-        $fileName = 'Счёт_на_оплату_'.$project['id'].'_'.$projectStage['stage']['id'].'_'.$currentDate.'_'.'.docx';
+        $fileName = 'Акт_об_оказании_услуг_'.$project['id'].'_'.$projectStage['stage']['id'].'_'.$currentDate.'_'.'.docx';
 
         $filePath = storage_path('app/' . $fileName);
         $templateProcessor->saveAs($filePath);
 
-        // Удаление временного файла
         unlink($tempFilePath);
 
         return $fileName;
     }
-
-
 }

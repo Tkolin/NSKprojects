@@ -2,10 +2,9 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\GraphQL\Service\AuthorizationService;
-use App\GraphQL\Service\ProjectOrderGeneratorService;
-use App\GraphQL\Service\TheActRenderingServicesTemplateGeneratorService;
 use App\Models\Project;
+use App\Services\FileGenerate\TheActRenderingServicesTemplateGeneratorService;
+use App\Services\GrpahQL\AuthorizationService;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 

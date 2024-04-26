@@ -2,67 +2,33 @@
 
 namespace App\GraphQL\Queries;
 
-use App\GraphQL\Service\AuthorizationService;
 use App\Models\Contact;
-use Illuminate\Support\Facades\Log;
+use App\Services\GrpahQL\AuthorizationService;
+use App\Services\GrpahQL\QueryService;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
-use Psy\Readline\Hoa\Console;
 
 final readonly class Contacts
 {
-    /** @param  array{}  $args */
-    public function __invoke(null $_, array $args, GraphQLContext $context)
+    /** @param array{} $args */
+    public function __invoke(null $_, array $args)
     {
-        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
+        $contactsQuery = Contact::with('position')->with('organization');
 
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
+        $queryService = new QueryService();
+        $searchColumns = ['id', 'first_name', 'last_name', 'patronymic', 'work_phone', 'work_email', 'mobile_phone', 'email'];
+        $contactsQuery = $queryService->buildQueryOptions($contactsQuery, $args['queryOptions'], $searchColumns);
 
-            $contactsQuery = Contact::with('position')->with('organization');
+        $count = $contactsQuery->count();
+        $irds = $queryService->paginate($contactsQuery, $args['queryOptions']['limit'], $args['queryOptions']['page']);
+        return ['items' => $irds, 'count' => $count];
+        //TODO: Поиск по огоранизщациям
+        // Поиск по организации
+//        if (isset($args['organizationId'])) {
+//            $searchTerm = $args['organizationId'];
+//            $contactsQuery = $contactsQuery
+//                ->where('organization_id', 'like', "%$searchTerm%");
+//        }
 
-            // Поиск
-            if (isset($args['queryOptions']['search'])) {
-                $searchTerm = $args['queryOptions']['search'];
-                $contactsQuery = $contactsQuery
-                    ->where('id', 'like', "$searchTerm")
-                    ->orWhere('first_name', 'like', "%$searchTerm%")
-                    ->orWhere('last_name', 'like', "%$searchTerm%")
-                    ->orWhere('patronymic', 'like', "%$searchTerm%")
-                    ->orWhere('work_phone', 'like', "%$searchTerm%")
-                    ->orWhere('work_email', 'like', "%$searchTerm%")
-                    ->orWhere('mobile_phone', 'like', "%$searchTerm%")
-                    ->orWhere('email', 'like', "%$searchTerm%");
-            }
-            // Поиск по организации
-            if (isset($args['organizationId'])) {
-                $searchTerm = $args['organizationId'];
-                $contactsQuery = $contactsQuery
-                    ->where('organization_id', 'like', "%$searchTerm%");
-            }
-
-            // Получаем количество записей
-            $count = $contactsQuery->count();
-
-            // Сортировка
-            if (isset($args['queryOptions']['sortField']) && isset($args['queryOptions']['sortOrder'])) {
-                $sortField = $args['queryOptions']['sortField'];
-                $sortOrder = $args['queryOptions']['sortOrder'];
-                $contactsQuery = $contactsQuery->orderBy($sortField, $sortOrder);
-            }
-
-            // Пагинация
-            if (isset($args['queryOptions']['page'])) {
-                $contacts = $contactsQuery->paginate($args['queryOptions']['limit'], ['*'], 'page', $args['queryOptions']['page']);
-            } else {
-                $contacts = $contactsQuery->get();
-            }
-
-
-
-            return ['items' => $contacts, 'count' => $count];
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
-        }
     }
 }

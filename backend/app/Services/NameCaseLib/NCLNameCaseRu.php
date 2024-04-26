@@ -9,11 +9,11 @@
  *
  */
 
-namespace App\GraphQL\Service\NameCaseLib;
+namespace App\Services\NameCaseLib;
 
-use App\GraphQL\Service\NameCaseLib\NCL\NCLNameCaseCore;
-use App\GraphQL\Service\NameCaseLib\NCL\NCLNameCaseWord;
-use App\GraphQL\Service\NameCaseLib\NCL\NCLStr;
+use App\Services\NameCaseLib\NCL\NCLNameCaseCore;
+use App\Services\NameCaseLib\NCL\NCLNameCaseWord;
+use App\Services\NameCaseLib\NCL\NCLStr;
 
 require_once dirname(__FILE__) . '/NCL/NCLNameCaseCore.php';
 

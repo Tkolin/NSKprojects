@@ -2,9 +2,9 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\GraphQL\Service\AuthorizationService;
-use App\GraphQL\Service\ContractGeneratorService;
 use App\Models\Person;
+use App\Services\FileGenerate\ContractGeneratorService;
+use App\Services\GrpahQL\AuthorizationService;
 use Exception;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;

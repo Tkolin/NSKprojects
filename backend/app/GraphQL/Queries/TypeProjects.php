@@ -2,51 +2,22 @@
 
 namespace App\GraphQL\Queries;
 
-use App\GraphQL\Service\AuthorizationService;
 use App\Models\TypeProjectDocument;
-use Nuwave\Lighthouse\Exceptions\AuthenticationException;
-use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
+use App\Services\GrpahQL\QueryService;
 
 final readonly class TypeProjects
 {
-    /** @param  array{}  $args */
-    public function __invoke(null $_, array $args, GraphQLContext $context)
+    /** @param array{} $args */
+    public function __invoke(null $_, array $args)
     {
-        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            $tpds = TypeProjectDocument::with(['group', 'group.technical_specification']);
-            // Поиск
-            if (isset($args['queryOptions']['search'])) {
-                $searchTerm = $args['queryOptions']['search'];
-                $tpds = $tpds
-                    ->where(function($query) use ($searchTerm) {
-                        $query->where('id', 'like', "$searchTerm")
-                            ->orWhere('name', 'like', "%$searchTerm%")
-                            ->orWhere('code', 'like', "%$searchTerm%");
-                    });
-            }
+        $typeProjectsQuery = TypeProjectDocument::with(['group', 'group.technical_specification']);
 
-            // Получаем количество записей
-            $count = $tpds->count();
-            // Сортировка
-            if (isset($args['queryOptions']['sortField']) && isset($args['queryOptions']['sortOrder'])) {
-                $sortField = $args['queryOptions']['sortField'];
-                $sortOrder = $args['queryOptions']['sortOrder'];
-                $tpds = $tpds->orderBy($sortField, $sortOrder);
-            }
+        $queryService = new QueryService();
+        $searchColumns = ['id','name','code'];
+        $typeProjectsQuery = $queryService->buildQueryOptions($typeProjectsQuery, $args['queryOptions'],$searchColumns);
 
-            if (isset($args['queryOptions']['page'])) {
-                $tpd = $tpds->paginate($args['queryOptions']['limit'], ['*'], 'page', $args['queryOptions']['page']);
-            } else {
-                $tpd = $tpds->get();
-            }
-
-            return ['items' => $tpd, 'count' => $count];
-
-
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
-        }
+        $count = $typeProjectsQuery->count();
+        $typeProjects = $queryService->paginate($typeProjectsQuery, $args['queryOptions']['limit'], $args['queryOptions']['page']);
+        return ['items' => $typeProjects, 'count' => $count];
     }
 }

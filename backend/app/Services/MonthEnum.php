@@ -1,8 +1,7 @@
 <?php
 
-namespace App\GraphQL\Service;
+namespace App\Services;
 
-use ReflectionClass;
 class MonthEnum
 {
     public const JANUARY = ['name' => 'Январь', 'rod_name' => 'Января', 'number' => 1];

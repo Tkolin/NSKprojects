@@ -4,7 +4,7 @@
  * @package NameCaseLib
  */
 
-namespace App\GraphQL\Service\NameCaseLib\NCL;
+namespace App\Services\NameCaseLib\NCL;
 
 /**
  * Класс, который содержит основные константы библиотеки:

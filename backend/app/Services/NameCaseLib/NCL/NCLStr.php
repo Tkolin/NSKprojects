@@ -4,7 +4,7 @@
  * @package NameCaseLib
  */
 
-namespace App\GraphQL\Service\NameCaseLib\NCL;
+namespace App\Services\NameCaseLib\NCL;
 
 /**
  * Класс содержит функции для работы со строками, которые используются в NCLNameCaseLib

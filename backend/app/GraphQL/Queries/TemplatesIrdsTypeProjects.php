@@ -2,32 +2,18 @@
 
 namespace App\GraphQL\Queries;
 
-use App\GraphQL\Service\AuthorizationService;
-use App\Models\TemplateIrdsTypeProjects; // Импорт модели
-use App\Models\InitialAuthorizationDocumentation;
-use Illuminate\Support\Facades\Log;
-use Nuwave\Lighthouse\Exceptions\AuthenticationException;
-use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
+use App\Models\TemplateIrdsTypeProjects;
 
 final readonly class TemplatesIrdsTypeProjects
 {
-    public function __invoke(null $_, array $args, GraphQLContext $context)
+    public function __invoke(null $_, array $args)
     {
-
-        $allowedRoles = ['admin','bookkeeper'];
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
-            if($args['typeProject']){
-            $tmItdTp = TemplateIrdsTypeProjects
+        if ($args['typeProject']) {
+            return TemplateIrdsTypeProjects
                 ::where('project_type_id', $args['typeProject'])
                 ->with('type_project')
                 ->with('ird')
                 ->get();
-
-            return $tmItdTp;}
-
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
         }
     }
 }

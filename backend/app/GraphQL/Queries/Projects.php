@@ -2,19 +2,13 @@
 
 namespace App\GraphQL\Queries;
 use App\Models\Project;
-use App\GraphQL\Service\AuthorizationService;
-use App\Models\ProjectTasks;
-use Nuwave\Lighthouse\Exceptions\AuthenticationException;
-use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
+use App\Services\GrpahQL\QueryService;
 
 final readonly class Projects
 {
     /** @param array{} $args */
-    public function __invoke(null $_, array $args, GraphQLContext $context)
+    public function __invoke(null $_, array $args)
     {
-        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
             $projectsQuery = Project::with('organization_customer')
                 ->with('type_project_document')
                 ->with("delegations")
@@ -24,53 +18,14 @@ final readonly class Projects
                 ->with('project_tasks')
                 ->with('project_irds.IRD')
                 ->with('project_stages.stage');
-            // Поиск
-//            $projectTasks = ProjectTasks::with('task')
-//                ->with('executors.executor')
-//                ->with('inherited_task_ids')
-//                ->where('project_id', $args["projectID"])
-//                ->get();
 
-            if(isset($args["projectId"])){
-                $projectsQuery->where('id', $args["projectId"]);
-            } else if(isset($args['queryOptions']['id'])){
-                $projectsQuery->where('id', $args['queryOptions']['id']);
-            }
-            if (isset($args['queryOptions']['search'])) {
-                $searchTerm = $args['queryOptions']['search'];
-                $projectsQuery = $projectsQuery->where('number', 'like', "%$searchTerm%")
-                    ->orWhere('name', 'like', "%$searchTerm%")
-                    ->orWhere('organization_customer_id', 'like', "%$searchTerm%")
-                    ->orWhere('type_project_document_id', 'like', "%$searchTerm%")
-                    ->orWhere('facility_id', 'like', "%$searchTerm%")
-                    ->orWhere('date_signing', 'like', "%$searchTerm%")
-                    ->orWhere('duration', 'like', "%$searchTerm%")
-                    ->orWhere('date_end', 'like', "%$searchTerm%")
-                    ->orWhere('status_id', 'like', "%$searchTerm%")
-                    ->orWhere('date_completion', 'like', "%$searchTerm%")
-                    ->orWhere('delegate_id', 'like', "%$searchTerm%");
-            }
+        $queryService = new QueryService();
+        $searchColumns = ['id','name','organization_customer_id','type_project_document_id','facility_id','date_signing',
+            'duration','date_end','status_id','date_completion','delegate_id'];
+        $projectsQuery = $queryService->buildQueryOptions($projectsQuery, $args['queryOptions'],$searchColumns);
 
-            // Получаем количество записей
-            $count = $projectsQuery->count();
-
-            // Сортировка
-            if (isset($args['queryOptions']['sortField']) && isset($args['queryOptions']['sortOrder'])) {
-                $sortField = $args['queryOptions']['sortField'];
-                $sortOrder = $args['queryOptions']['sortOrder'];
-                $projectsQuery = $projectsQuery->orderBy($sortField, $sortOrder);
-            }
-
-            // Пагинация
-            if (isset($args['queryOptions']['page'])) {
-                $projects = $projectsQuery->paginate($args['queryOptions']['limit'], ['*'], 'page', $args['queryOptions']['page']);
-            } else {
-                $projects = $projectsQuery->get();
-            }
-            error_log("projects  " . $projects);
-            return ['items' => $projects, 'count' =>  $count];
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
-        }
+        $count = $projectsQuery->count();
+        $irds = $queryService->paginate($projectsQuery, $args['queryOptions']['limit'], $args['queryOptions']['page']);
+        return ['items' => $irds, 'count' => $count];
     }
 }

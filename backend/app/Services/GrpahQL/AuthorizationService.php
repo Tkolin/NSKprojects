@@ -1,8 +1,7 @@
 <?php
 
-namespace App\GraphQL\Service;
+namespace App\Services\GrpahQL;
 
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class AuthorizationService
