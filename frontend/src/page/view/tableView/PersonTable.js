@@ -1,30 +1,25 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import {
-    Button,
     Col,
     Descriptions,
     Divider,
     Form,
     Modal,
     notification,
-    Popconfirm,
     Row,
     Space,
     Table,
-    Typography
 } from 'antd';
 import {PERSONS_QUERY} from '../../../graphql/queries';
 import {DELETE_PERSON_MUTATION} from '../../../graphql/mutationsPerson';
 import PersonForm from "../../form/basicForm/PersonForm";
-import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import Search from "antd/es/input/Search";
 import {StyledFormLarge} from "../../style/FormStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import PersonContractFileDownload from "../../script/PersonContractFileDownload";
 import Title from "antd/es/typography/Title";
 import {format} from "date-fns";
-import {QuestionCircleOutlined} from "@ant-design/icons";
 import StyledLinkManagingDataTable from "../../style/TableStyles";
 
 const PersonTable = () => {
@@ -107,7 +102,6 @@ const PersonTable = () => {
             render: (passport) => passport ? `${passport.lastname}  ${passport.firstname} ${passport.patronymic}  ` : "",
         }, {
             title: 'Личный тел.', dataIndex: 'phone_number', key: 'phone_number',
-
             sorter: true, ellipsis: true,
         }, {
             title: 'Личный e-mail', dataIndex: 'email', key: 'email',
@@ -139,28 +133,9 @@ const PersonTable = () => {
             ),
         },]
     ;
-    const onChange = (pagination, filters, sorter) => {
-        if ((sorter.field !== undefined) && currentSort !== sorter) {
-            setCurrentSort(sorter);
-            console.log("Фильтры");
-            if (sortField !== sorter.field) {
-                setSortField(sorter.field);
-                setSortOrder("asc");
-            } else {
-                setSortField(sortField);
-                switch (sortOrder) {
-                    case ("asc"):
-                        setSortOrder("desc");
-                        break;
-                    case ("desc"):
-                        setSortOrder("");
-                        break;
-                    case (""):
-                        setSortOrder("asc");
-                        break;
-                }
-            }
-        } else console.log("Фильтры сохранены");
+    const onChange = (sorter) => {
+        setSortField(sorter?.field ?? "");
+        setSortOrder(sorter?.order === 'descend' ? 'desc' : sorter?.order === 'ascend' ? 'asc' : '');
     };
     return (<div>
         <StyledFormLarge form={formSearch} layout="horizontal">
@@ -188,10 +163,19 @@ const PersonTable = () => {
             loading={loading}
             dataSource={data?.persons?.items?.map((person, index) => ({...person, key: index}))}
             columns={columns}
-            onChange={onChange}
+            onChange={(pagination, filters, sorter, extra) => onChange(sorter)}
             pagination={{
                 total: data?.persons?.count,
-
+                current: page,
+                pageSize: limit,
+                onChange: (page, limit) => {
+                    setPage(page);
+                    setLimit(limit)
+                },
+                onShowSizeChange: (current, size) => {
+                    setPage(1);
+                    setLimit(size);
+                },
                 showSizeChanger: true,
                 pageSizeOptions: ['10', '50', '100'],
             }}

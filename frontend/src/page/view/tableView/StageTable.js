@@ -101,30 +101,9 @@ const StageTable = () => {
             ),
         },
     ];
-    const onChange = (pagination, filters, sorter) => {
-
-        if((sorter.field !== undefined) && currentSort !== sorter){
-            setCurrentSort(sorter);
-            if (sortField !== sorter.field) {
-                setSortField(sorter.field);
-                setSortOrder("asc");
-            }
-            else {
-                setSortField(sortField);
-                switch (sortOrder){
-                    case ("asc"):
-                        setSortOrder("desc");
-                        break;
-                    case ("desc"):
-                        setSortOrder("");
-                        break;
-                    case (""):
-                        setSortOrder("asc");
-                        break;
-                }
-            }
-        }else
-            console.log("Фильтры сохранены");
+    const onChange = (sorter) => {
+        setSortField(sorter?.field ?? "");
+        setSortOrder(sorter?.order === 'descend' ? 'desc' : sorter?.order === 'ascend' ? 'asc' : '');
     };
     return (
         <div>
@@ -152,7 +131,7 @@ const StageTable = () => {
                 loading={loading}
                 dataSource={data?.stages?.items}
                 columns={columns}
-                onChange={onChange}
+                onChange={(pagination, filters, sorter, extra) => onChange(sorter)}
                 pagination={{
                     total: data?.stages?.count,
                     current: page,

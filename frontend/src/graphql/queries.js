@@ -1,5 +1,4 @@
 import {gql} from '@apollo/client';
-import SectionReferenceTable from "../page/view/tableView/SectionReferenceTable";
 
 export const TASKS_QUERY = gql`
     query TasksQuery  ($queryOptions: QueryOptions) {
@@ -58,7 +57,6 @@ export const SECTION_REFERENCES_QUERY = gql`
 export const GROUP_TYPE_PROJECTS_QUERY = gql`
     query GroupTypeProjectsQuery {
         groupTypeProjects  {
-
             id
             name
             technical_specification {

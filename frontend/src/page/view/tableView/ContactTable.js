@@ -1,10 +1,9 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, Divider, Form, Modal, notification, Popconfirm, Row, Space, Table, Typography} from 'antd';
+import {Divider, Form, Modal, notification, Space, Table} from 'antd';
 import {CONTACTS_QUERY} from '../../../graphql/queries';
 import {DELETE_CONTACT_MUTATION} from '../../../graphql/mutationsContact';
 import ContactForm from "../../form/basicForm/ContactForm";
-import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import Search from "antd/es/input/Search";
 import {StyledFormLarge} from "../../style/FormStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
@@ -34,9 +33,7 @@ const ContactTable = () => {
 
     const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(CONTACTS_QUERY, {
         variables: {
-            queryOptions: {
-                page, limit, search, sortField: sortField, sortOrder
-            }
+            queryOptions: {page, limit, search, sortField, sortOrder}
         }, fetchPolicy: 'network-only',
     });
 
@@ -89,70 +86,53 @@ const ContactTable = () => {
     const columns = [
         {
             title: 'ФИО', key: 'FIO',
-
-            sorter: true,
+            sorter: true, ellipsis: true,
             render: (text, record) => `${record.last_name}  ${record.first_name} ${record.patronymic}`
         }, {
             title: 'Личный тел.', dataIndex: 'mobile_phone', key: 'mobile_phone',
-            sorter: true,
+            sorter: true, ellipsis: true,
         }, {
             title: 'Рабочий тел.', dataIndex: 'work_phone', key: 'work_phone',
-            sorter: true,
+            sorter: true, ellipsis: true,
         }, {
             title: 'Личный E-mail', dataIndex: 'email', key: 'email',
-            sorter: true,
+            sorter: true, ellipsis: true,
         }, {
             title: 'Рабочий E-mail', dataIndex: 'work_email', key: 'work_email',
-            sorter: true,
+            sorter: true, ellipsis: true,
         }, {
             title: 'Дата рождения', dataIndex: 'birth_day', key: 'birth_day',
-            sorter: true,
+            sorter: true, ellipsis: true,
             render: (birthDay) => birthDay ? formatDate(birthDay) : "",
         }, {
             title: 'Должность',
             dataIndex: 'position',
-            key: 'position',
+            key: 'position', ellipsis: true,
             render: (position) => position?.name ?? null,
         }, {
             title: 'Организация',
             dataIndex: 'organization',
-            key: 'organization',
+            key: 'organization', ellipsis: true,
             render: (organization) => organization?.name ?? null,
         },
         {
-            title: 'Управление', key: 'edit', width: 100, render: (text, record) => (
+            title: 'Управление', key: 'edit', ellipsis: true, width: 100, render: (text, record) => (
                 <StyledLinkManagingDataTable
                     title={"Удаление контакта"}
                     description={"Вы уверены, что нужно удалить этот контакт?"}
-                    handleEdit={() => {handleEdit(record.id)}}
+                    handleEdit={() => {
+                        handleEdit(record.id)
+                    }}
                     handleDelete={() => handleDelete(record.id)}
                 />
             ),
         },]
     ;
-
-    const onChange = (pagination, filters, sorter) => {
-        if ((sorter.field !== undefined) && currentSort !== sorter) {
-            setCurrentSort(sorter);
-            if (sortField !== sorter.field) {
-                setSortField(sorter.field);
-                setSortOrder("asc");
-            } else {
-                setSortField(sortField);
-                switch (sortOrder) {
-                    case ("asc"):
-                        setSortOrder("desc");
-                        break;
-                    case ("desc"):
-                        setSortOrder("");
-                        break;
-                    case (""):
-                        setSortOrder("asc");
-                        break;
-                }
-            }
-        } else console.log("Фильтры сохранены");
+    const onChange = (sorter) => {
+        setSortField(sorter?.field ?? "");
+        setSortOrder(sorter?.order === 'descend' ? 'desc' : sorter?.order === 'ascend' ? 'asc' : '');
     };
+
     return (<div>
         <StyledFormLarge form={formSearch} layout="horizontal">
             <Divider style={{marginTop: 0}}>
@@ -180,7 +160,7 @@ const ContactTable = () => {
             loading={loading}
             dataSource={data?.contacts?.items?.map((org, index) => ({...org, key: index}))}
             columns={columns}
-            onChange={onChange}
+            onChange={(pagination, filters, sorter, extra) => onChange(sorter)}
             pagination={{
                 total: data?.contacts?.count,
                 current: page,

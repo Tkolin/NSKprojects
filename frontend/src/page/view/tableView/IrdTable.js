@@ -96,7 +96,8 @@ const IrdTable = () => {
         },
         {
             title: 'Управление',
-            key: 'edit',
+            key: 'edit',             ellipsis: true,
+
             render: (text, record) => (
 
                 <div>

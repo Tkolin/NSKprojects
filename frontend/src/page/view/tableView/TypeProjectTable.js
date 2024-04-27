@@ -113,30 +113,11 @@ const TypeProjectTable = () => {
             ),
         },
     ];
-    const onChange = (pagination, filters, sorter) => {
-
-        if ((sorter.field !== undefined) && currentSort !== sorter) {
-            setCurrentSort(sorter);
-            if (sortField !== sorter.field) {
-                setSortField(sorter.field);
-                setSortOrder("asc");
-            } else {
-                setSortField(sortField);
-                switch (sortOrder) {
-                    case ("asc"):
-                        setSortOrder("desc");
-                        break;
-                    case ("desc"):
-                        setSortOrder("");
-                        break;
-                    case (""):
-                        setSortOrder("asc");
-                        break;
-                }
-            }
-        } else
-            console.log("Фильтры сохранены");
+    const onChange = (sorter) => {
+        setSortField(sorter?.field ?? "");
+        setSortOrder(sorter?.order === 'descend' ? 'desc' : sorter?.order === 'ascend' ? 'asc' : '');
     };
+
     return (
         <div>
             <StyledFormLarge form={formSearch} layout="horizontal">
@@ -161,7 +142,7 @@ const TypeProjectTable = () => {
                 loading={loading}
                 dataSource={data?.typeProjects?.items.map((org, index) => ({...org, key: index}))}
                 columns={columns}
-                onChange={onChange}
+                onChange={(pagination, filters, sorter, extra) => onChange(sorter)}
                 pagination={{
                     total: data?.typeProjects?.count,
                     current: page,

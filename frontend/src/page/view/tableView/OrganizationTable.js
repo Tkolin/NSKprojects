@@ -26,14 +26,14 @@ const OrganizationTable = () => {
 
     const [currentSort, setCurrentSort] = useState({});
 
-    const [sortColum, setSortColum] = useState('');
+    const [sortField, setSortField] = useState('');
     const [sortOrder, setSortOrder] = useState('');
 
     const [search, setSearch] = useState('');
 
     const {loading, error, data, refetch} = useQuery(ORGANIZATIONS_QUERY, {
         variables: {
-            queryOptions: {page, limit, search, sortField: sortColum, sortOrder}
+            queryOptions: {page, limit, search, sortField, sortOrder}
         }, fetchPolicy: 'network-only',
     });
 
@@ -84,7 +84,8 @@ const OrganizationTable = () => {
         {
             title: 'Тип',
             dataIndex: 'legal_form',
-            key: 'legal_form', width: 60,
+            key: 'legal_form', width: 60,             ellipsis: true,
+
             render: (legal_form) => legal_form ? legal_form.name : '',
         }, {
             title: 'Название организации', dataIndex: 'name', key: 'name',
@@ -92,7 +93,8 @@ const OrganizationTable = () => {
         }, {
             title: 'Директор',
             dataIndex: 'director',
-            key: 'director',
+            key: 'director',             ellipsis: true,
+
             render: (director) => {
                 if (director) {
                     return `${director.last_name ?? ""} ${director.first_name ?? ""} ${director.patronymic ?? ""}`;
@@ -102,10 +104,10 @@ const OrganizationTable = () => {
             },
         }, {
             title: 'email', dataIndex: 'email', key: 'email', width: 200,
-            sorter: true,
+            sorter: true,  ellipsis: true,
         }, {
             title: 'номер телефона', dataIndex: 'phone_number', key: 'phone_number', width: 200,
-            sorter: true,
+            sorter: true,  ellipsis: true,
         },
         {
             title: 'Управление', key: 'edit', width: 100, render: (text, record) => (
@@ -119,28 +121,9 @@ const OrganizationTable = () => {
         },
     ];
 
-    const onChange = (pagination, filters, sorter) => {
-
-        if ((sorter.field !== undefined) && currentSort !== sorter) {
-            setCurrentSort(sorter);
-            if (sortColum !== sorter.field) {
-                setSortColum(sorter.field);
-                setSortOrder("asc");
-            } else {
-                setSortColum(sortColum);
-                switch (sortOrder) {
-                    case ("asc"):
-                        setSortOrder("desc");
-                        break;
-                    case ("desc"):
-                        setSortOrder("");
-                        break;
-                    case (""):
-                        setSortOrder("asc");
-                        break;
-                }
-            }
-        } else console.log("Фильтры сохранены");
+    const onChange = (sorter) => {
+        setSortField(sorter?.field ?? "");
+        setSortOrder(sorter?.order === 'descend' ? 'desc' : sorter?.order === 'ascend' ? 'asc' : '');
     };
 
     return <>
@@ -169,12 +152,15 @@ const OrganizationTable = () => {
             loading={loading}
             dataSource={data?.organizations?.items?.map((org, index) => ({...org, key: index}))}
             columns={columns}
-            onChange={onChange}
+            onChange={(pagination, filters, sorter, extra) => onChange(sorter)}
             pagination={{
                 total: data?.organizations?.count,
                 current: page,
                 pageSize: limit,
-                onChange: (page, limit) => setPage(page) && setLimit(limit),
+                onChange: (page, limit) => {
+                    setPage(page);
+                    setLimit(limit)
+                },
                 onShowSizeChange: (current, size) => {
                     setPage(1);
                     setLimit(size);

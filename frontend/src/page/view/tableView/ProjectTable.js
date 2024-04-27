@@ -1,9 +1,7 @@
 import React, {useState} from 'react';
 import {useQuery} from '@apollo/client';
-import {Button, Collapse, Descriptions, Divider, Form, Modal, notification, Row, Space, Table, Typography} from 'antd';
+import { Collapse, Descriptions, Divider, Form, Modal, notification, Row, Space, Table, Typography} from 'antd';
 import {PROJECTS_QUERY} from '../../../graphql/queries';
-import ProjectForm from "../../form/basicForm/ProjectForm";
-import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import Search from "antd/es/input/Search";
 import {StyledFormLarge} from "../../style/FormStyles";
 import StagesProjectFileDownload from "../../script/StagesProjectFileDownload";
@@ -15,7 +13,6 @@ import PaymentInvoiceProjectDownload from "../../script/PaymentInvoiceProjectDow
 import CreateNewProject from "../../form/composedForm/CreateNewProject";
 import TaskExecutorContractDownload from "../../script/TaskExecutorContractDownload";
 import {useNavigate} from "react-router-dom";
-import TaskProjectForm from "../../form/aggregateComponent/projectForm/TaskProjectForm";
 
 const {Text} = Typography;
 
@@ -88,19 +85,20 @@ const ProjectTable = () => {
             dataIndex: 'number',
             key: 'number',
             width: 100,
-            sorter: true,
+            sorter: true, ellipsis: true,
         },
         {
             title: 'Название',
             dataIndex: 'name',
             key: 'name',
             width: 200,
-            sorter: true,
+            sorter: true, ellipsis: true,
         },
         {
             title: 'Заказчик',
             dataIndex: 'organization_customer',
             key: 'organization_customer',
+            sorter: true, ellipsis: true,
             render: (organization_customer) => organization_customer ?
                 organization_customer.name : "",
         },
@@ -108,6 +106,8 @@ const ProjectTable = () => {
             title: 'Представитель',
             dataIndex: 'delegations',
             key: 'delegations',
+            sorter: true, ellipsis: true,
+
             render: (delegations) => (
                 delegations.map(delegate => (
                     <div key={delegate.id}>{delegate.last_name} {delegate.first_name} {delegate.patronymic}</div>
@@ -118,6 +118,7 @@ const ProjectTable = () => {
             title: 'Тип документации',
             dataIndex: 'type_project_document',
             key: 'type_project_document',
+            sorter: true, ellipsis: true,
             render: (type_project_document) => type_project_document ?
                 type_project_document.name : ""
         },
@@ -125,6 +126,7 @@ const ProjectTable = () => {
             title: 'Объект',
             dataIndex: 'facilities',
             key: 'facilities',
+            sorter: true, ellipsis: true,
             render: (facilities) =>
                 facilities?.map(f => (
                     <div key={f.id}>
@@ -139,34 +141,31 @@ const ProjectTable = () => {
             title: 'Дата подписания',
             dataIndex: 'date_signing',
             key: 'date_signing',
-            width: 100,
+            width: 100,  sorter: true, ellipsis: true,
         },
         {
             title: 'Продолжительность',
             dataIndex: 'duration',
             key: 'duration',
-            width: 100,
-
+            width: 100,  sorter: true, ellipsis: true,
         },
         {
             title: 'Дата начала',
             dataIndex: 'date_end',
             key: 'date_end',
-            width: 100,
-
+            width: 100, sorter: true, ellipsis: true,
         },
         {
             title: 'Дата окончания',
             dataIndex: 'date_end',
             key: 'date_end',
-            width: 100,
-
+            width: 100,  sorter: true, ellipsis: true,
         },
         {
             title: 'Стоимость',
             dataIndex: 'price',
             key: 'price',
-            width: 160,
+            width: 160,  sorter: true, ellipsis: true,
             render: (price) =>
                 (price?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' ₽')
         },
@@ -174,26 +173,26 @@ const ProjectTable = () => {
             title: 'Статус',
             dataIndex: 'status',
             key: 'status',
-            width: 220,
+            width: 220,  sorter: true, ellipsis: true,
             render: (status) => status ?
                 status.name : ""
         },
         {
-            title: 'Договор', key: 'btnContract', width: 80, align: 'center',
+            title: 'Договор', key: 'btnContract', width: 80, align: 'center',  sorter: true, ellipsis: true,
             render: (text, record) => (
                 <>
                     <ProjectFileDownload projectId={record.id}/>
                 </>
             ),
         }, {
-            title: 'Список ИРД', key: 'btnIrd', width: 80, align: 'center',
+            title: 'Список ИРД', key: 'btnIrd', width: 80, align: 'center',  sorter: true, ellipsis: true,
             render: (text, record) => (
                 <>
                     <IrdsProjectFileDownload projectId={record.id}/>
                 </>
             ),
         }, {
-            title: 'График этапов', key: 'btnStage', width: 80, align: 'center',
+            title: 'График этапов', key: 'btnStage', width: 80, align: 'center',  sorter: true, ellipsis: true,
             render: (text, record) => (
                 <>
                     <StagesProjectFileDownload projectId={record.id}/>
@@ -203,7 +202,7 @@ const ProjectTable = () => {
         {
             title: 'Управление',
             key: 'edit',
-            width: 110,
+            width: 110,  sorter: true, ellipsis: true,
             render: (text, record) => (
                 <Row>
                     <Typography.Link onClick={() => handleEdit(record)}>Изменить</Typography.Link>

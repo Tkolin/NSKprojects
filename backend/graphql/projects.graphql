@@ -1,4 +1,4 @@
-# Мутации с основными данными
+ # Мутации с основными данными
 extend type Mutation{
     updateProject(
         data: ProjectInput

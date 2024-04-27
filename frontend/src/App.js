@@ -23,7 +23,7 @@ import TemplateForm from "./page/form/composedForm/TemplateForm";
 import IrdTable from "./page/view/tableView/IrdTable";
 import TypeProjectTable from "./page/view/tableView/TypeProjectTable";
 import StageTable from "./page/view/tableView/StageTable";
-import Test from "./test";
+import Test from "./_dev/test";
 import {ConfigProvider} from "antd";
 import ruRU from "antd/locale/ru_RU";
 import CreateNewProject from "./page/form/composedForm/CreateNewProject";
@@ -32,7 +32,7 @@ import SectionReferenceTable from "./page/view/tableView/SectionReferenceTable";
 import TasksChartForm from "./page/form/basicForm/TasksChartForm";
 import FormulaOutput from "./page/form/aggregateComponent/matchForm/script/FormulaOutputScript";
 import FormulaUsabilityForm from "./page/form/aggregateComponent/matchForm/FormulaUsabilityForm";
-import Test2 from "./test2";
+import Test2 from "./_dev/test2";
 
 
 const App = () => {
