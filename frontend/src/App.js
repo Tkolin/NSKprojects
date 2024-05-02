@@ -33,6 +33,7 @@ import TasksChartForm from "./page/form/basicForm/TasksChartForm";
 import FormulaOutput from "./page/form/aggregateComponent/matchForm/script/FormulaOutputScript";
 import FormulaUsabilityForm from "./page/form/aggregateComponent/matchForm/FormulaUsabilityForm";
 import Test2 from "./_dev/test2";
+import FenrirPage from "./page/guillaume/fenrirPage";
 
 
 const App = () => {
@@ -70,7 +71,7 @@ const App = () => {
                         <Route path="/" element={<Home />} />
                         <Route path="/test1" element={<Test />} />
                         <Route path="/test2" element={<Test2 />} />
-                        <Route path="/math" element={<FormulaUsabilityForm />} />
+                        <Route path="/guillaume" element={<FenrirPage />} />
 
                         {currentUser ? (
                             <>

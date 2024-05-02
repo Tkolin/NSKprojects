@@ -9,13 +9,13 @@ export const useStore = create((set, get) => ({
             id: "inputNode",
             type: "inputNode",
             data: {values: {'one': 1}},
-            position: {x: -100, y: 0},
+            position: {x: -0, y: 0},
         },
         {
             id: "inputNode1",
             type: "inputNode",
             data: {values: {'one': 2}},
-            position: {x: 100, y: 0},
+            position: {x: 0, y: 0},
         },
         {
             id: "mathOperationNodeId",
@@ -24,7 +24,7 @@ export const useStore = create((set, get) => ({
                 operation: "+",
                 inputs: {x: 1, y: 2},
             },
-            position: {x: 50, y: 150},
+            position: {x: 0, y: 0},
         },
         {
             id: "mathOperationNodeId1",
@@ -33,13 +33,19 @@ export const useStore = create((set, get) => ({
                 operation: "+",
                 inputs: {x: 1, y: 2},
             },
-            position: {x: 50, y: 300},
+            position: {x: 0, y: 0},
         },
         {
             id: "outputNode1",
             type: "formulaNode",
             data: {inputs: {}},
-            position: {x: 50, y: 550},
+            position: {x: 0, y: 0},
+        },
+        {
+            id: "outputNode2",
+            type: "formulaNode",
+            data: {inputs: {}},
+            position: {x: 0, y: 0},
         }
     ],
     edges: [

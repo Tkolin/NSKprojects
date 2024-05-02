@@ -14,12 +14,14 @@ import OutputNode from "./nodes/OutputNode";
 
 import "reactflow/dist/style.css";
 import DevTools from "./devtoolH/Devtools";
+import FormulaNode from "./nodes/FormulaNode";
 
 const nodeTypes = {
   inputNode: InputNode,
   mathOperationNode: MathOperationNode,
-  out: OutputNode,
-};
+  outNode: OutputNode,
+  formulaNode: FormulaNode
+ };
 
 const selector = (store) => ({
   nodes: store.nodes,
@@ -42,7 +44,7 @@ export default function App() {
               nodeTypes={nodeTypes}
               nodes={store.nodes}
               edges={store.edges}
-              onChange={console.log('change')}
+              onChange={console.log('change')} 
               onNodesChange={store.onNodesChange}
               onNodesDelete={store.onNodesDelete}
               onEdgesChange={store.onEdgesChange}

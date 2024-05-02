@@ -110,7 +110,7 @@ const CustomLayout = ({children, currentUser, la}) => {
                         getItem('Проекты', '3-1', null, null)
                     ]),
                     getItem('Расчёты', '4', <CalculatorOutlined/>, [
-                        getItem('Вывод', '4-1', null, null),
+                        getItem('Рабочий стол', '4-1', null, null),
 
                     ]),
                     getItem('Экономика', '5', <BarChartOutlined/>, []),
@@ -218,8 +218,7 @@ const CustomLayout = ({children, currentUser, la}) => {
                 navigate('/auth/login');
                 break;
             case '4-1':
-                // Авторизация
-                navigate('/math');
+                navigate('/guillaume');
                 break;
             default:
                 break;

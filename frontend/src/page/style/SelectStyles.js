@@ -30,6 +30,7 @@ const BaseStyledFormItemSelect = ({
                                       formatOptionText,
                                       mode,
                                       labelCol,
+    size,
                                       wrapperCol
                                   }) => (
     <StyledFormItem name={formName} labelCol={labelCol} wrapperCol={wrapperCol} label={formLabel} style={{width: width}}>
@@ -38,6 +39,7 @@ const BaseStyledFormItemSelect = ({
             popupMatchSelectWidth={false}
             allowClear
             showSearch
+            size={size ?? 'regular'}
             mode={mode
                 ?? ''}
             onSelect={(value, option) => onSelect && onSelect(value, option)}
@@ -122,6 +124,7 @@ const StyledFormItemSelect = ({
                                                     mode,
                                                     labelCol,
                                                     wrapperCol,
+                                                    size,
                                                     width
                                                 }) => (
     <BaseStyledSpaceCompactFormItemSelect width={width ?? "100%"}>
@@ -136,7 +139,8 @@ const StyledFormItemSelect = ({
                                       mode = {mode}
                                       width={width ?? "100%"}
                                       labelCol={labelCol}
-                                      wrapperCol={wrapperCol}/>
+                                      wrapperCol={wrapperCol}
+                                      size={size }/>
     </BaseStyledSpaceCompactFormItemSelect>
 
 );

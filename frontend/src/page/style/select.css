@@ -1,0 +1,39 @@
+:where(.css-dev-only-do-not-override-11xg00t)
+.ant-select-outlined.my-custom-select-formula
+.ant-select-selector{
+    border: 1.5px solid #2a88b7;
+    background: #193c50;
+    color: #e2e3e7;
+    border-radius: 3px;
+}
+:where(.css-dev-only-do-not-override-11xg00t)
+.ant-select-outlined.my-custom-select-formula
+.ant-select-arrow{
+    color: #e2e3e7;
+}
+:where(.css-dev-only-do-not-override-11xg00t)
+.ant-select-outlined.my-custom-select-math
+.ant-select-selector{
+    border: 1.5px solid #b2722a;
+    background: #462b0d;
+    color: #e2e3e7;
+    border-radius: 3px;
+}
+:where(.css-dev-only-do-not-override-11xg00t)
+.ant-select-outlined.my-custom-select-math
+.ant-select-arrow{
+    color: #e2e3e7;
+}
+ :where(.css-dev-only-do-not-override-11xg00t)
+.ant-select-outlined.my-custom-select-references
+.ant-select-selector{
+    border: 1.5px solid #d2483e;
+    background: #602620;
+    color: #e2e3e7;
+    border-radius: 3px;
+}
+:where(.css-dev-only-do-not-override-11xg00t)
+.ant-select-outlined.my-custom-select-references
+.ant-select-arrow{
+    color: #e2e3e7;
+}

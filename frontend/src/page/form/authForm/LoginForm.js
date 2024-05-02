@@ -3,7 +3,7 @@ import { Form, Input, Button, message } from 'antd';
 import { useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from '../../../graphql/mutationsAuth';
 import { useNavigate } from 'react-router-dom';
-import {StyledFormBlock, StyledFormItem, StyledFormRegular} from '../../style/FormStyles';
+import { StyledFormItem, StyledFormRegular} from '../../style/FormStyles';
 import {Cookies} from "react-cookie";
 import {StyledBlockRegular} from "../../style/BlockStyles";
 

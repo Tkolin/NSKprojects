@@ -1,21 +1,43 @@
-import App from './flow';
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { ReactFlowProvider } from 'reactflow';
+import React from "react";
+import ReactFlow, {
+    ReactFlowProvider,
+    Background,
+    Panel,
+    useReactFlow,
+} from "reactflow";
+import { shallow } from "zustand/shallow";
+import { useStore } from "./store";
+import { tw } from "twind";
+import InputNode from "./nodes/InputNode";
+import MathOperationNode from "./nodes/MathOperationNode";
+import OutputNode from "./nodes/OutputNode";
 
-// ? Don't forget to import the styles!
-import 'reactflow/dist/style.css';
-import './index.css';
+import "reactflow/dist/style.css";
+import DevTools from "./devtoolH/Devtools";
+import FormulaNode from "./nodes/FormulaNode";
 
-const root = document.querySelector('#root');
+const nodeTypes = {
+    inputNode: InputNode,
+    mathOperationNode: MathOperationNode,
+    outNode: OutputNode,
+    formulaNode: FormulaNode
+};
 
-ReactDOM.createRoot(root).render(
-    <React.StrictMode>
-        {/* React flow needs to be inside an element with a known height and width to work */}
-        <div style={{ width: '100vw', height: '100vh' }}>
-            <ReactFlowProvider>
-                <App />
-            </ReactFlowProvider>
-        </div>
-    </React.StrictMode>,
-);
+const selector = (store) => ({
+    nodes: store.nodes,
+    edges: store.edges,
+    onNodesChange: store.onNodesChange,
+    onNodesDelete: store.onNodesDelete,
+    onEdgesChange: store.onEdgesChange,
+    onEdgesDelete: store.onEdgesDelete,
+    addEdge: store.addEdge,
+    addInputNode: () => store.createNode("inputNode"),
+    addMathOperationNode: () => store.createNode("MathOperationNode"),
+});
+
+export default function App() {
+    const store = useStore(selector, shallow);
+    return (
+   <>Пельмени</>
+    );
+}
