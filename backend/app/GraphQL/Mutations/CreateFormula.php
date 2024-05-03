@@ -25,7 +25,7 @@ final readonly class CreateFormula
         $name_key = $args['data']['name'];
         $newFormula = Formula::create([
             'original_formula' => $args['data']['original_formula'],
-            'rpn_formula' => $args['data']['rpn_formula'],
+            'rpn_formula' => $args['data']['rpn_formula'] ?? "",
             'name' => $args['data']['name'],
             'description' => $args['data']['description'],
             'name_key' => $name_key,

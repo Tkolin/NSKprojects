@@ -24,31 +24,33 @@ import IrdTable from "./page/view/tableView/IrdTable";
 import TypeProjectTable from "./page/view/tableView/TypeProjectTable";
 import StageTable from "./page/view/tableView/StageTable";
 import Test from "./_dev/test";
-import {ConfigProvider} from "antd";
+import {ConfigProvider, theme} from "antd";
 import ruRU from "antd/locale/ru_RU";
 import CreateNewProject from "./page/form/composedForm/CreateNewProject";
 import {createGlobalStyle} from "styled-components";
 import SectionReferenceTable from "./page/view/tableView/SectionReferenceTable";
 import TasksChartForm from "./page/form/basicForm/TasksChartForm";
-import FormulaOutput from "./page/form/aggregateComponent/matchForm/script/FormulaOutputScript";
-import FormulaUsabilityForm from "./page/form/aggregateComponent/matchForm/FormulaUsabilityForm";
 import Test2 from "./_dev/test2";
 import FenrirPage from "./page/guillaume/fenrirPage";
+import FormulaForm from "./page/guillaume/form/FormulaForm";
+import ReferenceForm from "./page/guillaume/form/ReferenceForm";
 
 
 const App = () => {
     const cookies = new Cookies();
     const accessToken = cookies.get('accessToken');
     const {loading, error, data} = useQuery(CURRENT_USER_QUERY, {
-        onCompleted: (data) => {console.log(data);}
+            onCompleted: (data) => {
+                console.log(data);
+            }
         }
-    //     , {
-    //     context: {
-    //         headers: {
-    //             Authorization: accessToken ? `Bearer ${accessToken}` : '',
-    //         }
-    //     }
-    // }
+        //     , {
+        //     context: {
+        //         headers: {
+        //             Authorization: accessToken ? `Bearer ${accessToken}` : '',
+        //         }
+        //     }
+        // }
     );
 
     // Обработка загрузки и ошибок
@@ -58,78 +60,79 @@ const App = () => {
     const currentUser = data?.currentUser;
 
     const GlobalStyles = createGlobalStyle`
-    body {
-        margin: 0;
-    }
-`;
+        body {
+            margin: 0;
+        }
+    `;
     return (
         <ConfigProvider locale={ruRU} >
-            <GlobalStyles />
+            <GlobalStyles/>
             <Router>
-                <CustomLayout currentUser={currentUser}  >
+                <CustomLayout currentUser={currentUser}>
                     <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/test1" element={<Test />} />
-                        <Route path="/test2" element={<Test2 />} />
-                        <Route path="/guillaume" element={<FenrirPage />} />
-
+                        <Route path="/" element={<Home/>}/>
+                        <Route path="/test1" element={<Test/>}/>
+                        <Route path="/test2" element={<Test2/>}/>
+                        <Route path="/guillaume/fenrir" element={<FenrirPage/>}/>
+                        <Route path="/guillaume/tyr" element={<FormulaForm/>}/>
+                        <Route path="/guillaume/silmarils" element={<ReferenceForm/>}/>
                         {currentUser ? (
                             <>
                                 {currentUser.role.name === "admin" && (
                                     <>
-                                        <Route path="/ird" element={<IrdTable />} />
-                                        <Route path="/typeProject" element={<TypeProjectTable />} />
-                                        <Route path="/stageProject" element={<StageTable />} />
+                                        <Route path="/ird" element={<IrdTable/>}/>
+                                        <Route path="/typeProject" element={<TypeProjectTable/>}/>
+                                        <Route path="/stageProject" element={<StageTable/>}/>
 
-                                        <Route path="/template/new" element={<TemplateForm />} />
+                                        <Route path="/template/new" element={<TemplateForm/>}/>
 
-                                        <Route path="/contacts" element={<ContactTable />} />
-                                        <Route path="/contacts/new" element={<ContactForm />} />
+                                        <Route path="/contacts" element={<ContactTable/>}/>
+                                        <Route path="/contacts/new" element={<ContactForm/>}/>
 
-                                        <Route path="/SectionReferences" element={<SectionReferenceTable />} />
+                                        <Route path="/SectionReferences" element={<SectionReferenceTable/>}/>
 
-                                        <Route path="/project/tasks/:projectId" element={<TasksChartForm />} />
+                                        <Route path="/project/tasks/:projectId" element={<TasksChartForm/>}/>
 
-                                        <Route path="/project" element={<ProjectTable />} />
-                                        <Route path="/project/new" element={<CreateNewProject />} />
-                                        <Route path="/project/stage" element={<ProjectStageList />} />
-                                         <Route path="/project/stage/task" element={<StageTaskList />}/>
-                                         <Route path="/project/facility" element={<FacilityList />} />
-                                        <Route path="/project/facility/new" element={<FacilityForm />} />
-                                        <Route path="/organization" element={<OrganizationTable />} />
-                                        <Route path="/organization/new" element={<OrganizationForm />} />
+                                        <Route path="/project" element={<ProjectTable/>}/>
+                                        <Route path="/project/new" element={<CreateNewProject/>}/>
+                                        <Route path="/project/stage" element={<ProjectStageList/>}/>
+                                        <Route path="/project/stage/task" element={<StageTaskList/>}/>
+                                        <Route path="/project/facility" element={<FacilityList/>}/>
+                                        <Route path="/project/facility/new" element={<FacilityForm/>}/>
+                                        <Route path="/organization" element={<OrganizationTable/>}/>
+                                        <Route path="/organization/new" element={<OrganizationForm/>}/>
 
-                                        <Route path="/person" element={<PersonTable />} />
-                                        <Route path="/person/new" element={<PersonForm />} />
+                                        <Route path="/person" element={<PersonTable/>}/>
+                                        <Route path="/person/new" element={<PersonForm/>}/>
                                     </>
                                 )}
 
                                 {currentUser.role.name === "bookkeeper" && (
                                     <>
-                                        <Route path="/contacts" element={<ContactTable />} />
-                                        <Route path="/contacts/new" element={<ContactForm />} />
+                                        <Route path="/contacts" element={<ContactTable/>}/>
+                                        <Route path="/contacts/new" element={<ContactForm/>}/>
 
-                                        <Route path="/person" element={<PersonTable />} />
-                                        <Route path="/person/new" element={<PersonForm />} />
+                                        <Route path="/person" element={<PersonTable/>}/>
+                                        <Route path="/person/new" element={<PersonForm/>}/>
 
-                                        <Route path="/organization" element={<OrganizationTable />} />
-                                        <Route path="/organization/new" element={<OrganizationForm />} />
+                                        <Route path="/organization" element={<OrganizationTable/>}/>
+                                        <Route path="/organization/new" element={<OrganizationForm/>}/>
 
-                                        <Route path="/project/tasks/:projectId" element={<TasksChartForm />} />
+                                        <Route path="/project/tasks/:projectId" element={<TasksChartForm/>}/>
 
-                                        <Route path="/project" element={<ProjectTable />} />
-                                        <Route path="/project/new" element={<CreateNewProject />} />
-                                        <Route path="/project/stage" element={<ProjectStageList />} />
-                                        <Route path="/project/stage/task" element={<StageTaskList />}/>
-                                        <Route path="/project/facility" element={<FacilityList />} />
-                                        <Route path="/project/facility/new" element={<FacilityForm />} />
+                                        <Route path="/project" element={<ProjectTable/>}/>
+                                        <Route path="/project/new" element={<CreateNewProject/>}/>
+                                        <Route path="/project/stage" element={<ProjectStageList/>}/>
+                                        <Route path="/project/stage/task" element={<StageTaskList/>}/>
+                                        <Route path="/project/facility" element={<FacilityList/>}/>
+                                        <Route path="/project/facility/new" element={<FacilityForm/>}/>
                                     </>
                                 )}
                             </>
                         ) : (
                             <>
-                                <Route path="/auth/register" element={<RegisterForm />} />
-                                <Route path="/auth/login" element={<LoginForm />} />
+                                <Route path="/auth/register" element={<RegisterForm/>}/>
+                                <Route path="/auth/login" element={<LoginForm/>}/>
                             </>
                         )}
                     </Routes>

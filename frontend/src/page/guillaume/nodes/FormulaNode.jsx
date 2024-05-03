@@ -3,39 +3,38 @@ import {Handle} from "reactflow";
 import {tw} from "twind";
 import {useStore} from "../store";
 import {StyledBlock, StyledBlockBig} from "../../style/BlockStyles";
-import {Col, Input, notification, Popover, Row, Space, Spin} from "antd";
+import {Checkbox, Col, Input, notification, Popover, Row, Space, Spin} from "antd";
 import {MathComponent} from "mathjax-react";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {LoadingOutlined} from "@ant-design/icons";
 import {useMutation, useQuery} from "@apollo/client";
 import {COMPUTE_FORMULA_MUTATION} from "../../../graphql/mutationsFormula";
 import {CONTACTS_QUERY, FORMULA_BY_KEY_QUERY} from "../../../graphql/queries";
+import {colors, exstra_colors} from "../../style/colors";
+import {isFunction} from "util";
 
-// const comput = (id) => (store) => ({
-//     setValue: (total) => store.updateNode(id,  {values:{'output': total}} ),
-// });
-
+const selector = (id, data) => (store) => ({
+    setValue: (data) => {
+        store.updateNode(id, data);
+    },
+});
 export default function FormulaNode({id, data}) {
     const [values, setValues] = useState({});
     const [result, setResult] = useState('');
     const [loading, setLoading] = useState(false);
+    const {setValue} = useStore(selector(id, data));
 
-    const {loading: loadingQ, error: errorQ, data: dataQ, refetch: refetchQ} = useQuery(FORMULA_BY_KEY_QUERY, {
-        variables: {
-            queryOptions: {
-                keys: 'formula1'
-            }
-        }, fetchPolicy: 'network-only',
-        onCompleted: (result) => {
-            console.log('result ', result?.formulaByKey.items[0]);
-            data.formulaData =  result.formulaByKey.items[0];
-        }
-    });
     useEffect(() => {
+        console.log("formulaNode ", id, data)
+    }, [data, ]);
 
-    }, []);
-    const handleInputChange = (key, value) => {
-        setValues({...values, [key]: value});
+    const handleInputChange = (value, key ) => {
+        console.log(key, value)
+        if(!(data.inputs[key]))
+            data.inputs[key] = {value: null}
+
+        data.inputs[key].value =  value; // обновляем значение в копии
+        setValue(data); // обновляем состояние
     };
     const openNotification = (placement, type, message) => {
         notification[type]({
@@ -57,7 +56,7 @@ export default function FormulaNode({id, data}) {
         }
     });
     const findEmptyField = (variableData, values) => {
-        if (data?.formulaData)
+        if (data?.formulaData && data?.formulaData?.variable_data)
             return;
 
         let emptyFieldKey;
@@ -79,8 +78,9 @@ export default function FormulaNode({id, data}) {
         }
     };
     const evaluateFormula = () => {
-        if (data?.formulaData)
+        if (data?.formulaData && data?.formulaData?.variable_data)
             return;
+
          const emptyFieldKey = findEmptyField(data?.formulaData?.variable_data, values);
 
         if (emptyFieldKey === undefined) {
@@ -99,53 +99,72 @@ export default function FormulaNode({id, data}) {
             }
         });
 
-        // ������ ����������� ���������� �� 'x'
         formula = formula.replace(new RegExp(emptyFieldKey, 'g'), 'x');
 
-        // ����������� �������� ��� ����������
         Object.keys(variables).forEach((key) => {
             formula = formula.replace(new RegExp(key, 'g'), variables[key]);
         });
         console.log('formula ', formula);
         computeFormula({variables: {formula: formula}});
     };
-
+    const handleIsFunction = () => {
+        console.log('isFunction', data.isFunction);
+        data.isFunction = (!data.isFunction)
+        setValue(data);
+    }
     return (
-            <StyledBlockBig label={data?.formulaData?.name ?? "Ошибка"} className={tw("rounded-md bg-white shadow-xl")}>
+            <StyledBlockBig label={data?.formulaData?.name ?? "Ошибка"}
+                            styleBlcok={data.isFunction ? {border: '2px solid '+colors.function.primary} : {border: '2px solid '+colors.formulas.primary}}
+                            styleHeader={data.isFunction ?  {backgroundColor: colors.function.secondary} : {backgroundColor: colors.formulas.secondary} }
+                            styleHeaderText={ {color: colors.textColor, margin: 0, marginBottom: '5px'}}
+                             >
                 {data?.formulaData ? (
-                    <Row gutter={15}>
+                    <Row gutter={15} style={{marginTop: '10px'}}>
                         <Col span={12}>
+                            <Checkbox value={data.isFunction} onChange={handleIsFunction} children={data.isFunction ? "Функция": "Формула"}/>
                             <p><strong>Описание:</strong> {data?.formulaData?.description}</p>
-                            <p><strong>Формула: </strong> <MathComponent tex={data?.formulaData?.latex_formula} display={false}/></p>
+                            <p style={{marginBottom: '10px', marginTop: '10px'}}> <MathComponent tex={data?.formulaData?.latex_formula} display={true}/></p>
                             <div>
                                 <Space direction="vertical" style={{ width: "100%" }} >
-                                    {data?.formulaData?.variable_data?.map(variable => (
-                                        <div key={variable.name}>
+                                    {data?.formulaData?.variable_data && data?.formulaData?.variable_data?.map(variable => (
+                                        <div key={variable?.name}>
                                             <Popover
-                                                title={variable.name}
-                                                content={variable.description}
+                                                title={variable?.name}
+                                                content={variable?.description}
                                                 trigger="hover"
                                                 placement="top"
                                             >
                                                 <Row style={{ width: "100%" }}>
-                                                    <Col span={1} >
-                                                        <Handle id={variable.name} type="target" position="left" style={{marginLeft: '-16px'}} />
+                                                    <Col span={0.1} >
+                                                        <Handle id={variable?.name} type="target" position="left"  style={{
+                                                            marginLeft: '-22px',
+                                                            borderColor: colors.input.primary,
+                                                            width: 15,
+                                                            height: 15,
+                                                            ...(data.isFunction ? {
+                                                                background: `linear-gradient(to bottom, ${colors.input.secondary} 50%, ${colors.inputArray.secondary} 50%)`,
+                                                            } : {
+                                                                backgroundColor: colors.input.secondary,
+                                                            })
+                                                        }}/>
                                                     </Col>
                                                     <Col span={3}  style={{marginTop: 10}}>
-                                                        <MathComponent tex={variable.name + " ="} display={false} />
+                                                        {variable?.name &&(
+                                                        <MathComponent  tex={variable?.name + " ="} display={false} />)}
 
                                                     </Col>
                                                     <Col span={20}>
-                                                        {data.inputs[variable.name] ? (
+                                                        {data.inputs && data?.inputs[variable.name] ? (
                                                             <Input
-                                                                style={{color: "yellow", backgroundColor: "orange"}}
+                                                                style={{color: colors.textColor, backgroundColor: colors.input.primary, borderColor: colors.input.secondary, borderWidth: '2px'}}
+                                                                value={data?.inputs[variable.name]?.value}
                                                                 disabled={true}
-                                                                value={data.inputs[variable.name]}
                                                             />
                                                         ) : (
                                                             <Input
-                                                                placeholder={variable.name}
-                                                                onChange={(e) => handleInputChange(variable.name, e.target.value)}
+                                                                style={{color: exstra_colors.red12, backgroundColor: exstra_colors.red46, borderColor: exstra_colors.red12, borderWidth: '2px'}}
+                                                                status="Подключите ввод" placeholder="Error"
+                                                                disabled={true}
                                                             />
                                                         )}
                                                     </Col>
@@ -167,7 +186,10 @@ export default function FormulaNode({id, data}) {
                             <StyledBlock color={'info'} label={'Вывод'}>
                                 {data?.formulaData?.variable_data?.map(variable => (
                                     <div key={variable.name}>
-                                        <Handle id='output' type="source" position="bottom"/>
+                                        <Handle id='output' type="source" position="right" style={{marginRight: '-15px',
+                                            backgroundColor:
+                                            colors.output.secondary,
+                                            borderColor: colors.output.primary,width: 20, height: 20}} />
                                         <p>
                                             <MathComponent tex={variable.name + '-'} display={false}/>
                                             <span>{variable.description}</span>

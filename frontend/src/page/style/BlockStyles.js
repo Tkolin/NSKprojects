@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import {Divider} from 'antd';
 import Title from "antd/es/typography/Title";
 import React from "react";
+import {QuestionCircleOutlined} from "@ant-design/icons";
 
 const StyledBlockWrapper = styled.div`
     margin: 10px auto;
@@ -72,11 +73,17 @@ const StyledBlockRegular = ({label, children}) => {
         </StyledBlockWrapperRegular>
     );
 };
-const StyledBlockBig = ({label, children}) => {
+const StyledBlockBig = ({label, children, styleHeader,styleHeaderText, styleBlcok}) => {
     return (
-        <StyledBlockWrapperBig>
-            <Divider style={{marginBottom: '0px', marginTop: '0px'}}>
-                <Title level={3}>{label}</Title>
+        <StyledBlockWrapperBig style={{...styleBlcok}}>
+            <QuestionCircleOutlined style={{ position: 'absolute', top: '18px', right: '10px', fontSize: '20px',...styleHeaderText }} />
+
+            <Divider style={{marginBottom: '0px', marginTop: '0px',
+                borderTopRightRadius: "6px",
+                borderTopLeftRadius: '6px', marginLeft: "-15px",
+                marginRight: "-15px", width: 'calc(100% + 30px)',
+                ...styleHeader}}>
+                <Title level={3} style={{...styleHeaderText}}>{label}</Title>
             </Divider>
             {children}
             <Divider style={{marginBottom: '0px', marginTop: '20px'}}/>

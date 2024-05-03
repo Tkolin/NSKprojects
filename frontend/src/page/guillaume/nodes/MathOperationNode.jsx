@@ -18,20 +18,18 @@ export default function MathOperationNode({id, data}) {
     if (data.inputs.x && data.inputs.y) {
         let total = 0;
         if (data?.operation === "+") {
-            total = data.inputs.x + data.inputs.y;
+            total = data.inputs.x.value + data.inputs.y.value;
         } else if (data?.operation === "-") {
-            total = data.inputs.x - data.inputs.y;
+            total = data.inputs.x.value - data.inputs.y.value;
         } else if (data?.operation === "*") {
-            total = data.inputs.x * data.inputs.y;
+            total = data.inputs.x.value * data.inputs.y.value;
         } else if (data?.operation === "/") {
-            total = data.inputs.x / data.inputs.y;
+            total = data.inputs.x.value / data.inputs.y.value;
         }
-
-        if (data.total  !== total) {
-            data.total = total
+        if (data.total !== total) {
+            data.total = total;
             setValue(total);
         }
-
     }
     return (
         <div className={tw("rounded-md bg-white shadow-xl")}>

@@ -1,6 +1,7 @@
 extend type Mutation{
     createFormula(data: FormulaInput): Int @checkRole(roles: ["admin"])
     updateFormula(data: FormulaInput): Int @checkRole(roles: ["admin"])
+    createReference(data: ReferenceInput): Int @checkRole(roles: ["admin"])
 
     computeFormula(formula: String!): Float @checkRole(roles: ["admin"])
 }
@@ -11,6 +12,12 @@ input FormulaInput{
     name: String!
     description: String!
     variable_data: [VariableInput]
+}
+input ReferenceInput{
+    id: ID
+    name: String
+    description: String
+    values: String!
 }
 input VariableInput{
     id: ID

@@ -37,14 +37,15 @@ const styles = {
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: '0 24px',
-        background: '#fff',
+        backgroundColor: '#fff',
         boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
     },
     logo: {
         width: '50px',
         height: '50px',
-        background: 'rgba(255, 255, 255, 0.2)',
         margin: '16px 24px 16px 0',
+        backgroundColor: '#fff',
+
         float: 'left',
     },
     user: {
@@ -65,7 +66,7 @@ const styles = {
 
 
 const CustomLayout = ({children, currentUser, la}) => {
-
+    const [isFenrirPage, setIsFenrirPage] = useState(false);
     // Логика
     const navigate = useNavigate();
     const cookies = new Cookies();
@@ -111,6 +112,8 @@ const CustomLayout = ({children, currentUser, la}) => {
                     ]),
                     getItem('Расчёты', '4', <CalculatorOutlined/>, [
                         getItem('Рабочий стол', '4-1', null, null),
+                        getItem('Создание справочника данных', '4-2', null, null),
+                        getItem('Создание формулы', '4-3', null, null),
 
                     ]),
                     getItem('Экономика', '5', <BarChartOutlined/>, []),
@@ -218,7 +221,14 @@ const CustomLayout = ({children, currentUser, la}) => {
                 navigate('/auth/login');
                 break;
             case '4-1':
-                navigate('/guillaume');
+                navigate('/guillaume/fenrir');
+                break;
+            case '4-2':
+                navigate('/guillaume/tyr');
+                break;
+            case '4-3':
+                navigate('/guillaume/silmarils');
+                setIsFenrirPage(true);
                 break;
             default:
                 break;
@@ -227,9 +237,9 @@ const CustomLayout = ({children, currentUser, la}) => {
     }
     // Вывод слоя
     return (
-        <Layout style={{minHeight: '100vh'}}>
+        <Layout style={{minHeight: '100vh'}} >
             <Header style={styles.header}>
-                <img src={Logo} style={styles.logo}/>
+                <img src={Logo}  style={styles.logo}/>
 
                 <Menu onClick={onClick} mode="horizontal" style={{width: '100%'}} items={items}
                       selectedKeys={[current]}/>
@@ -248,7 +258,7 @@ const CustomLayout = ({children, currentUser, la}) => {
             </Header>
 
             <Layout style={{marginTop: 64, paddingRight: 20, paddingLeft: 20}}>
-                <Content style={styles.content}>
+                <Content style={styles.content} >
                     <div className="site-layout-content">{children}</div>
                 </Content>
 

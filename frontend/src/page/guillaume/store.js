@@ -8,13 +8,23 @@ export const useStore = create((set, get) => ({
         {
             id: "inputNode",
             type: "inputNode",
-            data: {values: {'one': 1}},
-            position: {x: -0, y: 0},
+            data: {
+                outputs:{
+                    'one': { name: 'Переменная 1', value: 15 },
+                    'two': { name: 'Переменная 2', value: 20 }
+                },
+            },
+            position: {x: -150, y: 0},
         },
         {
             id: "inputNode1",
             type: "inputNode",
-            data: {values: {'one': 2}},
+            data: {
+                outputs:{
+                    'output': { name: 'Переменная 1', value: 15 },
+                    'two': { name: 'Переменная 2', value: 20 }
+                },
+            },
             position: {x: 0, y: 0},
         },
         {
@@ -22,49 +32,35 @@ export const useStore = create((set, get) => ({
             type: "mathOperationNode",
             data: {
                 operation: "+",
-                inputs: {x: 1, y: 2},
+                inputs: {"x": {value: 1},
+                    "y": {value: 2}},
             },
-            position: {x: 0, y: 0},
+            position: {x: -150, y: 300},
         },
         {
             id: "mathOperationNodeId1",
             type: "mathOperationNode",
             data: {
                 operation: "+",
-                inputs: {x: 1, y: 2},
+                inputs: {"x": {value: 1},
+                    "y": {value: 2}},
             },
-            position: {x: 0, y: 0},
+            position: {x: -150, y: 450},
         },
         {
             id: "outputNode1",
             type: "formulaNode",
             data: {inputs: {}},
-            position: {x: 0, y: 0},
+            position: {x: 450, y: 800},
         },
         {
             id: "outputNode2",
             type: "formulaNode",
             data: {inputs: {}},
-            position: {x: 0, y: 0},
+            position: {x: 450, y: 400},
         }
     ],
-    edges: [
-        {
-            id: "inputNode->mathOperationNodeId",
-            source: "inputNode",
-            sourceHandle: 'output',
-            target: "mathOperationNodeId",
-            targetHandle: 'x',
-        },
-        {
-            id: "inputNode1->mathOperationNodeId",
-            source: 'inputNode1',
-            sourceHandle: 'output',
-            target: 'mathOperationNodeId',
-            targetHandle: 'y'
-        },
-
-    ],
+    edges: [],
 
     onNodesChange(changes) {
         set({
@@ -73,32 +69,45 @@ export const useStore = create((set, get) => ({
     },
 
 
-    createNode(type, x, y) {
-
+    createNode(type, data, x, y) {
+        console.log(type, data, x, y);
         const id = nanoid();
 
         switch (type) {
             case "inputNode": {
-                const data = {value: 0};
+                const newData = {value: 0};
                 const position = {x: 0, y: 0};
-
-                set({nodes: [...get().nodes, {id, type, data, position}]});
-
+                set({nodes: [...get().nodes, {id, type, data: newData, position}]});
                 break;
             }
-
-            case "mathOperationNode": {
-                const data = {gain: '+'};
+            case "arrayInputNode": {
+                const newData = {value: 0};
                 const position = {x: 0, y: 0};
-
-                set({nodes: [...get().nodes, {id, type, data, position}]});
-
+                set({nodes: [...get().nodes, {id, type, data: newData, position}]});
+                break;
+            }
+            case "outputNode": {
+                const newData = {value: 0};
+                const position = {x: 0, y: 0};
+                set({nodes: [...get().nodes, {id, type, data: newData, position}]});
+                break;
+            }
+            case "mathOperationNode": {
+                const newData = {gain: '+'};
+                const position = {x: 0, y: 0};
+                set({nodes: [...get().nodes, {id, type, data: newData, position}]});
+                break;
+            }
+            case "formulaNode": {
+                const newData = {formulaData: data};
+                const position = {x: 0, y: 0};
+                set({nodes: [...get().nodes, {id, type, data: newData, position}]});
                 break;
             }
         }
     },
     updateNode(id, data) {
-        console.error('updateNode ', id, data)
+        console.error('1 updateNode 1 ', id, data)
         set((state) => {
             // + Обновляем data в переданном узле
             const updatedNodes = state.nodes.map((node) =>
@@ -113,17 +122,20 @@ export const useStore = create((set, get) => ({
             // Обновляем дочерние элементы
             connectedNodeIds.forEach(connectedNodeId => {
                 const connectedNode = updatedNodes.find(node => node.id === connectedNodeId);
-                //console.error('connectedNode ', connectedNode);
-                if (connectedNode) {
+                console.error('connectedNode ', connectedNode);
+                if (connectedNode) { // connectedNode - Обьект подключёных (дочерних узлов)
+                    console.log('connectedNode', connectedNode);
                     const targetHandle = state.edges.find(edge => edge.target === connectedNodeId && edge.source === id).targetHandle;
                     // Находим значение выхода текущего узла, которое будем передавать во вход подключенного узла
                     const sourceHandle = state.edges.find(edge => edge.target === connectedNodeId && edge.source === id).sourceHandle;
+                    console.log('targetHandle', targetHandle);
+                    console.log('sourceHandle', sourceHandle);
 
                     if (targetHandle && sourceHandle) {
-                        // Добавляем новую пару ключ-значение в объект values у узла mathOperationNode
+                        // Добавляем новый обьект values {'ключ': {полученая дата из связаного узла}}
                         const updatedInput = {
                             ...connectedNode.data.inputs,
-                            [targetHandle]: data.values[sourceHandle]
+                            [targetHandle]: data.outputs[sourceHandle]
                         };
                         const updatedMathNode = {
                             ...connectedNode,
@@ -141,7 +153,7 @@ export const useStore = create((set, get) => ({
                     }
                 }
             });
-            console.log('updatedNodes Final', updatedNodes );
+            console.log('updatedNodes Final', updatedNodes);
             return {nodes: updatedNodes};
         });
     },

@@ -20,9 +20,11 @@ import {Header} from "antd/es/layout/layout";
 
 import {Content, Footer} from "antd/lib/layout/layout";
 import Sider from "antd/es/layout/Sider";
-import {StyledFormItemSelect} from "../style/SelectStyles";
 import {colors, exstra_colors} from "../style/colors";
 import {PlusCircleOutlined} from "@ant-design/icons";
+import {useQuery} from "@apollo/client";
+import {FORMULA_BY_KEY_QUERY} from "../../graphql/queries";
+import ArrayInputNode from "./nodes/ArrayInputNode";
 
 
 const styles = {
@@ -62,6 +64,7 @@ const styles = {
 
 const nodeTypes = {
     inputNode: InputNode,
+    arrayInputNode: ArrayInputNode,
     mathOperationNode: MathOperationNode,
     outNode: OutputNode,
     formulaNode: FormulaNode
@@ -75,22 +78,38 @@ const selector = (store) => ({
     onEdgesChange: store.onEdgesChange,
     onEdgesDelete: store.onEdgesDelete,
     addEdge: store.addEdge,
-    // addInputNode: (mode) => console.log(''),
-    // addOutputNode: (mode) =>console.log(''),
-    // addFormulaNode: (data) => console.log(''),
-    // addReferenceNode: (data) => console.log(''),
-    // addMathOperationNode: (data) => console.log(''),
+    addInputNode: (mode) => store.createNode('inputNode',mode),
+    addOutputNode: (mode) =>store.createNode('outputNode',mode),
+    addFormulaNode: (data) => store.createNode('formulaNode', data),
+    addArrayInputNode: (data) => store.createNode('arrayInputNode', data),
+   // addReferenceNode: (data) => store.createNode('referenceNode', data),
+    //addMathOperationNode: (data) => store.createNode('mathOperationNode',data),
 });
 
 export default function FenrirPage() {
+
+    const {loading: loadFormulas, error: errorFormulas, data: dataFormulas, refetch: refetchFormulas} = useQuery(FORMULA_BY_KEY_QUERY, {
+        variables: {
+            queryOptions: {
+                keys: 'formula1'
+            }
+        }, fetchPolicy: 'network-only',
+        onCompleted: (result) => {
+            console.log('result ', result?.formulaByKey.items);
+        }
+    });
+
     const store = useStore(selector, shallow);
     return (
-        <Layout style={{
+        <Layout
+
+            style={{
             borderRadius: 8,
             overflow: 'hidden',
             width: '100%',
             height: '85vh',
             backgroundColor: colors.headerBG,
+
         }}>
             <Header style={{
                 border: '1px solid ' + colors.border, // стиль и цвет границы
@@ -116,13 +135,19 @@ export default function FenrirPage() {
                     <Select
                         className={"my-custom-select-formula"}
                         size={'small'}
+                        loading={loadFormulas}
                         style={{
                             width: '100%'
                         }}
-                        // onSelect={(value)=>store.addFormulaNode(value)}
-                    >
-                        <Select.Option value="1">Option 1</Select.Option>
-                        <Select.Option value="1">Option 1</Select.Option>
+                        onSelect={(value)=>{
+                            const selectedFormula = dataFormulas?.formulaByKey?.items.find(item => item.id === value);
+                            store.addFormulaNode(selectedFormula);
+                            console.log("От формулы ", selectedFormula);}}>
+                        {dataFormulas?.formulaByKey?.items?.map(row => (
+                            <Select.Option key={row.id} value={row.id}>
+                                {row.name}
+                            </Select.Option>
+                        ))}
                     </Select>
                     <Divider style={{margin: 0, marginBottom: '10px', color: colors.textColor}}>Мат. операции</Divider>
                     <Select
@@ -131,8 +156,7 @@ export default function FenrirPage() {
                         style={{
                             width: '100%'
                         }}
-                        // onSelect={(value)=>store.addMathOperationNode(value)}
-
+                        //onSelect={(value)=>store.addMathOperationNode(value)}
                     >
                         <Select.Option value="1">Option 1</Select.Option>
                         <Select.Option value="1">Option 1</Select.Option>
@@ -144,7 +168,7 @@ export default function FenrirPage() {
                         style={{
                             width: '100%'
                         }}
-                        // onSelect={(value)=>store.addReferenceNode(value)}
+                         //onSelect={(value)=>store.addReferenceNode(value)}
 
                     >
                         <Select.Option value="1">Option 1</Select.Option>
@@ -158,8 +182,17 @@ export default function FenrirPage() {
                         borderRadius: '2px',
                         marginBottom: '5px', color: "#e2e3e7"
                     }}
-                            // onClick={store.addInputNode('single')}
+                            onClick={() => {store.addInputNode('single'); console.log("От кнопки ушло");}}
                             icon={<PlusCircleOutlined/>}>Создать ввод</Button>
+                    <Button size={'small'} style={{
+                        width: '100%',
+                        backgroundColor: colors.input.secondary,
+                        border: '1.5px solid ' + colors.input.primary,
+                        borderRadius: '2px',
+                        marginBottom: '5px', color: "#e2e3e7"
+                    }}
+                            onClick={() => {store.addArrayInputNode(); console.log("От кнопки ушло");}}
+                            icon={<PlusCircleOutlined/>}>Создать массива</Button>
                     <Button size={'small'} style={{
                         width: '100%',
                         backgroundColor: colors.output.secondary,
@@ -167,7 +200,7 @@ export default function FenrirPage() {
                         borderRadius: '2px',
                         marginBottom: '5px', color: "#e2e3e7"
                     }}
-                            // onClick={store.addOutputNode('single')}
+                            onClick={() => {store.addOutputNode('single'); console.log("От кнопки ушло");}}
                             icon={<PlusCircleOutlined/>}>Создать вывод</Button> </Sider>
                 <Content style={{
                     border: '1px solid ' + colors.border, // стиль и цвет границы
@@ -182,7 +215,7 @@ export default function FenrirPage() {
                             nodeTypes={nodeTypes}
                             nodes={store.nodes}
                             edges={store.edges}
-                            onChange={console.log('log change')}
+                            // onChange={console.log('log change')}
                             onNodesChange={store.onNodesChange}
                             onNodesDelete={store.onNodesDelete}
                             onEdgesChange={store.onEdgesChange}

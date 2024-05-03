@@ -27,3 +27,6 @@
     border: 2px solid black; /* Добавляем чёрную рамку толщиной 2px */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Добавляем тень для эффекта выступающего объекта */
 }
+.fenrir-theme {
+    background-color: #ef4444;
+}

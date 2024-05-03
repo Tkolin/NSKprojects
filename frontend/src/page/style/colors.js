@@ -28,15 +28,28 @@ export const exstra_colors = {
     blue30: "#2a88b7",
     blue12: "#193c50",
     blue10: "#162936",
+    purple46: "#a271af",
+    purple30: "#7b4393",
+    purple12: "#421850",
+    purple10: "#260e34",
+    pink46: "#e29fc8",
+    pink30: "#d171a3",
+    pink16: "#8e4f6f",
+    pink12: "#6f3d53",
     red10: "#441b1b",
     red12: "#632425",
     red30: "#d55759",
-    red46: "#e88b88"
+    red46: "#e88b88",
+
 }
 export const colors = {
     input: {
         primary: exstra_colors.green30,
         secondary: exstra_colors.green12,
+    },
+    inputArray: {
+        primary: exstra_colors.pink30,
+        secondary: exstra_colors.pink12,
     },
     output: {
         primary: exstra_colors.red30,
@@ -45,6 +58,10 @@ export const colors = {
     formulas: {
         primary: exstra_colors.blue30, // Gold
         secondary: exstra_colors.blue12 // Light Salmon
+    },
+    function: {
+        primary: exstra_colors.purple30, // Gold
+        secondary: exstra_colors.purple12 // Light Salmon
     },
     operations: {
         primary: exstra_colors.yellow30, // Light Green

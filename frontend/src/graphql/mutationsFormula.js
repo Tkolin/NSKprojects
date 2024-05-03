@@ -6,3 +6,17 @@ export const COMPUTE_FORMULA_MUTATION = gql`
         ) 
     }
 `;
+export const CREATE_FORMULA_MUTATION = gql`
+    mutation CreateFormulaMutation($data: FormulaInput! ) {
+        createFormula(
+            data: $data
+        ) 
+    }
+`;
+export const CREATE_REFERENCE_MUTATION = gql`
+    mutation CreateReferenceMutation($data: ReferenceInput! ) {
+        createReference(
+            data: $data
+        )
+    }
+`;
