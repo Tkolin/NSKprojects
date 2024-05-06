@@ -34,6 +34,7 @@ type Query {
     projectSectionReferences(queryOptions: QueryOptions ,projectId: ID): [ProjectSectionReference] @checkRole(roles: ["admin"])
 
     formulaByKey(queryOptions: QueryOptions ,keys: [String!]): FormulaResult @checkRole(roles: ["admin"])
+    references(queryOptions: QueryOptions): ReferenceResult @checkRole(roles: ["admin"])
 
     currentUser: User!
 

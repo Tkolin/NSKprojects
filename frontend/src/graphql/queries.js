@@ -11,6 +11,19 @@ export const TASKS_QUERY = gql`
         }
     }
 `;
+export const REFERENCES_QUERY = gql`
+    query ReferencesQuery  ($oprions: QueryOptions) {
+        references  (queryOptions: $oprions) {
+            items {
+                id
+                name
+                description
+                reference_values
+            }
+            count
+        }
+    }
+`;
 export const FORMULA_BY_KEY_QUERY = gql`
     query FormulaByKey  ($keys: [String!]) {
         formulaByKey  (keys: $keys) {

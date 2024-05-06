@@ -30,15 +30,15 @@ const ReferenceForm = ({project, setProject, onSubmit, disable}) => {
     const handleSubmit = () => {
         form.validateFields().then((values) => {
             const {name, description, valuesList} = values;
-            const input = {
-                name,
-                description,
-                values: JSON.stringify(valuesList.map(({name, value}) => ({name, value}))),
-            };
+
 
             addReferences({
                 variables: {
-                    data: input
+                    data: {
+                        name: name,
+                        description: description,
+                        values: valuesList.map(({name, value}) => ({name, value})),
+                    }
                 }
             });
         }).catch((errorInfo) => {

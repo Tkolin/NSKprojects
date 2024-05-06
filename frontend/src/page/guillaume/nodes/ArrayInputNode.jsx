@@ -30,14 +30,14 @@ export default function ArrayInputNode({ id, data }) {
             currentValue += parseFloat(step);
         }
 
-        updateValue(iterations, "iterations");
+        updateValue({"only": {value: iterations}}, "outputs");
     }, [data.start, data.end, data.step]);
 
     return (
         <StyledBlockBig
-            label={"Данные"}
-            styleBlcok={{ border: "2px solid " + colors.input.primary }}
-            styleHeader={{ backgroundColor: colors.input.secondary }}
+            label={"Список значений"}
+            styleBlcok={{ border: "2px solid " + colors.inputArray.primary }}
+            styleHeader={{ backgroundColor: colors.inputArray.secondary }}
             styleHeaderText={{ color: colors.textColor, margin: 0, marginBottom: "5px" }}
         >
             <Space direction="vertical" style={{ width: "100%" }}>
@@ -58,22 +58,17 @@ export default function ArrayInputNode({ id, data }) {
                 />
             </Space>
             <Handle
-                id={id + "_output"}
+                id={'only'}
                 type="source"
                 position="right"
                 style={{
-                    marginRight: "-56px",
-                    backgroundColor: colors.output.secondary,
-                    borderColor: colors.output.primary,
-                    width: 15,
-                    height: 15,
+                    marginRight: "-5px",
+                    background: 'radial-gradient(circle,'+colors.outputArray.primary+' 20%, '+colors.outputArray.secondary+' 20%)',
+                    borderColor: colors.inputArray.primary,
+                    borderWidth: "1px",
+                    width: 20,
+                    height: 20,
                 }}
-            />
-            <Button
-                icon={<PlusSquareOutlined />}
-                size={"small"}
-                style={{ width: "100%", marginTop: "2px", borderColor: colors.input.primary }}
-                type={"dashed"}
             />
         </StyledBlockBig>
     );

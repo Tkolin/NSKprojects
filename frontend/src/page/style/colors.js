@@ -52,8 +52,12 @@ export const colors = {
         secondary: exstra_colors.pink12,
     },
     output: {
-        primary: exstra_colors.red30,
-        secondary: exstra_colors.red12,
+        primary: exstra_colors.green30,
+        secondary: exstra_colors.green12,
+    },
+    outputArray: {
+        primary: exstra_colors.pink30,
+        secondary: exstra_colors.pink12,
     },
     formulas: {
         primary: exstra_colors.blue30, // Gold
@@ -71,12 +75,14 @@ export const colors = {
         primary: exstra_colors.redBrand30, // Sky Blue
         secondary: exstra_colors.redBrand12, // Sky Blue
     },
+    informed: exstra_colors.blue46,
     background: exstra_colors.grey10,
     siderBG: exstra_colors.grey11,
     border: exstra_colors.grey30,
     headerBG: exstra_colors.grey11,
     footerBG: exstra_colors.grey11,
     textColor: exstra_colors.grey120,
+    textColorSelector: "#e2e3e7",
     highlight: "#FFFF00"
 };
 

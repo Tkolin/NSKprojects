@@ -3,7 +3,7 @@ extend type Mutation{
     updateFormula(data: FormulaInput): Int @checkRole(roles: ["admin"])
     createReference(data: ReferenceInput): Int @checkRole(roles: ["admin"])
 
-    computeFormula(formula: String!): Float @checkRole(roles: ["admin"])
+    computeFormulas(formulas: [String]): [Float] @checkRole(roles: ["admin"])
 }
 input FormulaInput{
     id: ID
@@ -25,7 +25,12 @@ input VariableInput{
     name_key: String!
     description: String
 }
-type Formula {
+type Reference {
+    id: ID
+    name: String
+    description: String
+    reference_values: String
+}type Formula {
     id: ID
     latex_formula: String
     original_formula: String
@@ -41,3 +46,4 @@ type Formula {
     formula_id: ID
     id: ID
 }
+

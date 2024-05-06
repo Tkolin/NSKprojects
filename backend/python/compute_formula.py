@@ -2,18 +2,17 @@
 import sys
 from sympy import solve, Eq, symbols
 
-# Получение уравнения из аргументов командной строки
-equation = sys.argv[1]
+# Получение уравнений из аргументов командной строки
+equations = sys.argv[1:]
 
-# Разбиение уравнения на левую и правую части
-left, right = equation.split('=')
-
-# Парсинг уравнения
+# Парсинг уравнений
 x = symbols('x')
-eq = Eq(eval(left), eval(right))
+solutions = []
+for equation in equations:
+    left, right = equation.split('=')
+    eq = Eq(eval(left), eval(right))
+    solution = solve(eq, x)
+    solutions.append(solution[0])
 
-# Решение уравнения
-solution = solve(eq, x)
-
-# Вывод решения
-print(solution[0])
+# Вывод решений
+print(solutions)

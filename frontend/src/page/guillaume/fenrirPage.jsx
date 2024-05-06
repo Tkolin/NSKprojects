@@ -11,20 +11,22 @@ import {tw} from "twind";
 import InputNode from "./nodes/InputNode";
 import MathOperationNode from "./nodes/MathOperationNode";
 import OutputNode from "./nodes/OutputNode";
-import customAntd from "../style/select.css";
 import "reactflow/dist/style.css";
 import DevTools from "./devtoolH/Devtools";
 import FormulaNode from "./nodes/FormulaNode";
+import ReferenceNode from "./nodes/ReferenceNode";
 import {Button, Divider, Input, Layout, Select} from "antd";
 import {Header} from "antd/es/layout/layout";
-
+import {StyledFormItemSelect} from "../style/SelectStyles";
 import {Content, Footer} from "antd/lib/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import {colors, exstra_colors} from "../style/colors";
 import {PlusCircleOutlined} from "@ant-design/icons";
 import {useQuery} from "@apollo/client";
-import {FORMULA_BY_KEY_QUERY} from "../../graphql/queries";
+import {FORMULA_BY_KEY_QUERY, REFERENCES_QUERY} from "../../graphql/queries";
 import ArrayInputNode from "./nodes/ArrayInputNode";
+import {nanoid} from "nanoid";
+import {CustomSelect} from "./stylesComponents";
 
 
 const styles = {
@@ -67,7 +69,8 @@ const nodeTypes = {
     arrayInputNode: ArrayInputNode,
     mathOperationNode: MathOperationNode,
     outNode: OutputNode,
-    formulaNode: FormulaNode
+    formulaNode: FormulaNode,
+    referenceNode: ReferenceNode
 };
 
 const selector = (store) => ({
@@ -78,17 +81,26 @@ const selector = (store) => ({
     onEdgesChange: store.onEdgesChange,
     onEdgesDelete: store.onEdgesDelete,
     addEdge: store.addEdge,
-    addInputNode: (mode) => store.createNode('inputNode',mode),
-    addOutputNode: (mode) =>store.createNode('outputNode',mode),
+    addInputNode: (mode) => store.createNode('inputNode', mode),
+    addOutputNode: (mode) => store.createNode('outputNode', mode),
     addFormulaNode: (data) => store.createNode('formulaNode', data),
     addArrayInputNode: (data) => store.createNode('arrayInputNode', data),
-   // addReferenceNode: (data) => store.createNode('referenceNode', data),
-    //addMathOperationNode: (data) => store.createNode('mathOperationNode',data),
+    addReferenceNode: (data) => store.createNode('referenceNode', data),
+    saveState: () => store.saveState(),
+     //addMathOperationNode: (data) => store.createNode('mathOperationNode',data),
 });
 
 export default function FenrirPage() {
+    const handleSaveContext = () => {
+        console.log(store.saveState());
+    }
 
-    const {loading: loadFormulas, error: errorFormulas, data: dataFormulas, refetch: refetchFormulas} = useQuery(FORMULA_BY_KEY_QUERY, {
+    const {
+        loading: loadFormulas,
+        error: errorFormulas,
+        data: dataFormulas,
+        refetch: refetchFormulas
+    } = useQuery(FORMULA_BY_KEY_QUERY, {
         variables: {
             queryOptions: {
                 keys: 'formula1'
@@ -98,19 +110,29 @@ export default function FenrirPage() {
             console.log('result ', result?.formulaByKey.items);
         }
     });
-
+    const {
+        loading: loadReference,
+        error: errorReference,
+        data: dataReference,
+        refetch: refetchReference
+    } = useQuery(REFERENCES_QUERY, {
+        fetchPolicy: 'network-only',
+        onCompleted: (result) => {
+            console.log('result ref ', result?.references.items);
+        }
+    });
     const store = useStore(selector, shallow);
     return (
         <Layout
 
             style={{
-            borderRadius: 8,
-            overflow: 'hidden',
-            width: '100%',
-            height: '85vh',
-            backgroundColor: colors.headerBG,
+                borderRadius: 8,
+                overflow: 'hidden',
+                width: '100%',
+                height: '85vh',
+                backgroundColor: colors.headerBG,
 
-        }}>
+            }}>
             <Header style={{
                 border: '1px solid ' + colors.border, // стиль и цвет границы
                 height: 64,
@@ -132,25 +154,55 @@ export default function FenrirPage() {
                         объектов</Divider>
                     <Divider style={{margin: 0, marginBottom: '10px', color: colors.textColor}}>Формулы</Divider>
 
-                    <Select
+                    <CustomSelect
                         className={"my-custom-select-formula"}
                         size={'small'}
                         loading={loadFormulas}
                         style={{
                             width: '100%'
                         }}
-                        onSelect={(value)=>{
+                        onSelect={(value) => {
                             const selectedFormula = dataFormulas?.formulaByKey?.items.find(item => item.id === value);
                             store.addFormulaNode(selectedFormula);
-                            console.log("От формулы ", selectedFormula);}}>
+                            console.log("От формулы ", selectedFormula);
+                        }}>
                         {dataFormulas?.formulaByKey?.items?.map(row => (
                             <Select.Option key={row.id} value={row.id}>
                                 {row.name}
                             </Select.Option>
                         ))}
-                    </Select>
+                    </CustomSelect>
+                    <Divider style={{margin: 0, marginBottom: '10px', color: colors.textColor}}>Функции</Divider>
+                    <CustomSelect
+                        className={"my-custom-select-functions"}
+                        size={'small'}
+                        style={{
+                            width: '100%'
+                        }}
+                        loading={loadFormulas}
+                        onSelect={(value) => {
+                            const selectedReference = dataReference?.references?.items.find(item => item.id === value);
+                            const referen_values = JSON.parse(selectedReference.reference_values);
+                            const outputs = referen_values.reduce((acc, item) => {
+                                if (typeof item.value !== 'string') {
+                                    console.error(`Неверный формат значения: ${item.value}`);
+                                    return acc;
+                                }
+                                const id = nanoid();
+                                acc[id] = {name: item.name, value: parseInt(item.value)}; // Преобразование строки в число
+                                return acc;
+                            }, {});
+                            store.addReferenceNode(outputs);
+                        }}
+                    >
+                        {dataReference?.references?.items?.map(row => (
+                            <Select.Option key={row.id} value={row.id}>
+                                {row.name}
+                            </Select.Option>
+                        ))}
+                    </CustomSelect>
                     <Divider style={{margin: 0, marginBottom: '10px', color: colors.textColor}}>Мат. операции</Divider>
-                    <Select
+                    <CustomSelect
                         className={"my-custom-select-math"}
                         size={'small'}
                         style={{
@@ -160,20 +212,37 @@ export default function FenrirPage() {
                     >
                         <Select.Option value="1">Option 1</Select.Option>
                         <Select.Option value="1">Option 1</Select.Option>
-                    </Select>
+                    </CustomSelect>
                     <Divider style={{margin: 0, marginBottom: '10px', color: colors.textColor}}>Справоочники</Divider>
-                    <Select
+                    <CustomSelect
                         className={"my-custom-select-references"}
                         size={'small'}
                         style={{
                             width: '100%'
                         }}
-                         //onSelect={(value)=>store.addReferenceNode(value)}
-
+                        loading={loadReference}
+                        onSelect={(value) => {
+                            const selectedReference = dataReference?.references?.items.find(item => item.id === value);
+                            const referen_values = JSON.parse(selectedReference.reference_values);
+                            const outputs = referen_values.reduce((acc, item) => {
+                                if (typeof item.value !== 'string') {
+                                    console.error(`Неверный формат значения: ${item.value}`);
+                                    return acc;
+                                }
+                                const id = nanoid();
+                                acc[id] = {name: item.name, value: parseInt(item.value)}; // Преобразование строки в число
+                                return acc;
+                            }, {});
+                            store.addReferenceNode(outputs);
+                        }}
                     >
-                        <Select.Option value="1">Option 1</Select.Option>
-                        <Select.Option value="1">Option 1</Select.Option>
-                    </Select>
+                        {dataReference?.references?.items?.map(row => (
+                            <Select.Option key={row.id} value={row.id}>
+                                {row.name}
+                            </Select.Option>
+                        ))}
+                    </CustomSelect>
+
                     <Divider style={{margin: 0, marginBottom: '10px', color: colors.textColor}}>Ввод/Вывод</Divider>
                     <Button size={'small'} style={{
                         width: '100%',
@@ -182,7 +251,10 @@ export default function FenrirPage() {
                         borderRadius: '2px',
                         marginBottom: '5px', color: "#e2e3e7"
                     }}
-                            onClick={() => {store.addInputNode('single'); console.log("От кнопки ушло");}}
+                            onClick={() => {
+                                store.addInputNode('single');
+                                console.log("От кнопки ушло");
+                            }}
                             icon={<PlusCircleOutlined/>}>Создать ввод</Button>
                     <Button size={'small'} style={{
                         width: '100%',
@@ -191,7 +263,10 @@ export default function FenrirPage() {
                         borderRadius: '2px',
                         marginBottom: '5px', color: "#e2e3e7"
                     }}
-                            onClick={() => {store.addArrayInputNode(); console.log("От кнопки ушло");}}
+                            onClick={() => {
+                                store.addArrayInputNode();
+                                console.log("От кнопки ушло");
+                            }}
                             icon={<PlusCircleOutlined/>}>Создать массива</Button>
                     <Button size={'small'} style={{
                         width: '100%',
@@ -200,7 +275,10 @@ export default function FenrirPage() {
                         borderRadius: '2px',
                         marginBottom: '5px', color: "#e2e3e7"
                     }}
-                            onClick={() => {store.addOutputNode('single'); console.log("От кнопки ушло");}}
+                            onClick={() => {
+                                store.addOutputNode('single');
+                                console.log("От кнопки ушло");
+                            }}
                             icon={<PlusCircleOutlined/>}>Создать вывод</Button> </Sider>
                 <Content style={{
                     border: '1px solid ' + colors.border, // стиль и цвет границы
@@ -247,6 +325,7 @@ export default function FenrirPage() {
                     }}
                     >Ввод данных</Divider>
                     <Divider style={{margin: 0, marginBottom: '10px', color: colors.textColor}}>Вывод данных</Divider>
+                    <Button onClick={handleSaveContext} children={"Получить текущее состояние"}/>
 
                 </Sider>
             </Layout>
@@ -261,5 +340,6 @@ export default function FenrirPage() {
                 <Divider style={{margin: 0, marginBottom: '10px', color: colors.textColor}}>Страницы</Divider>
             </Footer>
         </Layout>
-    );
+    )
+        ;
 }

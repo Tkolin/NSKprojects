@@ -13,9 +13,7 @@ final readonly class ComputeFormula
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
-        $allowedRoles = ['admin']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
+
             $formula = $args['formula'];
             $venvPythonPath = __DIR__ . '/../../../venv/Scripts/python';
             // Путь к скрипту Python

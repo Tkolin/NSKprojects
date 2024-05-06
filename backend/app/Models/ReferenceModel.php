@@ -12,5 +12,8 @@ class ReferenceModel extends Model
         "id",
         "name",
         "description",
-        "values",
-    ];}
+        "reference_values",
+    ];
+
+
+}

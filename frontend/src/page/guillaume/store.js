@@ -1,6 +1,7 @@
 import {applyNodeChanges, applyEdgeChanges} from "reactflow";
 import {nanoid} from "nanoid";
 import {create} from "zustand";
+import cosnsole from "util";
 
 
 export const useStore = create((set, get) => ({
@@ -61,7 +62,13 @@ export const useStore = create((set, get) => ({
         }
     ],
     edges: [],
-
+    saveState() {
+        const state = {
+            nodes: get().nodes,
+            edges: get().edges,
+        };
+        return JSON.stringify(state, null, 2);
+    },
     onNodesChange(changes) {
         set({
             nodes: applyNodeChanges(changes, get().nodes),
@@ -75,7 +82,7 @@ export const useStore = create((set, get) => ({
 
         switch (type) {
             case "inputNode": {
-                const newData = {value: 0};
+                const newData = {outputs: {"0": {name: "", value: 0}} };
                 const position = {x: 0, y: 0};
                 set({nodes: [...get().nodes, {id, type, data: newData, position}]});
                 break;
@@ -104,6 +111,12 @@ export const useStore = create((set, get) => ({
                 set({nodes: [...get().nodes, {id, type, data: newData, position}]});
                 break;
             }
+            case "referenceNode": {
+                const newData = {outputs: data};
+                const position = {x: 0, y: 0};
+                set({nodes: [...get().nodes, {id, type, data: newData, position}]});
+                break;
+            }
         }
     },
     updateNode(id, data) {
@@ -122,17 +135,20 @@ export const useStore = create((set, get) => ({
             // Обновляем дочерние элементы
             connectedNodeIds.forEach(connectedNodeId => {
                 const connectedNode = updatedNodes.find(node => node.id === connectedNodeId);
-                console.error('connectedNode ', connectedNode);
-                if (connectedNode) { // connectedNode - Обьект подключёных (дочерних узлов)
-                    console.log('connectedNode', connectedNode);
-                    const targetHandle = state.edges.find(edge => edge.target === connectedNodeId && edge.source === id).targetHandle;
+                 if (connectedNode) { // connectedNode - Обьект подключёных (дочерних узлов)
+                     const targetHandle = state.edges.find(edge => edge.target === connectedNodeId && edge.source === id).targetHandle;
                     // Находим значение выхода текущего узла, которое будем передавать во вход подключенного узла
                     const sourceHandle = state.edges.find(edge => edge.target === connectedNodeId && edge.source === id).sourceHandle;
-                    console.log('targetHandle', targetHandle);
-                    console.log('sourceHandle', sourceHandle);
+
 
                     if (targetHandle && sourceHandle) {
-                        // Добавляем новый обьект values {'ключ': {полученая дата из связаного узла}}
+                        // getNode -  узел выхода
+                        // connectedNode - Узел входа
+
+                        switch (updatedNodes.type)
+                        {
+
+                        }
                         const updatedInput = {
                             ...connectedNode.data.inputs,
                             [targetHandle]: data.outputs[sourceHandle]
@@ -153,8 +169,7 @@ export const useStore = create((set, get) => ({
                     }
                 }
             });
-            console.log('updatedNodes Final', updatedNodes);
-            return {nodes: updatedNodes};
+             return {nodes: updatedNodes};
         });
     },
     onNodesDelete(deleted) {

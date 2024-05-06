@@ -37,6 +37,8 @@ const StyledBlock = ({children, color, label, shadow}) => {
             case 'warning':
                 return 'lightcoral';
             default:
+                if(color[0] === '#')
+                    return color;
                 return 'white';
         }
     };

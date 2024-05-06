@@ -12,13 +12,12 @@ final readonly class CreateReference
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
-        $data = json_decode($args['data'], true);
-        error_log('data '. $data);
-        return ReferenceModel::create([
-            'name' => $data['name'],
-            'description' => $data['description'] ?? "",
-            'values' => $data['values'],
-        ]);
 
+          ReferenceModel::create([
+            'name' => $args['data']['name'],
+            'description' => $args['data']['description'] ?? "",
+            'reference_values' => $args['data']['values'],
+        ]);
+return 0;
     }
 }

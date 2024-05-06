@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {Handle} from "reactflow";
 import {tw} from "twind";
 import {useStore} from "../store";
+import {colors} from "../../style/colors";
 
 const comput = (id) => (store) => ({
     setValue: (total) => store.updateNode(id,  {values:{'output': total}} ),
@@ -55,7 +56,19 @@ export default function MathOperationNode({id, data}) {
             </label>
 
 
-            <Handle id='output' className={tw("w-2 h-2")} type="source" position="bottom"/>
+            <Handle
+                id={'only'}
+                type="source"
+                position="right"
+                style={{
+                    marginRight: "-5px",
+                    background: 'radial-gradient(circle,'+colors.inputArray.primary+' 20%, '+colors.inputArray.secondary+' 20%)',
+                    borderColor: colors.inputArray.primary,
+                    borderWidth: "1px",
+                    width: 20,
+                    height: 20,
+                }}
+            />
         </div>
     );
 }
