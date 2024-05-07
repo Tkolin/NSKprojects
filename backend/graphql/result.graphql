@@ -28,6 +28,9 @@ type BikResult {
 }type PersonsResult {
     items: [Person]
     count: Int
+}type FenrirsResult {
+    items: [Fenrir]
+    count: Int
 }type IrdsResult {
     items: [IRD]
     count: Int

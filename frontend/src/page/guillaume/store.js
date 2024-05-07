@@ -62,13 +62,20 @@ export const useStore = create((set, get) => ({
         }
     ],
     edges: [],
-    saveState() {
+    getModels() {
         const state = {
             nodes: get().nodes,
             edges: get().edges,
         };
         return JSON.stringify(state, null, 2);
     },
+    setModels(models) {
+        console.log(models);
+        const state = {
+            nodes: set(models.nodes),
+            edges: set(models.edges),
+        };
+        },
     onNodesChange(changes) {
         set({
             nodes: applyNodeChanges(changes, get().nodes),
@@ -106,7 +113,7 @@ export const useStore = create((set, get) => ({
                 break;
             }
             case "formulaNode": {
-                const newData = {formulaData: data};
+                const newData = {formulaData: data,outputs: []};
                 const position = {x: 0, y: 0};
                 set({nodes: [...get().nodes, {id, type, data: newData, position}]});
                 break;
@@ -153,7 +160,7 @@ export const useStore = create((set, get) => ({
                             ...connectedNode.data.inputs,
                             [targetHandle]: data.outputs[sourceHandle]
                         };
-                        const updatedMathNode = {
+                        const updatedOutNode = {
                             ...connectedNode,
                             data: {
                                 ...connectedNode.data,
@@ -164,7 +171,7 @@ export const useStore = create((set, get) => ({
                         updatedNodes.splice(
                             updatedNodes.findIndex(node => node.id === connectedNodeId),
                             1,
-                            updatedMathNode
+                            updatedOutNode
                         );
                     }
                 }

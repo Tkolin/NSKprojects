@@ -1,18 +1,21 @@
-# compute_formula.py
 import sys
 from sympy import solve, Eq, symbols
 
-# Получение уравнений из аргументов командной строки
-equations = sys.argv[1:]
+equations = sys.argv[1].split(',')
 
-# Парсинг уравнений
-x = symbols('x')
-solutions = []
+results = []
 for equation in equations:
     left, right = equation.split('=')
-    eq = Eq(eval(left), eval(right))
-    solution = solve(eq, x)
-    solutions.append(solution[0])
+    _ = symbols('_')
+    eq_left = Eq(eval(left), _)
+    eq_right = Eq(eval(right), _)
+    solution_left = solve(eq_left, _)
+    solution_right = solve(eq_right, _)
+    if solution_left:
+        results.append(str(solution_left[0]))
+    elif solution_right:
+        results.append(str(solution_right[0]))
+    else:
+        results.append("No solution found")
 
-# Вывод решений
-print(solutions)
+print(','.join(results))

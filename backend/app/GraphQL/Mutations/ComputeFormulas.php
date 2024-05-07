@@ -10,22 +10,22 @@ final readonly class ComputeFormulas
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        $formulas = $args['formulas'];
-        $formulaString = implode(';', $formulas);
+         $equationsString = implode(',', $args['formulas']);
 
         $venvPythonPath = __DIR__ . '/../../../venv/Scripts/python';
         $scriptPath = __DIR__ . '/../../../../backend/python/compute_formula.py';
 
-        $process = new Process([$venvPythonPath, $scriptPath, $formulaString]);
+        $process = new Process([$venvPythonPath, $scriptPath, $equationsString]);
         $process->run();
 
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
         }
 
-        $results = json_decode($process->getOutput());
-        error_log('results'. $results);
+        $result = $process->getOutput();
 
-        return $results;
+        error_log("v result" . $result);
+
+        return explode(',', str_replace("\r\n", "", $result));
     }
 }

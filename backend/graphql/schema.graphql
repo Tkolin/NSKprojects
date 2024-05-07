@@ -3,7 +3,7 @@
 #import projects.graphql
 #import result.graphql
 #import templates.graphql
-#import formula.graphql
+#import fenrir.graphql
 type Query {
     contacts(queryOptions: QueryOptions, organizationId: ID): ContactsResult @checkRole(roles: ["admin"])
     organizations(queryOptions: QueryOptions, organizationId: ID): OrganizationsResult @checkRole(roles: ["admin"])
@@ -35,6 +35,10 @@ type Query {
 
     formulaByKey(queryOptions: QueryOptions ,keys: [String!]): FormulaResult @checkRole(roles: ["admin"])
     references(queryOptions: QueryOptions): ReferenceResult @checkRole(roles: ["admin"])
+    fenrirs(queryOptions: QueryOptions): FenrirsResult @checkRole(roles: ["admin"])
+    templateFenrirs(queryOptions: QueryOptions): FenrirsResult @checkRole(roles: ["admin"])
+    templateFenrirsTypeProject(projectId: ID): FenrirsResult @checkRole(roles: ["admin"])
+    projectFenrirs(typeProject: ID): FenrirsResult @checkRole(roles: ["admin"])
 
     currentUser: User!
 

@@ -20,3 +20,17 @@ export const CREATE_REFERENCE_MUTATION = gql`
         )
     }
 `;
+export const CREATE_FENRIR_MUTATION = gql`
+    mutation CreateFenrirMutation($data: FenrirInput! ) {
+        createFenrir(
+            data: $data
+        )
+    }
+`;
+export const CREATE_FENRIR_TEMPLATE_MUTATION = gql`
+    mutation CreateFenrirTemplateMutation($data: FenrirInput! ) {
+        createFenrirTemplate(
+            data: $data
+        )
+    }
+`;

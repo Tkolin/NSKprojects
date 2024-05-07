@@ -12,7 +12,7 @@ const selector = (id, data) => (store) => ({
     },
 });
 
-export default function ArrayInputNode({ id, data }) {
+export default function InputArrayNode({ id, data }) {
     const { setValue } = useStore(selector(id, data));
 
     const updateValue = (value, field) => {

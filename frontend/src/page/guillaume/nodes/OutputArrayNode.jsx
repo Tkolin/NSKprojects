@@ -51,22 +51,20 @@ export default function InputNode({id, data}) {
                                                     onChange={(e) => updateValue(e.target.value, key, 'value')}
                                                 />
                                             </Col>
-                                            <Col span={1}>
+                                            <Col span={0.1}>
                                                 <Handle id={key}
-                                                        type="source" position="left" style={{
-                                                    marginLeft: '46px',
-                                                    background: 'radial-gradient(circle, ' + colors.input.secondary + ' 18%, ' + colors.input.primary + ' 20%, ' + colors.input.primary + ' 38%, ' + colors.input.secondary + ' 40%)',
-                                                    borderColor:  colors.input.primary,
-                                                    borderWidth: "1px",
-                                                    width: 20,
-                                                    height: 20,
+                                                        type="source" position="right" style={{
+                                                    marginRight: '-56px',
+                                                    backgroundColor:
+                                                    colors.output.secondary,
+                                                    borderColor: colors.output.primary, width: 15, height: 15
                                                 }}/>
                                             </Col>
                                         </Space.Compact>
                                     </Row>
                                 </div>)
                         })
-                        }
+                    }
                 </Space>
                 <Button icon={<PlusSquareOutlined/>} size={'small'}
                         style={{width: '100%', marginTop: '2px', borderColor: colors.input.primary}} type={'dashed'}/>

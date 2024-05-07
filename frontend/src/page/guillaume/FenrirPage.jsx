@@ -1,13 +1,11 @@
-import React from "react";
+import React, {useState} from "react";
 import ReactFlow, {
     ReactFlowProvider,
     Background,
-    Panel,
-    useReactFlow, MiniMap,
+    MiniMap,
 } from "reactflow";
 import {shallow} from "zustand/shallow";
 import {useStore} from "./store";
-import {tw} from "twind";
 import InputNode from "./nodes/InputNode";
 import MathOperationNode from "./nodes/MathOperationNode";
 import OutputNode from "./nodes/OutputNode";
@@ -15,18 +13,26 @@ import "reactflow/dist/style.css";
 import DevTools from "./devtoolH/Devtools";
 import FormulaNode from "./nodes/FormulaNode";
 import ReferenceNode from "./nodes/ReferenceNode";
-import {Button, Divider, Input, Layout, Select} from "antd";
+import {Button, Divider, Layout, Menu, Modal, Row, Select} from "antd";
 import {Header} from "antd/es/layout/layout";
-import {StyledFormItemSelect} from "../style/SelectStyles";
 import {Content, Footer} from "antd/lib/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import {colors, exstra_colors} from "../style/colors";
-import {PlusCircleOutlined} from "@ant-design/icons";
+import {
+    FileAddOutlined,
+    FileExclamationOutlined,
+    FileOutlined, FileTextOutlined,
+    PlusCircleOutlined,
+
+} from "@ant-design/icons";
 import {useQuery} from "@apollo/client";
 import {FORMULA_BY_KEY_QUERY, REFERENCES_QUERY} from "../../graphql/queries";
-import ArrayInputNode from "./nodes/ArrayInputNode";
+import InputArrayNode from "./nodes/InputArrayNode";
 import {nanoid} from "nanoid";
-import {CustomSelect} from "./stylesComponents";
+import {CompactMenu, CustomSelect} from "./FenrirStyles";
+import SubMenu from "antd/es/menu/SubMenu";
+import FenrirForm from "./form/FenrirForm";
+import FenrirView from "./form/FenrirView";
 
 
 const styles = {
@@ -66,7 +72,7 @@ const styles = {
 
 const nodeTypes = {
     inputNode: InputNode,
-    arrayInputNode: ArrayInputNode,
+    arrayInputNode: InputArrayNode,
     mathOperationNode: MathOperationNode,
     outNode: OutputNode,
     formulaNode: FormulaNode,
@@ -86,13 +92,38 @@ const selector = (store) => ({
     addFormulaNode: (data) => store.createNode('formulaNode', data),
     addArrayInputNode: (data) => store.createNode('arrayInputNode', data),
     addReferenceNode: (data) => store.createNode('referenceNode', data),
-    saveState: () => store.saveState(),
-     //addMathOperationNode: (data) => store.createNode('mathOperationNode',data),
+    getModels: () => store.getModels(),
+    setModels: (models) => store.setModels(models),
+    //addMathOperationNode: (data) => store.createNode('mathOperationNode',data),
 });
 
 export default function FenrirPage() {
+    const [createFenrirModalVisible, setCreateFenrirModalVisible] = useState();
+    const [viewFenrirModalVisible, setViewFenrirModalVisible] = useState();
+    const menuClick = (e) => {
+        switch (e?.key) {
+            case "SubMenyFile:1-1":
+                console.log(e?.key);
+                setCreateFenrirModalVisible({visible: true, type: "shema"})
+                break;
+            case "SubMenyFile:1-2":
+                console.log(e?.key);
+                setViewFenrirModalVisible({visible: true, type: "shema"})
+
+                break;
+            case "SubMenyFile:2-1":
+                setCreateFenrirModalVisible({visible: true, type: "template"})
+
+                break;
+            case "SubMenyFile:2-2":
+                setViewFenrirModalVisible({visible: true, type: "template"})
+
+                break;
+        }
+    }
+
     const handleSaveContext = () => {
-        console.log(store.saveState());
+        console.log(store.getModels());
     }
 
     const {
@@ -134,12 +165,63 @@ export default function FenrirPage() {
 
             }}>
             <Header style={{
+                paddingRight: 0,
+                paddingLeft: 0,
                 border: '1px solid ' + colors.border, // стиль и цвет границы
-                height: 64,
+                height: 70,
                 backgroundColor: colors.headerBG,
                 color: colors.textColor
             }}>
-                <Divider style={{margin: 0, color: colors.textColor}}>Инструменты</Divider>
+                <CompactMenu mode="horizontal" onClick={menuClick} style={{
+                    backgroundColor: colors.header, background: colors.header
+                }}>
+
+                    <SubMenu key="SubMenyFile" icon={<FileExclamationOutlined/>}
+                             title="Файл">
+                        <Menu.ItemGroup title="Схема">
+                            <Menu.Item key="SubMenyFile:1-1">Сохранить</Menu.Item>
+                            <Menu.Item key="SubMenyFile:1-2">Загрузить</Menu.Item>
+                        </Menu.ItemGroup>
+                        <Menu.ItemGroup title="Шаблон">
+                            <Menu.Item key="SubMenyFile:2-1">Сохранить</Menu.Item>
+                            <Menu.Item key="SubMenyFile:2-2">Загрузить</Menu.Item>
+                        </Menu.ItemGroup>
+                    </SubMenu>
+                    <SubMenu key="SubMenu2" icon={<FileOutlined/>}
+                             title="Главная">
+                        <Menu.ItemGroup title="Item 1">
+                            <Menu.Item key="setting:1">Option 1</Menu.Item>
+                            <Menu.Item key="setting:2">Option 2</Menu.Item>
+                        </Menu.ItemGroup>
+                        <Menu.ItemGroup title="Item 2">
+                            <Menu.Item key="setting:3">Option 3</Menu.Item>
+                            <Menu.Item key="setting:4">Option 4</Menu.Item>
+                        </Menu.ItemGroup>
+                    </SubMenu>
+                    <SubMenu key="SubMenu3" icon={<FileAddOutlined/>}
+                             title="Вставка">
+                        <Menu.ItemGroup title="Item 1">
+                            <Menu.Item key="setting:1">Option 1</Menu.Item>
+                            <Menu.Item key="setting:2">Option 2</Menu.Item>
+                        </Menu.ItemGroup>
+                        <Menu.ItemGroup title="Item 2">
+                            <Menu.Item key="setting:3">Option 3</Menu.Item>
+                            <Menu.Item key="setting:4">Option 4</Menu.Item>
+                        </Menu.ItemGroup>
+                    </SubMenu>
+                    <SubMenu key="SubMenu4" icon={<FileTextOutlined/>}
+                             title="Данные">
+                        <Menu.ItemGroup title="Item 1">
+                            <Menu.Item key="setting:1">Option 1</Menu.Item>
+                            <Menu.Item key="setting:2">Option 2</Menu.Item>
+                        </Menu.ItemGroup>
+                        <Menu.ItemGroup title="Item 2">
+                            <Menu.Item key="setting:3">Option 3</Menu.Item>
+                            <Menu.Item key="setting:4">Option 4</Menu.Item>
+                        </Menu.ItemGroup>
+                    </SubMenu>
+                </CompactMenu>
+                <hr/>
             </Header>
             <Layout>
                 <Sider style={{
@@ -287,25 +369,40 @@ export default function FenrirPage() {
                     color: 'black',
                     backgroundColor: colors.background
                 }}>
-                    <ReactFlowProvider>
-                        <ReactFlow
-                            proOptions={{hideAttribution: true}}
-                            nodeTypes={nodeTypes}
-                            nodes={store.nodes}
-                            edges={store.edges}
-                            // onChange={console.log('log change')}
-                            onNodesChange={store.onNodesChange}
-                            onNodesDelete={store.onNodesDelete}
-                            onEdgesChange={store.onEdgesChange}
-                            onEdgesDelete={store.onEdgesDelete}
-                            onConnect={store.addEdge}
-                            fitView
-                        >
-                            <DevTools/>
-                            <Background/>
-                            <MiniMap/>
-                        </ReactFlow>
-                    </ReactFlowProvider>
+                    <div style={{width: "100%", height: "100%"}}>
+                        <Modal
+                            open={createFenrirModalVisible?.visible ?? false}
+                            onCancel={() => setCreateFenrirModalVisible({...createFenrirModalVisible, visible: false})}
+                            footer={null} >
+                            <FenrirForm type={createFenrirModalVisible?.type} fenrir={store.getModels()}/>
+                        </Modal>
+                        <Modal
+                            open={viewFenrirModalVisible?.visible ?? false}
+                            onCancel={() => setViewFenrirModalVisible({...createFenrirModalVisible, visible: false})}
+                            footer={null} >
+                            <FenrirView type={viewFenrirModalVisible?.type} onSetModels={store.setModels}/>
+                        </Modal>
+                        <ReactFlowProvider>
+                            <ReactFlow
+                                proOptions={{hideAttribution: true}}
+                                nodeTypes={nodeTypes}
+                                nodes={store.nodes}
+                                edges={store.edges}
+                                // onChange={console.log('log change')}
+                                onNodesChange={store.onNodesChange}
+                                onNodesDelete={store.onNodesDelete}
+                                onEdgesChange={store.onEdgesChange}
+                                onEdgesDelete={store.onEdgesDelete}
+                                onConnect={store.addEdge}
+                                fitView
+                            >
+                                <DevTools/>
+                                <Background/>
+                                <MiniMap/>
+                            </ReactFlow>
+                        </ReactFlowProvider>
+                    </div>
+
                 </Content>
                 <Sider style={{
                     overflow: 'auto',
@@ -339,7 +436,9 @@ export default function FenrirPage() {
             }}>
                 <Divider style={{margin: 0, marginBottom: '10px', color: colors.textColor}}>Страницы</Divider>
             </Footer>
+
         </Layout>
     )
+
         ;
 }

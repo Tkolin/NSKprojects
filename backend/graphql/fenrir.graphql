@@ -3,7 +3,10 @@ extend type Mutation{
     updateFormula(data: FormulaInput): Int @checkRole(roles: ["admin"])
     createReference(data: ReferenceInput): Int @checkRole(roles: ["admin"])
 
-    computeFormulas(formulas: [String]): [Float] @checkRole(roles: ["admin"])
+    computeFormulas(formulas: [String]): [String] @checkRole(roles: ["admin"])
+
+    createFenrir(data: FenrirInput): Int  @checkRole(roles: ["admin"])
+    createFenrirTemplate(data: FenrirInput): Int @checkRole(roles: ["admin"])
 }
 input FormulaInput{
     id: ID
@@ -24,6 +27,11 @@ input VariableInput{
     name: String
     name_key: String!
     description: String
+}
+input FenrirInput{
+    name: String
+    description: String
+    models: String
 }
 type Reference {
     id: ID
@@ -46,4 +54,13 @@ type Reference {
     formula_id: ID
     id: ID
 }
+
+type Fenrir {
+    id: ID
+    name: String
+    description: String
+    models: String
+}
+
+
 

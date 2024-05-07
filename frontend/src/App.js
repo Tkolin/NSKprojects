@@ -31,7 +31,7 @@ import {createGlobalStyle} from "styled-components";
 import SectionReferenceTable from "./page/view/tableView/SectionReferenceTable";
 import TasksChartForm from "./page/form/basicForm/TasksChartForm";
 import Test2 from "./_dev/test2";
-import FenrirPage from "./page/guillaume/fenrirPage";
+import FenrirPage from "./page/guillaume/FenrirPage";
 import FormulaForm from "./page/guillaume/form/FormulaForm";
 import ReferenceForm from "./page/guillaume/form/ReferenceForm";
 

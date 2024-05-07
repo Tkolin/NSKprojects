@@ -20,7 +20,8 @@ export const exstra_colors = {
     green12: "#253e2f",
     green10: "#1f3428",
     orange30: "#ba5d38",
-    yellow46: "#cf9a69",
+    orange12: "#b44417",
+    yellow56: "#dbbd32",
     yellow30: "#b2722a",
     yellow10: "#38230b",
     yellow11: "#462b0d",
@@ -63,6 +64,10 @@ export const colors = {
         primary: exstra_colors.blue30, // Gold
         secondary: exstra_colors.blue12 // Light Salmon
     },
+    result: {
+        primary: exstra_colors.orange30, // Gold
+        secondary: exstra_colors.yellow56 // Light Salmon
+    },
     function: {
         primary: exstra_colors.purple30, // Gold
         secondary: exstra_colors.purple12 // Light Salmon
@@ -76,6 +81,7 @@ export const colors = {
         secondary: exstra_colors.redBrand12, // Sky Blue
     },
     informed: exstra_colors.blue46,
+    header: exstra_colors.grey5,
     background: exstra_colors.grey10,
     siderBG: exstra_colors.grey11,
     border: exstra_colors.grey30,
