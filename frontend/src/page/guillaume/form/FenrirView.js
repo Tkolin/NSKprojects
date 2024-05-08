@@ -10,7 +10,7 @@ import {CustomSelect} from "../FenrirStyles";
 import {nanoid} from "nanoid";
 import {FENRIR_QUERY, FORMULA_BY_KEY_QUERY} from "../../../graphql/queries";
 
-const FenrirView = ({type, onClose, setModels}) => {
+const FenrirView = ({type, onClose, onSetModels}) => {
 
     const {
         loading: loadFenrir,
@@ -24,7 +24,9 @@ const FenrirView = ({type, onClose, setModels}) => {
         }
     });
     // Обработчик отправки формы
-    const handleSubmit = () => {
+    const handleSubmit = (value) => {
+        onSetModels(JSON.parse(dataFenrir.fenrirs.items.find(row => row.id === value).models));
+        if(onClose) onClose();
     };
 
     return (
@@ -38,8 +40,7 @@ const FenrirView = ({type, onClose, setModels}) => {
                     }}
                     loading={loadFenrir}
                     onSelect={(value) => {
-                        console.log(JSON.parse(dataFenrir.fenrirs.items[0].models));
-                        setModels(dataFenrir.fenrirs.items[0].models);
+                        handleSubmit(value);
                     }}
                 >
                     {dataFenrir?.fenrirs?.items?.map(row => (
@@ -58,7 +59,7 @@ const FenrirView = ({type, onClose, setModels}) => {
                 </StyledFormItem>
             </div>
         </StyledBlockRegular>
-);
+    );
 };
 
 export default FenrirView;

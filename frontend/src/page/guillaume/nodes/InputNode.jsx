@@ -7,6 +7,7 @@ import {colors} from "../../style/colors";
 import {Button, Col, Divider, Form, Input, Popover, Row, Space} from "antd";
 import {MathComponent} from "mathjax-react";
 import {PlusSquareOutlined} from "@ant-design/icons";
+import {nanoid} from "nanoid";
 
 const selector = (id, data) => (store) => ({
     setValue: (data) => {
@@ -28,8 +29,8 @@ export default function InputNode({id, data}) {
 
             <div style={{width: '300px'}}>
                 <Space direction="vertical" style={{width: "100%"}}>
-                    {data?.output ?  "данные отсутвуют" :
-                        Object.keys(data?.outputs)?.map((key) => {
+                    {data?.outputs ?
+                        Object.keys(data?.outputs)?.map((key, add, del) => {
                             const value = data.outputs[key];
                             return (
                                 <div key={key}>
@@ -56,7 +57,7 @@ export default function InputNode({id, data}) {
                                                         type="source" position="left" style={{
                                                     marginLeft: '46px',
                                                     background: 'radial-gradient(circle, ' + colors.input.secondary + ' 18%, ' + colors.input.primary + ' 20%, ' + colors.input.primary + ' 38%, ' + colors.input.secondary + ' 40%)',
-                                                    borderColor:  colors.input.primary,
+                                                    borderColor: colors.input.primary,
                                                     borderWidth: "1px",
                                                     width: 20,
                                                     height: 20,
@@ -65,11 +66,21 @@ export default function InputNode({id, data}) {
                                         </Space.Compact>
                                     </Row>
                                 </div>)
-                        })
-                        }
+                        }) : "данные отсутвуют"
+                    }
                 </Space>
                 <Button icon={<PlusSquareOutlined/>} size={'small'}
-                        style={{width: '100%', marginTop: '2px', borderColor: colors.input.primary}} type={'dashed'}/>
+                        onClick={() => {
+                            setValue(
+                                data = {
+                                    ...data,
+                                    outputs: {
+                                        ...data.outputs,
+                                        [nanoid()]: {name: "", value: 0}
+                                    }
+                                });
+                        }}
+                        style={{width: '100%', marginTop: '20px', borderColor: colors.input.primary}} type={'dashed'}/>
             </div>
 
 

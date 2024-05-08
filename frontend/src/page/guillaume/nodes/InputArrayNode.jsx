@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
-import { Handle } from "reactflow";
-import { Button, Input, Space } from "antd";
-import { PlusSquareOutlined } from "@ant-design/icons";
-import { useStore } from "../store";
-import { StyledBlockBig } from "../../style/BlockStyles";
-import { colors } from "../../style/colors";
+import React, {useEffect} from "react";
+import {Handle} from "reactflow";
+import {Button, Input, Space} from "antd";
+import {PlusSquareOutlined} from "@ant-design/icons";
+import {useStore} from "../store";
+import {StyledBlockBig} from "../../style/BlockStyles";
+import {colors} from "../../style/colors";
 
 const selector = (id, data) => (store) => ({
     setValue: (data) => {
@@ -12,16 +12,16 @@ const selector = (id, data) => (store) => ({
     },
 });
 
-export default function InputArrayNode({ id, data }) {
-    const { setValue } = useStore(selector(id, data));
+export default function InputArrayNode({id, data}) {
+    const {setValue} = useStore(selector(id, data));
 
     const updateValue = (value, field) => {
-        const newData = { ...data, [field]: value };
+        const newData = {...data, [field]: value};
         setValue(newData);
     };
 
     useEffect(() => {
-        const { start, end, step } = data;
+        const {start, end, step} = data;
         const iterations = [];
         let currentValue = parseFloat(start);
 
@@ -29,18 +29,44 @@ export default function InputArrayNode({ id, data }) {
             iterations.push(currentValue);
             currentValue += parseFloat(step);
         }
-
-        updateValue({"only": {value: iterations}}, "outputs");
+        data = {
+            ...data,
+            outputs: {
+                ...data?.outputs,
+                "only": {
+                    ...data?.outputs?.only,
+                    value: iterations
+                }
+            }
+        }
+        setValue(data);
     }, [data.start, data.end, data.step]);
 
     return (
         <StyledBlockBig
             label={"Список значений"}
-            styleBlcok={{ border: "2px solid " + colors.inputArray.primary }}
-            styleHeader={{ backgroundColor: colors.inputArray.secondary }}
-            styleHeaderText={{ color: colors.textColor, margin: 0, marginBottom: "5px" }}
+            styleBlcok={{border: "2px solid " + colors.inputArray.primary}}
+            styleHeader={{backgroundColor: colors.inputArray.secondary}}
+            styleHeaderText={{color: colors.textColor, margin: 0, marginBottom: "5px"}}
         >
-            <Space direction="vertical" style={{ width: "100%" }}>
+            <Space direction="vertical" style={{width: "100%"}}>
+                <Input
+                    placeholder={"Наименование..."}
+                    value={data.outputs.only?.name ?? null}
+                    onChange={(e) => {
+                        data = {
+                            ...data,
+                            outputs: {
+                                ...data?.outputs,
+                                "only": {
+                                    ...data?.outputs?.only,
+                                    name: e.target.value
+                                }
+                            }
+                        }
+                        setValue(data);
+                    }}
+                />
                 <Input
                     placeholder={"Начальный элемент"}
                     value={data.start}
@@ -63,7 +89,7 @@ export default function InputArrayNode({ id, data }) {
                 position="right"
                 style={{
                     marginRight: "-5px",
-                    background: 'radial-gradient(circle,'+colors.outputArray.primary+' 20%, '+colors.outputArray.secondary+' 20%)',
+                    background: 'radial-gradient(circle,' + colors.outputArray.primary + ' 20%, ' + colors.outputArray.secondary + ' 20%)',
                     borderColor: colors.inputArray.primary,
                     borderWidth: "1px",
                     width: 20,

@@ -8,6 +8,7 @@ import {useMutation} from "@apollo/client";
 import {COMPUTE_FORMULAS_MUTATION} from "../../../graphql/mutationsFormula";
 import {colors, exstra_colors} from "../../style/colors";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
+import {StyledHandleArrayInput, StyledHandleSingleInput} from "./StylesNodesHandle";
 
 const selector = (id, data) => (store) => ({
     setValue: (data) => {
@@ -20,10 +21,10 @@ export default function FormulaNode({id, data}) {
     const {setValue} = useStore(selector(id, data));
 
     useEffect(() => {
-        console.log('useEffect FormulaNode Data');
+        //console.log('useEffect FormulaNode Data');
         const emptyValues = findEmptyField();
         if (emptyValues?.length != 1) {
-            console.log("Мало переменных для подсчёта " + id);
+            //console.log("Мало переменных для подсчёта " + id);
             return;
         }
 
@@ -56,13 +57,13 @@ export default function FormulaNode({id, data}) {
             console.log("result", result.computeFormulas);
 
             if (data?.outputs && data?.outputs[findEmptyField()] && data?.outputs[findEmptyField()]?.value) {
-                console.log("Вывод есть");
+                //console.log("Вывод есть");
                 if (
                     Array.isArray(data?.outputs[findEmptyField()].value) &&
                     data.outputs[findEmptyField()].value.length === result.computeFormulas.length &&
                     data.outputs[findEmptyField()].value.every((value, index) => value === result.computeFormulas[index])
                 ) {
-                    console.log("Данные актуальны");
+                    //console.log("Данные актуальны");
                     setLoading(false);
 
                     return;
@@ -71,7 +72,7 @@ export default function FormulaNode({id, data}) {
             const newOutput = {
                 [findEmptyField()]: {
                     value: result.computeFormulas,
-                    name: data.inputs[findEmptyField()]
+                    name: data.formulaData.name
                 }
             };
             setLoading(false);
@@ -94,37 +95,45 @@ export default function FormulaNode({id, data}) {
         });
         // Создаем список ключей, которые есть в variableKeys, но отсутствуют в inputKeysWithValue
         const keysToCheck = variableKeys.filter(key => !inputKeysWithValue.includes(key));
-        console.log(keysToCheck);
+        //console.log(keysToCheck);
 
         return keysToCheck;
     };
     const evaluateFormula = (valueReplaceToX) => {
         let formula = data?.formulaData?.original_formula;
+        console.log("Initial formula:", formula);
+
         if (data?.isFunction) {
             const arrayKey = Object.entries(data.inputs).find(([key, value]) => Array.isArray(value.value))?.[0];
+            console.log("Array key:", arrayKey);
             if (arrayKey) {
                 const arrayValues = data.inputs[arrayKey].value;
+                console.log("Array values:", arrayValues);
                 return arrayValues.map(val => {
                     let replacedFormula = formula.replace(new RegExp(arrayKey, 'g'), val);
+                    console.log(`Replaced formula with ${arrayKey}=${val}:`, replacedFormula);
                     return Object.entries(data.inputs).reduce((acc, [key, value]) => acc
                         .replace(new RegExp(key, 'g'), value.value)
-                        .replace(new RegExp(valueReplaceToX, 'g'), '_'), replacedFormula);
+                        .replace(new RegExp(`(?<![a-zA-Zа-яА-Я0-9])${valueReplaceToX}(?![a-zA-Zа-яА-Я0-9])`, 'g'), '_'), replacedFormula);
                 });
             }
         }
-        return Object.entries(data.inputs).reduce((acc, [key, value]) => acc
+
+        const result = Object.entries(data.inputs).reduce((acc, [key, value]) => acc
             .replace(new RegExp(key, 'g'), value.value)
-            .replace(new RegExp(valueReplaceToX, 'g'), '_'), formula);
+            .replace(new RegExp(`(?<![a-zA-Zа-яА-Я0-9])${valueReplaceToX}(?![a-zA-Zа-яА-Я0-9])`, 'g'), '_'), formula);
+        console.log("Final result:", result);
+        return result;
     };
 
 
     const handleIsFunction = () => {
-        console.log('isFunction', data.isFunction);
+        //console.log('isFunction', data.isFunction);
         data.isFunction = (!data.isFunction)
         setValue(data);
     }
     const handleArrayHandleValue = (key) => {
-        console.log('handleArrayHandleValue', data.arrayValueKey);
+        //console.log('handleArrayHandleValue', data.arrayValueKey);
         data.arrayValueKey = key;
         setValue(data);
     }
@@ -144,7 +153,8 @@ export default function FormulaNode({id, data}) {
                             tex={data?.formulaData?.latex_formula} display={true}/></p>
                         <div>
                             <Space direction="vertical" style={{width: "100%"}}>
-                                {data?.formulaData?.variable_data && data?.formulaData?.variable_data?.map(variable => (
+                                {data?.formulaData?.variable_data &&
+                                    data?.formulaData?.variable_data?.map(variable => (
                                     <div key={variable?.name}>
                                         <Popover
                                             title={variable?.name}
@@ -155,25 +165,15 @@ export default function FormulaNode({id, data}) {
                                             <Row style={{width: "100%"}}>
                                                 <Col span={0.1}>
                                                     {variable?.name === data?.arrayValueKey ? (
-                                                        <Handle id={variable?.name} type="target" position="left"
-                                                                style={{
-                                                                    marginLeft: '-22px',
-                                                                    background: 'radial-gradient(circle, ' + colors.inputArray.secondary + ' 18%, ' + colors.inputArray.primary + ' 20%, ' + colors.inputArray.primary + ' 38%, ' + colors.inputArray.secondary + ' 40%)',
-                                                                    borderColor: data?.isFunction ? colors.function.primary : colors.formulas.primary,
-                                                                    borderWidth: "1px", width: 20,
-                                                                    height: 20,
-                                                                }}/>
-
+                                                        <StyledHandleArrayInput id={variable?.name} style={{
+                                                            borderColor: data?.isFunction ? colors.function.primary : colors.formulas.primary,
+                                                            marginLeft: '-22px',
+                                                        }}/>
                                                     ) : (
-                                                        <Handle id={variable?.name} type="target" position="left"
-                                                                style={{
-                                                                    marginLeft: '-22px',
-                                                                    background: 'radial-gradient(circle, ' + colors.input.secondary + ' 18%, ' + colors.input.primary + ' 20%, ' + colors.input.primary + ' 38%, ' + colors.input.secondary + ' 40%)',
-                                                                    borderColor: data?.isFunction ? colors.function.primary : colors.formulas.primary,
-                                                                    borderWidth: "1px",
-                                                                    width: 20,
-                                                                    height: 20,
-                                                                }}/>
+                                                        <StyledHandleSingleInput id={variable?.name} style={{
+                                                            borderColor: data?.isFunction ? colors.function.primary : colors.formulas.primary,
+                                                            marginLeft: '-22px',
+                                                        }}/>
                                                     )}
 
                                                 </Col>
@@ -191,7 +191,7 @@ export default function FormulaNode({id, data}) {
                                                                 <Input
 
                                                                     style={{
-                                                                        color: "black",
+                                                                        color: colors.textColor,
                                                                         backgroundColor: colors.result.secondary,
                                                                         borderColor: colors.result.primary,
                                                                         borderWidth: '2px'

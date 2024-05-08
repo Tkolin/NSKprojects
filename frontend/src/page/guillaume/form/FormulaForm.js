@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import {Form, Input, Button, Space, notification} from 'antd';
-import { StyledFormItem } from "../../style/FormStyles";
-import { useForm } from "antd/es/form/Form";
-import { CaretUpOutlined } from "@ant-design/icons";
+import React, {useState} from 'react';
+import {Form, Input, Button, Space, notification, Row, Col} from 'antd';
+import {StyledFormItem} from "../../style/FormStyles";
+import {useForm} from "antd/es/form/Form";
+import {CaretUpOutlined} from "@ant-design/icons";
 import {useMutation} from "@apollo/client";
 import {UPDATE_PAYMENTS_TO_PROJECT_MUTATION} from "../../../graphql/mutationsProject";
 import {CREATE_FORMULA_MUTATION} from "../../../graphql/mutationsFormula";
@@ -29,16 +29,20 @@ const FormulaForm = () => {
         if (extractedVariables) {
             const uniqueVariables = Array.from(new Set(extractedVariables));
             const existingVariables = form.getFieldValue('valuesList') || [];
-            const newVariables = uniqueVariables.map(variable => ({ name: variable, description: '' }));
+            const newVariables = uniqueVariables.map(variable => ({name: variable, description: ''}));
             const filteredNewVariables = newVariables.filter(newVar => !existingVariables.some(existingVar => existingVar.name === newVar.name));
             const updatedVariables = [...existingVariables, ...filteredNewVariables];
-            form.setFieldsValue({ 'valuesList': updatedVariables });
+            form.setFieldsValue({'valuesList': updatedVariables});
         }
     };
     const handleSumbit = () => {
         form.validateFields().then((values) => {
-            const { name, original_formula, description, valuesList } = values;
-            const variable_data = valuesList.map(variable => ({ name: variable.name, name_key: variable.name, description: variable.description }));
+            const {name, original_formula, description, valuesList} = values;
+            const variable_data = valuesList.map(variable => ({
+                name: variable.name,
+                name_key: variable.name,
+                description: variable.description
+            }));
 
             // Вызов мутации для создания формулы
             updatePaymentToProject({
@@ -57,31 +61,38 @@ const FormulaForm = () => {
         <div>
             <Form form={form}>
                 <StyledFormItem label="Наименование" name='name'>
-                    <Input />
+                    <Input/>
                 </StyledFormItem>
                 <StyledFormItem label="Формула" name='original_formula'>
-                    <Input />
+                    <Input/>
                 </StyledFormItem>
                 <StyledFormItem label="Описание" name='description'>
-                    <Input />
+                    <Input/>
                 </StyledFormItem>
                 <Form.List name="valuesList">
-                    {(fields, { add, remove }) => (
+                    {(fields, {add, remove}) => (
                         <>
-                            {fields.map(({ key, name, ...restField }) => (
-                                <Space
+                            {fields.map(({key, name, ...restField}) => (
+                                <Row
                                     key={key}
-                                    style={{ display: 'flex', marginBottom: 2, marginTop: 2 }}
-                                    align="baseline"
+                                    style={{display: 'flex', marginBottom: 2, marginTop: 2}}
+                                    gutter={2}
                                 >
-                                    <StyledFormItem  label="Переменная" name={[name, 'name']}>
-                                        <Input placeholder="Переменная" style={{width: '50px'}} />
-                                    </StyledFormItem>
-                                    <StyledFormItem name={[name, 'description']}>
-                                        <Input placeholder="Описание" />
-                                    </StyledFormItem>
-                                    <Button onClick={() => remove(name)}>Remove</Button>
-                                </Space>
+                                    <Col span={10}>
+
+                                        <StyledFormItem name={[name, 'name']}>
+                                            <Input placeholder="Переменная"/>
+                                        </StyledFormItem>
+                                    </Col>
+                                    <Col span={10}>
+                                        <StyledFormItem name={[name, 'description']}>
+                                            <Input placeholder="Описание"/>
+                                        </StyledFormItem>
+                                    </Col>
+                                    <Col span={4}>
+                                        <Button onClick={() => remove(name)}>Удалить</Button>
+                                    </Col>
+                                </Row>
                             ))}
                             <Button onClick={() => add()}>Создать переменную</Button>
                         </>

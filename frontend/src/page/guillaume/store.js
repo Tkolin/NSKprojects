@@ -5,63 +5,9 @@ import cosnsole from "util";
 
 
 export const useStore = create((set, get) => ({
-    nodes: [
-        {
-            id: "inputNode",
-            type: "inputNode",
-            data: {
-                outputs:{
-                    'one': { name: 'Переменная 1', value: 15 },
-                    'two': { name: 'Переменная 2', value: 20 }
-                },
-            },
-            position: {x: -150, y: 0},
-        },
-        {
-            id: "inputNode1",
-            type: "inputNode",
-            data: {
-                outputs:{
-                    'output': { name: 'Переменная 1', value: 15 },
-                    'two': { name: 'Переменная 2', value: 20 }
-                },
-            },
-            position: {x: 0, y: 0},
-        },
-        {
-            id: "mathOperationNodeId",
-            type: "mathOperationNode",
-            data: {
-                operation: "+",
-                inputs: {"x": {value: 1},
-                    "y": {value: 2}},
-            },
-            position: {x: -150, y: 300},
-        },
-        {
-            id: "mathOperationNodeId1",
-            type: "mathOperationNode",
-            data: {
-                operation: "+",
-                inputs: {"x": {value: 1},
-                    "y": {value: 2}},
-            },
-            position: {x: -150, y: 450},
-        },
-        {
-            id: "outputNode1",
-            type: "formulaNode",
-            data: {inputs: {}},
-            position: {x: 450, y: 800},
-        },
-        {
-            id: "outputNode2",
-            type: "formulaNode",
-            data: {inputs: {}},
-            position: {x: 450, y: 400},
-        }
-    ],
+    nodes: [],
     edges: [],
+
     getModels() {
         const state = {
             nodes: get().nodes,
@@ -69,39 +15,37 @@ export const useStore = create((set, get) => ({
         };
         return JSON.stringify(state, null, 2);
     },
+
+
     setModels(models) {
-        console.log(models);
-        const state = {
-            nodes: set(models.nodes),
-            edges: set(models.edges),
-        };
-        },
+        set(models);
+    },
     onNodesChange(changes) {
-        set({
+         set({
             nodes: applyNodeChanges(changes, get().nodes),
         });
     },
 
 
     createNode(type, data, x, y) {
-        console.log(type, data, x, y);
+        //console.log(type, data, x, y);
         const id = nanoid();
 
         switch (type) {
             case "inputNode": {
-                const newData = {outputs: {"0": {name: "", value: 0}} };
+                const newData = {outputs: {"0": {name: "", value: 0}}};
                 const position = {x: 0, y: 0};
                 set({nodes: [...get().nodes, {id, type, data: newData, position}]});
                 break;
             }
             case "arrayInputNode": {
-                const newData = {value: 0};
+                const newData = {outputs: {"only": {value: 0, name: ""}}};
                 const position = {x: 0, y: 0};
                 set({nodes: [...get().nodes, {id, type, data: newData, position}]});
                 break;
             }
             case "outputNode": {
-                const newData = {value: 0};
+                const newData = {inputs: {}};
                 const position = {x: 0, y: 0};
                 set({nodes: [...get().nodes, {id, type, data: newData, position}]});
                 break;
@@ -113,7 +57,7 @@ export const useStore = create((set, get) => ({
                 break;
             }
             case "formulaNode": {
-                const newData = {formulaData: data,outputs: []};
+                const newData = {formulaData: data, outputs: []};
                 const position = {x: 0, y: 0};
                 set({nodes: [...get().nodes, {id, type, data: newData, position}]});
                 break;
@@ -127,7 +71,8 @@ export const useStore = create((set, get) => ({
         }
     },
     updateNode(id, data) {
-        console.error('1 updateNode 1 ', id, data)
+        //console.error('1 updateNode 1 ', id, data)
+        //console.log("ALT updateNode final", get().edges);
         set((state) => {
             // + Обновляем data в переданном узле
             const updatedNodes = state.nodes.map((node) =>
@@ -142,22 +87,34 @@ export const useStore = create((set, get) => ({
             // Обновляем дочерние элементы
             connectedNodeIds.forEach(connectedNodeId => {
                 const connectedNode = updatedNodes.find(node => node.id === connectedNodeId);
-                 if (connectedNode) { // connectedNode - Обьект подключёных (дочерних узлов)
-                     const targetHandle = state.edges.find(edge => edge.target === connectedNodeId && edge.source === id).targetHandle;
+                if (connectedNode) { // connectedNode - Обьект подключёных (дочерних узлов)
+                    const targetHandle = state.edges.find(edge => edge.target === connectedNodeId && edge.source === id).targetHandle;
                     // Находим значение выхода текущего узла, которое будем передавать во вход подключенного узла
                     const sourceHandle = state.edges.find(edge => edge.target === connectedNodeId && edge.source === id).sourceHandle;
 
+                    //console.log(state.edges);
 
+                    const validSources = state.edges.filter(edge => edge.target === connectedNodeId).map(edge => edge.targetHandle);
+
+                    //console.log("validSource", validSources)
+                    let updatedInput = {};
+
+                    if(connectedNode?.data?.inputs)
+                     updatedInput = Object.keys(connectedNode.data.inputs).reduce((acc, key) => {
+                        if (validSources.includes(key)) {
+                            acc[key] = connectedNode.data.inputs[key];
+                        }
+                        return acc;
+                    }, {});
+
+                    //console.log("connectedNodeIds", connectedNodeIds)
                     if (targetHandle && sourceHandle) {
                         // getNode -  узел выхода
                         // connectedNode - Узел входа
+                        //console.log("targetHandle && sourceHandle", targetHandle , sourceHandle)
 
-                        switch (updatedNodes.type)
-                        {
-
-                        }
-                        const updatedInput = {
-                            ...connectedNode.data.inputs,
+                        updatedInput = {
+                            ...updatedInput,
                             [targetHandle]: data.outputs[sourceHandle]
                         };
                         const updatedOutNode = {
@@ -176,7 +133,7 @@ export const useStore = create((set, get) => ({
                     }
                 }
             });
-             return {nodes: updatedNodes};
+            return {nodes: updatedNodes};
         });
     },
     onNodesDelete(deleted) {
@@ -184,25 +141,37 @@ export const useStore = create((set, get) => ({
         set({nodes: newNodes});
     },
 
-    onEdgesChange(changes) {
-        console.log('onEdgesChange');
 
-        set({
-            edges: applyEdgeChanges(changes, get().edges),
-        });
-    },
 
     addEdge(data) {
-        console.log('addEdge', data);
+        const updateNodeFunc = get().updateNode; // Получаем ссылку на функцию updateNode из хранилища
 
         const id = nanoid(6);
         const edge = {id, ...data};
-
         set({edges: [edge, ...get().edges]});
+        const sourceNode = get().nodes.find(node => node.id === data.source);
+        updateNodeFunc(sourceNode.id, sourceNode.data);
     },
+    onEdgesChange(changes) {
+        set({
+            edges: applyEdgeChanges(changes, get().edges),
+        });
 
+    },
     onEdgesDelete(deleted) {
-        const newEdges = get().edges.filter((edge) => !deleted.some((d) => d.source === edge.source && d.target === edge.target));
-        set({edges: newEdges});
+        const updateNodeFunc = get().updateNode; // Получаем ссылку на функцию updateNode из хранилища
+
+        set((state) => ({
+            edges: state.edges.filter((edge) => edge.id !== deleted.id)
+        }));
+
+        setTimeout(() => {
+            deleted.forEach((edge) => {
+                const sourceNode = get().nodes.find(node => node.id === edge.source);
+                if (sourceNode) {
+                    updateNodeFunc(sourceNode.id, sourceNode.data);
+                }
+            });
+        }, 100); // Задержка в миллисекундах
     },
 }));

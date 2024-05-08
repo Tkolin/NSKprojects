@@ -27,6 +27,7 @@ final readonly class CreateFormula
             'original_formula' => $args['data']['original_formula'],
             'rpn_formula' => $args['data']['rpn_formula'] ?? "",
             'name' => $args['data']['name'],
+            'latex_formula' => $args['data']['original_formula'],
             'description' => $args['data']['description'],
             'name_key' => $name_key,
         ]);

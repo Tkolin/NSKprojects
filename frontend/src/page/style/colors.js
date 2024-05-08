@@ -65,8 +65,8 @@ export const colors = {
         secondary: exstra_colors.blue12 // Light Salmon
     },
     result: {
-        primary: exstra_colors.orange30, // Gold
-        secondary: exstra_colors.yellow56 // Light Salmon
+        primary: exstra_colors.yellow56, // Gold
+        secondary: exstra_colors.yellow30 // Light Salmon
     },
     function: {
         primary: exstra_colors.purple30, // Gold

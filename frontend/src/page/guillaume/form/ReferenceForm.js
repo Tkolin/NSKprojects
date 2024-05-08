@@ -5,6 +5,7 @@ import {StyledFormBig, StyledFormItem} from "../../style/FormStyles";
 import {UPDATE_IRDS_TO_PROJECT_MUTATION} from "../../../graphql/mutationsProject";
 import {PlusOutlined} from "@ant-design/icons";
 import {CREATE_REFERENCE_MUTATION} from "../../../graphql/mutationsFormula";
+import TextArea from "antd/es/input/TextArea";
 
 const ReferenceForm = ({project, setProject, onSubmit, disable}) => {
     // Состояния
@@ -20,6 +21,7 @@ const ReferenceForm = ({project, setProject, onSubmit, disable}) => {
     // Мутации для добавления и обновления
     const [addReferences] = useMutation(CREATE_REFERENCE_MUTATION, {
         onCompleted: () => {
+            console.log()
             if (onSubmit)
                 onSubmit();
             openNotification('topRight', 'success', 'Данные ИРД успешно обновлены !');
@@ -28,16 +30,16 @@ const ReferenceForm = ({project, setProject, onSubmit, disable}) => {
         }
     });
     const handleSubmit = () => {
+
         form.validateFields().then((values) => {
             const {name, description, valuesList} = values;
-
 
             addReferences({
                 variables: {
                     data: {
                         name: name,
                         description: description,
-                        values: valuesList.map(({name, value}) => ({name, value})),
+                        values: JSON.stringify(valuesList.map(({name, value}) => ({name, value}))),
                     }
                 }
             });
@@ -57,33 +59,37 @@ const ReferenceForm = ({project, setProject, onSubmit, disable}) => {
             </StyledFormItem>
             <Form.List name="valuesList">
                 {(fields, {add, remove}) => (<>
-                        {fields.map(({key, name, ...restField}) => (<Space
+                        {fields.map(({key, name, ...restField}) => (
+                            <Space
                                 key={key}
                                 style={{
                                     display: 'flex', marginBottom: 2, marginTop: 2
                                 }}
-                                align="baseline"
+                                align="horizontal"
                             >
                                 <Form.Item
                                     {...restField}
                                     name={[name, 'name']}
-
+                                    style={{margin: "1px"}}
                                 >
-                                    <Input placeholder={"Наименование"}/>
+                                    <TextArea style={{margin: "1px"}}
+                                              placeholder={"Наименование"}/>
                                 </Form.Item>
                                 <Form.Item
                                     {...restField}
                                     name={[name, 'value']}
+                                    style={{margin: "1px"}}
 
                                 >
-                                    <Input placeholder={"Значение"}/>
+                                    <Input                                     style={{margin: "1px"}}
+                                                                               placeholder={"Значение"}/>
                                 </Form.Item>
                             </Space>
                         ))}
-                            <Button style={{width: "100%"}} type="dashed" onClick={() => add()}
-                                    icon={<PlusOutlined/>}>
-                                Добавить переменную
-                            </Button>
+                        <Button style={{width: "100%"}} type="dashed" onClick={() => add()}
+                                icon={<PlusOutlined/>}>
+                            Добавить переменную
+                        </Button>
                     </>
                 )}
 

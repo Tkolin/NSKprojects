@@ -222,13 +222,15 @@ const CustomLayout = ({children, currentUser, la}) => {
                 break;
             case '4-1':
                 navigate('/guillaume/fenrir');
+
                 break;
             case '4-2':
-                navigate('/guillaume/tyr');
+                navigate('/guillaume/silmarils');
+
                 break;
             case '4-3':
-                navigate('/guillaume/silmarils');
-                setIsFenrirPage(true);
+                navigate('/guillaume/tyr');
+
                 break;
             default:
                 break;

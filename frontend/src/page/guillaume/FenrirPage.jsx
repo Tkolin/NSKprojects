@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import ReactFlow, {
     ReactFlowProvider,
     Background,
@@ -10,71 +10,36 @@ import InputNode from "./nodes/InputNode";
 import MathOperationNode from "./nodes/MathOperationNode";
 import OutputNode from "./nodes/OutputNode";
 import "reactflow/dist/style.css";
-import DevTools from "./devtoolH/Devtools";
 import FormulaNode from "./nodes/FormulaNode";
 import ReferenceNode from "./nodes/ReferenceNode";
-import {Button, Divider, Layout, Menu, Modal, Row, Select} from "antd";
+import {Button, Divider, Input, Layout, Menu, Modal, Row, Select, Space} from "antd";
 import {Header} from "antd/es/layout/layout";
 import {Content, Footer} from "antd/lib/layout/layout";
 import Sider from "antd/es/layout/Sider";
-import {colors, exstra_colors} from "../style/colors";
+import {colors} from "../style/colors";
 import {
     FileAddOutlined,
     FileExclamationOutlined,
     FileOutlined, FileTextOutlined,
     PlusCircleOutlined,
-
 } from "@ant-design/icons";
 import {useQuery} from "@apollo/client";
 import {FORMULA_BY_KEY_QUERY, REFERENCES_QUERY} from "../../graphql/queries";
 import InputArrayNode from "./nodes/InputArrayNode";
 import {nanoid} from "nanoid";
-import {CompactMenu, CustomSelect} from "./FenrirStyles";
+import {CompactMenu, CustomButton, CustomSelect} from "./FenrirStyles";
 import SubMenu from "antd/es/menu/SubMenu";
 import FenrirForm from "./form/FenrirForm";
 import FenrirView from "./form/FenrirView";
+import DevTools from "../../_dev/devtoolH/Devtools";
 
 
-const styles = {
-    header: {
-        position: 'fixed',
-        zIndex: 1,
-        width: '100%',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '0 24px',
-        background: '#fff',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-    },
-    logo: {
-        width: '50px',
-        height: '50px',
-        background: 'rgba(255, 255, 255, 0.2)',
-        margin: '16px 24px 16px 0',
-        float: 'left',
-    },
-    user: {
-        display: 'flex',
-        alignItems: 'center',
-    },
-    logoutButton: {
-        marginLeft: '10px',
-    },
-    content: {
-        margin: '24px 16px 0',
-        overflow: 'initial',
-    },
-    footer: {
-        textAlign: 'center',
-    },
-};
 
 const nodeTypes = {
     inputNode: InputNode,
     arrayInputNode: InputArrayNode,
     mathOperationNode: MathOperationNode,
-    outNode: OutputNode,
+    outputNode: OutputNode,
     formulaNode: FormulaNode,
     referenceNode: ReferenceNode
 };
@@ -94,12 +59,23 @@ const selector = (store) => ({
     addReferenceNode: (data) => store.createNode('referenceNode', data),
     getModels: () => store.getModels(),
     setModels: (models) => store.setModels(models),
+
+    updateNode: (id, data) => store.updateNode(id, data),
     //addMathOperationNode: (data) => store.createNode('mathOperationNode',data),
 });
 
 export default function FenrirPage() {
+    const store = useStore(selector, shallow);
+
     const [createFenrirModalVisible, setCreateFenrirModalVisible] = useState();
     const [viewFenrirModalVisible, setViewFenrirModalVisible] = useState();
+
+    const setModel = (models) => {
+        console.log("setModel", models)
+        store.setModels(models);
+    }
+
+
     const menuClick = (e) => {
         switch (e?.key) {
             case "SubMenyFile:1-1":
@@ -152,10 +128,8 @@ export default function FenrirPage() {
             console.log('result ref ', result?.references.items);
         }
     });
-    const store = useStore(selector, shallow);
     return (
         <Layout
-
             style={{
                 borderRadius: 8,
                 overflow: 'hidden',
@@ -221,7 +195,7 @@ export default function FenrirPage() {
                         </Menu.ItemGroup>
                     </SubMenu>
                 </CompactMenu>
-                <hr/>
+                <hr style={{margin: 0}}/>
             </Header>
             <Layout>
                 <Sider style={{
@@ -235,133 +209,96 @@ export default function FenrirPage() {
                     <Divider style={{margin: 0, marginBottom: '30px', color: colors.textColor}}>Добавление
                         объектов</Divider>
                     <Divider style={{margin: 0, marginBottom: '10px', color: colors.textColor}}>Формулы</Divider>
+                    <Space.Compact style={{width: "100%"}}>
 
-                    <CustomSelect
-                        className={"my-custom-select-formula"}
-                        size={'small'}
-                        loading={loadFormulas}
-                        style={{
-                            width: '100%'
-                        }}
-                        onSelect={(value) => {
-                            const selectedFormula = dataFormulas?.formulaByKey?.items.find(item => item.id === value);
-                            store.addFormulaNode(selectedFormula);
-                            console.log("От формулы ", selectedFormula);
-                        }}>
-                        {dataFormulas?.formulaByKey?.items?.map(row => (
-                            <Select.Option key={row.id} value={row.id}>
-                                {row.name}
-                            </Select.Option>
-                        ))}
-                    </CustomSelect>
-                    <Divider style={{margin: 0, marginBottom: '10px', color: colors.textColor}}>Функции</Divider>
-                    <CustomSelect
-                        className={"my-custom-select-functions"}
-                        size={'small'}
-                        style={{
-                            width: '100%'
-                        }}
-                        loading={loadFormulas}
-                        onSelect={(value) => {
-                            const selectedReference = dataReference?.references?.items.find(item => item.id === value);
-                            const referen_values = JSON.parse(selectedReference.reference_values);
-                            const outputs = referen_values.reduce((acc, item) => {
-                                if (typeof item.value !== 'string') {
-                                    console.error(`Неверный формат значения: ${item.value}`);
-                                    return acc;
-                                }
-                                const id = nanoid();
-                                acc[id] = {name: item.name, value: parseInt(item.value)}; // Преобразование строки в число
-                                return acc;
-                            }, {});
-                            store.addReferenceNode(outputs);
-                        }}
-                    >
-                        {dataReference?.references?.items?.map(row => (
-                            <Select.Option key={row.id} value={row.id}>
-                                {row.name}
-                            </Select.Option>
-                        ))}
-                    </CustomSelect>
-                    <Divider style={{margin: 0, marginBottom: '10px', color: colors.textColor}}>Мат. операции</Divider>
-                    <CustomSelect
-                        className={"my-custom-select-math"}
-                        size={'small'}
-                        style={{
-                            width: '100%'
-                        }}
-                        //onSelect={(value)=>store.addMathOperationNode(value)}
-                    >
-                        <Select.Option value="1">Option 1</Select.Option>
-                        <Select.Option value="1">Option 1</Select.Option>
-                    </CustomSelect>
+                        <CustomSelect
+                            className={"my-custom-select-formula"}
+                            size={'small'}
+                            loading={loadFormulas}
+                            value={null}
+                            placeholder={"Выбор..."}
+                            style={{
+                                width: '100%'
+                            }}
+                            onSelect={(value) => {
+                                const selectedFormula = dataFormulas?.formulaByKey?.items.find(item => item.id === value);
+                                store.addFormulaNode(selectedFormula);
+                                console.log("От формулы ", selectedFormula);
+                            }}>
+                            {dataFormulas?.formulaByKey?.items?.map(row => (
+                                <Select.Option key={row.id} value={row.id}>
+                                    {row.name}
+                                </Select.Option>
+                            ))}
+                        </CustomSelect>
+                        <CustomButton size={'small'}
+                                      className={"my-custom-btn-create-formula"}
+                                      onClick={() => {}}
+                                      icon={<PlusCircleOutlined/>}/>
+                    </Space.Compact>
                     <Divider style={{margin: 0, marginBottom: '10px', color: colors.textColor}}>Справоочники</Divider>
-                    <CustomSelect
-                        className={"my-custom-select-references"}
-                        size={'small'}
-                        style={{
-                            width: '100%'
-                        }}
-                        loading={loadReference}
-                        onSelect={(value) => {
-                            const selectedReference = dataReference?.references?.items.find(item => item.id === value);
-                            const referen_values = JSON.parse(selectedReference.reference_values);
-                            const outputs = referen_values.reduce((acc, item) => {
-                                if (typeof item.value !== 'string') {
-                                    console.error(`Неверный формат значения: ${item.value}`);
+                    <Space.Compact style={{width: "100%"}}>
+                        <CustomSelect
+                            className={"my-custom-select-references"}
+                            size={'small'}
+                            placeholder={"Выбор..."}
+                            value={null}
+                            style={{
+                                width: '100%'
+                            }}
+                            loading={loadReference}
+                            onSelect={(value) => {
+                                const selectedReference = dataReference?.references?.items.find(item => item.id === value);
+                                const referen_values = JSON.parse(selectedReference.reference_values);
+                                const outputs = referen_values.reduce((acc, item) => {
+                                    if (typeof item.value !== 'string') {
+                                        console.error(`Неверный формат значения: ${item.value}`);
+                                        return acc;
+                                    }
+                                    const id = nanoid();
+                                    acc[id] = {name: item.name, value: parseInt(item.value)}; // Преобразование строки в число
                                     return acc;
-                                }
-                                const id = nanoid();
-                                acc[id] = {name: item.name, value: parseInt(item.value)}; // Преобразование строки в число
-                                return acc;
-                            }, {});
-                            store.addReferenceNode(outputs);
-                        }}
-                    >
-                        {dataReference?.references?.items?.map(row => (
-                            <Select.Option key={row.id} value={row.id}>
-                                {row.name}
-                            </Select.Option>
-                        ))}
-                    </CustomSelect>
+                                }, {});
+                                store.addReferenceNode(outputs);
+                            }}
+                        >
+                            {dataReference?.references?.items?.map(row => (
+                                <Select.Option key={row.id} value={row.id}>
+                                    {row.name}
+                                </Select.Option>
+                            ))}
+                        </CustomSelect>
+                        <CustomButton size={'small'}
+                                      className={"my-custom-btn-create-references"}
+                                      onClick={() => {
+                                      }}
+                                      icon={<PlusCircleOutlined/>}/>
+                    </Space.Compact>
 
                     <Divider style={{margin: 0, marginBottom: '10px', color: colors.textColor}}>Ввод/Вывод</Divider>
-                    <Button size={'small'} style={{
-                        width: '100%',
-                        backgroundColor: colors.input.secondary,
-                        border: '1.5px solid ' + colors.input.primary,
-                        borderRadius: '2px',
-                        marginBottom: '5px', color: "#e2e3e7"
-                    }}
+                    <CustomButton size={'small'}
+                                  className={"my-custom-btn-add-input"}
                             onClick={() => {
                                 store.addInputNode('single');
                                 console.log("От кнопки ушло");
                             }}
-                            icon={<PlusCircleOutlined/>}>Создать ввод</Button>
-                    <Button size={'small'} style={{
-                        width: '100%',
-                        backgroundColor: colors.input.secondary,
-                        border: '1.5px solid ' + colors.input.primary,
-                        borderRadius: '2px',
-                        marginBottom: '5px', color: "#e2e3e7"
-                    }}
+                            icon={<PlusCircleOutlined/>}>Ввод значения</CustomButton>
+                    <CustomButton size={'small'}
+                            className={"my-custom-btn-add-input-array"}
                             onClick={() => {
                                 store.addArrayInputNode();
                                 console.log("От кнопки ушло");
                             }}
-                            icon={<PlusCircleOutlined/>}>Создать массива</Button>
-                    <Button size={'small'} style={{
-                        width: '100%',
-                        backgroundColor: colors.output.secondary,
-                        border: '1.5px solid ' + colors.output.primary,
-                        borderRadius: '2px',
-                        marginBottom: '5px', color: "#e2e3e7"
-                    }}
+                            icon={<PlusCircleOutlined/>}>Ввод значений</CustomButton>
+
+                    <CustomButton size={'small'}
+                                  className={"my-custom-btn-add-output"}
                             onClick={() => {
                                 store.addOutputNode('single');
                                 console.log("От кнопки ушло");
                             }}
-                            icon={<PlusCircleOutlined/>}>Создать вывод</Button> </Sider>
+                            icon={<PlusCircleOutlined/>}>Вывод значений</CustomButton>
+                </Sider>
                 <Content style={{
                     border: '1px solid ' + colors.border, // стиль и цвет границы
                     textAlign: 'center',
@@ -373,14 +310,17 @@ export default function FenrirPage() {
                         <Modal
                             open={createFenrirModalVisible?.visible ?? false}
                             onCancel={() => setCreateFenrirModalVisible({...createFenrirModalVisible, visible: false})}
-                            footer={null} >
+                            footer={null}>
                             <FenrirForm type={createFenrirModalVisible?.type} fenrir={store.getModels()}/>
                         </Modal>
                         <Modal
                             open={viewFenrirModalVisible?.visible ?? false}
                             onCancel={() => setViewFenrirModalVisible({...createFenrirModalVisible, visible: false})}
-                            footer={null} >
-                            <FenrirView type={viewFenrirModalVisible?.type} onSetModels={store.setModels}/>
+                            footer={null}>
+                            <FenrirView
+                                onClose={() => setViewFenrirModalVisible({...createFenrirModalVisible, visible: false})}
+                                type={viewFenrirModalVisible?.type}
+                                onSetModels={(models) => setModel(models)}/>
                         </Modal>
                         <ReactFlowProvider>
                             <ReactFlow
@@ -388,7 +328,6 @@ export default function FenrirPage() {
                                 nodeTypes={nodeTypes}
                                 nodes={store.nodes}
                                 edges={store.edges}
-                                // onChange={console.log('log change')}
                                 onNodesChange={store.onNodesChange}
                                 onNodesDelete={store.onNodesDelete}
                                 onEdgesChange={store.onEdgesChange}
@@ -419,11 +358,71 @@ export default function FenrirPage() {
                     <Divider style={{
                         margin: 0, marginBottom: '10px',
                         color: colors.textColor
-                    }}
-                    >Ввод данных</Divider>
-                    <Divider style={{margin: 0, marginBottom: '10px', color: colors.textColor}}>Вывод данных</Divider>
-                    <Button onClick={handleSaveContext} children={"Получить текущее состояние"}/>
+                    }}>Ввод данных</Divider>
+                    {store.nodes?.map((row) => {
+                        if (row.type === 'inputNode') {
+                            return Object.keys(row.data.outputs).map((key) => {
+                                return (
+                                    <div style={{width: "100%"}}>
+                                        <Row style={{width: "100%"}}>
+                                            {row.data.outputs[key].name} :
+                                        </Row>
+                                        <Row style={{width: "100%"}}>
+                                            <Input
+                                                size={"small"}
+                                                value={row.data.outputs[key].value}
+                                                onChange={(e) => {
+                                                    if (e.target.value !== row.data.outputs[key].value) {
+                                                        console.log("пеоотмееи", " было");
+                                                        const data = row.data;
+                                                        data.outputs[key].value = e.target.value;
+                                                        store.updateNode(row.id, data);
+                                                    }
+                                                }}
+                                                style={{width: "100%"}}
+                                            />
 
+                                        </Row>
+                                    </div>
+
+                                );
+                            });
+                        }
+                        return null;
+                    })}
+
+                    <hr/>
+                    {store.nodes?.map((row) => {
+                        if (row.type === 'referenceNode') {
+                            return (
+                                <div key={row.id}>{row.id} - {row.type}</div>
+                            );
+                        }
+                        return null;
+                    })}
+                    <hr/>
+                    {store.nodes?.map((row) => {
+                        if (row.type === 'arrayInputNode') {
+                            return (
+                                <div key={row.id}>{row.id} - {row.type}</div>
+                            );
+                        }
+                        return null;
+                    })}
+                    <Divider style={{
+                        margin: 0, marginBottom: '10px',
+                        color: colors.textColor
+                    }}>Вывод</Divider>
+                    {store.nodes?.map((row) => {
+                        if (row.type === 'outputNode') {
+                            return (
+
+                                <div key={row.id}>{row.id} - {row.type}</div>
+                            );
+                        }
+                        return null;
+                    })}
+                    <Divider style={{margin: 0, marginBottom: '10px', color: colors.textColor}}>Вывод данных</Divider>
                 </Sider>
             </Layout>
             <Footer style={{
