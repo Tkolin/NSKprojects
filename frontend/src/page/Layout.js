@@ -1,11 +1,15 @@
 import React, {useState} from 'react';
 import {
-    SolutionOutlined,
-    HomeOutlined,
+    BarChartOutlined,
+    BugOutlined,
+    CalculatorOutlined,
     FormOutlined,
-    ProfileOutlined, LogoutOutlined, BarChartOutlined, CalculatorOutlined, BugOutlined,
+    HomeOutlined,
+    LogoutOutlined,
+    ProfileOutlined,
+    SolutionOutlined,
 } from '@ant-design/icons';
-import {Layout, Menu, Button, Typography, Space} from 'antd';
+import {Button, Layout, Menu, Space, Typography} from 'antd';
 import {useQuery} from "@apollo/client";
 import {CURRENT_USER_QUERY} from "../graphql/queries";
 import {useNavigate} from "react-router-dom";
@@ -111,9 +115,11 @@ const CustomLayout = ({children, currentUser, la}) => {
                         getItem('Проекты', '3-1', null, null)
                     ]),
                     getItem('Расчёты', '4', <CalculatorOutlined/>, [
-                        getItem('Рабочий стол', '4-1', null, null),
-                        getItem('Создание справочника данных', '4-2', null, null),
-                        getItem('Создание формулы', '4-3', null, null),
+                         getItem('1', '4-5', null, null),
+                         getItem('Рабочий стол', '4-1', null, null),
+                        // getItem('Создание справочника данных', '4-2', null, null),
+                        // getItem('Создание формулы', '4-3', null, null),
+                        // getItem('Форма расчёта', '4-4', null, null),
 
                     ]),
                     getItem('Экономика', '5', <BarChartOutlined/>, []),
@@ -230,6 +236,14 @@ const CustomLayout = ({children, currentUser, la}) => {
                 break;
             case '4-3':
                 navigate('/guillaume/tyr');
+
+                break;
+                case '4-4':
+                navigate('/guillaume/computing');
+
+                break;
+                case '4-5':
+                navigate('/calculations/bgd');
 
                 break;
             default:

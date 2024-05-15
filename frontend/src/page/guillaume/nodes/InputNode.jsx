@@ -1,11 +1,9 @@
 import React from "react";
 import {Handle} from "reactflow";
-import {tw} from "twind";
 import {useStore} from "../store";
-import {StyledBlockBig, StyledBlockSmall} from "../../style/BlockStyles";
+import {StyledBlockBig} from "../../style/BlockStyles";
 import {colors} from "../../style/colors";
-import {Button, Col, Divider, Form, Input, Popover, Row, Space} from "antd";
-import {MathComponent} from "mathjax-react";
+import {Button, Col, Input, Row, Space} from "antd";
 import {PlusSquareOutlined} from "@ant-design/icons";
 import {nanoid} from "nanoid";
 
@@ -54,8 +52,8 @@ export default function InputNode({id, data}) {
                                             </Col>
                                             <Col span={1}>
                                                 <Handle id={key}
-                                                        type="source" position="left" style={{
-                                                    marginLeft: '46px',
+                                                        type="source" position="right" style={{
+                                                    marginRight: '-46px',
                                                     background: 'radial-gradient(circle, ' + colors.input.secondary + ' 18%, ' + colors.input.primary + ' 20%, ' + colors.input.primary + ' 38%, ' + colors.input.secondary + ' 40%)',
                                                     borderColor: colors.input.primary,
                                                     borderWidth: "1px",

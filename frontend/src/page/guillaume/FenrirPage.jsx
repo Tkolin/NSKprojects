@@ -1,9 +1,5 @@
-import React, {useEffect, useState} from "react";
-import ReactFlow, {
-    ReactFlowProvider,
-    Background,
-    MiniMap,
-} from "reactflow";
+import React, {useState} from "react";
+import ReactFlow, {Background, MiniMap, ReactFlowProvider,} from "reactflow";
 import {shallow} from "zustand/shallow";
 import {useStore} from "./store";
 import InputNode from "./nodes/InputNode";
@@ -12,7 +8,7 @@ import OutputNode from "./nodes/OutputNode";
 import "reactflow/dist/style.css";
 import FormulaNode from "./nodes/FormulaNode";
 import ReferenceNode from "./nodes/ReferenceNode";
-import {Button, Divider, Input, Layout, Menu, Modal, Row, Select, Space} from "antd";
+import {Divider, Input, Layout, Menu, Modal, Row, Select, Space} from "antd";
 import {Header} from "antd/es/layout/layout";
 import {Content, Footer} from "antd/lib/layout/layout";
 import Sider from "antd/es/layout/Sider";
@@ -20,7 +16,8 @@ import {colors} from "../style/colors";
 import {
     FileAddOutlined,
     FileExclamationOutlined,
-    FileOutlined, FileTextOutlined,
+    FileOutlined,
+    FileTextOutlined,
     PlusCircleOutlined,
 } from "@ant-design/icons";
 import {useQuery} from "@apollo/client";
@@ -32,7 +29,6 @@ import SubMenu from "antd/es/menu/SubMenu";
 import FenrirForm from "./form/FenrirForm";
 import FenrirView from "./form/FenrirView";
 import DevTools from "../../_dev/devtoolH/Devtools";
-
 
 
 const nodeTypes = {
@@ -415,10 +411,32 @@ export default function FenrirPage() {
                     }}>Вывод</Divider>
                     {store.nodes?.map((row) => {
                         if (row.type === 'outputNode') {
-                            return (
+                            return Object.keys(row.data.outputs).map((key) => {
+                                return (
+                                    <div style={{width: "100%"}}>
+                                        <Row style={{width: "100%"}}>
+                                            {row.data.outputs[key].name} :
+                                        </Row>
+                                        <Row style={{width: "100%"}}>
+                                            <Input
+                                                size={"small"}
+                                                value={row.data.outputs[key].value}
+                                                onChange={(e) => {
+                                                    if (e.target.value !== row.data.outputs[key].value) {
+                                                        console.log("пеоотмееи", " было");
+                                                        const data = row.data;
+                                                        data.outputs[key].value = e.target.value;
+                                                        store.updateNode(row.id, data);
+                                                    }
+                                                }}
+                                                style={{width: "100%"}}
+                                            />
 
-                                <div key={row.id}>{row.id} - {row.type}</div>
-                            );
+                                        </Row>
+                                    </div>
+
+                                );
+                            });
                         }
                         return null;
                     })}

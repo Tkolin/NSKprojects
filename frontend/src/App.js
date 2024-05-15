@@ -24,7 +24,7 @@ import IrdTable from "./page/view/tableView/IrdTable";
 import TypeProjectTable from "./page/view/tableView/TypeProjectTable";
 import StageTable from "./page/view/tableView/StageTable";
 import Test from "./_dev/test";
-import {ConfigProvider, theme} from "antd";
+import {ConfigProvider} from "antd";
 import ruRU from "antd/locale/ru_RU";
 import CreateNewProject from "./page/form/composedForm/CreateNewProject";
 import {createGlobalStyle} from "styled-components";
@@ -32,8 +32,7 @@ import SectionReferenceTable from "./page/view/tableView/SectionReferenceTable";
 import TasksChartForm from "./page/form/basicForm/TasksChartForm";
 import Test2 from "./_dev/test2";
 import FenrirPage from "./page/guillaume/FenrirPage";
-import FormulaForm from "./page/guillaume/form/FormulaForm";
-import ReferenceForm from "./page/guillaume/form/ReferenceForm";
+import FirstComputingForm from "./page/form/calculations/FirstComputingForm";
 
 
 const App = () => {
@@ -73,9 +72,11 @@ const App = () => {
                         <Route path="/" element={<Home/>}/>
                         <Route path="/test1" element={<Test/>}/>
                         <Route path="/test2" element={<Test2/>}/>
+                        <Route path='/calculations/bgd' element={<FirstComputingForm/>}/>
+                        {/*<Route path="/guillaume/computing" element={<FenrirComputingForm/>}/>*/}
                         <Route path="/guillaume/fenrir" element={<FenrirPage/>}/>
-                        <Route path="/guillaume/tyr" element={<FormulaForm/>}/>
-                        <Route path="/guillaume/silmarils" element={<ReferenceForm/>}/>
+                        {/*<Route path="/guillaume/tyr" element={<FormulaForm/>}/>*/}
+                        {/*<Route path="/guillaume/silmarils" element={<ReferenceForm/>}/>*/}
                         {currentUser ? (
                             <>
                                 {currentUser.role.name === "admin" && (

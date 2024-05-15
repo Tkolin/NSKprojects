@@ -75,11 +75,12 @@ const StyledBlockRegular = ({label, children}) => {
         </StyledBlockWrapperRegular>
     );
 };
-const StyledBlockBig = ({label, children, styleHeader,styleHeaderText, styleBlcok}) => {
+const StyledBlockBig = ({label, children, styleHeader,styleHeaderText, styleBlcok, question}) => {
     return (
         <StyledBlockWrapperBig style={{...styleBlcok}}>
-            <QuestionCircleOutlined style={{ position: 'absolute', top: '18px', right: '10px', fontSize: '20px',...styleHeaderText }} />
-
+            {!question ?? (
+                <QuestionCircleOutlined style={{ position: 'absolute', top: '18px', right: '10px', fontSize: '20px',...styleHeaderText }} />
+            )}
             <Divider style={{marginBottom: '0px', marginTop: '0px',
                 borderTopRightRadius: "6px",
                 borderTopLeftRadius: '6px', marginLeft: "-15px",

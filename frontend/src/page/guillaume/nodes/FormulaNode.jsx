@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Handle} from "reactflow";
 import {useStore} from "../store";
 import {StyledBlock, StyledBlockBig} from "../../style/BlockStyles";
-import {Checkbox, Col, Input, notification, Popover, Row, Space, Spin} from "antd";
+import {Checkbox, Col, Input, notification, Popover, Row, Space} from "antd";
 import {MathComponent} from "mathjax-react";
 import {useMutation} from "@apollo/client";
 import {COMPUTE_FORMULAS_MUTATION} from "../../../graphql/mutationsFormula";
@@ -121,7 +121,7 @@ export default function FormulaNode({id, data}) {
 
         const result = Object.entries(data.inputs).reduce((acc, [key, value]) => acc
             .replace(new RegExp(key, 'g'), value.value)
-            .replace(new RegExp(`(?<![a-zA-Zа-яА-Я0-9])${valueReplaceToX}(?![a-zA-Zа-яА-Я0-9])`, 'g'), '_'), formula);
+            .replace(new RegExp(`(?<![a-zA-Zа-яА-Я0-9])${valueReplaceToX}(?![a-zA-Zа-яА-Я0-9])`  , 'g'), '_'), formula);
         console.log("Final result:", result);
         return result;
     };
@@ -196,7 +196,7 @@ export default function FormulaNode({id, data}) {
                                                                         borderColor: colors.result.primary,
                                                                         borderWidth: '2px'
                                                                     }}
-                                                                    value={data?.outputs[variable.name]?.value}
+                                                                    value={data?.outputs[variable.name]?.value }
                                                                 />)
                                                     ) : (
                                                         data.inputs && data?.inputs[variable.name] ? (

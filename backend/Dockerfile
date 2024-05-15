@@ -10,32 +10,32 @@ RUN apk update && apk add --no-cache \
     libjpeg-turbo-dev \
     freetype-dev \
     libzip-dev \
+    py3-pip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_mysql gd zip
 
 # Устанавливаем Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Установка virtualenv
-RUN pip3 install virtualenv
+# Устанавливаем virtualenv
+RUN pip install virtualenv
 
 # Настройка рабочей директории
 WORKDIR /var/www/html/backend
 
 # Создание и активация виртуального окружения
 RUN virtualenv venv
-RUN . venv/Scripts/activate \
+RUN . venv/bin/activate \
     && pip install --no-cache-dir -r requirements.txt
 
-    # Копируем файлы проекта в контейнер
+# Копируем файлы проекта в контейнер
 COPY . .
 
 # Устанавливаем зависимости Laravel
 RUN composer install --no-dev
 
 # Устанавливаем библиотеку SymPy
-RUN apk add --no-cache py3-pip
-RUN pip3 install sympy
+RUN pip install sympy
 
 # Открываем порт для веб-сервера (по умолчанию 8000)
 EXPOSE 8000
