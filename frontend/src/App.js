@@ -72,9 +72,9 @@ const App = () => {
                         <Route path="/" element={<Home/>}/>
                         <Route path="/test1" element={<Test/>}/>
                         <Route path="/test2" element={<Test2/>}/>
-                        <Route path='/calculations/bgd' element={<FirstComputingForm/>}/>
+                        {/*<Route path='/calculations/bgd' element={<FirstComputingForm/>}/>*/}
                         {/*<Route path="/guillaume/computing" element={<FenrirComputingForm/>}/>*/}
-                        <Route path="/guillaume/fenrir" element={<FenrirPage/>}/>
+                        {/*<Route path="/guillaume/fenrir" element={<FenrirPage/>}/>*/}
                         {/*<Route path="/guillaume/tyr" element={<FormulaForm/>}/>*/}
                         {/*<Route path="/guillaume/silmarils" element={<ReferenceForm/>}/>*/}
                         {currentUser ? (

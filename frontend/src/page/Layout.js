@@ -115,8 +115,8 @@ const CustomLayout = ({children, currentUser, la}) => {
                         getItem('Проекты', '3-1', null, null)
                     ]),
                     getItem('Расчёты', '4', <CalculatorOutlined/>, [
-                         getItem('1', '4-5', null, null),
-                         getItem('Рабочий стол', '4-1', null, null),
+                        // getItem('1', '4-5', null, null),
+                        // getItem('Рабочий стол', '4-1', null, null),
                         // getItem('Создание справочника данных', '4-2', null, null),
                         // getItem('Создание формулы', '4-3', null, null),
                         // getItem('Форма расчёта', '4-4', null, null),

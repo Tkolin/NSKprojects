@@ -12,9 +12,9 @@ export const DELETE_ORGANIZATION_MUTATION = gql`
                 id
                 name
             }
-            createress_legal
+            address_legal
             office_number_legal
-            createress_mail
+            address_mail
             office_number_mail
             phone_number
             fax_number
@@ -39,12 +39,12 @@ export const DELETE_ORGANIZATION_MUTATION = gql`
 
 export const ADD_ORGANIZATION_MUTATION = gql`
     mutation AddOrganization(
-        $legal_form: ID!,
+        $legal_form_id: ID!,
         $name: String!,
         $full_name: String!,
-        $createress_legal: String,
+        $address_legal: String,
         $office_number_legal: String,
-        $createress_mail: String,
+        $address_mail: String,
         $office_number_mail: String,
         $phone_number: String,
         $fax_number: String,
@@ -58,12 +58,12 @@ export const ADD_ORGANIZATION_MUTATION = gql`
         $director_id: ID
     ) {
         createOrganization(
-            legal_form_id: $legal_form
+            legal_form_id: $legal_form_id
             name: $name
             full_name: $full_name
-            createress_legal: $createress_legal
+            address_legal: $address_legal
             office_number_legal: $office_number_legal
-            createress_mail: $createress_mail
+            address_mail: $address_mail
             office_number_mail: $office_number_mail
             phone_number: $phone_number
             fax_number: $fax_number
@@ -82,9 +82,9 @@ export const ADD_ORGANIZATION_MUTATION = gql`
                 id
                 name
             }
-            createress_legal
+            address_legal
             office_number_legal
-            createress_mail
+            address_mail
             office_number_mail
             phone_number
             fax_number
@@ -110,12 +110,12 @@ export const ADD_ORGANIZATION_MUTATION = gql`
 export const UPDATE_ORGANIZATION_MUTATION = gql`
     mutation AddOrganization(
         $id: ID!,
-        $legal_form: ID!,
+        $legal_form_id: ID!,
         $name: String!,
         $full_name: String!,
-        $createress_legal: String,
+        $address_legal: String,
         $office_number_legal: String,
-        $createress_mail: String,
+        $address_mail: String,
         $office_number_mail: String,
         $phone_number: String,
         $fax_number: String,
@@ -130,12 +130,12 @@ export const UPDATE_ORGANIZATION_MUTATION = gql`
     ) {
         updateOrganization(
             id: $id
-            legal_form_id: $legal_form
+            legal_form_id: $legal_form_id
             name: $name
             full_name: $full_name
-            createress_legal: $createress_legal
+            address_legal: $address_legal
             office_number_legal: $office_number_legal
-            createress_mail: $createress_mail
+            address_mail: $address_mail
             office_number_mail: $office_number_mail
             phone_number: $phone_number
             fax_number: $fax_number
@@ -154,9 +154,9 @@ export const UPDATE_ORGANIZATION_MUTATION = gql`
                 id
                 name
             }
-            createress_legal
+            address_legal
             office_number_legal
-            createress_mail
+            address_mail
             office_number_mail
             phone_number
             fax_number

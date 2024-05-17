@@ -79,8 +79,8 @@ const OrganizationForm = ({organization, onClose}) => {
             form.resetFields();
             form.setFieldsValue({
                 ...organization,
-                director: organization?.director?.id ??  null,
-                legal_form: organization?.legal_form?.id ?? null,
+                director_id: organization?.director?.id ??  null,
+                legal_form_id: organization?.legal_form?.id ?? null,
                 bik_id: organization?.bik?.id ?? null,
             });
             setAddress1(organization?.address_mail);
@@ -114,19 +114,16 @@ const OrganizationForm = ({organization, onClose}) => {
     // Обработчик отправки формы
     const handleSubmit = () => {
         const formValues = form.getFieldsValue();
-        const {address_legal, address_mail, director, bik_id, legal_form, ...rest} = formValues;
+        const {address_legal, address_mail,  ...rest} = formValues;
         const restrictedValue1 =  address_legal?.unrestricted_value ?? address1;
         const restrictedValue2 =  address_mail?.unrestricted_value ?? address2;
-    console.log(bik_id);
+
         if (editingOrganization) {
             updateOrganization({
                 variables: {
                     id: editingOrganization.id,
                     address_legal: restrictedValue1,
                     address_mail: restrictedValue2,
-                    legal_form: legal_form,
-                    director_id: director,
-                    bik_id: bik_id,
                     ...rest
                 }
             });
@@ -135,9 +132,6 @@ const OrganizationForm = ({organization, onClose}) => {
                 variables: {
                     address_legal: restrictedValue1,
                     address_mail: restrictedValue2,
-                    legal_form: legal_form,
-                    director_id: director,
-                    bik_id: bik_id,
                     ...rest
                 }
             });
@@ -155,7 +149,7 @@ const OrganizationForm = ({organization, onClose}) => {
                         <Input                          style={{width: "100%)"}}
                                                          placeholder={"Наименование"}/>
                     </StyledFormItem>
-                    <StyledFormItem  style={{width: "10%" }} name="legal_form" rules={[{required: true, message: "Укажите тип организации"}]}>
+                    <StyledFormItem  style={{width: "10%" }} name="legal_form_id" rules={[{required: true, message: "Укажите тип организации"}]}>
                         <Select placeholder={"Форма"} style={{width: "100%)"}} loading={loadingLegalForm}>
                             {dataLegalForm?.legalForms?.map(row => (
                                 <Select.Option key={row.id} value={row.id}>{row.name}</Select.Option>))}
@@ -166,7 +160,7 @@ const OrganizationForm = ({organization, onClose}) => {
                     <Input/>
                 </StyledFormItem>
                 <StyledFormItemSelectAndCreateWitchEdit
-                                               formName={"director"}
+                                               formName={"director_id"}
                                                formLabel={"Руководитель"}
                                                onSearch={handleAutoCompleteContacts}
                                                placeholder={"Начните ввод..."}
