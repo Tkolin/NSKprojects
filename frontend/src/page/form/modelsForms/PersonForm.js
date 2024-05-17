@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Form, Input, Select, notification, Col, Row, Modal, Space, Divider, Button} from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
 import {
@@ -9,24 +9,82 @@ import {
 } from '../../style/FormStyles';
 import {DatePicker} from "antd/lib";
 import moment from 'moment';
-import PassportPlaceIssuesForm from "../simpleForm/passportPlaceIssuesForm";
+import PassportPlaceIssuesForm from "./PassportPlaceIssuesForm";
 import {StyledBlockBig} from "../../style/BlockStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {PlusOutlined} from "@ant-design/icons";
 import {BANKS_QUERY, BIKS_QUERY, PASSPORTS_PLACE_ISSUES_QUERY, PERSONS_QUERY} from "../../../graphql/queries";
-import BikForm from "../simpleForm/BikForm";
+import BikForm from "./BikForm";
 import {AddressSuggestions} from "react-dadata";
 import {StyledAddressSuggestions, StyledAddressSuggestionsInput} from "../../style/InputStyles";
 import {StyledFormItemSelectAndCreate, StyledFormItemSelectAndCreateWitchEdit} from "../../style/SelectStyles";
+import {NotificationContext} from "../../../NotificationProvider";
 
-const PersonForm = ({person, onClose}) => {
+const PersonForm = ({ initialObject, mutation, onCompleted }) => {
+    // Первичные данные
+    const {openNotification} = useContext(NotificationContext);
+    const [form] = Form.useForm();
+    const nameModel = 'Контакт';
+
+    // Состояния
+    const [organizationModalStatus, setOrganizationModalStatus] = useState("add");
+    const [selectedOrganizationData, setSelectedOrganizationData] = useState(null);
+
+
+    // Изменение состояния
+    const handleSelectedOrganization = (value) => {
+        setAutoCompleteOrganization(null);
+        setSelectedOrganizationData(dataOrganizations?.organizations?.items?.find(org => org.id === value));
+    };
+
+    // Мутация
+    const [mutate] = useMutation(initialObject ? UPDATE_CONTACT_MUTATION : ADD_CONTACT_MUTATION, {
+        onCompleted: (data) => {
+            openNotification('topRight', 'success', `Мутация ${nameModel} выполнена успешно`);
+            onCompleted && onCompleted(data);
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при выполнении мутации ${nameModel}: ${error.message}`);
+        },
+    });
+
+    // Подгрузка при обновлении
+    useEffect(() => {
+        initialObject &&
+        form.setFieldsValue({
+            ...initialObject,
+            birth_day: initialObject?.birth_day ? moment(initialObject.birth_day) : null,
+            position_id: initialObject?.position.id ?? null,
+            organization_id: initialObject?.organization?.id ?? null
+        });
+    }, [initialObject, form]);
+
+
+    // Получение данных для выпадающих списков
+    const {loading: loadingPositions, error: errorPositions, data: dataPositions} = useQuery(POSITIONS_QUERY_COMPACT);
+
+    const {
+        loading: loadingOrganizations,
+        error: errorOrganizations,
+        data: dataOrganizations
+    } = useQuery(ORGANIZATIONS_QUERY_COMPACT);
+
+    // Завершение
+    const handleSubmit = () => {
+        mutate({variables: {...(initialObject ? {id: initialObject.id} : {}), ...form.getFieldsValue()}});
+    };
+
+    if (errorOrganizations || errorPositions) return `Ошибка! ${errorOrganizations?.message || errorPositions?.message}`;
+//////TODO:
+//
+//
+//
+// /////////////////////////////////////////////////////////////////////////////////////
+
     // Состояния
     const [bikFormViewModalVisible, setBikFormViewModalVisible] = useState(false);
-
     const [editingPerson, setEditingPerson] = useState(null);
-    const [form] = Form.useForm();
     const [formPassport] = Form.useForm();
-    const [,] = notification.useNotification();
     const [ppiFormViewModalVisible, setPpiFormViewModalVisible] = useState(false);
     const handlePpiFormView = () => {setPpiFormViewModalVisible(false);};
     const handleBikFormView = () => {setBikFormViewModalVisible(false);};
@@ -48,12 +106,6 @@ const PersonForm = ({person, onClose}) => {
     const addresChange1 = (suggestion) => {setAddress1(suggestion?.unrestricted_value);};
     const addresChange2 = (suggestion) => {setAddress2(suggestion?.unrestricted_value);};
 
-    // Функции уведомлений
-    const openNotification = (placement, type, message) => {
-        notification[type]({
-            message: message, placement,
-        });
-    };
 
     const {loading: loadingbiks} = useQuery(BIKS_QUERY, {
         variables: {

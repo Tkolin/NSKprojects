@@ -10,7 +10,7 @@ import {
 } from '../../style/FormStyles';
 import {  PlusOutlined} from '@ant-design/icons';
 
-import TypeProjectForm from "../simpleForm/TypeProjectForm";
+import TypeProjectForm from "../modelsForms/TypeProjectForm";
  import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../style/BlockStyles";
 import { StyledButtonGreen} from "../../style/ButtonStyles";
 import StagesTemplateForm from "../aggregateComponent/templateForm/StagesTemplateForm";

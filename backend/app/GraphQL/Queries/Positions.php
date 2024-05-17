@@ -10,6 +10,9 @@ final readonly class Positions
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
+        if(!isset($args['queryOptions']))
+            return ['items' => Position::all()];
+
         $positionQuery = Position::query();
 
         $queryService = new QueryService();

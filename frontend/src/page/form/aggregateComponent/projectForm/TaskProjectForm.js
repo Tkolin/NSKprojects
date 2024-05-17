@@ -12,8 +12,8 @@ import {
 
 import {StyledFormItem, StyledFormRegular} from '../../../style/FormStyles';
 import {StyledButtonGreen} from "../../../style/ButtonStyles";
-import PersonForm from "../../basicForm/PersonForm";
-import TaskForm from "../../simpleForm/TaskForm";
+import PersonForm from "../../modelsForms/PersonForm";
+import TaskForm from "../../modelsForms/TaskForm";
 import {
     BaseStyledFormItemSelect,
     StyledFormItemSelect,

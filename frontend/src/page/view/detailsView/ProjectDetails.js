@@ -1,12 +1,12 @@
 import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../style/BlockStyles";
 import React, {useState} from "react";
 import {Col, Divider, Form, Modal, Row, Select} from "antd";
-import TypeProjectForm from "../../form/simpleForm/TypeProjectForm";
+import TypeProjectForm from "../../form/modelsForms/TypeProjectForm";
 import IrdsTemplateForm from "../../form/aggregateComponent/templateForm/IrdsTemplateForm";
 import StagesTemplateForm from "../../form/aggregateComponent/templateForm/StagesTemplateForm";
 import {TYPES_PROJECTS_QUERY} from "../../../graphql/queries";
 import {useQuery} from "@apollo/client";
-import ProjectForm from "../../form/basicForm/ProjectForm";
+import ProjectForm from "../../form/modelsForms/ProjectForm";
 import IrdsProjectForm from "../../form/aggregateComponent/projectForm/IrdsProjectForm";
 import StagesProjectForm from "../../form/aggregateComponent/projectForm/StagesProjectForm";
 

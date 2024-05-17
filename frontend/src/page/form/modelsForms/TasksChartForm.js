@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useContext} from 'react';
 import {Button, Col, Drawer, Form, Input, InputNumber, Popconfirm, Row, Table, Typography} from 'antd';
 import {Chart} from 'react-google-charts';
 import {useMutation, useQuery} from "@apollo/client";
@@ -9,8 +9,69 @@ import {useParams} from "react-router";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {QuestionCircleOutlined} from "@ant-design/icons";
 import StyledLinkManagingDataTable from "../../style/TableStyles";
+import {NotificationContext} from "../../../NotificationProvider";
 
-const TasksChartForm = ({project, setProject}) => {
+const TasksChartForm = ({ initialObject, mutation, onCompleted }) => {
+    // Первичные данные
+    const {openNotification} = useContext(NotificationContext);
+    const [form] = Form.useForm();
+    const nameModel = 'Контакт';
+
+    // Состояния
+    const [organizationModalStatus, setOrganizationModalStatus] = useState("add");
+    const [selectedOrganizationData, setSelectedOrganizationData] = useState(null);
+
+
+    // Изменение состояния
+    const handleSelectedOrganization = (value) => {
+        setAutoCompleteOrganization(null);
+        setSelectedOrganizationData(dataOrganizations?.organizations?.items?.find(org => org.id === value));
+    };
+
+    // Мутация
+    const [mutate] = useMutation(initialObject ? UPDATE_CONTACT_MUTATION : ADD_CONTACT_MUTATION, {
+        onCompleted: (data) => {
+            openNotification('topRight', 'success', `Мутация ${nameModel} выполнена успешно`);
+            onCompleted && onCompleted(data);
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при выполнении мутации ${nameModel}: ${error.message}`);
+        },
+    });
+
+    // Подгрузка при обновлении
+    useEffect(() => {
+        initialObject &&
+        form.setFieldsValue({
+            ...initialObject,
+            birth_day: initialObject?.birth_day ? moment(initialObject.birth_day) : null,
+            position_id: initialObject?.position.id ?? null,
+            organization_id: initialObject?.organization?.id ?? null
+        });
+    }, [initialObject, form]);
+
+
+    // Получение данных для выпадающих списков
+    const {loading: loadingPositions, error: errorPositions, data: dataPositions} = useQuery(POSITIONS_QUERY_COMPACT);
+
+    const {
+        loading: loadingOrganizations,
+        error: errorOrganizations,
+        data: dataOrganizations
+    } = useQuery(ORGANIZATIONS_QUERY_COMPACT);
+
+    // Завершение
+    const handleSubmit = () => {
+        mutate({variables: {...(initialObject ? {id: initialObject.id} : {}), ...form.getFieldsValue()}});
+    };
+
+    if (errorOrganizations || errorPositions) return `Ошибка! ${errorOrganizations?.message || errorPositions?.message}`;
+//////TODO:
+//
+//
+//
+// /////////////////////////////////////////////////////////////////////////////////////
+
     const {projectId} = useParams();
 
     // Состояния
@@ -18,7 +79,6 @@ const TasksChartForm = ({project, setProject}) => {
     const [openTaskProjectForm, setOpenTaskProjectForm] = useState(false);
     const [addTasksProject, setAddTasksProject] = useState(false);
     const [editTask, setEditTask] = useState(null);
-    const [form] = Form.useForm();
 
     // Обработка полученых данных
     const buildData = (data) => {

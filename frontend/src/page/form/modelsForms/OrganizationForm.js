@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Form, Input, Select, Space, notification, Row, Col, Modal} from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
 import {
@@ -11,21 +11,79 @@ import {
 import {AddressSuggestions} from "react-dadata";
 import 'react-dadata/dist/react-dadata.css';
 import ContactForm from "./ContactForm";
-import BikForm from "../simpleForm/BikForm";
+import BikForm from "./BikForm";
 import {StyledBlockBig} from "../../style/BlockStyles";
 import { StyledButtonGreen} from "../../style/ButtonStyles";
 import {PlusOutlined} from "@ant-design/icons";
 import {BIKS_QUERY, CONTACTS_QUERY, LEGAL_FORM_QUERY, ORGANIZATIONS_QUERY} from "../../../graphql/queries";
 import {StyledAddressSuggestionsInput} from "../../style/InputStyles";
 import {StyledFormItemSelectAndCreate, StyledFormItemSelectAndCreateWitchEdit} from "../../style/SelectStyles";
+import {NotificationContext} from "../../../NotificationProvider";
 
-const OrganizationForm = ({organization, onClose}) => {
+const OrganizationForm = ({ initialObject, mutation, onCompleted }) => {
+    // Первичные данные
+    const {openNotification} = useContext(NotificationContext);
+    const [form] = Form.useForm();
+    const nameModel = 'Контакт';
+
+    // Состояния
+    const [organizationModalStatus, setOrganizationModalStatus] = useState("add");
+    const [selectedOrganizationData, setSelectedOrganizationData] = useState(null);
+
+
+    // Изменение состояния
+    const handleSelectedOrganization = (value) => {
+        setAutoCompleteOrganization(null);
+        setSelectedOrganizationData(dataOrganizations?.organizations?.items?.find(org => org.id === value));
+    };
+
+    // Мутация
+    const [mutate] = useMutation(initialObject ? UPDATE_CONTACT_MUTATION : ADD_CONTACT_MUTATION, {
+        onCompleted: (data) => {
+            openNotification('topRight', 'success', `Мутация ${nameModel} выполнена успешно`);
+            onCompleted && onCompleted(data);
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при выполнении мутации ${nameModel}: ${error.message}`);
+        },
+    });
+
+    // Подгрузка при обновлении
+    useEffect(() => {
+        initialObject &&
+        form.setFieldsValue({
+            ...initialObject,
+            birth_day: initialObject?.birth_day ? moment(initialObject.birth_day) : null,
+            position_id: initialObject?.position.id ?? null,
+            organization_id: initialObject?.organization?.id ?? null
+        });
+    }, [initialObject, form]);
+
+
+    // Получение данных для выпадающих списков
+    const {loading: loadingPositions, error: errorPositions, data: dataPositions} = useQuery(POSITIONS_QUERY_COMPACT);
+
+    const {
+        loading: loadingOrganizations,
+        error: errorOrganizations,
+        data: dataOrganizations
+    } = useQuery(ORGANIZATIONS_QUERY_COMPACT);
+
+    // Завершение
+    const handleSubmit = () => {
+        mutate({variables: {...(initialObject ? {id: initialObject.id} : {}), ...form.getFieldsValue()}});
+    };
+
+    if (errorOrganizations || errorPositions) return `Ошибка! ${errorOrganizations?.message || errorPositions?.message}`;
+//////TODO:
+//
+//
+//
+// /////////////////////////////////////////////////////////////////////////////////////
+
     // Состояния
     const TokenDADATA = process.env.REACT_APP_TOKEN_DADATAADDRESS;
 
-    const [editingOrganization, setEditingOrganization] = useState(null);
-    const [form] = Form.useForm();
-    const [api, contextHolder] = notification.useNotification();
     const [bikFormViewModalVisible, setBikFormViewModalVisible] = useState(false);
     const [editContactModalVisible, setEditContactModalVisible] = useState(false);
     const [addContactModalVisible, setAddContactModalVisible] = useState(false);
@@ -46,11 +104,7 @@ const OrganizationForm = ({organization, onClose}) => {
     const handleSelectedContact = (value, option) => {
         setSelectedContactData(dataContacts?.contacts?.items?.find(org => org.id === value))
     }
-    // Функции уведомлений
-    const openNotification = (placement, type, message) => {
-        notification[type]({
-            message: message, placement,
-        });};
+
 
     // Получение данных для выпадающих списков
     const {loading: loadingLegalForm, error: errorLegalForm, data: dataLegalForm} = useQuery(LEGAL_FORM_QUERY);

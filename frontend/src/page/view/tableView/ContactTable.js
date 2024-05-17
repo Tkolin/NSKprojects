@@ -3,7 +3,7 @@ import {useMutation, useQuery} from '@apollo/client';
 import {Divider, Form, Modal, notification, Space, Table} from 'antd';
 import {CONTACTS_QUERY} from '../../../graphql/queries';
 import {DELETE_CONTACT_MUTATION} from '../../../graphql/mutationsContact';
-import ContactForm from "../../form/basicForm/ContactForm";
+import ContactForm from "../../form/modelsForms/ContactForm";
 import Search from "antd/es/input/Search";
 import {StyledFormLarge} from "../../style/FormStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";

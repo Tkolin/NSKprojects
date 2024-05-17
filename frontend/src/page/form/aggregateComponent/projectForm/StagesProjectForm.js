@@ -16,8 +16,8 @@ import {PROJECTS_QUERY, STAGES_QUERY, TEMPLATE_STAGES_TYPE_PROJECTS_QUERY} from 
 import LoadingSpinnerStyles from "../../../style/LoadingSpinnerStyles";
 import {StyledFormLarge} from "../../../style/FormStyles";
 import {StyledButtonGreen} from "../../../style/ButtonStyles";
-import IrdForm from "../../simpleForm/IrdForm";
-import StageForm from "../../simpleForm/StageForm";
+import IrdForm from "../../modelsForms/IrdForm";
+import StageForm from "../../modelsForms/StageForm";
 
 const {RangePicker} = DatePicker;
 

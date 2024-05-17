@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Form, Input, notification} from 'antd';
 import { useMutation } from '@apollo/client';
 import {IRDS_QUERY} from '../../../graphql/queries';
@@ -6,23 +6,68 @@ import {StyledFormItem, StyledFormRegular} from '../../style/FormStyles';
 import {ADD_IRD_MUTATION, UPDATE_IRD_MUTATION} from "../../../graphql/mutationsIrd";
 import {StyledBlockRegular} from "../../style/BlockStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
+import {NotificationContext} from "../../../NotificationProvider";
 
-const IrdForm = ({ ird, onClose }) => {
+const IrdForm = ({ initialObject, mutation, onCompleted }) => {
+    // Первичные данные
+    const {openNotification} = useContext(NotificationContext);
+    const [form] = Form.useForm();
+    const nameModel = 'Контакт';
 
     // Состояния
-    const [editingIrd, setEditingIrd] = useState(null);
-    const [form] = Form.useForm();
-    const [ api,contextHolder] = notification.useNotification();
+    const [organizationModalStatus, setOrganizationModalStatus] = useState("add");
+    const [selectedOrganizationData, setSelectedOrganizationData] = useState(null);
 
-    // Функции уведомлений
-    const openNotification = (placement, type, message) => {
-        notification[type]({
-            message: message,
-            placement,
-        });
+
+    // Изменение состояния
+    const handleSelectedOrganization = (value) => {
+        setAutoCompleteOrganization(null);
+        setSelectedOrganizationData(dataOrganizations?.organizations?.items?.find(org => org.id === value));
     };
 
+    // Мутация
+    const [mutate] = useMutation(initialObject ? UPDATE_CONTACT_MUTATION : ADD_CONTACT_MUTATION, {
+        onCompleted: (data) => {
+            openNotification('topRight', 'success', `Мутация ${nameModel} выполнена успешно`);
+            onCompleted && onCompleted(data);
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при выполнении мутации ${nameModel}: ${error.message}`);
+        },
+    });
 
+    // Подгрузка при обновлении
+    useEffect(() => {
+        initialObject &&
+        form.setFieldsValue({
+            ...initialObject,
+            birth_day: initialObject?.birth_day ? moment(initialObject.birth_day) : null,
+            position_id: initialObject?.position.id ?? null,
+            organization_id: initialObject?.organization?.id ?? null
+        });
+    }, [initialObject, form]);
+
+
+    // Получение данных для выпадающих списков
+    const {loading: loadingPositions, error: errorPositions, data: dataPositions} = useQuery(POSITIONS_QUERY_COMPACT);
+
+    const {
+        loading: loadingOrganizations,
+        error: errorOrganizations,
+        data: dataOrganizations
+    } = useQuery(ORGANIZATIONS_QUERY_COMPACT);
+
+    // Завершение
+    const handleSubmit = () => {
+        mutate({variables: {...(initialObject ? {id: initialObject.id} : {}), ...form.getFieldsValue()}});
+    };
+
+    if (errorOrganizations || errorPositions) return `Ошибка! ${errorOrganizations?.message || errorPositions?.message}`;
+//////TODO:
+//
+//
+//
+// /////////////////////////////////////////////////////////////////////////////////////
     // Заполнение формы данными контакта при его редактировании
     useEffect(() => {
         if (ird) {

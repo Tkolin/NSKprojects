@@ -3,7 +3,7 @@ import {useMutation, useQuery} from '@apollo/client';
 import {Button, Divider, Form, Modal, notification, Space, Table} from 'antd';
 import {IRDS_QUERY, STAGES_QUERY} from '../../../graphql/queries';
 import {DELETE_IRD_MUTATION} from '../../../graphql/mutationsIrd';
-import IrdForm from "../../form/simpleForm/IrdForm";
+import IrdForm from "../../form/modelsForms/IrdForm";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import Search from "antd/es/input/Search";
 import {StyledFormLarge} from "../../style/FormStyles";

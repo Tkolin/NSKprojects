@@ -5,7 +5,7 @@ import {
 import {useQuery} from '@apollo/client';
 import {TYPES_PROJECTS_QUERY} from '../../../graphql/queries';
 
-import TypeProjectForm from "../simpleForm/TypeProjectForm";
+import TypeProjectForm from "../modelsForms/TypeProjectForm";
 import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../style/BlockStyles";
 import StagesTemplateForm from "../aggregateComponent/templateForm/StagesTemplateForm";
 import IrdsTemplateForm from "../aggregateComponent/templateForm/IrdsTemplateForm";

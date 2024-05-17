@@ -6,7 +6,7 @@ import {LoadingOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/ic
 import {StyledButtonGreen} from "../../../style/ButtonStyles";
 import {StyledFormBig} from "../../../style/FormStyles";
 import {UPDATE_IRDS_TEMPLATE_MUTATION} from "../../../../graphql/mutationsTemplate";
-import IrdForm from "../../simpleForm/IrdForm";
+import IrdForm from "../../modelsForms/IrdForm";
 import {IRDS_QUERY, TEMPLATE_IRDS_TYPE_PROJECTS_QUERY} from "../../../../graphql/queries";
 
 const IrdsTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod, disabled}) => {

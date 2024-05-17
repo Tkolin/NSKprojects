@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
     Form, Input, Select, InputNumber, notification, Modal, Space, Cascader, Button, Divider,
 } from 'antd';
@@ -22,21 +22,17 @@ import ContactForm from "./ContactForm";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import dayjs from "dayjs";
 import {StyledFormItemSelectAndCreate, StyledFormItemSelectAndCreateWitchEdit} from "../../style/SelectStyles";
+import {NotificationContext} from "../../../NotificationProvider";
 
 const {Option} = Select;
 const {SHOW_CHILD} = Cascader;
 
-const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
-    const [editingProject, setEditingProject] = useState(null);
-    // Заполнение формы данными контакта при его редактировании
-    useEffect(() => {
-        if (project) {
-            console.log("Редачение");
-            setEditingProject(project)
-        }
-    }, [project]);
-    // Состояния
+const ProjectForm = ({ initialObject, mutation, onCompleted }) => {
+    // Базовые наследования
+    const { openNotification } = useContext(NotificationContext);
     const [form] = Form.useForm();
+
+
     const [selectedTypeProject, setSelectedTypeProject] = useState(null);
     const [cascaderFacility, setCascaderFacility] = useState(null);
     const [addContactModalVisibleMode, setAddContactModalVisibleMode] = useState(false);
@@ -135,13 +131,6 @@ const ProjectForm = ({project, setProject, onClose, onSubmit}) => {
         // form.setFieldsValue({
         //     number: createNumber
         // });
-    };
-
-    // Функции уведомлений
-    const openNotification = (placement, type, message) => {
-        notification[type]({
-            message: message, placement,
-        });
     };
 
     // Получение данных для выпадающих списков

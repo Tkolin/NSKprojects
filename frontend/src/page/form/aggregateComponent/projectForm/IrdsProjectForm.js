@@ -9,7 +9,7 @@ import {IRDS_QUERY, PROJECTS_QUERY, STAGES_QUERY, TEMPLATE_IRDS_TYPE_PROJECTS_QU
 import {ADD_IRD_MUTATION} from "../../../../graphql/mutationsIrd";
 import LoadingSpinnerStyles from "../../../style/LoadingSpinnerStyles";
 import {StyledButtonGreen} from "../../../style/ButtonStyles";
-import IrdForm from "../../simpleForm/IrdForm";
+import IrdForm from "../../modelsForms/IrdForm";
 
 const IrdsProjectForm = ({project, setProject, onSubmit, disable}) => {
     // Состояния

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Button, Col, Divider, Row, Steps, Typography } from 'antd';
-import ProjectForm from "../basicForm/ProjectForm";
+import ProjectForm from "../modelsForms/ProjectForm";
 import StagesProjectForm from "../aggregateComponent/projectForm/StagesProjectForm";
 import IrdsProjectForm from "../aggregateComponent/projectForm/IrdsProjectForm";
 import { StyledBlockBig, StyledBlockLarge, StyledBlockRegular } from "../../style/BlockStyles";
@@ -109,6 +109,7 @@ const ComposedProjectForm = ({ editProject }) => {
                                     </li>
                                 ))}
                             </ul>
+
                         </StyledBlockBig>
                     )}
                 </Col>
