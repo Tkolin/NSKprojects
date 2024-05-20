@@ -5,38 +5,38 @@
 #import templates.graphql
 #import fenrir.graphql
 type Query {
-    contacts(queryOptions: QueryOptions, organizationId: ID): ContactsResult @checkRole(roles: ["admin"])
-    organizations(queryOptions: QueryOptions, organizationId: ID): OrganizationsResult @checkRole(roles: ["admin"])
-    positions(queryOptions: QueryOptions): PositionsResult @checkRole(roles: ["admin"])
-    irds(queryOptions: QueryOptions): IrdsResult @checkRole(roles: ["admin"])
-    stages(queryOptions: QueryOptions): StagesResult @checkRole(roles: ["admin"])
-    tasks(queryOptions: QueryOptions): TasksResult @checkRole(roles: ["admin"])
-    projects(queryOptions: QueryOptions, projectId: ID): ProjectsResult
-    persons(queryOptions: QueryOptions): PersonsResult @checkRole(roles: ["admin"])
-    biks(queryOptions: QueryOptions): BikResult @checkRole(roles: ["admin"])
-    passportPlaceIssues(queryOptions: QueryOptions): PassportPlaceIssueResult @checkRole(roles: ["admin"])
-    banks(queryOptions: QueryOptions): BanksResult @checkRole(roles: ["admin"])
+    contacts(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): ContactsResult @checkRole(roles: ["admin"])
+    organizations(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): OrganizationsResult @checkRole(roles: ["admin"])
+    positions(id: ID, queryOptions: QueryOptions, queryType: String): PositionsResult @checkRole(roles: ["admin"])
+    irds(id: ID, queryOptions: QueryOptions, queryType: String): IrdsResult @checkRole(roles: ["admin"])
+    stages(id: ID, queryOptions: QueryOptions, queryType: String): StagesResult @checkRole(roles: ["admin"])
+    tasks(id: ID, queryOptions: QueryOptions, queryType: String): TasksResult @checkRole(roles: ["admin"])
+    projects(id: ID, queryOptions: QueryOptions, queryType: String, projectId: ID): ProjectsResult
+    persons(id: ID, queryOptions: QueryOptions, queryType: String): PersonsResult @checkRole(roles: ["admin"])
+    biks(id: ID, queryOptions: QueryOptions, queryType: String): BikResult @checkRole(roles: ["admin"])
+    passportPlaceIssues(id: ID, queryOptions: QueryOptions, queryType: String): PassportPlaceIssueResult @checkRole(roles: ["admin"])
+    banks(id: ID, queryOptions: QueryOptions, queryType: String): BanksResult @checkRole(roles: ["admin"])
 
-    typeProjects(queryOptions: QueryOptions): TypeProjectsResult @checkRole(roles: ["admin"])
+    typeProjects(id: ID, queryOptions: QueryOptions, queryType: String): TypeProjectsResult @checkRole(roles: ["admin"])
     technicalSpecification: TechnicalSpecificationResult @checkRole(roles: ["admin"])
     typeTechnicalSpecification: TypeTechnicalSpecification @checkRole(roles: ["admin"])
     sectionReferences: SectionReferenceResult @checkRole(roles: ["admin"])
-    groupTypeProjects: [GroupTypeProjectDocument] @checkRole(roles: ["admin"])
+    groupTypeProjects(id: ID): [GroupTypeProjectDocument] @checkRole(roles: ["admin"])
 
     templatesIrdsTypeProjects(typeProject: ID): [TemplateIRD] @checkRole(roles: ["admin"])
     templatesStagesTypeProjects(typeProject: ID): [TemplateStage] @checkRole(roles: ["admin"])
     templatesTasksTypeProjects(typeProject: ID): [TemplateTask] @checkRole(roles: ["admin"])
     templatesSectionReferencesTypeProjects(typeProject: ID): [TemplateSectionReference] @checkRole(roles: ["admin"])
 
-    projectIrds(queryOptions: QueryOptions, projectId: ID): [ProjectIRD] @checkRole(roles: ["admin"])
-    projectStages(queryOptions: QueryOptions ,projectId: ID): [ProjectStage] @checkRole(roles: ["admin"])
-    projectTasksQuery(queryOptions: QueryOptions ,projectId: ID): [ProjectTask] @checkRole(roles: ["admin"])
-    projectSectionReferences(queryOptions: QueryOptions ,projectId: ID): [ProjectSectionReference] @checkRole(roles: ["admin"])
+    projectIrds(id: ID, queryOptions: QueryOptions, projectId: ID, queryType: String): [ProjectIRD] @checkRole(roles: ["admin"])
+    projectStages(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [ProjectStage] @checkRole(roles: ["admin"])
+    projectTasksQuery(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [ProjectTask] @checkRole(roles: ["admin"])
+    projectSectionReferences(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [ProjectSectionReference] @checkRole(roles: ["admin"])
 
-    formulaByKey(queryOptions: QueryOptions ,keys: [String!]): FormulaResult @checkRole(roles: ["admin"])
-    references(queryOptions: QueryOptions): ReferenceResult @checkRole(roles: ["admin"])
-    fenrirs(queryOptions: QueryOptions): FenrirsResult @checkRole(roles: ["admin"])
-    templateFenrirs(queryOptions: QueryOptions): FenrirsResult @checkRole(roles: ["admin"])
+    formulaByKey(id: ID, queryOptions: QueryOptions ,keys: [String!]): FormulaResult @checkRole(roles: ["admin"])
+    references(id: ID, queryOptions: QueryOptions): ReferenceResult @checkRole(roles: ["admin"])
+    fenrirs(id: ID, queryOptions: QueryOptions): FenrirsResult @checkRole(roles: ["admin"])
+    templateFenrirs(id: ID, queryOptions: QueryOptions): FenrirsResult @checkRole(roles: ["admin"])
     templateFenrirsTypeProject(projectId: ID): FenrirsResult @checkRole(roles: ["admin"])
     projectFenrirs(typeProject: ID): FenrirsResult @checkRole(roles: ["admin"])
 
@@ -246,7 +246,7 @@ type Mutation {
         passport_place_issue_id: ID
         address_registration: String
         address_residential: String
-        brth_date: String
+        birth_date: String
         date: String
         SHILS: String
         INN: String

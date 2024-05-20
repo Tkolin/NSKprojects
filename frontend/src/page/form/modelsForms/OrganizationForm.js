@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Form, Input, Select, Space, notification, Row, Col, Modal} from 'antd';
-import {useMutation, useQuery} from '@apollo/client';
+import {Form, Input, Select, Space, Row, Col, Modal} from 'antd';
+import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import {
     UPDATE_ORGANIZATION_MUTATION, ADD_ORGANIZATION_MUTATION,
 } from '../../../graphql/mutationsOrganization';
@@ -8,223 +8,156 @@ import {
     StyledFormItem, StyledFormBig
 } from '../../style/FormStyles';
 
-import {AddressSuggestions} from "react-dadata";
 import 'react-dadata/dist/react-dadata.css';
-import ContactForm from "./ContactForm";
-import BikForm from "./BikForm";
 import {StyledBlockBig} from "../../style/BlockStyles";
-import { StyledButtonGreen} from "../../style/ButtonStyles";
-import {PlusOutlined} from "@ant-design/icons";
-import {BIKS_QUERY, CONTACTS_QUERY, LEGAL_FORM_QUERY, ORGANIZATIONS_QUERY} from "../../../graphql/queries";
-import {StyledAddressSuggestionsInput} from "../../style/InputStyles";
-import {StyledFormItemSelectAndCreate, StyledFormItemSelectAndCreateWitchEdit} from "../../style/SelectStyles";
+import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {NotificationContext} from "../../../NotificationProvider";
+import {
+    BIKS_QUERY_COMPACT,
+    CONTACTS_QUERY_COMPACT, LEGAL_FORM_QUERY_COMPACT,
+} from "../../../graphql/queriesCompact";
+import {ORGANIZATIONS_QUERY_BY_ID} from "../../../graphql/queriesByID";
 
-const OrganizationForm = ({ initialObject, mutation, onCompleted }) => {
+import {
+    StyledFormItemAutoCompleteAndCreate,
+    StyledFormItemAutoCompleteAndCreateWitchEdit
+} from "../../style/SearchAutoCompleteStyles";
+
+
+import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
+import {AddressSuggestions} from "react-dadata";
+import {StyledAddressSuggestionsInput} from "../../style/InputStyles";
+import BikForm from "./BikForm";
+import ContactForm from "./ContactForm";
+
+const OrganizationForm = ({initialObject, onCompleted}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
-    const nameModel = 'Контакт';
-
-    // Состояния
-    const [organizationModalStatus, setOrganizationModalStatus] = useState("add");
-    const [selectedOrganizationData, setSelectedOrganizationData] = useState(null);
-
-
-    // Изменение состояния
-    const handleSelectedOrganization = (value) => {
-        setAutoCompleteOrganization(null);
-        setSelectedOrganizationData(dataOrganizations?.organizations?.items?.find(org => org.id === value));
-    };
-
-    // Мутация
-    const [mutate] = useMutation(initialObject ? UPDATE_CONTACT_MUTATION : ADD_CONTACT_MUTATION, {
+    const nameModel = 'Организация';
+    const TokenDADATA = process.env.REACT_APP_TOKEN_DADATAADDRESS;
+    const [actualObject, setActualObject] = useState(initialObject ?? null);
+    const [loadContext, {loading, data}] = useLazyQuery(ORGANIZATIONS_QUERY_BY_ID, {
+        variables: {id: initialObject?.id ?? null},
         onCompleted: (data) => {
-            openNotification('topRight', 'success', `Мутация ${nameModel} выполнена успешно`);
+            setActualObject(data?.organizations?.items[0]);
+            updateForm(data?.organizations?.items[0]);
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
+        },
+    });
+    // Состояния
+    const [contactModalStatus, setContactModalStatus] = useState(null);
+    const [contactAutoComplete, setContactAutoComplete] = useState({options: [], selected: {}});
+    const [bikModalStatus, setBikModalStatus] = useState(null);
+    const [bikAutoComplete, setBikAutoComplete] = useState({options: [], selected: {}});
+    const [address, setAddress] = useState({legal: "", mail: ""});
+    // Мутация
+    const [mutate] = useMutation(actualObject ? UPDATE_ORGANIZATION_MUTATION : ADD_ORGANIZATION_MUTATION, {
+        onCompleted: (data) => {
+            openNotification('topRight', 'success', `Создание новой записи в таблице ${nameModel} выполнено успешно`);
+            form.resetFields();
+            setAddress({legal: "", mail: ""});
             onCompleted && onCompleted(data);
         },
         onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении мутации ${nameModel}: ${error.message}`);
+            openNotification('topRight', 'error', `Ошибка при выполнении сооздания ${nameModel}: ${error.message}`);
         },
     });
 
     // Подгрузка при обновлении
     useEffect(() => {
-        initialObject &&
-        form.setFieldsValue({
-            ...initialObject,
-            birth_day: initialObject?.birth_day ? moment(initialObject.birth_day) : null,
-            position_id: initialObject?.position.id ?? null,
-            organization_id: initialObject?.organization?.id ?? null
-        });
-    }, [initialObject, form]);
-
-
-    // Получение данных для выпадающих списков
-    const {loading: loadingPositions, error: errorPositions, data: dataPositions} = useQuery(POSITIONS_QUERY_COMPACT);
-
-    const {
-        loading: loadingOrganizations,
-        error: errorOrganizations,
-        data: dataOrganizations
-    } = useQuery(ORGANIZATIONS_QUERY_COMPACT);
-
-    // Завершение
-    const handleSubmit = () => {
-        mutate({variables: {...(initialObject ? {id: initialObject.id} : {}), ...form.getFieldsValue()}});
-    };
-
-    if (errorOrganizations || errorPositions) return `Ошибка! ${errorOrganizations?.message || errorPositions?.message}`;
-//////TODO:
-//
-//
-//
-// /////////////////////////////////////////////////////////////////////////////////////
-
-    // Состояния
-    const TokenDADATA = process.env.REACT_APP_TOKEN_DADATAADDRESS;
-
-    const [bikFormViewModalVisible, setBikFormViewModalVisible] = useState(false);
-    const [editContactModalVisible, setEditContactModalVisible] = useState(false);
-    const [addContactModalVisible, setAddContactModalVisible] = useState(false);
-    const [selectedContactData, setSelectedContactData] = useState();
-    const [autoCompleteContacts, setAutoCompleteContacts] = useState('');
-    const [autoCompleteBiks, setAutoCompleteBiks] = useState('');
-    const [address1, setAddress1] = useState();
-    const [address2, setAddress2] = useState();
-    const addresChange1 = (suggestion) => {setAddress1(suggestion?.unrestricted_value);};
-    const addresChange2 = (suggestion) => {setAddress2(suggestion?.unrestricted_value);};
-    const handleAutoCompleteContacts = (value) => {setAutoCompleteContacts(value)};
-    const handleAutoCompleteBiks = (value) => {setAutoCompleteBiks(value)};
-    const handleBikFormView = () => {setBikFormViewModalVisible(false);};
-    const handleCloseModalFormView = () => {
-        setAddContactModalVisible(false);
-        setEditContactModalVisible(false);
-    };
-    const handleSelectedContact = (value, option) => {
-        setSelectedContactData(dataContacts?.contacts?.items?.find(org => org.id === value))
-    }
-
-
-    // Получение данных для выпадающих списков
-    const {loading: loadingLegalForm, error: errorLegalForm, data: dataLegalForm} = useQuery(LEGAL_FORM_QUERY);
-    const {loading: loadingBiks, error: errorBiks, data: dataBiks} = useQuery(BIKS_QUERY,{
-        variables: {
-            queryOptions: {search: autoCompleteBiks, limit: 10, page: 1}
-        },});
-    const {loading: loadingContacts, error: errorContacts, data: dataContacts} = useQuery(CONTACTS_QUERY, {
-        variables: {
-            queryOptions: { search: autoCompleteContacts, limit: 10, page: 1}
-        },});
-
-    // Заполнение формы данными контакта при его редактировании
-    useEffect(() =>{
-        form.resetFields();
-        setAddress1("");
-        setAddress2("");
-    }, []);
-
-    useEffect(() => {
-        console.log(organization)
-        if (organization ) {
-
-            setAutoCompleteBiks(organization?.bik?.id);
-            setEditingOrganization(organization);
+        console.log("initialObject",initialObject);
+        if (initialObject?.id) {
+            loadContext();
+        }
+    }, [initialObject]);
+    const updateForm = (data) => {
+        if (data) {
             form.resetFields();
+            setAddress({ legal: "", mail: "" });
+
+            const director = data?.director || {};
+            const bik = data?.bik || {};
+            const legalForm = data?.legal_form || {};
+
             form.setFieldsValue({
-                ...organization,
-                director_id: organization?.director?.id ??  null,
-                legal_form_id: organization?.legal_form?.id ?? null,
-                bik_id: organization?.bik?.id ?? null,
+                ...data,
+                director_name:
+                    (director.last_name ?? "") + " " +
+                    (director.first_name ?? "") + " " +
+                    (director.patronymic ?? ""),
+                bik_name: (bik.BIK ?? "") + " " + (bik.name ?? ""),
+                legal_form_id: legalForm.id ?? null,
+                address_legal: "Пельменная"
             });
-            setAddress1(organization?.address_mail);
-            setAddress2(organization?.address_legal);
-        }
-    }, [organization, form]);
 
-    // Мутации для добавления и обновления
-    const [addOrganization] = useMutation(ADD_ORGANIZATION_MUTATION, {
-        refetchQueries: [{query: ORGANIZATIONS_QUERY}], onCompleted: () => {
-            openNotification('topRight', 'success', 'Данные успешно добавлены!');
-            form.resetFields();
-            if(onClose())
-                onClose()
-        }, onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при добавлении данных:' + error.message);
-        }
-    });
-
-    const [updateOrganization] = useMutation(UPDATE_ORGANIZATION_MUTATION, {
-        refetchQueries: [{query: ORGANIZATIONS_QUERY}], onCompleted: () => {
-            openNotification('topRight', 'success', 'Данные успешно обновлены!');
-            setEditingOrganization(null);
-            if(onClose())
-                onClose()
-        }, onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при обновлении данных:' + error.message);
-        }
-    });
-
-    // Обработчик отправки формы
-    const handleSubmit = () => {
-        const formValues = form.getFieldsValue();
-        const {address_legal, address_mail,  ...rest} = formValues;
-        const restrictedValue1 =  address_legal?.unrestricted_value ?? address1;
-        const restrictedValue2 =  address_mail?.unrestricted_value ?? address2;
-
-        if (editingOrganization) {
-            updateOrganization({
-                variables: {
-                    id: editingOrganization.id,
-                    address_legal: restrictedValue1,
-                    address_mail: restrictedValue2,
-                    ...rest
-                }
-            });
-        } else {
-            addOrganization({
-                variables: {
-                    address_legal: restrictedValue1,
-                    address_mail: restrictedValue2,
-                    ...rest
-                }
-            });
+            setBikAutoComplete({ selected: bik.id });
+            setContactAutoComplete({ selected: director.id });
+            setAddress({ legal: data.address_legal, mail: data.address_mail });
         }
     };
 
 
-    return (<StyledBlockBig label={'Организация'}>
+
+    // Получение данных для выпадающих списков
+    const {loading: loadingContacts, error: errorContacts, data: dataContacts} = useQuery(CONTACTS_QUERY_COMPACT);
+    const {loading: loadingLegalForm, error: errorLegalForm, data: dataLegalForm} = useQuery(LEGAL_FORM_QUERY_COMPACT);
+    const {loading: loadingBik,error: errorBik,data: dataBik} = useQuery(BIKS_QUERY_COMPACT);
+
+    const handleSubmit = () => {
+        mutate({
+            variables: {
+                ...(actualObject ? {id: actualObject.id} : {}), ...form.getFieldsValue(),
+                director_id: contactAutoComplete?.selected,
+                bik_id: bikAutoComplete?.selected,
+                address_legal: form.getFieldValue("address_legal")?.unrestricted_value,
+                address_mail: form.getFieldValue("address_mail")?.unrestricted_value
+            }
+        });
+    };
+
+    if (loading) return <LoadingSpinnerStyles/>
+    if (errorContacts || errorBik) return `Ошибка! ${errorContacts?.message || errorBik?.message}`;
+
+
+    return (<StyledBlockBig label={nameModel}>
             <StyledFormBig form={form} onFinish={handleSubmit}>
                 <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
                     <StyledFormItem name="name"
                                     label={"Наименование компании"}
                                     rules={[{required: true, message: "Укажите наименование компании"}]}
-                                    style={{width: "90%" }}>
-                        <Input                          style={{width: "100%)"}}
-                                                         placeholder={"Наименование"}/>
+                                    style={{width: "90%"}}>
+                        <Input style={{width: "100%)"}}
+                               placeholder={"Наименование"}/>
                     </StyledFormItem>
-                    <StyledFormItem  style={{width: "10%" }} name="legal_form_id" rules={[{required: true, message: "Укажите тип организации"}]}>
+                    <StyledFormItem style={{width: "10%"}} name="legal_form_id"
+                                    rules={[{required: true, message: "Укажите тип организации"}]}>
                         <Select placeholder={"Форма"} style={{width: "100%)"}} loading={loadingLegalForm}>
                             {dataLegalForm?.legalForms?.map(row => (
                                 <Select.Option key={row.id} value={row.id}>{row.name}</Select.Option>))}
                         </Select>
                     </StyledFormItem>
                 </Space.Compact>
-                <StyledFormItem name="full_name" label="Полное наименование" rules={[{required: true, message: "Укажите полное наименование компании"}]}>
+                <StyledFormItem name="full_name" label="Полное наименование"
+                                rules={[{required: true, message: "Укажите полное наименование компании"}]}>
                     <Input/>
                 </StyledFormItem>
-                <StyledFormItemSelectAndCreateWitchEdit
-                                               formName={"director_id"}
-                                               formLabel={"Руководитель"}
-                                               onSearch={handleAutoCompleteContacts}
-                                               placeholder={"Начните ввод..."}
-                                               loading={loadingContacts}
-                                               items={dataContacts?.contacts?.items}
-                                               onSelect={handleSelectedContact}
-                                               secondDisable={!selectedContactData}
-                                               firstBtnOnClick={setAddContactModalVisible}
-                                               secondBtnOnClick={setEditContactModalVisible}
-                                               formatOptionText={(row) => `${row.first_name} ${row.patronymic} ${row.last_name}`}
+                <StyledFormItemAutoCompleteAndCreateWitchEdit
+                    formName={"director_name"}
+                    formLabel={"Руководитель"}
+                    placeholder={"Начните ввод..."}
+                    loading={loadingContacts}
+                    secondDisable={!contactAutoComplete?.selected}
+                    firstBtnOnClick={() => setContactModalStatus("add")}
+                    secondBtnOnClick={() => setContactModalStatus("edit")}
+
+                    data={dataContacts?.contacts?.items}
+                    stateSearch={contactAutoComplete}
+                    setStateSearch={setContactAutoComplete}
+
+                    typeData={"FIO"}
                 />
 
                 <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
@@ -232,12 +165,15 @@ const OrganizationForm = ({ initialObject, mutation, onCompleted }) => {
                                     delay={50}
                                     style={{width: '90%'}}>
                         <AddressSuggestions token={TokenDADATA}
-                                            defaultQuery={address1}
+                                            defaultQuery={address?.legal ?? ""}
                                             inputProps={{
                                                 placeholder: 'Введите адрес',
                                                 style: StyledAddressSuggestionsInput,
                                             }}
-                                            onChange={addresChange1}
+                                            onChange={(suggestion) => setAddress({
+                                                ...address,
+                                                legal: suggestion?.unrestricted_value
+                                            })}
                                             style={{width: '100%'}}/>
                     </StyledFormItem>
                     <StyledFormItem name="office_number_legal" style={{width: "10%"}}>
@@ -249,12 +185,15 @@ const OrganizationForm = ({ initialObject, mutation, onCompleted }) => {
                                     delay={50}
                                     style={{width: '90%'}}>
                         <AddressSuggestions token={TokenDADATA}
-                                            defaultQuery={address2}
+                                            defaultQuery={address?.mail ?? ""}
                                             inputProps={{
                                                 placeholder: 'Введите адрес',
                                                 style: StyledAddressSuggestionsInput,
                                             }}
-                                            onChange={addresChange2}
+                                            onChange={(suggestion) => setAddress({
+                                                ...address,
+                                                mail: suggestion?.unrestricted_value
+                                            })}
                                             style={{width: '100%'}}/>
                     </StyledFormItem>
                     <StyledFormItem
@@ -267,7 +206,8 @@ const OrganizationForm = ({ initialObject, mutation, onCompleted }) => {
                     <Col span={12}>
                         <StyledFormItem name="phone_number" label="Телефон" rules={[{
                             pattern: /^\+[0-9\s()-]+$/,
-                            message: 'Пожалуйста, введите в формате +79003001234',},]}>
+                            message: 'Пожалуйста, введите в формате +79003001234',
+                        },]}>
                             <Input
                                 placeholder="+790031001234"
                                 maxLength={11}
@@ -278,20 +218,22 @@ const OrganizationForm = ({ initialObject, mutation, onCompleted }) => {
                             <Input placeholder="Введите номер факса"/>
                         </StyledFormItem>
                         <StyledFormItem name="email" label="e-mail" rules={[{
-                            type: "email", message: 'Пожалуйста, введите корректный почтовый адрес',},]}>
+                            type: "email", message: 'Пожалуйста, введите корректный почтовый адрес',
+                        },]}>
                             <Input placeholder="Введите почтовый адрес"/>
                         </StyledFormItem>
                         <StyledFormItem name="payment_account" label="Расчётынй счёт">
                             <Input placeholder="Введите номер расчётного счёта"/>
                         </StyledFormItem>
-                        <StyledFormItemSelectAndCreate formName={"bik_id"}
-                                                       formLabel={"Бик"}
-                                                       onSearch={handleAutoCompleteBiks}
-                                                       placeholder={"Начните ввод..."}
-                                                       loading={loadingBiks}
-                                                       items={dataBiks?.biks?.items}
-                                                       firstBtnOnClick={setBikFormViewModalVisible}
-                                                       formatOptionText={(row) => `${row.BIK} ${row.name}`}
+                        <StyledFormItemAutoCompleteAndCreate
+                            formName={"bik_name"}
+                            formLabel={"Бик"}
+                            data={dataBik?.biks?.items}
+                            placeholder={"Бик"}
+                            stateSearch={ bikAutoComplete}
+                            setStateSearch={setBikAutoComplete}
+                            loading={loadingBik}
+                            firstBtnOnClick={() => setBikModalStatus("add")}
                         />
                     </Col>
                     <Col span={12}>
@@ -341,7 +283,7 @@ const OrganizationForm = ({ initialObject, mutation, onCompleted }) => {
                 <StyledFormItem>
                     <div style={{textAlign: 'center'}}>
                         <StyledButtonGreen type="dashed" htmlType={"submit"}>
-                            {editingOrganization ? "Сохранить изменения" : "Добавить контакт"}
+                            {actualObject ? `Обновить ${nameModel}ю` : `Создать ${nameModel}ю`}
                         </StyledButtonGreen>
                     </div>
                 </StyledFormItem>
@@ -351,27 +293,39 @@ const OrganizationForm = ({ initialObject, mutation, onCompleted }) => {
             */}
             {/* Бики */}
             <Modal
-                open={bikFormViewModalVisible}
-                onCancel={() => setBikFormViewModalVisible(false)}
+                key={bikAutoComplete?.selected}
+                open={bikModalStatus === "add" || bikModalStatus === "edit"}
+                onCancel={() => setBikModalStatus(null)}
                 footer={null}
-                onClose={handleBikFormView}>
-                <BikForm/>
+                onClose={() => setBikModalStatus(null)}>
+                {bikModalStatus === "edit" ? (
+                    bikAutoComplete?.selected && (
+                        <BikForm onCompleted={() => setBikModalStatus(null)}
+                                          initialObject={{id: bikAutoComplete.selected}}/>
+                    )
+                ) : (
+                    <BikForm onCompleted={() => setBikModalStatus(null)}/>
+                )}
             </Modal>
+
             {/* контакты */}
             <Modal
-                open={addContactModalVisible}
-                onCancel={() => setAddContactModalVisible(false)}
+                key={contactAutoComplete?.selected}
+                open={contactModalStatus === "add" || contactModalStatus === "edit"}
+                onCancel={() => setContactModalStatus(null)}
                 footer={null}
-                onClose={handleCloseModalFormView}>
-                <ContactForm contact={null}/>
+                onClose={() => setContactModalStatus(null)}>
+                {contactModalStatus === "edit" ? (
+                    contactAutoComplete?.selected && (
+                        <ContactForm onCompleted={() => setContactModalStatus(null)}
+                                          initialObject={{id: contactAutoComplete.selected}}/>
+                    )
+                ) : (
+                    <ContactForm onCompleted={() => setContactModalStatus(null)}/>
+                )}
+
             </Modal>
-            <Modal
-                open={editContactModalVisible}
-                onCancel={() => setEditContactModalVisible(false)}
-                footer={null}
-                onClose={handleCloseModalFormView}>
-                <ContactForm contact={selectedContactData}/>
-            </Modal>
+
         </StyledBlockBig>
 
     );

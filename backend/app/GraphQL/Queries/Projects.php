@@ -9,6 +9,13 @@ final readonly class Projects
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
+        if(!isset($args['queryOptions']))
+            switch ($args['queryType']){
+                case "COMPACT":
+                    return ['items' => Project::all()];
+                default:
+                    return ['items' => "Ошибка, не верный тип запрооса"];
+            }
             $projectsQuery = Project::with('organization_customer')
                 ->with('type_project_document')
                 ->with("delegations")

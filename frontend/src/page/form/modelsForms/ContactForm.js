@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {AutoComplete, Divider, Form, Input, Modal, Select} from 'antd';
-import {useMutation, useQuery} from '@apollo/client';
+import {Divider, Form, Input, Modal} from 'antd';
+import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import {ADD_CONTACT_MUTATION, UPDATE_CONTACT_MUTATION} from '../../../graphql/mutationsContact';
 import {StyledFormItem, StyledFormRegular} from '../../style/FormStyles';
 import {DatePicker} from "antd/lib";
@@ -8,23 +8,46 @@ import moment from 'moment';
 import {StyledBlockRegular} from "../../style/BlockStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {NotificationContext} from "../../../NotificationProvider";
-import {ORGANIZATIONS_QUERY_COMPACT, POSITIONS_QUERY_COMPACT} from "../../../graphql/queriesCompact";
+import {
+    ORGANIZATIONS_QUERY_COMPACT,
+    POSITIONS_QUERY_COMPACT
+} from "../../../graphql/queriesCompact";
+import {
+    StyledFormItemAutoComplete,
+    StyledFormItemAutoCompleteAndCreateWitchEdit
+} from "../../style/SearchAutoCompleteStyles";
+import OrganizationForm from "./OrganizationForm";
+import {CONTACTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
+import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 
 const ContactForm = ({initialObject, onCompleted}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
     const nameModel = 'Контакт';
+    const [actualObject, setActualObject] = useState(initialObject ?? null);
+    const [loadContext, {loading, data}] = useLazyQuery(CONTACTS_QUERY_BY_ID, {
+        variables: {id: initialObject?.id},
+        onCompleted: (data) => {
+            setActualObject(data?.contacts?.items[0]);
+            updateForm(data?.contacts?.items[0])
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
+        },
+    });
 
     // Состояния
     const [organizationModalStatus, setOrganizationModalStatus] = useState(null);
-     const [organizationAutoComplete, setOrganizationAutoComplete] = useState({options: [], selected: {}});
+    const [organizationAutoComplete, setOrganizationAutoComplete] = useState({options: [], selected: {}});
     const [positionAutoComplete, setPositionAutoComplete] = useState({options: [], selected: {}});
 
+
     // Мутация
-    const [mutate] = useMutation(initialObject ? UPDATE_CONTACT_MUTATION : ADD_CONTACT_MUTATION, {
+    const [mutate] = useMutation(actualObject ? UPDATE_CONTACT_MUTATION : ADD_CONTACT_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Создание новой записи в таблице ${nameModel} выполнено успешно`);
+            form.resetFields();
             onCompleted && onCompleted(data);
         },
         onError: (error) => {
@@ -32,18 +55,26 @@ const ContactForm = ({initialObject, onCompleted}) => {
         },
     });
 
+
     // Подгрузка при обновлении
     useEffect(() => {
-        if (initialObject) {
+        if (initialObject?.id)
+            loadContext();
+    }, [initialObject]);
+    const updateForm = (data) => {
+        if (data) {
+            console.log("useEffect");
             form.resetFields();
             form.setFieldsValue({
-                ...initialObject,
-                birth_day: initialObject?.birth_day ? moment(initialObject.birth_day) : null,
-                position_id: initialObject?.position.id ?? null,
-                organization_id: initialObject?.organization?.id ?? null
+                ...data,
+                position_name: data?.position?.name,
+                organization_name: data?.organization?.name,
+                birth_day: data?.birth_day ? moment(data.birth_day) : null,
             });
+            setPositionAutoComplete({selected: data?.position?.id});
+            setOrganizationAutoComplete({selected: data?.organization?.id});
         }
-    }, [initialObject, form]);
+    };
 
     // Получение данных для выпадающих списков
     const {loading: loadingPositions, error: errorPositions, data: dataPositions} = useQuery(POSITIONS_QUERY_COMPACT);
@@ -53,19 +84,15 @@ const ContactForm = ({initialObject, onCompleted}) => {
         data: dataOrganizations
     } = useQuery(ORGANIZATIONS_QUERY_COMPACT);
 
-    // Обработка поиска и выбора
-    const handleSearch = (data, value, stateSearch, setStateSearch) => {
-        if (!data) return;
-        const filteredOptions = data
-            .filter(row => row.name.toLowerCase().includes(value.toLowerCase()))
-            .map(row => ({value: row.name, label: row.name, data: row.id}));
-        setStateSearch({...stateSearch, options: filteredOptions});
-    };
-
     const handleSubmit = () => {
-                 mutate({variables: {...(initialObject ? {id: initialObject.id} : {}), ...form.getFieldsValue(),
-                         organization_id: organizationAutoComplete?.selected, position_id: positionAutoComplete?.selected}});
+        mutate({
+            variables: {
+                ...(actualObject ? {id: actualObject.id} : {}), ...form.getFieldsValue(),
+                organization_id: organizationAutoComplete?.selected, position_id: positionAutoComplete?.selected
+            }
+        });
     };
+    if (loading) return <LoadingSpinnerStyles/>
 
     if (errorOrganizations || errorPositions) return `Ошибка! ${errorOrganizations?.message || errorPositions?.message}`;
 
@@ -78,7 +105,7 @@ const ContactForm = ({initialObject, onCompleted}) => {
                 labelAlign="left"
                 wrapperCol={{span: 16}}
             >
-                 <Divider orientation="left">ФИО:</Divider>
+                <Divider orientation="left">ФИО:</Divider>
                 <StyledFormItem
                     name="last_name"
                     label="Фамилия"
@@ -142,40 +169,34 @@ const ContactForm = ({initialObject, onCompleted}) => {
                 </StyledFormItem>
 
                 <Divider orientation="left">Данные организации:</Divider>
-                <StyledFormItem
-                    name="organization_name"
-                    label="Организация"
-                    rules={[{required: true, message: 'Пожалуйста, выберите организацию'}]}
-                >
-                    <AutoComplete
-                        options={organizationAutoComplete?.options}
-                        style={{width: '100%'}}
-                        value={organizationAutoComplete?.selected}
-                        onSearch={(value) => handleSearch(dataOrganizations?.organizations?.items, value, organizationAutoComplete, setOrganizationAutoComplete)}
-                        onSelect={(value, option)=> setOrganizationAutoComplete({...organizationAutoComplete, selected: option.data})}
-                        placeholder="Выберите организацию"
-                    />
-                </StyledFormItem>
+                <StyledFormItemAutoComplete
+                    formName={"position_name"}
+                    formLabel={"Должность"}
+                    data={dataPositions?.positions?.items}
 
-                <StyledFormItem
-                    name="position_name"
-                    label="Должность"
-                    rules={[{required: true, message: 'Пожалуйста, выберите должность'}]}
-                >
-                    <AutoComplete
-                        options={positionAutoComplete?.options}
-                        style={{width: '100%'}}
-                        value={positionAutoComplete?.selected}
-                        onSearch={(value) => handleSearch(dataPositions?.positions?.items, value, positionAutoComplete, setPositionAutoComplete)}
-                        onSelect={(value, option)=> setPositionAutoComplete({...positionAutoComplete, selected: option.data})}
-                        placeholder="Выберите должность"
-                    />
-                </StyledFormItem>
+                    placeholder="Выберите должность"
+                    stateSearch={positionAutoComplete}
+                    setStateSearch={ setPositionAutoComplete}
+
+                />
+                <StyledFormItemAutoCompleteAndCreateWitchEdit
+                    formName={"organization_name"}
+                    formLabel={"Организация"}
+
+                    data={dataOrganizations?.organizations?.items}
+                    placeholder="Выберите организацию"
+
+                    stateSearch={organizationAutoComplete}
+                    setStateSearch={setOrganizationAutoComplete}
+                    firstBtnOnClick={() => setOrganizationModalStatus("add")}
+                    secondBtnOnClick={() => setOrganizationModalStatus("edit")}
+                />
+
 
                 <StyledFormItem labelCol={{span: 24}} wrapperCol={{span: 24}}>
                     <div style={{textAlign: 'center'}}>
                         <StyledButtonGreen style={{marginBottom: 0}} type="primary" htmlType="submit">
-                            {initialObject ? "Сохранить изменения" : "Добавить контакт"}
+                            {actualObject ? `Обновить ${nameModel}` : `Создать ${nameModel}`}
                         </StyledButtonGreen>
                     </div>
                 </StyledFormItem>
@@ -187,7 +208,14 @@ const ContactForm = ({initialObject, onCompleted}) => {
                 footer={null}
                 onClose={() => setOrganizationModalStatus(null)}
             >
-                {/* Организация формы */}
+                {organizationModalStatus === "edit" ? (
+                    organizationAutoComplete?.selected && (
+                        <OrganizationForm onCompleted={() => setOrganizationModalStatus(null)}
+                                          initialObject={{id: organizationAutoComplete.selected}}/>
+                    )
+                ) : (
+                    <OrganizationForm onCompleted={() => setOrganizationModalStatus(null)}/>
+                )}
             </Modal>
         </StyledBlockRegular>
     );

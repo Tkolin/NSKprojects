@@ -10,6 +10,13 @@ final readonly class Tasks
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
+        if(!isset($args['queryOptions']))
+            switch ($args['queryType']){
+                case "COMPACT":
+                    return ['items' => Task::all()];
+                default:
+                    return ['items' => "Ошибка, не верный тип запрооса"];
+            }
         $tasksQuery = Task::query();
 
         $queryService = new QueryService();

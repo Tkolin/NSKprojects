@@ -1,13 +1,10 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, Descriptions, Divider, FloatButton, Form, Modal, notification, Space, Table} from 'antd';
+import { Descriptions, Divider, Form, Modal, notification, Space, Table} from 'antd';
 import {DELETE_ORGANIZATION_MUTATION} from '../../../graphql/mutationsOrganization';
 import OrganizationForm from "../../form/modelsForms/OrganizationForm";
-import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
-import TypeProjectForm from "../../form/modelsForms/TypeProjectForm";
 import Search from "antd/es/input/Search";
-import {PlusSquareOutlined} from "@ant-design/icons";
-import StyledLinkManagingDataTable, {StyledTable} from "../../style/TableStyles";
+import StyledLinkManagingDataTable from "../../style/TableStyles";
 import {StyledFormLarge} from "../../style/FormStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {ORGANIZATIONS_QUERY} from "../../../graphql/queries";

@@ -88,174 +88,63 @@ const CustomLayout = ({children, currentUser, la}) => {
 
     // Меню
     const items = [];
-
+    const hasAccess = (currentRole, allowedRoles) => {
+        return allowedRoles.includes(currentRole);
+    };
     items.push(getItem('Главная', '0', <HomeOutlined/>, null, "/"));
     if (data && data.currentUser) {
         const roleName = data.currentUser.role.name;
-        switch (roleName) {
-            case "admin":
-                items.push(
-                    getItem('Справочники', '1', <ProfileOutlined/>, [
-                        getItem('Контакты', '1-1', null, null),
-                        getItem('Подрядчики', '1-3', null, null),
-                        getItem('Организации', '1-4', null, null),
-                        getItem('ИРД', '1-5', null, null),
-                        getItem('Типы документации', '1-6', null, null),
-                        getItem('Этапы проекта', '1-7', null, null),
-                        getItem('Разделы технического задания', '1-8', null, null),
-                    ]),
-                    getItem('Формы', '2', <FormOutlined/>, [
-                        getItem('Контакт', '2-1', null, null),
-                        getItem('Создание нового договора', '2-2', null, null),
-                        getItem('Организация', '2-3', null, null),
-                        getItem('Подрядчик', '2-4', null, null),
-                        getItem('Шаблоны по типу проекта', '2-5', null, null),
-                    ]),
-                    getItem('Отчёты', '3', <SolutionOutlined/>, [
-                        getItem('Проекты', '3-1', null, null)
-                    ]),
-                    getItem('Расчёты', '4', <CalculatorOutlined/>, [
-                        // getItem('1', '4-5', null, null),
-                        // getItem('Рабочий стол', '4-1', null, null),
-                        // getItem('Создание справочника данных', '4-2', null, null),
-                        // getItem('Создание формулы', '4-3', null, null),
-                        // getItem('Форма расчёта', '4-4', null, null),
+        items.push(
+            hasAccess(roleName,  ["admin",'bugalter',"poet"])
+            && getItem('Справочники', '/table', <ProfileOutlined/>, [
+                getItem('Контакты', '/table/contact', null, null),
+                getItem('Подрядчики', '/table/persons', null, null),
+                getItem('Организации', '/table/organizations', null, null),
+                getItem('ИРД', '/table/ird', null, null),
+                getItem('Типы документации', '/table/type_projects', null, null),
+                getItem('Этапы проекта', '/table/stage_projects', null, null),
+                getItem('Разделы технического задания', '/table/technical', null, null),
+            ]),
+            getItem('Формы', '/form/', <FormOutlined/>, [
+                getItem('Контакт', '/form/contact', null, null),
+                getItem('Создание нового договора', '/form/new_project', null, null),
+                getItem('Организация', '/form/organizations', null, null),
+                getItem('Подрядчик', '/form/persons', null, null),
+                getItem('Шаблоны по типу проекта', '/form/template_project', null, null),
+            ]),
+            getItem('Отчёты', '/reports/', <SolutionOutlined/>, [
+                getItem('Проекты', '/reports/project', null, null)
+            ]),
+            getItem('Расчёты', '/computs/', <CalculatorOutlined/>, [
+                // getItem('1', '4-5', null, null),
+                // getItem('Рабочий стол', '4-1', null, null),
+                // getItem('Создание справочника данных', '4-2', null, null),
+                // getItem('Создание формулы', '4-3', null, null),
+                // getItem('Форма расчёта', '4-4', null, null),
 
-                    ]),
-                    getItem('Экономика', '5', <BarChartOutlined/>, []),
-                    getItem('', '6', <BugOutlined/>, [
-                        getItem('Тест 1', '6-1', null, null),
-                        getItem('Тест 2', '6-2', null, null),
+            ]),
+            getItem('Экономика', '5', <BarChartOutlined/>, []),
+            getItem('', '6', <BugOutlined/>, [
+                getItem('Тест 1', '/test/test1', null, null),
+                getItem('Тест 2', '/test/test2', null, null),
 
-                    ])
-                );
-                break;
-            case "bookkeeper":
-                items.push(
-                    getItem('Справочники', '1', <ProfileOutlined/>, [
-                        getItem('Контакты', '1-1', null, null),
-                        getItem('Организации', '1-4', null, null),
-                        getItem('Подрядчики', '1-3', null, null),
-                    ]),
-                    getItem('Отчёты', '3', <SolutionOutlined/>, [
-                        getItem('Проекты', '3-1', null, null)
-                    ]),
-                    getItem('Формы', '2', <FormOutlined/>, [
-                        getItem('Создание нового договора', '2-2', null, null),
-                    ]),
-                );
-                break;
-            default:
-                break;
-        }
+            ])
+        );
     } else {
         items.push(
-            getItem('Регистрация', '7', null, null),
-            getItem('Авторизация', '8', null, null)
+            getItem('Регистрация', '/auth/register', null, null),
+            getItem('Авторизация', '/auth/login', null, null)
         );
     }
     const onClick = (e) => {
-        switch (e.key) {
-            case '0':
-                navigate('/');
-                break;
-            case '1-1':
-                navigate('/contacts');
-                break;
-            case '3-1':
-                navigate('/project');
-                break;
-            case '1-3':
-                navigate('/person');
-                break;
-            case '1-4':
-                navigate('/organization');
-                break;
-            case '1-5':
-                navigate('/ird');
-                break;
-            case '1-6':
-                // Типы документации
-                navigate('/typeProject');
-                break;
-            case '1-7':
-                // Этапы проекта
-                navigate('/stageProject');
-                break;
-            case '1-8':
-                // Этапы проекта
-                navigate('/SectionReferences');
-                break;
-            case '2-1':
-                // Контакт
-                navigate('/contacts/new');
-                break;
-            case '2-2':
-                // Проект
-                navigate('/project/new');
-                break;
-            case '2-3':
-                // Организация
-                navigate('/organization/new');
-                break;
-            case '2-4':
-                // Исполнитель
-                navigate('/person/new');
-                break;
-            case '2-5':
-                // Шаблоны по типу проекта
-                navigate('/template/new');
-                break;
-            case '6-1':
-                // Шаблоны по типу проекта
-                navigate('/test1');
-                break;
-            case '6-2':
-                // Шаблоны по типу проекта
-                navigate('/test2');
-                break;
-            case '3':
-                // Отчёты
-                // Действие для отчетов
-                break;
-            case '7':
-                // Регистрация
-                navigate('/auth/register');
-                break;
-            case '8':
-                // Авторизация
-                navigate('/auth/login');
-                break;
-            case '4-1':
-                navigate('/guillaume/fenrir');
-
-                break;
-            case '4-2':
-                navigate('/guillaume/silmarils');
-
-                break;
-            case '4-3':
-                navigate('/guillaume/tyr');
-
-                break;
-                case '4-4':
-                navigate('/guillaume/computing');
-
-                break;
-                case '4-5':
-                navigate('/calculations/bgd');
-
-                break;
-            default:
-                break;
-        }
+        navigate(e.key);
         setCurrent(e.key);
     }
     // Вывод слоя
     return (
-        <Layout style={{minHeight: '100vh'}} >
+        <Layout style={{minHeight: '100vh'}}>
             <Header style={styles.header}>
-                <img src={Logo}  style={styles.logo}/>
+                <img src={Logo} style={styles.logo}/>
 
                 <Menu onClick={onClick} mode="horizontal" style={{width: '100%'}} items={items}
                       selectedKeys={[current]}/>
@@ -274,7 +163,7 @@ const CustomLayout = ({children, currentUser, la}) => {
             </Header>
 
             <Layout style={{marginTop: 64, paddingRight: 20, paddingLeft: 20}}>
-                <Content style={styles.content} >
+                <Content style={styles.content}>
                     <div className="site-layout-content">{children}</div>
                 </Content>
 

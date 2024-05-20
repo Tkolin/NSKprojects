@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Form, Input, Select, notification, Col, Row, Modal, Space, Divider, Button} from 'antd';
-import {useMutation, useQuery} from '@apollo/client';
+import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import {
     ADD_PERSON_MUTATION, UPDATE_PERSON_MUTATION
 } from '../../../graphql/mutationsPerson';
@@ -12,208 +12,120 @@ import moment from 'moment';
 import PassportPlaceIssuesForm from "./PassportPlaceIssuesForm";
 import {StyledBlockBig} from "../../style/BlockStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
-import {PlusOutlined} from "@ant-design/icons";
-import {BANKS_QUERY, BIKS_QUERY, PASSPORTS_PLACE_ISSUES_QUERY, PERSONS_QUERY} from "../../../graphql/queries";
-import BikForm from "./BikForm";
 import {AddressSuggestions} from "react-dadata";
-import {StyledAddressSuggestions, StyledAddressSuggestionsInput} from "../../style/InputStyles";
-import {StyledFormItemSelectAndCreate, StyledFormItemSelectAndCreateWitchEdit} from "../../style/SelectStyles";
+import { StyledAddressSuggestionsInput} from "../../style/InputStyles";
 import {NotificationContext} from "../../../NotificationProvider";
+import {
+    BANKS_QUERY_COMPACT, BIKS_QUERY_COMPACT,
+    PASSPORTS_PLACE_ISSUES_QUERY_COMPACT,
+} from "../../../graphql/queriesCompact";
+import { PERSONS_QUERY_BY_ID} from "../../../graphql/queriesByID";
+import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
+import {StyledFormItemAutoComplete, StyledFormItemAutoCompleteAndCreate} from "../../style/SearchAutoCompleteStyles";
+import ContactForm from "./ContactForm";
+import BikForm from "./BikForm";
 
-const PersonForm = ({ initialObject, mutation, onCompleted }) => {
+const PersonForm = ({initialObject, onCompleted}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
-    const nameModel = 'Контакт';
+    const [formPassport] = Form.useForm();
+
+    const nameModel = 'Подрядчики';
+    const TokenDADATA = process.env.REACT_APP_TOKEN_DADATAADDRESS;
+    const [actualObject, setActualObject] = useState(initialObject ?? null);
+    const [loadContact, {loading, data}] = useLazyQuery(PERSONS_QUERY_BY_ID, {
+        variables: {id: initialObject?.id},
+        onCompleted: (data) => {
+            setActualObject(data?.contacts?.items[0]);
+            updateForm      (data?.contacts?.items[0]);
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
+        },
+    });
+
 
     // Состояния
-    const [organizationModalStatus, setOrganizationModalStatus] = useState("add");
-    const [selectedOrganizationData, setSelectedOrganizationData] = useState(null);
+    const [address, setAddress] = useState({registration: "", residential: ""});
 
+    const [bikModalStatus, setBikModalStatus] = useState(null);
+    const [bikAutoComplete, setBikAutoComplete] = useState({options: [], selected: {}});
+    const [ppiModalStatus, setPpiModalStatus] = useState(null);
+    const [ppiAutoComplete, setPpiAutoComplete] = useState({options: [], selected: {}});
+    const [bankModalStatus, setBankModalStatus] = useState(null);
+    const [bankAutoComplete, setBankAutoComplete] = useState({options: [], selected: {}});
 
-    // Изменение состояния
-    const handleSelectedOrganization = (value) => {
-        setAutoCompleteOrganization(null);
-        setSelectedOrganizationData(dataOrganizations?.organizations?.items?.find(org => org.id === value));
-    };
 
     // Мутация
-    const [mutate] = useMutation(initialObject ? UPDATE_CONTACT_MUTATION : ADD_CONTACT_MUTATION, {
+    const [mutate] = useMutation(actualObject ? UPDATE_PERSON_MUTATION : ADD_PERSON_MUTATION, {
         onCompleted: (data) => {
-            openNotification('topRight', 'success', `Мутация ${nameModel} выполнена успешно`);
+            openNotification('topRight', 'success', `Создание новой записи в таблице ${nameModel} выполнено успешно`);
+            form.resetFields();
+            formPassport.resetFields();
+            setActualObject(null)
+            setAddress({registration: "", residential: "" })
             onCompleted && onCompleted(data);
         },
         onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении мутации ${nameModel}: ${error.message}`);
+            openNotification('topRight', 'error', `Ошибка при выполнении сооздания ${nameModel}: ${error.message}`);
         },
     });
+
 
     // Подгрузка при обновлении
     useEffect(() => {
-        initialObject &&
-        form.setFieldsValue({
-            ...initialObject,
-            birth_day: initialObject?.birth_day ? moment(initialObject.birth_day) : null,
-            position_id: initialObject?.position.id ?? null,
-            organization_id: initialObject?.organization?.id ?? null
-        });
-    }, [initialObject, form]);
-
-
-    // Получение данных для выпадающих списков
-    const {loading: loadingPositions, error: errorPositions, data: dataPositions} = useQuery(POSITIONS_QUERY_COMPACT);
-
-    const {
-        loading: loadingOrganizations,
-        error: errorOrganizations,
-        data: dataOrganizations
-    } = useQuery(ORGANIZATIONS_QUERY_COMPACT);
-
-    // Завершение
-    const handleSubmit = () => {
-        mutate({variables: {...(initialObject ? {id: initialObject.id} : {}), ...form.getFieldsValue()}});
-    };
-
-    if (errorOrganizations || errorPositions) return `Ошибка! ${errorOrganizations?.message || errorPositions?.message}`;
-//////TODO:
-//
-//
-//
-// /////////////////////////////////////////////////////////////////////////////////////
-
-    // Состояния
-    const [bikFormViewModalVisible, setBikFormViewModalVisible] = useState(false);
-    const [editingPerson, setEditingPerson] = useState(null);
-    const [formPassport] = Form.useForm();
-    const [ppiFormViewModalVisible, setPpiFormViewModalVisible] = useState(false);
-    const handlePpiFormView = () => {setPpiFormViewModalVisible(false);};
-    const handleBikFormView = () => {setBikFormViewModalVisible(false);};
-
-    // Получение данных для выпадающих списков
-    const [address1, setAddress1] = useState();
-    const [address2, setAddress2] = useState();
-
-     const [autoCompletebiks, setAutoCompletebiks] = useState('');
-    const [autoCompleteBanks, setAutoCompleteBanks] = useState('');
-    const [autoCompletePPI, setAutoCompletePPI] = useState('');
-
-    const [databiks, setDatabiks] = useState('');
-    const [dataBanks, setDataBanks] = useState('');
-    const [dataPPI, setDataPPI] = useState('');
-    const handleAutoCompletebiks = (value) => {setAutoCompletebiks(value);};
-    const handleAutoCompleteBanks = (value) => {setAutoCompleteBanks(value);};
-    const handleAutoCompletePPI = (value) => {setAutoCompletePPI(value);};
-    const addresChange1 = (suggestion) => {setAddress1(suggestion?.unrestricted_value);};
-    const addresChange2 = (suggestion) => {setAddress2(suggestion?.unrestricted_value);};
-
-
-    const {loading: loadingbiks} = useQuery(BIKS_QUERY, {
-        variables: {
-            queryOptions: {search: autoCompletebiks, limit: 10, page: 1}
-        },
-        onCompleted: (data) => setDatabiks(data)
-    });
-    const {loading: loadingBanks, error: errorBanks} = useQuery(BANKS_QUERY, {
-        variables: {
-            queryOptions: {search: autoCompleteBanks, limit: 10, page: 1}
-        },
-        onCompleted: (data) => setDataBanks(data)
-    });
-    const {loading: loadingPPI, error: errorPPI} = useQuery(PASSPORTS_PLACE_ISSUES_QUERY, {
-        variables: {
-            queryOptions: {search: autoCompletePPI, limit: 10, page: 1}
-        },
-        onCompleted: (data) => setDataPPI(data)
-    });
-
-    // Мутации для добавления и обновления
-    const [addPerson] = useMutation(ADD_PERSON_MUTATION, {
-        refetchQueries: [{query: PERSONS_QUERY}], onCompleted: () => {
-            openNotification('topRight', 'success', 'Данные успешно добавлены!');
-            if (onClose) {
-                console.log("Закрыл")
-                onClose()
-            }
-            form.resetFields();
-            formPassport.resetFields();
-
-        }, onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при добавлении данных: ' + error.message);
-        }
-    });
-
-    const [updatePerson] = useMutation(UPDATE_PERSON_MUTATION, {
-        refetchQueries: [{query: PERSONS_QUERY}], onCompleted: () => {
-            openNotification('topRight', 'success', 'Данные успешно обновлены!');
-            if (onClose) {
-                console.log("Закрыл")
-                onClose()
-            }
-            form.resetFields();
-            formPassport.resetFields();
-            setEditingPerson(null);
-
-        }, onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при обновлении данных: ' + error.message);
-        }
-    });
-    useEffect(() => {
-        form.resetFields();
-        formPassport.resetFields();
-        setAddress1("");
-        setAddress2("");
+        if (initialObject?.id)
+            loadContact();
     }, []);
-    // Заполнение формы данными контакта при его редактировании
-    useEffect(() => {
-        if (person) {
-            setEditingPerson(person);
+    const updateForm = (data) =>  {
+        if (data) {
+            console.log("useEffect");
+            form.resetFields();
             form.setFieldsValue({
-                ...person,
-                bank_id: person.bank ? person.bank.id : null,
-                bik_id: person.bik ? person.bik.id : null,
+                ...data,
+                bank_name: data?.bank?.name ?? "",
+                bik_name: data?.bik?.name ?? ""
             });
-
-            person.bank ? setAutoCompleteBanks(person.bank.name) : setAutoCompleteBanks('');
-            person.bik ? setAutoCompletebiks(person.bik.name) : setAutoCompletebiks('');
-            person.passport.passport_place_issue ? setAutoCompletePPI(person.passport.passport_place_issue.name) : setAutoCompletePPI('');
-
             formPassport.setFieldsValue({
-                firstname: person.passport.firstname,
-                lastname: person.passport.lastname,
-                patronymic: person.passport.patronymic,
-                birth_date: person.passport.birth_date ? moment(person.passport.birth_date, 'YYYY-MM-DD') : null,
-                date: person.passport.date ? moment(person.passport.date, 'YYYY-MM-DD') : null,
-                passport_place_issue_id: person.passport.passport_place_issue ? person.passport.passport_place_issue.id : null,// TODO: НЕ РАБОТАЕТ
-                serial: person.passport.serial,
-                number: person.passport.number,
+                ...data?.passport,
+                passport_place_issue_name: data?.passport?.name,
             });
+            setPpiAutoComplete({selected: data?.Ppi?.id});
+            setBikAutoComplete({selected: data?.organization?.id});
+            setBankAutoComplete({selected: data?.organization?.id});
 
-            setAddress1(person.passport.address_registration);
-            setAddress2(person.passport.address_residential);
-        }
-    }, [person, form, formPassport]);
-
-    // Обработчик отправки формы
-    const handleSubmit = () => {
-        const { address_registration, address_residential, ...formPassportValues } = formPassport.getFieldsValue();
-        const restrictedValue1 = address_registration?.unrestricted_value ?? address1;
-        const restrictedValue2 = address_residential?.unrestricted_value ?? address2;
-
-        const variables = {
-            ...form.getFieldsValue(),
-            ...formPassportValues,
-            address_registration: restrictedValue1,
-            address_residential: restrictedValue2,
-        };
-
-        if (editingPerson) {
-            updatePerson({ variables: { id: editingPerson.id, ...variables } });
-        } else {
-            addPerson({ variables });
+            setAddress({
+                registration: data?.passport?.address_registration,
+                residential: data?.passport?.address_residential
+            });
         }
     };
 
-    const TokenDADATA = process.env.REACT_APP_TOKEN_DADATAADDRESS;
+    // Получение данных для выпадающих списков
+    const {loading: loadingPpi, error: errorPpi, data: dataPpi} = useQuery(PASSPORTS_PLACE_ISSUES_QUERY_COMPACT);
+    const {loading: loadingBank, error: errorBank, data: dataBank} = useQuery(BANKS_QUERY_COMPACT);
+    const {loading: loadingBik, error: errorBik, data: dataBik} = useQuery(BIKS_QUERY_COMPACT);
+
+
+    const handleSubmit = () => {
+        mutate({
+            variables: {
+                ...(actualObject ? {id: actualObject.id} : {}), ...form.getFieldsValue(),
+                ...formPassport.getFieldsValue(),
+                bank_id: bankAutoComplete?.selected ?? null,
+                bik_id:  bikAutoComplete?.selected ?? null,
+                passport_place_issue_id:  ppiAutoComplete?.selected ?? null,
+                address_registration: address.registration,
+                address_residential: address.residential
+             }
+        });
+    };
+    if (loading) return <LoadingSpinnerStyles/>
+
+    if (errorPpi || errorBank || errorBik) return `Ошибка! ${errorPpi?.message || errorBank?.message || errorBik?.message}`;
+
+
 
     return (
         <StyledBlockBig label={'Подрядчик'}>
@@ -241,16 +153,16 @@ const PersonForm = ({ initialObject, mutation, onCompleted }) => {
                         <StyledFormItem name="date" label="Дата выдачи">
                             <DatePicker/>
                         </StyledFormItem>
-                        <StyledFormItemSelectAndCreate
-                            formName={"passport_place_issue_id"}
+                        <StyledFormItemAutoCompleteAndCreate
+                            formName={"passport_place_issue_name"}
                             formLabel={"Место выдачи"}
-                            onSearch={handleAutoCompletePPI}
                             placeholder={"Начните ввод..."}
-                            loading={loadingPPI}
-                            items={dataPPI?.passportPlaceIssues?.items}
-                            firstBtnOnClick={setPpiFormViewModalVisible}
-                            formatOptionText={(row) => `${row.name}`}
-                        />
+                            firstBtnOnClick={()=>setPpiModalStatus("add")}
+
+                            data={dataPpi?.passportPlaceIssues?.items}
+                            stateSearch={ppiAutoComplete}
+                            setStateSearch={setPpiAutoComplete}
+                         />
                         <StyledFormItem name="serial" label="Серия">
                             <Input/>
                         </StyledFormItem>
@@ -267,8 +179,9 @@ const PersonForm = ({ initialObject, mutation, onCompleted }) => {
                                                     placeholder: 'Введите адрес',
                                                     style: StyledAddressSuggestionsInput,
                                                 }}
-                                                defaultQuery={address1}
-                                                onChange={addresChange1}/>
+                                                defaultQuery={address.registration}
+                                                onChange={(suggestion)=>setAddress({...address, registration: suggestion?.unrestricted_value })}
+                            />
                         </StyledFormItem>
                         <StyledFormItem name="address_residential" label="Адрес проживания" minchars={3}
                                         delay={50}
@@ -280,8 +193,9 @@ const PersonForm = ({ initialObject, mutation, onCompleted }) => {
                                                     placeholder: 'Введите адрес',
                                                     style: StyledAddressSuggestionsInput,
                                                 }}
-                                                defaultQuery={address2}
-                                                onChange={addresChange2}/>
+                                                defaultQuery={address.residential}
+                                                onChange={(suggestion)=>setAddress({...address, residential: suggestion?.unrestricted_value })}
+                            />
                         </StyledFormItem>
                     </StyledFormRegular>
                 </Col>
@@ -313,34 +227,29 @@ const PersonForm = ({ initialObject, mutation, onCompleted }) => {
                         </StyledFormItem>
 
 
-
                         <Divider orientation={"left"}>Реквизиты:</Divider>
                         <StyledFormItem name="payment_account" label="Расчётный счёт">
                             <Input/>
                         </StyledFormItem>
-                        <StyledFormItem name="bank_id" label="Банк">
-                            <Select
-                                popupMatchSelectWidth={false}
-                                allowClear
-                                showSearch
-                                filterOption={false}
-                                onSearch={(value) => handleAutoCompleteBanks(value)}
-                                loading={loadingBanks}
-                                placeholder="Начните ввод...">
-                                {dataBanks?.banks?.items?.map(bank => (
-                                    <Select.Option key={bank.id} value={bank.id}>{bank.name}</Select.Option>))}
-                            </Select>
-                        </StyledFormItem>
-                        <StyledFormItemSelectAndCreate
-                            formName={"bik_id"}
-                            formLabel={"Бик"}
-                            onSearch={handleAutoCompletebiks}
-                            placeholder={"Начните ввод..."}
-                            loading={loadingbiks}
-                            items={databiks?.biks?.items}
-                            firstBtnOnClick={setBikFormViewModalVisible}
-                            formatOptionText={(row) => `${row.BIK} ${row.name}`}
+                        <StyledFormItemAutoComplete
+                            formName="bank_name"
+                            formLabel="Банк"
+                            data={dataBank?.banks?.items}
+                            placeholder="Выберите банк"
+                            stateSearch={bankAutoComplete}
+                            setStateSearch={setBankAutoComplete}
                         />
+
+                        <StyledFormItemAutoCompleteAndCreate
+                            formName={"bik_name"}
+                            formLabel={"Бик"}
+                            placeholder={"Начните ввод..."}
+                            data={dataBik?.biks?.items}
+
+                            firstBtnOnClick={()=>setBankModalStatus("add")}
+                            stateSearch={bikAutoComplete}
+                            setStateSearch={setBikAutoComplete}
+                         />
                         <StyledFormItem name="INN" label="Инн">
                             <Input/>
                         </StyledFormItem>
@@ -355,26 +264,40 @@ const PersonForm = ({ initialObject, mutation, onCompleted }) => {
             <StyledFormItem>
                 <div style={{textAlign: 'center'}}>
                     <StyledButtonGreen style={{marginBottom: 0}} type="dashed" onClick={handleSubmit}>
-                        {editingPerson ? "Сохранить изменения" : "Добавить сотрудника"}
+                        {actualObject ? `Обновить ${nameModel}` : `Создать ${nameModel}`}
                     </StyledButtonGreen>
                 </div>
             </StyledFormItem>
 
-            {/* Места выдачи */}
             <Modal
-                open={ppiFormViewModalVisible}
-                onCancel={() => setPpiFormViewModalVisible(false)}
+                key={bikAutoComplete?.selected}
+                open={ppiModalStatus === "add" || ppiModalStatus === "edit"}
+                onCancel={() => setPpiModalStatus(null)}
                 footer={null}
-                onClose={handlePpiFormView}>
-                <PassportPlaceIssuesForm/>
-            </Modal>
+                onClose={()=> setPpiModalStatus(null)}>
+                {ppiModalStatus === "edit" ? (
+                    ppiAutoComplete?.selected && (
+                        <PassportPlaceIssuesForm onCompleted={() => setPpiModalStatus(null)}
+                                     initialObject={{id: ppiAutoComplete.selected}}/>
+                    )
+                ) : (
+                    <PassportPlaceIssuesForm onCompleted={() => setPpiModalStatus(null)}/>
+                )}            </Modal>
             <Modal
-                open={bikFormViewModalVisible}
-                onCancel={() => setBikFormViewModalVisible(false)}
+                key={bikAutoComplete?.selected}
+                open={bikModalStatus === "add" || bikModalStatus === "edit"}
+
+                onCancel={() => setBikModalStatus(null)}
                 footer={null}
-                onClose={handleBikFormView}>
-                <BikForm/>
-            </Modal>
+                onClose={()=>setBikModalStatus(null)}>
+                {bikModalStatus === "edit" ? (
+                    bikAutoComplete?.selected && (
+                        <BikForm onCompleted={() => setBikModalStatus(null)}
+                                     initialObject={{id: bikAutoComplete.selected}}/>
+                    )
+                ) : (
+                    <BikForm onCompleted={() => setBikModalStatus(null)}/>
+                )}            </Modal>
         </StyledBlockBig>);
 };
 

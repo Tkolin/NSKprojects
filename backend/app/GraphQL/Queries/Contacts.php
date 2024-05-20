@@ -3,16 +3,32 @@
 namespace App\GraphQL\Queries;
 
 use App\Models\Contact;
-use App\Services\GrpahQL\AuthorizationService;
 use App\Services\GrpahQL\QueryService;
-use Nuwave\Lighthouse\Exceptions\AuthenticationException;
-use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
+
 
 final readonly class Contacts
 {
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
+        if(!isset($args['queryOptions']))
+            switch ($args['queryType']){
+                case "COMPACT":
+                    return ['items' => Contact::all()];
+                case "BY_ID":
+                    if (!isset($args['id'])) {
+                        return ['items' => 'Ошибка, отсутствует id'];
+                    }
+                    $data = Contact::find($args['id']);
+                    if ($data) {
+                        return ['items' => [$data]];
+                    } else {
+                        return ['items' => 'Ошибка, контакт не найден'];
+                    }
+                default:
+                    return ['items' => "Ошибка, не верный тип запрооса"];
+            }
+
         $contactsQuery = Contact::with('position')->with('organization');
 
         $queryService = new QueryService();

@@ -11,6 +11,13 @@ final readonly class Irds
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
+        if(!isset($args['queryOptions']))
+            switch ($args['queryType']){
+                case "COMPACT":
+                    return ['items' => InitialAuthorizationDocumentation::all()];
+                default:
+                    return ['items' => "Ошибка, не верный тип запрооса"];
+            }
         $irdQuery = InitialAuthorizationDocumentation::query();
 
         $queryService = new QueryService();

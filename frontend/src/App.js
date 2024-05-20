@@ -1,83 +1,73 @@
-import React from 'react';
-import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
-import {Cookies} from "react-cookie";
-import {ConfigProvider} from "antd";
-import ruRU from "antd/locale/ru_RU";
-import {useQuery} from "@apollo/client";
-import {CURRENT_USER_QUERY} from "./graphql/queries";
-import {createGlobalStyle} from "styled-components";
+import React, { useEffect, useState } from 'react';
+import { InputNumber, Space, DatePicker } from 'antd';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ru';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+import { StyledFormItem } from "./page/style/FormStyles";
 
-import CustomLayout from './page/Layout';
+dayjs.extend(localizedFormat);
+dayjs.locale('ru');
 
-import Home from './page/Home';
-import LoadingSpinnerStyles from "./page/style/LoadingSpinnerStyles";
+const StyledDateRangePicker = ({  }) => {
+    const [data, setData] = useState({ dateStart: null, dateEnd: null, duration: 0 });
+    const [errors, setErrors] = useState({ dateStart: false, dateEnd: false, duration: false });
 
-import LoginForm from './page/form/authForm/LoginForm';
-import RegisterForm from './page/form/authForm/RegisterForm';
+    const onChange = (value) => {
+        console.log(value)
+    }
 
-import ContactTable from './page/view/tableView/ContactTable';
-import ContactForm from './page/form/modelsForms/ContactForm';
-// import OrganizationForm from './page/form/modelsForms/OrganizationForm';
-// import OrganizationTable from './page/view/tableView/OrganizationTable';
-// import PersonForm from './page/form/modelsForms/PersonForm';
-// import ProjectTable from './page/view/tableView/ProjectTable';
-// import FacilityForm from './page/form/modelsForms/FacilityForm';
-// import FacilityList from './page/view/tableView/FacilityTable';
-// import ProjectStageList from './page/view/tableView/ProjectStageTable';
-// import StageTaskList from './page/view/tableView/StageTaskTable';
-// import PersonTable from "./page/view/tableView/PersonTable";
-// import TemplateForm from "./page/form/composedForm/TemplateForm";
-// import IrdTable from "./page/view/tableView/IrdTable";
-// import TypeProjectTable from "./page/view/tableView/TypeProjectTable";
-// import StageTable from "./page/view/tableView/StageTable";
-// import CreateNewProject from "./page/form/composedForm/CreateNewProject";
-// import SectionReferenceTable from "./page/view/tableView/SectionReferenceTable";
-// import TasksChartForm from "./page/form/modelsForms/TasksChartForm";
+    const handleDateChange = (field, value) => {
+        setData((prevData) => ({ ...prevData, [field]: value ? dayjs(value).format() : null }));
+    };
 
-import Test from "./_dev/test";
-import Test2 from "./_dev/test2";
+    const handleDurationChange = (value) => {
+        setData((prevData) => ({ ...prevData, duration: value }));
+    };
 
-import {NotificationProvider} from './NotificationProvider';
-
-
-const App = () => {
-    const cookies = new Cookies();
-    const accessToken = cookies.get('accessToken');
-    const {loading, error, data} = useQuery(CURRENT_USER_QUERY);
-
-    // Обработка загрузки и ошибок
-    if (loading) return <LoadingSpinnerStyles/>;
-    if (data) if (error) return `Ошибка! ${error.message}`;
-
-    const currentUser = data?.currentUser;
-
-    const GlobalStyles = createGlobalStyle`
-        body {
-            margin: 0;
-        }
-    `;
     return (
-        <ConfigProvider locale={ruRU}>
-            <NotificationProvider>
-                <GlobalStyles/>
-                <Router>
-                    <CustomLayout currentUser={currentUser}>
-                        <Routes>
-                            <Route path="/" element={<Home/>}/>
-                            <Route path="/test1" element={<Test/>}/>
-                            <Route path="/test2" element={<Test2/>}/>
-
-                            <Route path="/table/contacts" element={<ContactTable/>}/>
-                            <Route path="/form/contact" element={<ContactForm/>}/>
-
-                            <Route path="/auth/register" element={<RegisterForm/>}/>
-                            <Route path="/auth/login" element={<LoginForm/>}/>
-                        </Routes>
-                    </CustomLayout>
-                </Router>
-            </NotificationProvider>
-        </ConfigProvider>
+        <div>
+            <Space style={{ alignItems: 'flex-end' }}>
+                <StyledFormItem
+                    name="date_start"
+                    label="Дата подписания"
+                    validateStatus={errors.dateStart ? 'error' : ''}
+                    help={errors.dateStart ? 'Дата подписания обязательна' : ''}
+                >
+                    <DatePicker
+                        placeholder="Выберите дату"
+                        onChange={(date) => handleDateChange('dateStart', date)}
+                    />
+                </StyledFormItem>
+                <StyledFormItem
+                    name="duration"
+                    label="Срок (в днях)"
+                    value
+                    validateStatus={errors.duration ? 'error' : ''}
+                    help={errors.duration ? 'Срок обязателен' : ''}
+                    style={{ width: '50%' }}
+                >
+                    <InputNumber
+                        formatter={(value) => `${value}`.replace(/[^0-9]/g, '')}
+                        parser={(value) => `${value}`.replace(/[^0-9]/g, '')}
+                        style={{ width: '100%' }}
+                        value={data.duration}
+                        onChange={(value) => handleDurationChange(value)}
+                    />
+                </StyledFormItem>
+                <StyledFormItem
+                    name="date_end"
+                    label="Дата окончания"
+                    validateStatus={errors.dateEnd ? 'error' : ''}
+                    help={errors.dateEnd ? 'Дата окончания обязательна' : ''}
+                >
+                    <DatePicker
+                        placeholder="Выберите дату"
+                        onChange={(date) => handleDateChange('dateEnd', date)}
+                    />
+                </StyledFormItem>
+            </Space>
+        </div>
     );
 };
 
-export default App;
+export default StyledDateRangePicker;

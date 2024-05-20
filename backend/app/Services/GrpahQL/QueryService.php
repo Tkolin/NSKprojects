@@ -17,6 +17,16 @@ class QueryService
             $query = $this->find($query, $queryOptions['finds']); // Массив из стобец = значение
         return $query;
     }
+    public function switchQueryType(Builder $query): Builder
+    {
+        if (isset($queryOptions['search']) && isset($searchColumns))
+            $query = $this->search($query, $queryOptions['search'], $searchColumns);
+        if (isset($queryOptions['sortField']) && isset($queryOptions['sortOrder']))
+            $query = $this->sort($query, $queryOptions['sortField'], $queryOptions['sortOrder']);
+        if (isset($queryOptions['finds']))
+            $query = $this->find($query, $queryOptions['finds']); // Массив из стобец = значение
+        return $query;
+    }
 
     public function find(Builder $query, ?array $finds): Builder
     {

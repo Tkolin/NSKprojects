@@ -11,6 +11,13 @@ final readonly class SectionReferences
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
+        if(!isset($args['queryOptions']))
+            switch ($args['queryType']){
+                case "COMPACT":
+                    return ['items' => SectionReference::all()];
+                default:
+                    return ['items' => "Ошибка, не верный тип запрооса"];
+            }
         $sectionReferenceQuery = SectionReference::query();
 
         $queryService = new QueryService();

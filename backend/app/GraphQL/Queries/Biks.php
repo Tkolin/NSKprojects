@@ -13,6 +13,13 @@ final readonly class Biks
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
+        if(!isset($args['queryOptions']))
+            switch ($args['queryType']){
+                case "COMPACT":
+                    return ['items' => Bik::all()];
+                default:
+                    return ['items' => "Ошибка, не верный тип запрооса"];
+            }
         $biksQuery = Bik::query();
 
         $queryService = new QueryService();

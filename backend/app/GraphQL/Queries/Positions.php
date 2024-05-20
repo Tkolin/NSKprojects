@@ -11,7 +11,13 @@ final readonly class Positions
     public function __invoke(null $_, array $args)
     {
         if(!isset($args['queryOptions']))
-            return ['items' => Position::all()];
+            switch ($args['queryType']){
+                case "COMPACT":
+                    return ['items' => Position::all()];
+                default:
+                    return ['items' => "Ошибка, не верный тип запрооса"];
+            }
+
 
         $positionQuery = Position::query();
 

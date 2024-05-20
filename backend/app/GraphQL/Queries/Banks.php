@@ -11,6 +11,14 @@ final readonly class Banks
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
+        if(!isset($args['queryOptions']))
+            switch ($args['queryType']){
+                case "COMPACT":
+                    return ['items' => Bank::all()];
+                default:
+                    return ['items' => "Ошибка, не верный тип запрооса"];
+            }
+
         $banksQuery = Bank::query();
 
         $queryService = new QueryService();

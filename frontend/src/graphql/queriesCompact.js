@@ -1,7 +1,7 @@
 import {gql} from '@apollo/client';
 export const TASKS_QUERY_COMPACT = gql`
     query TasksQueryCompact    {
-        tasks    {
+        tasks  (queryType: "COMPACT")  {
             items {
                 id
                 name
@@ -46,7 +46,7 @@ export const GROUP_TYPE_PROJECTS_QUERY_COMPACT = gql`
 `;
 export const BANKS_QUERY_COMPACT = gql`
     query BanksQueryCompact   {
-        banks 
+        banks (queryType: "COMPACT")
         {
             items{
                 id
@@ -57,7 +57,7 @@ export const BANKS_QUERY_COMPACT = gql`
 `;
 export const PASSPORTS_PLACE_ISSUES_QUERY_COMPACT = gql`
     query PPIQueryCompact  {
-        passportPlaceIssues   {
+        passportPlaceIssues  (queryType: "COMPACT") {
             items{
                 id
                 name
@@ -67,7 +67,7 @@ export const PASSPORTS_PLACE_ISSUES_QUERY_COMPACT = gql`
 `;
 export const PROJECT_STATUSES_QUERY_COMPACT = gql`
     query ProjectStatusesQueryCompact {
-        projectStatuses  {
+        projectStatuses   {
             id
             name
         }
@@ -83,7 +83,7 @@ export const TYPES_PAYMENT_QUERY_COMPACT = gql`
 `;
 export const ORGANIZATIONS_QUERY_COMPACT = gql`
     query OrganizationsQuery  {
-        organizations{
+        organizations (queryType: "COMPACT"){
             items {
                 id
                 name
@@ -93,7 +93,7 @@ export const ORGANIZATIONS_QUERY_COMPACT = gql`
 `;
 export const ORGANIZATIONS_SHORT_QUERY_COMPACT = gql`
     query OrganizationsQueryCompact  {
-        organizations  {
+        organizations (queryType: "COMPACT") {
             items {
                 id
                 name
@@ -103,7 +103,7 @@ export const ORGANIZATIONS_SHORT_QUERY_COMPACT = gql`
 `;
 export const IRDS_QUERY_COMPACT = gql`
     query IrdQueryCompact {
-        irds  {
+        irds (queryType: "COMPACT") {
             items {
                 id
                 name
@@ -113,7 +113,7 @@ export const IRDS_QUERY_COMPACT = gql`
 `;
 export const TYPES_PROJECTS_QUERY_COMPACT = gql`
     query TypeProjectsQueryCompact {
-        typeProjects  {
+        typeProjects (queryType: "COMPACT") {
             items {
                 id
                 name
@@ -123,7 +123,7 @@ export const TYPES_PROJECTS_QUERY_COMPACT = gql`
 `;
 export const PROJECTS_QUERY_COMPACT = gql`
     query ProjectQueryCompact  {
-        projects  {
+        projects (queryType: "COMPACT") {
             items{
                 id
                 name
@@ -133,7 +133,7 @@ export const PROJECTS_QUERY_COMPACT = gql`
 `;
 export const PPI_QUERY_COMPACT = gql`
     query PpiQueryCompact {
-        passportPlaceIssues {
+        passportPlaceIssues(queryType: "COMPACT") {
             items{
                 id
                 name
@@ -143,7 +143,7 @@ export const PPI_QUERY_COMPACT = gql`
 `;
 export const PERSONS_QUERY_COMPACT = gql`
     query PersonQueryCompact {
-        persons {
+        persons(queryType: "COMPACT") {
             items {
                 id
                 passport{
@@ -159,7 +159,7 @@ export const PERSONS_QUERY_COMPACT = gql`
 
 export const STAGES_QUERY_COMPACT = gql`
     query StagesQueryCompact {
-        stages  {
+        stages (queryType: "COMPACT") {
             items {
                 id
                 name
@@ -169,7 +169,7 @@ export const STAGES_QUERY_COMPACT = gql`
 `;
 export const CONTACTS_QUERY_COMPACT = gql`
     query ContactsQueryCompact  {
-        contacts {
+        contacts(queryType: "COMPACT") {
             items {
                 id
                 first_name
@@ -182,7 +182,7 @@ export const CONTACTS_QUERY_COMPACT = gql`
 `;
 export const FACILITYS_QUERY_COMPACT = gql`
     query FacilitiesQueryCompact   {
-        facilities {
+        facilities  {
             id
             name
             code
@@ -208,7 +208,7 @@ export const FACILITYS_QUERY_COMPACT = gql`
 
 export const PAYMENTS_QUERY_COMPACT = gql`
     query BikQueryCompact {
-        tasks  {
+        tasks (queryType: "COMPACT") {
             items {
                 id
                 name
@@ -218,7 +218,7 @@ export const PAYMENTS_QUERY_COMPACT = gql`
 `;
 export const LEGAL_FORM_QUERY_COMPACT = gql`
     query LegalFormsCompact {
-        legalForms   {
+        legalForms    {
             id
             name
         }
@@ -226,7 +226,7 @@ export const LEGAL_FORM_QUERY_COMPACT = gql`
 `;
 export const BIKS_QUERY_COMPACT = gql`
     query BiksFormsCompact {
-        biks   {
+        biks (queryType: "COMPACT")  {
             items {
                 id
                 name
@@ -236,7 +236,7 @@ export const BIKS_QUERY_COMPACT = gql`
 `;
 export const POSITIONS_QUERY_COMPACT = gql`
     query PositionsQueryCompact   {
-        positions  {
+        positions  (queryType: "COMPACT"){
             items {
                 id
                 name

@@ -12,8 +12,23 @@ final readonly class Organizations
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
-        if (!isset($args['queryOptions']))
-            return ['items' => Organization::all()];
+        if(!isset($args['queryOptions']))
+            switch ($args['queryType']){
+                case "COMPACT":
+                    return ['items' => Organization::all()];
+                case "BY_ID":
+                    if (!isset($args['id'])) {
+                        return ['items' => 'Ошибка, отсутствует id'];
+                    }
+                    $data = Organization::find($args['id']);
+                    if ($data) {
+                        return ['items' => [$data]];
+                    } else {
+                        return ['items' => 'Ошибка, контакт не найден'];
+                    }
+                default:
+                    return ['items' => "Ошибка, не верный тип запрооса"];
+            }
 
 
         $organizationsQuery = Organization

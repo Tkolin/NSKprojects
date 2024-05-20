@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Form, Input, Button, notification, Space, Select, Modal} from 'antd';
-import {useMutation, useQuery} from '@apollo/client';
+import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import {GROUP_TYPE_PROJECTS_QUERY, TYPES_PROJECTS_QUERY} from '../../../graphql/queries';
 import { StyledFormItem, StyledFormLarge} from '../../style/FormStyles';
 import {
@@ -9,124 +9,74 @@ import {
     UPDATE_TYPE_PROJECTS_MUTATION
 } from "../../../graphql/mutationsTypeProject";
 import {StyledBlockLarge} from "../../style/BlockStyles";
-import {StyledButtonGreen} from "../../style/ButtonStyles";
-import {PlusOutlined} from "@ant-design/icons";
-import TypeProjectForm from "./TypeProjectForm";
-import GroupTypeProjectForm from "./GroupTypeProjectForm";
+
 import {NotificationContext} from "../../../NotificationProvider";
+import {ADD_CONTACT_MUTATION, UPDATE_CONTACT_MUTATION} from "../../../graphql/mutationsContact";
+import moment from "moment/moment";
+import {
+    GROUP_TYPE_PROJECTS_QUERY_COMPACT,
+    ORGANIZATIONS_QUERY_COMPACT,
+    POSITIONS_QUERY_COMPACT
+} from "../../../graphql/queriesCompact";
+import {CONTACTS_QUERY_BY_ID, GROUP_TYPE_PROJECTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
+import {StyledFormItemAutoCompleteAndCreate} from "../../style/SearchAutoCompleteStyles";
 const {Option} = Select;
 
-const IrdForm = ({ initialObject, mutation, onCompleted }) => {
+const GroupTypeProjectForm = ({ initialObject, onCompleted }) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
-    const nameModel = 'Контакт';
+    const nameModel = 'Группа типа документации';
+
+    const [actualObject, setActualObject] = useState(initialObject);
 
     // Состояния
-    const [organizationModalStatus, setOrganizationModalStatus] = useState("add");
-    const [selectedOrganizationData, setSelectedOrganizationData] = useState(null);
-
-
-    // Изменение состояния
-    const handleSelectedOrganization = (value) => {
-        setAutoCompleteOrganization(null);
-        setSelectedOrganizationData(dataOrganizations?.organizations?.items?.find(org => org.id === value));
-    };
-
-    // Мутация
-    const [mutate] = useMutation(initialObject ? UPDATE_CONTACT_MUTATION : ADD_CONTACT_MUTATION, {
+    const [organizationModalStatus, setOrganizationModalStatus] = useState(null);
+    const [technicalSpecificationAutoComplete, setTechnicalSpecificationAutoComplete] = useState({options: [], selected: {}});
+    const [loadContact, { loading, data }] = useLazyQuery(GROUP_TYPE_PROJECTS_QUERY_BY_ID, {
+        variables: { id: 0},
         onCompleted: (data) => {
-            openNotification('topRight', 'success', `Мутация ${nameModel} выполнена успешно`);
+            console.log("lazyContact 0", data?.contacts?.items[0])
+            setActualObject(data?.groupTypeProjects[0]?.items[0]);
+            console.log("actualObject", actualObject);
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
+        },
+    });
+    // Мутация
+    const [mutate] = useMutation(actualObject ? UPDATE_GROUP_TYPE_PROJECTS_MUTATION : ADD_GROUP_TYPE_PROJECTS_MUTATION, {
+        onCompleted: (data) => {
+            openNotification('topRight', 'success', `Создание новой записи в таблице ${nameModel} выполнено успешно`);
+            form.resetFields();
             onCompleted && onCompleted(data);
         },
         onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении мутации ${nameModel}: ${error.message}`);
+            openNotification('topRight', 'error', `Ошибка при выполнении сооздания ${nameModel}: ${error.message}`);
         },
     });
 
     // Подгрузка при обновлении
     useEffect(() => {
-        initialObject &&
-        form.setFieldsValue({
-            ...initialObject,
-            birth_day: initialObject?.birth_day ? moment(initialObject.birth_day) : null,
-            position_id: initialObject?.position.id ?? null,
-            organization_id: initialObject?.organization?.id ?? null
-        });
-    }, [initialObject, form]);
-
+        if (actualObject) {
+            form.resetFields();
+            form.setFieldsValue({
+                ...actualObject,
+                technical_specification_id:  actualObject.technicalSpecification
+            });
+        }
+    }, [actualObject, form]);
 
     // Получение данных для выпадающих списков
-    const {loading: loadingPositions, error: errorPositions, data: dataPositions} = useQuery(POSITIONS_QUERY_COMPACT);
+    const {loading: loadingGroupTypeProject, error: errorGroupTypeProject, data: dataGroupTypeProject} = useQuery(GROUP_TYPE_PROJECTS_QUERY_COMPACT);
 
-    const {
-        loading: loadingOrganizations,
-        error: errorOrganizations,
-        data: dataOrganizations
-    } = useQuery(ORGANIZATIONS_QUERY_COMPACT);
 
-    // Завершение
     const handleSubmit = () => {
-        mutate({variables: {...(initialObject ? {id: initialObject.id} : {}), ...form.getFieldsValue()}});
+        mutate({variables: {...(actualObject ? {id: actualObject.id} : {}), ...form.getFieldsValue(),
+                organization_id: organizationAutoComplete?.selected, position_id: positionAutoComplete?.selected}});
     };
 
-    if (errorOrganizations || errorPositions) return `Ошибка! ${errorOrganizations?.message || errorPositions?.message}`;
-//////TODO:
-//
-//
-//
-// /////////////////////////////////////////////////////////////////////////////////////
-
-
-
-    // Заполнение формы данными контакта при его редактировании
-    useEffect(() => {
-        if (groupTypeProject) {
-            setEditingGroupTypeProject(groupTypeProject);
-            form.setFieldsValue({name: groupTypeProject.name, technical_specification_id: groupTypeProject.technicalSpecification });
-        }
-    }, [groupTypeProject, form]);
-
-
-    // Мутации для добавления и обновления
-    const [addGroupTypeProject] = useMutation(ADD_GROUP_TYPE_PROJECTS_MUTATION, {
-        refetchQueries: [{ query: GROUP_TYPE_PROJECTS_QUERY }],
-        onCompleted: () => {
-            openNotification('topRight', 'success', 'Данные успешно добавлены!');
-            if (onClose)
-                onClose();
-            form.resetFields();
-        },
-        onError: () => {
-            openNotification('topRight', 'error', 'Ошибка при добавлении данных.');
-        }
-    });
-
-    const [updateGroupTypeProject] = useMutation(UPDATE_GROUP_TYPE_PROJECTS_MUTATION, {
-        refetchQueries: [{ query: GROUP_TYPE_PROJECTS_QUERY }],
-        onCompleted: () => {
-            openNotification('topRight', 'success', 'Данные успешно обновлены!');
-            setEditingGroupTypeProject(null);
-            if (onClose)
-                onClose();
-            form.resetFields();
-        },
-        onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при обновлении данных:' + error.message);
-        }
-    });
-    const {
-        loading: loadingGroupTypeProject, error: errorGroupTypeProject, data: dataGroupTypeProject
-    } = useQuery(GROUP_TYPE_PROJECTS_QUERY);
-
-    // Обработчик отправки формы
-    const handleSubmit = () => {
-        if (editingGroupTypeProject) {
-            updateGroupTypeProject({ variables: {id: editingGroupTypeProject.id,  ...form.getFieldsValue() } });
-        } else {
-            addGroupTypeProject({variables: form.getFieldsValue() });
-        }
-    };
+    if (errorGroupTypeProject) return `Ошибка! ${errorGroupTypeProject?.message}`;
 
     return (
         <StyledBlockLarge lable={''}>
@@ -134,24 +84,13 @@ const IrdForm = ({ initialObject, mutation, onCompleted }) => {
                 <StyledFormItem name="name" label="Наименование"  rules={[{ required: true }]}>
                     <Input />
                 </StyledFormItem>
-                <Space.Compact block style={{alignItems: 'flex-end'}}>
-                    <StyledFormItem name="techinacl_specification_id" label="Тип документации" style={{width: '100%'}}>
-                        <Select
-                            popupMatchSelectWidth={false}
-                            allowClear
-                            showSearch
-                            filterOption = {false}
-                            loading={loadingGroupTypeProject}
-                            placeholder="Начните ввод...">
-                            {dataGroupTypeProject?.groupTypeProjects?.items?.map(row => (
-                                <Option key={row.id}
-                                        value={row.id}>{row.name}</Option>))}
-                        </Select>
-                    </StyledFormItem>
-                </Space.Compact>
+                <StyledFormItemAutoCompleteAndCreate
+
+
+                />
                 <StyledFormItem>
                     <Button type="primary" onClick={handleSubmit}>
-                        {editingGroupTypeProject ? "Сохранить изменения" : "Добавить"}
+                        {actualObject ? "Сохранить" : "Создать"}
                     </Button>
                 </StyledFormItem>
             </StyledFormLarge>
@@ -159,4 +98,4 @@ const IrdForm = ({ initialObject, mutation, onCompleted }) => {
     );
 };
 
-export default IrdForm;
+export default GroupTypeProjectForm;

@@ -11,6 +11,23 @@ final readonly class Persons
 {
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
+        if(!isset($args['queryOptions']))
+            switch ($args['queryType']){
+                case "COMPACT":
+                    return ['items' => Person::all()];
+                case "BY_ID":
+                    if (!isset($args['id'])) {
+                        return ['items' => 'Ошибка, отсутствует id'];
+                    }
+                    $data = Person::find($args['id']);
+                    if ($data) {
+                        return ['items' => [$data]];
+                    } else {
+                        return ['items' => 'Ошибка, контакт не найден'];
+                    }
+                default:
+                    return ['items' => "Ошибка, не верный тип запрооса"];
+            }
             $personQuery = Person::with(['passport', 'passport.passport_place_issue'])
                 ->with('bank')
                 ->with('BIK');

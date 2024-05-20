@@ -9,6 +9,13 @@ final readonly class Stages
 {
     public function __invoke(null $_, array $args)
     {
+        if(!isset($args['queryOptions']))
+            switch ($args['queryType']){
+                case "COMPACT":
+                    return ['items' => Stage::all()];
+                default:
+                    return ['items' => "Ошибка, не верный тип запрооса"];
+            }
         $stageQuery = Stage::query();
 
         $queryService = new QueryService();

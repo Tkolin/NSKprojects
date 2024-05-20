@@ -10,6 +10,13 @@ final readonly class TypeProjects
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
+        if(!isset($args['queryOptions']))
+            switch ($args['queryType']){
+                case "COMPACT":
+                    return ['items' => TypeProjectDocument::all()];
+                default:
+                    return ['items' => "Ошибка, не верный тип запрооса"];
+            }
         $typeProjectsQuery = TypeProjectDocument::with(['group', 'group.technical_specification']);
 
         $queryService = new QueryService();

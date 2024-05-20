@@ -23,16 +23,13 @@ import {StyledButtonGreen} from "../../style/ButtonStyles";
 import dayjs from "dayjs";
 import {StyledFormItemSelectAndCreate, StyledFormItemSelectAndCreateWitchEdit} from "../../style/SelectStyles";
 import {NotificationContext} from "../../../NotificationProvider";
+import {ADD_CONTACT_MUTATION, UPDATE_CONTACT_MUTATION} from "../../../graphql/mutationsContact";
+import {ORGANIZATIONS_QUERY_COMPACT, POSITIONS_QUERY_COMPACT} from "../../../graphql/queriesCompact";
 
 const {Option} = Select;
 const {SHOW_CHILD} = Cascader;
 
 const ProjectForm = ({ initialObject, mutation, onCompleted }) => {
-    // Базовые наследования
-    const { openNotification } = useContext(NotificationContext);
-    const [form] = Form.useForm();
-
-
     const [selectedTypeProject, setSelectedTypeProject] = useState(null);
     const [cascaderFacility, setCascaderFacility] = useState(null);
     const [addContactModalVisibleMode, setAddContactModalVisibleMode] = useState(false);
@@ -85,41 +82,11 @@ const ProjectForm = ({ initialObject, mutation, onCompleted }) => {
         setAutoCompleteTypeProjects(value)
     };
 
-    // Подсчёт даты
-    const [dateSigning, setDateSigning] = useState(null);
-    const [duration, setDuration] = useState(null);
-    const [dateEnd, setDateEnd] = useState(null);
-    const handleDateSigningChange = (value) => {
-        setDateSigning(value);
-        calculateEndDate(value, duration);
-    };
-    const handleDurationChange = (value) => {
-        if (!isNaN(value)) {
-            setDuration(value);
-            calculateEndDate(dateSigning, value);
-        }
-    };
-    const handleSelectedOrganization = (value, option) => {
-        setSelectedOrganization(value);
-        setSelectedOrganizationData(dataOrganizations?.organizations?.items?.find(org => org.id === value));
+    const handleDateRange = () => {
+        const [date_start,duration,date_end] = form;
+
     }
 
-
-    const calculateEndDate = (dateSigning, duration) => {
-        if (dateSigning && duration) {
-            const endDate = dayjs(dateSigning).add(duration, 'day');
-            form.setFieldsValue({date_end: endDate});
-            setDateEnd(endDate);
-        }
-    };
-
-    const calculateDuration = (dateSigning, dateEnd) => {
-        if (dateSigning && dateEnd) {
-            const duration = dayjs(dateEnd).diff(dateSigning, 'days');
-            form.setFieldsValue({duration: duration});
-            setDuration(duration);
-        }
-    };
 
     // Переключение типов документации
 
@@ -356,17 +323,16 @@ const ProjectForm = ({ initialObject, mutation, onCompleted }) => {
             </StyledFormItem>
 
             <Space.Compact block style={{alignItems: 'flex-end'}}>
-                {/*<StyledFormItem name="date_signing" label="Дата подписания">*/}
-                {/*    <DatePicker placeholder="Выберите дату" disabled={!editingProject}*/}
-                {/*                onChange={(value) => handleDateSigningChange(value)}/>*/}
-                {/*</StyledFormItem>*/}
+                <StyledFormItem name="date_signing" label="Дата подписания">
+                    <DatePicker placeholder="Выберите дату" onChange={handleDateRange}/>
+                </StyledFormItem>
                 <StyledFormItem name="duration" label="Срок (в днях)" style={{width: '50%'}}>
                     <InputNumber
                         formatter={(value) => `${value}`.replace(/[^0-9]/g, '')}
                         parser={(value) => `${value}`.replace(/[^0-9]/g, '')}
                         style={{width: '100%'}}
                         disabled={editingProject}
-                        onChange={(value) => handleDurationChange(value)}
+                        onChange={handleDateRange}
                     />
 
                 </StyledFormItem>
@@ -374,12 +340,11 @@ const ProjectForm = ({ initialObject, mutation, onCompleted }) => {
                     <DatePicker placeholder="Выберите дату" style={{width: '100%'}}
                                 onChange={(value) => setDateCreate(value)}/>
                 </StyledFormItem>
-                {/*<StyledFormItem name="date_end" label="Дата окончания" >*/}
-                {/*    <DatePicker minDate={dateSigning} disabled={!editingProject}*/}
-                {/*                style={{width: '100%'}}*/}
-
-                {/*                placeholder="Выберите дату" onChange={handleDateEndChange}/>*/}
-                {/*</StyledFormItem>*/}
+                <StyledFormItem name="date_end" label="Дата окончания" >
+                    <DatePicker minDate={dateSigning} disabled={!editingProject}
+                                style={{width: '100%'}}
+                                placeholder="Выберите дату" onChange={handleDateRange}/>
+                </StyledFormItem>
 
             </Space.Compact>
             <StyledFormItem name="status_id" label="Статус проекта">
