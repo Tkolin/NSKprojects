@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {
     Form, Input, Select, InputNumber, notification, Modal, Space, Cascader, Button, Divider,
 } from 'antd';
-import {useMutation, useQuery} from '@apollo/client';
+import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import {
     PROJECTS_QUERY,
     PROJECT_STATUSES_QUERY,
@@ -24,332 +24,235 @@ import dayjs from "dayjs";
 import {StyledFormItemSelectAndCreate, StyledFormItemSelectAndCreateWitchEdit} from "../../style/SelectStyles";
 import {NotificationContext} from "../../../NotificationProvider";
 import {ADD_CONTACT_MUTATION, UPDATE_CONTACT_MUTATION} from "../../../graphql/mutationsContact";
-import {ORGANIZATIONS_QUERY_COMPACT, POSITIONS_QUERY_COMPACT} from "../../../graphql/queriesCompact";
+import {
+    CONTACTS_QUERY_COMPACT,
+    ORGANIZATIONS_QUERY_COMPACT,
+    POSITIONS_QUERY_COMPACT, PROJECT_STATUSES_QUERY_COMPACT,
+    TYPES_PROJECTS_QUERY_COMPACT
+} from "../../../graphql/queriesCompact";
+import {
+    ORGANIZATIONS_QUERY_BY_ID,
+    PROJECT_STATUSES_QUERY_BY_ID,
+    PROJECTS_QUERY_BY_ID
+} from "../../../graphql/queriesByID";
+import {ADD_ORGANIZATION_MUTATION, UPDATE_ORGANIZATION_MUTATION} from "../../../graphql/mutationsOrganization";
+import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
+import {StyledFormItemAutoCompleteAndCreate} from "../../style/SearchAutoCompleteStyles";
+import {StyledBlockBig, StyledBlockRegular} from "../../style/BlockStyles";
+import FacilitiesCascader from "./component/FacilitiesCascader";
 
 const {Option} = Select;
 const {SHOW_CHILD} = Cascader;
 
-const ProjectForm = ({ initialObject, mutation, onCompleted }) => {
-    const [selectedTypeProject, setSelectedTypeProject] = useState(null);
-    const [cascaderFacility, setCascaderFacility] = useState(null);
-    const [addContactModalVisibleMode, setAddContactModalVisibleMode] = useState(false);
-    const [autoCompleteOrganization, setAutoCompleteOrganization] = useState('');
-    const [selectedOrganization, setSelectedOrganization] = useState('')
-    const [selectedOrganizationData, setSelectedOrganizationData] = useState('')
-    const [autoCompleteTypeProjects, setAutoCompleteTypeProjects] = useState('');
-    const [addOrganizationModalVisibleMode, setAddOrganizationModalVisibleMode] = useState(false);
-    const [dateCreate, setDateCreate] = useState(null);
-    const [facilitysList, setFacilitysList] = useState(null);
-    const [editOrganizationModalVisibleMode, setEditOrganizationModalVisibleMode] = useState(false);
-    const [projectStatus, setProjectStatus] = useState({key: 4});
-    const [projectNumber, setProjectNumber] = useState({
-        typeDocument: 'xxx', year: 'xx', organizationId: 'xx', selectFacilitiCode: 'xx', subSelectFaciliiCode: 'xx',
-        groupFacilitiCode: 'xxx', facilitiCode: 'xxx'
-    });
-    const handleCloseModalFormView = () => {
-        setAddContactModalVisibleMode(false);
-        setAddOrganizationModalVisibleMode(false);
-        setEditOrganizationModalVisibleMode(false);
-    };
-    const getNumberString = () => {
-        return projectNumber.typeDocument + "–" + projectNumber.year + "–" + projectNumber.organizationId + "–" + projectNumber.selectFacilitiCode + "–" + projectNumber.subSelectFaciliiCode + "–" +
-            projectNumber.groupFacilitiCode + "–" + projectNumber.facilitiCode;
-
-    }
-    useEffect(() => {
-
-        const facilitysId = form.getFieldValue('facilitys_id');
-        setProjectNumber({
-            ...projectNumber,
-            typeDocument: dataTypeProject?.typeProjects?.items?.find(d => d.id === form.getFieldValue('type_project_document_id'))?.group?.name,
-            year: form.getFieldValue('date_create')?.$y?.toString()?.slice(-2),
-            organizationId: addLeadingZeros(form.getFieldValue('organization_customer_id'), 3),
-            selectFacilitiCode: facilitysId?.[0]?.[0] != null ? addLeadingZeros(facilitysId[0][0], 2) : null,
-            subSelectFaciliiCode: facilitysId?.[0]?.[1] != null ? addLeadingZeros(facilitysId[0][1], 2) : null,
-            groupFacilitiCode: facilitysId?.[0]?.[2] != null ? addLeadingZeros(facilitysId[0][2], 3) : null,
-            facilitiCode: facilitysId?.[0]?.[3] != null ? addLeadingZeros(facilitysId[0][3], 3) : null,
-        })
-    }, [form.getFieldValue('facilitys_id'), form, form.getFieldValue, form.getFieldValue('organization_customer_id'), selectedTypeProject, form.getFieldValue('date_create'), dateCreate, facilitysList]);
-
-    function addLeadingZeros(number, length) {
-        return String(number).padStart(length, '0');
-    }
-
-    const handleAutoCompleteOrganizations = (value) => {
-        setAutoCompleteOrganization(value)
-    };
-    const handleAutoCompleteTypeProjects = (value) => {
-        setAutoCompleteTypeProjects(value)
-    };
-
-    const handleDateRange = () => {
-        const [date_start,duration,date_end] = form;
-
-    }
-
-
-    // Переключение типов документации
-
-    const handleEditingTemplate = (value, option) => {
-        setSelectedTypeProject(value);
-        //TODO: Получать из туда суда типа дока до группы
-        // setProjectNumber(createNumber);
-        //
-        // form.setFieldsValue({
-        //     number: createNumber
-        // });
-    };
-
-    // Получение данных для выпадающих списков
-    const {loading: loadingFacility} = useQuery(FACILITYS_QUERY, {
-        onCompleted: (data) => setCascaderFacility(sortFacilitysForCascader(data.facilities))
-    });
-    const {loading: loadingStatuses, error: errorStatuses, data: dataStatuses} =
-        useQuery(PROJECT_STATUSES_QUERY, {
-            onCompleted: () => !editingProject && setProjectStatus(3)
-        });
-    const {
-        loading: loadingTypeProject, error: errorTypeProject, data: dataTypeProject
-    } = useQuery(TYPES_PROJECTS_QUERY, {
-        variables: {queryOptions: {limit: 10, page: 1, search: autoCompleteTypeProjects}}
-    });
-
-    const {
-        loading: loadingDelegates, error: errorDelegates, data: dataDelegates
-    } = useQuery(CONTACTS_SHORT_QUERY, {
-        variables: {organizationId: selectedOrganization},
-    });
-    const {
-        loading: loadingOrganizations, error: errorOrganizations, data: dataOrganizations, refetch: refetchOrganizations
-    } = useQuery(ORGANIZATIONS_QUERY, {
-        variables: {queryOptions: {limit: 10, page: 1, search: autoCompleteOrganization}}
-    });
-
-    // Мутации для добавления и обновления
-    const [addProject] = useMutation(ADD_PROJECT_MUTATION, {
-        refetchQueries: [{query: PROJECTS_QUERY}],
+const ProjectForm = ({initialObject, onCompleted}) => {
+    // Первичные данные
+    const {openNotification} = useContext(NotificationContext);
+    const [form] = Form.useForm();
+    const nameModel = 'Проект';
+    const [actualObject, setActualObject] = useState(initialObject ?? null);
+    const [loadContext, {loading, data}] = useLazyQuery(PROJECTS_QUERY_BY_ID, {
+        variables: {id: initialObject?.id ?? null},
         onCompleted: (data) => {
-            save(data);
-            setProject(data.addProject);
-
-            if (onSubmit) {
-                onSubmit(true);
-            }
-            openNotification('topRight', 'success', 'Данные успешно добавлены!');
-        }, onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при добавлении данных: ' + error.message);
-        }
+            setActualObject(data?.projects?.items[0]);
+            updateForm(data?.projects?.items[0]);
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
+        },
     });
-    const [updateProject] = useMutation(UPDATE_PROJECT_MUTATION, {
-        refetchQueries: [{query: PROJECTS_QUERY}], onCompleted: (data) => {
-            openNotification('topRight', 'success', 'Данные успешно обновлены!');
-            save(data);
-            if (setProject)
-                setProject(data.updateProject);
+    // Состояния
+    const [delegatesModalStatus, setDelegatesModalStatus] = useState(null);
+    const [delegatesAutoComplete, setDelegatesAutoComplete] = useState({options: [], selected: {}});
+    const [organizationsModalStatus, setOrganizationsModalStatus] = useState(null);
+    const [organizationsAutoComplete, setOrganizationsAutoComplete] = useState({options: [], selected: {}});
+    const [typeProjectModalStatus, setTypeProjectModalStatus] = useState(null);
+    const [typeProjectAutoComplete, setTypeProjectAutoComplete] = useState({options: [], selected: {}});
 
-            if (onSubmit) {
-                onSubmit(true);
-            }
-            if (onClose) onClose();
-        }, onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при обновлении данных: ' + error.message);
-        }
+
+    // Мутация
+    const [mutate] = useMutation(actualObject ? UPDATE_PROJECT_MUTATION : ADD_PROJECT_MUTATION, {
+        onCompleted: (data) => {
+            openNotification('topRight', 'success', `Создание новой записи в таблице ${nameModel} выполнено успешно`);
+            form.resetFields();
+            onCompleted && onCompleted(data);
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при выполнении сооздания ${nameModel}: ${error.message}`);
+        },
     });
-    // Заполнение формы данными контакта при его редактировании
+    // Подгрузка при обновлении
     useEffect(() => {
-        if (editingProject) {
-            save(editingProject);
-            setSelectedTypeProject(editingProject?.type_project_document?.id);
-            setAutoCompleteTypeProjects(editingProject?.type_project_document?.id);
-            setSelectedOrganization(editingProject?.organization_customer?.id);
-            setAutoCompleteOrganization(editingProject?.organization_customer?.id)
+        console.log("initialObject", initialObject);
+        if (initialObject?.id) {
+            loadContext();
+        }
+    }, [initialObject]);
+    const updateForm = (data) => {
+        if (data) {
+            form.resetFields();
 
-            const facilitys_id = editingProject?.facilities?.map(facility => [
+            const facilitys_id = actualObject?.facilities?.map(facility => [
                 facility?.group_facility?.subselection_facility?.selection_facility?.code ?? null,
                 facility?.group_facility?.subselection_facility?.code ?? null,
                 facility?.group_facility?.code ?? null,
                 facility?.code ?? null
             ]);
+
             form.setFieldsValue({
-                ...editingProject,
-                date_signing: editingProject.date_signing ? moment(editingProject.date_signing, 'YYYY-MM-DD') : null,
-                date_end: editingProject.date_end ? moment(editingProject.date_end, 'YYYY-MM-DD') : null,
-                date_completion: editingProject.date_completion ? moment(editingProject.date_completion, 'YYYY-MM-DD') : null,
-                date_create: editingProject.date_create ? moment(editingProject.date_create, 'YYYY-MM-DD') : null,
-                organization_customer_id: editingProject?.organization_customer?.id ?? null,
-                delegates_id: editingProject?.delegations?.map(delegations => delegations.id),
-                type_project_document_id: editingProject?.type_project_document?.id ?? null,
+                ...data,
+                date_signing: data.date_signing ? moment(data.date_signing, 'YYYY-MM-DD') : null,
+                date_end: data.date_end ? moment(data.date_end, 'YYYY-MM-DD') : null,
+                date_completion: data.date_completion ? moment(data.date_completion, 'YYYY-MM-DD') : null,
+                date_create: data.date_create ? moment(data.date_create, 'YYYY-MM-DD') : null,
+                organization_customer_id: data?.organization_customer?.id ?? null,
+                delegates_id: data?.delegations?.map(delegations => delegations.id),
+                type_project_document_id: data?.type_project_document?.id ?? null,
                 facilitys_id: facilitys_id,
-                status_id: editingProject?.status?.id ?? null
+                status_id: data?.status?.id ?? null
             });
+
+            setDelegatesAutoComplete({selected: data.delegate.id});
+            setOrganizationsAutoComplete({selected: data.organization.id});
+            setTypeProjectAutoComplete({selected: data.typeProject.id});
+
         }
-    }, [editingProject, form]);
-
-    const save = (data) => {
-        setEditingProject(data);
-    }
-
-
-    const sortFacilitysForCascader = (facilities) => {
-        return facilities.map(facility => {
-            const subselectionFacilities = facility.subselection_facility.map(subFacility => {
-                const groupFacilities = subFacility.group_facility.map(groupFacility => {
-                    const facilities = groupFacility.facilities.map(facility => ({
-                        key: facility.id,
-                        label: facility.name,
-                        value: facility.code
-                    }));
-
-                    return {
-                        key: groupFacility.id,
-                        label: groupFacility.name,
-                        value: groupFacility.code,
-                        children: facilities
-                    };
-                });
-
-                return {
-                    key: subFacility.id,
-                    label: subFacility.name,
-                    value: subFacility.code,
-                    children: groupFacilities
-                };
-            });
-
-            return {
-                key: facility.id,
-                label: facility.name,
-                value: facility.code,
-                children: subselectionFacilities
-            };
-        });
     };
-    // Обработчик отправки формы
+
+    // Получение данных для выпадающих списков
+    const {loading: loadingStatuses, error: errorStatuses, data: dataStatuses} =
+        useQuery(PROJECT_STATUSES_QUERY_COMPACT,);
+    const {
+        loading: loadingTypeProject, error: errorTypeProject, data: dataTypeProject
+    } = useQuery(TYPES_PROJECTS_QUERY_COMPACT);
+
+    const {
+        loading: loadingDelegates, error: errorDelegates, data: dataDelegates
+    } = useQuery(CONTACTS_QUERY_COMPACT);
+    const {
+        loading: loadingOrganizations, error: errorOrganizations, data: dataOrganizations, refetch: refetchOrganizations
+    } = useQuery(ORGANIZATIONS_QUERY_COMPACT);
+
+    // Логика формы
+
+    useEffect(() => {
+        form.setFieldValue("number", 0)
+        const facilitiCode = form.getFieldValue("facility_id")?.[0];
+        console.log(form.getFieldValue("facilitys_id") +
+                    form.getFieldValue.typeDocument +
+                    "–" + form.getFieldValue("date_signing") +
+                    "–" + organizationsAutoComplete.selected +
+                    "–" + facilitiCode?.[0] +
+                    "–" + facilitiCode?.[0] +
+                    "–" + facilitiCode?.[0] +
+                    "–" + facilitiCode?.[0]);
+    }, [form.getFieldValue("facility_id"), form.getFieldValue("date_signing"), organizationsAutoComplete.selected]);
+
     const handleSubmit = () => {
-        const currentDate = new Date();
-
-        if (editingProject) {
-            updateProject({
-                variables: {
-                    data: {
-                        ...form.getFieldsValue(),
-                        number: editingProject.number,
-                        date_create: form.getFieldValue("date_create")?.toISOString() ?? currentDate.toISOString(),
-                        facilitys_id: facilitysList?.map(cascad => cascad[3].key) ?? null,
-                        id: editingProject?.id,
-                        organization_customer_id: selectedOrganization
-                    }
-                }
-            });
-        } else {
-            addProject({
-                variables: {
-                    data: {
-                        ...form.getFieldsValue(),
-                        number: getNumberString(),
-                        date_create: form.getFieldValue("date_create")?.toISOString() ?? currentDate.toISOString(),
-                        facilitys_id: facilitysList?.map(cascad => cascad[3].key) ?? null,
-                        organization_customer_id: selectedOrganization,
-                        status_id: 4
-                    }
-                }
-            });
-        }
+        console.log(form.getFieldsValue(),
+            delegatesAutoComplete.selected,
+            organizationsAutoComplete.selected,
+            typeProjectAutoComplete.selected);
+        const facilitiCode = form.getFieldValue("facility_id")?.[0];
+        console.log(form.getFieldValue("facilitys_id") +
+            form.getFieldValue.typeDocument +
+            "–" + form.getFieldValue("date_signing") +
+            "–" + organizationsAutoComplete.selected +
+            "–" + facilitiCode?.[0] +
+            "–" + facilitiCode?.[1] +
+            "–" + facilitiCode?.[2] +
+            "–" + facilitiCode?.[3]);
+        // mutate({
+        //     variables: {
+        //         data: {
+        //             ...form.getFieldsValue(),
+        //             //number: editingProject.number,
+        //             //date_create: form.getFieldValue("date_create")?.toISOString() ?? currentDate.toISOString(),
+        //             //facilitys_id: facilitysList?.map(cascad => cascad[3].key) ?? null,
+        //             //id: editingProject?.id,
+        //             //organization_customer_id: selectedOrganization
+        //         }
+        //     }
+        // });
     };
-    return (<>
+
+    if (loading) return <LoadingSpinnerStyles/>
+    if (errorStatuses || errorTypeProject || errorDelegates || errorOrganizations) return `Ошибка! ${errorStatuses?.message || errorTypeProject?.message || errorDelegates?.message || errorOrganizations?.message}`;
+
+    return (<StyledBlockRegular label={"Проект"}>
         <StyledFormRegular form={form} layout="vertical">
-            <Divider>:Данные:</Divider>
             <StyledFormItem name="number" label="Номер проекта" rules={[{required: true}]}>
-                <div>
-                    {project?.number ?
-                        (<Input defaultValue={project?.number} value={project?.number}/>) :
-                        (<Input defaultValue={getNumberString()} value={getNumberString()}/>)
-                    }
-                </div>
+                <Input disabled={true}/>
             </StyledFormItem>
             <StyledFormItem name="name" label="Наименование проекта" rules={[{required: true}]}>
                 <Input/>
             </StyledFormItem>
-            <StyledFormItem name="type_project_document_id" label="Тип документа">
-                <Select
-                    popupMatchSelectWidth={false}
-                    allowClear
-                    showSearch
-                    filterOption={false}
-                    value={selectedTypeProject?.id}
-                    loading={loadingTypeProject}
-                    placeholder="Начните ввод..."
-                    onSearch={(value) => handleAutoCompleteTypeProjects(value)}
-                    onSelect={(value, option) => handleEditingTemplate(value, option)}>
-                    {dataTypeProject?.typeProjects?.items?.map(typeDocument => (
-                        <Option key={typeDocument.id}
-                                value={typeDocument?.id}>{typeDocument.name}</Option>))}
-                </Select>
-            </StyledFormItem>
-            <StyledFormItemSelectAndCreateWitchEdit
-                formName={"organization_customer_id"}
+            <StyledFormItemAutoCompleteAndCreate
+                formName={"type_project_document_name"}
+                formLabel={"Тип документа"}
+                placeholder={"Начните ввод..."}
+                loading={loadingTypeProject}
+                firstBtnOnClick={() => setTypeProjectModalStatus("add")}
+
+                data={dataTypeProject?.typeProjects?.items}
+                stateSearch={typeProjectAutoComplete}
+                setStateSearch={setTypeProjectAutoComplete}
+            />
+            <StyledFormItemAutoCompleteAndCreate
+                formName={"organization_customer_name"}
                 formLabel={"Заказчик"}
-                onSearch={handleAutoCompleteOrganizations}
-                onSelect={handleSelectedOrganization}
                 placeholder={"Начните ввод..."}
                 loading={loadingOrganizations}
-                items={dataOrganizations?.organizations?.items}
-                firstBtnOnClick={setAddOrganizationModalVisibleMode}
-                secondBtnOnClick={setEditOrganizationModalVisibleMode}
-                secondDisable={!selectedOrganization}
-                formatOptionText={(row) => `${row.name}`}
+                firstBtnOnClick={() => setOrganizationsModalStatus("add")}
+
+                data={dataOrganizations?.organizations?.items}
+                stateSearch={organizationsAutoComplete}
+                setStateSearch={setOrganizationsAutoComplete}
             />
-            <StyledFormItemSelectAndCreate
-                formName={"delegates_id"}
+            <StyledFormItemAutoCompleteAndCreate
+                formName={"delegates_name"}
                 formLabel={"Представители компании"}
                 mode={'multiple'}
-                placeholder={"По компаниям"}
+                placeholder={"Начните ввод..."}
                 loading={loadingDelegates}
-                items={dataDelegates?.contacts?.items}
-                firstBtnOnClick={setAddContactModalVisibleMode}
-                formatOptionText={(row) => `${row.last_name} ${row.first_name} ${row.patronymic}`}
+                firstBtnOnClick={() => setDelegatesModalStatus("add")}
+
+                data={dataDelegates?.contacts?.items}
+                stateSearch={delegatesAutoComplete}
+                setStateSearch={setDelegatesAutoComplete}
+
+                typeData={"FIO"}
             />
-            <StyledFormItem name="facilitys_id" label="Объект" style={{width: "100%"}}>
-                <Cascader
-                    style={{width: "100%"}}
-                    showCheckedStrategy={SHOW_CHILD}
-                    popupMatchSelectWidth={false}
-                    options={cascaderFacility}
-                    multiple
-                    onChange={(value, selectedOptions) => setFacilitysList(selectedOptions)}
-                    expandTrigger="hover"
-                    maxTagCount="responsive"
-                />
-            </StyledFormItem>
+            <Form.Item name="facilitys_id" label="Объект" style={{width: "100%"}}>
+                <FacilitiesCascader/>
+            </Form.Item>
 
             <Space.Compact block style={{alignItems: 'flex-end'}}>
                 <StyledFormItem name="date_signing" label="Дата подписания">
-                    <DatePicker placeholder="Выберите дату" onChange={handleDateRange}/>
+                    <DatePicker placeholder="Выберите дату"/>
                 </StyledFormItem>
                 <StyledFormItem name="duration" label="Срок (в днях)" style={{width: '50%'}}>
                     <InputNumber
                         formatter={(value) => `${value}`.replace(/[^0-9]/g, '')}
                         parser={(value) => `${value}`.replace(/[^0-9]/g, '')}
                         style={{width: '100%'}}
-                        disabled={editingProject}
-                        onChange={handleDateRange}
+                        disabled={actualObject}
                     />
 
                 </StyledFormItem>
-                <StyledFormItem name="date_create" label="Дата создания договора" style={{width: '50%'}}>
-                    <DatePicker placeholder="Выберите дату" style={{width: '100%'}}
-                                onChange={(value) => setDateCreate(value)}/>
-                </StyledFormItem>
-                <StyledFormItem name="date_end" label="Дата окончания" >
-                    <DatePicker minDate={dateSigning} disabled={!editingProject}
-                                style={{width: '100%'}}
-                                placeholder="Выберите дату" onChange={handleDateRange}/>
-                </StyledFormItem>
 
+                <StyledFormItem name="date_end" label="Дата окончания">
+                    <DatePicker minDate={form.getFieldValue("date_signing")}
+                                style={{width: '100%'}}
+                                placeholder="Выберите дату"/>
+                </StyledFormItem>
             </Space.Compact>
+            <StyledFormItem name="date_create" label="Дата создания договора" style={{width: '50%'}}>
+                <DatePicker placeholder="Выберите дату" style={{width: '100%'}}/>
+            </StyledFormItem>
             <StyledFormItem name="status_id" label="Статус проекта">
-                <Select loading={loadingStatuses} disabled={!editingProject} placeholder={"В разработке"}
-                        value={projectStatus}>
+                <Select loading={loadingStatuses}
+                    // disabled={!actualObject}
+                        placeholder={"В разработке"}>
                     {dataStatuses?.projectStatuses?.map(status => (
                         <Select.Option key={status.id}
                                        value={status.id}>{status.name}</Select.Option>))}
@@ -377,31 +280,31 @@ const ProjectForm = ({ initialObject, mutation, onCompleted }) => {
 
         </StyledFormRegular>
 
-        <Modal
-            open={addContactModalVisibleMode}
-            onCancel={() => setAddContactModalVisibleMode(false)}
-            footer={null}
-            onClose={handleCloseModalFormView}
-        >
-            <ContactForm onClose={handleCloseModalFormView}/>
-        </Modal>
-        <Modal
-            open={addOrganizationModalVisibleMode}
-            onCancel={() => setAddOrganizationModalVisibleMode(false)}
-            footer={null}
-            onClose={handleCloseModalFormView}
-        >
-            <OrganizationForm onClose={handleCloseModalFormView} organization={null}/>
-        </Modal>
-        <Modal
-            open={editOrganizationModalVisibleMode}
-            onCancel={() => setEditOrganizationModalVisibleMode(false)}
-            footer={null}
-            onClose={handleCloseModalFormView}
-        >
-            <OrganizationForm onClose={handleCloseModalFormView} organization={selectedOrganizationData}/>
-        </Modal>
-    </>)
+        {/*<Modal*/}
+        {/*    open={addContactModalVisibleMode}*/}
+        {/*    onCancel={() => setAddContactModalVisibleMode(false)}*/}
+        {/*    footer={null}*/}
+        {/*    onClose={handleCloseModalFormView}*/}
+        {/*>*/}
+        {/*    <ContactForm onClose={handleCloseModalFormView}/>*/}
+        {/*</Modal>*/}
+        {/*<Modal*/}
+        {/*    open={addOrganizationModalVisibleMode}*/}
+        {/*    onCancel={() => setAddOrganizationModalVisibleMode(false)}*/}
+        {/*    footer={null}*/}
+        {/*    onClose={handleCloseModalFormView}*/}
+        {/*>*/}
+        {/*    <OrganizationForm onClose={handleCloseModalFormView} organization={null}/>*/}
+        {/*</Modal>*/}
+        {/*<Modal*/}
+        {/*    open={editOrganizationModalVisibleMode}*/}
+        {/*    onCancel={() => setEditOrganizationModalVisibleMode(false)}*/}
+        {/*    footer={null}*/}
+        {/*    onClose={handleCloseModalFormView}*/}
+        {/*>*/}
+        {/*    <OrganizationForm onClose={handleCloseModalFormView} organization={selectedOrganizationData}/>*/}
+        {/*</Modal>*/}
+    </StyledBlockRegular>)
 };
 
 export default ProjectForm;

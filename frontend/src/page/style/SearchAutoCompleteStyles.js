@@ -53,7 +53,7 @@ const BaseStyledFormItemAutoComplete = ({
         <StyledFormItem name={formName} labelCol={labelCol} wrapperCol={wrapperCol} label={formLabel}
                         style={{width: width}}>
             <AutoComplete
-                style={{width: width}}
+                 style={{width: width}}
                 allowClear
                 showSearch
                 status={stateSearch?.selected ? "" : "warning"}
@@ -72,6 +72,7 @@ const BaseStyledFormItemAutoComplete = ({
                 }}
                 placeholder={placeholder}
             />
+
         </StyledFormItem>)
 };
 
@@ -109,6 +110,8 @@ const StyledFormItemAutoCompleteAndCreate = ({
                                                  firstBtnOnClick,
                                                  formatOptionText,
                                                  mode,
+
+
                                                  typeData,data, stateSearch, setStateSearch
 
                                              }) => (

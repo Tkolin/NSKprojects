@@ -117,6 +117,10 @@ export const TYPES_PROJECTS_QUERY_COMPACT = gql`
             items {
                 id
                 name
+                group {
+                    id
+                    name
+                }
             }
         }
     }
