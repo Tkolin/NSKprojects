@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Collapse, Divider, Modal, notification, Transfer, Tree} from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
-import {UPDATE_TASKS_TEMPLATE_MUTATION} from "../../../../graphql/mutationsTemplate";
-import {StyledButtonGreen} from "../../../style/ButtonStyles";
+import {UPDATE_TASKS_TEMPLATE_MUTATION} from "../../../../../graphql/mutationsTemplate";
+import {StyledButtonGreen} from "../../../../style/ButtonStyles";
 import {LoadingOutlined} from "@ant-design/icons";
-import TasksToProjectStageForm from "../projectForm/TasksToProjectStageForm";
-import {TASKS_QUERY, TEMPLATE_TASKS_TYPE_PROJECTS_QUERY} from "../../../../graphql/queries";
+import TasksToProjectStageForm from "../../project/components/TasksToProjectStageForm";
+import {TASKS_QUERY, TEMPLATE_TASKS_TYPE_PROJECTS_QUERY} from "../../../../../graphql/queries";
 const { Panel } = Collapse;
 
 const App = ({ typeProjectId, triggerMethod, setTriggerMethod, disabled }) => {

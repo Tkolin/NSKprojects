@@ -2,17 +2,17 @@ import React, {useEffect, useState, useRef, useContext} from 'react';
 import {Button, Col, Drawer, Form, Input, InputNumber, Popconfirm, Row, Table, Typography} from 'antd';
 import {Chart} from 'react-google-charts';
 import {useMutation, useQuery} from "@apollo/client";
-import {PROJECTS_QUERY, TASKS_TO_PROJECT_QUERY} from "../../../graphql/queries";
-import TaskProjectForm from "../aggregateComponent/projectForm/TaskProjectForm";
-import {DELETE_TASK_TO_PROJECT_MUTATION, UPDATE_TASK_TO_PROJECT_MUTATION} from "../../../graphql/mutationsTask";
+import {PROJECTS_QUERY, TASKS_TO_PROJECT_QUERY} from "../../../../graphql/queries";
+import TaskProjectForm from "../project/components/TaskProjectForm";
+import {DELETE_TASK_TO_PROJECT_MUTATION, UPDATE_TASK_TO_PROJECT_MUTATION} from "../../../../graphql/mutationsTask";
 import {useParams} from "react-router";
-import {StyledButtonGreen} from "../../style/ButtonStyles";
+import {StyledButtonGreen} from "../../../style/ButtonStyles";
 import {QuestionCircleOutlined} from "@ant-design/icons";
-import StyledLinkManagingDataTable from "../../style/TableStyles";
-import {NotificationContext} from "../../../NotificationProvider";
-import {ADD_CONTACT_MUTATION, UPDATE_CONTACT_MUTATION} from "../../../graphql/mutationsContact";
+import StyledLinkManagingDataTable from "../../../style/TableStyles";
+import {NotificationContext} from "../../../../NotificationProvider";
+import {ADD_CONTACT_MUTATION, UPDATE_CONTACT_MUTATION} from "../../../../graphql/mutationsContact";
 import moment from "moment/moment";
-import {ORGANIZATIONS_QUERY_COMPACT, POSITIONS_QUERY_COMPACT} from "../../../graphql/queriesCompact";
+import {ORGANIZATIONS_QUERY_COMPACT, POSITIONS_QUERY_COMPACT} from "../../../../graphql/queriesCompact";
 
 const TasksChartForm = ({ initialObject, mutation, onCompleted }) => {
     // Первичные данные

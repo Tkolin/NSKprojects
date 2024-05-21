@@ -1,4 +1,4 @@
-import {StyledFormBig} from "../../../style/FormStyles";
+import {StyledFormBig} from "../../../../style/FormStyles";
 import {Button, Form, InputNumber, notification, Select, Space, Tooltip} from "antd";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
@@ -6,12 +6,12 @@ import {useMutation, useQuery} from "@apollo/client";
 import {
     PROJECTS_QUERY,
     SECTION_REFERENCES_QUERY, TEMPLATE_SECTION_REFERENCES_TYPE_PROJECTS_QUERY
-} from "../../../../graphql/queries";
-import LoadingSpinnerStyles from "../../../style/LoadingSpinnerStyles";
-import {StyledButtonGreen} from "../../../style/ButtonStyles";
-import {UPDATE_SECTION_REFERENCES_TEMPLATE_MUTATION} from "../../../../graphql/mutationsTemplate";
+} from "../../../../../graphql/queries";
+import LoadingSpinnerStyles from "../../../../style/LoadingSpinnerStyles";
+import {StyledButtonGreen} from "../../../../style/ButtonStyles";
+import {UPDATE_SECTION_REFERENCES_TEMPLATE_MUTATION} from "../../../../../graphql/mutationsTemplate";
 
-const SectionReferenceTemplateForm = ({project, setProject , onSubmit, disable}) => {
+const SectionReferenceProjectForm = ({project, setProject , onSubmit, disable}) => {
     const [formSectionReference] = Form.useForm();
     const [autoCompleteSectionReference, setAutoCompleteSectionReference] = useState('');
     const [dataSectionReference, setDataSectionReference] = useState(null);
@@ -30,12 +30,12 @@ const SectionReferenceTemplateForm = ({project, setProject , onSubmit, disable})
     };
 
     // Получение данных для выпадающих списков
-    const {loading: loadingSectionReference, refetch: refetchSectionReference, data: dataSectionReferenceQuery} =
+    const {loading: loadingSectionReference, refetch: refetchSectionReference, data: dataSectionReferenceQuery} = 
         useQuery(SECTION_REFERENCES_QUERY, {
-            fetchPolicy: 'network-only',
-            variables: {queryOptions: {search: autoCompleteSectionReference, limit: 10, page: 1}},
-            onCompleted: (data) => setDataSectionReference(data)
-        });
+        fetchPolicy: 'network-only',
+        variables: {queryOptions: {search: autoCompleteSectionReference, limit: 10, page: 1}},
+        onCompleted: (data) => setDataSectionReference(data)
+    });
     useEffect((dataSectionReferenceQuery) => {
         dataSectionReferenceQuery ?? setDataSectionReference(dataSectionReferenceQuery);
     }, [dataSectionReferenceQuery]);
@@ -199,4 +199,4 @@ const SectionReferenceTemplateForm = ({project, setProject , onSubmit, disable})
     )
 };
 
-export default SectionReferenceTemplateForm;
+export default SectionReferenceProjectForm;

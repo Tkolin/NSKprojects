@@ -4,22 +4,22 @@ import {useMutation, useQuery} from '@apollo/client';
 import {
     PERSONS_QUERY, TASKS_QUERY,
     TASKS_TO_PROJECT_QUERY
-} from '../../../../graphql/queries';
+} from '../../../../../graphql/queries';
 import {
     ADD_TASK_TO_PROJECT_MUTATION,
     UPDATE_TASK_TO_PROJECT_MUTATION
-} from '../../../../graphql/mutationsTask';
+} from '../../../../../graphql/mutationsTask';
 
-import {StyledFormItem, StyledFormRegular} from '../../../style/FormStyles';
-import {StyledButtonGreen} from "../../../style/ButtonStyles";
-import PersonForm from "../../modelsForms/PersonForm";
-import TaskForm from "../../modelsForms/TaskForm";
+import {StyledFormItem, StyledFormRegular} from '../../../../style/FormStyles';
+import {StyledButtonGreen} from "../../../../style/ButtonStyles";
+import PersonForm from "../../../modelsForms/PersonForm";
+import TaskForm from "../../../modelsForms/TaskForm";
 import {
     BaseStyledFormItemSelect,
     StyledFormItemSelect,
 
     StyledFormItemSelectAndCreateWitchEdit
-} from "../../../style/SelectStyles";
+} from "../../../../style/SelectStyles";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 import {DatePicker} from "antd/lib";
 import moment from "moment";

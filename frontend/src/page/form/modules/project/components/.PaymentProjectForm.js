@@ -1,4 +1,4 @@
-import {StyledFormBig, StyledFormRegular} from "../../../style/FormStyles";
+import {StyledFormBig, StyledFormRegular} from "../../../../style/FormStyles";
 import {Button, Col, Form, Input, InputNumber, notification, Row, Select, Space} from "antd";
 import {DatePicker} from "antd/lib";
 import {LoadingOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
@@ -8,8 +8,8 @@ import {
     SEARCH_IRDS_QUERY,
     SEARCH_TEMPLATE_IRDS_OR_TYPE_PROJECT_QUERY,
 } from "../../graphql/queriesSearch";
-import {UPDATE_IRDS_TO_PROJECT_MUTATION, UPDATE_PAYMENTS_TO_PROJECT_MUTATION} from "../../../../graphql/mutationsProject";
-import {TYPES_PAYMENT_QUERY} from "../../../../graphql/queries";
+import {UPDATE_IRDS_TO_PROJECT_MUTATION, UPDATE_PAYMENTS_TO_PROJECT_MUTATION} from "../../../../../graphql/mutationsProject";
+import {TYPES_PAYMENT_QUERY} from "../../../../../graphql/queries";
 
 const PaymentProjectForm = ({typeProjectId, projectId, triggerMethod, setTriggerMethod, totalToPay}) => {
     // Триггер

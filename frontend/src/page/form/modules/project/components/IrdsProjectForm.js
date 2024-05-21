@@ -1,15 +1,15 @@
-import {StyledFormBig} from "../../../style/FormStyles";
+import {StyledFormBig} from "../../../../style/FormStyles";
 import {Button, Form, InputNumber, Modal, notification, Select, Space, Tooltip} from "antd";
 import {DatePicker} from "antd/lib";
 import {CloudUploadOutlined, MinusCircleOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
-import {UPDATE_IRDS_TO_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION} from "../../../../graphql/mutationsProject";
-import {IRDS_QUERY, PROJECTS_QUERY, STAGES_QUERY, TEMPLATE_IRDS_TYPE_PROJECTS_QUERY} from "../../../../graphql/queries";
-import {ADD_IRD_MUTATION} from "../../../../graphql/mutationsIrd";
-import LoadingSpinnerStyles from "../../../style/LoadingSpinnerStyles";
-import {StyledButtonGreen} from "../../../style/ButtonStyles";
-import IrdForm from "../../modelsForms/IrdForm";
+import {UPDATE_IRDS_TO_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION} from "../../../../../graphql/mutationsProject";
+import {IRDS_QUERY, PROJECTS_QUERY, STAGES_QUERY, TEMPLATE_IRDS_TYPE_PROJECTS_QUERY} from "../../../../../graphql/queries";
+import {ADD_IRD_MUTATION} from "../../../../../graphql/mutationsIrd";
+import LoadingSpinnerStyles from "../../../../style/LoadingSpinnerStyles";
+import {StyledButtonGreen} from "../../../../style/ButtonStyles";
+import IrdForm from "../../../modelsForms/IrdForm";
 
 const IrdsProjectForm = ({project, setProject, onSubmit, disable}) => {
     // Состояния

@@ -1,14 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {
-    Form, Input, Select, InputNumber, notification, Modal, Space, Cascader, Button, Divider,
+    Form, Input, Select, InputNumber, Space, Cascader,
 } from 'antd';
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
-import {
-    PROJECTS_QUERY,
-    PROJECT_STATUSES_QUERY,
-    TYPES_PROJECTS_QUERY,
-    CONTACTS_SHORT_QUERY, FACILITYS_QUERY, ORGANIZATIONS_QUERY
-} from '../../../graphql/queries';
+
 import {
     ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION,
 } from '../../../graphql/mutationsProject';
@@ -16,14 +11,11 @@ import {
     StyledFormItem, StyledFormRegular
 } from '../../style/FormStyles';
 import {DatePicker} from "antd/lib";
-import OrganizationForm from "./OrganizationForm";
 import moment from 'moment';
-import ContactForm from "./ContactForm";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import dayjs from "dayjs";
-import {StyledFormItemSelectAndCreate, StyledFormItemSelectAndCreateWitchEdit} from "../../style/SelectStyles";
+import {StyledFormItemSelectAndCreate} from "../../style/SelectStyles";
 import {NotificationContext} from "../../../NotificationProvider";
-import {ADD_CONTACT_MUTATION, UPDATE_CONTACT_MUTATION} from "../../../graphql/mutationsContact";
 import {
     CONTACTS_QUERY_COMPACT,
     ORGANIZATIONS_QUERY_COMPACT,
@@ -62,9 +54,9 @@ const ProjectForm = ({initialObject, onCompleted}) => {
     });
     // Состояния
     const [delegatesModalStatus, setDelegatesModalStatus] = useState(null);
-    const [delegatesAutoComplete, setDelegatesAutoComplete] = useState({options: [], selected: {}});
+    // const [delegatesAutoComplete, setDelegatesAutoComplete] = useState({options: [], selected: {}});
     const [organizationsModalStatus, setOrganizationsModalStatus] = useState(null);
-    const [organizationsAutoComplete, setOrganizationsAutoComplete] = useState({options: [], selected: {}});
+    const [organizationsAutoComplete, setOrganizationsAutoComplete] = useState({options: [], selected: 0});
     const [typeProjectModalStatus, setTypeProjectModalStatus] = useState(null);
     const [typeProjectAutoComplete, setTypeProjectAutoComplete] = useState({options: [], selected: {}});
 
@@ -100,6 +92,7 @@ const ProjectForm = ({initialObject, onCompleted}) => {
 
             form.setFieldsValue({
                 ...data,
+
                 date_signing: data.date_signing ? moment(data.date_signing, 'YYYY-MM-DD') : null,
                 date_end: data.date_end ? moment(data.date_end, 'YYYY-MM-DD') : null,
                 date_completion: data.date_completion ? moment(data.date_completion, 'YYYY-MM-DD') : null,
@@ -111,7 +104,7 @@ const ProjectForm = ({initialObject, onCompleted}) => {
                 status_id: data?.status?.id ?? null
             });
 
-            setDelegatesAutoComplete({selected: data.delegate.id});
+            //setDelegatesAutoComplete({selected: data.delegate.id});
             setOrganizationsAutoComplete({selected: data.organization.id});
             setTypeProjectAutoComplete({selected: data.typeProject.id});
 
@@ -135,44 +128,44 @@ const ProjectForm = ({initialObject, onCompleted}) => {
     // Логика формы
 
     useEffect(() => {
-        form.setFieldValue("number", 0)
         const facilitiCode = form.getFieldValue("facility_id")?.[0];
-        console.log(form.getFieldValue("facilitys_id") +
-                    form.getFieldValue.typeDocument +
-                    "–" + form.getFieldValue("date_signing") +
-                    "–" + organizationsAutoComplete.selected +
-                    "–" + facilitiCode?.[0] +
-                    "–" + facilitiCode?.[0] +
-                    "–" + facilitiCode?.[0] +
-                    "–" + facilitiCode?.[0]);
-    }, [form.getFieldValue("facility_id"), form.getFieldValue("date_signing"), organizationsAutoComplete.selected]);
+        form.setFieldValue("number", (
+            (dataTypeProject?.typeProjects?.items?.find(row => row.id === typeProjectAutoComplete?.selected)?.group?.name ?? "___") +
+            "–" + (dayjs(form.getFieldValue("date_signing")).format("YY") ?? "___") +
+            "–" + (organizationsAutoComplete?.selected ?? "___") +
+            "–" + (facilitiCode?.[0] ?? "___") +
+            "–" + (facilitiCode?.[1] ?? "___") +
+            "–" + (facilitiCode?.[2] ?? "___") +
+            "–" + (facilitiCode?.[3] ?? "___")));
+    }, [typeProjectAutoComplete,
+        form.getFieldValue("facility_id"),
+        form.getFieldValue("date_signing"),
+        organizationsAutoComplete.selected]);
 
     const handleSubmit = () => {
-        console.log(form.getFieldsValue(),
-            delegatesAutoComplete.selected,
-            organizationsAutoComplete.selected,
-            typeProjectAutoComplete.selected);
-        const facilitiCode = form.getFieldValue("facility_id")?.[0];
-        console.log(form.getFieldValue("facilitys_id") +
-            form.getFieldValue.typeDocument +
-            "–" + form.getFieldValue("date_signing") +
-            "–" + organizationsAutoComplete.selected +
-            "–" + facilitiCode?.[0] +
-            "–" + facilitiCode?.[1] +
-            "–" + facilitiCode?.[2] +
-            "–" + facilitiCode?.[3]);
-        // mutate({
-        //     variables: {
-        //         data: {
-        //             ...form.getFieldsValue(),
-        //             //number: editingProject.number,
-        //             //date_create: form.getFieldValue("date_create")?.toISOString() ?? currentDate.toISOString(),
-        //             //facilitys_id: facilitysList?.map(cascad => cascad[3].key) ?? null,
-        //             //id: editingProject?.id,
-        //             //organization_customer_id: selectedOrganization
-        //         }
-        //     }
-        // });
+
+        const formValues = form.getFieldsValue();
+         mutate({
+            variables: {
+                data: {
+                    ...(actualObject ? {id: actualObject.id} : {}),
+                    number: formValues.number,
+                    name: formValues.name,
+                    duration: formValues.duration,
+                    status_id: formValues.status_id,
+                    price: formValues.price,
+                    prepayment: formValues.prepayment,
+                    organization_customer_id: organizationsAutoComplete?.selected ?? null,
+                    type_project_document_id: typeProjectAutoComplete?.selected ?? null,
+                    date_signing: dayjs(formValues.date_signing).format("YYYY-MM-DD"),
+                    date_end: dayjs(formValues.date_end).format("YYYY-MM-DD"),
+                    date_create: dayjs(formValues.date_create).format("YYYY-MM-DD"),
+                    date_completion: dayjs(formValues.date_completion).format("YYYY-MM-DD"),
+                    facilitys_id: formValues.facility_id?.map(row => row[3]) ?? null,
+                    delegates_id: formValues.delegates_id
+                }
+            }
+        });
     };
 
     if (loading) return <LoadingSpinnerStyles/>
@@ -208,21 +201,19 @@ const ProjectForm = ({initialObject, onCompleted}) => {
                 stateSearch={organizationsAutoComplete}
                 setStateSearch={setOrganizationsAutoComplete}
             />
-            <StyledFormItemAutoCompleteAndCreate
-                formName={"delegates_name"}
+            <StyledFormItemSelectAndCreate
+                formName={"delegates_id"}
                 formLabel={"Представители компании"}
                 mode={'multiple'}
                 placeholder={"Начните ввод..."}
                 loading={loadingDelegates}
                 firstBtnOnClick={() => setDelegatesModalStatus("add")}
 
-                data={dataDelegates?.contacts?.items}
-                stateSearch={delegatesAutoComplete}
-                setStateSearch={setDelegatesAutoComplete}
-
+                items={dataDelegates?.contacts?.items}
+                formatOptionText={(row) => `${row.last_name ?? ""} ${row.first_name ?? ""}  ${row.patronymic ?? ""}`}
                 typeData={"FIO"}
             />
-            <Form.Item name="facilitys_id" label="Объект" style={{width: "100%"}}>
+            <Form.Item name="facility_id" label="Объект" style={{width: "100%"}}>
                 <FacilitiesCascader/>
             </Form.Item>
 

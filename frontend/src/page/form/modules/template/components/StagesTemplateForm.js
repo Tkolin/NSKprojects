@@ -1,12 +1,12 @@
 import {Button, Divider, Form, Input, InputNumber, Modal, notification, Select, Space, Tooltip} from "antd";
 import React, {useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
-import {UPDATE_STAGES_TEMPLATE_MUTATION} from "../../../../graphql/mutationsTemplate";
-import {StyledFormRegular} from "../../../style/FormStyles";
+import {UPDATE_STAGES_TEMPLATE_MUTATION} from "../../../../../graphql/mutationsTemplate";
+import {StyledFormRegular} from "../../../../style/FormStyles";
 import {LoadingOutlined, MinusCircleOutlined, PlusOutlined, RetweetOutlined} from "@ant-design/icons";
-import {StyledButtonGreen} from "../../../style/ButtonStyles";
-import StageForm from "../../modelsForms/StageForm";
-import {STAGES_QUERY, TEMPLATE_STAGES_TYPE_PROJECTS_QUERY} from "../../../../graphql/queries";
+import {StyledButtonGreen} from "../../../../style/ButtonStyles";
+import StageForm from "../../../modelsForms/StageForm";
+import {STAGES_QUERY, TEMPLATE_STAGES_TYPE_PROJECTS_QUERY} from "../../../../../graphql/queries";
 
 const StagesTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod, disabled}) => {
     // Состояния

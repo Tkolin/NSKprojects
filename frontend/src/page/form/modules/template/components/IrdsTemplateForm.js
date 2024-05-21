@@ -3,11 +3,11 @@ import {useMutation, useQuery} from "@apollo/client";
 import React, {useEffect, useState} from "react";
 import {Button, Form, InputNumber, Modal, notification, Select, Space} from "antd";
 import {LoadingOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
-import {StyledButtonGreen} from "../../../style/ButtonStyles";
-import {StyledFormBig} from "../../../style/FormStyles";
-import {UPDATE_IRDS_TEMPLATE_MUTATION} from "../../../../graphql/mutationsTemplate";
-import IrdForm from "../../modelsForms/IrdForm";
-import {IRDS_QUERY, TEMPLATE_IRDS_TYPE_PROJECTS_QUERY} from "../../../../graphql/queries";
+import {StyledButtonGreen} from "../../../../style/ButtonStyles";
+import {StyledFormBig} from "../../../../style/FormStyles";
+import {UPDATE_IRDS_TEMPLATE_MUTATION} from "../../../../../graphql/mutationsTemplate";
+import IrdForm from "../../../modelsForms/IrdForm";
+import {IRDS_QUERY, TEMPLATE_IRDS_TYPE_PROJECTS_QUERY} from "../../../../../graphql/queries";
 
 const IrdsTemplateForm = ({typeProjectId, triggerMethod, setTriggerMethod, disabled}) => {
         // Состояния

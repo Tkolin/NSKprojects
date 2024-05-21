@@ -3,25 +3,25 @@ import {
     Form, Select, Col, Row, notification, Modal, Space, Button
 } from 'antd';
 import {useQuery} from '@apollo/client';
-import {TYPES_PROJECTS_QUERY} from '../../../graphql/queries';
+import {TYPES_PROJECTS_QUERY} from '../../../../graphql/queries';
 
 import {
     StyledFormItem, StyledFormRegular
-} from '../../style/FormStyles';
+} from '../../../style/FormStyles';
 import {  PlusOutlined} from '@ant-design/icons';
 
-import TypeProjectForm from "../modelsForms/TypeProjectForm";
- import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../style/BlockStyles";
-import { StyledButtonGreen} from "../../style/ButtonStyles";
-import StagesTemplateForm from "../aggregateComponent/templateForm/StagesTemplateForm";
-import IrdsTemplateForm from "../aggregateComponent/templateForm/IrdsTemplateForm";
-import TasksTemplateForm from "../aggregateComponent/templateForm/TasksTemplateForm";
-import {StyledFormItemSelectAndCreate} from "../../style/SelectStyles";
-import SectionReferenceTemplateForm from "../aggregateComponent/templateForm/SectionReferenceTemplateForm";
+import TypeProjectForm from "../../modelsForms/TypeProjectForm";
+ import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../../style/BlockStyles";
+import { StyledButtonGreen} from "../../../style/ButtonStyles";
+import StagesTemplateForm from "./templateForm/StagesTemplateForm";
+import IrdsTemplateForm from "./templateForm/IrdsTemplateForm";
+import TasksTemplateForm from "./templateForm/TasksTemplateForm";
+import {StyledFormItemSelectAndCreate} from "../../../style/SelectStyles";
+import SectionReferenceTemplateForm from "./templateForm/SectionReferenceTemplateForm";
 
 const {Option} = Select;
 
-const TemplateForm = ({project, onClose}) => {
+const Index = ({project, onClose}) => {
 
     // Состояния
     const [form] = Form.useForm();
@@ -119,4 +119,4 @@ const TemplateForm = ({project, onClose}) => {
     </StyledBlockLarge>);
 };
 
-export default TemplateForm;
+export default Index;

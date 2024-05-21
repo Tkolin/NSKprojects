@@ -1,17 +1,17 @@
 import React, {useState, useEffect} from 'react';
 import {Tree, Radio, Form, notification} from 'antd';
 import {useMutation, useQuery} from "@apollo/client";
-import {StyledBlockBig} from "../../../style/BlockStyles";
-import {StyledFormItem} from "../../../style/FormStyles";
+import {StyledBlockBig} from "../../../../style/BlockStyles";
+import {StyledFormItem} from "../../../../style/FormStyles";
 import {
     STAGES_TO_PROJECT_QUERY,
     TASKS_TO_PROJECT_QUERY, TEMPLATE_TASKS_TYPE_PROJECTS_QUERY,
 
-} from "../../../../graphql/queries";
-import LoadingSpinnerStyles from "../../../style/LoadingSpinnerStyles";
-import {StyledButtonGreen} from "../../../style/ButtonStyles";
-import {UPDATE_STAGES_TO_PROJECT_MUTATION, UPDATE_TASKS_TO_PROJECT_MUTATION} from "../../../../graphql/mutationsProject";
-import {ADD_TASK_TO_PROJECT_MUTATION, ADD_TASK_MUTATION} from "../../../../graphql/mutationsTask";
+} from "../../../../../graphql/queries";
+import LoadingSpinnerStyles from "../../../../style/LoadingSpinnerStyles";
+import {StyledButtonGreen} from "../../../../style/ButtonStyles";
+import {UPDATE_STAGES_TO_PROJECT_MUTATION, UPDATE_TASKS_TO_PROJECT_MUTATION} from "../../../../../graphql/mutationsProject";
+import {ADD_TASK_TO_PROJECT_MUTATION, ADD_TASK_MUTATION} from "../../../../../graphql/mutationsTask";
 
 const TasksToProjectStageForm = ({project, onSubmit}) => {
     const [stagesArray, setStagesArray] = useState(null);

@@ -1,19 +1,15 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Form, Input, Button, notification} from 'antd';
-import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
+import {Form, Input} from 'antd';
+import {useLazyQuery, useMutation} from '@apollo/client';
 import {
     ADD_PPI_MUTATION,
     UPDATE_PPI_MUTATION
 } from '../../../graphql/mutationsPerson';
 import {StyledFormItem, StyledFormBig} from '../../style/FormStyles';
-import {PPI_QUERY} from "../../../graphql/queries";
-import {StyledBlockBig} from "../../style/BlockStyles";
+import {StyledBlockRegular} from "../../style/BlockStyles";
 import {NotificationContext} from "../../../NotificationProvider";
-import {ADD_CONTACT_MUTATION, UPDATE_CONTACT_MUTATION} from "../../../graphql/mutationsContact";
-import moment from "moment/moment";
-import {ORGANIZATIONS_QUERY_COMPACT, POSITIONS_QUERY_COMPACT} from "../../../graphql/queriesCompact";
-import {ADD_BIK_MUTATION, UPDATE_BIK_MUTATION} from "../../../graphql/mutationsBik";
-import {BIKS_QUERY_BY_ID, PASSPORTS_PLACE_ISSUES_QUERY_BY_ID} from "../../../graphql/queriesByID";
+import {PASSPORTS_PLACE_ISSUES_QUERY_BY_ID} from "../../../graphql/queriesByID";
+import {StyledButtonGreen} from "../../style/ButtonStyles";
 
 
 const PassportPlaceIssuesForm = ({initialObject, onCompleted}) => {
@@ -49,10 +45,11 @@ const PassportPlaceIssuesForm = ({initialObject, onCompleted}) => {
         if (initialObject?.id)
             loadContext();
     }, []);
-    const updateForm = (data) =>  {
+    const updateForm = (data) => {
         if (data) {
             form.resetFields();
-            form.setFieldsValue({...data});}
+            form.setFieldsValue({...data});
+        }
     };
 
     // Завершение
@@ -61,7 +58,7 @@ const PassportPlaceIssuesForm = ({initialObject, onCompleted}) => {
     };
 
     return (
-        <StyledBlockBig>
+        <StyledBlockRegular label={nameModel}>
             <StyledFormBig form={form} layout="vertical">
                 <StyledFormItem name="name" label="Наименование" rules={[{required: true}]}>
                     <Input/>
@@ -69,13 +66,15 @@ const PassportPlaceIssuesForm = ({initialObject, onCompleted}) => {
                 <StyledFormItem name="code" label="Код" rules={[{required: true}]}>
                     <Input/>
                 </StyledFormItem>
-                <StyledFormItem>
-                    <Button type="primary" onClick={handleSubmit}>
-                        {actualObject ? "Сохранить изменения" : "Добавить"}
-                    </Button>
-                </StyledFormItem>
+                <div style={{textAlign: 'center'}}>
+                    <StyledFormItem>
+                        <StyledButtonGreen style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
+                            {actualObject ? `Обновить` : `Создать`}
+                        </StyledButtonGreen>
+                    </StyledFormItem>
+                </div>
             </StyledFormBig>
-        </StyledBlockBig>
+        </StyledBlockRegular>
     );
 };
 

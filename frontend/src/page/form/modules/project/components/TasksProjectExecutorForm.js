@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/client';
 import {Table, Select, InputNumber, DatePicker} from 'antd';
 
 import {LoadingOutlined} from "@ant-design/icons";
-import {PERSONS_QUERY, PERSONS_SHORT_QUERY, TEMPLATE_TASKS_TYPE_PROJECTS_QUERY} from "../../../../graphql/queries";
+import {PERSONS_QUERY, PERSONS_SHORT_QUERY, TEMPLATE_TASKS_TYPE_PROJECTS_QUERY} from "../../../../../graphql/queries";
 
 
 const TasksProjectExecutorForm = ({ project, triggerMethod, setTriggerMethod }) => {

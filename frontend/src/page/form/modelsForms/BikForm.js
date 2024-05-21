@@ -7,23 +7,26 @@ import { StyledButtonGreen } from '../../style/ButtonStyles';
 import { NotificationContext } from '../../../NotificationProvider';
 import {useLazyQuery, useMutation} from '@apollo/client';
 import { ADD_BIK_MUTATION, UPDATE_BIK_MUTATION } from '../../../graphql/mutationsBik';
-import {BIKS_QUERY_BY_ID, PERSONS_QUERY_BY_ID} from "../../../graphql/queriesByID";
+import {BIKS_QUERY_BY_ID} from "../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 
-const BikForm = ({ initialObject, onCompleted }) => {
+const BikForm = ({ localObject ,initialObject, onCompleted }) => {
     // Первичные данные
     const { openNotification } = useContext(NotificationContext);
     const [form] = Form.useForm();
     const nameModel = 'БИК';
-    const [actualObject, setActualObject] = useState(initialObject);
-    const [loadBiks, {loading, data}] = useLazyQuery(BIKS_QUERY_BY_ID, {
-        variables: {id: initialObject.id},
+    const [actualObject, setActualObject] = useState(initialObject ?? null);
+    const [loadContext, {loading, data}] = useLazyQuery(BIKS_QUERY_BY_ID, {
+        variables: {id: initialObject?.id},
         onCompleted: (data) => {
-             setActualObject(data?.biks?.items[0]);
-         },
+            setActualObject(data?.biks?.items[0]);
+            updateForm(data?.biks?.items[0])
+        },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
-        },});
+        },
+    });
+
     // Мутация
     const [mutate] = useMutation(actualObject ? UPDATE_BIK_MUTATION : ADD_BIK_MUTATION, {
         onCompleted: (data) => {
@@ -38,13 +41,17 @@ const BikForm = ({ initialObject, onCompleted }) => {
 
     // Подгрузка при обновлении
     useEffect(() => {
-        form.resetFields();
-        actualObject && form.setFieldsValue({ ...actualObject });
-    }, [actualObject, form]);
-    useEffect(() => {
-        form.resetFields();
-        actualObject && form.setFieldsValue({ ...actualObject });
-    }, [actualObject, form]);
+        if (initialObject?.id)
+            loadContext();
+    }, [initialObject]);
+    const updateForm = (data) => {
+        if (data) {
+            form.resetFields();
+            form.setFieldsValue({
+                ...data,
+            });
+        }
+    };
 
     // Завершение
     const handleSubmit = () => {
@@ -67,7 +74,7 @@ const BikForm = ({ initialObject, onCompleted }) => {
                 <div style={{ textAlign: 'center' }}>
                     <StyledFormItem>
                         <StyledButtonGreen style={{ marginBottom: 0 }} type="primary" onClick={handleSubmit}>
-                            {actualObject ? `Обновить ${nameModel}` : `Создать ${nameModel}`}
+                            {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
                     </StyledFormItem>
                 </div>

@@ -105,9 +105,6 @@ export const UPDATE_PROJECT_MUTATION = gql`
     ) {
         updateProject(
             data: $data
-
-
-
             tasks : $tasks
             stages: $stages
             irds: $irds

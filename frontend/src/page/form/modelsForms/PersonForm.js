@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Form, Input, Select, notification, Col, Row, Modal, Space, Divider, Button} from 'antd';
+import {Form, Input, Col, Row, Modal, Divider} from 'antd';
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import {
     ADD_PERSON_MUTATION, UPDATE_PERSON_MUTATION
@@ -8,7 +8,6 @@ import {
     StyledFormItem, StyledFormRegular
 } from '../../style/FormStyles';
 import {DatePicker} from "antd/lib";
-import moment from 'moment';
 import PassportPlaceIssuesForm from "./PassportPlaceIssuesForm";
 import {StyledBlockBig} from "../../style/BlockStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
@@ -22,7 +21,6 @@ import {
 import { PERSONS_QUERY_BY_ID} from "../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import {StyledFormItemAutoComplete, StyledFormItemAutoCompleteAndCreate} from "../../style/SearchAutoCompleteStyles";
-import ContactForm from "./ContactForm";
 import BikForm from "./BikForm";
 
 const PersonForm = ({initialObject, onCompleted}) => {

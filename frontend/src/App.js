@@ -24,6 +24,7 @@ import Test2 from "./_dev/test2";
 
 import {NotificationProvider} from './NotificationProvider';
 import ProjectForm from "./page/form/modelsForms/ProjectForm";
+import ComposedProjectForm from "./page/form/modules/project/Index";
 
 
 const App = () => {
@@ -72,7 +73,8 @@ const App = () => {
                             <Route path="/form/stage_projects" element={<ContactForm/>}/>
 
                             <Route path="/reports/project" element={<ContactTable/>}/>
-                            <Route path="/form/new_project" element={<ProjectForm/>}/>
+                            <Route path="/form/new_project" element={<ComposedProjectForm/>}/>
+
 
                             <Route path="/auth/register" element={<RegisterForm/>}/>
                             <Route path="/auth/login" element={<LoginForm/>}/>

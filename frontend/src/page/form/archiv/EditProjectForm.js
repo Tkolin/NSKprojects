@@ -7,8 +7,8 @@ import {TYPES_PROJECTS_QUERY} from '../../../graphql/queries';
 
 import TypeProjectForm from "../modelsForms/TypeProjectForm";
 import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../style/BlockStyles";
-import StagesTemplateForm from "../aggregateComponent/templateForm/StagesTemplateForm";
-import IrdsTemplateForm from "../aggregateComponent/templateForm/IrdsTemplateForm";
+import StagesTemplateForm from "./template/templateForm/StagesTemplateForm";
+import IrdsTemplateForm from "./template/templateForm/IrdsTemplateForm";
 
 const EditProjectForm = ({project, onClose}) => {
 

@@ -1,97 +1,109 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Form, Input, Button} from 'antd';
-import {useMutation, useQuery} from '@apollo/client';
+import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import { StyledFormItem, StyledFormLarge} from '../../style/FormStyles';
-import {StyledBlockLarge} from "../../style/BlockStyles";
+import {StyledBlockLarge, StyledBlockRegular} from "../../style/BlockStyles";
 import {
     ADD_TYPE_PROJECTS_MUTATION,
     UPDATE_TYPE_PROJECTS_MUTATION
 } from "../../../graphql/mutationsTypeProject";
 import {NotificationContext} from "../../../NotificationProvider";
 import {
+    GROUP_TYPE_PROJECTS_QUERY_COMPACT,
     ORGANIZATIONS_QUERY_COMPACT,
     POSITIONS_QUERY_COMPACT
 } from "../../../graphql/queriesCompact";
-import {StyledFormItemAutoCompleteAndCreate} from "../../style/SearchAutoCompleteStyles";
+import {StyledFormItemAutoComplete, StyledFormItemAutoCompleteAndCreate} from "../../style/SearchAutoCompleteStyles";
+import {BIKS_QUERY_BY_ID, TYPES_PROJECTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
+import {ADD_BIK_MUTATION, UPDATE_BIK_MUTATION} from "../../../graphql/mutationsBik";
+import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
+import {StyledButtonGreen} from "../../style/ButtonStyles";
 
 const TypeProjectForm = ({ initialObject, onCompleted }) => {
     // Первичные данные
-    const {openNotification} = useContext(NotificationContext);
+    const { openNotification } = useContext(NotificationContext);
     const [form] = Form.useForm();
-    const nameModel = 'Тип проекта';
-    const [actualObject, setActualObject] = useState(initialObject);
+    const nameModel = 'БИК';
+    const [actualObject, setActualObject] = useState(initialObject ?? null);
+    const [loadContext, {loading, data}] = useLazyQuery(TYPES_PROJECTS_QUERY_BY_ID, {
+        variables: {id: initialObject?.id},
+        onCompleted: (data) => {
+            setActualObject(data?.typeProjects?.items[0]);
+            updateForm(data?.typeProjects?.items[0])
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
+        },
+    });
 
     // Состояния
-    const [groupModalStatus, setGroupModalStatus] = useState(null);
-    const [GroupAutoComplete, setGroupAutoComplete] = useState({options: [], selected: {}});
+    const [groupTypeProjectAutoComplete, setGroupTypeProjectAutoComplete] = useState({options: [], selected: {}});
 
     // Мутация
     const [mutate] = useMutation(actualObject ? UPDATE_TYPE_PROJECTS_MUTATION : ADD_TYPE_PROJECTS_MUTATION, {
         onCompleted: (data) => {
-            openNotification('topRight', 'success', `Создание новой записи в таблице ${nameModel} выполнено успешно`);
+            openNotification('topRight', 'success', `Мутация ${nameModel} выполнена успешно`);
             form.resetFields();
             onCompleted && onCompleted(data);
         },
         onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении сооздания ${nameModel}: ${error.message}`);
+            openNotification('topRight', 'error', `Ошибка при выполнении мутации ${nameModel}: ${error.message}`);
         },
     });
 
     // Подгрузка при обновлении
     useEffect(() => {
-        if (actualObject) {
+        if (initialObject?.id)
+            loadContext();
+    }, [initialObject]);
+    const updateForm = (data) => {
+        if (data) {
             form.resetFields();
             form.setFieldsValue({
-                ...actualObject,
-                group_id: actualObject?.group?.id ?? null
+                ...data,
+                group_name: data?.group?.name,
             });
+            setGroupTypeProjectAutoComplete({selected: data?.group?.id});
         }
-    }, [actualObject, form]);
-
-    // Получение данных для выпадающих списков
-    const {loading: loadingPositions, error: errorPositions, data: dataPositions} = useQuery(POSITIONS_QUERY_COMPACT);
-    const {
-        loading: loadingOrganizations,
-        error: errorOrganizations,
-        data: dataOrganizations
-    } = useQuery(ORGANIZATIONS_QUERY_COMPACT);
-
-    const handleSubmit = () => {
-        mutate({variables: {...(actualObject ? {id: actualObject.id} : {}), ...form.getFieldsValue(),
-                organization_id: organizationAutoComplete?.selected, position_id: positionAutoComplete?.selected}});
     };
+    // Получение данных для выпадающих списков
+    const {loading: loadingGroup, error: errorGroup, data: dataGroup} = useQuery(GROUP_TYPE_PROJECTS_QUERY_COMPACT);
 
-    if (errorOrganizations || errorPositions) return `Ошибка! ${errorOrganizations?.message || errorPositions?.message}`;
+
+    // Завершение
+    const handleSubmit = () => {
+        mutate({ variables: { ...(actualObject ? { id: actualObject.id } : {}), ...form.getFieldsValue() } });
+    };
+    if (loading) return <LoadingSpinnerStyles/>
 
 
     return (
-        <StyledBlockLarge lable={''}>
-            <StyledFormLarge form={form} layout="vertical">
-                <StyledFormItem name="name" label="Наименование"  rules={[{ required: true }]}>
-                    <Input />
+             <StyledBlockRegular label={nameModel}>
+                <StyledFormItem name="name" label="Наименование" rules={[{required: true}]}>
+                    <Input/>
                 </StyledFormItem>
-                <StyledFormItem name="code" label="код"  rules={[{ required: true }]}>
-                    <Input />
+                <StyledFormItem name="code" label="код" rules={[{required: true}]}>
+                    <Input/>
                 </StyledFormItem>
-                <StyledFormItemAutoCompleteAndCreate
+                <StyledFormItemAutoComplete
                     formName={"group_name"}
                     formLabel={"Группа"}
-                    onSelect={setSelectedGroupTypeProject}
-                    loading={loadingGroupTypeProject}
-                    placeholder={"Начните ввод..."}
-                    formatOptionText={(row) => `${row.name}`}
-                    firstBtnOnClick={()=>setGroupModalStatus("edit")}
 
-                    items={dataGroupTypeProject?.groupTypeProjects}
+                    data={dataGroup?.groupTypeProjects?.items}
+                    placeholder={"Начните ввод..."}
+
+                    stateSearch={groupTypeProjectAutoComplete}
+                    setStateSearch={setGroupTypeProjectAutoComplete}
                 />
-                <StyledFormItem>
-                    <Button type="primary" onClick={handleSubmit}>
-                        {editingTypeProject ? "Сохранить изменения" : "Добавить"}
-                    </Button>
-                </StyledFormItem>
-            </StyledFormLarge>
-        </StyledBlockLarge>
-    );
+                <div style={{textAlign: 'center'}}>
+                    <StyledFormItem>
+                        <StyledButtonGreen style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
+                            {actualObject ? `Обновить` : `Создать`}
+                        </StyledButtonGreen>
+                    </StyledFormItem>
+                </div>
+            </StyledBlockRegular>
+     );
 };
 
 export default TypeProjectForm;

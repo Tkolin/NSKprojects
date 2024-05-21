@@ -9,8 +9,7 @@ import {StyledFormLarge} from "../../style/FormStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import Title from "antd/es/typography/Title";
 import {format} from "date-fns";
-import {QuestionCircleOutlined} from "@ant-design/icons";
-import StyledLinkManagingDataTable from "../../style/TableStyles";
+ import StyledLinkManagingDataTable from "../../style/TableStyles";
 
 const ContactTable = () => {
 

@@ -154,8 +154,110 @@ export const PROJECTS_QUERY_BY_ID = gql`
         projects (queryType: "BY_ID", id: $id) {
             items{
                 id
+                number
                 name
+                duration
+                organization_customer
+                {
+                    id
+                    name
+                }
+                type_project_document
+                {
+                    id
+                    name
+                }
+                facilities
+                {
+                    id
+                    name
+                    code
+                    group_facility {
+                        id
+                        name
+                        code
+                        subselection_facility {
+                            id
+                            name
+                            code
+                            selection_facility {
+                                id
+                                name
+                                code
+                            }
+                        }
+                    }
+                }
+                date_signing
+                date_create
+                date_end
+                prepayment
+                status
+                {
+                    id
+                    name
+                }
+                date_completion
+                delegations{
+                    id
+                    first_name
+                    last_name
+                    patronymic
+                }
+                project_stages {
+                    id
+                    number
+                    stage {
+                        id
+                        name
+                    }
+                    date_start
+                    duration
+                    date_end
+                    percent
+                    price
+                }
+                project_irds {
+                    id
+                    stageNumber
+                    applicationProject
+                    IRD {
+                        id
+                        name
+                    }
+                    receivedDate
+                }
+                project_tasks {
+                    id
+                    task {
+                        id
+                        name
+                    }
+                    inherited_task_ids{
+                        project_task_id
+                        project_inherited_task_id
+                    }
+                    date_start
+                    date_end
+                    duration
+                    executors {
+                        id
+                        price
+                        executor {
+                            id
+                            passport {
+                                firstname
+                                lastname
+                                patronymic
+                            }
+                        }
+                    }
+                    price
+                    description
+                }
+                price
             }
+            count
         }
     }
 `;
@@ -295,6 +397,8 @@ export const BIKS_QUERY_BY_ID = gql`
             items {
                 id
                 name
+                BIK
+                correspondent_account
             }
         }
     }
@@ -305,6 +409,7 @@ export const POSITIONS_QUERY_BY_ID = gql`
             items {
                 id
                 name
+                
             }
             count
         }
