@@ -10,21 +10,15 @@ import {createGlobalStyle} from "styled-components";
 import CustomLayout from './page/Layout';
 
 import Home from './page/Home';
-import LoadingSpinnerStyles from "./page/style/LoadingSpinnerStyles";
+import LoadingSpinnerStyles from "./components/style/LoadingSpinnerStyles";
 
-import LoginForm from './page/form/authForm/LoginForm';
-import RegisterForm from './page/form/authForm/RegisterForm';
-
-import ContactTable from './page/view/tableView/ContactTable';
-import ContactForm from './page/form/modelsForms/ContactForm';
-
-
-import Test from "./_dev/test";
-import Test2 from "./_dev/test2";
-
-import {NotificationProvider} from './NotificationProvider';
-import ProjectForm from "./page/form/modelsForms/ProjectForm";
-import ComposedProjectForm from "./page/form/modules/project/Index";
+import LoginPage from "./page/modules/auth/loginPage";
+import RegisterPage from "./page/modules/auth/RegisterPage";
+import ContactPage from "./page/simples/forms/ContactPage";
+import {NotificationProvider} from "./NotificationProvider";
+import PersonPage from "./page/simples/forms/PersonPage";
+import OrganizationPage from "./page/simples/forms/OrganizationPage";
+import ProjectModules from "./page/modules/project/Index";
 
 
 const App = () => {
@@ -51,34 +45,27 @@ const App = () => {
                     <CustomLayout currentUser={currentUser}>
                         <Routes>
                             <Route path="/" element={<Home/>}/>
-                            <Route path="/test1" element={<Test/>}/>
-                            <Route path="/test2" element={<Test2/>}/>
+                            {/*<Route path="/test1" element={<Test/>}/>*/}
+                            {/*<Route path="/test2" element={<Test2/>}/>*/}
 
-                            <Route path="/table/contacts" element={<ContactTable/>}/>
-                            <Route path="/form/contact" element={<ContactForm/>}/>
+                            <Route path="/form/contact" element={<ContactPage/>}/>
+                            <Route path="/form/persons" element={<PersonPage/>}/>
+                            <Route path="/form/organizations" element={<OrganizationPage/>}/>
+                            <Route path="/form/new_project" element={<ProjectModules/>}/>
 
-                            <Route path="/table/persons" element={<ContactTable/>}/>
-                            <Route path="/form/persons" element={<ContactForm/>}/>
-
-                            <Route path="/table/organizations" element={<ContactTable/>}/>
-                            <Route path="/form/organizations" element={<ContactForm/>}/>
-
-                            <Route path="/table/ird" element={<ContactTable/>}/>
-                            <Route path="/form/ird" element={<ContactForm/>}/>
-
-                            <Route path="/table/type_projects" element={<ContactTable/>}/>
-                            <Route path="/form/type_projects" element={<ContactForm/>}/>
-
-                            <Route path="/table/stage_projects" element={<ContactTable/>}/>
-                            <Route path="/form/stage_projects" element={<ContactForm/>}/>
-
-                            <Route path="/reports/project" element={<ContactTable/>}/>
-                            <Route path="/form/new_project" element={<ComposedProjectForm/>}/>
+                            {/*<Route path="/table/contacts" element={<ContactPage/>}/>*/}
+                            {/*<Route path="/table/persons" element={<ContactPage/>}/>*/}
+                            {/*<Route path="/table/organizations" element={<ContactPage/>}/>*/}
+                            {/*<Route path="/table/ird" element={<ContactPage/>}/>*/}
+                            {/*<Route path="/table/type_projects" element={<ContactPage/>}/>*/}
+                            {/*<Route path="/table/stage_projects" element={<ContactPage/>}/>*/}
+                            {/*<Route path="/reports/project" element={<ContactPage/>}/>*/}
+                            {/*<Route path="/form/new_project" element={<ComposedProjectPage/>}/>*/}
 
 
-                            <Route path="/auth/register" element={<RegisterForm/>}/>
-                            <Route path="/auth/login" element={<LoginForm/>}/>
-                        </Routes>
+                            <Route path="/auth/register" element={<RegisterPage/>}/>
+                            <Route path="/auth/login" element={<LoginPage/>}/>
+                         </Routes>
                     </CustomLayout>
                 </Router>
             </NotificationProvider>

@@ -14,7 +14,7 @@ import {useQuery} from "@apollo/client";
 import {CURRENT_USER_QUERY} from "../graphql/queries";
 import {useNavigate} from "react-router-dom";
 import {Cookies} from "react-cookie";
-import LoadingSpinnerStyles from "./style/LoadingSpinnerStyles";
+import LoadingSpinnerStyles from "../components/style/LoadingSpinnerStyles";
 import {Header} from "antd/es/layout/layout";
 import {Content, Footer} from "antd/lib/layout/layout";
 import Logo from "../resursed/logo512.png";

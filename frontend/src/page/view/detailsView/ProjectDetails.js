@@ -1,4 +1,4 @@
-import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../style/BlockStyles";
+import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../../components/style/BlockStyles";
 import React, {useState} from "react";
 import {Col, Divider, Form, Modal, Row, Select} from "antd";
 import TypeProjectForm from "../../form/modelsForms/TypeProjectForm";

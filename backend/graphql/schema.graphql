@@ -28,8 +28,8 @@ type Query {
     templatesTasksTypeProjects(typeProject: ID): [TemplateTask] @checkRole(roles: ["admin"])
     templatesSectionReferencesTypeProjects(typeProject: ID): [TemplateSectionReference] @checkRole(roles: ["admin"])
 
-    projectIrds(id: ID, queryOptions: QueryOptions, projectId: ID, queryType: String): [ProjectIRD] @checkRole(roles: ["admin"])
-    projectStages(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [ProjectStage] @checkRole(roles: ["admin"])
+    projectIrds( projectId: ID): [ProjectIRD] @checkRole(roles: ["admin"])
+    projectStages( projectId: ID): [ProjectStage] @checkRole(roles: ["admin"])
     projectTasksQuery(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [ProjectTask] @checkRole(roles: ["admin"])
     projectSectionReferences(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [ProjectSectionReference] @checkRole(roles: ["admin"])
 
