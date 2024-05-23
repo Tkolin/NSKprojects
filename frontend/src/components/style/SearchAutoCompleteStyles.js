@@ -53,6 +53,7 @@ const BaseStyledFormItemAutoComplete = ({
         <StyledFormItem name={formName} labelCol={labelCol} wrapperCol={wrapperCol} label={formLabel}
                         style={{width: width}}>
             <AutoComplete
+                popupMatchSelectWidth={false}
                  style={{width: width}}
                 allowClear
                 showSearch

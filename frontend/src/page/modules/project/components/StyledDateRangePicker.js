@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { InputNumber, Space, DatePicker } from 'antd';
 import dayjs from 'dayjs';
-import { StyledFormItem } from '../../../style/FormStyles';
+import { StyledFormItem } from '../../../../components/style/FormStyles';
 
 const StyledDateRangePicker = ({ onChange }) => {
     const [data, setData] = useState({ dateStart: null, dateEnd: null, duration: null });

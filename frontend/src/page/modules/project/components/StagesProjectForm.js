@@ -16,77 +16,47 @@ import {
 import {UPDATE_STAGES_TO_PROJECT_MUTATION} from '../../../../graphql/mutationsProject';
 import StageItem from "./StageItem";
 import {CloudUploadOutlined, PlusOutlined} from "@ant-design/icons";
+import {useProjectStore} from "../Store";
+import dayjs from "dayjs";
 
-const StagesProjectForm = ({localObject, initialObject, onCompleted}) => {
+const StagesProjectForm = ({onCompleted, onChange}) => {
+    const updateStages = useProjectStore((state) => state.updateStages);
+    const actualStages = useProjectStore((state) => state.stages);
+    // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
-    const nameModel = 'Этапы на проеselectorкте';
-    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
-    const [loadContext, {loading, data}] = useLazyQuery(PROJECTS_QUERY_BY_ID, {
-        variables: {projectId: initialObject?.id ?? null},
-        onCompleted: (data) => {
-            setActualObject(data?.projects?.items[0]);
-            updateForm(data?.projects?.items[0]);
-        },
-        onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
-        },
-    });
+    const [formLoad, setFormLoad] = useState(false);
 
-    const [mutate] = useMutation(UPDATE_STAGES_TO_PROJECT_MUTATION, {
-        onCompleted: (data) => {
-            openNotification('topRight', 'success', `Создание новой записи в таблице ${nameModel} выполнено успешно`);
-            form.resetFields();
-            onCompleted && onCompleted(data);
-        },
-        onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении создания ${nameModel}: ${error.message}`);
-        },
-    });
+    const load = () => {
 
+        console.log(actualStages);
+        form.setFieldsValue({
+            stageList: actualStages && Object.values(actualStages)?.map((row) => ({
+                ...row,
+                date_range: [
+                    row?.date_range?.[0] ? dayjs(row?.date_range?.[0]) : null,
+                    row?.date_range?.[1] ? dayjs(row?.date_range?.[1]) : null
+                ]
+            }))
+
+        });
+    }
     useEffect(() => {
-        if (initialObject?.id) {
-            loadContext();
-        }
-    }, [initialObject]);
-
-    const updateForm = (data) => {
-        if (data) {
-            form.resetFields();
-            form.setFieldsValue({
-                stageList: data.project_stages,
-            });
-        }
-    };
+        load();
+    }, [actualStages]);
 
     const {loading: loadingStages, error: errorStages, data: dataStages} =
-        useQuery(STAGES_QUERY_COMPACT, {
-            notifyOnNetworkStatusChange: true,
-        });
+        useQuery(STAGES_QUERY_COMPACT);
 
-
-    if (loading || loadingStages) return <LoadingSpinnerStyles />;
-
-    if (errorStages ) {
-        openNotification('topRight', 'error', 'Ошибка при загрузке данных.');
-        return null;
+    const handleChange = () => {
+        if (formLoad)
+            updateStages({...form.getFieldValue("stageList")});
     }
 
-    const handleFinish = (values) => {
-        console.log(form.getFieldsValue());
-        // mutate({
-        //     variables: {
-        //         input: {
-        //             id: actualObject.id,
-        //             project_stages: values.stageList.map((stage, index) => ({
-        //                 ...stage,
-        //                 start_date: stage.date_range ? stage.date_range[0].toISOString() : null,
-        //                 end_date: stage.date_range ? stage.date_range[1].toISOString() : null,
-        //             })),
-        //         },
-        //     },
-        // });
-    };
+
+    useEffect(() => {
+        console.log("dsadasdasdasdasd");
+    }, []);
     const handleStageIdChange = (index, value) => {
         // Получить текущий список stageList
         const stageList = form.getFieldValue("stageList");
@@ -101,15 +71,17 @@ const StagesProjectForm = ({localObject, initialObject, onCompleted}) => {
             }
             return item;
         });
-
         // Установить обновленный список обратно в форму
         form.setFieldValue("stageList", updatedStageList);
+        handleChange();
+        console.log("dsadasdasdasdasd");
 
-        console.log(index, value);
-        console.log("Обновленный stageList", form.getFieldsValue());
     };
     return (
-        <StyledFormLarge layout="vertical" form={form} onFinish={handleFinish}>
+        <StyledFormLarge layout="vertical" onChange={() => {
+            handleChange();
+            setFormLoad(true);
+        }} form={form}>
 
             <Form.List name="stageList">
                 {(fields, {add, remove}) => (
@@ -133,7 +105,7 @@ const StagesProjectForm = ({localObject, initialObject, onCompleted}) => {
                                     type="dashed"
                                     onClick={() => add()}
                                     style={{width: '100%'}}
-                                    icon={<PlusOutlined />}
+                                    icon={<PlusOutlined/>}
                                 >
                                     Добавить этап
                                 </Button>
@@ -142,7 +114,6 @@ const StagesProjectForm = ({localObject, initialObject, onCompleted}) => {
                     </>
                 )}
             </Form.List>
-            <Button type={"primary"} onClick={() => handleFinish()} icon={<CloudUploadOutlined/>}>Сохранить</Button>
         </StyledFormLarge>
     );
 };

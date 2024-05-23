@@ -1,16 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {Row, Col, Form, InputNumber, Select, Tooltip, DatePicker, Input} from 'antd';
 import {CaretUpOutlined, CaretDownOutlined, MinusCircleOutlined} from '@ant-design/icons';
-import moment from 'moment';
 import {StyledFormItemAutoComplete} from "../../../../components/style/SearchAutoCompleteStyles";
-import {useQuery} from "@apollo/client";
-import {STAGES_QUERY_COMPACT, TYPES_PROJECTS_QUERY_COMPACT} from "../../../../graphql/queriesCompact";
-import {useForm} from "antd/es/form/Form";
 
 const {RangePicker} = DatePicker;
 
 const StageItem = ({value, onChangeStageId, onChange, index, stagesData, moveItem, removeItem, isFirst, isLast}) => {
-    const [form] = useForm();
     // бновления всех записей в строке
 
     const [stageAutoComplete, setStageAutoComplete] = useState({options: [], selected: null});
@@ -22,7 +17,7 @@ const StageItem = ({value, onChangeStageId, onChange, index, stagesData, moveIte
     // Для хранения выбора элемента
 
     return (
-        <Row key={index} gutter={2} style={{marginBottom: 8}}>
+        <Row key={index} gutter={2} style={{marginBottom: 0}}>
             <Col span={0.5} style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 {/* Стрелка вверх для перемещения строки вверх */}
                 {!isFirst && (
@@ -35,6 +30,7 @@ const StageItem = ({value, onChangeStageId, onChange, index, stagesData, moveIte
                                 // const newItems = moveItem(items, index, index - 1);
                                 // formStage.setFieldsValue({stageList: newItems});
                             }}
+                            style={{marginTop: 0}}
                         />
                     </Tooltip>
                 )}
@@ -48,7 +44,7 @@ const StageItem = ({value, onChangeStageId, onChange, index, stagesData, moveIte
                                 // const newItems = moveItem(items, index, index + 1);
                                 // formStage.setFieldsValue({stageList: newItems});
                             }}
-                            style={{marginTop: "auto"}} // Размещение внизу
+                            style={{marginTop: 0}} // Размещение внизу
                         />
                     </Tooltip>
                 )}
@@ -100,7 +96,7 @@ const StageItem = ({value, onChangeStageId, onChange, index, stagesData, moveIte
                     </Form.Item>
                 </Tooltip>
             </Col>
-            <Col span={3}>
+            <Col span={4}>
                 <Tooltip title="Сроки этапа">
                     <Form.Item
                         style={{marginBottom: 0, width: "100%"}}
@@ -120,7 +116,7 @@ const StageItem = ({value, onChangeStageId, onChange, index, stagesData, moveIte
                     </Form.Item>
                 </Tooltip>
             </Col>
-            <Col span={3}>
+            <Col span={2}>
                 <Tooltip title="Процент от общей стоимости">
                     <Form.Item
                         style={{marginBottom: 0, width: "100%"}}
@@ -164,8 +160,10 @@ const StageItem = ({value, onChangeStageId, onChange, index, stagesData, moveIte
                     </Form.Item>
                 </Tooltip>
             </Col>
-            <Col span={0.5} style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                <MinusCircleOutlined onClick={() => removeItem && removeItem(index)}/>
+            <Col span={0.1} style={{marginBottom: 0, width: "0%"}}
+            >
+                <MinusCircleOutlined style={{marginTop: 10, marginLeft: 10}}
+                                     onClick={() => removeItem && removeItem(index)}/>
             </Col>
 
         </Row>

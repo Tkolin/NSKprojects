@@ -1,117 +1,114 @@
 import React, {useEffect, useState} from 'react';
-import {Row, Col, Form, InputNumber, Select, Tooltip, DatePicker, Input, Space, Button} from 'antd';
+import {Row, Col, Form, InputNumber, Select, Tooltip, DatePicker} from 'antd';
 import {
-    CaretUpOutlined,
-    CaretDownOutlined,
     MinusCircleOutlined,
-    PlusOutlined,
-    SaveOutlined,
-    CloudUploadOutlined
 } from '@ant-design/icons';
-import moment from 'moment';
-import {StyledFormItemAutoComplete} from "../../../../components/style/SearchAutoCompleteStyles";
-import {useQuery} from "@apollo/client";
-import {STAGES_QUERY_COMPACT, TYPES_PROJECTS_QUERY_COMPACT} from "../../../../graphql/queriesCompact";
 import {useForm} from "antd/es/form/Form";
-import {StyledButtonGreen} from "../../../../components/style/ButtonStyles";
+import {StyledFormItemAutoComplete} from "../../../../components/style/SearchAutoCompleteStyles";
 
-const {RangePicker} = DatePicker;
 
-const StageItem = ({value, onChangeStageId, onChange, index, stagesData, moveItem, removeItem, isFirst, isLast}) => {
-    const [form] = useForm();
-    // бновления всех записей в строке
+const StageItem = ({value, onChangeIrdId, onChange, index, irdData, moveItem, removeItem, isFirst, isLast}) => {
 
-    const [stageAutoComplete, setStageAutoComplete] = useState({options: [], selected: null});
-    const handleItems = () => {
-    }
+
+    const [irdAutoComplete, setIrdAutoComplete] = useState({options: [], selected: null});
+
     useEffect(() => {
-        onChangeStageId && onChangeStageId(index, stageAutoComplete?.selected)
-    }, [stageAutoComplete?.selected]);
+        onChangeIrdId && onChangeIrdId(index, irdAutoComplete?.selected)
+    }, [irdAutoComplete?.selected]);
     // Для хранения выбора элемента
 
     return (
-        <>
-            {fields.map(({key, name, ...restField}) => (<Space
-                key={key}
-                style={{
-                    display: 'flex', marginBottom: 2, marginTop: 2
-                }}
-                align="baseline"
+        <Row key={index} gutter={2} style={{marginBottom: 0}}>
+            <Col span={0} style={{marginBottom: 0, width: 0, height: 0}}
             >
+
+                <Form.Item
+                    name={[index, 'ird_id']}
+                    style={{marginBottom: 0, width: 0, height: 0}}
+                >
+                    <InputNumber style={{marginBottom: 0, width: 0, height: 0}}
+                    />
+                </Form.Item>
+
+            </Col>
+            <Col span={14}>
+                <Tooltip title="Наименование ИРД">
+
+                    <StyledFormItemAutoComplete
+                        style={{marginBottom: 0, width: "100%"}}
+
+                        formName={[index, 'ird_name']}
+                        placeholder={"Выбор ИРД..."}
+
+                        data={irdData}
+                        stateSearch={irdAutoComplete}
+                        setStateSearch={setIrdAutoComplete}
+                    />
+                </Tooltip>
+            </Col>
+            <Col span={3}>
+
                 <Tooltip title="Номер этапа">
                     <Form.Item
-                        {...restField}
-                        name={[name, 'stage_number_item']}
-                        style={{display: 'flex', marginBottom: 0}}
+                        name={[index, 'stage_number_item']}
+                        style={{marginBottom: 0, width: "100%"}}
                     >
-                        <InputNumber max={100} min={0} prefix={"№"}/>
+                        <InputNumber max={100}
+                                     style={{marginBottom: 0, width: "100%"}}
+                                     min={0} prefix={"№"}/>
                     </Form.Item>
                 </Tooltip>
+
+            </Col>
+
+            <Col span={3}>
                 <Tooltip title="Номер в приложении">
                     <Form.Item
-                        {...restField}
-                        name={[name, 'application_project_item']}
-                        style={{display: 'flex', marginBottom: 0}}
+                        name={[index, 'application_project_item']}
+                        style={{marginBottom: 0, width: "100%"}}
                     >
-                        <InputNumber max={100} min={0} prefix={"№"}/>
+                        <InputNumber max={100} min={0}
+                                     style={{marginBottom: 0, width: "100%"}}
+                                     prefix={"№"}/>
                     </Form.Item>
                 </Tooltip>
-                <Tooltip title="Наименование ИРД">
-                    <Form.Item
-                        {...restField}
-                        style={{width: 570, minWidth: 220, marginBottom: 0}}
-                        name={[name, 'ird_item']}
-                    >
-                        <Select
-                            style={{width: 570, minWidth: 220, marginBottom: 0}}
-                            popupMatchSelectWidth={false}
-                            filterOption={false}
-                            placeholder="Начните ввод..."
-                            onSearch={(value) => handleAutoCompleteIrd(value)}
-                            onSelect={(value) => handleAutoCompleteIrdSelect(value)}
-                            allowClear
-                            showSearch
-                        >
-                            {dataIrds?.irds?.items?.map(ird => (
-                                <Select.Option key={ird.id}
-                                               value={ird.id}>
-                                    {ird.name}
-                                </Select.Option>))}
-                        </Select>
-                    </Form.Item>
-                </Tooltip>
+            </Col>
+
+            <Col span={3}>
                 <Tooltip title="Дата получения">
                     <Form.Item
-                        {...restField}
-                        name={[name, 'isChecked']}
+                        name={[index, 'isChecked']}
                         valuePropName="date_complite_item"
-                        style={{
-                            display: 'flex', marginBottom: 0, marginTop: 0
-                        }}
+                        style={{marginBottom: 0,textAlign: "center" ,width: "100%"}}
+
                     >
                         <DatePicker
-                            disabled={disable}
+                            style={{marginBottom: 0, width: "100%"}}
+
                             status={"warning"}
                             placeholder="Получено"/>
                     </Form.Item>
                 </Tooltip>
-                <MinusCircleOutlined onClick={() => remove(name)}/>
-            </Space>))}
-            <Form.Item block style={{width: "100%"}}>
-                <Space.Compact block style={{width: "100%"}}>
-                    <Button style={{width: "100%"}} type="dashed" onClick={() => add()}
-                            icon={<PlusOutlined/>}>
-                        Добавить ИРД
-                    </Button>
-                    <StyledButtonGreen icon={<SaveOutlined/>}
-                                       onClick={() => setAddModalVisible(true)}>Создать ИРД</StyledButtonGreen>
-                    <Button type={"primary"} onClick={() => saveTemplate()} icon={<CloudUploadOutlined/>}>Сохранить
-                        в шаблоне</Button>
+            </Col>
 
-                </Space.Compact>
-
-            </Form.Item>
-        </>
+            <Col span={1} style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                <MinusCircleOutlined onClick={() => removeItem && removeItem(index)}/>
+            </Col>
+            {/*// <Form.Item block style={{width: "100%"}}>*/}
+            {/*//     <Space.Compact block style={{width: "100%"}}>*/}
+            {/*//         <Button style={{width: "100%"}} type="dashed" onClick={() => add()}*/}
+            {/*//                 icon={<PlusOutlined/>}>*/}
+            {/*//             Добавить ИРД*/}
+            {/*//         </Button>*/}
+            {/*//         <StyledButtonGreen icon={<SaveOutlined/>}*/}
+            {/*//                            onClick={() => setAddModalVisible(true)}>Создать ИРД</StyledButtonGreen>*/}
+            {/*//         <Button type={"primary"} onClick={() => saveTemplate()} icon={<CloudUploadOutlined/>}>Сохранить*/}
+            {/*//             в шаблоне</Button>*/}
+            {/*//*/}
+            {/*//     </Space.Compact>*/}
+            {/*//*/}
+            {/*// </Form.Item>*/}
+        </Row>
     );
 };
 

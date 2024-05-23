@@ -46,9 +46,9 @@ const StyledFormSmall = ({ form, onFinish, children  }) => {
 
     );
 };
-const StyledFormRegular = ({form, onFinish, children, layout, disabled,labelAlign,wrapperCol,labelCol  }) => {
+const StyledFormRegular = ({form,onChange, onFinish, children, layout, disabled,labelAlign,wrapperCol,labelCol  }) => {
     return (
-            <Form form={form} onFinish={onFinish}
+            <Form form={form} onFinish={onFinish} onChange={onChange}
                   labelAlign={labelAlign ? labelAlign : "left"}
                   style={{minWidth: 360}}
                   wrapperCol={wrapperCol ? wrapperCol : {flex: 1}}
@@ -74,9 +74,9 @@ const StyledFormBig = ({ form, onFinish, children, disabled  }) => {
             </Form>
     );
 };
-const StyledFormLarge = ({ form, onFinish, children  }) => {
+const StyledFormLarge = ({ form, onFinish, children, onChange  }) => {
     return (
-            <Form
+            <Form onChange={onChange}
                 form={form}
                   onFinish={onFinish} layout="vertical">
                 {children}

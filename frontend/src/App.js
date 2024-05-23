@@ -62,7 +62,6 @@ const App = () => {
                             {/*<Route path="/reports/project" element={<ContactPage/>}/>*/}
                             {/*<Route path="/form/new_project" element={<ComposedProjectPage/>}/>*/}
 
-
                             <Route path="/auth/register" element={<RegisterPage/>}/>
                             <Route path="/auth/login" element={<LoginPage/>}/>
                          </Routes>
