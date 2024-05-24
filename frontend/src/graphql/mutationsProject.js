@@ -6,17 +6,9 @@ import React from "react";
 export const ADD_PROJECT_MUTATION = gql`
     mutation AddProject(
         $data: ProjectInput
-        $tasks: [ProjectTasksInput]
-        $stages: [ProjectStageInput]
-        $irds: [ProjectIrdInput]
     ) {
         createProject(
             data: $data
-
-
-            tasks : $tasks
-            stages: $stages
-            irds: $irds
 
         ) {
             id
@@ -99,15 +91,10 @@ export const UPDATE_PROJECT_MUTATION = gql`
     mutation UpdateProject(
         $data: ProjectInput
 
-        $tasks: [ProjectTasksInput]
-        $stages: [ProjectStageInput]
-        $irds: [ProjectIrdInput]
     ) {
         updateProject(
             data: $data
-            tasks : $tasks
-            stages: $stages
-            irds: $irds
+   
         ) {
             id
             number
@@ -209,8 +196,8 @@ export const UPDATE_TASKS_TO_PROJECT_MUTATION = gql`
     mutation UpdateTasksToProject(
         $data: [TasksToProject]
     ) {
-        updateTasksToProject(
-            items: $data
+        updateTaskToProject(
+            data: $data
         )
     }
 `;

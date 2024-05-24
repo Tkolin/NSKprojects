@@ -2,15 +2,9 @@
 extend type Mutation{
     updateProject(
         data: ProjectInput
-        tasks: [ProjectTasksInput]
-        stages: [ProjectStageInput]
-        irds: [ProjectIrdInput]
     ): Project! @checkRole(roles: ["admin"])
     createProject(
         data: ProjectInput
-        tasks: [ProjectTasksInput]
-        stages: [ProjectStageInput]
-        irds: [ProjectIrdInput]
     ): Project! @checkRole(roles: ["admin"])
     updateSectionReferenceToProject(
         items: [SectionReferencesToProject]
@@ -120,18 +114,18 @@ type InheritedTask{
 input ProjectInput {
     id: ID
     number: String
-    name: String!
+    name: String
     organization_customer_id: ID
     type_project_document_id: ID
     date_signing: String
-    duration: Int!
+    duration: Int
     date_end: String
-    date_create: String!
+    date_create: String
     status_id: ID
     date_completion: String
     price: Int
     prepayment: Int
-    facilitys_id: [ID]
+    facility_id: [ID]
     delegates_id: [ID]
 }
 

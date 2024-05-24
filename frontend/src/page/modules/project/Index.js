@@ -1,58 +1,150 @@
-import React, {useEffect, useState} from 'react';
-import {Anchor, Button, Col, Divider, Form, Row, Steps, theme} from 'antd';
-import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../../components/style/BlockStyles";
+import React, {useContext, useState} from 'react';
+import {Button, Form, Steps, theme} from 'antd';
+import {StyledBlockLarge, StyledBlockRegular} from "../../../components/style/BlockStyles";
 import StagesProjectForm from "./components/StagesProjectForm";
 
 import ProjectForm from "./components/ProjectForm";
-import {shallow} from "zustand/shallow";
 import {useProjectStore} from "./Store";
 import IrdsProjectForm from "./components/IrdsProjectForm";
-// import IrdsProjectForm from "./components/IrdsProjectForm";
+import {useMutation} from "@apollo/client";
+import {ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION} from "../../../graphql/mutationsProject";
+import {UPDATE_IRD_MUTATION} from "../../../graphql/mutationsIrd";
+import {UPDATE_STAGE_MUTATION} from "../../../graphql/mutationsStage";
+import {NotificationContext} from "../../../NotificationProvider";
+import dayjs from "dayjs";
 
 
 const Index = () => {
     const current = useProjectStore((state) => state.step);
     const setCurrent = useProjectStore((state) => state.setSteps);
 
+    const project = useProjectStore((state) => state.project);
+    const irds = useProjectStore((state) => state.irds);
+    const stages = useProjectStore((state) => state.stages);
+
     const updateProject = useProjectStore((state) => state.updateProject);
     const updateIrds = useProjectStore((state) => state.updateIrds);
     const updateStages = useProjectStore((state) => state.updateStages);
+    const [newCurrent, setNewCurrent] = useState(current)
 
+    const {openNotification} = useContext(NotificationContext);
 
-    const [form] = Form.useForm();
 
     const {token} = theme.useToken();
+    const rebuildProjectResultQuery = (data) => {
+        const row = data?.createProject;
+        return {
+            ...data,
+            date_create: dayjs(row?.date_create),
+            date_end: dayjs(row?.date_end),
+            date_signing: dayjs(row?.date_signing),
+            delegates_id: row?.delegations?.map(k => k?.id),
+            facility_id: row?.facilities?.map(k => k?.id),
+            organization_customer_id: row?.organization_customer?.id,
+            organization_customer_name: row?.organization_customer?.name,
+            status_id: row?.status?.id,
+            type_project_document_id: row?.type_project_document?.id,
+            type_project_document_name: row?.type_project_document?.name,
+        };
+    };
+    const rebuildStagesResultQuery = (data) => {
+        console.log("rebuildStagesResultQuery");
+        return {
+             date_range: [
+                dayjs(data?.date_start),
+                dayjs(data?.date_end)],
+            // stage_id: data?.stage?.id,
+            stage_id: data?.stage?.id,
+            stage_name: data?.stage?.name,
+        };
+    };
+    const rebuildIrdsResultQuery = (data) => {
+        return {};
+    };
+    const [mutateProject] = useMutation(project?.id ? UPDATE_PROJECT_MUTATION : ADD_PROJECT_MUTATION, {
+        onCompleted: (data) => {
+            openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
+            updateProject(rebuildProjectResultQuery(data?.createProject));
+            updateStages(rebuildStagesResultQuery(data?.createProject?.project_stages));
+            updateIrds(rebuildIrdsResultQuery(data?.createProject?.project_irds));
+            setCurrent(newCurrent);
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при выполнении сооздания : ${error.message}`);
+        },
+    });
 
+    const [mutateIrd] = useMutation(UPDATE_IRD_MUTATION, {
+        onCompleted: (data) => {
+            openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
+            updateIrds(data);
+            setCurrent(newCurrent);
 
-    const saveProject = (steps) => {
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при выполнении сооздания : ${error.message}`);
+            return false;
+        },
+    });
 
-        console.log(steps);
+    const [mutateStage] = useMutation(UPDATE_STAGE_MUTATION, {
+        onCompleted: (data) => {
+            openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
+            updateStages(data);
+            setCurrent(newCurrent);
 
-        // switch (steps) {
-        //     case 0:
-        //         updateProject();
-        //         return true;
-        //     case 1:
-        //         updateStages();
-        //         return true;
-        //     case 2:
-        //         updateIrds();
-        //         return true;
-        // }
-        return true;
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при выполнении сооздания : ${error.message}`);
+            return false;
+        },
+    });
+    const handleStage = (steps) => {
+        setNewCurrent(steps)
+        switch (current) {
+            case 0:
+                mutateProject({
+                    variables: {
+                        data: {
+                            id: project?.id ?? null,
+                            number: project?.number,
+                            name: project?.name,
+                            organization_customer_id: project?.organization_customer_id,
+                            type_project_document_id: project?.type_project_document_id,
+                            date_signing: dayjs(project?.date_signing).format("YYYY-MM-DD"),
+                            duration: project?.duration,
+                            date_end: dayjs(project?.date_end).format("YYYY-MM-DD"),
+                            date_create: dayjs(project?.date_create).format("YYYY-MM-DD"),
+                            status_id: project?.status_id,
+                            date_completion: dayjs(project?.date_completion).format("YYYY-MM-DD"),
+                            price: project?.price,
+                            prepayment: project?.prepayment,
+                            facility_id: project?.facility_id.map(row => row[3][0]),
+                            delegates_id: project?.delegates_id,
+                        }
+                    }
+                });
 
+                break;
+            case 1:
+                mutateStage({variables: {data: {...stages}}});
+                break;
+            case 2:
+                mutateIrd({variables: {data: {...irds}}});
+                break;
+        }
     }
+
     const next = () => {
-        if (saveProject(current))
-            setCurrent(current + 1);
+        handleStage(current + 1);
     };
+
     const prev = () => {
-        if (saveProject(current))
-            setCurrent(current - 1);
+        handleStage(current - 1);
     };
+
     const onChangeStep = (value) => {
-        if (saveProject(current))
-            setCurrent(value);
+        handleStage(value);
     };
 
 

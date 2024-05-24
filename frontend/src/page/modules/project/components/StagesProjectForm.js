@@ -28,11 +28,11 @@ const StagesProjectForm = ({onCompleted, onChange}) => {
     const [formLoad, setFormLoad] = useState(false);
 
     const load = () => {
-
         console.log(actualStages);
         form.setFieldsValue({
             stageList: actualStages && Object.values(actualStages)?.map((row) => ({
                 ...row,
+                stage_id: row?.stage_id ?? null,
                 date_range: [
                     row?.date_range?.[0] ? dayjs(row?.date_range?.[0]) : null,
                     row?.date_range?.[1] ? dayjs(row?.date_range?.[1]) : null
@@ -49,38 +49,12 @@ const StagesProjectForm = ({onCompleted, onChange}) => {
         useQuery(STAGES_QUERY_COMPACT);
 
     const handleChange = () => {
-        if (formLoad)
-            updateStages({...form.getFieldValue("stageList")});
+        updateStages({...form.getFieldValue("stageList")});
     }
 
-
-    useEffect(() => {
-        console.log("dsadasdasdasdasd");
-    }, []);
-    const handleStageIdChange = (index, value) => {
-        // Получить текущий список stageList
-        const stageList = form.getFieldValue("stageList");
-
-        // Обновить конкретный элемент в списке
-        const updatedStageList = stageList.map((item, idx) => {
-            if (idx === index) {
-                return {
-                    ...item,
-                    stage_id: value
-                };
-            }
-            return item;
-        });
-        // Установить обновленный список обратно в форму
-        form.setFieldValue("stageList", updatedStageList);
-        handleChange();
-        console.log("dsadasdasdasdasd");
-
-    };
     return (
         <StyledFormLarge layout="vertical" onChange={() => {
             handleChange();
-            setFormLoad(true);
         }} form={form}>
 
             <Form.List name="stageList">
@@ -88,12 +62,14 @@ const StagesProjectForm = ({onCompleted, onChange}) => {
                     <>
                         {fields.map(({key, name, ...restField}, index) => (
                             <StageItem
+                                form={form}
+
                                 key={key}
                                 index={index}
                                 value={name}
                                 stagesData={dataStages?.stages?.items}
                                 removeItem={remove}
-                                onChangeStageId={handleStageIdChange}
+                                onChangeExtend={handleChange}
                                 isFirst={index === 0}
                                 isLast={index === fields.length - 1}
                                 {...restField}

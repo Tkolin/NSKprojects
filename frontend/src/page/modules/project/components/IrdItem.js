@@ -5,23 +5,48 @@ import {
 } from '@ant-design/icons';
 import {useForm} from "antd/es/form/Form";
 import {StyledFormItemAutoComplete} from "../../../../components/style/SearchAutoCompleteStyles";
+import {EmptyFormItem} from "../../../../components/formComponents/EmptyFormItem";
 
 
-const StageItem = ({value, onChangeIrdId, onChange, index, irdData, moveItem, removeItem, isFirst, isLast}) => {
+const IrdItem = ({
+                     onChangeIrdId,
+                     index,
+                     irdData,
+                     removeItem,
+                     onChangeExtend,
+                     form
+                 }) => {
 
 
     const [irdAutoComplete, setIrdAutoComplete] = useState({options: [], selected: null});
+    const [firstLoad, setFirstLoad] = useState(false)
 
     useEffect(() => {
-        onChangeIrdId && onChangeIrdId(index, irdAutoComplete?.selected)
+        if (firstLoad) {
+            const irdList = form.getFieldValue("irdList");
+            const updatedIrdList = irdList.map((item, idx) => {
+                if (idx === index) {
+                    return {
+                        ...item,
+                        stage_id: irdAutoComplete?.selected
+                    };
+                }
+                return item;
+            });
+            form.setFieldValue("irdList", updatedIrdList);
+            onChangeExtend();
+        }
     }, [irdAutoComplete?.selected]);
+    useEffect(() => {
+        setIrdAutoComplete({...irdAutoComplete, selected: form.getFieldValue("irdList")?.[index]?.stage_id})
+        setFirstLoad(true);
+    }, []);
+
     // Для хранения выбора элемента
 
     return (
         <Row key={index} gutter={2} style={{marginBottom: 0}}>
-            <Col span={0} style={{marginBottom: 0, width: 0, height: 0}}
-            >
-
+            <Col span={0}>
                 <Form.Item
                     name={[index, 'ird_id']}
                     style={{marginBottom: 0, width: 0, height: 0}}
@@ -46,6 +71,8 @@ const StageItem = ({value, onChangeIrdId, onChange, index, irdData, moveItem, re
                     />
                 </Tooltip>
             </Col>
+            <EmptyFormItem name={"ird_id"}/>
+
             <Col span={3}>
 
                 <Tooltip title="Номер этапа">
@@ -77,14 +104,13 @@ const StageItem = ({value, onChangeIrdId, onChange, index, irdData, moveItem, re
             <Col span={3}>
                 <Tooltip title="Дата получения">
                     <Form.Item
-                        name={[index, 'isChecked']}
-                        valuePropName="date_complite_item"
-                        style={{marginBottom: 0,textAlign: "center" ,width: "100%"}}
+                        name={[index, 'date_complite_item']}
+                        style={{marginBottom: 0, textAlign: "center", width: "100%"}}
 
                     >
                         <DatePicker
                             style={{marginBottom: 0, width: "100%"}}
-
+                            onChange={()=>onChangeExtend()}
                             status={"warning"}
                             placeholder="Получено"/>
                     </Form.Item>
@@ -94,22 +120,9 @@ const StageItem = ({value, onChangeIrdId, onChange, index, irdData, moveItem, re
             <Col span={1} style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                 <MinusCircleOutlined onClick={() => removeItem && removeItem(index)}/>
             </Col>
-            {/*// <Form.Item block style={{width: "100%"}}>*/}
-            {/*//     <Space.Compact block style={{width: "100%"}}>*/}
-            {/*//         <Button style={{width: "100%"}} type="dashed" onClick={() => add()}*/}
-            {/*//                 icon={<PlusOutlined/>}>*/}
-            {/*//             Добавить ИРД*/}
-            {/*//         </Button>*/}
-            {/*//         <StyledButtonGreen icon={<SaveOutlined/>}*/}
-            {/*//                            onClick={() => setAddModalVisible(true)}>Создать ИРД</StyledButtonGreen>*/}
-            {/*//         <Button type={"primary"} onClick={() => saveTemplate()} icon={<CloudUploadOutlined/>}>Сохранить*/}
-            {/*//             в шаблоне</Button>*/}
-            {/*//*/}
-            {/*//     </Space.Compact>*/}
-            {/*//*/}
-            {/*// </Form.Item>*/}
+
         </Row>
     );
 };
 
-export default StageItem;
+export default IrdItem;

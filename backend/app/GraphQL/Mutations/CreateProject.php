@@ -5,6 +5,10 @@ namespace App\GraphQL\Mutations;
 use App\Models\Project;
 use App\Models\ProjectDelegations;
 use App\Models\ProjectFacilities;
+use App\Models\ProjectIrds;
+use App\Models\ProjectStage;
+use App\Models\TemplateIrdsTypeProjects;
+use App\Models\TemplateStagesTypeProjects;
 
 final readonly class CreateProject
 {
@@ -23,13 +27,13 @@ final readonly class CreateProject
             'name' => $args['data']['name'] ?? null,
             'organization_customer_id' => $args['data']['organization_customer_id'] ?? null,
             'type_project_document_id' => $args['data']['type_project_document_id'] ?? null,
-            'date_signing' => isset($args['data']['date_signing']) ? substr((string) $args['data']['date_signing'], 0, 10) : null,
+            'date_signing' => isset($args['data']['date_signing']) ? substr((string)$args['data']['date_signing'], 0, 10) : null,
             'duration' => $args['data']['duration'] ?? null,
-            'date_end' => isset($args['data']['date_end']) ? substr((string) $args['data']['date_end'], 0, 10) : null,
-            'date_create' => isset($args['data']['date_create']) ? substr((string) $args['data']['date_create'], 0, 10) : null,
+            'date_end' => isset($args['data']['date_end']) ? substr((string)$args['data']['date_end'], 0, 10) : null,
+            'date_create' => isset($args['data']['date_create']) ? substr((string)$args['data']['date_create'], 0, 10) : null,
             'status_id' => $args['data']['status_id'] ?? null,
             'prepayment' => $args['data']['prepayment'] ?? null,
-            'date_completion' => isset($args['data']['date_completion']) ? substr((string) $args['data']['date_completion'], 0, 10) : null,
+            'date_completion' => isset($args['data']['date_completion']) ? substr((string)$args['data']['date_completion'], 0, 10) : null,
             'price' => $args['data']['price'] ?? null,
         ]);
 
@@ -51,6 +55,35 @@ final readonly class CreateProject
                     ]);
                 }
             }
+        }
+
+        $tempStage = TemplateStagesTypeProjects
+            ::where('project_type_id', $project->type_project_document_id)
+            ->get();
+
+        foreach ($tempStage as $key => $value) {
+            ProjectStage::create(
+                [
+                    'project_id' => $project->id,
+                    'stage_id' => $tempStage[$key]->stage_id,
+                    'duration' => $tempStage[$key]->duration,
+                    'percent' => $tempStage[$key]->percentage,
+                    'number' => $tempStage[$key]->number,
+                ]
+            );
+        }
+        $tempIrd = TemplateIrdsTypeProjects
+            ::where('project_type_id', $project->type_project_document_id)
+            ->get();
+        foreach ($tempIrd as $key => $value) {
+            ProjectIrds::create(
+                [
+                    'project_id' => $project->id,
+                    'ird_id' => $tempIrd[$key]->ird_id,
+                    'stageNumber' => $tempIrd[$key]->stage_number,
+                    'applicationProject' => $tempIrd[$key]->application_to_project,
+                ]
+            );
         }
 
         return $project;

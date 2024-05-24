@@ -29,6 +29,9 @@ const BaseStyledFormItemAutoComplete = ({
                                             size,
                                             wrapperCol,
 
+                                            onChange,
+                                            value,
+
                                             data, stateSearch, setStateSearch, typeData
                                         }) => {
     const getName = (row, typeData) => {
@@ -63,6 +66,9 @@ const BaseStyledFormItemAutoComplete = ({
                     ?? ''}
                 filterOption={false}
                 loading={loading}
+
+                onChange={onChange}
+                value={value}
 
                 options={stateSearch?.options}
                 //value={stateSearch?.selected}
@@ -152,7 +158,10 @@ const StyledFormItemAutoComplete = ({
                                         size,
                                         width,
 
-                                        typeData, data, stateSearch, setStateSearch
+                                        typeData, data, stateSearch, setStateSearch,
+
+    onChange,
+    value
                                     }) => (
     <BaseStyledSpaceCompactFormItemAutoComplete width={width ?? "100%"}>
         <BaseStyledFormItemAutoComplete formName={formName}
@@ -164,6 +173,9 @@ const StyledFormItemAutoComplete = ({
                                         formatOptionText={formatOptionText}
                                         mode={mode}
                                         width={width ?? "100%"}
+
+                                        onChange={onChange}
+                                        value={value}
 
                                         labelCol={labelCol}
                                         wrapperCol={wrapperCol}

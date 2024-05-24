@@ -2,18 +2,46 @@ import React, {useEffect, useState} from 'react';
 import {Row, Col, Form, InputNumber, Select, Tooltip, DatePicker, Input} from 'antd';
 import {CaretUpOutlined, CaretDownOutlined, MinusCircleOutlined} from '@ant-design/icons';
 import {StyledFormItemAutoComplete} from "../../../../components/style/SearchAutoCompleteStyles";
+import {EmptyFormItem} from "../../../../components/formComponents/EmptyFormItem";
 
 const {RangePicker} = DatePicker;
 
-const StageItem = ({value, onChangeStageId, onChange, index, stagesData, moveItem, removeItem, isFirst, isLast}) => {
+const StageItem = ({
+    value,
+    onChange,
+                       onChangeExtend,
+                       index,
+                       form,
+                       stagesData,
+                       moveItem,
+                       removeItem,
+                       isFirst,
+                       isLast
+                   }) => {
     // бновления всех записей в строке
-
     const [stageAutoComplete, setStageAutoComplete] = useState({options: [], selected: null});
-    const handleItems = () => {
-    }
+    const [firstLoad, setFirstLoad] = useState(false)
+
     useEffect(() => {
-        onChangeStageId && onChangeStageId(index, stageAutoComplete?.selected)
+        if (firstLoad) {
+            const stageList = form.getFieldValue("stageList");
+            const updatedStageList = stageList.map((item, idx) => {
+                if (idx === index) {
+                    return {
+                        ...item,
+                        stage_id: stageAutoComplete?.selected
+                    };
+                }
+                return item;
+            });
+            form.setFieldValue("stageList", updatedStageList);
+            onChangeExtend();
+        }
     }, [stageAutoComplete?.selected]);
+    useEffect(() => {
+        setStageAutoComplete({...stageAutoComplete, selected: form.getFieldValue("stageList")?.[index]?.stage_id})
+        setFirstLoad(true);
+    }, []);
     // Для хранения выбора элемента
 
     return (
@@ -63,9 +91,10 @@ const StageItem = ({value, onChangeStageId, onChange, index, stagesData, moveIte
 
                     <StyledFormItemAutoComplete
                         style={{width: "100%"}}
-
                         formName={[index, 'stage_name']}
                         placeholder={"Выбор этапа..."}
+
+                        value={value.stage_name}
 
                         data={stagesData}
                         stateSearch={stageAutoComplete}
@@ -73,16 +102,8 @@ const StageItem = ({value, onChangeStageId, onChange, index, stagesData, moveIte
                     />
                 </Tooltip>
             </Col>
-            <Col span={0} style={{width: "0"}}>
-                <Form.Item
-                    style={{marginBottom: 0, width: "0", height: "0"}}
-                    name={[index, 'stage_id']}
-                >
-                    <Input value={stageAutoComplete.selected} style={{width: "0"}}
-                    />
-                </Form.Item>
-            </Col>
-            <Col span={2}>
+                 <EmptyFormItem name={"stage_id"}/>
+             <Col span={2}>
                 <Tooltip title="Продолжительность этапа (дни)">
                     <Form.Item
                         style={{marginBottom: 0, width: "100%"}}
@@ -91,7 +112,7 @@ const StageItem = ({value, onChangeStageId, onChange, index, stagesData, moveIte
                             required: true,
                         },]}
                     >
-                        <InputNumber onChange={() => handleItems()} style={{width: "100%"}}
+                        <InputNumber style={{width: "100%"}}
                         />
                     </Form.Item>
                 </Tooltip>
@@ -107,10 +128,10 @@ const StageItem = ({value, onChangeStageId, onChange, index, stagesData, moveIte
                     >
                         <RangePicker
                             style={{width: "100%"}}
-                            onChange={() => handleItems()}
+                            onChange={(e) => onChangeExtend()}
                             id={{
-                                start: 'date_start_item',
-                                end: 'date_end_item',
+                                start: 'date_start',
+                                end: 'date_end',
                             }}
                         />
                     </Form.Item>
@@ -120,12 +141,12 @@ const StageItem = ({value, onChangeStageId, onChange, index, stagesData, moveIte
                 <Tooltip title="Процент от общей стоимости">
                     <Form.Item
                         style={{marginBottom: 0, width: "100%"}}
-                        name={[index, 'percent_item']}
+                        name={[index, 'percent']}
                         rules={[{
                             required: true,
                         },]}
                     >
-                        <InputNumber onChange={() => handleItems()} max={100} min={0} value={0}
+                        <InputNumber max={100} min={0} value={0}
                                      defaultValue={1} suffix={"%"}
                                      style={{width: "100%"}}
                         />
@@ -136,7 +157,7 @@ const StageItem = ({value, onChangeStageId, onChange, index, stagesData, moveIte
                 <Tooltip title="Стоимость этапа">
                     <Form.Item
                         style={{marginBottom: 0, width: "100%"}}
-                        name={[index, 'price_item']}
+                        name={[index, 'price']}
                         rules={[{
                             required: true,
                         },]}>
@@ -150,7 +171,7 @@ const StageItem = ({value, onChangeStageId, onChange, index, stagesData, moveIte
                 <Tooltip title="Сумма к оплате за этап">
                     <Form.Item
                         style={{marginBottom: 0, width: "100%"}}
-                        name={[index, 'end_price_item']}
+                        name={[index, 'price_to_paid']}
                         rules={[{
                             required: true,
                         },]}>

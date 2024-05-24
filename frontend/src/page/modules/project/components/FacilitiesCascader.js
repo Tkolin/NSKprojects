@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Cascader } from 'antd';
-import { useQuery } from "@apollo/client";
-import { FACILITYS_QUERY } from "../../../../graphql/queries";
+import React, {useState, useEffect} from 'react';
+import {Cascader} from 'antd';
+import {useQuery} from "@apollo/client";
+import {FACILITYS_QUERY} from "../../../../graphql/queries";
 
-const { SHOW_CHILD } = Cascader;
+const {SHOW_CHILD} = Cascader;
 
-const FacilitiesCascader = ({ value, onChange }) => {
+const FacilitiesCascader = ({value, onChange}) => {
     const [cascaderFacility, setCascaderFacility] = useState([]);
 
-    const { loading: loadingFacility } = useQuery(FACILITYS_QUERY, {
+    const {loading: loadingFacility} = useQuery(FACILITYS_QUERY, {
         onCompleted: (data) => setCascaderFacility(sortFacilitysForCascader(data.facilities))
     });
 
@@ -19,13 +19,13 @@ const FacilitiesCascader = ({ value, onChange }) => {
                     const facilities = groupFacility.facilities.map(facility => ({
                         key: facility.id,
                         label: facility.name,
-                        value: facility.code
+                        value: [facility.id, facility.code],
                     }));
 
                     return {
                         key: groupFacility.id,
                         label: groupFacility.name,
-                        value: groupFacility.code,
+                        value: [groupFacility.id, groupFacility.code],
                         children: facilities
                     };
                 });
@@ -33,7 +33,7 @@ const FacilitiesCascader = ({ value, onChange }) => {
                 return {
                     key: subFacility.id,
                     label: subFacility.name,
-                    value: subFacility.code,
+                    value: [subFacility.id, subFacility.code],
                     children: groupFacilities
                 };
             });
@@ -41,7 +41,7 @@ const FacilitiesCascader = ({ value, onChange }) => {
             return {
                 key: facility.id,
                 label: facility.name,
-                value: facility.code,
+                value: [facility.id, facility.code],
                 children: subselectionFacilities
             };
         });
@@ -49,7 +49,7 @@ const FacilitiesCascader = ({ value, onChange }) => {
 
     return (
         <Cascader
-            style={{ width: "100%" }}
+            style={{width: "100%"}}
             showCheckedStrategy={SHOW_CHILD}
             popupMatchSelectWidth={false}
             options={cascaderFacility}

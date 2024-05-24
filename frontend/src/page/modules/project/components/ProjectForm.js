@@ -32,21 +32,11 @@ const ProjectForm = ({onCompleted, onChange}) => {
     const [form] = Form.useForm();
     const [formLoad, setFormLoad] = useState(false);
     const handleChange = () => {
+        updateNumber();
         if (formLoad)
             updateProject({...compiletedFormToProjectInput()})
-
     }
-    const convertQueryResultToAutoComplete = (items) => {
-        return items.map((row) => {
-            return {
-                value: row.name,
-                label: row.name,
-                data: row.id,
-            }
 
-        })
-
-    }
     // Состояния
     const [delegatesModalStatus, setDelegatesModalStatus] = useState(null);
     const [delegatesAutoComplete, setDelegatesAutoComplete] = useState({options: [], selected: {}});
@@ -61,7 +51,6 @@ const ProjectForm = ({onCompleted, onChange}) => {
     }, [organizationsAutoComplete.selected, typeProjectAutoComplete.selected, form]);
 
 
-    // Мутация
 
     // Подгрузка при обновлении
     const load = () => {
@@ -80,7 +69,9 @@ const ProjectForm = ({onCompleted, onChange}) => {
     useEffect(() => {
         load();
     }, [actualProject]);
-
+    useEffect(() => {
+        setFormLoad(true)
+    }, []);
 
     // Получение данных для выпадающих списков
     const {loading: loadingStatuses, error: errorStatuses, data: dataStatuses} =
@@ -97,21 +88,18 @@ const ProjectForm = ({onCompleted, onChange}) => {
     } = useQuery(ORGANIZATIONS_QUERY_COMPACT);
 
     // Логика формы
-    useEffect(() => {
+    const updateNumber = () => {
         const facilitiCode = form.getFieldValue("facility_id")?.[0];
+        console.log("facilitiCode",facilitiCode)
         form.setFieldValue("number", (
             (dataTypeProject?.typeProjects?.items?.find(row => row.id === typeProjectAutoComplete?.selected)?.group?.name ?? "___") +
             "–" + (dayjs(form.getFieldValue("date_signing")).format("YY") ?? "___") +
             "–" + (organizationsAutoComplete?.selected ?? "___") +
-            "–" + (facilitiCode?.[0] ?? "___") +
-            "–" + (facilitiCode?.[1] ?? "___") +
-            "–" + (facilitiCode?.[2] ?? "___") +
-            "–" + (facilitiCode?.[3] ?? "___")));
-    }, [typeProjectAutoComplete,
-        form.getFieldValue("facility_id"),
-        form.getFieldValue("date_signing"),
-        organizationsAutoComplete.selected]);
-
+            "–" + (facilitiCode?.[0]?.[1] ?? "___") +
+            "–" + (facilitiCode?.[1]?.[1] ?? "___") +
+            "–" + (facilitiCode?.[2]?.[1] ?? "___") +
+            "–" + (facilitiCode?.[3]?.[1] ?? "___")));
+    }
     const compiletedFormToProjectInput = () => {
         const formValues = form.getFieldsValue();
         return {

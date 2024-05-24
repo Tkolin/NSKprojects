@@ -19,111 +19,58 @@ import {PROJECTS_QUERY_BY_ID} from "../../../../graphql/queriesByID";
 import {IRDS_QUERY_COMPACT, STAGES_QUERY_COMPACT} from "../../../../graphql/queriesCompact";
 import StageItem from "./StageItem";
 import IrdItem from "./IrdItem";
+import {useProjectStore} from "../Store";
+import dayjs from "dayjs";
 
 const IrdsProjectForm = ({localObject, initialObject, onCompleted}) => {
+    const updateIrds = useProjectStore((state) => state.updateIrds);
+    const actualIrds = useProjectStore((state) => state.irds);
+    // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
-    const nameModel = 'Этапы на проеselectorкте';
-    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
-    const [loadContext, {loading, data}] = useLazyQuery(PROJECTS_QUERY_BY_ID, {
-        variables: {projectId: initialObject?.id ?? null},
-        onCompleted: (data) => {
-            setActualObject(data?.projects?.items[0]);
-            updateForm(data?.projects?.items[0]);
-        },
-        onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
-        },
-    });
+    const [formLoad, setFormLoad] = useState(false);
 
-    const [mutate] = useMutation(UPDATE_STAGES_TO_PROJECT_MUTATION, {
-        onCompleted: (data) => {
-            openNotification('topRight', 'success', `Создание новой записи в таблице ${nameModel} выполнено успешно`);
-            form.resetFields();
-            onCompleted && onCompleted(data);
-        },
-        onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении создания ${nameModel}: ${error.message}`);
-        },
-    });
+    const load = () => {
+        console.log(actualIrds);
+        form.setFieldsValue({
+            irdList: actualIrds && Object.values(actualIrds)?.map((row) => ({
+                ...row,
+                ird_id: row.ird_id,
+                date_complite_item:  row?.date_complite_item ? dayjs(row?.date_complite_item) : null,
+            }))
 
+        });
+    }
     useEffect(() => {
-        if (initialObject?.id) {
-            loadContext();
-        }
-    }, [initialObject]);
-
-    const updateForm = (data) => {
-        if (data) {
-            form.resetFields();
-            form.setFieldsValue({
-                stageList: data.project_stages,
-            });
-        }
-    };
+        load();
+    }, [actualIrds]);
 
     const {loading: loadingIrds, error: errorIrds, data: dataIrds} =
         useQuery(IRDS_QUERY_COMPACT);
-    const handleIrdIdChange = (index, value) => {
-        // Получить текущий список stageList
-        const irdList = form.getFieldValue("irdList");
 
-        // Обновить конкретный элемент в списке
-        const updatedStageList = irdList.map((item, idx) => {
-            if (idx === index) {
-                return {
-                    ...item,
-                    ird_id: value
-                };
-            }
-            return item;
-        });
-
-        // Установить обновленный список обратно в форму
-        form.setFieldValue("irdList", updatedStageList);
-
-        console.log(index, value);
-        console.log("Обновленный stageList", form.getFieldsValue());
-    };
-    const handleFinish = (values) => {
-        console.log(form.getFieldsValue());
-        // mutate({
-        //     variables: {
-        //         input: {
-        //             id: actualObject.id,
-        //             project_stages: values.stageList.map((stage, index) => ({
-        //                 ...stage,
-        //                 start_date: stage.date_range ? stage.date_range[0].toISOString() : null,
-        //                 end_date: stage.date_range ? stage.date_range[1].toISOString() : null,
-        //             })),
-        //         },
-        //     },
-        // });
-    };
-
-    if (loading || loadingIrds) return <LoadingSpinnerStyles />;
-
-    if (errorIrds ) {
-        openNotification('topRight', 'error', 'Ошибка при загрузке данных.');
-        return null;
+    const handleChange = () => {
+        updateIrds({...form.getFieldValue("irdList")});
     }
 
     return (
-        <StyledFormLarge layout="vertical" form={form} onFinish={handleFinish}>
+        <StyledFormLarge layout="vertical"
+                         onChange={() => {
+                             handleChange();
+                         }}
+                         form={form}>
 
             <Form.List name="irdList">
                 {(fields, {add, remove}) => (
                     <>
                         {fields.map(({key, name, ...restField}, index) => (
                             <IrdItem
+                                form={form}
                                 key={key}
                                 index={index}
                                 value={name}
                                 irdData={dataIrds?.irds?.items}
                                 removeItem={remove}
-                                onChangeIrdId={handleIrdIdChange}
-                                isFirst={index === 0}
-                                isLast={index === fields.length - 1}
+                                onChangeExtend={handleChange}
                                 {...restField}
                             />
                         ))}
@@ -142,7 +89,6 @@ const IrdsProjectForm = ({localObject, initialObject, onCompleted}) => {
                     </>
                 )}
             </Form.List>
-            <Button type={"primary"} onClick={() => handleFinish()} icon={<CloudUploadOutlined/>}>Сохранить</Button>
         </StyledFormLarge>
     )
 };
