@@ -10,7 +10,7 @@ import IrdsProjectFileDownload from "../../../components/script/IrdsProjectFileD
 import Title from "antd/es/typography/Title";
 import ActRenderingProjectDownload from "../../../components/script/ActRenderingProjectDownload";
 import PaymentInvoiceProjectDownload from "../../../components/script/PaymentInvoiceProjectDownload";
-import CreateNewProject from "../../form/composedForm/CreateNewProject";
+import Index from "../../modules/project/Index";
 import TaskExecutorContractDownload from "../../../components/script/TaskExecutorContractDownload";
 import {useNavigate} from "react-router-dom";
 
@@ -368,7 +368,7 @@ const ProjectTable = () => {
                 width={1840}
                 style={{width: 1840}}
             >
-                <CreateNewProject editProject={selectedProject} onClose={handleClose}/>
+                <Index editProject={selectedProject} onClose={handleClose}/>
             </Modal>
 
         </div>

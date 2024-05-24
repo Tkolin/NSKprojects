@@ -8,7 +8,7 @@ const { Text, Title } = Typography;
 const Home = () => {
     return (
         <StyledBlockRegular label={"Главная страница!"}>
-            <img src={catImage} alt="Cat" className="rotate-image" />
+            {/*<img src={catImage} alt="Cat" className="rotate-image" />*/}
         </StyledBlockRegular>
     );
 };

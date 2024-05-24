@@ -7,11 +7,16 @@ import ProjectForm from "./components/ProjectForm";
 import {useProjectStore} from "./Store";
 import IrdsProjectForm from "./components/IrdsProjectForm";
 import {useMutation} from "@apollo/client";
-import {ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION} from "../../../graphql/mutationsProject";
+import {
+    ADD_PROJECT_MUTATION, UPDATE_IRDS_TO_PROJECT_MUTATION,
+    UPDATE_PROJECT_MUTATION,
+    UPDATE_STAGES_TO_PROJECT_MUTATION
+} from "../../../graphql/mutationsProject";
 import {UPDATE_IRD_MUTATION} from "../../../graphql/mutationsIrd";
 import {UPDATE_STAGE_MUTATION} from "../../../graphql/mutationsStage";
 import {NotificationContext} from "../../../NotificationProvider";
 import dayjs from "dayjs";
+import ProjectDetails from "./components/ProjectDetails";
 
 
 const Index = () => {
@@ -49,23 +54,64 @@ const Index = () => {
     };
     const rebuildStagesResultQuery = (data) => {
         console.log("rebuildStagesResultQuery");
-        return {
+        return data?.map((row, index) =>({
+            ...row,
              date_range: [
-                dayjs(data?.date_start),
-                dayjs(data?.date_end)],
-            // stage_id: data?.stage?.id,
-            stage_id: data?.stage?.id,
-            stage_name: data?.stage?.name,
-        };
+                 row?.date_start ? dayjs(row?.date_start) : null,
+                 row?.date_end ?  dayjs(row?.date_end)  : null],
+            stage_number: index+1,
+            stage_id: row?.stage?.id,
+            stage_name: row?.stage?.name
+        }));
     };
     const rebuildIrdsResultQuery = (data) => {
-        return {};
+        return data?.map((row, index) =>({
+            ...row,
+            receivedDate:  row.receivedDate ? dayjs(row.receivedDate?.[1]).format("YYYY-MM-DD")  : null,
+            ird_id: row?.IRD?.id,
+            ird_name: row?.IRD?.name
+        }));
     };
+    const rebuildStagesToQuery = (data) => {
+        if(!data)
+            return [];
+        const dataArray = Object.values(data);
+
+        return dataArray?.map((row, index) =>({
+            id: row?.id ?? null,
+            project_id: project?.id ?? null,
+            date_start: row.date_range?.[0] ? dayjs(row.date_range?.[0]).format("YYYY-MM-DD") : null,
+            date_end: row.date_range?.[1] ? dayjs(row.date_range?.[1]).format("YYYY-MM-DD")  : null,
+            duration: row?.duration ?? null,
+            stage_id: row?.stage_id ?? null,
+            stage_number: index+1,
+            price: row?.price ?? null,
+            percent: row?.percent ?? null,
+            progress: row?.progress ?? null,
+            price_to_paid: row?.price_to_paid ?? null,
+        }));
+    };
+    const rebuildIrdToQuery = (data) => {
+        if(!data)
+            return [];
+        const dataArray = Object.values(data);
+
+        return dataArray?.map((row, index) =>({
+            id:  row?.id ?? null,
+            project_id: project?.id ?? null,
+            ird_id: row?.ird_id ?? null,
+            stageNumber: row?.stageNumber ? parseInt(row?.stageNumber) : null,
+            applicationProject: row?.applicationProject ? parseInt(row?.applicationProject) : null,
+            receivedDate: row?.receivedDate ? dayjs(row?.receivedDate).format("YYYY-MM-DD") : null,
+        }));
+    };
+
     const [mutateProject] = useMutation(project?.id ? UPDATE_PROJECT_MUTATION : ADD_PROJECT_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
             updateProject(rebuildProjectResultQuery(data?.createProject));
             updateStages(rebuildStagesResultQuery(data?.createProject?.project_stages));
+
             updateIrds(rebuildIrdsResultQuery(data?.createProject?.project_irds));
             setCurrent(newCurrent);
         },
@@ -74,10 +120,10 @@ const Index = () => {
         },
     });
 
-    const [mutateIrd] = useMutation(UPDATE_IRD_MUTATION, {
+    const [mutateIrd] = useMutation(UPDATE_IRDS_TO_PROJECT_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
-            updateIrds(data);
+            updateIrds(rebuildIrdsResultQuery(data?.updateIrdsToProject));
             setCurrent(newCurrent);
 
         },
@@ -87,10 +133,10 @@ const Index = () => {
         },
     });
 
-    const [mutateStage] = useMutation(UPDATE_STAGE_MUTATION, {
+    const [mutateStage] = useMutation(UPDATE_STAGES_TO_PROJECT_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
-            updateStages(data);
+            updateStages(rebuildStagesResultQuery(data?.updateStagesToProject));
             setCurrent(newCurrent);
 
         },
@@ -100,7 +146,11 @@ const Index = () => {
         },
     });
     const handleStage = (steps) => {
+
+
         setNewCurrent(steps)
+        setCurrent(newCurrent);
+
         switch (current) {
             case 0:
                 mutateProject({
@@ -119,7 +169,7 @@ const Index = () => {
                             date_completion: dayjs(project?.date_completion).format("YYYY-MM-DD"),
                             price: project?.price,
                             prepayment: project?.prepayment,
-                            facility_id: project?.facility_id.map(row => row[3][0]),
+                            facility_id: project?.facility_id?.map(row => row[3][0]),
                             delegates_id: project?.delegates_id,
                         }
                     }
@@ -127,12 +177,11 @@ const Index = () => {
 
                 break;
             case 1:
-                mutateStage({variables: {data: {...stages}}});
+                mutateStage({variables: {data: rebuildStagesToQuery(stages)}});
                 break;
             case 2:
-                mutateIrd({variables: {data: {...irds}}});
-                break;
-        }
+                mutateIrd({variables: {data: rebuildIrdToQuery(irds)}});
+         }
     }
 
     const next = () => {
@@ -208,7 +257,9 @@ const Index = () => {
                                 <StyledBlockLarge label={"Ирд"}>
                                     <IrdsProjectForm onCompleted={(value) => getNewProject(value, "IRDS")}/>
                                 </StyledBlockLarge>) :
-                            current === 3 ? (<></>) :
+                            current === 3 ? (<>
+                                <ProjectDetails project={project}/>
+                                </>) :
                                 <></>
                 }
             </div>

@@ -28,10 +28,10 @@ extend type Mutation{
 
     updateIrdsToProject(
         items: [IrdToProject]
-    ): Int @checkRole(roles: ["admin"])
+    ): [ProjectIRD] @checkRole(roles: ["admin"])
     updateStagesToProject(
         items: [StageToProject]
-    ): Int @checkRole(roles: ["admin"])
+    ): [ProjectStage] @checkRole(roles: ["admin"])
     updateTaskToProject(
         data: TasksToProject
     ): Int @checkRole(roles: ["admin"])
@@ -83,6 +83,7 @@ type ProjectStage{
     stage: Stage
     number: Int
     price: Float
+    price_to_paid: Float
     percent: Int
     date_start: String
     duration: Int
@@ -109,7 +110,19 @@ type InheritedTask{
     project_task_id: ID!
     project_inherited_task_id: ID!
 }
-
+ input StageToProject {
+     id: ID
+     project_id: ID
+     stage_id: ID
+     stage_number: Int
+     price: Float
+     percent: Int
+     date_start: String
+     duration: Int
+     date_end: String
+     progress: Int
+     price_to_paid: Float
+ }
 # Данные для запроса
 input ProjectInput {
     id: ID
@@ -154,20 +167,6 @@ input ProjectIrdInput {
     date_end: String
     number: Int
 }
-#
-input StageToProject {
-    id: ID
-    projectId: ID!
-    stage_id: ID
-    stageNumber: Int
-    price: Float
-    percent: Int
-    dateStart: String
-    duration: Int
-    dateEnd: String
-    progress: Int
-    price_to_paid: Float
-}
 input TasksToProject {
     id: ID
     projectId: ID!
@@ -185,11 +184,12 @@ input TaskExecutor {
     executor_id: ID
     price: Int
 }
-input IrdToProject {
-    projectId: ID!
-    irdId: ID
-    stageNumber: Int
-    applicationProject: Int
-    receivedDate: String
-}
+ input IrdToProject {
+     id: ID
+     project_id: ID
+     ird_id: ID
+     stageNumber: Int
+     applicationProject: Int
+     receivedDate: String
+ }
 

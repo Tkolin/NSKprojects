@@ -57,11 +57,9 @@ export const useProjectStore = create(((set, get) => ({
     },
     updateIrds: (newIrds) => {
         set({irds: newIrds});
-        console.log("newIrds", newIrds)
     },
     updateStages: (newStages) => {
         set({stages: newStages});
-        console.log("newStages", newStages)
     },
 
 

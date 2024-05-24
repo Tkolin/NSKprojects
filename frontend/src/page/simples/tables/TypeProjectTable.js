@@ -3,7 +3,7 @@ import {useMutation, useQuery} from '@apollo/client';
 import {Button, Form, Modal, notification, Space, Table} from 'antd';
 import {TYPES_PROJECTS_QUERY} from '../../../graphql/queries';
 import {DELETE_TYPE_PROJECT_MUTATION} from '../../../graphql/mutationsTypeProject';
-import TypeProjectForm from "../../form/modelsForms/TypeProjectForm";
+import TypeProjectForm from "../../../components/form/modelsForms/TypeProjectForm";
 
 import LoadingSpinnerStyles from "../../../components/style/LoadingSpinnerStyles";
 import Search from "antd/es/input/Search";

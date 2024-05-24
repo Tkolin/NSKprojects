@@ -57,7 +57,7 @@ const ProjectForm = ({onCompleted, onChange}) => {
 
         form.setFieldsValue({
             ...actualProject,
-            id: 0,
+            id: actualProject?.id ?? null,
             date_signing: actualProject?.date_signing ? dayjs(actualProject?.date_signing) : null,
             date_end: actualProject?.date_end ?  dayjs(actualProject?.date_end): null,
             date_create: actualProject?.date_create ? dayjs(actualProject?.date_create): null,

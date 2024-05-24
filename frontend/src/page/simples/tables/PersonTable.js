@@ -13,7 +13,7 @@ import {
 } from 'antd';
 import {PERSONS_QUERY} from '../../../graphql/queries';
 import {DELETE_PERSON_MUTATION} from '../../../graphql/mutationsPerson';
-import PersonForm from "../../form/modelsForms/PersonForm";
+import PersonForm from "../../../components/form/modelsForms/PersonForm";
 import Search from "antd/es/input/Search";
 import {StyledFormLarge} from "../../../components/style/FormStyles";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";

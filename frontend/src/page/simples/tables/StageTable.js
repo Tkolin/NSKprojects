@@ -3,7 +3,7 @@ import {useMutation, useQuery} from '@apollo/client';
 import {Button, Divider, Form, Modal, notification, Space, Table} from 'antd';
 import {STAGES_QUERY} from '../../../graphql/queries';
 import {DELETE_STAGE_MUTATION} from '../../../graphql/mutationsStage';
-import StageForm from "../../form/modelsForms/StageForm";
+import StageForm from "../../../components/form/modelsForms/StageForm";
 import LoadingSpinnerStyles from "../../../components/style/LoadingSpinnerStyles";
 import Search from "antd/es/input/Search";
 import {StyledFormLarge} from "../../../components/style/FormStyles";

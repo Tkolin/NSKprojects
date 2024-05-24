@@ -14,6 +14,7 @@ export const ADD_PROJECT_MUTATION = gql`
             id
             number
             name
+            prepayment
             organization_customer
             {
                 id
@@ -131,9 +132,9 @@ export const UPDATE_PROJECT_MUTATION = gql`
                 }
             }
             date_signing
+            duration
             date_end
             date_create
-            duration
             status
             {
                 id
@@ -174,22 +175,44 @@ export const UPDATE_PROJECT_MUTATION = gql`
     }
 `;
 export const UPDATE_IRDS_TO_PROJECT_MUTATION = gql`
-    mutation UpdateStagesToProject(
+    mutation UpdateIrdsToProject(
         $data: [IrdToProject]
     ) {
         updateIrdsToProject(
             items: $data
-        )
+        ){
+            id
+            IRD{
+                id
+                name
+            }
+            receivedDate
+            stageNumber
+            applicationProject
+        }
     }
 `;
 
 export const UPDATE_STAGES_TO_PROJECT_MUTATION = gql`
-    mutation UpdateIrdsToProject(
+    mutation UpdateStagesToProject(
         $data: [StageToProject]
     ) {
         updateStagesToProject(
             items: $data
-        )
+        ){
+            id
+            number
+            stage {
+                id
+                name
+            }
+            price_to_paid
+            date_start
+            duration
+            date_end
+            percent
+            price
+        }
     }
 `;
 export const UPDATE_TASKS_TO_PROJECT_MUTATION = gql`

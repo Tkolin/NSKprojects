@@ -1,34 +1,33 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
-import {Button, Col, Form, Row, фRow} from 'antd';
-import LoadingSpinnerStyles from '../../../../components/style/LoadingSpinnerStyles';
+import {useQuery} from '@apollo/client';
+import {Button, Col, Form, Row} from 'antd';
 import {StyledFormLarge} from '../../../../components/style/FormStyles';
 import {NotificationContext} from '../../../../NotificationProvider';
 import {
-    PROJECT_STATUSES_QUERY_COMPACT,
-    TYPES_PROJECTS_QUERY_COMPACT,
-    CONTACTS_QUERY_COMPACT,
-    ORGANIZATIONS_QUERY_COMPACT, STAGES_QUERY_COMPACT
+STAGES_QUERY_COMPACT
 } from '../../../../graphql/queriesCompact';
-import {
-    PROJECTS_QUERY_BY_ID
-} from '../../../../graphql/queriesByID';
-import {UPDATE_STAGES_TO_PROJECT_MUTATION} from '../../../../graphql/mutationsProject';
+
 import StageItem from "./StageItem";
-import {CloudUploadOutlined, PlusOutlined} from "@ant-design/icons";
+import { PlusOutlined} from "@ant-design/icons";
 import {useProjectStore} from "../Store";
 import dayjs from "dayjs";
+import StagesListHeader from "./StagesListHeader";
+import StagesListFooter from "./StagesListFooter";
 
 const StagesProjectForm = ({onCompleted, onChange}) => {
+    // Хранилище
     const updateStages = useProjectStore((state) => state.updateStages);
     const actualStages = useProjectStore((state) => state.stages);
+    const project = useProjectStore((state) => state.project);
     // Первичные данные
-    const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
-    const [formLoad, setFormLoad] = useState(false);
+
+    // Внешняя логика
+    const [totalToPercent, setTotalToPercent] = useState(0);
+    const [totalToDuration,setTotalToDuration] = useState(0);
+
 
     const load = () => {
-        console.log(actualStages);
         form.setFieldsValue({
             stageList: actualStages && Object.values(actualStages)?.map((row) => ({
                 ...row,
@@ -49,7 +48,26 @@ const StagesProjectForm = ({onCompleted, onChange}) => {
         useQuery(STAGES_QUERY_COMPACT);
 
     const handleChange = () => {
+        console.log("stageFormChange", form.getFieldsValue())
         updateStages({...form.getFieldValue("stageList")});
+        handleFooterUpdate();
+    }
+    const handleFooterUpdate = () => {
+        const stageList = form.getFieldValue('stageList');
+        if (Array.isArray(stageList)) {
+            const totalDuration = stageList.reduce((acc, item) => {
+                const duration = parseInt(item?.duration_item) || 0;
+                return acc + duration;
+            }, 0);
+            setTotalToDuration(totalDuration);
+        }
+        if (Array.isArray(stageList)) {
+            const totalProcent = stageList.reduce((acc, item) => {
+                const procent = item?.percent ?? 0;
+                return acc + procent;
+            }, 0);
+            setTotalToPercent(totalProcent);
+        }
     }
 
     return (
@@ -60,21 +78,34 @@ const StagesProjectForm = ({onCompleted, onChange}) => {
             <Form.List name="stageList">
                 {(fields, {add, remove}) => (
                     <>
-                        {fields.map(({key, name, ...restField}, index) => (
-                            <StageItem
-                                form={form}
+                        <StagesListHeader/>
 
-                                key={key}
-                                index={index}
-                                value={name}
-                                stagesData={dataStages?.stages?.items}
-                                removeItem={remove}
-                                onChangeExtend={handleChange}
-                                isFirst={index === 0}
-                                isLast={index === fields.length - 1}
-                                {...restField}
-                            />
+                        {fields.map(({key, name, ...restField}, index) => (
+                            <>
+                                <StageItem
+                                    form={form}
+
+                                    projectPrice={project?.price ?? 0}
+                                    prepayment={project?.prepayment ?? 0}
+
+                                    key={key}
+                                    index={index}
+                                    value={name}
+                                    stagesData={dataStages?.stages?.items}
+                                    removeItem={remove}
+                                    onChange={handleChange}
+                                    isFirst={index === 0}
+                                    isLast={index === fields.length - 1}
+                                    {...restField}
+                                />
+                            </>
+
                         ))}
+                        <StagesListFooter
+                        project={project}
+                        totalToDuration={totalToDuration}
+                        totalToPercent={totalToPercent}/>
+
                         <Row>
                             <Col span={24}>
                                 <Button
@@ -87,6 +118,7 @@ const StagesProjectForm = ({onCompleted, onChange}) => {
                                 </Button>
                             </Col>
                         </Row>
+
                     </>
                 )}
             </Form.List>

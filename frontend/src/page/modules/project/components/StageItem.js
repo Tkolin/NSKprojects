@@ -3,13 +3,18 @@ import {Row, Col, Form, InputNumber, Select, Tooltip, DatePicker, Input} from 'a
 import {CaretUpOutlined, CaretDownOutlined, MinusCircleOutlined} from '@ant-design/icons';
 import {StyledFormItemAutoComplete} from "../../../../components/style/SearchAutoCompleteStyles";
 import {EmptyFormItem} from "../../../../components/formComponents/EmptyFormItem";
+import dayjs from "dayjs";
 
 const {RangePicker} = DatePicker;
 
 const StageItem = ({
-    value,
-    onChange,
-                       onChangeExtend,
+                       value,
+
+                        projectPrice,
+                        prepayment,
+
+
+                       onChange,
                        index,
                        form,
                        stagesData,
@@ -18,6 +23,7 @@ const StageItem = ({
                        isFirst,
                        isLast
                    }) => {
+
     // бновления всех записей в строке
     const [stageAutoComplete, setStageAutoComplete] = useState({options: [], selected: null});
     const [firstLoad, setFirstLoad] = useState(false)
@@ -35,15 +41,36 @@ const StageItem = ({
                 return item;
             });
             form.setFieldValue("stageList", updatedStageList);
-            onChangeExtend();
+            onChange();
         }
     }, [stageAutoComplete?.selected]);
     useEffect(() => {
         setStageAutoComplete({...stageAutoComplete, selected: form.getFieldValue("stageList")?.[index]?.stage_id})
+        handlePriceChange(form.getFieldValue(["stageList",index,"percent"]));
         setFirstLoad(true);
     }, []);
     // Для хранения выбора элемента
 
+
+    // Обработчик изменения даты
+    const handleDateRangeChange = (dates) => {
+        if (dates && dates[0] && dates[1]) {
+            form.setFieldValue(["stageList", index, "duration"],
+                dayjs(dates[1]).diff(dayjs(dates[0]), 'day') + 1); // обновляем поле продолжительности
+            onChange(); // вызываем onChange для обновления данных
+        }
+    };
+    // Обработчик цен
+    const handlePriceChange = (percent) => {
+        if (percent) {
+            const price = projectPrice * (percent / 100);
+            form.setFieldValue(["stageList", index, "price"],
+                price); // обновляем поле продолжительности
+            form.setFieldValue(["stageList", index, "price_to_paid"],
+                price * ( prepayment / 100)); // обновляем поле продолжительности
+            onChange(); // вызываем onChange для обновления данных
+        }
+    };
     return (
         <Row key={index} gutter={2} style={{marginBottom: 0}}>
             <Col span={0.5} style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
@@ -78,14 +105,14 @@ const StageItem = ({
                 )}
             </Col>
             <Col span={1}>
-                <Tooltip title="Номер этапа">
-                    <InputNumber disabled={true}
-                                 value={index}
-                                 style={{width: "100%"}}
-                                 min={1}
-                                 max={25}/>
-                </Tooltip>
-            </Col>
+                     <Tooltip title="Номер этапа">
+                        <InputNumber disabled={true}
+                                     style={{width: "100%"}}
+                               value={index + 1}
+                                      min={1}
+                                     max={25}/>
+                    </Tooltip>
+             </Col>
             <Col span={8} style={{width: "100%"}}>
                 <Tooltip title="Наименование этапа">
 
@@ -102,33 +129,19 @@ const StageItem = ({
                     />
                 </Tooltip>
             </Col>
-                 <EmptyFormItem name={"stage_id"}/>
-             <Col span={2}>
-                <Tooltip title="Продолжительность этапа (дни)">
-                    <Form.Item
-                        style={{marginBottom: 0, width: "100%"}}
-                        name={[index, 'duration_item']}
-                        rules={[{
-                            required: true,
-                        },]}
-                    >
-                        <InputNumber style={{width: "100%"}}
-                        />
-                    </Form.Item>
-                </Tooltip>
-            </Col>
+            <EmptyFormItem name={"stage_id"}/>
             <Col span={4}>
                 <Tooltip title="Сроки этапа">
                     <Form.Item
                         style={{marginBottom: 0, width: "100%"}}
-                        name={[index, 'date_range']}
+                        name={[index,'date_range']}
                         rules={[{
                             required: true,
                         },]}
                     >
                         <RangePicker
                             style={{width: "100%"}}
-                            onChange={(e) => onChangeExtend()}
+                            onChange={handleDateRangeChange}
                             id={{
                                 start: 'date_start',
                                 end: 'date_end',
@@ -136,6 +149,9 @@ const StageItem = ({
                         />
                     </Form.Item>
                 </Tooltip>
+            </Col>
+            <Col span={0}>
+                <EmptyFormItem name={"duration"}/>
             </Col>
             <Col span={2}>
                 <Tooltip title="Процент от общей стоимости">
@@ -147,6 +163,7 @@ const StageItem = ({
                         },]}
                     >
                         <InputNumber max={100} min={0} value={0}
+                                     onChange={handlePriceChange}
                                      defaultValue={1} suffix={"%"}
                                      style={{width: "100%"}}
                         />

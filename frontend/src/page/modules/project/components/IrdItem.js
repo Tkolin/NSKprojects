@@ -9,15 +9,16 @@ import {EmptyFormItem} from "../../../../components/formComponents/EmptyFormItem
 
 
 const IrdItem = ({
-                     onChangeIrdId,
+                     value,
+
+                     onChange,
                      index,
+                     form,
                      irdData,
                      removeItem,
-                     onChangeExtend,
-                     form
                  }) => {
 
-
+    // бновления всех записей в строке
     const [irdAutoComplete, setIrdAutoComplete] = useState({options: [], selected: null});
     const [firstLoad, setFirstLoad] = useState(false)
 
@@ -28,17 +29,17 @@ const IrdItem = ({
                 if (idx === index) {
                     return {
                         ...item,
-                        stage_id: irdAutoComplete?.selected
+                        ird_id: irdAutoComplete?.selected
                     };
                 }
                 return item;
             });
             form.setFieldValue("irdList", updatedIrdList);
-            onChangeExtend();
+            onChange();
         }
     }, [irdAutoComplete?.selected]);
     useEffect(() => {
-        setIrdAutoComplete({...irdAutoComplete, selected: form.getFieldValue("irdList")?.[index]?.stage_id})
+        setIrdAutoComplete({...irdAutoComplete, selected: form.getFieldValue("irdList")?.[index]?.ird_id})
         setFirstLoad(true);
     }, []);
 
@@ -46,16 +47,7 @@ const IrdItem = ({
 
     return (
         <Row key={index} gutter={2} style={{marginBottom: 0}}>
-            <Col span={0}>
-                <Form.Item
-                    name={[index, 'ird_id']}
-                    style={{marginBottom: 0, width: 0, height: 0}}
-                >
-                    <InputNumber style={{marginBottom: 0, width: 0, height: 0}}
-                    />
-                </Form.Item>
 
-            </Col>
             <Col span={14}>
                 <Tooltip title="Наименование ИРД">
 
@@ -77,7 +69,7 @@ const IrdItem = ({
 
                 <Tooltip title="Номер этапа">
                     <Form.Item
-                        name={[index, 'stage_number_item']}
+                        name={[index, 'stageNumber']}
                         style={{marginBottom: 0, width: "100%"}}
                     >
                         <InputNumber max={100}
@@ -91,7 +83,7 @@ const IrdItem = ({
             <Col span={3}>
                 <Tooltip title="Номер в приложении">
                     <Form.Item
-                        name={[index, 'application_project_item']}
+                        name={[index, 'applicationProject']}
                         style={{marginBottom: 0, width: "100%"}}
                     >
                         <InputNumber max={100} min={0}
@@ -104,13 +96,13 @@ const IrdItem = ({
             <Col span={3}>
                 <Tooltip title="Дата получения">
                     <Form.Item
-                        name={[index, 'date_complite_item']}
+                        name={[index, 'receivedDate']}
                         style={{marginBottom: 0, textAlign: "center", width: "100%"}}
 
                     >
                         <DatePicker
                             style={{marginBottom: 0, width: "100%"}}
-                            onChange={()=>onChangeExtend()}
+                            onChange={()=>onChange()}
                             status={"warning"}
                             placeholder="Получено"/>
                     </Form.Item>

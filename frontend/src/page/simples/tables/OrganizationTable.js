@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import { Descriptions, Divider, Form, Modal, notification, Space, Table} from 'antd';
 import {DELETE_ORGANIZATION_MUTATION} from '../../../graphql/mutationsOrganization';
-import OrganizationForm from "../../form/modelsForms/OrganizationForm";
+import OrganizationForm from "../../../components/form/modelsForms/OrganizationForm";
 import Search from "antd/es/input/Search";
 import StyledLinkManagingDataTable from "../../../components/style/TableStyles";
 import {StyledFormLarge} from "../../../components/style/FormStyles";

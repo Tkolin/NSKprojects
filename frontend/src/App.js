@@ -19,6 +19,13 @@ import {NotificationProvider} from "./NotificationProvider";
 import PersonPage from "./page/simples/forms/PersonPage";
 import OrganizationPage from "./page/simples/forms/OrganizationPage";
 import ProjectModules from "./page/modules/project/Index";
+import ContactTable from "./page/simples/tables/ContactTable";
+import PersonTable from "./page/simples/tables/PersonTable";
+import OrganizationTable from "./page/simples/tables/OrganizationTable";
+import IrdTable from "./page/simples/tables/IrdTable";
+import TypeProjectTable from "./page/simples/tables/TypeProjectTable";
+import StageTable from "./page/simples/tables/StageTable";
+import ProjectTable from "./page/simples/tables/ProjectTable";
 
 
 const App = () => {
@@ -53,14 +60,13 @@ const App = () => {
                             <Route path="/form/organizations" element={<OrganizationPage/>}/>
                             <Route path="/form/new_project" element={<ProjectModules/>}/>
 
-                            {/*<Route path="/table/contacts" element={<ContactPage/>}/>*/}
-                            {/*<Route path="/table/persons" element={<ContactPage/>}/>*/}
-                            {/*<Route path="/table/organizations" element={<ContactPage/>}/>*/}
-                            {/*<Route path="/table/ird" element={<ContactPage/>}/>*/}
-                            {/*<Route path="/table/type_projects" element={<ContactPage/>}/>*/}
-                            {/*<Route path="/table/stage_projects" element={<ContactPage/>}/>*/}
-                            {/*<Route path="/reports/project" element={<ContactPage/>}/>*/}
-                            {/*<Route path="/form/new_project" element={<ComposedProjectPage/>}/>*/}
+                            <Route path="/table/contacts" element={<ContactTable/>}/>
+                            <Route path="/table/persons" element={<PersonTable/>}/>
+                            <Route path="/table/organizations" element={<OrganizationTable/>}/>
+                            <Route path="/table/ird" element={<IrdTable/>}/>
+                            <Route path="/table/type_projects" element={<TypeProjectTable/>}/>
+                            <Route path="/table/stage_projects" element={<StageTable/>}/>
+                            <Route path="/reports/project" element={<ProjectTable/>}/>
 
                             <Route path="/auth/register" element={<RegisterPage/>}/>
                             <Route path="/auth/login" element={<LoginPage/>}/>
