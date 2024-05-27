@@ -2,7 +2,7 @@
 
 namespace App\Services\FileGenerate;
 
-use App\Services\GeneratorService;
+use App\Services\FileGenerate\GeneratorService;
 use App\Services\MonthEnum;
 use PhpOffice\PhpWord\TemplateProcessor;
 

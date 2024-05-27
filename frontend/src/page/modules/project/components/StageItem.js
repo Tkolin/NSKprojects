@@ -63,11 +63,11 @@ const StageItem = ({
     // Обработчик цен
     const handlePriceChange = (percent) => {
         if (percent) {
-            const price = projectPrice * (percent / 100);
-            form.setFieldValue(["stageList", index, "price"],
-                price); // обновляем поле продолжительности
-            form.setFieldValue(["stageList", index, "price_to_paid"],
-                price * ( prepayment / 100)); // обновляем поле продолжительности
+            const price = (projectPrice * (percent / 100)).toFixed(2);
+            const priceToPaid = (price - price * (prepayment / 100)).toFixed(2);
+
+            form.setFieldValue(["stageList", index, "price"], parseFloat(price)); // обновляем поле продолжительности
+            form.setFieldValue(["stageList", index, "price_to_paid"], parseFloat(priceToPaid)); // обновляем поле продолжительности
             onChange(); // вызываем onChange для обновления данных
         }
     };

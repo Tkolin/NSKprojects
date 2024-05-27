@@ -64,6 +64,7 @@ const IrdItem = ({
                 </Tooltip>
             </Col>
             <EmptyFormItem name={"ird_id"}/>
+            <EmptyFormItem name={"project_id"}/>
 
             <Col span={3}>
 

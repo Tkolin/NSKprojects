@@ -2,7 +2,7 @@
 
 namespace App\Services\FileGenerate;
 
-use App\Services\GeneratorService;
+use App\Services\FileGenerate\GeneratorService;
 use App\Services\MonthEnum;
 use App\Services\TranslatorNumberToName;
 use PhpOffice\PhpWord\TemplateProcessor;
@@ -69,8 +69,7 @@ class TheActRenderingServicesTemplateGeneratorService
             'projectOrganization.INN' => $project["organization_customer"]['INN'] ?? '(данные отсутвуют)',
             'projectOrganization.KPP' => $project["organization_customer"]['KPP'] ?? '(данные отсутвуют)',
             'projectOrganization.address_legal' => $project["organization_customer"]['address_legal'] ?? '(данные отсутвуют)',
-
-            'projectStages.stage.finalPriceToString' => $TranslatorNumberToName->num2str($projectStage['price']),
+            'projectStages.stage.finalPriceToString' => isset($projectStage['price']) ? $TranslatorNumberToName->num2str($projectStage['price']) : "",
             'myOrg.INN' => $myOrg['INN'] ?? '(данные отсутвуют)',
             'myOrg.KPP' => $myOrg['KPP'] ?? '(данные отсутвуют)',
             'myOrg.address_legal' => $myOrg['address_legal'] ?? '(данные отсутвуют)',
@@ -86,9 +85,8 @@ class TheActRenderingServicesTemplateGeneratorService
         foreach ($replacements as $key => $value) {
             $templateProcessor->setValue($key, $value);
         }
-        $currentDate = date('Ymd');
 
-        $fileName = 'Акт_об_оказании_услуг_'.$project['id'].'_'.$projectStage['stage']['id'].'_'.$currentDate.'_'.'.docx';
+        $fileName = 'Акт_об_оказании_услуг'.'.docx';
 
         $filePath = storage_path('app/' . $fileName);
         $templateProcessor->saveAs($filePath);

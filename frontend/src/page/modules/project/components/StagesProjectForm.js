@@ -14,11 +14,8 @@ import dayjs from "dayjs";
 import StagesListHeader from "./StagesListHeader";
 import StagesListFooter from "./StagesListFooter";
 
-const StagesProjectForm = ({onCompleted, onChange}) => {
-    // Хранилище
-    const updateStages = useProjectStore((state) => state.updateStages);
-    const actualStages = useProjectStore((state) => state.stages);
-    const project = useProjectStore((state) => state.project);
+const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, project }) => {
+
     // Первичные данные
     const [form] = Form.useForm();
 

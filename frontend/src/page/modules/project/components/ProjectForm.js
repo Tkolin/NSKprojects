@@ -24,10 +24,8 @@ import {useProjectStore} from "../Store";
 import {EmptyFormItem} from "../../../../components/formComponents/EmptyFormItem";
 
 
-const ProjectForm = ({onCompleted, onChange}) => {
-    const updateProject = useProjectStore((state) => state.updateProject);
-    const actualProject = useProjectStore((state) => state.project);
-    // Первичные данные
+const ProjectForm = ({onCompleted, onChange, updateProject, actualProject}) => {
+     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
     const [formLoad, setFormLoad] = useState(false);

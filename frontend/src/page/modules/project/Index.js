@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Button, Form, Steps, theme} from 'antd';
 import {StyledBlockLarge, StyledBlockRegular} from "../../../components/style/BlockStyles";
 import StagesProjectForm from "./components/StagesProjectForm";
@@ -19,7 +19,7 @@ import dayjs from "dayjs";
 import ProjectDetails from "./components/ProjectDetails";
 
 
-const Index = () => {
+const Index = ({object}) => {
     const current = useProjectStore((state) => state.step);
     const setCurrent = useProjectStore((state) => state.setSteps);
 
@@ -33,58 +33,63 @@ const Index = () => {
     const [newCurrent, setNewCurrent] = useState(current)
 
     const {openNotification} = useContext(NotificationContext);
-
+    useEffect(() => {
+        if (object && object.id) {
+            setCurrent(0);
+            console.log("object",object)
+            reconstructProjectToIrdsAndStages(object);
+        }
+    }, [object]);
 
     const {token} = theme.useToken();
     const rebuildProjectResultQuery = (data) => {
-        const row = data?.createProject;
         return {
             ...data,
-            date_create: dayjs(row?.date_create),
-            date_end: dayjs(row?.date_end),
-            date_signing: dayjs(row?.date_signing),
-            delegates_id: row?.delegations?.map(k => k?.id),
-            facility_id: row?.facilities?.map(k => k?.id),
-            organization_customer_id: row?.organization_customer?.id,
-            organization_customer_name: row?.organization_customer?.name,
-            status_id: row?.status?.id,
-            type_project_document_id: row?.type_project_document?.id,
-            type_project_document_name: row?.type_project_document?.name,
+            date_create: data?.date_create ? dayjs(data?.date_create) : null,
+            date_end: data?.date_end ? dayjs(data?.date_end): null,
+            date_signing: data?.date_signing ? dayjs(data?.date_signing): null,
+            delegates_id: data?.delegations?.map(k => k?.id),
+            facility_id: data?.facilities?.map(k => k?.id),
+            organization_customer_id: data?.organization_customer?.id,
+            organization_customer_name: data?.organization_customer?.name,
+            status_id: data?.status?.id,
+            type_project_document_id: data?.type_project_document?.id,
+            type_project_document_name: data?.type_project_document?.name,
         };
     };
     const rebuildStagesResultQuery = (data) => {
-        console.log("rebuildStagesResultQuery");
-        return data?.map((row, index) =>({
+        return data?.map((row, index) => ({
             ...row,
-             date_range: [
-                 row?.date_start ? dayjs(row?.date_start) : null,
-                 row?.date_end ?  dayjs(row?.date_end)  : null],
-            stage_number: index+1,
+            date_range: [
+                row?.date_start ? dayjs(row?.date_start) : null,
+                row?.date_end ? dayjs(row?.date_end) : null],
+            stage_number: index + 1,
             stage_id: row?.stage?.id,
             stage_name: row?.stage?.name
         }));
     };
     const rebuildIrdsResultQuery = (data) => {
-        return data?.map((row, index) =>({
+        return data?.map((row, index) => ({
             ...row,
-            receivedDate:  row.receivedDate ? dayjs(row.receivedDate?.[1]).format("YYYY-MM-DD")  : null,
+            receivedDate: row.receivedDate ? dayjs(row.receivedDate?.[1]).format("YYYY-MM-DD") : null,
             ird_id: row?.IRD?.id,
             ird_name: row?.IRD?.name
         }));
     };
     const rebuildStagesToQuery = (data) => {
-        if(!data)
+        if (!data)
             return [];
         const dataArray = Object.values(data);
+        console.log("rebuildStagesToQuery", data);
 
-        return dataArray?.map((row, index) =>({
+        return dataArray?.map((row, index) => ({
             id: row?.id ?? null,
             project_id: project?.id ?? null,
             date_start: row.date_range?.[0] ? dayjs(row.date_range?.[0]).format("YYYY-MM-DD") : null,
-            date_end: row.date_range?.[1] ? dayjs(row.date_range?.[1]).format("YYYY-MM-DD")  : null,
+            date_end: row.date_range?.[1] ? dayjs(row.date_range?.[1]).format("YYYY-MM-DD") : null,
             duration: row?.duration ?? null,
             stage_id: row?.stage_id ?? null,
-            stage_number: index+1,
+            stage_number: index + 1,
             price: row?.price ?? null,
             percent: row?.percent ?? null,
             progress: row?.progress ?? null,
@@ -92,12 +97,12 @@ const Index = () => {
         }));
     };
     const rebuildIrdToQuery = (data) => {
-        if(!data)
+        if (!data)
             return [];
         const dataArray = Object.values(data);
 
-        return dataArray?.map((row, index) =>({
-            id:  row?.id ?? null,
+        return dataArray?.map((row, index) => ({
+            id: row?.id ?? null,
             project_id: project?.id ?? null,
             ird_id: row?.ird_id ?? null,
             stageNumber: row?.stageNumber ? parseInt(row?.stageNumber) : null,
@@ -105,14 +110,43 @@ const Index = () => {
             receivedDate: row?.receivedDate ? dayjs(row?.receivedDate).format("YYYY-MM-DD") : null,
         }));
     };
+    const rebuildProjectToQuery = (daprojectta) => {
+        if (!project)
+            return [];
 
+        return{
+            id: project?.id ?? null,
+            number: project?.number,
+            name: project?.name,
+            organization_customer_id: project?.organization_customer_id,
+            type_project_document_id: project?.type_project_document_id,
+            date_signing: dayjs(project?.date_signing).format("YYYY-MM-DD"),
+            duration: project?.duration,
+            date_end: dayjs(project?.date_end).format("YYYY-MM-DD"),
+            date_create: dayjs(project?.date_create).format("YYYY-MM-DD"),
+            status_id: project?.status_id,
+            date_completion: dayjs(project?.date_completion).format("YYYY-MM-DD"),
+            price: project?.price,
+            prepayment: project?.prepayment,
+            facility_id: project?.facility_id?.map(row => row[3][0]),
+            delegates_id: project?.delegates_id,
+        };
+    };
+    const reconstructProjectToIrdsAndStages = (project) => {
+        console.log("reconstructProjectToIrdsAndStages", project);
+        console.log("updateProject", rebuildProjectResultQuery(project));
+
+        updateProject(rebuildProjectResultQuery(project));
+
+        updateStages(rebuildStagesResultQuery(project?.project_stages));
+
+        updateIrds(rebuildIrdsResultQuery(project?.project_irds));
+    }
     const [mutateProject] = useMutation(project?.id ? UPDATE_PROJECT_MUTATION : ADD_PROJECT_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
-            updateProject(rebuildProjectResultQuery(data?.createProject));
-            updateStages(rebuildStagesResultQuery(data?.createProject?.project_stages));
+            reconstructProjectToIrdsAndStages(data?.createProject);
 
-            updateIrds(rebuildIrdsResultQuery(data?.createProject?.project_irds));
             setCurrent(newCurrent);
         },
         onError: (error) => {
@@ -128,7 +162,7 @@ const Index = () => {
 
         },
         onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении сооздания : ${error.message}`);
+            openNotification('topRight', 'error', `Ошибка при выполнении сооздания ирд : ${error.message}`);
             return false;
         },
     });
@@ -141,7 +175,7 @@ const Index = () => {
 
         },
         onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении сооздания : ${error.message}`);
+            openNotification('topRight', 'error', `Ошибка при выполнении сооздания этапа : ${error.message}`);
             return false;
         },
     });
@@ -149,7 +183,6 @@ const Index = () => {
 
 
         setNewCurrent(steps)
-        setCurrent(newCurrent);
 
         switch (current) {
             case 0:
@@ -180,8 +213,17 @@ const Index = () => {
                 mutateStage({variables: {data: rebuildStagesToQuery(stages)}});
                 break;
             case 2:
-                mutateIrd({variables: {data: rebuildIrdToQuery(irds)}});
-         }
+                console.log("project", project);
+
+                const data = rebuildIrdToQuery(irds);
+                console.log("mutateIrd", data);
+                mutateIrd({variables: {data: data}});
+                break;
+            case 3:
+                setCurrent(steps);
+
+
+        }
     }
 
     const next = () => {
@@ -245,20 +287,25 @@ const Index = () => {
             <div style={contentStyle}>
                 {current === 0 ? (
                         <StyledBlockRegular label={"Основные данные об проекте"}>
-                            <ProjectForm/>
+                            <ProjectForm actualProject={project} updateProject={(value) => updateProject(value)}/>
                         </StyledBlockRegular>
                     ) :
                     current === 1 ? (
                             <StyledBlockLarge label={"Этапы"}>
-                                <StagesProjectForm onCompleted={(value) => getNewProject(value, "STAGES")}/>
+                                <StagesProjectForm
+                                    updateStages={(value) => updateStages(value)}
+                                    actualStages={stages}
+                                    project={project}/>
                             </StyledBlockLarge>
                         ) :
                         current === 2 ? (
                                 <StyledBlockLarge label={"Ирд"}>
-                                    <IrdsProjectForm onCompleted={(value) => getNewProject(value, "IRDS")}/>
+                                    <IrdsProjectForm
+                                        actualIrds={irds}
+                                        updateIrds={(value) => updateIrds(value)}/>
                                 </StyledBlockLarge>) :
                             current === 3 ? (<>
-                                <ProjectDetails project={project}/>
+                                    <ProjectDetails project={project}/>
                                 </>) :
                                 <></>
                 }

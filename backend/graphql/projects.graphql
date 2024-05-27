@@ -2,13 +2,13 @@
 extend type Mutation{
     updateProject(
         data: ProjectInput
-    ): Project! @checkRole(roles: ["admin"])
+    ): Project! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     createProject(
         data: ProjectInput
-    ): Project! @checkRole(roles: ["admin"])
+    ): Project! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateSectionReferenceToProject(
         items: [SectionReferencesToProject]
-    ): Int @checkRole(roles: ["admin"])
+    ): Int @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
     updateProjectStage(
         id: ID!
@@ -24,26 +24,26 @@ extend type Mutation{
         progress: String!
         date_start: String!
         duration: String!
-    ): ProjectStage! @checkRole(roles: ["admin"])
+    ): ProjectStage! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
     updateIrdsToProject(
         items: [IrdToProject]
-    ): [ProjectIRD] @checkRole(roles: ["admin"])
+    ): [ProjectIRD] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateStagesToProject(
         items: [StageToProject]
-    ): [ProjectStage] @checkRole(roles: ["admin"])
+    ): [ProjectStage] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateTaskToProject(
         data: TasksToProject
-    ): Int @checkRole(roles: ["admin"])
+    ): Int @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     deleteTaskToProject(
         id: ID!
-    ): String @checkRole(roles: ["admin"])
+    ): String @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     createTaskToProject(
         data: TasksToProject
-    ): Int @checkRole(roles: ["admin"])
+    ): Int @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updatePaymentsToProject(
         project: ID
-    ): Int @checkRole(roles: ["admin"])
+    ): Int @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 }
 
 # Основная модель проекта

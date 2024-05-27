@@ -2,7 +2,7 @@
 
 namespace App\Services\FileGenerate;
 
-use App\Services\GeneratorService;
+use App\Services\FileGenerate\GeneratorService;
 use App\Services\MonthEnum;
 use App\Services\TranslatorNumberToName;
 use PhpOffice\PhpWord\TemplateProcessor;
@@ -94,7 +94,7 @@ class StagesProjectTemplateGeneratorService
 
         $templateProcessor->cloneRowAndSetValues('projectStages.number' , $table);
         // Сохранение отредактированного документа
-        $fileName = 'График_работ.docx';
+        $fileName = 'График_рабыот.docx';
 
 
 

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import {useQuery} from '@apollo/client';
-import { Collapse, Descriptions, Divider, Form, Modal, notification, Row, Space, Table, Typography} from 'antd';
+import {useMutation, useQuery} from '@apollo/client';
+import {Collapse, Descriptions, Divider, Form, Modal, notification, Row, Space, Table, Typography} from 'antd';
 import {PROJECTS_QUERY} from '../../../graphql/queries';
 import Search from "antd/es/input/Search";
 import {StyledFormLarge} from "../../../components/style/FormStyles";
@@ -13,6 +13,16 @@ import PaymentInvoiceProjectDownload from "../../../components/script/PaymentInv
 import Index from "../../modules/project/Index";
 import TaskExecutorContractDownload from "../../../components/script/TaskExecutorContractDownload";
 import {useNavigate} from "react-router-dom";
+import ProjectForm from "../../modules/project/components/ProjectForm";
+import StagesProjectForm from "../../modules/project/components/StagesProjectForm";
+import IrdsProjectForm from "../../modules/project/components/IrdsProjectForm";
+import dayjs from "dayjs";
+import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
+import {
+    ADD_PROJECT_MUTATION,
+    UPDATE_IRDS_TO_PROJECT_MUTATION,
+    UPDATE_PROJECT_MUTATION, UPDATE_STAGES_TO_PROJECT_MUTATION
+} from "../../../graphql/mutationsProject";
 
 const {Text} = Typography;
 
@@ -21,8 +31,9 @@ const ProjectTable = () => {
     // Состояния
     const [formSearch] = Form.useForm();
     const [selectedProject, setSelectedProject] = useState(null);
-    const [editModalVisible, setEditModalVisible] = useState(false);
+    const [editModalStatus, setEditModalStatus] = useState(false);
     const navigate = useNavigate();
+
 
     // Данные
     const [page, setPage] = useState(1);
@@ -60,21 +71,129 @@ const ProjectTable = () => {
     const onSearch = (value) => {
         setSearch(value);
     }
-    // Обработчик событий
-    const handleClose = () => {
-        setEditModalVisible(false);
-    };
-    const handleEdit = (project) => {
-        console.log(project);
-        setSelectedProject(project);
-        setEditModalVisible(true);
-    };
 
     function addLeadingZeros(number, length) {
         return String(number).padStart(length, '0');
     }
 
+    const rebuildProjectResultQuery = (data) => {
+        return {
+            ...data,
+            date_create: data?.date_create ? dayjs(data?.date_create) : null,
+            date_end: data?.date_end ? dayjs(data?.date_end) : null,
+            date_signing: data?.date_signing ? dayjs(data?.date_signing) : null,
+            delegates_id: data?.delegations?.map(k => k?.id),
+            facility_id: data?.facilities?.map(k => k?.id),
+            organization_customer_id: data?.organization_customer?.id,
+            organization_customer_name: data?.organization_customer?.name,
+            status_id: data?.status?.id,
+            type_project_document_id: data?.type_project_document?.id,
+            type_project_document_name: data?.type_project_document?.name,
+        };
+    };
+    const rebuildStagesResultQuery = (data) => {
+        return data?.map((row, index) => ({
+            ...row,
+            date_range: [
+                row?.date_start ? dayjs(row?.date_start) : null,
+                row?.date_end ? dayjs(row?.date_end) : null],
+            stage_number: index + 1,
+            stage_id: row?.stage?.id,
+            stage_name: row?.stage?.name
+        }));
+    };
+    const rebuildProjectToQuery = (project) => {
+        if (!project)
+            return [];
 
+        return {
+            id: project?.id ?? null,
+            number: project?.number,
+            name: project?.name,
+            organization_customer_id: project?.organization_customer_id,
+            type_project_document_id: project?.type_project_document_id,
+            date_signing: dayjs(project?.date_signing).format("YYYY-MM-DD"),
+            duration: project?.duration,
+            date_end: dayjs(project?.date_end).format("YYYY-MM-DD"),
+            date_create: dayjs(project?.date_create).format("YYYY-MM-DD"),
+            status_id: project?.status_id,
+            date_completion: dayjs(project?.date_completion).format("YYYY-MM-DD"),
+            price: project?.price,
+            prepayment: project?.prepayment,
+            facility_id: project?.facility_id?.map(row => row[3][0]),
+            delegates_id: project?.delegates_id,
+        };
+    };
+    const rebuildIrdsResultQuery = (data) => {
+        return data?.map((row, index) => ({
+            ...row,
+            receivedDate: row.receivedDate ? dayjs(row.receivedDate?.[1]).format("YYYY-MM-DD") : null,
+            ird_id: row?.IRD?.id,
+            ird_name: row?.IRD?.name
+        }));
+    };
+    const rebuildStagesToQuery = (data, projectId) => {
+        if (!data)
+            return [];
+        const dataArray = Object.values(data);
+
+        return dataArray?.map((row, index) => ({
+            id: row?.id ?? null,
+            project_id: projectId,
+            date_start: row.date_range?.[0] ? dayjs(row.date_range?.[0]).format("YYYY-MM-DD") : null,
+            date_end: row.date_range?.[1] ? dayjs(row.date_range?.[1]).format("YYYY-MM-DD") : null,
+            duration: row?.duration ?? null,
+            stage_id: row?.stage_id ?? null,
+            stage_number: index + 1,
+            price: row?.price ?? null,
+            percent: row?.percent ?? null,
+            progress: row?.progress ?? null,
+            price_to_paid: row?.price_to_paid ?? null,
+        }));
+    };
+    const rebuildIrdToQuery = (data, projectId) => {
+        if (!data)
+            return [];
+        const dataArray = Object.values(data);
+
+        return dataArray?.map((row, index) => ({
+            id: row?.id ?? null,
+            project_id: projectId,
+            ird_id: row?.ird_id ?? null,
+            stageNumber: row?.stageNumber ? parseInt(row?.stageNumber) : null,
+            applicationProject: row?.applicationProject ? parseInt(row?.applicationProject) : null,
+            receivedDate: row?.receivedDate ? dayjs(row?.receivedDate).format("YYYY-MM-DD") : null,
+        }));
+    };
+    const [mutateProject] = useMutation(UPDATE_PROJECT_MUTATION, {
+        onCompleted: (data) => {
+            openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
+            setEditModalStatus(null);
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при выполнении сооздания : ${error.message}`);
+        },
+    });
+
+    const [mutateIrd] = useMutation(UPDATE_IRDS_TO_PROJECT_MUTATION, {
+        onCompleted: (data) => {
+            openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
+            setEditModalStatus(null);
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при выполнении сооздания ирд : ${error.message}`);
+        },
+    });
+
+    const [mutateStage] = useMutation(UPDATE_STAGES_TO_PROJECT_MUTATION, {
+        onCompleted: (data) => {
+            openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
+            setEditModalStatus(null);
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при выполнении сооздания этапа : ${error.message}`);
+        },
+    });
     // Обработка загрузки и ошибок
     if (error) return `Ошибка! ${error.message}`;
 
@@ -141,13 +260,13 @@ const ProjectTable = () => {
             title: 'Дата подписания',
             dataIndex: 'date_signing',
             key: 'date_signing',
-            width: 100,  sorter: true, ellipsis: true,
+            width: 100, sorter: true, ellipsis: true,
         },
         {
             title: 'Продолжительность',
             dataIndex: 'duration',
             key: 'duration',
-            width: 100,  sorter: true, ellipsis: true,
+            width: 100, sorter: true, ellipsis: true,
         },
         {
             title: 'Дата начала',
@@ -159,13 +278,13 @@ const ProjectTable = () => {
             title: 'Дата окончания',
             dataIndex: 'date_end',
             key: 'date_end',
-            width: 100,  sorter: true, ellipsis: true,
+            width: 100, sorter: true, ellipsis: true,
         },
         {
             title: 'Стоимость',
             dataIndex: 'price',
             key: 'price',
-            width: 160,  sorter: true, ellipsis: true,
+            width: 160, sorter: true, ellipsis: true,
             render: (price) =>
                 (price?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' ₽')
         },
@@ -173,26 +292,26 @@ const ProjectTable = () => {
             title: 'Статус',
             dataIndex: 'status',
             key: 'status',
-            width: 220,  sorter: true, ellipsis: true,
+            width: 220, sorter: true, ellipsis: true,
             render: (status) => status ?
                 status.name : ""
         },
         {
-            title: 'Договор', key: 'btnContract', width: 80, align: 'center',  sorter: true, ellipsis: true,
+            title: 'Договор', key: 'btnContract', width: 80, align: 'center', sorter: true, ellipsis: true,
             render: (text, record) => (
                 <>
                     <ProjectFileDownload projectId={record.id}/>
                 </>
             ),
         }, {
-            title: 'Список ИРД', key: 'btnIrd', width: 80, align: 'center',  sorter: true, ellipsis: true,
+            title: 'Список ИРД', key: 'btnIrd', width: 80, align: 'center', sorter: true, ellipsis: true,
             render: (text, record) => (
                 <>
                     <IrdsProjectFileDownload projectId={record.id}/>
                 </>
             ),
         }, {
-            title: 'График этапов', key: 'btnStage', width: 80, align: 'center',  sorter: true, ellipsis: true,
+            title: 'График этапов', key: 'btnStage', width: 80, align: 'center', sorter: true, ellipsis: true,
             render: (text, record) => (
                 <>
                     <StagesProjectFileDownload projectId={record.id}/>
@@ -202,12 +321,29 @@ const ProjectTable = () => {
         {
             title: 'Управление',
             key: 'edit',
-            width: 110,  sorter: true, ellipsis: true,
+            width: 110, sorter: true, ellipsis: true,
             render: (text, record) => (
                 <Row>
-                    <Typography.Link onClick={() => handleEdit(record)}>Изменить</Typography.Link>
-                    <Typography.Link onClick={() => navigate(`/project/tasks/${record.id}`)}>Распределение задач</Typography.Link>
-                 </Row>
+                    <Typography.Link onClick={() => setEditModalStatus({
+                        status: "base",
+                        project: rebuildProjectResultQuery(record)
+                    })}>Изменить
+                        Проект</Typography.Link>
+                    <Typography.Link onClick={() => setEditModalStatus({
+                        status: "irds",
+                        irds: rebuildIrdsResultQuery(record?.project_irds),
+                        project: rebuildProjectResultQuery(record)
+                    })}>Изменить
+                        Список ИРД</Typography.Link>
+                    <Typography.Link onClick={() => setEditModalStatus({
+                        status: "stages",
+                        stages: rebuildStagesResultQuery(record?.project_stages),
+                        project: rebuildProjectResultQuery(record)
+                    })}>Изменить
+                        Список Этапов</Typography.Link>
+                    <Typography.Link onClick={() => navigate(`/project/tasks/${record.id}`)}>Распределение
+                        задач</Typography.Link>
+                </Row>
             ),
         },
     ];
@@ -265,8 +401,7 @@ const ProjectTable = () => {
                     total: data?.projects?.count,
                     current: page,
                     pageSize: limit,
-                    onChange: (page, limit) =>
-                    {
+                    onChange: (page, limit) => {
                         setPage(page);
                         setLimit(limit)
                     },
@@ -309,26 +444,27 @@ const ProjectTable = () => {
                                     </Descriptions>
                                 </>
                                 {record.project_stages.map(psid => (
-                                        <>
-                                            <Descriptions title={`Этап №${psid.number} (${psid.stage.name})`}
-                                                          column={1}>
-                                                <Text>Этап {psid.number} {psid.stage.name}</Text>
-                                            </Descriptions>
-                                            <Descriptions title={`Акт`} column={1}>
-                                                <ActRenderingProjectDownload stageNumber={psid.number}
-                                                                             projectId={record.id} type="acts"/>
-                                            </Descriptions>
-                                            <Descriptions title={`Счёт`} column={1}>
-                                                <PaymentInvoiceProjectDownload stageNumber={psid.number}
-                                                                               projectId={record.id} type="acts"/>
-                                            </Descriptions>
-                                        </>
+                                    <>
+                                        <Descriptions title={`Этап №${psid.number} (${psid.stage.name})`}
+                                                      column={1}>
+                                            <Text>Этап {psid.number} {psid.stage.name}</Text>
+                                        </Descriptions>
+                                        <Descriptions title={`Акт`} column={1}>
+                                            <ActRenderingProjectDownload stageNumber={psid.number}
+                                                                         projectId={record.id} type="acts"/>
+                                        </Descriptions>
+                                        <Descriptions title={`Счёт`} column={1}>
+                                            <PaymentInvoiceProjectDownload stageNumber={psid.number}
+                                                                           projectId={record.id} type="acts"/>
+                                        </Descriptions>
+                                    </>
 
                                 ))}
                             </Descriptions>
                             <Collapse style={{width: "550px", marginLeft: 10}}>
                                 <Collapse.Panel header="Исполнители" key="all-persons">
-                                    <Descriptions labelStyle={{height: 2333, margin:  0, padding: 0 }} layout={"vertical"} bordered size={"small"} column={2} style={{width: "100%"}}>
+                                    <Descriptions labelStyle={{height: 2333, margin: 0, padding: 0}} layout={"vertical"}
+                                                  bordered size={"small"} column={2} style={{width: "100%"}}>
                                         <Descriptions column={1}>
                                             <Text>Исполнитель</Text>
                                         </Descriptions>
@@ -345,9 +481,11 @@ const ProjectTable = () => {
                                             return acc;
                                         }, []).map((executor) => (
                                             <>
-                                                <Descriptions title={"Исполнитель"}   column={1}>{executor.passport.lastname} {executor.passport.firstname} {executor.passport.patronymic}</Descriptions>
-                                                <Descriptions title={"Договор"}  column={1}>
-                                                    <TaskExecutorContractDownload executorId={executor.id} projectId={record.id} type="acts"/>
+                                                <Descriptions title={"Исполнитель"}
+                                                              column={1}>{executor.passport.lastname} {executor.passport.firstname} {executor.passport.patronymic}</Descriptions>
+                                                <Descriptions title={"Договор"} column={1}>
+                                                    <TaskExecutorContractDownload executorId={executor.id}
+                                                                                  projectId={record.id} type="acts"/>
                                                 </Descriptions>
                                             </>
                                         ))}
@@ -360,15 +498,57 @@ const ProjectTable = () => {
                 }}
             />
             <Modal
-                key={selectedProject?.id}
-                open={editModalVisible}
-                onCancel={() => setEditModalVisible(false)}
+                key={editModalStatus?.project?.id}
+                open={editModalStatus?.status}
+                onCancel={() => setEditModalStatus(null)}
                 footer={null}
-                onClose={handleClose}
+                onClose={() => setEditModalStatus(null)}
                 width={1840}
                 style={{width: 1840}}
             >
-                <Index editProject={selectedProject} onClose={handleClose}/>
+                {editModalStatus?.status === "base" ? (
+                        <>
+                            <ProjectForm
+                                actualProject={editModalStatus?.project}
+                                updateProject={(value) => setEditModalStatus({...editModalStatus, project: value})}
+                            />
+                            <div>
+                                <StyledButtonGreen onClick={() =>
+                                    mutateProject({variables: {data: rebuildProjectToQuery(editModalStatus?.project)}})}>
+                                    Сохранить
+                                </StyledButtonGreen>
+                            </div>
+                        </>
+                    ) :
+                    editModalStatus?.status === "irds" ? (
+                            <>
+                                <IrdsProjectForm
+                                    actualIrds={editModalStatus?.irds}
+                                    updateIrds={(value) => setEditModalStatus({...editModalStatus, irds: value})}
+                                    project={editModalStatus?.project}
+                                />
+                                <div>
+                                    <StyledButtonGreen onClick={() =>
+                                        mutateIrd({variables: {data: rebuildIrdToQuery(editModalStatus?.irds, editModalStatus?.project?.id)}})}>
+                                        Сохранить
+                                    </StyledButtonGreen>
+                                </div>
+                            </>) :
+                        editModalStatus?.status === "stages" ? (
+                                <>
+                                    <StagesProjectForm
+                                        actualStages={editModalStatus?.stages}
+                                        updateStages={(value) => setEditModalStatus({...editModalStatus, stages: value})}
+                                        project={editModalStatus?.project}
+                                    />
+                                    <div>
+                                        <StyledButtonGreen onClick={() =>
+                                            mutateStage({variables: {data: rebuildStagesToQuery(editModalStatus?.stages, editModalStatus?.project?.id)}})}>
+                                            Сохранить
+                                        </StyledButtonGreen>
+                                    </div>
+                                </>)
+                            : null}
             </Modal>
 
         </div>

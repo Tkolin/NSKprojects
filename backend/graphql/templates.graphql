@@ -5,16 +5,16 @@ extend type Mutation {
         listIrds_id: [ID]
         listStageNumber: [Int]
         listAppNumber: [Int]
-    ) : Int @checkRole(roles: ["admin"])
+    ) : Int @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateTaskTemplate(
         typeProjectId: ID,
         listTasks_id: [ID],
         listInheritedTasks_id: [ID],
         stageNumber: [Int],
-    ) : Int @checkRole(roles: ["admin"])
+    ) : Int @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateStagesTemplate(
         items: [TemplateStageToTypeProject]
-    ) : Int @checkRole(roles: ["admin"])
+    ) : Int @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 }
 # Данные для мутаций
 input TemplateStageToTypeProject {

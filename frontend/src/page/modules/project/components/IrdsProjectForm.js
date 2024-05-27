@@ -10,11 +10,7 @@ import IrdItem from "./IrdItem";
 import {useProjectStore} from "../Store";
 import dayjs from "dayjs";
 
-const IrdsProjectForm = ({localObject, initialObject, onCompleted}) => {
-    // Хранилище
-    const updateIrds = useProjectStore((state) => state.updateIrds);
-    const actualIrds = useProjectStore((state) => state.irds);
-
+const IrdsProjectForm = ({localObject, initialObject, onCompleted, updateIrds, actualIrds}) => {
     // Первичные данные
     const [form] = Form.useForm();
 

@@ -12,9 +12,6 @@ final readonly class ProjectIrdsFileDownload
 {
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
-        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
 
             $projectData = Project::with('organization_customer')
                 ->with('type_project_document')
@@ -35,8 +32,6 @@ final readonly class ProjectIrdsFileDownload
             return ['url' => $contractFilePath];
 
 
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
-        }
+
     }
 }

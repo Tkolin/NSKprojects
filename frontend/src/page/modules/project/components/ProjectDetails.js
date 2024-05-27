@@ -6,6 +6,9 @@ import dayjs from "dayjs";
 import PaymentInvoiceProjectDownload from "../../../../components/script/PaymentInvoiceProjectDownload";
 import ActRenderingProjectDownload from "../../../../components/script/ActRenderingProjectDownload";
 import TaskExecutorContractDownload from "../../../../components/script/TaskExecutorContractDownload";
+import IrdsProjectFileDownload from "../../../../components/script/IrdsProjectFileDownload";
+import StagesProjectFileDownload from "../../../../components/script/StagesProjectFileDownload";
+import ProjectFileDownload from "../../../../components/script/ProjectFileDownload";
 const {RangePicker} = DatePicker;
 const {Text} = Typography;
 
@@ -14,6 +17,18 @@ const ProjectDetails = ({project, totalToPercent, totalToDuration}) => {
 
     return (
         <Row>
+            <>
+                Список ИРД
+                <ProjectFileDownload projectId={project?.id}/>
+            </>
+            <>
+                Список ИРД
+                <IrdsProjectFileDownload projectId={project?.id}/>
+            </>
+            <>
+                График этапов
+                <StagesProjectFileDownload projectId={project?.id}/>
+            </>
             <Descriptions layout={"vertical"} bordered size={"small"} style={{width: "600px"}}>
                 <Descriptions column={1}>
                     <Text>Этапы</Text>
@@ -55,6 +70,7 @@ const ProjectDetails = ({project, totalToPercent, totalToDuration}) => {
 
                 ))}
             </Descriptions>
+
             <Collapse style={{width: "550px", marginLeft: 10}}>
                 <Collapse.Panel header="Исполнители" key="all-persons">
                     <Descriptions labelStyle={{height: 2333, margin:  0, padding: 0 }} layout={"vertical"} bordered size={"small"} column={2} style={{width: "100%"}}>

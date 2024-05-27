@@ -1,12 +1,12 @@
 extend type Mutation{
-    createFormula(data: FormulaInput): Int @checkRole(roles: ["admin"])
-    updateFormula(data: FormulaInput): Int @checkRole(roles: ["admin"])
-    createReference(data: ReferenceInput): Int @checkRole(roles: ["admin"])
+    createFormula(data: FormulaInput): Int @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    updateFormula(data: FormulaInput): Int @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    createReference(data: ReferenceInput): Int @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
-    computeFormulas(formulas: [String]): [String] @checkRole(roles: ["admin"])
+    computeFormulas(formulas: [String]): [String] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
-    createFenrir(data: FenrirInput): Int  @checkRole(roles: ["admin"])
-    createFenrirTemplate(data: FenrirInput): Int @checkRole(roles: ["admin"])
+    createFenrir(data: FenrirInput): Int  @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    createFenrirTemplate(data: FenrirInput): Int @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 }
 input FormulaInput{
     id: ID

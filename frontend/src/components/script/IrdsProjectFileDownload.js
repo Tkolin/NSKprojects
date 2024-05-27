@@ -26,14 +26,12 @@ const IrdsProjectFileDownload = ({projectId, text}) => {
     });
 
     const handleDownload = () => {
-        console.log(projectId);
-        downloadProjectIrds({ variables: { id: projectId } });
+         downloadProjectIrds({ variables: { id: projectId } });
     };
 
     const handleDownloadClick = async (downloadedFileUrl) => {
         try {
             const link = document.createElement('a');
-            console.log(link);
 
             link.href = `${LaravelURL}download-projectIrds/${downloadedFileUrl}`;
             link.download = 'contractIrds.docx';
