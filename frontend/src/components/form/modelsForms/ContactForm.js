@@ -19,7 +19,7 @@ import {
 import OrganizationForm from "./OrganizationForm";
 import {CONTACTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
-import OrganizationModalForm from "../../../page/simples/modal/OrganizationModalForm";
+import OrganizationModalForm from "../../modal/OrganizationModalForm";
 
 const ContactForm = ({localObject, initialObject, onCompleted}) => {
     // Первичные данные

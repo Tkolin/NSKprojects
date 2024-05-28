@@ -24,6 +24,9 @@ import {useProjectStore} from "../Store";
 import {EmptyFormItem} from "../../../../components/formComponents/EmptyFormItem";
 import ContactForm from "../../../../components/form/modelsForms/ContactForm";
 import OrganizationForm from "../../../../components/form/modelsForms/OrganizationForm";
+import OrganizationModalForm from "../../../../components/modal/OrganizationModalForm";
+import TypeProjectModalForm from "../../../../components/modal/TypeProjectModalForm";
+import ContactModalForm from "../../../../components/modal/ContactModalForm";
 
 
 const ProjectForm = ({onCompleted, onChange, updateProject, actualProject}) => {
@@ -39,8 +42,7 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject}) => {
 
     // Состояния
     const [delegatesModalStatus, setDelegatesModalStatus] = useState(null);
-    const [delegatesAutoComplete, setDelegatesAutoComplete] = useState({options: [], selected: {}});
-    const [organizationsModalStatus, setOrganizationsModalStatus] = useState(null);
+     const [organizationsModalStatus, setOrganizationsModalStatus] = useState(null);
     const [organizationsAutoComplete, setOrganizationsAutoComplete] = useState({options: [], selected: 0});
     const [typeProjectModalStatus, setTypeProjectModalStatus] = useState(null);
     const [typeProjectAutoComplete, setTypeProjectAutoComplete] = useState({options: [], selected: {}});
@@ -141,7 +143,8 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject}) => {
                 formLabel={"Заказчик"}
                 placeholder={"Начните ввод..."}
                 loading={loadingOrganizations}
-                firstBtnOnClick={() => setOrganizationsModalStatus("add")}
+                firstBtnOnClick={() =>  {console.log("sdafasdarswevgasr");
+                    setOrganizationsModalStatus("add");}}
 
                 data={dataOrganizations?.organizations?.items}
                 stateSearch={organizationsAutoComplete}
@@ -155,7 +158,8 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject}) => {
                 mode={'multiple'}
                 placeholder={"Начните ввод..."}
                 loading={loadingDelegates}
-                firstBtnOnClick={() => setDelegatesModalStatus("add")}
+                firstBtnOnClick={() =>
+                setDelegatesModalStatus("add")}
 
                 onSelect={() => handleChange()}
                 items={dataDelegates?.contacts?.items}
@@ -229,30 +233,19 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject}) => {
 
         </StyledFormRegular>
 
-        <Modal
-            open={addContactModalVisibleMode}
-            onCancel={() => setAddContactModalVisibleMode(false)}
-            footer={null}
-            onClose={handleCloseModalFormView}
-        >
-            <ContactForm onClose={handleCloseModalFormView}/>
-        </Modal>
-        <Modal
-            open={addOrganizationModalVisibleMode}
-            onCancel={() => setAddOrganizationModalVisibleMode(false)}
-            footer={null}
-            onClose={handleCloseModalFormView}
-        >
-            <OrganizationForm onClose={handleCloseModalFormView} organization={null}/>
-        </Modal>
-        <Modal
-            open={editOrganizationModalVisibleMode}
-            onCancel={() => setEditOrganizationModalVisibleMode(false)}
-            footer={null}
-            onClose={handleCloseModalFormView}
-        >
-            <OrganizationForm onClose={handleCloseModalFormView} organization={selectedOrganizationData}/>
-        </Modal>
+        <ContactModalForm
+            onClose={()=>setDelegatesModalStatus(null)}
+            mode={delegatesModalStatus}/>
+        <OrganizationModalForm
+            key={organizationsAutoComplete?.selected}
+            object={{id: organizationsAutoComplete?.selected}}
+            onClose={()=>setOrganizationsModalStatus(null)}
+            mode={organizationsModalStatus}/>
+        <TypeProjectModalForm
+            key={typeProjectAutoComplete?.selected}
+            object={{id: TypeProjectModalForm?.selected}}
+            onClose={()=>setTypeProjectModalStatus(null)}
+            mode={typeProjectModalStatus}/>
     </div>)
 };
 

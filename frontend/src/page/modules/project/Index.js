@@ -17,6 +17,9 @@ import {UPDATE_STAGE_MUTATION} from "../../../graphql/mutationsStage";
 import {NotificationContext} from "../../../NotificationProvider";
 import dayjs from "dayjs";
 import ProjectDetails from "./components/ProjectDetails";
+import TasksProjectExecutorForm from "./components/TasksProjectExecutorForm";
+import TasksToProjectStageForm from "./components/TasksToProjectStageForm";
+import TaskProjectForm from "./components/TaskProjectForm";
 
 
 const Index = ({object}) => {
@@ -221,6 +224,9 @@ const Index = ({object}) => {
                 break;
             case 3:
                 setCurrent(steps);
+                break;
+            case 4:
+                setCurrent(steps);
 
 
         }
@@ -305,8 +311,11 @@ const Index = ({object}) => {
                                         updateIrds={(value) => updateIrds(value)}/>
                                 </StyledBlockLarge>) :
                             current === 3 ? (<>
-                                    <ProjectDetails project={project}/>
+                                <TaskProjectForm project={project}/>
                                 </>) :
+                                current === 4 ? (<>
+                                        <ProjectDetails project={project}/>
+                                    </>):
                                 <></>
                 }
             </div>

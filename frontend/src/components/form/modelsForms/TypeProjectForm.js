@@ -75,7 +75,7 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted }) => {
 
 
     return (
-             <StyledBlockRegular label={nameModel}>
+             < >
                 <StyledFormItem name="name" label="Наименование" rules={[{required: true}]}>
                     <Input/>
                 </StyledFormItem>
@@ -99,7 +99,7 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted }) => {
                         </StyledButtonGreen>
                     </StyledFormItem>
                 </div>
-            </StyledBlockRegular>
+            </>
      );
 };
 
