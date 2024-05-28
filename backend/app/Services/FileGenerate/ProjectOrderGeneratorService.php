@@ -2,7 +2,7 @@
 
 namespace App\Services\FileGenerate;
 
-use App\Services\GeneratorService;
+use App\Services\FileGenerate\GeneratorService;
 use App\Services\MonthEnum;
 use App\Services\NameCaseLib\NCL\NCL;
 use App\Services\NameCaseLib\NCLNameCaseRu;
@@ -29,15 +29,6 @@ class ProjectOrderGeneratorService
         $month = $dateComponents[1] ? MonthEnum::getMonthName($dateComponents[1]) : "__";
         $day = $dateComponents[2] ?? "__";
         error_log("Договор");
-
-        $avansPercent = false;
-        if(isset($project->project_stages)){
-            foreach ($project->project_stages as $project_stages){
-                if($project_stages->stage_id == 0){
-                    $avansPercent = $project_stages->percent;
-                }
-            }
-        }
 
         // Склонение имени
         $NCLNameCaseRu = new NCLNameCaseRu();

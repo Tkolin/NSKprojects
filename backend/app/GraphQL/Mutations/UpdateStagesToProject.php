@@ -15,14 +15,14 @@ final readonly class UpdateStagesToProject
         for ($i = 0; $i < $count; $i++) {
             ProjectStage::updateOrCreate(
                 [
-                    'project_id' => $stages[$i]["projectId"],
+                    'project_id' => $stages[$i]["project_id"],
                     'stage_id' => (string)$stages[$i]["stage_id"]
                 ],
                 [
                     'number' => isset($stages[$i]["stageNumber"]) ? (int)$stages[$i]["stageNumber"] : null,
-                    'date_start' => isset($stages[$i]["dateStart"]) ? substr((string) $stages[$i]["dateStart"], 0, 10) : null,
+                    'date_start' => isset($stages[$i]["date_start"]) ? substr((string) $stages[$i]["date_start"], 0, 10) : null,
                     'duration' => isset($stages[$i]["duration"]) ? (int)$stages[$i]["duration"] : null,
-                    'date_end' => isset($stages[$i]["dateEnd"]) ? substr((string) $stages[$i]["dateEnd"], 0, 10) : null,
+                    'date_end' => isset($stages[$i]["date_end"]) ? substr((string) $stages[$i]["date_end"], 0, 10) : null,
                     'percent' => isset($stages[$i]["percent"]) ? (int)$stages[$i]["percent"] : null,
                     'price' => isset($stages[$i]["price"]) ? (int)$stages[$i]["price"] : null,
                     'price_to_paid' => isset($stages[$i]["price"]) ? (int)$stages[$i]["price_to_paid"] : null,
@@ -30,9 +30,10 @@ final readonly class UpdateStagesToProject
             );
         }
         // Удаление записей, которых нет в списке
-        ProjectStage::where('project_id', $stages[0]["projectId"])
+        ProjectStage::where('project_id', $stages[0]["project_id"])
             ->whereNotIn('stage_id', array_column($stages, 'stage_id'))
             ->delete();
-        return true;
+
+        return ProjectStage::where('project_id', $stages[0]["project_id"])->get();
     }
 }

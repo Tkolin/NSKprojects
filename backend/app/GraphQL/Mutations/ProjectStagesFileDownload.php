@@ -7,14 +7,12 @@ use App\Services\FileGenerate\StagesProjectTemplateGeneratorService;
 use App\Services\GrpahQL\AuthorizationService;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
+use Exception;
 
 final readonly class ProjectStagesFileDownload
 {
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
-        $allowedRoles = ['admin','bookkeeper']; // Роли, которые разрешены
-        $accessToken = $context->request()->header('Authorization');
-        if (AuthorizationService::checkAuthorization($accessToken, $allowedRoles)) {
 
             $projectData = Project::with('organization_customer')
                 ->with('type_project_document')
@@ -39,8 +37,5 @@ final readonly class ProjectStagesFileDownload
             return ['url' => $contractFilePath];
 
 
-        } else {
-            throw new AuthenticationException('Отказано в доступе');
-        }
     }
 }

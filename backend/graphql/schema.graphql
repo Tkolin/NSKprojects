@@ -5,40 +5,40 @@
 #import templates.graphql
 #import fenrir.graphql
 type Query {
-    contacts(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): ContactsResult @checkRole(roles: ["admin"])
-    organizations(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): OrganizationsResult @checkRole(roles: ["admin"])
-    positions(id: ID, queryOptions: QueryOptions, queryType: String): PositionsResult @checkRole(roles: ["admin"])
-    irds(id: ID, queryOptions: QueryOptions, queryType: String): IrdsResult @checkRole(roles: ["admin"])
-    stages(id: ID, queryOptions: QueryOptions, queryType: String): StagesResult @checkRole(roles: ["admin"])
-    tasks(id: ID, queryOptions: QueryOptions, queryType: String): TasksResult @checkRole(roles: ["admin"])
+    contacts(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): ContactsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    organizations(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): OrganizationsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    positions(id: ID, queryOptions: QueryOptions, queryType: String): PositionsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    irds(id: ID, queryOptions: QueryOptions, queryType: String): IrdsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    stages(id: ID, queryOptions: QueryOptions, queryType: String): StagesResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    tasks(id: ID, queryOptions: QueryOptions, queryType: String): TasksResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     projects(id: ID, queryOptions: QueryOptions, queryType: String, projectId: ID): ProjectsResult
-    persons(id: ID, queryOptions: QueryOptions, queryType: String): PersonsResult @checkRole(roles: ["admin"])
-    biks(id: ID, queryOptions: QueryOptions, queryType: String): BikResult @checkRole(roles: ["admin"])
-    passportPlaceIssues(id: ID, queryOptions: QueryOptions, queryType: String): PassportPlaceIssueResult @checkRole(roles: ["admin"])
-    banks(id: ID, queryOptions: QueryOptions, queryType: String): BanksResult @checkRole(roles: ["admin"])
+    persons(id: ID, queryOptions: QueryOptions, queryType: String): PersonsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    biks(id: ID, queryOptions: QueryOptions, queryType: String): BikResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    passportPlaceIssues(id: ID, queryOptions: QueryOptions, queryType: String): PassportPlaceIssueResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    banks(id: ID, queryOptions: QueryOptions, queryType: String): BanksResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
-    typeProjects(id: ID, queryOptions: QueryOptions, queryType: String): TypeProjectsResult @checkRole(roles: ["admin"])
-    technicalSpecification: TechnicalSpecificationResult @checkRole(roles: ["admin"])
-    typeTechnicalSpecification: TypeTechnicalSpecification @checkRole(roles: ["admin"])
-    sectionReferences: SectionReferenceResult @checkRole(roles: ["admin"])
-    groupTypeProjects(id: ID): [GroupTypeProjectDocument] @checkRole(roles: ["admin"])
+    typeProjects(id: ID, queryOptions: QueryOptions, queryType: String): TypeProjectsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    technicalSpecification: TechnicalSpecificationResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    typeTechnicalSpecification: TypeTechnicalSpecification @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    sectionReferences: SectionReferenceResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    groupTypeProjects(id: ID): [GroupTypeProjectDocument] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
-    templatesIrdsTypeProjects(typeProject: ID): [TemplateIRD] @checkRole(roles: ["admin"])
-    templatesStagesTypeProjects(typeProject: ID): [TemplateStage] @checkRole(roles: ["admin"])
-    templatesTasksTypeProjects(typeProject: ID): [TemplateTask] @checkRole(roles: ["admin"])
-    templatesSectionReferencesTypeProjects(typeProject: ID): [TemplateSectionReference] @checkRole(roles: ["admin"])
+    templatesIrdsTypeProjects(typeProject: ID): [TemplateIRD] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    templatesStagesTypeProjects(typeProject: ID): [TemplateStage] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    templatesTasksTypeProjects(typeProject: ID): [TemplateTask] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    templatesSectionReferencesTypeProjects(typeProject: ID): [TemplateSectionReference] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
-    projectIrds(id: ID, queryOptions: QueryOptions, projectId: ID, queryType: String): [ProjectIRD] @checkRole(roles: ["admin"])
-    projectStages(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [ProjectStage] @checkRole(roles: ["admin"])
-    projectTasksQuery(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [ProjectTask] @checkRole(roles: ["admin"])
-    projectSectionReferences(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [ProjectSectionReference] @checkRole(roles: ["admin"])
+    projectIrds( projectId: ID): [ProjectIRD] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    projectStages( projectId: ID): [ProjectStage] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    projectTasksQuery(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [ProjectTask] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    projectSectionReferences(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [ProjectSectionReference] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
-    formulaByKey(id: ID, queryOptions: QueryOptions ,keys: [String!]): FormulaResult @checkRole(roles: ["admin"])
-    references(id: ID, queryOptions: QueryOptions): ReferenceResult @checkRole(roles: ["admin"])
-    fenrirs(id: ID, queryOptions: QueryOptions): FenrirsResult @checkRole(roles: ["admin"])
-    templateFenrirs(id: ID, queryOptions: QueryOptions): FenrirsResult @checkRole(roles: ["admin"])
-    templateFenrirsTypeProject(projectId: ID): FenrirsResult @checkRole(roles: ["admin"])
-    projectFenrirs(typeProject: ID): FenrirsResult @checkRole(roles: ["admin"])
+    formulaByKey(id: ID, queryOptions: QueryOptions ,keys: [String!]): FormulaResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    references(id: ID, queryOptions: QueryOptions): ReferenceResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    fenrirs(id: ID, queryOptions: QueryOptions): FenrirsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    templateFenrirs(id: ID, queryOptions: QueryOptions): FenrirsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    templateFenrirsTypeProject(projectId: ID): FenrirsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    projectFenrirs(typeProject: ID): FenrirsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
     currentUser: User!
 
@@ -64,7 +64,7 @@ input QueryOptions {
 type Mutation {
     updateTask(
         names: [String]
-    ): [Task] @checkRole(roles: ["admin"])
+    ): [Task] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
     createTypeTechnicalSpecification(
         name: String
@@ -73,75 +73,75 @@ type Mutation {
         id: ID
         name: String
         techicalSpecification: ID
-    ): TypeTechnicalSpecification @checkRole(roles: ["admin"])
+    ): TypeTechnicalSpecification @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
     createGroupTypeProject(
         name: String
         techicalSpecification: ID
-    ): GroupTypeProjectDocument @checkRole(roles: ["admin"])
+    ): GroupTypeProjectDocument @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateGroupTypeProject(
         id: ID
         name: String
-    ): GroupTypeProjectDocument @checkRole(roles: ["admin"])
+    ): GroupTypeProjectDocument @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
     createTypeProject(
         name: String
         group_id: ID
         code: String
-    ): TypeProjectDocument @checkRole(roles: ["admin"])
+    ): TypeProjectDocument @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateTypeProject(
         id: ID
         name: String
         group_id: ID
         code: String
-    ): TypeProjectDocument @checkRole(roles: ["admin"])
+    ): TypeProjectDocument @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     deleteTypeProject (
         id: ID
-    ): String @checkRole(roles: ["admin"])
+    ): String @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
     createIrd(
         name: String
-    ): IRD! @checkRole(roles: ["admin"])
+    ): IRD! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateIrd(
         id: ID!
         name: String!
-    ): IRD! @checkRole(roles: ["admin"])
+    ): IRD! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     deleteIrd (
         id: ID!
-    ): String @checkRole(roles: ["admin"])
+    ): String @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
     createStage(
         name: String!
-    ): Stage! @checkRole(roles: ["admin"])
+    ): Stage! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateStage(
         id: ID!
         name: String!
-    ): Stage! @checkRole(roles: ["admin"])
+    ): Stage! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     deleteStage (
         id: ID!
-    ): String @checkRole(roles: ["admin"])
+    ): String @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
     createPpi(
         name: String!
         code: String!
-    ): PassportPlaceIssue! @checkRole(roles: ["admin"])
+    ): PassportPlaceIssue! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updatePpi(
         id: ID!
         name: String!
         code: String!
-    ): PassportPlaceIssue! @checkRole(roles: ["admin"])
+    ): PassportPlaceIssue! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
     createBik(
         bik: String!
         name: String!
         correspondent_account: String
-    ):  bik! @checkRole(roles: ["admin"])
+    ):  bik! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateBik(
         id: ID!
         bik: String!
         name: String!
         correspondent_account: String
-    ):  bik! @checkRole(roles: ["admin"])
+    ):  bik! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
     createContact(
         first_name: String!
@@ -154,7 +154,7 @@ type Mutation {
         email: String
         position_id: ID
         organization_id: ID
-    ): Contact! @checkRole(roles: ["admin"])
+    ): Contact! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateContact(
         id: ID!
         first_name: String!
@@ -167,10 +167,10 @@ type Mutation {
         email: String
         position_id: ID
         organization_id: ID
-    ): Contact! @checkRole(roles: ["admin"])
+    ): Contact! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     deleteContact (
         id: ID!
-    ): Contact @checkRole(roles: ["admin"])
+    ): Contact @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
 
     createOrganization(
@@ -191,7 +191,7 @@ type Mutation {
         bik_id: ID
         payment_account: String
         director_id: ID
-    ): Organization! @checkRole(roles: ["admin"])
+    ): Organization! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateOrganization(
         id: ID!
         legal_form_id: ID!
@@ -211,10 +211,10 @@ type Mutation {
         bik_id: ID
         payment_account: String
         director_id: ID
-    ): Organization! @checkRole(roles: ["admin"])
+    ): Organization! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     deleteOrganization (
         id: ID!
-    ): Organization @checkRole(roles: ["admin"])
+    ): Organization @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
     createPerson(
         firstname: String
@@ -235,7 +235,7 @@ type Mutation {
         email_sibnipi: String
         bank_id: ID
         bik_id: ID
-    ): Person! @checkRole(roles: ["admin"])
+    ): Person! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updatePerson(
         id: ID!
         firstname: String
@@ -256,20 +256,20 @@ type Mutation {
         email_sibnipi: String
         bank_id: ID
         bik_id: ID
-    ): Person! @checkRole(roles: ["admin"])
+    ): Person! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     deletePerson (
         id: ID!
-    ): Person @checkRole(roles: ["admin"])
+    ): Person @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
     updateFacility(
         id: ID!
         name: String!
         type: ID!
-    ): Facility! @checkRole(roles: ["admin"])
+    ): Facility! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     createFacility(
         name: String!
         type: ID!
-    ): Facility! @checkRole(roles: ["admin"])
+    ): Facility! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 }
 type Contact {
     id: ID!

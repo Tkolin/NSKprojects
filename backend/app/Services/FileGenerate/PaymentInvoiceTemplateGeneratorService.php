@@ -2,7 +2,7 @@
 
 namespace App\Services\FileGenerate;
 
-use App\Services\GeneratorService;
+use App\Services\FileGenerate\GeneratorService;
 use App\Services\MonthEnum;
 use App\Services\TranslatorNumberToName;
 use PhpOffice\PhpWord\TemplateProcessor;
@@ -63,14 +63,14 @@ class PaymentInvoiceTemplateGeneratorService
 
             'projectStages.stage.finalPrice' => number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
 
-            'projectStages.stage.name' => ($projectStage['stage']['id'] == 0) ? $projectStage['stage']['name'] : 'Выполнение работ ',
-            'projectStages.stage.percent' => ($projectStage['stage']['id'] == 0) ? $projectStage['percent'] . '% ' : '',
+            'projectStages.stage.name' => isset($projectStage['stage']) ? ($projectStage['stage']['id'] == 0) ? $projectStage['stage']['name'] : 'Выполнение работ ' : "'(данные отсутвуют)",
+            'projectStages.stage.percent' => isset($projectStage['stage']) ? ($projectStage['stage']['id'] == 0) ? $projectStage['percent'] . '% ' : '' : "",
 
             'projectStages.stage.price' => number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
             'projectStages.stage.endPrice' =>  number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
             'projectStages.stage.sumEndPrice' =>  number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
 
-            'projectStages.stage.finalPriceToString' => $TranslatorNumberToName->num2str($projectStage['price']),
+            'projectStages.stage.finalPriceToString' => isset($projectStage['price']) ? $TranslatorNumberToName->num2str($projectStage['price']) : "___",
 
 
             'projectOrganization.INN' => $project["organization_customer"]['INN'] ?? '(данные отсутвуют)',
@@ -96,7 +96,7 @@ class PaymentInvoiceTemplateGeneratorService
         //        $templateProcessor->cloneRowAndSetValues('projectStages.number' , $table);
         $currentDate = date('Ymd');
 
-        $fileName = 'Счёт_на_оплату_'.$project['id'].'_'.$projectStage['stage']['id'].'_'.$currentDate.'_'.'.docx';
+        $fileName = 'Счёт_на_оплату'.'.docx';
 
         $filePath = storage_path('app/' . $fileName);
         $templateProcessor->saveAs($filePath);

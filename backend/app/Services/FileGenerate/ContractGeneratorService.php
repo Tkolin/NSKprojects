@@ -4,6 +4,7 @@ namespace App\Services\FileGenerate;
 
 use App\Models\Organization;
 use PhpOffice\PhpWord\TemplateProcessor;
+use App\Services\FileGenerate\GeneratorService;
 
 class ContractGeneratorService
 {

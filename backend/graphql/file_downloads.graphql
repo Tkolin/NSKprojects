@@ -1,29 +1,29 @@
 extend type Mutation {
     personOrderFileDownload(
         personId: ID
-    ): File! @checkRole(roles: ["admin"])
+    ): File! @checkRole(roles: ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     projectPaymentInvoiceFileDownload(
         projectId: ID!
         stageNumber: ID
         isPrepayment: Boolean
-    ): File! @checkRole(roles: ["admin"])
+    ): File! @checkRole(roles: ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     projectActRenderingFileDownload(
         projectId: ID
         stageNumber: Int
-    ): File! @checkRole(roles: ["admin"])
+    ): File! @checkRole(roles: ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     projectOrderFileDownload(
         projectId: ID
-    ): File! @checkRole(roles: ["admin"])
+    ): File! @checkRole(roles: ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     projectIrdsFileDownload(
         projectId: ID
-    ): File! @checkRole(roles: ["admin"])
+    ): File! @checkRole(roles: ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     projectStagesFileDownload(
         projectId: ID
-    ): File! @checkRole(roles: ["admin"])
+    ): File! @checkRole(roles: ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     taskExecutorContractFileDownload(
         projectId: ID
         executorId: ID
-    ): File! @checkRole(roles: ["admin"])
+    ): File! @checkRole(roles: ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 }
 type File {
     url: String

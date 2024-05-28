@@ -1,14 +1,14 @@
-import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../style/BlockStyles";
+import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../../components/style/BlockStyles";
 import React, {useState} from "react";
 import {Col, Divider, Form, Modal, Row, Select} from "antd";
 import TypeProjectForm from "../../form/modelsForms/TypeProjectForm";
-import IrdsTemplateForm from "../../form/aggregateComponent/templateForm/IrdsTemplateForm";
-import StagesTemplateForm from "../../form/aggregateComponent/templateForm/StagesTemplateForm";
+import IrdsTemplateForm from "../../form/composedForm/template/templateForm/IrdsTemplateForm";
+import StagesTemplateForm from "../../form/composedForm/template/templateForm/StagesTemplateForm";
 import {TYPES_PROJECTS_QUERY} from "../../../graphql/queries";
 import {useQuery} from "@apollo/client";
 import ProjectForm from "../../form/modelsForms/ProjectForm";
-import IrdsProjectForm from "../../form/aggregateComponent/projectForm/IrdsProjectForm";
-import StagesProjectForm from "../../form/aggregateComponent/projectForm/StagesProjectForm";
+import IrdsProjectForm from "../../form/composedForm/project/components/IrdsProjectForm";
+import StagesProjectForm from "../../form/composedForm/project/components/StagesProjectForm";
 
 
 const {Option} = Select;

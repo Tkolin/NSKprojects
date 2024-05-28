@@ -1,27 +1,20 @@
 import {gql} from "@apollo/client";
-import ProjectFileDownload from "../page/script/ProjectFileDownload";
-import StagesProjectFileDownload from "../page/script/StagesProjectFileDownload";
+import ProjectFileDownload from "../components/script/ProjectFileDownload";
+import StagesProjectFileDownload from "../components/script/StagesProjectFileDownload";
 import React from "react";
 
 export const ADD_PROJECT_MUTATION = gql`
     mutation AddProject(
         $data: ProjectInput
-        $tasks: [ProjectTasksInput]
-        $stages: [ProjectStageInput]
-        $irds: [ProjectIrdInput]
     ) {
         createProject(
             data: $data
-
-
-            tasks : $tasks
-            stages: $stages
-            irds: $irds
 
         ) {
             id
             number
             name
+            prepayment
             organization_customer
             {
                 id
@@ -99,18 +92,10 @@ export const UPDATE_PROJECT_MUTATION = gql`
     mutation UpdateProject(
         $data: ProjectInput
 
-        $tasks: [ProjectTasksInput]
-        $stages: [ProjectStageInput]
-        $irds: [ProjectIrdInput]
     ) {
         updateProject(
             data: $data
-
-
-
-            tasks : $tasks
-            stages: $stages
-            irds: $irds
+   
         ) {
             id
             number
@@ -147,9 +132,9 @@ export const UPDATE_PROJECT_MUTATION = gql`
                 }
             }
             date_signing
+            duration
             date_end
             date_create
-            duration
             status
             {
                 id
@@ -190,30 +175,52 @@ export const UPDATE_PROJECT_MUTATION = gql`
     }
 `;
 export const UPDATE_IRDS_TO_PROJECT_MUTATION = gql`
-    mutation UpdateStagesToProject(
+    mutation UpdateIrdsToProject(
         $data: [IrdToProject]
     ) {
         updateIrdsToProject(
             items: $data
-        )
+        ){
+            id
+            IRD{
+                id
+                name
+            }
+            receivedDate
+            stageNumber
+            applicationProject
+        }
     }
 `;
 
 export const UPDATE_STAGES_TO_PROJECT_MUTATION = gql`
-    mutation UpdateIrdsToProject(
+    mutation UpdateStagesToProject(
         $data: [StageToProject]
     ) {
         updateStagesToProject(
             items: $data
-        )
+        ){
+            id
+            number
+            stage {
+                id
+                name
+            }
+            price_to_paid
+            date_start
+            duration
+            date_end
+            percent
+            price
+        }
     }
 `;
 export const UPDATE_TASKS_TO_PROJECT_MUTATION = gql`
     mutation UpdateTasksToProject(
         $data: [TasksToProject]
     ) {
-        updateTasksToProject(
-            items: $data
+        updateTaskToProject(
+            data: $data
         )
     }
 `;
