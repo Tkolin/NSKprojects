@@ -1,13 +1,14 @@
 import React from 'react';
 import {StyledFormRegular} from "../../../components/style/FormStyles";
 import RegisterForm from "../../../components/form/authForm/RegisterForm";
+import {StyledBlockRegular} from "../../../components/style/BlockStyles";
 
 
 const RegisterPage = () => {
     return (
-        <StyledFormRegular>
+        <StyledBlockRegular label={"Регистрация"}>
             <RegisterForm/>
-        </StyledFormRegular>
+        </StyledBlockRegular>
     );
 };
 

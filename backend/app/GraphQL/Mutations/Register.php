@@ -13,10 +13,10 @@ final readonly class Register
     {
         error_log('Зашёл в регистр');
         $user = User::create([
-            'name' => $args['input']['name'],
-            'email' => $args['input']['email'],
+            'name' => $args['input']['name'] ?? null,
+            'email' => $args['input']['email'] ?? null,
             'password' => Hash::make($args['input']['password']),
-            'role_id' => 3, // Устанавливаем роль пользователя
+            'role_id' => 0, // Устанавливаем роль пользователя
         ]);
 
         $accessToken = $user->createToken('authToken')->accessToken;

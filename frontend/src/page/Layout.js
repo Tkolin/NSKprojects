@@ -98,7 +98,7 @@ const CustomLayout = ({children, currentUser, la}) => {
             hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
             && getItem('Справочники', '/table', <ProfileOutlined/>, [
                 hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
-                && getItem('Контакты', '/table/contact', null, null),
+                && getItem('Контакты', '/table/contacts', null, null),
                 hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
                 && getItem('Подрядчики', '/table/persons', null, null),
                 hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])

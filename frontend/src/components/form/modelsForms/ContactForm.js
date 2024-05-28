@@ -19,6 +19,7 @@ import {
 import OrganizationForm from "./OrganizationForm";
 import {CONTACTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
+import OrganizationModalForm from "../../../page/simples/modal/OrganizationModalForm";
 
 const ContactForm = ({localObject, initialObject, onCompleted}) => {
     // Первичные данные
@@ -201,22 +202,11 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
                     </div>
                 </StyledFormItem>
             </StyledFormRegular>
-            <Modal
+            <OrganizationModalForm
                 key={organizationAutoComplete?.selected}
-                open={organizationModalStatus === "add" || organizationModalStatus === "edit"}
-                onCancel={() => setOrganizationModalStatus(null)}
-                footer={null}
-                onClose={() => setOrganizationModalStatus(null)}
-            >
-                {organizationModalStatus === "edit" ? (
-                    organizationAutoComplete?.selected && (
-                        <OrganizationForm onCompleted={() => setOrganizationModalStatus(null)}
-                                          initialObject={{id: organizationAutoComplete.selected}}/>
-                    )
-                ) : (
-                    <OrganizationForm onCompleted={() => setOrganizationModalStatus(null)}/>
-                )}
-            </Modal>
+                object={organizationAutoComplete?.selected}
+                mode={organizationModalStatus}
+                onClose={() => setOrganizationModalStatus(null)}/>
         </div>
     );
 };

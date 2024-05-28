@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {
-    Form, Input, Select, InputNumber, Space,
+    Form, Input, Select, InputNumber, Space, Modal,
 } from 'antd';
 import {useQuery} from '@apollo/client';
 
@@ -22,6 +22,8 @@ import {StyledFormItemAutoCompleteAndCreate} from "../../../../components/style/
 import FacilitiesCascader from "./FacilitiesCascader";
 import {useProjectStore} from "../Store";
 import {EmptyFormItem} from "../../../../components/formComponents/EmptyFormItem";
+import ContactForm from "../../../../components/form/modelsForms/ContactForm";
+import OrganizationForm from "../../../../components/form/modelsForms/OrganizationForm";
 
 
 const ProjectForm = ({onCompleted, onChange, updateProject, actualProject}) => {
@@ -227,30 +229,30 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject}) => {
 
         </StyledFormRegular>
 
-        {/*<Modal*/}
-        {/*    open={addContactModalVisibleMode}*/}
-        {/*    onCancel={() => setAddContactModalVisibleMode(false)}*/}
-        {/*    footer={null}*/}
-        {/*    onClose={handleCloseModalFormView}*/}
-        {/*>*/}
-        {/*    <ContactForm onClose={handleCloseModalFormView}/>*/}
-        {/*</Modal>*/}
-        {/*<Modal*/}
-        {/*    open={addOrganizationModalVisibleMode}*/}
-        {/*    onCancel={() => setAddOrganizationModalVisibleMode(false)}*/}
-        {/*    footer={null}*/}
-        {/*    onClose={handleCloseModalFormView}*/}
-        {/*>*/}
-        {/*    <OrganizationForm onClose={handleCloseModalFormView} organization={null}/>*/}
-        {/*</Modal>*/}
-        {/*<Modal*/}
-        {/*    open={editOrganizationModalVisibleMode}*/}
-        {/*    onCancel={() => setEditOrganizationModalVisibleMode(false)}*/}
-        {/*    footer={null}*/}
-        {/*    onClose={handleCloseModalFormView}*/}
-        {/*>*/}
-        {/*    <OrganizationForm onClose={handleCloseModalFormView} organization={selectedOrganizationData}/>*/}
-        {/*</Modal>*/}
+        <Modal
+            open={addContactModalVisibleMode}
+            onCancel={() => setAddContactModalVisibleMode(false)}
+            footer={null}
+            onClose={handleCloseModalFormView}
+        >
+            <ContactForm onClose={handleCloseModalFormView}/>
+        </Modal>
+        <Modal
+            open={addOrganizationModalVisibleMode}
+            onCancel={() => setAddOrganizationModalVisibleMode(false)}
+            footer={null}
+            onClose={handleCloseModalFormView}
+        >
+            <OrganizationForm onClose={handleCloseModalFormView} organization={null}/>
+        </Modal>
+        <Modal
+            open={editOrganizationModalVisibleMode}
+            onCancel={() => setEditOrganizationModalVisibleMode(false)}
+            footer={null}
+            onClose={handleCloseModalFormView}
+        >
+            <OrganizationForm onClose={handleCloseModalFormView} organization={selectedOrganizationData}/>
+        </Modal>
     </div>)
 };
 

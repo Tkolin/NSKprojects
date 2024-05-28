@@ -3,7 +3,7 @@ import { InputNumber, Space, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { StyledFormItem } from '../../../../components/style/FormStyles';
 
-const StyledDateRangePicker = ({ onChange }) => {
+const StyledDateRangePicker = ({ onChange, value }) => {
     const [data, setData] = useState({ dateStart: null, dateEnd: null, duration: null });
 
     useEffect(() => {
@@ -51,7 +51,7 @@ const StyledDateRangePicker = ({ onChange }) => {
                     <DatePicker
                         placeholder="Выберите дату"
                         onChange={handleDateStartChange}
-                        value={dateStart}
+                        value={value.dateStart}
                         style={dateStartStyle}
                     />
                 </StyledFormItem>
@@ -60,7 +60,7 @@ const StyledDateRangePicker = ({ onChange }) => {
                         formatter={(value) => `${value}`.replace(/[^0-9]/g, '')}
                         parser={(value) => `${value}`.replace(/[^0-9]/g, '')}
                         style={{ width: '100%', ...durationStyle }}
-                        value={duration}
+                        value={value.duration}
                         onChange={handleDurationChange}
                     />
                 </StyledFormItem>
@@ -68,7 +68,7 @@ const StyledDateRangePicker = ({ onChange }) => {
                     <DatePicker
                         placeholder="Выберите дату"
                         onChange={handleDateEndChange}
-                        value={dateEnd}
+                        value={value.dateEnd}
                         style={dateEndStyle}
                     />
                 </StyledFormItem>
