@@ -5,13 +5,13 @@ import {
     STAGES_TO_PROJECT_QUERY,
     TASKS_TO_PROJECT_QUERY, TEMPLATE_TASKS_TYPE_PROJECTS_QUERY,
 
-} from "../../../../graphql/queries";
-import LoadingSpinnerStyles from "../../../../components/style/LoadingSpinnerStyles";
-import {StyledButtonGreen} from "../../../../components/style/ButtonStyles";
-import {UPDATE_STAGES_TO_PROJECT_MUTATION, UPDATE_TASKS_TO_PROJECT_MUTATION} from "../../../../graphql/mutationsProject";
-import {ADD_TASK_TO_PROJECT_MUTATION, ADD_TASK_MUTATION} from "../../../../graphql/mutationsTask";
-import {StyledBlockBig} from "../../../../components/style/BlockStyles";
-import {StyledFormItem} from "../../../../components/style/FormStyles";
+} from "../../../../../graphql/queries";
+import LoadingSpinnerStyles from "../../../../../components/style/LoadingSpinnerStyles";
+import {StyledButtonGreen} from "../../../../../components/style/ButtonStyles";
+import {UPDATE_STAGES_TO_PROJECT_MUTATION, UPDATE_TASKS_TO_PROJECT_MUTATION} from "../../../../../graphql/mutationsProject";
+import {ADD_TASK_TO_PROJECT_MUTATION, ADD_TASK_MUTATION} from "../../../../../graphql/mutationsTask";
+import {StyledBlockBig} from "../../../../../components/style/BlockStyles";
+import {StyledFormItem} from "../../../../../components/style/FormStyles";
 
 const TasksToProjectStageForm = ({project, onSubmit}) => {
     const [stagesArray, setStagesArray] = useState(null);

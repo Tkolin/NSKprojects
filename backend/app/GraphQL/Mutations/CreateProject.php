@@ -7,8 +7,11 @@ use App\Models\ProjectDelegations;
 use App\Models\ProjectFacilities;
 use App\Models\ProjectIrds;
 use App\Models\ProjectStage;
+use App\Models\ProjectTasks;
+use App\Models\ProjectTasksInherited;
 use App\Models\TemplateIrdsTypeProjects;
 use App\Models\TemplateStagesTypeProjects;
+use App\Models\TemplateTasksTypeProject;
 
 final readonly class CreateProject
 {
@@ -71,6 +74,27 @@ final readonly class CreateProject
                     'number' => $tempStage[$key]->number,
                 ]
             );
+        }
+        $tempTasks = TemplateTasksTypeProject
+            ::where('project_type_id', $project->type_project_document_id)
+            ->get();
+
+        foreach ($tempStage as $key => $value) {
+            ProjectTasks::create(
+                [
+                    'task_id' => $tempTasks[$key]->task_id,
+                    'project_id' => $project->id,
+                    'stage_number' => $tempTasks[$key]->stage_number,
+                ]
+            );
+            if(isset($tempTasks[$key]->inherited_task_id)){
+                ProjectTasksInherited::create(
+                    [
+                        'project_task_id' => $tempTasks[$key]->task_id,
+                        'project_inherited_task_id' => $tempTasks[$key]->inherited_task_id,
+                    ]
+                );
+            }
         }
         $tempIrd = TemplateIrdsTypeProjects
             ::where('project_type_id', $project->type_project_document_id)

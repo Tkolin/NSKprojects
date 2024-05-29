@@ -3,7 +3,7 @@ import { InputNumber, Space, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { StyledFormItem } from '../../../../components/style/FormStyles';
 
-const StyledDateRangePicker = ({ onChange, value }) => {
+const DateRangePickerComponent = ({ onChange, value }) => {
     const [data, setData] = useState({ dateStart: null, dateEnd: null, duration: null });
 
     useEffect(() => {
@@ -77,4 +77,4 @@ const StyledDateRangePicker = ({ onChange, value }) => {
     );
 };
 
-export default StyledDateRangePicker;
+export default DateRangePickerComponent;

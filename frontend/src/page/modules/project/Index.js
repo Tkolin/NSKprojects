@@ -12,14 +12,10 @@ import {
     UPDATE_PROJECT_MUTATION,
     UPDATE_STAGES_TO_PROJECT_MUTATION
 } from "../../../graphql/mutationsProject";
-import {UPDATE_IRD_MUTATION} from "../../../graphql/mutationsIrd";
-import {UPDATE_STAGE_MUTATION} from "../../../graphql/mutationsStage";
 import {NotificationContext} from "../../../NotificationProvider";
 import dayjs from "dayjs";
 import ProjectDetails from "./components/ProjectDetails";
-import TasksProjectExecutorForm from "./components/TasksProjectExecutorForm";
-import TasksToProjectStageForm from "./components/TasksToProjectStageForm";
-import TaskProjectForm from "./components/TaskProjectForm";
+
 
 
 const Index = ({object}) => {
@@ -284,7 +280,6 @@ const Index = ({object}) => {
                     },
                     {
                         title: 'Этап 4',
-                        subTitle: 'waiting for longlong time',
                         status: 'Требует сохранения',
                         description: 'Вывод документов.',
                     },
@@ -310,10 +305,7 @@ const Index = ({object}) => {
                                         actualIrds={irds}
                                         updateIrds={(value) => updateIrds(value)}/>
                                 </StyledBlockLarge>) :
-                            current === 3 ? (<>
-                                <TaskProjectForm project={project}/>
-                                </>) :
-                                current === 4 ? (<>
+                                current === 3 ? (<>
                                         <ProjectDetails project={project}/>
                                     </>):
                                 <></>

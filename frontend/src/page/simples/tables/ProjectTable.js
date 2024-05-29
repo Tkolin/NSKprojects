@@ -10,7 +10,7 @@ import IrdsProjectFileDownload from "../../../components/script/IrdsProjectFileD
 import Title from "antd/es/typography/Title";
 import ActRenderingProjectDownload from "../../../components/script/ActRenderingProjectDownload";
 import PaymentInvoiceProjectDownload from "../../../components/script/PaymentInvoiceProjectDownload";
-import Index from "../../modules/project/Index";
+import ProjectTasks from "../../modules/projectTasks/Index";
 import TaskExecutorContractDownload from "../../../components/script/TaskExecutorContractDownload";
 import {useNavigate} from "react-router-dom";
 import ProjectForm from "../../modules/project/components/ProjectForm";
@@ -23,6 +23,8 @@ import {
     UPDATE_IRDS_TO_PROJECT_MUTATION,
     UPDATE_PROJECT_MUTATION, UPDATE_STAGES_TO_PROJECT_MUTATION
 } from "../../../graphql/mutationsProject";
+import TaskProjectForm from "../../modules/projectTasks/components/old/TaskProjectForm";
+import TasksToProjectStageForm from "../../modules/projectTasks/components/old/TasksToProjectStageForm";
 
 const {Text} = Typography;
 
@@ -326,23 +328,22 @@ const ProjectTable = () => {
                 <Row>
                     <Typography.Link onClick={() => setEditModalStatus({
                         status: "base",
-                        project: rebuildProjectResultQuery(record)
                     })}>Изменить
                         Проект</Typography.Link>
                     <Typography.Link onClick={() => setEditModalStatus({
                         status: "irds",
                         irds: rebuildIrdsResultQuery(record?.project_irds),
                         project: rebuildProjectResultQuery(record)
-                    })}>Изменить
-                        Список ИРД</Typography.Link>
+                    })}>ИРД</Typography.Link>
                     <Typography.Link onClick={() => setEditModalStatus({
                         status: "stages",
                         stages: rebuildStagesResultQuery(record?.project_stages),
                         project: rebuildProjectResultQuery(record)
-                    })}>Изменить
-                        Список Этапов</Typography.Link>
-                    <Typography.Link onClick={() => navigate(`/project/tasks/${record.id}`)}>Распределение
-                        задач</Typography.Link>
+                    })}>Этапы</Typography.Link>
+                    <Typography.Link onClick={() => setEditModalStatus({
+                        status: "tasks",
+                        project: rebuildProjectResultQuery(record)
+                    })}>Задачи</Typography.Link>
                 </Row>
             ),
         },
@@ -548,7 +549,22 @@ const ProjectTable = () => {
                                         </StyledButtonGreen>
                                     </div>
                                 </>)
-                            : null}
+                            :
+                            editModalStatus?.status === "tasks" ? (
+                                    <>
+                                        <ProjectTasks
+                                            actualStages={editModalStatus?.stages}
+                                            updateStages={(value) => setEditModalStatus({...editModalStatus, stages: value})}
+                                            project={editModalStatus?.project}
+                                        />
+                                        <div>
+                                            <StyledButtonGreen onClick={() =>
+                                                mutateStage({variables: {data: rebuildStagesToQuery(editModalStatus?.stages, editModalStatus?.project?.id)}})}>
+                                                Сохранить
+                                            </StyledButtonGreen>
+                                        </div>
+                                    </>)
+                                : null}
             </Modal>
 
         </div>

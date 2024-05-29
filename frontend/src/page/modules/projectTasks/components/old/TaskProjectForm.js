@@ -4,19 +4,19 @@ import {useMutation, useQuery} from '@apollo/client';
 import {
     PERSONS_QUERY, TASKS_QUERY,
     TASKS_TO_PROJECT_QUERY
-} from '../../../../graphql/queries';
+} from '../../../../../graphql/queries';
 import {
     ADD_TASK_TO_PROJECT_MUTATION,
     UPDATE_TASK_TO_PROJECT_MUTATION
-} from '../../../../graphql/mutationsTask';
+} from '../../../../../graphql/mutationsTask';
 
-import {StyledFormItem, StyledFormRegular} from '../../../../components/style/FormStyles';
-import {StyledButtonGreen} from "../../../../components/style/ButtonStyles";
-import PersonForm from "../../../../components/form/modelsForms/PersonForm";
-import TaskForm from "../../../../components/form/modelsForms/TaskForm";
+import {StyledFormItem, StyledFormRegular} from '../../../../../components/style/FormStyles';
+import {StyledButtonGreen} from "../../../../../components/style/ButtonStyles";
+import PersonForm from "../../../../../components/form/modelsForms/PersonForm";
+import TaskForm from "../../../../../components/form/modelsForms/TaskForm";
 import {
     StyledFormItemSelect,
-} from "../../../../components/style/SelectStyles";
+} from "../../../../../components/style/SelectStyles";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 import {DatePicker} from "antd/lib";
 import moment from "moment";
@@ -42,7 +42,7 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
     const [selectedPerson, setSelectedPerson] = useState(null);
 
     useEffect(() => {
-             form.resetFields();
+        form.resetFields();
 
     }, [tasksProject]);
     // События
@@ -85,21 +85,7 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
         data: dataTasksProject
     } = useQuery(TASKS_TO_PROJECT_QUERY);
     const [dataTasks, setDataTasks] = useState();
-    const addingDataTasks = (newData) => {
-        // if (!dataStages || !value) return;
-        // const newStages = value.map(a => ({
-        //     id: a.stage ? a.stage.id : null, name: a.stage ? a.stage.name : null,
-        // }));
-        // const existingStages = dataStages.stages ? dataStages.stages.items : [];
-        // const updatedStages = [...existingStages, ...newStages];
-        // setDataStages({
-        //     ...dataStages,
-        //     stages: {
-        //         ...dataStages.stages,
-        //         items: updatedStages,
-        //     },
-        // });
-    }
+
     const {loading: loadingTasks, error: errorTasks, refetch: refetchTasks} = useQuery(TASKS_QUERY, {
         variables: {
             queryOptions: {search: autoCompleteTask, limit: 10, page: 1}
@@ -107,21 +93,7 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
         onCompleted: (data) => setDataTasks(data)
     });
     const [dataPersons, setDataPersons] = useState();
-    const addingDataPersons = (newData) => {
-        // if (!dataStages || !value) return;
-        // const newStages = value.map(a => ({
-        //     id: a.stage ? a.stage.id : null, name: a.stage ? a.stage.name : null,
-        // }));
-        // const existingStages = dataStages.stages ? dataStages.stages.items : [];
-        // const updatedStages = [...existingStages, ...newStages];
-        // setDataStages({
-        //     ...dataStages,
-        //     stages: {
-        //         ...dataStages.stages,
-        //         items: updatedStages,
-        //     },
-        // });
-    }
+
     const {loading: loadingPersons, error: errorPersons, refetch: refetchPersons} = useQuery(PERSONS_QUERY, {
         variables: {
             queryOptions: {search: autoCompletePerson, limit: 10, page: 1}
@@ -233,11 +205,11 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
 
     return (
         <>
-            <StyledFormRegular form={form}
-                               onFinish={handleSubmit}
-                               labelCol={{span: 8}}
-                               labelAlign="left"
-                               wrapperCol={{span: 16}}>
+            <Form form={form}
+                  onFinish={handleSubmit}
+                  labelCol={{span: 8}}
+                  labelAlign="left"
+                  wrapperCol={{span: 16}}>
 
                 <FormItem name={"date_range"} label={"Продолжительность"}>
                     <RangePicker
@@ -347,15 +319,7 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
                         </Form.Item>
                     </>)}
                 </Form.List>
-
-                <StyledFormItem labelCol={{span: 24}} wrapperCol={{span: 24}}>
-                    <div style={{textAlign: 'center'}}>
-                        <StyledButtonGreen type="primary" onClick={()=>handleSubmit()}>
-                            Сохранить изменения
-                        </StyledButtonGreen>
-                    </div>
-                </StyledFormItem>
-            </StyledFormRegular>
+            </Form>
             <Modal
                 key={selectedTask?.id}
                 open={addTaskModalVisible}
