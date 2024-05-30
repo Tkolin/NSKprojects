@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import { Form, Input } from 'antd';
 
-import { StyledFormItem, StyledFormRegular } from '../../style/FormStyles';
 import { StyledButtonGreen } from '../../style/ButtonStyles';
 import { NotificationContext } from '../../../NotificationProvider';
 import {useLazyQuery, useMutation} from '@apollo/client';
@@ -60,24 +59,24 @@ const BikForm = ({ localObject ,initialObject, onCompleted }) => {
 
     return (
         <div>
-            <StyledFormRegular form={form}>
-                <StyledFormItem name="BIK" label="Бик" rules={[{required: true}]}>
+            <Form form={form}>
+                <Form.Item name="BIK" label="Бик" rules={[{required: true}]}>
                     <Input/>
-                </StyledFormItem>
-                <StyledFormItem name="name" label="Наименование" rules={[{required: true}]}>
+                </Form.Item>
+                <Form.Item name="name" label="Наименование" rules={[{required: true}]}>
                     <Input/>
-                </StyledFormItem>
-                <StyledFormItem name="correspondent_account" label="Корреспондентский счёт">
+                </Form.Item>
+                <Form.Item name="correspondent_account" label="Корреспондентский счёт">
                     <Input/>
-                </StyledFormItem>
+                </Form.Item>
                 <div style={{textAlign: 'center'}}>
-                    <StyledFormItem>
+                    <Form.Item>
                         <StyledButtonGreen style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
                             {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
-                    </StyledFormItem>
+                    </Form.Item>
                 </div>
-            </StyledFormRegular>
+            </Form>
         </div>
     );
 };

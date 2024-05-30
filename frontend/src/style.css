@@ -30,3 +30,6 @@
 .fenrir-theme {
     background-color: #ef4444;
 }
+.ant-form-item {
+    margin-bottom: 10px;
+}

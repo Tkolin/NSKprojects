@@ -14,7 +14,6 @@ final readonly class UpdateProject
         $project = Project::findOrFail($args['data']['id']);
 
         $project->update([
-            'number' => $args['data']['number'],
             'name' => $args['data']['name'] ?? null,
             'organization_customer_id' => $args['data']['organization_customer_id'] ?? null,
             'type_project_document_id' => $args['data']['type_project_document_id'] ?? null,
@@ -31,31 +30,32 @@ final readonly class UpdateProject
 
         // Update or create new ProjectFacilities
         if (isset($project['id'])) {
-            if (isset($args['data']['facilitys_id'])) {
-                foreach ($args['data']['facilitys_id'] as $facilityId) {
+            if (isset($args['data']['facility_id'])) {
+                foreach ($args['data']['facility_id'] as $facilityId) {
                     ProjectFacilities::updateOrCreate([
                         'project_id' => $project['id'],
                         'facility_id' => $facilityId
                     ]);
                 }
                 ProjectFacilities::where('project_id', $project['id'])
-                    ->whereNotIn('facility_id', $args['data']['facilitys_id'])
-                    ->delete();
-            }
-
-            // Update or create new ProjectDelegations
-            if (isset($args['data']['delegates_id'])) {
-                foreach ($args['data']['delegates_id'] as $delegateId) {
-                    ProjectDelegations::updateOrCreate([
-                        'project_id' => $project['id'],
-                        'delegation_id' => $delegateId
-                    ]);
-                }
-                ProjectDelegations::where('project_id', $project['id'])
-                    ->whereNotIn('delegation_id', $args['data']['delegates_id'])
+                    ->whereNotIn('facility_id', $args['data']['facility_id'])
                     ->delete();
             }
         }
+
+        // Update or create new ProjectDelegations
+        if (isset($args['data']['delegates_id'])) {
+            foreach ($args['data']['delegates_id'] as $delegateId) {
+                ProjectDelegations::updateOrCreate([
+                    'project_id' => $project['id'],
+                    'delegation_id' => $delegateId
+                ]);
+            }
+            ProjectDelegations::where('project_id', $project['id'])
+                ->whereNotIn('delegation_id', $args['data']['delegates_id'])
+                ->delete();
+        }
+
 
         return $project;
     }

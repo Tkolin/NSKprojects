@@ -1,9 +1,8 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Collapse, Descriptions, Divider, Form, Modal, notification, Row, Space, Table, Typography} from 'antd';
+import {Col, Collapse, Descriptions, Divider, Form, Modal, notification, Row, Space, Table, Typography} from 'antd';
 import {PROJECTS_QUERY} from '../../../graphql/queries';
 import Search from "antd/es/input/Search";
-import {StyledFormLarge} from "../../../components/style/FormStyles";
 import StagesProjectFileDownload from "../../../components/script/StagesProjectFileDownload";
 import ProjectFileDownload from "../../../components/script/ProjectFileDownload";
 import IrdsProjectFileDownload from "../../../components/script/IrdsProjectFileDownload";
@@ -19,12 +18,10 @@ import IrdsProjectForm from "../../modules/project/components/IrdsProjectForm";
 import dayjs from "dayjs";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
 import {
-    ADD_PROJECT_MUTATION,
     UPDATE_IRDS_TO_PROJECT_MUTATION,
     UPDATE_PROJECT_MUTATION, UPDATE_STAGES_TO_PROJECT_MUTATION
 } from "../../../graphql/mutationsProject";
-import TaskProjectForm from "../../modules/projectTasks/components/old/TaskProjectForm";
-import TasksToProjectStageForm from "../../modules/projectTasks/components/old/TasksToProjectStageForm";
+import {StyledBlockRegular} from "../../../components/style/BlockStyles";
 
 const {Text} = Typography;
 
@@ -77,21 +74,35 @@ const ProjectTable = () => {
     function addLeadingZeros(number, length) {
         return String(number).padStart(length, '0');
     }
-
+    const facilitiesToFullCode = (faclility) => {
+        return  `${faclility.group_facility.subselection_facility.selection_facility.code.toString().padStart(2, '0')}-`+
+        `${faclility.group_facility.subselection_facility.code.toString().padStart(2, '0')}-`+
+        `${faclility.group_facility.code.toString().padStart(3, '0')}-`+
+        `${faclility.code.toString().padStart(3, '0')}`
+    }
     const rebuildProjectResultQuery = (data) => {
         return {
             ...data,
-            date_create: data?.date_create ? dayjs(data?.date_create) : null,
-            date_end: data?.date_end ? dayjs(data?.date_end) : null,
-            date_signing: data?.date_signing ? dayjs(data?.date_signing) : null,
-            delegates_id: data?.delegations?.map(k => k?.id),
-            facility_id: data?.facilities?.map(k => k?.id),
-            organization_customer_id: data?.organization_customer?.id,
-            organization_customer_name: data?.organization_customer?.name,
-            status_id: data?.status?.id,
-            type_project_document_id: data?.type_project_document?.id,
-            type_project_document_name: data?.type_project_document?.name,
-        };
+
+            date_range: {
+                dateEnd: data?.date_end ? dayjs(data?.date_end) : null,
+                dateStart: data?.date_signing ? dayjs(data?.date_signing) : null,
+                duration: data?.duration ?? null
+            },
+            date_create:data?.date_create ? dayjs(data?.date_create) : null,
+            date_end:data?.date_end ? dayjs(data?.date_end) : null,
+            date_signing:data?.date_signing ? dayjs(data?.date_signing) : null,
+            delegates_id:data?.delegations?.map(k => k?.id),
+            facility_id: {
+                checkedKeys: data?.facilities?.map(k => facilitiesToFullCode(k))
+            },
+            organization_customer_id:data?.organization_customer?.id,
+            organization_customer_name:data?.organization_customer?.name,
+            status_id:data?.status?.id,
+            type_project_document_id:data?.type_project_document?.id,
+            type_project_document_name:data?.type_project_document?.name,
+        }
+            ;
     };
     const rebuildStagesResultQuery = (data) => {
         return data?.map((row, index) => ({
@@ -104,26 +115,26 @@ const ProjectTable = () => {
             stage_name: row?.stage?.name
         }));
     };
-    const rebuildProjectToQuery = (project) => {
-        if (!project)
+    const rebuildProjectToQuery = (data) => {
+        if (!data)
             return [];
 
         return {
-            id: project?.id ?? null,
-            number: project?.number,
-            name: project?.name,
-            organization_customer_id: project?.organization_customer_id,
-            type_project_document_id: project?.type_project_document_id,
-            date_signing: dayjs(project?.date_signing).format("YYYY-MM-DD"),
-            duration: project?.duration,
-            date_end: dayjs(project?.date_end).format("YYYY-MM-DD"),
-            date_create: dayjs(project?.date_create).format("YYYY-MM-DD"),
-            status_id: project?.status_id,
-            date_completion: dayjs(project?.date_completion).format("YYYY-MM-DD"),
-            price: project?.price,
-            prepayment: project?.prepayment,
-            facility_id: project?.facility_id?.map(row => row[3][0]),
-            delegates_id: project?.delegates_id,
+            id: data?.id ?? null,
+            number: data?.number,
+            name: data?.name,
+            organization_customer_id: data?.organization_customer_id,
+            type_project_document_id: data?.type_project_document_id,
+            date_signing: dayjs(data?.date_signing).format("YYYY-MM-DD"),
+            duration: data?.date_range?.duration,
+            date_end: dayjs(data?.date_range?.date_end).format("YYYY-MM-DD"),
+            date_create: dayjs(data?.date_range?.date_create).format("YYYY-MM-DD"),
+            status_id: data?.status_id,
+            date_completion: dayjs(data?.date_completion).format("YYYY-MM-DD"),
+            price: data?.price,
+            prepayment: data?.prepayment,
+            facility_id: data?.facility_id?.checkedObjects?.map(row => row?.value[0] ?? null),
+            delegates_id: data?.delegates_id,
         };
     };
     const rebuildIrdsResultQuery = (data) => {
@@ -323,28 +334,30 @@ const ProjectTable = () => {
         {
             title: 'Управление',
             key: 'edit',
-            width: 110, sorter: true, ellipsis: true,
+            width: 110, sorter: true,
             render: (text, record) => (
-                <Row>
-                    <Typography.Link onClick={() => setEditModalStatus({
-                        status: "base",
-                    })}>Изменить
-                        Проект</Typography.Link>
+                <div>
+                    <p>
+                        <Typography.Link onClick={() => setEditModalStatus({
+                            status: "base",
+                            project: rebuildProjectResultQuery(record)
+                        })}>Изменить
+                            Проект</Typography.Link></p> <p>
                     <Typography.Link onClick={() => setEditModalStatus({
                         status: "irds",
                         irds: rebuildIrdsResultQuery(record?.project_irds),
                         project: rebuildProjectResultQuery(record)
-                    })}>ИРД</Typography.Link>
+                    })}>ИРД</Typography.Link></p> <p>
                     <Typography.Link onClick={() => setEditModalStatus({
                         status: "stages",
                         stages: rebuildStagesResultQuery(record?.project_stages),
                         project: rebuildProjectResultQuery(record)
-                    })}>Этапы</Typography.Link>
+                    })}>Этапы</Typography.Link></p> <p>
                     <Typography.Link onClick={() => setEditModalStatus({
                         status: "tasks",
                         project: rebuildProjectResultQuery(record)
-                    })}>Задачи</Typography.Link>
-                </Row>
+                    })}>Задачи</Typography.Link></p>
+                </div>
             ),
         },
     ];
@@ -377,7 +390,7 @@ const ProjectTable = () => {
                 <Title style={{marginTop: 0}} level={2}>Отчёты по Проектам</Title>
             </Divider>
 
-            <StyledFormLarge form={formSearch} layout="horizontal">
+            <Form form={formSearch} layout="horizontal">
                 <Form.Item label="Поиск:" name="search">
                     <Space>
                         <Search
@@ -388,7 +401,7 @@ const ProjectTable = () => {
                         />
                     </Space>
                 </Form.Item>
-            </StyledFormLarge>
+            </Form>
             <Table
                 size={'small'}
                 sticky={{
@@ -504,22 +517,26 @@ const ProjectTable = () => {
                 onCancel={() => setEditModalStatus(null)}
                 footer={null}
                 onClose={() => setEditModalStatus(null)}
-                width={1840}
-                style={{width: 1840}}
+
             >
                 {editModalStatus?.status === "base" ? (
-                        <>
+
+                        <StyledBlockRegular>
                             <ProjectForm
+
                                 actualProject={editModalStatus?.project}
-                                updateProject={(value) => setEditModalStatus({...editModalStatus, project: value})}
-                            />
+                                updateProject={(value) => setEditModalStatus({
+                                    ...editModalStatus,
+                                    project: value
+                                })}/>
                             <div>
                                 <StyledButtonGreen onClick={() =>
                                     mutateProject({variables: {data: rebuildProjectToQuery(editModalStatus?.project)}})}>
                                     Сохранить
                                 </StyledButtonGreen>
                             </div>
-                        </>
+                        </StyledBlockRegular>
+
                     ) :
                     editModalStatus?.status === "irds" ? (
                             <>
@@ -554,7 +571,10 @@ const ProjectTable = () => {
                                     <>
                                         <ProjectTasks
                                             actualStages={editModalStatus?.stages}
-                                            updateStages={(value) => setEditModalStatus({...editModalStatus, stages: value})}
+                                            updateStages={(value) => setEditModalStatus({
+                                                ...editModalStatus,
+                                                stages: value
+                                            })}
                                             project={editModalStatus?.project}
                                         />
                                         <div>

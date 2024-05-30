@@ -10,8 +10,6 @@ import {
     UPDATE_TASK_TO_PROJECT_MUTATION
 } from '../../../../../graphql/mutationsTask';
 
-import {StyledFormItem, StyledFormRegular} from '../../../../../components/style/FormStyles';
-import {StyledButtonGreen} from "../../../../../components/style/ButtonStyles";
 import PersonForm from "../../../../../components/form/modelsForms/PersonForm";
 import TaskForm from "../../../../../components/form/modelsForms/TaskForm";
 import {
@@ -224,12 +222,12 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
                     />
                 </FormItem>
 
-                <StyledFormItem name="price" style={{width: '100%'}} label="Стоимость">
+                <Form.Item name="price" style={{width: '100%'}} label="Стоимость">
                     <InputNumber suffix={"₽"} style={{width: '100%'}}
                                  formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                  parser={value => `${value}`.replace(/[^0-9]/g, '')}/>
-                </StyledFormItem>
-                <StyledFormItem name="task_id" label="Задача">
+                </Form.Item>
+                <Form.Item name="task_id" label="Задача">
                     <Select
                         popupMatchSelectWidth={false}
                         allowClear
@@ -241,8 +239,8 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
                         {dataTasks?.tasks?.items?.map(row => (
                             <Select.Option key={row.id} value={row.id}>{row.name}</Select.Option>))}
                     </Select>
-                </StyledFormItem>
-                <StyledFormItem name="inherited_task_ids" label="Наслудует от">
+                </Form.Item>
+                <Form.Item name="inherited_task_ids" label="Наслудует от">
                     <Select
                         popupMatchSelectWidth={false}
                         allowClear
@@ -255,7 +253,7 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
                         {project?.project_tasks?.map(row => (
                             <Select.Option key={row.id} value={row.id}>{row.task.name}</Select.Option>))}
                     </Select>
-                </StyledFormItem>
+                </Form.Item>
 
 
                 <Divider>Исполнители: </Divider>

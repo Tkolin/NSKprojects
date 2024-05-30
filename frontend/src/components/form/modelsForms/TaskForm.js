@@ -1,12 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Form, Input} from 'antd';
 import {useLazyQuery, useMutation} from '@apollo/client';
-import { StyledFormItem, StyledFormRegular} from '../../style/FormStyles';
-import {StyledBlockRegular} from "../../style/BlockStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {NotificationContext} from "../../../NotificationProvider";
-import {BIKS_QUERY_BY_ID, TASKS_QUERY_BY_ID} from "../../../graphql/queriesByID";
-import {ADD_BIK_MUTATION, UPDATE_BIK_MUTATION} from "../../../graphql/mutationsBik";
+import { TASKS_QUERY_BY_ID} from "../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import {ADD_TASK_MUTATION, UPDATE_TASK_MUTATION} from "../../../graphql/mutationsTask";
 
@@ -61,15 +58,15 @@ const TaskForm = ({localObject, initialObject, onCompleted }) => {
     return (
         <>
             <Form form={form} layout="vertical">
-                <StyledFormItem name="name" label="Наименование" rules={[{required: true}]}>
+                <Form.Item name="name" label="Наименование" rules={[{required: true}]}>
                     <Input/>
-                </StyledFormItem>
+                </Form.Item>
                 <div style={{textAlign: 'center'}}>
-                    <StyledFormItem>
+                    <Form.Item>
                         <StyledButtonGreen style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
                             {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
-                    </StyledFormItem>
+                    </Form.Item>
                 </div>
             </Form>
         </>

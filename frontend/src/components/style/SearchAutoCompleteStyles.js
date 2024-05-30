@@ -1,9 +1,7 @@
 import React from 'react';
-import {AutoComplete, Button, Select, Space} from 'antd';
+import {AutoComplete, Button, Form, Space} from 'antd';
 import {EditOutlined, PlusOutlined} from '@ant-design/icons';
-import {StyledButtonGreen} from "./ButtonStyles";
-import {StyledFormItem} from "./FormStyles";
-import styled from "styled-components";
+
 
 const ButtonGreenStyle = {
     background: "#52c41a",
@@ -53,7 +51,7 @@ const BaseStyledFormItemAutoComplete = ({
         setStateSearch({...stateSearch, options: filteredOptions, selected: null});
     };
     return (
-        <StyledFormItem name={formName} labelCol={labelCol} wrapperCol={wrapperCol} label={formLabel}
+        <Form.Item name={formName} labelCol={labelCol} wrapperCol={wrapperCol} label={formLabel}
                         style={{width: width}}>
             <AutoComplete
                 popupMatchSelectWidth={false}
@@ -80,7 +78,7 @@ const BaseStyledFormItemAutoComplete = ({
                 placeholder={placeholder}
             />
 
-        </StyledFormItem>)
+        </Form.Item>)
 };
 
 const BaseStyledButtonFormItemAutoComplete = ({onClick, position, type, icon, style, disabled}) => (

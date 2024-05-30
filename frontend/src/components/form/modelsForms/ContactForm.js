@@ -1,11 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Divider, Form, Input, Modal} from 'antd';
+import {Divider, Form, Input} from 'antd';
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import {ADD_CONTACT_MUTATION, UPDATE_CONTACT_MUTATION} from '../../../graphql/mutationsContact';
-import {StyledFormItem, StyledFormRegular} from '../../style/FormStyles';
 import {DatePicker} from "antd/lib";
 import moment from 'moment';
-import {StyledBlockRegular} from "../../style/BlockStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {NotificationContext} from "../../../NotificationProvider";
 import {
@@ -16,7 +14,6 @@ import {
     StyledFormItemAutoComplete,
     StyledFormItemAutoCompleteAndCreateWitchEdit
 } from "../../style/SearchAutoCompleteStyles";
-import OrganizationForm from "./OrganizationForm";
 import {CONTACTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import OrganizationModalForm from "../../modal/OrganizationModalForm";
@@ -99,7 +96,7 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
 
     return (
         <div>
-            <StyledFormRegular
+            <Form
                 form={form}
                 onFinish={handleSubmit}
                 labelCol={{span: 8}}
@@ -107,27 +104,27 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
                 wrapperCol={{span: 16}}
             >
                 <Divider orientation="left">ФИО:</Divider>
-                <StyledFormItem
+                <Form.Item
                     name="last_name"
                     label="Фамилия"
                     rules={[{required: true, message: 'Пожалуйста, заполните фамилию'}]}
                 >
                     <Input/>
-                </StyledFormItem>
-                <StyledFormItem
+                </Form.Item>
+                <Form.Item
                     name="first_name"
                     label="Имя"
                     rules={[{required: true, message: 'Пожалуйста, заполните имя'}]}
                 >
                     <Input/>
-                </StyledFormItem>
-                <StyledFormItem name="patronymic" label="Отчество">
+                </Form.Item>
+                <Form.Item name="patronymic" label="Отчество">
                     <Input/>
-                </StyledFormItem>
+                </Form.Item>
 
                 <Divider orientation="left">Персональные данные:</Divider>
 
-                <StyledFormItem
+                <Form.Item
                     name="work_phone"
                     label="Рабочий тел."
                     rules={[
@@ -138,8 +135,8 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
                     ]}
                 >
                     <Input placeholder="+790031001234" maxLength={16} minLength={10}/>
-                </StyledFormItem>
-                <StyledFormItem
+                </Form.Item>
+                <Form.Item
                     name="mobile_phone"
                     label="Личный тел."
                     rules={[
@@ -150,24 +147,24 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
                     ]}
                 >
                     <Input placeholder="+790031001234" maxLength={16} minLength={10}/>
-                </StyledFormItem>
-                <StyledFormItem
+                </Form.Item>
+                <Form.Item
                     name="email"
                     label="Личный e-mail"
                     rules={[{type: 'email', message: 'Пожалуйста, введите корректный почтовый адрес',}]}
                 >
                     <Input placeholder="Введите e-mail"/>
-                </StyledFormItem>
-                <StyledFormItem
+                </Form.Item>
+                <Form.Item
                     name="work_email"
                     label="Рабочий e-mail"
                     rules={[{type: 'email', message: 'Пожалуйста, введите корректный почтовый адрес',}]}
                 >
                     <Input placeholder="Введите e-mail"/>
-                </StyledFormItem>
-                <StyledFormItem name="birth_day" label="Дата рождения">
+                </Form.Item>
+                <Form.Item name="birth_day" label="Дата рождения">
                     <DatePicker placeholder="Выберите дату"/>
-                </StyledFormItem>
+                </Form.Item>
 
                 <Divider orientation="left">Данные организации:</Divider>
                 <StyledFormItemAutoComplete
@@ -194,14 +191,14 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
                 />
 
 
-                <StyledFormItem labelCol={{span: 24}} wrapperCol={{span: 24}}>
+                <Form.Item labelCol={{span: 24}} wrapperCol={{span: 24}}>
                     <div style={{textAlign: 'center'}}>
                         <StyledButtonGreen style={{marginBottom: 0}} type="primary" htmlType="submit">
                             {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
                     </div>
-                </StyledFormItem>
-            </StyledFormRegular>
+                </Form.Item>
+            </Form>
             <OrganizationModalForm
                 key={organizationAutoComplete?.selected}
                 object={organizationAutoComplete?.selected}

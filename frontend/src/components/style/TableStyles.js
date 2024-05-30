@@ -1,8 +1,7 @@
 import styled from 'styled-components';
-import {Form, Popconfirm, Row, Select, Spin, Table, Typography} from 'antd';
-import {StyledFormItem} from "./FormStyles";
+import { Popconfirm, Row, Table, Typography} from 'antd';
 import React from "react";
-import {LoadingOutlined, QuestionCircleOutlined} from "@ant-design/icons";
+import { QuestionCircleOutlined} from "@ant-design/icons";
 
 export const StyledTable = styled(Table)`
 

@@ -106,7 +106,6 @@ const App = ({value, onChange, stageNumber}) => {
         });
     };
     return (
-        <Form.Item>
             <Tree
                 checkable={stageNumber}
                 onExpand={onExpand}
@@ -126,7 +125,6 @@ const App = ({value, onChange, stageNumber}) => {
                 onDrop={onDrop}
                 treeData={updateTreeData(value.gData)}
             />
-        </Form.Item>
 
     );
 };

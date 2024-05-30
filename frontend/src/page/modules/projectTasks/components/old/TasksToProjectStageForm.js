@@ -8,10 +8,9 @@ import {
 } from "../../../../../graphql/queries";
 import LoadingSpinnerStyles from "../../../../../components/style/LoadingSpinnerStyles";
 import {StyledButtonGreen} from "../../../../../components/style/ButtonStyles";
-import {UPDATE_STAGES_TO_PROJECT_MUTATION, UPDATE_TASKS_TO_PROJECT_MUTATION} from "../../../../../graphql/mutationsProject";
-import {ADD_TASK_TO_PROJECT_MUTATION, ADD_TASK_MUTATION} from "../../../../../graphql/mutationsTask";
+import {UPDATE_TASKS_TO_PROJECT_MUTATION} from "../../../../../graphql/mutationsProject";
+import {ADD_TASK_TO_PROJECT_MUTATION} from "../../../../../graphql/mutationsTask";
 import {StyledBlockBig} from "../../../../../components/style/BlockStyles";
-import {StyledFormItem} from "../../../../../components/style/FormStyles";
 
 const TasksToProjectStageForm = ({project, onSubmit}) => {
     const [stagesArray, setStagesArray] = useState(null);
@@ -184,7 +183,7 @@ const TasksToProjectStageForm = ({project, onSubmit}) => {
         <StyledBlockBig>
             <Form form={formStages} style={{width: '50%'}}>
                 {stagesArray?.map(stage => (
-                    <StyledFormItem key={stage.id}>
+                    <Form.Item key={stage.id}>
                         <h3></h3>
                         <Radio
                             checked={selectedStage === stage.id}
@@ -193,7 +192,7 @@ const TasksToProjectStageForm = ({project, onSubmit}) => {
                         >
                             {stage.name}
                         </Radio>
-                    </StyledFormItem>
+                    </Form.Item>
                 ))}
             </Form>
             <Tree

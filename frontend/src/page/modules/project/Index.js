@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Form, Steps, theme} from 'antd';
+import {Button, Form, Space, Steps, theme} from 'antd';
 import {StyledBlockLarge, StyledBlockRegular} from "../../../components/style/BlockStyles";
 import StagesProjectForm from "./components/StagesProjectForm";
 
@@ -15,7 +15,7 @@ import {
 import {NotificationContext} from "../../../NotificationProvider";
 import dayjs from "dayjs";
 import ProjectDetails from "./components/ProjectDetails";
-
+import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
 
 
 const Index = ({object}) => {
@@ -35,26 +35,41 @@ const Index = ({object}) => {
     useEffect(() => {
         if (object && object.id) {
             setCurrent(0);
-            console.log("object",object)
+            console.log("object", object)
             reconstructProjectToIrdsAndStages(object);
         }
     }, [object]);
 
     const {token} = theme.useToken();
+    const facilitiesToFullCode = (faclility) => {
+        return  `${faclility.group_facility.subselection_facility.selection_facility.code.toString().padStart(2, '0')}-
+        ${faclility.group_facility.subselection_facility.code.toString().padStart(2, '0')}-
+        ${faclility.group_facility.code.toString().padStart(3, '0')}-
+        ${faclility.code.toString().padStart(3, '0')}`
+    }
     const rebuildProjectResultQuery = (data) => {
         return {
             ...data,
-            date_create: data?.date_create ? dayjs(data?.date_create) : null,
-            date_end: data?.date_end ? dayjs(data?.date_end): null,
-            date_signing: data?.date_signing ? dayjs(data?.date_signing): null,
-            delegates_id: data?.delegations?.map(k => k?.id),
-            facility_id: data?.facilities?.map(k => k?.id),
-            organization_customer_id: data?.organization_customer?.id,
-            organization_customer_name: data?.organization_customer?.name,
-            status_id: data?.status?.id,
-            type_project_document_id: data?.type_project_document?.id,
-            type_project_document_name: data?.type_project_document?.name,
-        };
+
+            date_range: {
+                dateEnd: data?.date_end ? dayjs(data?.date_end) : null,
+                dateStart: data?.date_signing ? dayjs(data?.date_signing) : null,
+                duration: data?.duration ?? null
+            },
+            date_create:data?.date_create ? dayjs(data?.date_create) : null,
+            date_end:data?.date_end ? dayjs(data?.date_end) : null,
+            date_signing:data?.date_signing ? dayjs(data?.date_signing) : null,
+            delegates_id:data?.delegations?.map(k => k?.id),
+            facility_id: {
+                checkedKeys: data?.facilities?.map(k => facilitiesToFullCode(k))
+            },
+            organization_customer_id:data?.organization_customer?.id,
+            organization_customer_name:data?.organization_customer?.name,
+            status_id:data?.status?.id,
+            type_project_document_id:data?.type_project_document?.id,
+            type_project_document_name:data?.type_project_document?.name,
+        }
+            ;
     };
     const rebuildStagesResultQuery = (data) => {
         return data?.map((row, index) => ({
@@ -109,26 +124,26 @@ const Index = ({object}) => {
             receivedDate: row?.receivedDate ? dayjs(row?.receivedDate).format("YYYY-MM-DD") : null,
         }));
     };
-    const rebuildProjectToQuery = (daprojectta) => {
-        if (!project)
+    const rebuildProjectToQuery = (data) => {
+        if (!data)
             return [];
 
-        return{
-            id: project?.id ?? null,
-            number: project?.number,
-            name: project?.name,
-            organization_customer_id: project?.organization_customer_id,
-            type_project_document_id: project?.type_project_document_id,
-            date_signing: dayjs(project?.date_signing).format("YYYY-MM-DD"),
-            duration: project?.duration,
-            date_end: dayjs(project?.date_end).format("YYYY-MM-DD"),
-            date_create: dayjs(project?.date_create).format("YYYY-MM-DD"),
-            status_id: project?.status_id,
-            date_completion: dayjs(project?.date_completion).format("YYYY-MM-DD"),
-            price: project?.price,
-            prepayment: project?.prepayment,
-            facility_id: project?.facility_id?.map(row => row[3][0]),
-            delegates_id: project?.delegates_id,
+        return {
+            id: data?.id ?? null,
+            number: data?.number,
+            name: data?.name,
+            organization_customer_id: data?.organization_customer_id,
+            type_project_document_id: data?.type_project_document_id,
+            date_signing: dayjs(data?.date_signing).format("YYYY-MM-DD"),
+            duration: data?.date_range?.duration,
+            date_end: dayjs(data?.date_range?.date_end).format("YYYY-MM-DD"),
+            date_create: dayjs(data?.date_range?.date_create).format("YYYY-MM-DD"),
+            status_id: data?.status_id,
+            date_completion: dayjs(data?.date_completion).format("YYYY-MM-DD"),
+            price: data?.price,
+            prepayment: data?.prepayment,
+            facility_id: data?.facility_id?.checkedObjects?.map(row => row?.value[0] ?? null),
+            delegates_id: data?.delegates_id,
         };
     };
     const reconstructProjectToIrdsAndStages = (project) => {
@@ -185,28 +200,7 @@ const Index = ({object}) => {
 
         switch (current) {
             case 0:
-                mutateProject({
-                    variables: {
-                        data: {
-                            id: project?.id ?? null,
-                            number: project?.number,
-                            name: project?.name,
-                            organization_customer_id: project?.organization_customer_id,
-                            type_project_document_id: project?.type_project_document_id,
-                            date_signing: dayjs(project?.date_signing).format("YYYY-MM-DD"),
-                            duration: project?.duration,
-                            date_end: dayjs(project?.date_end).format("YYYY-MM-DD"),
-                            date_create: dayjs(project?.date_create).format("YYYY-MM-DD"),
-                            status_id: project?.status_id,
-                            date_completion: dayjs(project?.date_completion).format("YYYY-MM-DD"),
-                            price: project?.price,
-                            prepayment: project?.prepayment,
-                            facility_id: project?.facility_id?.map(row => row[3][0]),
-                            delegates_id: project?.delegates_id,
-                        }
-                    }
-                });
-
+                mutateProject({variables: {data: rebuildProjectToQuery(project)}});
                 break;
             case 1:
                 mutateStage({variables: {data: rebuildStagesToQuery(stages)}});
@@ -288,7 +282,17 @@ const Index = ({object}) => {
             <div style={contentStyle}>
                 {current === 0 ? (
                         <StyledBlockRegular label={"Основные данные об проекте"}>
-                            <ProjectForm actualProject={project} updateProject={(value) => updateProject(value)}/>
+                            <ProjectForm actualProject={project} onCompleted={() => next()}
+                                         updateProject={(value) => updateProject(value)}
+                                         confirmFormButton={
+                                             <div style={{textAlign: 'center'}}>
+                                                 <Space>
+                                                     <StyledButtonGreen style={{marginBottom: 0}} htmlType="submit">
+                                                         Сохранить проект
+                                                     </StyledButtonGreen>
+                                                 </Space>
+                                             </div>
+                                         }/>
                         </StyledBlockRegular>
                     ) :
                     current === 1 ? (
@@ -305,9 +309,9 @@ const Index = ({object}) => {
                                         actualIrds={irds}
                                         updateIrds={(value) => updateIrds(value)}/>
                                 </StyledBlockLarge>) :
-                                current === 3 ? (<>
-                                        <ProjectDetails project={project}/>
-                                    </>):
+                            current === 3 ? (<>
+                                    <ProjectDetails project={project}/>
+                                </>) :
                                 <></>
                 }
             </div>

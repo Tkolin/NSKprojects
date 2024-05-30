@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {Row, Col, Form, InputNumber, Select, Tooltip, DatePicker} from 'antd';
+import {Row, Col, Form, InputNumber, Tooltip, DatePicker} from 'antd';
 import {
     MinusCircleOutlined,
 } from '@ant-design/icons';
-import {useForm} from "antd/es/form/Form";
 import {StyledFormItemAutoComplete} from "../../../../components/style/SearchAutoCompleteStyles";
 import {EmptyFormItem} from "../../../../components/formComponents/EmptyFormItem";
 

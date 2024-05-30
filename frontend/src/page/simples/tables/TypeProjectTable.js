@@ -5,10 +5,8 @@ import {TYPES_PROJECTS_QUERY} from '../../../graphql/queries';
 import {DELETE_TYPE_PROJECT_MUTATION} from '../../../graphql/mutationsTypeProject';
 import TypeProjectForm from "../../../components/form/modelsForms/TypeProjectForm";
 
-import LoadingSpinnerStyles from "../../../components/style/LoadingSpinnerStyles";
 import Search from "antd/es/input/Search";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
-import {StyledFormLarge} from "../../../components/style/FormStyles";
 
 const TypeProjectTable = () => {
 
@@ -120,7 +118,7 @@ const TypeProjectTable = () => {
 
     return (
         <div>
-            <StyledFormLarge form={formSearch} layout="horizontal">
+            <Form form={formSearch} layout="horizontal">
                 <Form.Item label="Поиск:" name="search">
                     <Space>
                         <Search
@@ -133,7 +131,7 @@ const TypeProjectTable = () => {
                             запись</StyledButtonGreen>
                     </Space>
                 </Form.Item>
-            </StyledFormLarge>
+            </Form>
             <Table
                 size={'small'}
                 sticky={{

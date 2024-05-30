@@ -4,9 +4,6 @@ import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import {
     UPDATE_ORGANIZATION_MUTATION, ADD_ORGANIZATION_MUTATION,
 } from '../../../graphql/mutationsOrganization';
-import {
-    StyledFormItem, StyledFormBig
-} from '../../style/FormStyles';
 
 import 'react-dadata/dist/react-dadata.css';
 import {StyledButtonGreen} from "../../style/ButtonStyles";
@@ -122,27 +119,27 @@ const OrganizationForm = ({localObject,initialObject, onCompleted}) => {
 
 
     return (<div>
-            <StyledFormBig form={form} onFinish={handleSubmit}>
+            <Form form={form} onFinish={handleSubmit}>
                 <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
-                    <StyledFormItem name="name"
+                    <Form.Item name="name"
                                     label={"Наименование компании"}
                                     rules={[{required: true, message: "Укажите наименование компании"}]}
                                     style={{width: "90%"}}>
                         <Input style={{width: "100%)"}}
                                placeholder={"Наименование"}/>
-                    </StyledFormItem>
-                    <StyledFormItem style={{width: "10%"}} name="legal_form_id"
+                    </Form.Item>
+                    <Form.Item style={{width: "10%"}} name="legal_form_id"
                                     rules={[{required: true, message: "Укажите тип организации"}]}>
                         <Select placeholder={"Форма"} style={{width: "100%)"}} loading={loadingLegalForm}>
                             {dataLegalForm?.legalForms?.map(row => (
                                 <Select.Option key={row.id} value={row.id}>{row.name}</Select.Option>))}
                         </Select>
-                    </StyledFormItem>
+                    </Form.Item>
                 </Space.Compact>
-                <StyledFormItem name="full_name" label="Полное наименование"
+                <Form.Item name="full_name" label="Полное наименование"
                                 rules={[{required: true, message: "Укажите полное наименование компании"}]}>
                     <Input/>
-                </StyledFormItem>
+                </Form.Item>
                 <StyledFormItemAutoCompleteAndCreateWitchEdit
                     formName={"director_name"}
                     formLabel={"Руководитель"}
@@ -160,7 +157,7 @@ const OrganizationForm = ({localObject,initialObject, onCompleted}) => {
                 />
 
                 <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
-                    <StyledFormItem name="address_legal" label="Юридический адрес" minchars={3}
+                    <Form.Item name="address_legal" label="Юридический адрес" minchars={3}
                                     delay={50}
                                     style={{width: '90%'}}>
                         <AddressSuggestions token={TokenDADATA}
@@ -174,13 +171,13 @@ const OrganizationForm = ({localObject,initialObject, onCompleted}) => {
                                                 legal: suggestion?.unrestricted_value
                                             })}
                                             style={{width: '100%'}}/>
-                    </StyledFormItem>
-                    <StyledFormItem name="office_number_legal" style={{width: "10%"}}>
+                    </Form.Item>
+                    <Form.Item name="office_number_legal" style={{width: "10%"}}>
                         <Input placeholder="Офис" style={{width: '100%'}}/>
-                    </StyledFormItem>
+                    </Form.Item>
                 </Space.Compact>
                 <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
-                    <StyledFormItem name="address_mail" label="Почтовый адрес" minchars={3}
+                    <Form.Item name="address_mail" label="Почтовый адрес" minchars={3}
                                     delay={50}
                                     style={{width: '90%'}}>
                         <AddressSuggestions token={TokenDADATA}
@@ -194,16 +191,16 @@ const OrganizationForm = ({localObject,initialObject, onCompleted}) => {
                                                 mail: suggestion?.unrestricted_value
                                             })}
                                             style={{width: '100%'}}/>
-                    </StyledFormItem>
-                    <StyledFormItem
+                    </Form.Item>
+                    <Form.Item
                         name="office_number_mail"
                         style={{width: "10%"}}>
                         <Input placeholder="Офис" style={{width: '100%'}}/>
-                    </StyledFormItem>
+                    </Form.Item>
                 </Space.Compact>
                 <Row gutter={8}>
                     <Col span={12}>
-                        <StyledFormItem name="phone_number" label="Телефон" rules={[{
+                        <Form.Item name="phone_number" label="Телефон" rules={[{
                             pattern: /^\+[0-9\s()-]+$/,
                             message: 'Пожалуйста, введите в формате +79003001234',
                         },]}>
@@ -212,18 +209,18 @@ const OrganizationForm = ({localObject,initialObject, onCompleted}) => {
                                 maxLength={11}
                                 minLength={10}
                             />
-                        </StyledFormItem>
-                        <StyledFormItem name="fax_number" label="Факс">
+                        </Form.Item>
+                        <Form.Item name="fax_number" label="Факс">
                             <Input placeholder="Введите номер факса"/>
-                        </StyledFormItem>
-                        <StyledFormItem name="email" label="e-mail" rules={[{
+                        </Form.Item>
+                        <Form.Item name="email" label="e-mail" rules={[{
                             type: "email", message: 'Пожалуйста, введите корректный почтовый адрес',
                         },]}>
                             <Input placeholder="Введите почтовый адрес"/>
-                        </StyledFormItem>
-                        <StyledFormItem name="payment_account" label="Расчётынй счёт">
+                        </Form.Item>
+                        <Form.Item name="payment_account" label="Расчётынй счёт">
                             <Input placeholder="Введите номер расчётного счёта"/>
-                        </StyledFormItem>
+                        </Form.Item>
                         <StyledFormItemAutoCompleteAndCreate
                             formName={"bik_name"}
                             formLabel={"Бик"}
@@ -236,7 +233,7 @@ const OrganizationForm = ({localObject,initialObject, onCompleted}) => {
                         />
                     </Col>
                     <Col span={12}>
-                        <StyledFormItem name="INN" label="ИНН" rules={[{
+                        <Form.Item name="INN" label="ИНН" rules={[{
                             pattern: /^[\d\s]+$/, message: 'Пожалуйста, введите корректный номер ИНН',
                         },]}>
                             <Input
@@ -245,8 +242,8 @@ const OrganizationForm = ({localObject,initialObject, onCompleted}) => {
                                 minLength={10}
                                 pattern="\d*"
                             />
-                        </StyledFormItem>
-                        <StyledFormItem name="OGRN" label="ОГРН" rules={[{
+                        </Form.Item>
+                        <Form.Item name="OGRN" label="ОГРН" rules={[{
                             pattern: /^[\d\s]+$/, message: 'Пожалуйста, введите корректный номер ОГРН',
                         },]}>
                             <Input
@@ -255,8 +252,8 @@ const OrganizationForm = ({localObject,initialObject, onCompleted}) => {
                                 minLength={13}
                                 pattern="\d*"
                             />
-                        </StyledFormItem>
-                        <StyledFormItem name="OKPO" label="ОКПО" rules={[{
+                        </Form.Item>
+                        <Form.Item name="OKPO" label="ОКПО" rules={[{
                             pattern: /^[\d\s]+$/, message: 'Пожалуйста, введите корректный номер ОКПО',
                         },]}>
                             <Input
@@ -265,8 +262,8 @@ const OrganizationForm = ({localObject,initialObject, onCompleted}) => {
                                 minLength={8}
                                 pattern="\d*"
                             />
-                        </StyledFormItem>
-                        <StyledFormItem name="KPP" label="КПП" rules={[{
+                        </Form.Item>
+                        <Form.Item name="KPP" label="КПП" rules={[{
                             pattern: /^[\d\s]+$/, message: 'Пожалуйста, введите корректный номер КПП',
                         },]}>
                             <Input
@@ -275,18 +272,18 @@ const OrganizationForm = ({localObject,initialObject, onCompleted}) => {
                                 minLength={9}
                                 pattern="\d*"
                             />
-                        </StyledFormItem>
+                        </Form.Item>
                     </Col>
                 </Row>
 
-                <StyledFormItem>
+                <Form.Item>
                     <div style={{textAlign: 'center'}}>
                         <StyledButtonGreen type="dashed" htmlType={"submit"}>
                             {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
                     </div>
-                </StyledFormItem>
-            </StyledFormBig>
+                </Form.Item>
+            </Form>
             {/*
             Модальные окна редактирования
             */}

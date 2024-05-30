@@ -4,9 +4,7 @@ import OrganizationForm from "../form/modelsForms/OrganizationForm";
 import React from "react";
 
 const OrganizationModalForm = ({key,object,onClose, mode}) => {
-    if(mode == null)
-        onClose();
-        return null;
+
     return (
         <Modal
             key={key}

@@ -1,13 +1,10 @@
-import { StyledFormLarge} from "../../../../components/style/FormStyles";
 import {Button, Col, Form,  Row, } from "antd";
 import { PlusOutlined, } from "@ant-design/icons";
-import React, {useContext, useEffect, useState} from "react";
+import React, { useEffect} from "react";
 import {useQuery} from "@apollo/client";
 
-import {NotificationContext} from "../../../../NotificationProvider";
 import {IRDS_QUERY_COMPACT} from "../../../../graphql/queriesCompact";
 import IrdItem from "./IrdItem";
-import {useProjectStore} from "../Store";
 import dayjs from "dayjs";
 
 const IrdsProjectForm = ({localObject, initialObject, onCompleted, updateIrds, actualIrds}) => {
@@ -37,11 +34,11 @@ const IrdsProjectForm = ({localObject, initialObject, onCompleted, updateIrds, a
     }
 
     return (
-        <StyledFormLarge layout="vertical"
-                         onChange={() => {
+        <Form layout="vertical"
+              onChange={() => {
                              handleChange();
                          }}
-                         form={form}>
+              form={form}>
 
             <Form.List name="irdList">
                 {(fields, {add, remove}) => (
@@ -73,7 +70,7 @@ const IrdsProjectForm = ({localObject, initialObject, onCompleted, updateIrds, a
                     </>
                 )}
             </Form.List>
-        </StyledFormLarge>
+        </Form>
     )
 };
 

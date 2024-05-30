@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Form, Input} from 'antd';
 import {useLazyQuery, useMutation} from '@apollo/client';
-import { StyledFormItem, StyledFormRegular} from '../../style/FormStyles';
 import {StyledBlockRegular} from "../../style/BlockStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {NotificationContext} from "../../../NotificationProvider";
@@ -60,18 +59,18 @@ const IrdForm = ({localObject, initialObject, onCompleted }) => {
 
     return (
         <StyledBlockRegular label={nameModel}>
-            <StyledFormRegular form={form} layout="vertical">
-                <StyledFormItem name="name" label="Наименование" rules={[{required: true}]}>
+            <Form form={form} layout="vertical">
+                <Form.Item name="name" label="Наименование" rules={[{required: true}]}>
                     <Input/>
-                </StyledFormItem>
+                </Form.Item>
                 <div style={{textAlign: 'center'}}>
-                    <StyledFormItem>
+                    <Form.Item>
                         <StyledButtonGreen type="primary" onClick={handleSubmit}>
                             {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
-                    </StyledFormItem>
+                    </Form.Item>
                 </div>
-            </StyledFormRegular>
+            </Form>
         </StyledBlockRegular>
 );
 };

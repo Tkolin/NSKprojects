@@ -1,78 +1,49 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { InputNumber, Space, DatePicker } from 'antd';
 import dayjs from 'dayjs';
-import { StyledFormItem } from '../../../../components/style/FormStyles';
 
-const DateRangePickerComponent = ({ onChange, value }) => {
-    const [data, setData] = useState({ dateStart: null, dateEnd: null, duration: null });
-
-    useEffect(() => {
-        const { dateStart, dateEnd, duration } = data;
-        let newData = { ...data };
-
-        if (!dateStart && dateEnd && duration) {
-            newData.dateStart = dayjs(dateEnd).subtract(duration, 'day');
-        } else if (!dateEnd && dateStart && duration) {
-            newData.dateEnd = dayjs(dateStart).add(duration, 'day');
-        } else if (!duration && dateStart && dateEnd) {
-            newData.duration = dayjs(dateEnd).diff(dateStart, 'day');
-        }
-
-        setData(newData);
-
-        const incomplete = !newData.dateStart || !newData.dateEnd || !newData.duration;
-        if (!incomplete) {
-            onChange(newData);
-        }
-    }, [data, onChange]);
+const DateRangePickerComponent = ({ value = { dateStart: null, dateEnd: null, duration: null }, onChange }) => {
 
     const handleDateStartChange = (date) => {
-        setData((prevData) => ({ ...prevData, dateStart: date }));
+        const newDuration = date && value.dateEnd ? dayjs(value.dateEnd).diff(date, 'day') : value.duration;
+        onChange && onChange({ ...value, dateStart: date, duration: newDuration });
     };
 
     const handleDateEndChange = (date) => {
-        setData((prevData) => ({ ...prevData, dateEnd: date }));
+        const newDuration = date && value.dateStart ? dayjs(date).diff(value.dateStart, 'day') : value.duration;
+        onChange && onChange({ ...value, dateEnd: date, duration: newDuration });
     };
 
-    const handleDurationChange = (value) => {
-        setData((prevData) => ({ ...prevData, duration: value }));
+    const handleDurationChange = (duration) => {
+        const newDateEnd = value.dateStart ? dayjs(value.dateStart).add(duration, 'day') : value.dateEnd;
+        onChange && onChange({ ...value, duration: duration, dateEnd: newDateEnd });
     };
-
-    const { dateStart, dateEnd, duration } = data;
-
-    const dateStartStyle = dateStart ? {} : { borderColor: 'red' };
-    const dateEndStyle = dateEnd ? {} : { borderColor: 'red' };
-    const durationStyle = duration ? {} : { borderColor: 'red' };
 
     return (
         <div>
-            <Space block style={{ alignItems: 'flex-end' }}>
-                <StyledFormItem name="date_start" label="Дата подписания">
-                    <DatePicker
-                        placeholder="Выберите дату"
-                        onChange={handleDateStartChange}
-                        value={value.dateStart}
-                        style={dateStartStyle}
-                    />
-                </StyledFormItem>
-                <StyledFormItem name="duration" label="Срок (в днях)" style={{ width: '50%' }}>
-                    <InputNumber
-                        formatter={(value) => `${value}`.replace(/[^0-9]/g, '')}
-                        parser={(value) => `${value}`.replace(/[^0-9]/g, '')}
-                        style={{ width: '100%', ...durationStyle }}
-                        value={value.duration}
-                        onChange={handleDurationChange}
-                    />
-                </StyledFormItem>
-                <StyledFormItem name="date_end" label="Дата окончания">
-                    <DatePicker
-                        placeholder="Выберите дату"
-                        onChange={handleDateEndChange}
-                        value={value.dateEnd}
-                        style={dateEndStyle}
-                    />
-                </StyledFormItem>
-            </Space>
+            <Space.Compact style={{ alignItems: 'flex-end' }}>
+                <DatePicker
+                    placeholder="Дата начала"
+                    onChange={handleDateStartChange}
+                    value={value.dateStart}
+                    maxDate={value.dateEnd}
+                />
+                <InputNumber
+                    placeholder="Продолжительность"
+                    formatter={(value) => `${value}`.replace(/[^0-9]/g, '')}
+                    parser={(value) => `${value}`.replace(/[^0-9]/g, '')}
+                    value={value.duration}
+                    onChange={handleDurationChange}
+                />
+
+                <DatePicker
+                    placeholder="Дата окончания"
+                    onChange={handleDateEndChange}
+                    value={value.dateEnd}
+                    disabledDate={(current) => value.dateStart && current && current < value.dateStart}
+                    minDate={value.dateStart}
+                />
+            </Space.Compact>
         </div>
     );
 };

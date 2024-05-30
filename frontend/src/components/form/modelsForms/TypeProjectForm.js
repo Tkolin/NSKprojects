@@ -1,8 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Form, Input} from 'antd';
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
-import { StyledFormItem} from '../../style/FormStyles';
-import { StyledBlockRegular} from "../../style/BlockStyles";
 import {
     ADD_TYPE_PROJECTS_MUTATION,
     UPDATE_TYPE_PROJECTS_MUTATION
@@ -76,12 +74,12 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted }) => {
 
     return (
              < >
-                <StyledFormItem name="name" label="Наименование" rules={[{required: true}]}>
+                <Form.Item name="name" label="Наименование" rules={[{required: true}]}>
                     <Input/>
-                </StyledFormItem>
-                <StyledFormItem name="code" label="код" rules={[{required: true}]}>
+                </Form.Item>
+                <Form.Item name="code" label="код" rules={[{required: true}]}>
                     <Input/>
-                </StyledFormItem>
+                </Form.Item>
                 <StyledFormItemAutoComplete
                     formName={"group_name"}
                     formLabel={"Группа"}
@@ -93,11 +91,11 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted }) => {
                     setStateSearch={setGroupTypeProjectAutoComplete}
                 />
                 <div style={{textAlign: 'center'}}>
-                    <StyledFormItem>
+                    <Form.Item>
                         <StyledButtonGreen style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
                             {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
-                    </StyledFormItem>
+                    </Form.Item>
                 </div>
             </>
      );

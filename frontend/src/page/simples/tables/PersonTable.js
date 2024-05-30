@@ -15,7 +15,6 @@ import {PERSONS_QUERY} from '../../../graphql/queries';
 import {DELETE_PERSON_MUTATION} from '../../../graphql/mutationsPerson';
 import PersonForm from "../../../components/form/modelsForms/PersonForm";
 import Search from "antd/es/input/Search";
-import {StyledFormLarge} from "../../../components/style/FormStyles";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
 import PersonContractFileDownload from "../../../components/script/PersonContractFileDownload";
 import Title from "antd/es/typography/Title";
@@ -138,7 +137,7 @@ const PersonTable = () => {
         setSortOrder(sorter?.order === 'descend' ? 'desc' : sorter?.order === 'ascend' ? 'asc' : '');
     };
     return (<div>
-        <StyledFormLarge form={formSearch} layout="horizontal">
+        <Form form={formSearch} layout="horizontal">
             <Divider style={{marginTop: 0}}>
                 <Title style={{marginTop: 0}} level={2}>Справочник Подрядчиков</Title>
             </Divider>
@@ -154,7 +153,7 @@ const PersonTable = () => {
                         запись</StyledButtonGreen>
                 </Space>
             </Form.Item>
-        </StyledFormLarge>
+        </Form>
         <Table
             size={'small'}
             sticky={{

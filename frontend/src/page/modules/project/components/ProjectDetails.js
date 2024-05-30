@@ -1,15 +1,11 @@
 import React from 'react';
-import {Row, Col, Input, Form, DatePicker, Descriptions, Collapse, Typography} from 'antd';
-import dayjs from "dayjs";
+import {Row, DatePicker, Descriptions, Collapse, Typography} from 'antd';
 
- import moment from "moment/moment";
 import PaymentInvoiceProjectDownload from "../../../../components/script/PaymentInvoiceProjectDownload";
 import ActRenderingProjectDownload from "../../../../components/script/ActRenderingProjectDownload";
-import TaskExecutorContractDownload from "../../../../components/script/TaskExecutorContractDownload";
 import IrdsProjectFileDownload from "../../../../components/script/IrdsProjectFileDownload";
 import StagesProjectFileDownload from "../../../../components/script/StagesProjectFileDownload";
 import ProjectFileDownload from "../../../../components/script/ProjectFileDownload";
-const {RangePicker} = DatePicker;
 const {Text} = Typography;
 
 

@@ -3,9 +3,7 @@ import {Form, Input, Button, message} from 'antd';
 import {useMutation} from '@apollo/client';
 import {LOGIN_MUTATION} from '../../../graphql/mutationsAuth';
 import {useNavigate} from 'react-router-dom';
-import {StyledFormItem, StyledFormRegular} from '../../style/FormStyles';
-import {Cookies} from "react-cookie";
-import {StyledBlockRegular} from "../../style/BlockStyles";
+ import {Cookies} from "react-cookie";
 
 const LoginForm = () => {
     const [form] = Form.useForm();
@@ -29,35 +27,35 @@ const LoginForm = () => {
 
     return (
         <div style={{marginTop: "20px"}}>
-            <StyledFormRegular
+            <Form
                 form={form}
                 name="loginForm"
                 onFinish={onFinish}
                 initialValues={{remember: true}}
             >
-                <StyledFormItem
+                <Form.Item
                     name="email"
                     rules={[{required: true, message: 'Пожалуйста введите email!'}]}
                 >
                     <Input placeholder="Email"/>
-                </StyledFormItem>
+                </Form.Item>
 
-                <StyledFormItem
+                <Form.Item
                     name="password"
                     rules={[{required: true, message: 'Пожалуйста введите пароль!'}]}
                 >
                     <Input.Password placeholder="Password"/>
-                </StyledFormItem>
+                </Form.Item>
                 <div style={{textAlign: 'center'}}>
 
-                    <StyledFormItem>
+                    <Form.Item>
                         <Button type="primary" htmlType="submit" loading={loading}>
                             Вход
                         </Button>
-                    </StyledFormItem>
+                    </Form.Item>
                 </div>
                 {error && <p>Error: {error.message}</p>}
-            </StyledFormRegular>
+            </Form>
         </div>
 
     );
