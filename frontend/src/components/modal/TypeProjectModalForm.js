@@ -4,7 +4,7 @@ import OrganizationForm from "../form/modelsForms/OrganizationForm";
 import React from "react";
 import TypeProjectForm from "../form/modelsForms/TypeProjectForm";
 
-const TypeProjectModalForm = ({key,object,onClose, mode}) => {
+const TypeProjectModalForm = ({key,object={id: null},onClose, mode="edit"||"add"}) => {
     return (
         <Modal
             key={key}
@@ -12,6 +12,8 @@ const TypeProjectModalForm = ({key,object,onClose, mode}) => {
             onCancel={() => onClose(null)}
             footer={null}
             onClose={() => onClose(null)}
+            width={"600px"}
+
         >
             <StyledBlockRegular label={"Тип документации"}>
                 {mode === "edit" ? (

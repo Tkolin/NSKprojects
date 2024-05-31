@@ -109,8 +109,8 @@ const CustomLayout = ({children, currentUser, la}) => {
                 && getItem('Типы документации', '/table/type_projects', null, null),
                 hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','OFF_WORKER','FIN_DIR','PROGRAMMER'])
                 && getItem('Этапы проекта', '/table/stage_projects', null, null),
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','FIN_DIR','PROGRAMMER'])
-                && getItem('Разделы технического задания', '/table/technical', null, null),
+                // hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','FIN_DIR','PROGRAMMER'])
+                // && getItem('Разделы технического задания', '/table/technical', null, null),
             ]),
             hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','OFF_WORKER','BOOKMAKER','FIN_DIR','PROGRAMMER'])
             && getItem('Формы', '/form/', <FormOutlined/>, [

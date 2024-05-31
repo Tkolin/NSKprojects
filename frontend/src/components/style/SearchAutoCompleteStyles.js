@@ -49,12 +49,9 @@ const CustomAutoCompleteComponent = ({
                 label: getName(row, typeData),
                 data: row.id
             }));
-        console.log("hs",{...value, options: filteredOptions, output: txt, selected: null})
-        onChange({...value, options: filteredOptions, output: txt, selected: null});
+         onChange({...value, options: filteredOptions, output: txt, selected: null});
     };
-    useEffect(() => {
-        console.log("загрузил",value);
-    }, [value]);
+
     return (
         <AutoComplete
             popupMatchSelectWidth={false}
@@ -69,10 +66,10 @@ const CustomAutoCompleteComponent = ({
             loading={loading}
             value={value?.output}
             options={value?.options}
+            onClear={()=>onChange({...value, selected: null, output: null})}
             onSearch={handleSearch}
             onSelect={(variable, option) => {
-                console.log("onSelect",{...value, selected: option.data, output: option.label})
-                onChange({...value, selected: option.data, output: option.label});
+                 onChange({...value, selected: option.data, output: option.label});
             }}
             placeholder={placeholder}
         />
@@ -146,7 +143,7 @@ const CustomAutoComplete = ({
             onSearch={onSearch}
             formatOptionText={formatOptionText}
             mode={mode}
-            width={"calc(100% - 32px)"}
+            width={"100%"}
             typeData={typeData} data={data} value={value} onChange={onChange}/>
     </Space.Compact>
 

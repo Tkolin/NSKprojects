@@ -51,12 +51,16 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted }) => {
         if (initialObject?.id)
             loadContext();
     }, [initialObject]);
+    useEffect(() => {
+        if (localObject?.id)
+            updateForm(localObject);
+    }, [localObject]);
     const updateForm = (data) => {
         if (data) {
             form.resetFields();
             form.setFieldsValue({
                 ...data,
-                group_name: data?.group?.name,
+                group: data?.group?.name,
             });
             setGroupTypeProjectAutoComplete({selected: data?.group?.id});
         }

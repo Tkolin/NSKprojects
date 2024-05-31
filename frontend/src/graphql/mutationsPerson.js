@@ -116,8 +116,8 @@ export const ADD_PERSON_MUTATION = gql`
 export const UPDATE_PERSON_MUTATION = gql`
     mutation UpdatePerson(
         $id: ID!,
-        $firstname: String!
-        $lastname: String!
+        $firstname: String
+        $lastname: String
         $patronymic: String
         $serial: String
         $number: String

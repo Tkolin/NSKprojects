@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Form, Input, Select, Space, Row, Col, Modal} from 'antd';
+import {Form, Input, Select, Space, Row, Col} from 'antd';
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import {
     UPDATE_ORGANIZATION_MUTATION, ADD_ORGANIZATION_MUTATION,
@@ -23,14 +23,14 @@ import {
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import {AddressSuggestions} from "react-dadata";
 import {StyledAddressSuggestionsInput} from "../../style/InputStyles";
-import BikForm from "./BikForm";
-import ContactForm from "./ContactForm";
+
+import ContactModalForm from "../../modal/ContactModalForm";
+import BikModalForm from "../../modal/BikModalForm";
 
 const OrganizationForm = ({localObject, initialObject, onCompleted}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
-    const nameModel = 'Организация';
     const TokenDADATA = process.env.REACT_APP_TOKEN_DADATAADDRESS;
     const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
     const [loadContext, {loading, data}] = useLazyQuery(ORGANIZATIONS_QUERY_BY_ID, {
@@ -45,52 +45,48 @@ const OrganizationForm = ({localObject, initialObject, onCompleted}) => {
     });
     // Состояния
     const [contactModalStatus, setContactModalStatus] = useState(null);
-    const [contactAutoComplete, setContactAutoComplete] = useState({options: [], selected: {}});
     const [bikModalStatus, setBikModalStatus] = useState(null);
-    const [bikAutoComplete, setBikAutoComplete] = useState({options: [], selected: {}});
     const [address, setAddress] = useState({legal: "", mail: ""});
+
     // Мутация
     const [mutate] = useMutation(actualObject ? UPDATE_ORGANIZATION_MUTATION : ADD_ORGANIZATION_MUTATION, {
         onCompleted: (data) => {
-            openNotification('topRight', 'success', `Создание новой записи в таблице ${nameModel} выполнено успешно`);
+            openNotification('topRight', 'success', `Создание новой записи в таблице организаций выполнено успешно`);
             form.resetFields();
             setAddress({legal: "", mail: ""});
             onCompleted && onCompleted(data);
         },
         onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении сооздания ${nameModel}: ${error.message}`);
+            openNotification('topRight', 'error', `Ошибка при выполнении сооздания организации: ${error.message}`);
         },
     });
 
     // Подгрузка при обновлении
     useEffect(() => {
-        console.log("initialObject", initialObject);
         if (initialObject?.id) {
             loadContext();
         }
     }, [initialObject]);
+    useEffect(() => {
+        console.log("contactModalStatus", contactModalStatus);
+    }, [contactModalStatus]);
+    useEffect(() => {
+        if (localObject?.id) {
+            updateForm(localObject);
+        }
+    }, [localObject]);
     const updateForm = (data) => {
         if (data) {
             form.resetFields();
             setAddress({legal: "", mail: ""});
-
-            const director = data?.director || {};
-            const bik = data?.bik || {};
-            const legalForm = data?.legal_form || {};
-
             form.setFieldsValue({
                 ...data,
-                director_name:
-                    (director.last_name ?? "") + " " +
-                    (director.first_name ?? "") + " " +
-                    (director.patronymic ?? ""),
-                bik_name: (bik.BIK ?? "") + " " + (bik.name ?? ""),
-                legal_form_id: legalForm.id ?? null,
-                address_legal: "Пельменная"
+                bik: {selected: data?.bik?.id, output: (data?.bik?.BIK ?? "") + " " + (data?.bik?.name ?? "")} ,
+                legal_form_id: data?.legal_form?.id ?? null,
+                director: {selected: data?.director?.id, output:  (data?.director?.last_name ?? "") + " " +
+                        (data?.director?.first_name ?? "") + " " +
+                        (data?.director?.patronymic ?? "") }
             });
-
-            setBikAutoComplete({selected: bik.id});
-            setContactAutoComplete({selected: director.id});
             setAddress({legal: data.address_legal, mail: data.address_mail});
         }
     };
@@ -102,13 +98,14 @@ const OrganizationForm = ({localObject, initialObject, onCompleted}) => {
     const {loading: loadingBik, error: errorBik, data: dataBik} = useQuery(BIKS_QUERY_COMPACT);
 
     const handleSubmit = () => {
+        const formData = form.getFieldsValue();
         mutate({
             variables: {
-                ...(actualObject ? {id: actualObject.id} : {}), ...form.getFieldsValue(),
-                director_id: contactAutoComplete?.selected,
-                bik_id: bikAutoComplete?.selected,
-                address_legal: form.getFieldValue("address_legal")?.unrestricted_value,
-                address_mail: form.getFieldValue("address_mail")?.unrestricted_value
+                ...(actualObject ? {id: actualObject.id} : {}), ...formData,
+                director_id: formData?.director?.selected,
+                bik_id: formData?.bik?.selected,
+                address_legal: formData?.address_legal?.unrestricted_value ?? address?.legal ?? null,
+                address_mail: formData?.address_mail?.unrestricted_value ?? address?.mail ?? null,
             }
         });
     };
@@ -118,7 +115,11 @@ const OrganizationForm = ({localObject, initialObject, onCompleted}) => {
 
 
     return (<div>
-            <Form form={form} onFinish={handleSubmit}>
+            <Form
+                form={form}
+                onFinish={handleSubmit}
+                onChange={()=>console.log("change", form.getFieldsValue())}
+            >
                 <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
                     <Form.Item name="name"
                                label={"Наименование компании"}
@@ -139,24 +140,25 @@ const OrganizationForm = ({localObject, initialObject, onCompleted}) => {
                            rules={[{required: true, message: "Укажите полное наименование компании"}]}>
                     <Input/>
                 </Form.Item>
-                <Form.Item name="director_name" label="Руководитель">
+                <Form.Item name="director" label="Руководитель">
                     <CustomAutoCompleteAndCreateWitchEdit
                         placeholder={"Начните ввод..."}
                         loading={loadingContacts}
-                        secondDisable={!contactAutoComplete?.selected}
-                        firstBtnOnClick={() => setContactModalStatus("add")}
-                        secondBtnOnClick={() => setContactModalStatus("edit")}
                         data={dataContacts?.contacts?.items}
-                        stateSearch={contactAutoComplete}
-                        setStateSearch={setContactAutoComplete}
                         typeData={"FIO"}
+                        firstBtnOnClick={() =>
+                            setContactModalStatus({contact_id: null, mode: "add"})}
+                        secondBtnOnClick={() =>
+                            form.getFieldValue("director")?.selected &&
+                            setContactModalStatus({contact_id:
+                                form.getFieldValue("director")?.selected,mode: "edit"})}
                     />
                 </Form.Item>
 
                 <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
                     <Form.Item name="address_legal" label="Юридический адрес" minchars={3}
                                delay={50}
-                               style={{width: '90%'}}>
+                               style={{width: '80%'}}>
                         <AddressSuggestions token={TokenDADATA}
                                             defaultQuery={address?.legal ?? ""}
                                             inputProps={{
@@ -203,8 +205,8 @@ const OrganizationForm = ({localObject, initialObject, onCompleted}) => {
                         },]}>
                             <Input
                                 placeholder="+790031001234"
-                                maxLength={11}
-                                minLength={10}
+                                maxLength={12}
+                                minLength={11}
                             />
                         </Form.Item>
                         <Form.Item name="fax_number" label="Факс">
@@ -218,14 +220,14 @@ const OrganizationForm = ({localObject, initialObject, onCompleted}) => {
                         <Form.Item name="payment_account" label="Расчётынй счёт">
                             <Input placeholder="Введите номер расчётного счёта"/>
                         </Form.Item>
-                        <Form.Item name="bik_name" label="Бик">
+                        <Form.Item name="bik" label="Бик">
                             <CustomAutoCompleteAndCreate
                                 data={dataBik?.biks?.items}
                                 placeholder={"Бик"}
-                                stateSearch={bikAutoComplete}
-                                setStateSearch={setBikAutoComplete}
                                 loading={loadingBik}
-                                firstBtnOnClick={() => setBikModalStatus("add")}
+                                firstBtnOnClick={() =>
+
+                                    setBikModalStatus({bik: null, mode: "add"})}
                             />
                         </Form.Item>
                     </Col>
@@ -285,39 +287,19 @@ const OrganizationForm = ({localObject, initialObject, onCompleted}) => {
             Модальные окна редактирования
             */}
             {/* Бики */}
-            <Modal
-                key={bikAutoComplete?.selected}
-                open={bikModalStatus === "add" || bikModalStatus === "edit"}
-                onCancel={() => setBikModalStatus(null)}
-                footer={null}
-                onClose={() => setBikModalStatus(null)}>
-                {bikModalStatus === "edit" ? (
-                    bikAutoComplete?.selected && (
-                        <BikForm onCompleted={() => setBikModalStatus(null)}
-                                 initialObject={{id: bikAutoComplete.selected}}/>
-                    )
-                ) : (
-                    <BikForm onCompleted={() => setBikModalStatus(null)}/>
-                )}
-            </Modal>
+            <BikModalForm
+                key={bikModalStatus?.bik_id ?? null}
+                onClose={()=>setBikModalStatus(null)}
+                mode={bikModalStatus?.mode ?? null}
+            />
 
             {/* контакты */}
-            <Modal
-                key={contactAutoComplete?.selected}
-                open={contactModalStatus === "add" || contactModalStatus === "edit"}
-                onCancel={() => setContactModalStatus(null)}
-                footer={null}
-                onClose={() => setContactModalStatus(null)}>
-                {contactModalStatus === "edit" ? (
-                    contactAutoComplete?.selected && (
-                        <ContactForm onCompleted={() => setContactModalStatus(null)}
-                                     initialObject={{id: contactAutoComplete.selected}}/>
-                    )
-                ) : (
-                    <ContactForm onCompleted={() => setContactModalStatus(null)}/>
-                )}
-
-            </Modal>
+            <ContactModalForm
+                key={ contactModalStatus?.contact_id }
+                objectId={contactModalStatus?.contact_id ?? null}
+                mode={contactModalStatus?.mode ?? null}
+                onClose={() => setContactModalStatus(null)}
+            />
 
         </div>
 

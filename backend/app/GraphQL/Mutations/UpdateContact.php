@@ -3,6 +3,7 @@
 namespace App\GraphQL\Mutations;
 
 use App\Models\Contact;
+use function Laravel\Prompts\error;
 
 final readonly class UpdateContact
 {
@@ -11,17 +12,16 @@ final readonly class UpdateContact
     {
         $contact = Contact::findOrFail($args['id']);
         $contact->update([
-            'first_name' => $args['first_name'] ?? $contact->first_name,
-            'last_name' => $args['last_name'] ?? $contact->last_name,
-            'patronymic' => $args['patronymic'] ?? $contact->patronymic,
-            'mobile_phone' => $args['mobile_phone'] ?? $contact->mobile_phone,
-            'work_phone' => $args['work_phone'] ?? $contact->work_phone,
+            'first_name' => $args['first_name'] ?? null,
+            'last_name' => $args['last_name'] ?? null,
+            'patronymic' => $args['patronymic'] ?? null,
+            'mobile_phone' => $args['mobile_phone'] ?? null,
+            'work_phone' => $args['work_phone'] ?? null,
             'birth_day' => isset($args['birth_day']) ? substr((string)$args['birth_day'], 0, 10) : null,
-            'email' => $args['email'] ?? $contact->email,
-            'sibnipi_email' => $args['sibnipi_email'] ?? $contact->sibnipi_email,
-            'work_email' => $args['work_email'] ?? $contact->work_email,
-            'position_id' => $args['position_id'] ?? $contact->position_id,
-            'organization_id' => $args['organization_id'] ?? $contact->organization_id
+            'email' => $args['email'] ?? null,
+            'work_email' => $args['work_email'] ?? null,
+            'position_id' => $args['position_id'] ?? null,
+            'organization_id' => $args['organization_id'] ?? null
         ]);
         return $contact;
     }

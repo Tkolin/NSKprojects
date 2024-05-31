@@ -100,7 +100,7 @@ const Index = ({object}) => {
                 mutateProject({variables: {data: rebuildProjectToQuery(project,project)}});
                 break;
             case 1:
-                mutateStage({variables: {data: rebuildStagesToQuery(stages,project)}});
+                mutateStage({variables: {data: rebuildStagesToQuery(stages, project)}});
                 break;
             case 2:
                 console.log("project", project);
@@ -181,21 +181,22 @@ const Index = ({object}) => {
                         <StyledBlockRegular label={"Основные данные об проекте"}>
                             <ProjectForm actualProject={project} onCompleted={() => next()}
                                          updateProject={(value) => {console.log("updateProject",value); updateProject(value);}}
-                                         confirmFormButton={
-                                             <div style={{textAlign: 'center'}}>
-                                                 <Space>
-                                                     <StyledButtonGreen style={{marginBottom: 0}} htmlType="submit">
-                                                         Сохранить проект
-                                                     </StyledButtonGreen>
-                                                 </Space>
-                                             </div>
-                                         }/>
+                                         // confirmFormButton={
+                                         //     <div style={{textAlign: 'center'}}>
+                                         //         <Space>
+                                         //             <StyledButtonGreen style={{marginBottom: 0}} htmlType="submit">
+                                         //                 Сохранить проект
+                                         //             </StyledButtonGreen>
+                                         //         </Space>
+                                         //     </div>
+                                         // }
+                            />
                         </StyledBlockRegular>
                     ) :
                     current === 1 ? (
                             <StyledBlockLarge label={"Этапы"}>
                                 <StagesProjectForm
-                                    updateStages={(value) => updateStages(value)}
+                                    updateStages={(value) => {console.log("updateStages",value); updateStages(value)}}
                                     actualStages={stages}
                                     project={project}/>
                             </StyledBlockLarge>
@@ -212,11 +213,8 @@ const Index = ({object}) => {
                                 <></>
                 }
             </div>
-            <div
-                style={{
-                    marginTop: 24,
-                }}
-            >
+            <div style={{display: 'flex', justifyContent: 'center', marginTop: 24}}>
+
                 {current < 4 - 1 && (
                     <Button type="primary" onClick={() => next()}>
                         Вперёд

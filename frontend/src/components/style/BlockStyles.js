@@ -18,15 +18,19 @@ const InformerBlockWrapper = styled.div`
     border-radius: 5px;
 `;
 export const StyledBlockWrapperSmall = styled(StyledBlockWrapper)`
+    min-width: 200px;
     max-width: 200px;
 `;
 export const StyledBlockWrapperRegular = styled(StyledBlockWrapper)`
+    min-width: 400px;
     max-width: 400px;
 `;
 export const StyledBlockWrapperBig = styled(StyledBlockWrapper)`
+    min-width: 800px;
     max-width: 800px;
 `;
 export const StyledBlockWrapperLarge = styled(StyledBlockWrapper)`
+    min-width: 1200px;
     max-width: 1200px;
 `;
 const StyledBlock = ({children, color, label, shadow}) => {
@@ -75,18 +79,11 @@ const StyledBlockRegular = ({label, children}) => {
         </StyledBlockWrapperRegular>
     );
 };
-const StyledBlockBig = ({label, children, styleHeader,styleHeaderText, styleBlcok, question}) => {
+const StyledBlockBig = ({label, children}) => {
     return (
-        <StyledBlockWrapperBig style={{...styleBlcok}}>
-            {!question ?? (
-                <QuestionCircleOutlined style={{ position: 'absolute', top: '18px', right: '10px', fontSize: '20px',...styleHeaderText }} />
-            )}
-            <Divider style={{marginBottom: '0px', marginTop: '0px',
-                borderTopRightRadius: "6px",
-                borderTopLeftRadius: '6px', marginLeft: "-15px",
-                marginRight: "-15px", width: 'calc(100% + 30px)',
-                ...styleHeader}}>
-                <Title level={3} style={{...styleHeaderText}}>{label}</Title>
+        <StyledBlockWrapperBig>
+            <Divider style={{marginBottom: '0px', marginTop: '0px'}}>
+                <Title level={3} style={{marginBottom: 0}}>{label}</Title>
             </Divider>
             {children}
             <Divider style={{marginBottom: '0px', marginTop: '20px'}}/>
@@ -97,7 +94,7 @@ const StyledBlockLarge = ({label, children}) => {
     return (
         <StyledBlockWrapperLarge>
             <Divider style={{marginBottom: '20px', marginTop: '0px'}}>
-                <Title level={3}>{label}</Title>
+                <Title level={3} style={{marginBottom: 0}}>{label}</Title>
             </Divider>
             {children}
             <Divider style={{marginBottom: '0px', marginTop: '20px'}}/>

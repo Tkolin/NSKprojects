@@ -1,10 +1,10 @@
 import {StyledBlockRegular} from "../style/BlockStyles";
 import {Modal} from "antd";
- import React, {useEffect} from "react";
-import ContactForm from "../form/modelsForms/ContactForm";
+import React from "react";
 import {nanoid} from "nanoid";
+import BikForm from "../form/modelsForms/BikForm";
 
-const ContactModalForm = ({key,object,objectId,onClose, mode}) => {
+const BikModalForm = ({key,object,objectId,onClose, mode}) => {
     return (
         <Modal
             key={key ?? nanoid()}
@@ -13,11 +13,12 @@ const ContactModalForm = ({key,object,objectId,onClose, mode}) => {
             footer={null}
             onClose={() => onClose(null)}
             width={"600px"}
+
         >
-            <StyledBlockRegular label={"Контакт"}>
+            <StyledBlockRegular label={"Бик"}>
                 {mode === "edit" ? (
                     (object || objectId) && (
-                        <ContactForm
+                        <BikForm
                             onCompleted={() =>
                             onClose(null)}
                             initialObject={objectId ? {id: objectId} : null}
@@ -25,11 +26,11 @@ const ContactModalForm = ({key,object,objectId,onClose, mode}) => {
                         />
                     )
                 ) : (
-                    <ContactForm onCompleted={() => onClose(null)}/>
+                    <BikForm onCompleted={() => onClose(null)}/>
                 )}
             </StyledBlockRegular>
         </Modal>
     );
 };
 
-export default ContactModalForm;
+export default BikModalForm;

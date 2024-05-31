@@ -42,6 +42,10 @@ const IrdForm = ({localObject, initialObject, onCompleted }) => {
         if (initialObject?.id)
             loadContext();
     }, [initialObject]);
+    useEffect(() => {
+        if (localObject?.id)
+            updateForm(localObject);
+    }, [localObject]);
     const updateForm = (data) => {
         if (data) {
             form.resetFields();
