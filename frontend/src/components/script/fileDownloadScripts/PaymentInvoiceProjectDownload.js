@@ -1,10 +1,10 @@
 import 'react-phone-number-input/style.css';
 import { useMutation } from '@apollo/client';
-import {notification, Typography} from 'antd';
-import {IRDS_PROJECT_DOWNLOAD} from "../../graphql/mutationsProject";
+import { notification, Typography} from 'antd';
+import { PAYMENT_INVOICE_PROJECT_DOWNLOAD} from "../../../graphql/mutationsProject";
 const {Text, Link} = Typography;
 
-const IrdsProjectFileDownload = ({projectId, text}) => {
+const PaymentInvoiceProjectDownload = ({projectId, stageNumber, isPrepayment, text}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
 
 
@@ -15,9 +15,9 @@ const IrdsProjectFileDownload = ({projectId, text}) => {
         });
     };
 
-    const [downloadProjectIrds] = useMutation(IRDS_PROJECT_DOWNLOAD, {
+    const [downloadProjectPaymentInvoice] = useMutation(PAYMENT_INVOICE_PROJECT_DOWNLOAD, {
         onCompleted: (data) => {
-            handleDownloadClick(data.projectIrdsFileDownload.url);
+            handleDownloadClick(data.projectPaymentInvoiceFileDownload.url);
             openNotification('topRight', 'success', 'Загрузка начата!');
         },
         onError: (error) => {
@@ -26,15 +26,20 @@ const IrdsProjectFileDownload = ({projectId, text}) => {
     });
 
     const handleDownload = () => {
-         downloadProjectIrds({ variables: { id: projectId } });
+        console.log(projectId);
+        if(isPrepayment)
+            downloadProjectPaymentInvoice({ variables: { id: projectId, isPrepayment: true } });
+        else
+            downloadProjectPaymentInvoice({ variables: { id: projectId, stageNumber: stageNumber } });
     };
 
     const handleDownloadClick = async (downloadedFileUrl) => {
         try {
             const link = document.createElement('a');
+            console.log(link);
 
-            link.href = `${LaravelURL}download-projectIrds/${downloadedFileUrl}`;
-            link.download = 'contractIrds.docx';
+            link.href = `${LaravelURL}download-projectPaymentInvoice/${downloadedFileUrl}`;
+            link.download = '${downloadedFileUrl}';
 
             document.body.appendChild(link);
             link.click();
@@ -45,9 +50,9 @@ const IrdsProjectFileDownload = ({projectId, text}) => {
     };
 
     return (
-        <Link onClick={handleDownload}>{text ?? 'скачать'}</Link>
+            <Link strong style={{color: "green"}} onClick={handleDownload}>{text ?? 'скачать' }</Link>
     );
 };
 
-export default IrdsProjectFileDownload;
+export default PaymentInvoiceProjectDownload;
 

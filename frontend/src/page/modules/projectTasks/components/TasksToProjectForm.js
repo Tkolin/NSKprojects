@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Col, Divider, Form, Radio, Row} from "antd";
 import TaskForm from "../../../../components/form/modelsForms/TaskForm";
 import TasksTreeComponent from "./TasksTreeComponent";
-import {StyledFormItemAutoCompleteAndCreateWitchEdit} from "../../../../components/style/SearchAutoCompleteStyles";
+import {CustomAutoCompleteAndCreateWitchEdit} from "../../../../components/style/SearchAutoCompleteStyles";
 import {useQuery} from "@apollo/client";
 import {LEGAL_FORM_QUERY_COMPACT, TASKS_QUERY_COMPACT} from "../../../../graphql/queriesCompact";
 import LoadingSpinnerStyles from "../../../../components/style/LoadingSpinnerStyles";
@@ -107,7 +107,7 @@ const TasksToProjectForm = ({actualTasks, updateTasks, actualProject}) => {
                     </Form.Item>
 
 
-                    <StyledFormItemAutoCompleteAndCreateWitchEdit
+                    <CustomAutoCompleteAndCreateWitchEdit
                         formName={"director_name"}
                         formLabel={"Добавить задачу"}
                         placeholder={"Начните ввод..."}

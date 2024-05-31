@@ -25,7 +25,6 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
         form.setFieldsValue({
             stageList: actualStages && Object.values(actualStages)?.map((row) => ({
                 ...row,
-                stage_id: row?.stage_id ?? null,
                 date_range: [
                     row?.date_range?.[0] ? dayjs(row?.date_range?.[0]) : null,
                     row?.date_range?.[1] ? dayjs(row?.date_range?.[1]) : null

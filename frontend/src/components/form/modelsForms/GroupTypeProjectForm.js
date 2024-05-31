@@ -10,7 +10,7 @@ import {
     GROUP_TYPE_PROJECTS_QUERY_COMPACT,
 } from "../../../graphql/queriesCompact";
 import {CONTACTS_QUERY_BY_ID, GROUP_TYPE_PROJECTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
-import {StyledFormItemAutoCompleteAndCreate} from "../../style/SearchAutoCompleteStyles";
+import {CustomAutoCompleteAndCreate} from "../../style/SearchAutoCompleteStyles";
 const {Option} = Select;
 
 const GroupTypeProjectForm = ({ initialObject, onCompleted }) => {
@@ -75,10 +75,10 @@ const GroupTypeProjectForm = ({ initialObject, onCompleted }) => {
                 <Form.Item name="name" label="Наименование"  rules={[{ required: true }]}>
                     <Input />
                 </Form.Item>
-                <StyledFormItemAutoCompleteAndCreate
+                <Form.Item name="name" label="Наименование"  rules={[{ required: true }]}>
+                    <CustomAutoCompleteAndCreate/>
+                </Form.Item>
 
-
-                />
                 <Form.Item>
                     <Button type="primary" onClick={handleSubmit}>
                         {actualObject ? "Сохранить" : "Создать"}

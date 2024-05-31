@@ -1,10 +1,11 @@
 import 'react-phone-number-input/style.css';
 import { useMutation } from '@apollo/client';
 import { notification, Typography} from 'antd';
-import {CONTRACT_PROJECT_DOWNLOAD} from "../../graphql/mutationsProject";
+import {TASK_EXECUTOR_CONTRACT_DOWNLOAD
+} from "../../../graphql/mutationsProject";
 const {Text, Link} = Typography;
 
-const ProjectFileDownload  = ({projectId, text}) => {
+const TaskExecutorContractDownload = ({projectId, executorId, text}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
 
 
@@ -15,9 +16,10 @@ const ProjectFileDownload  = ({projectId, text}) => {
         });
     };
 
-    const [downloadProjectContract] = useMutation(CONTRACT_PROJECT_DOWNLOAD, {
+    const [downloadTaskExecutorContract] = useMutation(TASK_EXECUTOR_CONTRACT_DOWNLOAD, {
         onCompleted: (data) => {
-            handleDownloadClick(data.projectOrderFileDownload.url);
+            console.log("onCompleted data", data);
+            handleDownloadClick(data?.taskExecutorContractFileDownload?.url);
             openNotification('topRight', 'success', 'Загрузка начата!');
         },
         onError: (error) => {
@@ -27,17 +29,19 @@ const ProjectFileDownload  = ({projectId, text}) => {
 
     const handleDownload = () => {
         console.log(projectId);
-        downloadProjectContract({ variables: { id: projectId } });
+        downloadTaskExecutorContract({ variables: { projectId: projectId, executorId: executorId } });
     };
 
     const handleDownloadClick = async (downloadedFileUrl) => {
+        console.log("handleDownloadClick");
+
         try {
             const link = document.createElement('a');
             console.log(link);
 
-            link.href = `${LaravelURL}download-projectIrds/${downloadedFileUrl}`;
+            link.href = `${LaravelURL}download-taskExecutorContract/${downloadedFileUrl}`;
+            link.download = '${downloadedFileUrl}';
 
-            link.download = 'contract.docx';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -51,5 +55,5 @@ const ProjectFileDownload  = ({projectId, text}) => {
     );
 };
 
-export default ProjectFileDownload;
+export default TaskExecutorContractDownload;
 

@@ -114,7 +114,7 @@ type InheritedTask{
      id: ID
      project_id: ID
      stage_id: ID
-     stage_number: Int
+     number: Int
      price: Float
      percent: Int
      date_start: String

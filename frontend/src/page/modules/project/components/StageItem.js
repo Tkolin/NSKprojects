@@ -1,19 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {Row, Col, Form, InputNumber, Select, Tooltip, DatePicker, Input} from 'antd';
 import {CaretUpOutlined, CaretDownOutlined, MinusCircleOutlined} from '@ant-design/icons';
-import {StyledFormItemAutoComplete} from "../../../../components/style/SearchAutoCompleteStyles";
+import {CustomAutoComplete} from "../../../../components/style/SearchAutoCompleteStyles";
 import {EmptyFormItem} from "../../../../components/formComponents/EmptyFormItem";
 import dayjs from "dayjs";
 
 const {RangePicker} = DatePicker;
 
 const StageItem = ({
-                       value,
-
-                        projectPrice,
-                        prepayment,
-
-
+                       projectPrice,
+                       prepayment,
                        onChange,
                        index,
                        form,
@@ -24,32 +20,10 @@ const StageItem = ({
                        isLast
                    }) => {
 
-    // бновления всех записей в строке
-    const [stageAutoComplete, setStageAutoComplete] = useState({options: [], selected: null});
-    const [firstLoad, setFirstLoad] = useState(false)
 
     useEffect(() => {
-        if (firstLoad) {
-            const stageList = form.getFieldValue("stageList");
-            const updatedStageList = stageList.map((item, idx) => {
-                if (idx === index) {
-                    return {
-                        ...item,
-                        stage_id: stageAutoComplete?.selected
-                    };
-                }
-                return item;
-            });
-            form.setFieldValue("stageList", updatedStageList);
-            onChange();
-        }
-    }, [stageAutoComplete?.selected]);
-    useEffect(() => {
-        setStageAutoComplete({...stageAutoComplete, selected: form.getFieldValue("stageList")?.[index]?.stage_id})
-        handlePriceChange(form.getFieldValue(["stageList",index,"percent"]));
-        setFirstLoad(true);
+        handlePriceChange(form.getFieldValue(["stageList", index, "percent"]));
     }, []);
-    // Для хранения выбора элемента
 
 
     // Обработчик изменения даты
@@ -105,36 +79,30 @@ const StageItem = ({
                 )}
             </Col>
             <Col span={1}>
-                     <Tooltip title="Номер этапа">
-                        <InputNumber disabled={true}
-                                     style={{width: "100%"}}
-                               value={index + 1}
-                                      min={1}
-                                     max={25}/>
-                    </Tooltip>
-             </Col>
-            <Col span={8} style={{width: "100%"}}>
-                <Tooltip title="Наименование этапа">
-
-                    <StyledFormItemAutoComplete
-                        style={{width: "100%"}}
-                        formName={[index, 'stage_name']}
-                        placeholder={"Выбор этапа..."}
-
-                        value={value.stage_name}
-
-                        data={stagesData}
-                        stateSearch={stageAutoComplete}
-                        setStateSearch={setStageAutoComplete}
-                    />
+                <Tooltip title="Номер этапа">
+                    <InputNumber disabled={true}
+                                 style={{width: "100%"}}
+                                 value={index + 1}
+                                 min={1}
+                                 max={25}/>
                 </Tooltip>
             </Col>
-            <EmptyFormItem name={"stage_id"}/>
+            <Col span={8} style={{width: "100%"}}>
+                <Tooltip title="Наименование этапа">
+                    <Form.Item name={[index, 'stage']}>
+                        <CustomAutoComplete
+                            style={{width: "100%"}}
+                             placeholder={"Выбор этапа..."}
+                            data={stagesData}
+                        />
+                    </Form.Item>
+                </Tooltip>
+            </Col>
             <Col span={4}>
                 <Tooltip title="Сроки этапа">
                     <Form.Item
                         style={{marginBottom: 0, width: "100%"}}
-                        name={[index,'date_range']}
+                        name={[index, 'date_range']}
                         rules={[{
                             required: true,
                         },]}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {AutoComplete, Button, Form, Space} from 'antd';
 import {EditOutlined, PlusOutlined} from '@ant-design/icons';
 
@@ -16,222 +16,187 @@ const ButtonGreenStyle = {
         borderColor: '#237804',
     }
 };
-const BaseStyledFormItemAutoComplete = ({
-                                            formName,
-                                            formLabel,
-                                            width,
-                                            placeholder,
-                                            loading,
-                                            mode,
-                                            labelCol,
-                                            size,
-                                            wrapperCol,
+const CustomAutoCompleteComponent = ({
+                                         width,
+                                         placeholder,
+                                         loading,
+                                         mode,
+                                         size,
+                                         data,
+                                         value,
+                                         onChange,
+                                         typeData
+                                     }) => {
 
-                                            onChange,
-                                            value,
-
-                                            data, stateSearch, setStateSearch, typeData
-                                        }) => {
     const getName = (row, typeData) => {
         if (typeData === "FIO") {
             return `${row.last_name || row.lastname} ${row.first_name || row.firstname} ${row.patronymic ?? ""}`;
         }
         return row.name;
     };
-    const handleSearch = (value) => {
-        console.log(value.toLowerCase());
+    useEffect(() => {
+        console.log(value);
+    }, [value]);
+
+
+    const handleSearch = (txt) => {
+        console.log(txt.toLowerCase());
         if (!data) return;
         const filteredOptions = data
-            .filter(row => getName(row, typeData).toLowerCase().includes(value.toLowerCase()))
+            .filter(row => getName(row, typeData).toLowerCase().includes(txt.toLowerCase()))
             .map(row => ({
                 value: getName(row, typeData),
                 label: getName(row, typeData),
                 data: row.id
             }));
-        setStateSearch({...stateSearch, options: filteredOptions, selected: null});
+        console.log("hs",{...value, options: filteredOptions, output: txt, selected: null})
+        onChange({...value, options: filteredOptions, output: txt, selected: null});
     };
+    useEffect(() => {
+        console.log("загрузил",value);
+    }, [value]);
     return (
-        <Form.Item name={formName} labelCol={labelCol} wrapperCol={wrapperCol} label={formLabel}
-                        style={{width: width}}>
-            <AutoComplete
-                popupMatchSelectWidth={false}
-                 style={{width: width}}
-                allowClear
-                showSearch
-                status={stateSearch?.selected ? "" : "warning"}
-                size={size ?? 'regular'}
-                mode={mode
-                    ?? ''}
-                filterOption={false}
-                loading={loading}
-
-                onChange={onChange}
-                value={value}
-
-                options={stateSearch?.options}
-                //value={stateSearch?.selected}
-                onSearch={handleSearch}
-                onSelect={(value, option) =>
-                {console.log("filter", {...stateSearch, selected: option.data});
-                    setStateSearch({...stateSearch, selected: option.data});
-                }}
-                placeholder={placeholder}
-            />
-
-        </Form.Item>)
+        <AutoComplete
+            popupMatchSelectWidth={false}
+            style={{width: width}}
+            allowClear
+            showSearch
+            status={value?.selected ? "" : "warning"}
+            size={size ?? 'regular'}
+            mode={mode
+                ?? ''}
+            filterOption={false}
+            loading={loading}
+            value={value?.output}
+            options={value?.options}
+            onSearch={handleSearch}
+            onSelect={(variable, option) => {
+                console.log("onSelect",{...value, selected: option.data, output: option.label})
+                onChange({...value, selected: option.data, output: option.label});
+            }}
+            placeholder={placeholder}
+        />
+    )
 };
 
-const BaseStyledButtonFormItemAutoComplete = ({onClick, position, type, icon, style, disabled}) => (
+const BaseStyledButton = ({onClick, icon, style, disabled}) => (
     <Button
         style={{
             ...style,
-            marginBottom: 10,
-            marginLeft: position === 0 ? -32 : position === 1 ? -64 : position === 2 ? 0 : 0
+            marginBottom: 0,
         }}
-        type={type}
+        type={"dashed"}
         icon={icon}
         disabled={disabled}
         onClick={() => onClick && onClick(true)}
     />
 );
-const BaseStyledSpaceCompactFormItemAutoComplete = ({width, children}) => (
-    <Space.Compact style={
-        {
-            width: width,
-            alignItems: 'flex-end'
-        }
-    }>
-        {children}
+const CustomAutoCompleteAndCreate = ({
+                                         onSelect,
+                                         onSearch,
+                                         placeholder,
+                                         loading,
+                                         items,
+                                         firstBtnOnClick,
+                                         formatOptionText,
+                                         mode,
+                                         typeData,
+                                         data,
+                                         value,
+                                         onChange
+                                     }) => (
+    <Space.Compact style={{width: "100%", marginBottom: 0}}>
+
+        <CustomAutoCompleteComponent
+            onSelect={onSelect}
+            placeholder={placeholder}
+            loading={loading}
+            items={items}
+            onSearch={onSearch}
+            formatOptionText={formatOptionText}
+            mode={mode}
+            width={"calc(100% - 32px)"}
+            typeData={typeData} data={data} value={value} onChange={onChange}/>
+        <BaseStyledButton onClick={firstBtnOnClick}
+                          icon={<PlusOutlined/>}
+                          style={ButtonGreenStyle}/>
     </Space.Compact>
-);
-const StyledFormItemAutoCompleteAndCreate = ({
-                                                 formName,
-                                                 formLabel,
-                                                 onSelect,
-                                                 onSearch,
-                                                 placeholder,
-                                                 loading,
-                                                 items,
-                                                 firstBtnOnClick,
-                                                 formatOptionText,
-                                                 mode,
-
-
-                                                 typeData,data, stateSearch, setStateSearch
-
-                                             }) => (
-    <BaseStyledSpaceCompactFormItemAutoComplete width={"calc(100% + 32px)"}>
-        <BaseStyledFormItemAutoComplete formName={formName}
-                                        formLabel={formLabel}
-                                        onSelect={onSelect}
-                                        placeholder={placeholder}
-                                        loading={loading}
-                                        items={items}
-                                        onSearch={onSearch}
-                                        formatOptionText={formatOptionText}
-                                        mode={mode}
-                                        width={"calc(100% - 32px)"}
-
-                                        typeData={typeData} data={data} stateSearch={stateSearch} setStateSearch={setStateSearch}/>
-
-        <BaseStyledButtonFormItemAutoComplete position={0}
-                                              onClick={firstBtnOnClick}
-                                              icon={<PlusOutlined/>}
-                                              type="dashed"
-                                              style={ButtonGreenStyle}/>
-    </BaseStyledSpaceCompactFormItemAutoComplete>
 
 );
-const StyledFormItemAutoComplete = ({
-                                        formName,
-                                        formLabel,
-                                        onSelect,
-                                        placeholder,
-                                        loading,
-                                        onSearch,
-                                        formatOptionText,
-                                        mode,
-                                        labelCol,
-                                        wrapperCol,
-                                        size,
-                                        width,
+const CustomAutoComplete = ({
 
-                                        typeData, data, stateSearch, setStateSearch,
-
-    onChange,
-    value
-                                    }) => (
-    <BaseStyledSpaceCompactFormItemAutoComplete width={width ?? "100%"}>
-        <BaseStyledFormItemAutoComplete formName={formName}
-                                        formLabel={formLabel}
-                                        onSelect={onSelect}
-                                        onSearch={onSearch}
-                                        placeholder={placeholder}
-                                        loading={loading}
-                                        formatOptionText={formatOptionText}
-                                        mode={mode}
-                                        width={width ?? "100%"}
-
-                                        onChange={onChange}
-                                        value={value}
-
-                                        labelCol={labelCol}
-                                        wrapperCol={wrapperCol}
-                                        size={size}
-                                        typeData={typeData} data={data} stateSearch={stateSearch} setStateSearch={setStateSearch}/>
-    </BaseStyledSpaceCompactFormItemAutoComplete>
+                                onSelect,
+                                placeholder,
+                                loading,
+                                onSearch,
+                                formatOptionText,
+                                mode,
+                                items,
+                                typeData,
+                                data,
+                                value,
+                                onChange,
+                            }) => (
+    <Space.Compact style={{width: "100%", marginBottom: 0}}>
+        <CustomAutoCompleteComponent
+            onSelect={onSelect}
+            placeholder={placeholder}
+            loading={loading}
+            items={items}
+            onSearch={onSearch}
+            formatOptionText={formatOptionText}
+            mode={mode}
+            width={"calc(100% - 32px)"}
+            typeData={typeData} data={data} value={value} onChange={onChange}/>
+    </Space.Compact>
 
 );
-const StyledFormItemAutoCompleteAndCreateWitchEdit = ({
-                                                          formName,
-                                                          formLabel,
-                                                          onSelect,
-                                                          placeholder,
-                                                          loading,
-                                                          items,
-                                                          onSearch,
-                                                          firstBtnOnClick,
-                                                          secondBtnOnClick,
-                                                          formatOptionText,
-                                                          mode,
-                                                          secondDisable,
-                                                          labelCol,
-                                                          wrapperCol,
+const CustomAutoCompleteAndCreateWitchEdit = ({
 
-                                                          data, stateSearch, setStateSearch, typeData
-                                                      }) => (
-    <BaseStyledSpaceCompactFormItemAutoComplete width={"calc(100% + 64px)"}>
-        <BaseStyledFormItemAutoComplete formName={formName}
-                                        formLabel={formLabel}
-                                        onSelect={onSelect}
-                                        onSearch={onSearch}
-                                        placeholder={placeholder}
-                                        loading={loading}
-                                        items={items}
-                                        formatOptionText={formatOptionText}
-                                        mode={mode}
-                                        width={"calc(100% - 64px)"}
+                                                  onSelect,
+                                                  placeholder,
+                                                  loading,
+                                                  items,
+                                                  onSearch,
+                                                  firstBtnOnClick,
+                                                  secondBtnOnClick,
+                                                  formatOptionText,
+                                                  mode,
+                                                  secondDisable,
+                                                  data,
+                                                  value,
+                                                  onChange,
+                                                  typeData
+                                              }) => (
+    <Space.Compact style={{width: "100%", marginBottom: 0}}>
+        <CustomAutoCompleteComponent
+            onSelect={onSelect}
+            onSearch={onSearch}
+            placeholder={placeholder}
+            loading={loading}
+            items={items}
+            formatOptionText={formatOptionText}
+            mode={mode}
+            width={"calc(100% - 64px)"}
+            typeData={typeData}
+            data={data}
+            value={value}
+            onChange={onChange}/>
 
-                                        labelCol={labelCol}
-                                        wrapperCol={wrapperCol}
-                                        typeData={typeData} data={data} stateSearch={stateSearch} setStateSearch={setStateSearch}/>
-
-        <BaseStyledButtonFormItemAutoComplete position={1} onClick={firstBtnOnClick}
-                                              icon={<PlusOutlined/>}
-                                              type={'dashed'}
-                                              style={ButtonGreenStyle}/>
-        <BaseStyledButtonFormItemAutoComplete position={2} onClick={secondBtnOnClick}
-                                              type={"dashed"}
-                                              icon={<EditOutlined/>}
-                                              disable={secondDisable}/>
-    </BaseStyledSpaceCompactFormItemAutoComplete>
+        <BaseStyledButton onClick={firstBtnOnClick}
+                          icon={<PlusOutlined/>}
+                          type={'dashed'}
+                          style={ButtonGreenStyle}/>
+        <BaseStyledButton onClick={secondBtnOnClick}
+                          icon={<EditOutlined/>}
+                          disable={secondDisable}/>
+    </Space.Compact>
 
 );
 
 export {
-    StyledFormItemAutoCompleteAndCreate,
-    StyledFormItemAutoCompleteAndCreateWitchEdit,
-    StyledFormItemAutoComplete,
-    BaseStyledFormItemAutoComplete
+    CustomAutoCompleteAndCreate,
+    CustomAutoCompleteAndCreateWitchEdit,
+    CustomAutoComplete
 };
 

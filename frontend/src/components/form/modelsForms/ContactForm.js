@@ -11,8 +11,8 @@ import {
     POSITIONS_QUERY_COMPACT
 } from "../../../graphql/queriesCompact";
 import {
-    StyledFormItemAutoComplete,
-    StyledFormItemAutoCompleteAndCreateWitchEdit
+    CustomAutoComplete,
+    CustomAutoCompleteAndCreateWitchEdit
 } from "../../style/SearchAutoCompleteStyles";
 import {CONTACTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
@@ -167,30 +167,30 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
                 </Form.Item>
 
                 <Divider orientation="left">Данные организации:</Divider>
-                <StyledFormItemAutoComplete
-                    formName={"position_name"}
-                    formLabel={"Должность"}
-                    data={dataPositions?.positions?.items}
-
-                    placeholder="Выберите должность"
-                    stateSearch={positionAutoComplete}
-                    setStateSearch={ setPositionAutoComplete}
-
-                />
-                <StyledFormItemAutoCompleteAndCreateWitchEdit
-                    formName={"organization_name"}
-                    formLabel={"Организация"}
-
-                    data={dataOrganizations?.organizations?.items}
-                    placeholder="Выберите организацию"
-
-                    stateSearch={organizationAutoComplete}
-                    setStateSearch={setOrganizationAutoComplete}
-                    firstBtnOnClick={() => setOrganizationModalStatus("add")}
-                    secondBtnOnClick={() => setOrganizationModalStatus("edit")}
-                />
-
-
+                <Form.Item
+                    name={"position_name"}
+                    label={"Должность"}
+                    style={{width: "100%"}}>
+                    <CustomAutoComplete
+                        data={dataPositions?.positions?.items}
+                        placeholder="Выберите должность"
+                        stateSearch={positionAutoComplete}
+                        setStateSearch={setPositionAutoComplete}
+                    />
+                </Form.Item>
+                <Form.Item
+                    name={"organization_name"}
+                    label={"Организация"}
+                    style={{width: "100%"}}>
+                    <CustomAutoCompleteAndCreateWitchEdit
+                        data={dataOrganizations?.organizations?.items}
+                        placeholder="Выберите организацию"
+                        stateSearch={organizationAutoComplete}
+                        setStateSearch={setOrganizationAutoComplete}
+                        firstBtnOnClick={() => setOrganizationModalStatus("add")}
+                        secondBtnOnClick={() => setOrganizationModalStatus("edit")}
+                    />
+                </Form.Item>
                 <Form.Item labelCol={{span: 24}} wrapperCol={{span: 24}}>
                     <div style={{textAlign: 'center'}}>
                         <StyledButtonGreen style={{marginBottom: 0}} type="primary" htmlType="submit">

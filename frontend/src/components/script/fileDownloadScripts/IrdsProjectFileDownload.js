@@ -1,10 +1,10 @@
 import 'react-phone-number-input/style.css';
 import { useMutation } from '@apollo/client';
-import { notification, Typography} from 'antd';
-import {STAGE_PROJECT_DOWNLOAD} from "../../graphql/mutationsProject";
+import {notification, Typography} from 'antd';
+import {IRDS_PROJECT_DOWNLOAD} from "../../../graphql/mutationsProject";
 const {Text, Link} = Typography;
 
-const StagesProjectFileDownload = ({projectId, text}) => {
+const IrdsProjectFileDownload = ({projectId,style, text, type}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
 
 
@@ -15,9 +15,9 @@ const StagesProjectFileDownload = ({projectId, text}) => {
         });
     };
 
-    const [downloadProjectStage] = useMutation(STAGE_PROJECT_DOWNLOAD, {
+    const [downloadProjectIrds] = useMutation(IRDS_PROJECT_DOWNLOAD, {
         onCompleted: (data) => {
-            handleDownloadClick(data.projectStagesFileDownload.url);
+            handleDownloadClick(data.projectIrdsFileDownload.url);
             openNotification('topRight', 'success', 'Загрузка начата!');
         },
         onError: (error) => {
@@ -26,17 +26,15 @@ const StagesProjectFileDownload = ({projectId, text}) => {
     });
 
     const handleDownload = () => {
-        console.log(projectId);
-        downloadProjectStage({ variables: { id: projectId } });
+         downloadProjectIrds({ variables: { id: projectId } });
     };
 
     const handleDownloadClick = async (downloadedFileUrl) => {
         try {
             const link = document.createElement('a');
-            console.log(link);
 
-            link.href = `${LaravelURL}download-projectStages/${downloadedFileUrl}`;
-            link.download = 'График работ.docx';
+            link.href = `${LaravelURL}download-projectIrds/${downloadedFileUrl}`;
+            link.download = 'contractIrds.docx';
 
             document.body.appendChild(link);
             link.click();
@@ -47,9 +45,9 @@ const StagesProjectFileDownload = ({projectId, text}) => {
     };
 
     return (
-        <Link onClick={handleDownload}>{text ?? 'скачать'}</Link>
+        <Link style={style} type={type ?? null}  onClick={handleDownload}>{text ?? 'скачать'}</Link>
     );
 };
 
-export default StagesProjectFileDownload;
+export default IrdsProjectFileDownload;
 

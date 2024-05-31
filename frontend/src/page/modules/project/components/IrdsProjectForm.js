@@ -16,10 +16,8 @@ const IrdsProjectForm = ({localObject, initialObject, onCompleted, updateIrds, a
         form.setFieldsValue({
             irdList: actualIrds && Object.values(actualIrds)?.map((row) => ({
                 ...row,
-                ird_id: row.ird_id,
                 receivedDate:  row?.receivedDate ? dayjs(row?.receivedDate) : null,
             }))
-
         });
     }
     useEffect(() => {

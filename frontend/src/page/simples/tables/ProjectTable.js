@@ -1,27 +1,52 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Col, Collapse, Descriptions, Divider, Form, Modal, notification, Row, Space, Table, Typography} from 'antd';
+import {
+    Col,
+    Collapse,
+    Descriptions,
+    Divider,
+    Form,
+    Modal,
+    notification,
+    Row,
+    Space,
+    Table,
+    Tooltip,
+    Typography
+} from 'antd';
 import {PROJECTS_QUERY} from '../../../graphql/queries';
 import Search from "antd/es/input/Search";
-import StagesProjectFileDownload from "../../../components/script/StagesProjectFileDownload";
-import ProjectFileDownload from "../../../components/script/ProjectFileDownload";
-import IrdsProjectFileDownload from "../../../components/script/IrdsProjectFileDownload";
+import StagesProjectFileDownload from "../../../components/script/fileDownloadScripts/StagesProjectFileDownload";
+import ProjectFileDownload from "../../../components/script/fileDownloadScripts/ProjectFileDownload";
+import IrdsProjectFileDownload from "../../../components/script/fileDownloadScripts/IrdsProjectFileDownload";
 import Title from "antd/es/typography/Title";
-import ActRenderingProjectDownload from "../../../components/script/ActRenderingProjectDownload";
-import PaymentInvoiceProjectDownload from "../../../components/script/PaymentInvoiceProjectDownload";
+import ActRenderingProjectDownload from "../../../components/script/fileDownloadScripts/ActRenderingProjectDownload";
+import PaymentInvoiceProjectDownload
+    from "../../../components/script/fileDownloadScripts/PaymentInvoiceProjectDownload";
 import ProjectTasks from "../../modules/projectTasks/Index";
-import TaskExecutorContractDownload from "../../../components/script/TaskExecutorContractDownload";
+import TaskExecutorContractDownload from "../../../components/script/fileDownloadScripts/TaskExecutorContractDownload";
 import {useNavigate} from "react-router-dom";
 import ProjectForm from "../../modules/project/components/ProjectForm";
 import StagesProjectForm from "../../modules/project/components/StagesProjectForm";
 import IrdsProjectForm from "../../modules/project/components/IrdsProjectForm";
-import dayjs from "dayjs";
+import {
+    facilitiesToFullCode,
+    rebuildProjectResultQuery,
+    rebuildStagesResultQuery,
+    rebuildIrdsResultQuery,
+    rebuildStagesToQuery,
+    rebuildIrdToQuery,
+    rebuildProjectToQuery
+} from '../../../components/script/rebuildData/ProjectRebuilderQuery';
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
 import {
     UPDATE_IRDS_TO_PROJECT_MUTATION,
     UPDATE_PROJECT_MUTATION, UPDATE_STAGES_TO_PROJECT_MUTATION
 } from "../../../graphql/mutationsProject";
-import {StyledBlockRegular} from "../../../components/style/BlockStyles";
+import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../../components/style/BlockStyles";
+import Link from "antd/es/typography/Link";
+import dayjs from "dayjs";
+import {DeleteOutlined, DownloadOutlined, EditOutlined} from "@ant-design/icons";
 
 const {Text} = Typography;
 
@@ -32,7 +57,9 @@ const ProjectTable = () => {
     const [selectedProject, setSelectedProject] = useState(null);
     const [editModalStatus, setEditModalStatus] = useState(false);
     const navigate = useNavigate();
-
+    const formatCurrency = (amount) => {
+        return amount.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'});
+    };
 
     // Данные
     const [page, setPage] = useState(1);
@@ -71,113 +98,7 @@ const ProjectTable = () => {
         setSearch(value);
     }
 
-    function addLeadingZeros(number, length) {
-        return String(number).padStart(length, '0');
-    }
-    const facilitiesToFullCode = (faclility) => {
-        return  `${faclility.group_facility.subselection_facility.selection_facility.code.toString().padStart(2, '0')}-`+
-        `${faclility.group_facility.subselection_facility.code.toString().padStart(2, '0')}-`+
-        `${faclility.group_facility.code.toString().padStart(3, '0')}-`+
-        `${faclility.code.toString().padStart(3, '0')}`
-    }
-    const rebuildProjectResultQuery = (data) => {
-        return {
-            ...data,
 
-            date_range: {
-                dateEnd: data?.date_end ? dayjs(data?.date_end) : null,
-                dateStart: data?.date_signing ? dayjs(data?.date_signing) : null,
-                duration: data?.duration ?? null
-            },
-            date_create:data?.date_create ? dayjs(data?.date_create) : null,
-            date_end:data?.date_end ? dayjs(data?.date_end) : null,
-            date_signing:data?.date_signing ? dayjs(data?.date_signing) : null,
-            delegates_id:data?.delegations?.map(k => k?.id),
-            facility_id: {
-                checkedKeys: data?.facilities?.map(k => facilitiesToFullCode(k))
-            },
-            organization_customer_id:data?.organization_customer?.id,
-            organization_customer_name:data?.organization_customer?.name,
-            status_id:data?.status?.id,
-            type_project_document_id:data?.type_project_document?.id,
-            type_project_document_name:data?.type_project_document?.name,
-        }
-            ;
-    };
-    const rebuildStagesResultQuery = (data) => {
-        return data?.map((row, index) => ({
-            ...row,
-            date_range: [
-                row?.date_start ? dayjs(row?.date_start) : null,
-                row?.date_end ? dayjs(row?.date_end) : null],
-            stage_number: index + 1,
-            stage_id: row?.stage?.id,
-            stage_name: row?.stage?.name
-        }));
-    };
-    const rebuildProjectToQuery = (data) => {
-        if (!data)
-            return [];
-
-        return {
-            id: data?.id ?? null,
-            number: data?.number,
-            name: data?.name,
-            organization_customer_id: data?.organization_customer_id,
-            type_project_document_id: data?.type_project_document_id,
-            date_signing: dayjs(data?.date_signing).format("YYYY-MM-DD"),
-            duration: data?.date_range?.duration,
-            date_end: dayjs(data?.date_range?.date_end).format("YYYY-MM-DD"),
-            date_create: dayjs(data?.date_range?.date_create).format("YYYY-MM-DD"),
-            status_id: data?.status_id,
-            date_completion: dayjs(data?.date_completion).format("YYYY-MM-DD"),
-            price: data?.price,
-            prepayment: data?.prepayment,
-            facility_id: data?.facility_id?.checkedObjects?.map(row => row?.value[0] ?? null),
-            delegates_id: data?.delegates_id,
-        };
-    };
-    const rebuildIrdsResultQuery = (data) => {
-        return data?.map((row, index) => ({
-            ...row,
-            receivedDate: row.receivedDate ? dayjs(row.receivedDate?.[1]).format("YYYY-MM-DD") : null,
-            ird_id: row?.IRD?.id,
-            ird_name: row?.IRD?.name
-        }));
-    };
-    const rebuildStagesToQuery = (data, projectId) => {
-        if (!data)
-            return [];
-        const dataArray = Object.values(data);
-
-        return dataArray?.map((row, index) => ({
-            id: row?.id ?? null,
-            project_id: projectId,
-            date_start: row.date_range?.[0] ? dayjs(row.date_range?.[0]).format("YYYY-MM-DD") : null,
-            date_end: row.date_range?.[1] ? dayjs(row.date_range?.[1]).format("YYYY-MM-DD") : null,
-            duration: row?.duration ?? null,
-            stage_id: row?.stage_id ?? null,
-            stage_number: index + 1,
-            price: row?.price ?? null,
-            percent: row?.percent ?? null,
-            progress: row?.progress ?? null,
-            price_to_paid: row?.price_to_paid ?? null,
-        }));
-    };
-    const rebuildIrdToQuery = (data, projectId) => {
-        if (!data)
-            return [];
-        const dataArray = Object.values(data);
-
-        return dataArray?.map((row, index) => ({
-            id: row?.id ?? null,
-            project_id: projectId,
-            ird_id: row?.ird_id ?? null,
-            stageNumber: row?.stageNumber ? parseInt(row?.stageNumber) : null,
-            applicationProject: row?.applicationProject ? parseInt(row?.applicationProject) : null,
-            receivedDate: row?.receivedDate ? dayjs(row?.receivedDate).format("YYYY-MM-DD") : null,
-        }));
-    };
     const [mutateProject] = useMutation(UPDATE_PROJECT_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
@@ -213,154 +134,359 @@ const ProjectTable = () => {
     // Формат таблицы
     const columns = [
         {
-            title: 'Номер',
-            dataIndex: 'number',
-            key: 'number',
-            width: 100,
-            sorter: true, ellipsis: true,
+            key: 'edit',
+            width: "2%",
+            render: (text, record) => (
+                <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
+                        <Link type={"warning"}>
+                            <EditOutlined
+                                onClick={() => setEditModalStatus({
+                                    status: "base",
+                                    project: rebuildProjectResultQuery(record)
+                                })}/>
+                        </Link>
+                    <Link type={"danger"}>
+                            <DeleteOutlined/>
+                        </Link>
+                </Space.Compact>
+            ),
         },
         {
-            title: 'Название',
-            dataIndex: 'name',
-            key: 'name',
-            width: 200,
-            sorter: true, ellipsis: true,
-        },
-        {
-            title: 'Заказчик',
-            dataIndex: 'organization_customer',
-            key: 'organization_customer',
-            sorter: true, ellipsis: true,
-            render: (organization_customer) => organization_customer ?
-                organization_customer.name : "",
-        },
-        {
-            title: 'Представитель',
-            dataIndex: 'delegations',
-            key: 'delegations',
-            sorter: true, ellipsis: true,
+            title: 'Основные данные',
+            dataIndex: 'main_data',
+            key: 'main_data',
+            width: "50%",
+            align: "left",
+            render: (text, record) => (
+                <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
+                    <Title level={5} style={{marginTop: 0}}>{record.name}</Title>
+                    <Text>{record.number}</Text>
+                    <Text>{record.type_project_document.name}</Text>
+                    <ProjectFileDownload  style={{color: "green"}} text={"Скачать договор"} projectId={record.id}/>
+                </Space.Compact>
+            ),
 
-            render: (delegations) => (
-                delegations.map(delegate => (
-                    <div key={delegate.id}>{delegate.last_name} {delegate.first_name} {delegate.patronymic}</div>
-                ))
-            )
         },
         {
-            title: 'Тип документации',
-            dataIndex: 'type_project_document',
-            key: 'type_project_document',
-            sorter: true, ellipsis: true,
-            render: (type_project_document) => type_project_document ?
-                type_project_document.name : ""
-        },
-        {
-            title: 'Объект',
-            dataIndex: 'facilities',
-            key: 'facilities',
-            sorter: true, ellipsis: true,
-            render: (facilities) =>
-                facilities?.map(f => (
-                    <div key={f.id}>
-                        {addLeadingZeros(f?.group_facility?.subselection_facility?.selection_facility?.code, 2)}.
-                        {addLeadingZeros(f?.group_facility?.subselection_facility?.code, 2)}.
-                        {addLeadingZeros(f?.group_facility?.code, 3)}.
-                        {addLeadingZeros(f?.code, 3)}.
-                        {f?.name}</div>
-                ))
-        },
-        {
-            title: 'Дата подписания',
-            dataIndex: 'date_signing',
-            key: 'date_signing',
-            width: 100, sorter: true, ellipsis: true,
-        },
-        {
-            title: 'Продолжительность',
-            dataIndex: 'duration',
-            key: 'duration',
-            width: 100, sorter: true, ellipsis: true,
-        },
-        {
-            title: 'Дата начала',
-            dataIndex: 'date_end',
-            key: 'date_end',
-            width: 100, sorter: true, ellipsis: true,
-        },
-        {
-            title: 'Дата окончания',
-            dataIndex: 'date_end',
-            key: 'date_end',
-            width: 100, sorter: true, ellipsis: true,
-        },
-        {
-            title: 'Стоимость',
-            dataIndex: 'price',
-            key: 'price',
-            width: 160, sorter: true, ellipsis: true,
-            render: (price) =>
-                (price?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' ₽')
+            title: 'Данные о заказчике',
+            dataIndex: 'customer_data',
+            key: 'customer_data',
+            width: "18%",
+            align: "left",
+            render: (text, record) => (
+                <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
+                    {record.organization_customer ?
+                        <Title level={5} style={{marginTop: 0}}>{record.organization_customer?.name ?? "?"}</Title>
+                        :
+                        <Title level={5} style={{marginTop: 0, color: '#ff4d4f'}}>Организация не указана</Title>
+                    }
+                    <Text strong>Объекты:</Text>
+                    {record.facilities && record.facilities?.length > 0 ? (record.facilities?.map(row => (
+                            <Tooltip placement={"leftBottom"} title={
+                                `${row?.group_facility?.subselection_facility?.selection_facility.name}, ` +
+                                `${row?.group_facility?.subselection_facility?.name}, ` +
+                                `${row?.group_facility?.name}, ` +
+                                `${row?.name}.`
+                            }>
+                                < Text style={{marginLeft: 8, color: '#1677ff'}} key={row.id}>
+                                    {facilitiesToFullCode(row)}
+                                </Text>
+                            </Tooltip>
+                        )))
+                        :
+                        <Text type="danger">Объекты отсутствуют
+                        </Text>
+                    }
+                    <Text strong>Представители:</Text>
+                    {record.delegations && record.delegations?.length > 0 ? (record.delegations.map(delegate => (
+                            <Link style={{marginLeft: 8}}
+                                  key={delegate.id}>{delegate?.last_name ?? ""} {delegate?.first_name ?? ""} {delegate?.patronymic ?? ""}
+                            </Link>
+                        )))
+                        :
+                        <Text>Представители отсутсвуют</Text>}
+                </Space.Compact>
+            ),
         },
         {
             title: 'Статус',
-            dataIndex: 'status',
-            key: 'status',
-            width: 220, sorter: true, ellipsis: true,
-            render: (status) => status ?
-                status.name : ""
+            dataIndex: 'status_data',
+            key: 'status_data',
+            width: "15%",
+            align: "left",
+            render: (text, record) => (
+                <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
+                    <Text strong>Статус:</Text>
+                    <Text>{record.status?.name}</Text>
+                    <Text strong>Сроки:</Text>
+                    {
+                        record.date_signing ?
+                            <Text>с {record.date_signing}</Text>
+                            :
+                            <Text type="danger">Не подписан</Text>
+                    }
+                    {
+                        record.date_end ?
+                            <Text>по {record.date_end}</Text>
+                            :
+                            <Text type="danger">Не задана дата окончания</Text>
+                    }
+                    <Text> </Text>
+                    {
+                        record.date_end && record.date_signing ?
+                            (
+                                <Text>{dayjs(record.date_end).diff(dayjs(record.date_signing), 'day')} (дней)</Text>) : null
+                    }
+                </Space.Compact>
+            ),
         },
         {
-            title: 'Договор', key: 'btnContract', width: 80, align: 'center', sorter: true, ellipsis: true,
+            title: 'Стоимость',
+            dataIndex: 'price_data',
+            key: 'price_data',
+            width: "10%",
+            align: "left",
             render: (text, record) => (
-                <>
-                    <ProjectFileDownload projectId={record.id}/>
-                </>
-            ),
-        }, {
-            title: 'Список ИРД', key: 'btnIrd', width: 80, align: 'center', sorter: true, ellipsis: true,
-            render: (text, record) => (
-                <>
-                    <IrdsProjectFileDownload projectId={record.id}/>
-                </>
-            ),
-        }, {
-            title: 'График этапов', key: 'btnStage', width: 80, align: 'center', sorter: true, ellipsis: true,
-            render: (text, record) => (
-                <>
-                    <StagesProjectFileDownload projectId={record.id}/>
-                </>
+                <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
+                    <Text strong>Полная стоимость:</Text>
+                    <Text>{formatCurrency(record.price)} ₽</Text>
+                    <Text strong>Аванс:</Text>
+                    <Text>{record.prepayment}%
+                        ({record.price && record.prepayment && formatCurrency(record.price / 100 * record.prepayment)} ₽)</Text>
+                </Space.Compact>
             ),
         },
-        {
-            title: 'Управление',
-            key: 'edit',
-            width: 110, sorter: true,
-            render: (text, record) => (
-                <div>
-                    <p>
-                        <Typography.Link onClick={() => setEditModalStatus({
-                            status: "base",
-                            project: rebuildProjectResultQuery(record)
-                        })}>Изменить
-                            Проект</Typography.Link></p> <p>
-                    <Typography.Link onClick={() => setEditModalStatus({
-                        status: "irds",
-                        irds: rebuildIrdsResultQuery(record?.project_irds),
-                        project: rebuildProjectResultQuery(record)
-                    })}>ИРД</Typography.Link></p> <p>
-                    <Typography.Link onClick={() => setEditModalStatus({
-                        status: "stages",
-                        stages: rebuildStagesResultQuery(record?.project_stages),
-                        project: rebuildProjectResultQuery(record)
-                    })}>Этапы</Typography.Link></p> <p>
-                    <Typography.Link onClick={() => setEditModalStatus({
-                        status: "tasks",
-                        project: rebuildProjectResultQuery(record)
-                    })}>Задачи</Typography.Link></p>
-                </div>
-            ),
-        },
+
     ];
+    const expandedRowRender = (project) => {
+            const columnsStages = [{
+                title:
+                    <Space>
+                        <Tooltip title={"График выполнения работ"}>
+                            <Text style={{marginRight: 10}}>Список Этапов</Text>
+                            <StagesProjectFileDownload  style={{color: "green"}} text={<DownloadOutlined/>} projectId={project.id}/>
+                        </Tooltip>
+                        <Link  type={"warning"}>
+                            <EditOutlined
+                                onClick={() => setEditModalStatus({
+                                    status: "stages",
+                                    stages: rebuildStagesResultQuery(project.project_stages),
+                                    project: rebuildProjectResultQuery(project)
+                                })}/>
+                        </Link>
+                    </Space>,
+                children: [
+                    {
+                        title: '№',
+                        dataIndex: 'number',
+                        key: 'number',
+                        align: "left",
+                    },
+                    {
+                        title: 'Наименование этапа',
+                        dataIndex: 'stage',
+                        key: 'stage',
+                        align: "left",
+                        render: (text, record) => (
+                            <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
+                                <Text>{record?.stage?.name}</Text>
+                            </Space.Compact>
+                        ),
+                    },
+                    {
+                        title: 'Счёт на оплату',
+                        dataIndex: 'payment',
+                        key: 'payment',
+                        align: "left",
+                        render: (text, record) => (
+                            <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
+                                {record.prepayment ?
+                                    <PaymentInvoiceProjectDownload isPrepayment={true}
+                                                                   projectId={record.id} type="acts"/>
+                                    :
+                                    <PaymentInvoiceProjectDownload stageNumber={record.number}
+                                                                   projectId={project.id} type="acts"/>
+                                }
+                            </Space.Compact>
+                        ),
+                    },
+                    {
+                        title: 'Акт работ',
+                        dataIndex: 'act',
+                        key: 'act',
+                        align: "left",
+                        render: (text, record) => (
+                            <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
+                                {record.prepayment ?
+                                    ("-")
+                                    :
+                                    <ActRenderingProjectDownload stageNumber={record.number}
+                                                                 projectId={project.id} type="acts"/>
+                                }
+                            </Space.Compact>
+                        ),
+                    },]
+            }
+            ];
+            const columnsIrds = [{
+                title:
+                    <Space>
+                        <Tooltip title={"Список ИРД"}>
+
+                            <Text style={{marginRight: 10}}>Список ИРД</Text>
+                            <IrdsProjectFileDownload style={{color: "green"}} text={<DownloadOutlined/>} projectId={project.id}/>
+                        </Tooltip>
+                        <Link  type={"warning"}>
+
+                            <EditOutlined onClick={() => setEditModalStatus({
+                                status: "irds",
+                                irds: rebuildIrdsResultQuery(project.project_irds),
+                                project: rebuildProjectResultQuery(project)
+                            })}/>
+                        </Link>
+                    </Space>,
+                children: [
+                    {
+                        width: '45%',
+
+                        title: 'Основаня информация',
+                        dataIndex: 'ird',
+                        key: 'ird',
+                        align: "left",
+                        render: (text, record) => (
+                            <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
+                                <Text strong>{record?.IRD?.name}</Text>
+                            </Space.Compact>
+                        ),
+                    },
+                    {
+                        width: '40%',
+
+                        title: 'Статус получения',
+                        dataIndex: 'status_confirm',
+                        key: 'status_confirm',
+                        align: "left",
+                        render: (text, record) => (
+                            record.receivedDate ? (
+                                    <Text strong>{record?.receivedDate}</Text>
+                                )
+                                :
+                                <Text strong style={{color: "#ff4d4f"}}>Не получено</Text>
+                        ),
+                    },
+                    {
+                        width: '15%',
+
+                        title: 'Файл',
+                        dataIndex: 'ird_download',
+                        key: 'ird_download',
+                        align: "left",
+                        render: (text, record) => (
+                            <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
+                            </Space.Compact>
+                        ),
+                    }]
+            }
+            ];
+            const columnsExecutors = [{
+                title:
+                    <Space>
+                        <Tooltip title={'Список Исполнителей (В разработке)'}>
+
+                            <Text style={{marginRight: 10}}>Список Исполнителей (В разработке)</Text>
+                            <DownloadOutlined/>
+                        </Tooltip>
+                        {/*<IrdsProjectFileDownload text={<DownloadOutlined/>} projectId={project.id}/>*/}
+                        <EditOutlined onClick={() => setEditModalStatus({
+                            status: "tasks",
+                            project: rebuildProjectResultQuery(project)
+                        })}/>
+                    </Space>,
+                children: [
+                    {
+                        title: 'Исполнитель',
+                        dataIndex: 'executor',
+                        width: '45%',
+                        key: 'executor',
+                        align: "left",
+                        render: (text, record) => (
+                            <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
+                            </Space.Compact>
+                        ),
+                    },
+                    {
+                        title: 'Список задач',
+                        dataIndex: 'tasks',
+                        width: '40%',
+                        key: 'tasks',
+                        align: "left",
+                        render: (text, record) => (
+                            <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
+                            </Space.Compact>
+                        ),
+                    },
+                    {
+                        title: 'Договор',
+                        dataIndex: 'contract',
+                        width: '15%',
+                        key: 'contract',
+                        align: "left",
+                        render: (text, record) => (
+                            <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
+                            </Space.Compact>
+                        ),
+                    }]
+            }
+            ];
+            return (
+                <Space.Compact style={{width: "100%", margin: 0}}>
+                    <Table
+                        style={{
+                            margin: 0,
+                            width: "33%",
+                            borderWidth: "1px",
+                            borderStyle: "solid",
+                            borderColor: "grey",
+                        }}
+                        size={"small"}
+                        columns={columnsStages}
+                        dataSource={project?.project_stages ? [{
+                            number: 0,
+                            type: "prepayment",
+                            stage: {name: "Аванс"}
+                        }, ...project?.project_stages] : [{}]}
+                        pagination={false}
+                    />
+                    <Table
+                        style={{
+                            margin: 0,
+                            width: "35%",
+                            borderWidth: "1px",
+                            borderStyle: "solid",
+                            borderColor: "grey",
+                        }}
+                        size={"small"}
+                        columns={columnsIrds}
+                        dataSource={project.project_irds}
+                        pagination={false}
+                    />
+                    <Table
+                        style={{
+                            margin: 0,
+                            width: "33%",
+                            borderWidth: "1px",
+                            borderStyle: "solid",
+                            borderColor: "grey",
+                        }}
+                        size={"small"}
+                        columns={columnsExecutors}
+                        dataSource={project.executors}
+                        pagination={false}
+                    />
+                </Space.Compact>
+            );
+        }
+    ;
     const onChange = (pagination, filters, sorter) => {
         if ((sorter.field !== undefined) && currentSort !== sorter) {
             setCurrentSort(sorter);
@@ -433,81 +559,7 @@ const ProjectTable = () => {
                         setExpandedRowKeys(keys);
                     },
                     expandedRowRender: (record) => (
-                        <Row>
-                            <Descriptions layout={"vertical"} bordered size={"small"} style={{width: "600px"}}>
-                                <Descriptions column={1}>
-                                    <Text>Этапы</Text>
-                                </Descriptions>
-                                <Descriptions column={1}>
-                                    <Text>Акты</Text>
-                                </Descriptions>
-                                <Descriptions column={1}>
-                                    <Text>Счета</Text>
-                                </Descriptions>
-                                <>
-                                    <Descriptions title={'Аванс'}
-                                                  column={1}>
-                                        <Text>Аванс</Text>
-                                    </Descriptions>
-                                    <Descriptions title={`Акт`} column={1}>
-                                        <>X</>
-                                    </Descriptions>
-                                    <Descriptions title={`Счёт`} column={1}>
-                                        <PaymentInvoiceProjectDownload isPrepayment={true}
-                                                                       projectId={record.id} type="acts"/>
-                                    </Descriptions>
-                                </>
-                                {record.project_stages.map(psid => (
-                                    <>
-                                        <Descriptions title={`Этап №${psid.number} (${psid.stage.name})`}
-                                                      column={1}>
-                                            <Text>Этап {psid.number} {psid.stage.name}</Text>
-                                        </Descriptions>
-                                        <Descriptions title={`Акт`} column={1}>
-                                            <ActRenderingProjectDownload stageNumber={psid.number}
-                                                                         projectId={record.id} type="acts"/>
-                                        </Descriptions>
-                                        <Descriptions title={`Счёт`} column={1}>
-                                            <PaymentInvoiceProjectDownload stageNumber={psid.number}
-                                                                           projectId={record.id} type="acts"/>
-                                        </Descriptions>
-                                    </>
-
-                                ))}
-                            </Descriptions>
-                            <Collapse style={{width: "550px", marginLeft: 10}}>
-                                <Collapse.Panel header="Исполнители" key="all-persons">
-                                    <Descriptions labelStyle={{height: 2333, margin: 0, padding: 0}} layout={"vertical"}
-                                                  bordered size={"small"} column={2} style={{width: "100%"}}>
-                                        <Descriptions column={1}>
-                                            <Text>Исполнитель</Text>
-                                        </Descriptions>
-                                        <Descriptions column={1}>
-                                            <Text>Договор</Text>
-                                        </Descriptions>
-                                        {record.project_tasks?.reduce((acc, task) => {
-                                            task.executors.forEach((executor) => {
-                                                // Добавляем исполнителя в аккумулятор, если его еще нет
-                                                if (!acc.some((e) => e.id === executor.executor.id)) {
-                                                    acc.push(executor.executor);
-                                                }
-                                            });
-                                            return acc;
-                                        }, []).map((executor) => (
-                                            <>
-                                                <Descriptions title={"Исполнитель"}
-                                                              column={1}>{executor.passport.lastname} {executor.passport.firstname} {executor.passport.patronymic}</Descriptions>
-                                                <Descriptions title={"Договор"} column={1}>
-                                                    <TaskExecutorContractDownload executorId={executor.id}
-                                                                                  projectId={record.id} type="acts"/>
-                                                </Descriptions>
-                                            </>
-                                        ))}
-                                    </Descriptions>
-                                </Collapse.Panel>
-                            </Collapse>
-
-                        </Row>
+                        expandedRowRender(record)
                     ),
                 }}
             />
@@ -516,8 +568,8 @@ const ProjectTable = () => {
                 open={editModalStatus?.status}
                 onCancel={() => setEditModalStatus(null)}
                 footer={null}
-                onClose={() => setEditModalStatus(null)}
-
+                width={1500}
+                 onClose={() => setEditModalStatus(null)}
             >
                 {editModalStatus?.status === "base" ? (
 
@@ -539,7 +591,7 @@ const ProjectTable = () => {
 
                     ) :
                     editModalStatus?.status === "irds" ? (
-                            <>
+                            <StyledBlockLarge >
                                 <IrdsProjectForm
                                     actualIrds={editModalStatus?.irds}
                                     updateIrds={(value) => setEditModalStatus({...editModalStatus, irds: value})}
@@ -547,28 +599,31 @@ const ProjectTable = () => {
                                 />
                                 <div>
                                     <StyledButtonGreen onClick={() =>
-                                        mutateIrd({variables: {data: rebuildIrdToQuery(editModalStatus?.irds, editModalStatus?.project?.id)}})}>
+                                        mutateIrd({variables: {data: rebuildIrdToQuery(editModalStatus?.irds, editModalStatus?.project)}})}>
                                         Сохранить
                                     </StyledButtonGreen>
                                 </div>
-                            </>) :
+                            </StyledBlockLarge>) :
                         editModalStatus?.status === "stages" ? (
-                                <>
+                                <StyledBlockLarge>
                                     <StagesProjectForm
                                         actualStages={editModalStatus?.stages}
-                                        updateStages={(value) => setEditModalStatus({...editModalStatus, stages: value})}
+                                        updateStages={(value) => setEditModalStatus({
+                                            ...editModalStatus,
+                                            stages: value
+                                        })}
                                         project={editModalStatus?.project}
                                     />
                                     <div>
                                         <StyledButtonGreen onClick={() =>
-                                            mutateStage({variables: {data: rebuildStagesToQuery(editModalStatus?.stages, editModalStatus?.project?.id)}})}>
+                                            mutateStage({variables: {data: rebuildStagesToQuery(editModalStatus?.stages, editModalStatus?.project)}})}>
                                             Сохранить
                                         </StyledButtonGreen>
                                     </div>
-                                </>)
+                                </StyledBlockLarge>)
                             :
                             editModalStatus?.status === "tasks" ? (
-                                    <>
+                                    <StyledBlockLarge>
                                         <ProjectTasks
                                             actualStages={editModalStatus?.stages}
                                             updateStages={(value) => setEditModalStatus({
@@ -579,11 +634,11 @@ const ProjectTable = () => {
                                         />
                                         <div>
                                             <StyledButtonGreen onClick={() =>
-                                                mutateStage({variables: {data: rebuildStagesToQuery(editModalStatus?.stages, editModalStatus?.project?.id)}})}>
+                                                mutateStage({variables: {data: rebuildStagesToQuery(editModalStatus?.stages, editModalStatus?.project)}})}>
                                                 Сохранить
                                             </StyledButtonGreen>
                                         </div>
-                                    </>)
+                                    </StyledBlockLarge>)
                                 : null}
             </Modal>
 

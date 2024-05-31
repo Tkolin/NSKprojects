@@ -1,11 +1,10 @@
 import 'react-phone-number-input/style.css';
 import { useMutation } from '@apollo/client';
 import { notification, Typography} from 'antd';
-import {TASK_EXECUTOR_CONTRACT_DOWNLOAD
-} from "../../graphql/mutationsProject";
+import {STAGE_PROJECT_DOWNLOAD} from "../../../graphql/mutationsProject";
 const {Text, Link} = Typography;
 
-const TaskExecutorContractDownload = ({projectId, executorId, text}) => {
+const StagesProjectFileDownload = ({projectId, style,text}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
 
 
@@ -16,10 +15,9 @@ const TaskExecutorContractDownload = ({projectId, executorId, text}) => {
         });
     };
 
-    const [downloadTaskExecutorContract] = useMutation(TASK_EXECUTOR_CONTRACT_DOWNLOAD, {
+    const [downloadProjectStage] = useMutation(STAGE_PROJECT_DOWNLOAD, {
         onCompleted: (data) => {
-            console.log("onCompleted data", data);
-            handleDownloadClick(data?.taskExecutorContractFileDownload?.url);
+            handleDownloadClick(data.projectStagesFileDownload.url);
             openNotification('topRight', 'success', 'Загрузка начата!');
         },
         onError: (error) => {
@@ -29,18 +27,16 @@ const TaskExecutorContractDownload = ({projectId, executorId, text}) => {
 
     const handleDownload = () => {
         console.log(projectId);
-        downloadTaskExecutorContract({ variables: { projectId: projectId, executorId: executorId } });
+        downloadProjectStage({ variables: { id: projectId } });
     };
 
     const handleDownloadClick = async (downloadedFileUrl) => {
-        console.log("handleDownloadClick");
-
         try {
             const link = document.createElement('a');
             console.log(link);
 
-            link.href = `${LaravelURL}download-taskExecutorContract/${downloadedFileUrl}`;
-            link.download = '${downloadedFileUrl}';
+            link.href = `${LaravelURL}download-projectStages/${downloadedFileUrl}`;
+            link.download = 'График работ.docx';
 
             document.body.appendChild(link);
             link.click();
@@ -51,9 +47,9 @@ const TaskExecutorContractDownload = ({projectId, executorId, text}) => {
     };
 
     return (
-        <Link onClick={handleDownload}>{text ?? 'скачать'}</Link>
+        <Link style={style} onClick={handleDownload}>{text ?? 'скачать'}</Link>
     );
 };
 
-export default TaskExecutorContractDownload;
+export default StagesProjectFileDownload;
 

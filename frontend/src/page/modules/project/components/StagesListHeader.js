@@ -1,6 +1,5 @@
 import React from 'react';
-import {Row, Col} from 'antd';
-
+import {Row, Col, Space} from 'antd';
 
 
 const StagesListHeader = ({}) => {
@@ -40,9 +39,11 @@ const StagesListHeader = ({}) => {
                 </div>
             </Col>
             <Col span={3}>
-                <div style={{width: "100%", textAlign: "center"}}>
-                    Итоговая стоимость
-                </div>
+                <Space.Compact direction={"vertical"} style={{width: "100%", textAlign: "center"}}>
+                    <> Итоговая стоимость
+                    </>
+                    <>(с вычетом аванса)</>
+                </Space.Compact>
             </Col>
 
 

@@ -9,7 +9,7 @@ import {NotificationContext} from "../../../NotificationProvider";
 import {
     GROUP_TYPE_PROJECTS_QUERY_COMPACT
 } from "../../../graphql/queriesCompact";
-import {StyledFormItemAutoComplete} from "../../style/SearchAutoCompleteStyles";
+import {CustomAutoComplete} from "../../style/SearchAutoCompleteStyles";
 import {TYPES_PROJECTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
@@ -80,7 +80,7 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted }) => {
                 <Form.Item name="code" label="код" rules={[{required: true}]}>
                     <Input/>
                 </Form.Item>
-                <StyledFormItemAutoComplete
+                <CustomAutoComplete
                     formName={"group_name"}
                     formLabel={"Группа"}
 

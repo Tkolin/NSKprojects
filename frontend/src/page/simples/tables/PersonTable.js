@@ -16,7 +16,7 @@ import {DELETE_PERSON_MUTATION} from '../../../graphql/mutationsPerson';
 import PersonForm from "../../../components/form/modelsForms/PersonForm";
 import Search from "antd/es/input/Search";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
-import PersonContractFileDownload from "../../../components/script/PersonContractFileDownload";
+import PersonContractFileDownload from "../../../components/script/fileDownloadScripts/PersonContractFileDownload";
 import Title from "antd/es/typography/Title";
 import {format} from "date-fns";
 import StyledLinkManagingDataTable from "../../../components/style/TableStyles";

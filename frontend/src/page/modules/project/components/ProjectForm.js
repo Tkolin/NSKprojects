@@ -15,7 +15,7 @@ import {
     TYPES_PROJECTS_QUERY_COMPACT
 } from "../../../../graphql/queriesCompact";
 
-import {StyledFormItemAutoCompleteAndCreate} from "../../../../components/style/SearchAutoCompleteStyles";
+import {CustomAutoCompleteAndCreate} from "../../../../components/style/SearchAutoCompleteStyles";
 import {EmptyFormItem} from "../../../../components/formComponents/EmptyFormItem";
 
 import OrganizationModalForm from "../../../../components/modal/OrganizationModalForm";
@@ -35,7 +35,7 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
         if (!actualProject?.id)
             updateNumber();
         if (formLoad)
-            updateProject({...compiletedFormToProjectInput()})
+            updateProject(form.getFieldsValue())
     }
     useEffect(() => {
         actualProject && console.log(actualProject);
@@ -43,46 +43,36 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
     // Состояния
     const [delegatesModalStatus, setDelegatesModalStatus] = useState(null);
     const [organizationsModalStatus, setOrganizationsModalStatus] = useState(null);
-    useEffect(() => {
-        console.log("organizationsModalStatus", organizationsModalStatus);
-    }, [organizationsModalStatus]);
-    const [organizationsAutoComplete, setOrganizationsAutoComplete] = useState({options: [], selected: 0});
     const [typeProjectModalStatus, setTypeProjectModalStatus] = useState(null);
-    const [typeProjectAutoComplete, setTypeProjectAutoComplete] = useState({options: [], selected: {}});
-    useEffect(() => {
-        form.setFieldValue("organization_customer_id", organizationsAutoComplete.selected);
-        form.setFieldValue("type_project_document_id", typeProjectAutoComplete.selected);
-        handleChange()
-    }, [organizationsAutoComplete.selected, typeProjectAutoComplete.selected, form]);
-
-
     // Подгрузка при обновлении
     const load = () => {
-
+        console.log("load", actualProject);
         form.setFieldsValue({
             ...actualProject,
             id: actualProject?.id ?? null,
             date_signing: actualProject?.date_signing ? dayjs(actualProject?.date_signing) : null,
             date_end: actualProject?.date_end ? dayjs(actualProject?.date_end) : null,
             date_create: actualProject?.date_create ? dayjs(actualProject?.date_create) : null,
-            date_completion: actualProject?.date_completion ? dayjs(actualProject?.date_completion) : null
+            date_completion: actualProject?.date_completion ? dayjs(actualProject?.date_completion) : null,
         });
-        setTypeProjectAutoComplete({...typeProjectAutoComplete, selected: actualProject?.type_project_document_id});
-        setOrganizationsAutoComplete({...organizationsAutoComplete, selected: actualProject?.organization_customer_id});
     }
     useEffect(() => {
-        load();
+        if(!formLoad)
+            load();
     }, [actualProject]);
     useEffect(() => {
         setFormLoad(true)
-    }, []);
+    }, []);  
+    useEffect(() => {
+        console.log("newForm",form.getFieldsValue())
+    }, [form]);
 
     // Получение данных для выпадающих списков
     const {loading: loadingStatuses, error: errorStatuses, data: dataStatuses} =
         useQuery(PROJECT_STATUSES_QUERY_COMPACT,);
     const {
         loading: loadingTypeProject, error: errorTypeProject, data: dataTypeProject
-    } = useQuery(TYPES_PROJECTS_QUERY_COMPACT);
+    } = useQuery(TYPES_PROJECTS_QUERY_COMPACT, {onCompleted:()=>updateNumber()});
 
     const {
         loading: loadingDelegates, error: errorDelegates, data: dataDelegates
@@ -93,25 +83,22 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
 
     // Логика формы
     const updateNumber = () => {
+        console.log("actualProject?.id", actualProject?.id);
+        if(actualProject?.id && actualProject?.id > -1)
+        {
+            return;
+        }
         const facilitiCode = (
             form.getFieldValue("facility_id")?.checkedObjects &&
             form.getFieldValue("facility_id")?.checkedObjects[0] &&
             form.getFieldValue("facility_id")?.checkedObjects[0]?.key) ?? "__-__-___-___";
         form.setFieldValue("number", (
-            (dataTypeProject?.typeProjects?.items?.find(row => row.id === typeProjectAutoComplete?.selected)?.group?.name ?? "___") +
-            "–" + (dayjs(form.getFieldValue("date_signing")).format("YY") ?? "___") +
-            "–" + (organizationsAutoComplete?.selected ?? "___") +
+            (dataTypeProject?.typeProjects?.items?.find(row => row.id === form.getFieldValue("type_project_document")?.selected)?.group?.name ?? "___") +
+            "–" +  "24" +
+            "–" + (form.getFieldValue("organization_customer")?.selected ?? "___") +
             "–" + facilitiCode));
     }
-    const compiletedFormToProjectInput = () => {
-        const formValues = form.getFieldsValue();
-        return {
-            ...formValues,
-            organization_customer_id: organizationsAutoComplete?.selected ?? null,
-            type_project_document_id: typeProjectAutoComplete?.selected ?? null,
-        }
 
-    }
     if (errorStatuses || errorTypeProject || errorDelegates || errorOrganizations) return `Ошибка! ${errorStatuses?.message || errorTypeProject?.message || errorDelegates?.message || errorOrganizations?.message}`;
 
     return (<div>
@@ -120,40 +107,35 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
             setFormLoad(true);
 
         }} layout="vertical">
-            <EmptyFormItem name={"id"}/>
+                <EmptyFormItem name={"id"}/>
             <Form.Item name="number" label="Номер проекта" rules={[{required: true}]}>
                 <Input disabled={true}/>
             </Form.Item>
             <Form.Item name="name" label="Наименование проекта" rules={[{required: true}]}>
                 <Input/>
             </Form.Item>
-            <StyledFormItemAutoCompleteAndCreate
-                formName={"type_project_document_name"}
-                formLabel={"Тип документа"}
-                placeholder={"Начните ввод..."}
-                loading={loadingTypeProject}
-                firstBtnOnClick={() => setTypeProjectModalStatus("add")}
+            <Form.Item name="type_project_document" label="Тип документа" rules={[{required: true}]}>
+                <CustomAutoCompleteAndCreate
+                    placeholder={"Начните ввод..."}
+                    loading={loadingTypeProject}
+                    onChange={()=>handleChange()}
+                    firstBtnOnClick={() => setTypeProjectModalStatus("add")}
+                    data={dataTypeProject?.typeProjects?.items}
+                 />
+            </Form.Item>
 
-                data={dataTypeProject?.typeProjects?.items}
-                stateSearch={typeProjectAutoComplete}
-                setStateSearch={setTypeProjectAutoComplete}
-            />
-            <EmptyFormItem name={"type_project_document_id"}/>
+            <Form.Item  name="organization_customer" label="Заказчик" rules={[{required: true}]}>
+                <CustomAutoCompleteAndCreate
+                    placeholder={"Начните ввод..."}
+                    loading={loadingOrganizations}
+                    onChange={()=>handleChange()}
+                    firstBtnOnClick={() => {
+                        setOrganizationsModalStatus("add");
+                    }}
+                    data={dataOrganizations?.organizations?.items}
+                />
+            </Form.Item>
 
-            <StyledFormItemAutoCompleteAndCreate
-                formName={"organization_customer_name"}
-                formLabel={"Заказчик"}
-                placeholder={"Начните ввод..."}
-                loading={loadingOrganizations}
-                firstBtnOnClick={() => {
-                    setOrganizationsModalStatus("add");
-                }}
-
-                data={dataOrganizations?.organizations?.items}
-                stateSearch={organizationsAutoComplete}
-                setStateSearch={setOrganizationsAutoComplete}
-            />
-            <EmptyFormItem name={"organization_customer_id"}/>
 
             <StyledFormItemSelectAndCreate
                 formName={"delegates_id"}
@@ -169,18 +151,19 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
                 formatOptionText={(row) => `${row.last_name ?? ""} ${row.first_name ?? ""}  ${row.patronymic ?? ""}`}
                 typeData={"FIO"}
             />
-            <Collapse label={"Обьекты"}>
-                <Collapse.Panel label={"Обьекты"}>
-                    <Form.Item name="facility_id" label="Объект" style={{width: "100%"}}>
-                        <FacilitiesTreeComponent
-                            onChange={() => {
-                                console.log("facility_id", form.getFieldValue("facility_id"));
-                                handleChange()
-                            }}
-                        />
-                    </Form.Item>
-                </Collapse.Panel>
-            </Collapse>
+            <Form.Item label={"Обьекты"}>
+                <Collapse size={"small"}>
+                    <Collapse.Panel header={"Обьекты"}>
+                        <Form.Item name="facility_id" style={{width: "100%"}}>
+                            <FacilitiesTreeComponent
+                                onChange={() => {
+                                    handleChange()
+                                }}
+                            />
+                        </Form.Item>
+                    </Collapse.Panel>
+                </Collapse>
+            </Form.Item>
             <Form.Item name="date_range" label="Продолжительность">
                 <DateRangePickerComponent onChange={() => handleChange()}/>
             </Form.Item>
@@ -212,7 +195,9 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
                 </Form.Item>
             </Space.Compact>
 
-            {confirmFormButton}
+            {
+                confirmFormButton
+            }
 
 
         </Form>
@@ -221,12 +206,12 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
             onClose={() => setDelegatesModalStatus(null)}
             mode={delegatesModalStatus}/>
         <OrganizationModalForm
-            key={organizationsAutoComplete?.selected ?? 0}
-            object={{id: organizationsAutoComplete?.selected}}
+            key={form.getFieldValue("organization_customer") ?? 0}
+            object={{id: form.getFieldValue("organization_customer")?.selected}}
             onClose={() => setOrganizationsModalStatus(null)}
             mode={organizationsModalStatus}/>
         <TypeProjectModalForm
-            key={typeProjectAutoComplete?.selected}
+            key={form.getFieldValue("type_project_document")?.selected}
             object={{id: TypeProjectModalForm?.selected}}
             onClose={() => setTypeProjectModalStatus(null)}
             mode={typeProjectModalStatus}/>
