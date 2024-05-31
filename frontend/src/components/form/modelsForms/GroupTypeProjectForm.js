@@ -22,9 +22,7 @@ const GroupTypeProjectForm = ({ initialObject, onCompleted }) => {
     const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
 
     // Состояния
-    const [organizationModalStatus, setOrganizationModalStatus] = useState(null);
-    const [technicalSpecificationAutoComplete, setTechnicalSpecificationAutoComplete] = useState({options: [], selected: {}});
-    const [loadContact, { loading, data }] = useLazyQuery(GROUP_TYPE_PROJECTS_QUERY_BY_ID, {
+     const [loadContact, { loading, data }] = useLazyQuery(GROUP_TYPE_PROJECTS_QUERY_BY_ID, {
         variables: { id: 0},
         onCompleted: (data) => {
             console.log("lazyContact 0", data?.contacts?.items[0])

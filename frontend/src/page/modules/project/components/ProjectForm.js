@@ -185,7 +185,7 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
                 </Select>
             </Form.Item>
             <Space.Compact style={{width: '100%'}}>
-                <Form.Item name="price" style={{width: '100%'}} label="Стоимость" rules={[{required: true}]}>
+                <Form.Item name="price" style={{width: '100%'}} label="Стоимость" status_id>
                     <InputNumber suffix={"₽"} style={{width: '100%'}}
                                  formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                  parser={value => `${value}`.replace(/[^0-9]/g, '')}/>
@@ -207,13 +207,11 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
             onClose={() => setDelegatesModalStatus(null)}
             mode={delegatesModalStatus}/>
         <OrganizationModalForm
-            key={form.getFieldValue("organization_customer") ?? 0}
-            object={{id: form.getFieldValue("organization_customer")?.selected}}
+             object={{id: form.getFieldValue("organization_customer")?.selected}}
             onClose={() => setOrganizationsModalStatus(null)}
             mode={organizationsModalStatus}/>
         <TypeProjectModalForm
-            key={form.getFieldValue("type_project_document")?.selected}
-            object={{id: TypeProjectModalForm?.selected}}
+             object={{id: TypeProjectModalForm?.selected}}
             onClose={() => setTypeProjectModalStatus(null)}
             mode={typeProjectModalStatus}/>
     </div>)

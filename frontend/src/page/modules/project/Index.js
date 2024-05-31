@@ -16,11 +16,13 @@ import {NotificationContext} from "../../../NotificationProvider";
 import { rebuildProjectResultQuery, rebuildStagesResultQuery, rebuildIrdsResultQuery, rebuildStagesToQuery, rebuildIrdToQuery, rebuildProjectToQuery } from '../../../components/script/rebuildData/ProjectRebuilderQuery';
 import ProjectDetails from "./components/ProjectDetails";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
+import {useNavigate} from "react-router-dom";
 
 
 const Index = ({object}) => {
     const current = useProjectStore((state) => state.step);
     const setCurrent = useProjectStore((state) => state.setSteps);
+    const navigate = useNavigate();
 
     const project = useProjectStore((state) => state.project);
     const irds = useProjectStore((state) => state.irds);
@@ -44,8 +46,6 @@ const Index = ({object}) => {
 
 
     const reconstructProjectToIrdsAndStages = (project) => {
-        console.log("reconstructProjectToIrdsAndStages", project);
-        console.log("updateProject", rebuildProjectResultQuery(project));
 
         updateProject(rebuildProjectResultQuery(project));
 
@@ -151,7 +151,7 @@ const Index = ({object}) => {
                 type="navigation"
                 size="small"
                 current={current}
-                onChange={onChangeStep}
+                // onChange={onChangeStep}
                 className="site-navigation-steps"
                 items={[
                     {
@@ -221,20 +221,28 @@ const Index = ({object}) => {
                     </Button>
                 )}
                 {current === 4 - 1 && (
-                    <Button type="primary" onClick={() => console.log('Processing complete!')}>
+                    <Button type="primary" onClick={() =>
+                    {
+                        updateProject(null);
+                        updateIrds(null);
+                        updateStages(null);
+                        setCurrent(0);
+                        navigate("/reports/project");
+
+                    }}>
                         Завершить
                     </Button>
                 )}
-                {current > 0 && (
-                    <Button
-                        style={{
-                            margin: '0 8px',
-                        }}
-                        onClick={() => prev()}
-                    >
-                        Назад
-                    </Button>
-                )}
+                {/*{current > 0 && (*/}
+                {/*    // <Button*/}
+                {/*    //     style={{*/}
+                {/*    //         margin: '0 8px',*/}
+                {/*    //     }}*/}
+                {/*    //     onClick={() => prev()}*/}
+                {/*    // >*/}
+                {/*    //     Назад*/}
+                {/*    // </Button>*/}
+                {/*)}*/}
             </div>
         </>
 

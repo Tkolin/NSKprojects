@@ -85,8 +85,9 @@ type Mutation {
     ): GroupTypeProjectDocument @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
     createTypeProject(
+        id: ID
         name: String
-        group_id: ID
+        group: ID
         code: String
     ): TypeProjectDocument @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateTypeProject(

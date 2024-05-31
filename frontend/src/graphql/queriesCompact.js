@@ -38,7 +38,7 @@ export const SECTION_REFERENCES_QUERY_COMPACT = gql`
 `;
 export const GROUP_TYPE_PROJECTS_QUERY_COMPACT = gql`
     query GroupTypeProjectsQueryCompact {
-        groupTypeProjects  {
+        groupTypeProjects   {
             id
             name
         }

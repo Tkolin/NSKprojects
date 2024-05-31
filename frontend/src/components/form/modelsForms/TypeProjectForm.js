@@ -9,16 +9,19 @@ import {NotificationContext} from "../../../NotificationProvider";
 import {
     GROUP_TYPE_PROJECTS_QUERY_COMPACT
 } from "../../../graphql/queriesCompact";
-import {CustomAutoComplete} from "../../style/SearchAutoCompleteStyles";
+import {CustomAutoComplete, CustomAutoCompleteAndCreate} from "../../style/SearchAutoCompleteStyles";
 import {TYPES_PROJECTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
+import TypeProjectModalForm from "../../modal/TypeProjectModalForm";
+import {nanoid} from "nanoid";
 
-const TypeProjectForm = ({localObject, initialObject, onCompleted }) => {
+const TypeProjectForm = ({localObject, initialObject, onCompleted}) => {
     // Первичные данные
-    const { openNotification } = useContext(NotificationContext);
+    const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
     const nameModel = 'БИК';
+
     const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
     const [loadContext, {loading, data}] = useLazyQuery(TYPES_PROJECTS_QUERY_BY_ID, {
         variables: {id: initialObject?.id},
@@ -32,7 +35,6 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted }) => {
     });
 
     // Состояния
-    const [groupTypeProjectAutoComplete, setGroupTypeProjectAutoComplete] = useState({options: [], selected: {}});
 
     // Мутация
     const [mutate] = useMutation(actualObject ? UPDATE_TYPE_PROJECTS_MUTATION : ADD_TYPE_PROJECTS_MUTATION, {
@@ -60,9 +62,8 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted }) => {
             form.resetFields();
             form.setFieldsValue({
                 ...data,
-                group: data?.group?.name,
+                group: {selected: data?.group?.id, output: data?.group?.name}
             });
-            setGroupTypeProjectAutoComplete({selected: data?.group?.id});
         }
     };
     // Получение данных для выпадающих списков
@@ -71,29 +72,27 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted }) => {
 
     // Завершение
     const handleSubmit = () => {
-        mutate({ variables: { ...(actualObject ? { id: actualObject.id } : {}), ...form.getFieldsValue() } });
+        mutate({variables: {...(actualObject ? {id: actualObject.id} : {}), ...form.getFieldsValue()}});
     };
     if (loading) return <LoadingSpinnerStyles/>
 
 
     return (
-             < >
+        <div>
+            <Form form={form} layout="vertical">
+
                 <Form.Item name="name" label="Наименование" rules={[{required: true}]}>
                     <Input/>
                 </Form.Item>
                 <Form.Item name="code" label="код" rules={[{required: true}]}>
                     <Input/>
                 </Form.Item>
-                <CustomAutoComplete
-                    formName={"group_name"}
-                    formLabel={"Группа"}
-
-                    data={dataGroup?.groupTypeProjects?.items}
-                    placeholder={"Начните ввод..."}
-
-                    stateSearch={groupTypeProjectAutoComplete}
-                    setStateSearch={setGroupTypeProjectAutoComplete}
-                />
+                <Form.Item name="group" label="Группа" rules={[{required: true}]}>
+                    <CustomAutoComplete
+                        data={dataGroup?.groupTypeProjects}
+                        placeholder={"Начните ввод..."}
+                    />
+                </Form.Item>
                 <div style={{textAlign: 'center'}}>
                     <Form.Item>
                         <StyledButtonGreen style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
@@ -101,8 +100,9 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted }) => {
                         </StyledButtonGreen>
                     </Form.Item>
                 </div>
-            </>
-     );
+            </Form>
+        </div>
+    );
 };
 
 export default TypeProjectForm;
