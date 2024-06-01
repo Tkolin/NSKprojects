@@ -1,8 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Form, Input} from 'antd';
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
-import { StyledFormItem} from '../../style/FormStyles';
-import { StyledBlockRegular} from "../../style/BlockStyles";
 import {
     ADD_TYPE_PROJECTS_MUTATION,
     UPDATE_TYPE_PROJECTS_MUTATION
@@ -11,7 +9,7 @@ import {NotificationContext} from "../../../NotificationProvider";
 import {
     GROUP_TYPE_PROJECTS_QUERY_COMPACT
 } from "../../../graphql/queriesCompact";
-import {StyledFormItemAutoComplete} from "../../style/SearchAutoCompleteStyles";
+import {CustomAutoComplete} from "../../style/SearchAutoCompleteStyles";
 import {TYPES_PROJECTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
@@ -75,14 +73,14 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted }) => {
 
 
     return (
-             <StyledBlockRegular label={nameModel}>
-                <StyledFormItem name="name" label="Наименование" rules={[{required: true}]}>
+             < >
+                <Form.Item name="name" label="Наименование" rules={[{required: true}]}>
                     <Input/>
-                </StyledFormItem>
-                <StyledFormItem name="code" label="код" rules={[{required: true}]}>
+                </Form.Item>
+                <Form.Item name="code" label="код" rules={[{required: true}]}>
                     <Input/>
-                </StyledFormItem>
-                <StyledFormItemAutoComplete
+                </Form.Item>
+                <CustomAutoComplete
                     formName={"group_name"}
                     formLabel={"Группа"}
 
@@ -93,13 +91,13 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted }) => {
                     setStateSearch={setGroupTypeProjectAutoComplete}
                 />
                 <div style={{textAlign: 'center'}}>
-                    <StyledFormItem>
+                    <Form.Item>
                         <StyledButtonGreen style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
                             {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
-                    </StyledFormItem>
+                    </Form.Item>
                 </div>
-            </StyledBlockRegular>
+            </>
      );
 };
 

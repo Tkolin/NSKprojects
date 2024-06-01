@@ -2,30 +2,26 @@ import {create} from 'zustand';
 import {persist} from "zustand/middleware";
 import {useMutation} from "@apollo/client";
 
-export const useProjectStore = create(((set, get) => ({
+export const useTasksStore = create(((set, get) => ({
 
     project: {},
-    irds: [],
-    stages: [],
+    tasks: [],
 
     step: 0,
     setSteps: (newStep) => {
         set({step: newStep})
     },
 
+
     updateProject: (newProject) => {
         set({project: newProject});
         console.log("newProject", newProject)
     },
-    updateIrds: (newIrds) => {
-        set({irds: newIrds})
-        console.log("newIrds", newIrds);
+    updateTasks: (newTasks) => {
+        set({irds: newTasks})
+        console.log("newTasks", newTasks);
     },
-    updateStages: (newStages) => {
-        set({stages: newStages});
-        console.log("newStages", newStages)
 
-    },
 
 
 })));

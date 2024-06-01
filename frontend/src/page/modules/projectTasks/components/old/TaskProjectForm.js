@@ -10,16 +10,11 @@ import {
     UPDATE_TASK_TO_PROJECT_MUTATION
 } from '../../../../../graphql/mutationsTask';
 
-import {StyledFormItem, StyledFormRegular} from '../../../../style/FormStyles';
-import {StyledButtonGreen} from "../../../../style/ButtonStyles";
-import PersonForm from "../../../modelsForms/PersonForm";
-import TaskForm from "../../../modelsForms/TaskForm";
+import PersonForm from "../../../../../components/form/modelsForms/PersonForm";
+import TaskForm from "../../../../../components/form/modelsForms/TaskForm";
 import {
-    BaseStyledFormItemSelect,
     StyledFormItemSelect,
-
-    StyledFormItemSelectAndCreateWitchEdit
-} from "../../../../style/SelectStyles";
+} from "../../../../../components/style/SelectStyles";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 import {DatePicker} from "antd/lib";
 import moment from "moment";
@@ -45,7 +40,7 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
     const [selectedPerson, setSelectedPerson] = useState(null);
 
     useEffect(() => {
-             form.resetFields();
+        form.resetFields();
 
     }, [tasksProject]);
     // События
@@ -88,21 +83,7 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
         data: dataTasksProject
     } = useQuery(TASKS_TO_PROJECT_QUERY);
     const [dataTasks, setDataTasks] = useState();
-    const addingDataTasks = (newData) => {
-        // if (!dataStages || !value) return;
-        // const newStages = value.map(a => ({
-        //     id: a.stage ? a.stage.id : null, name: a.stage ? a.stage.name : null,
-        // }));
-        // const existingStages = dataStages.stages ? dataStages.stages.items : [];
-        // const updatedStages = [...existingStages, ...newStages];
-        // setDataStages({
-        //     ...dataStages,
-        //     stages: {
-        //         ...dataStages.stages,
-        //         items: updatedStages,
-        //     },
-        // });
-    }
+
     const {loading: loadingTasks, error: errorTasks, refetch: refetchTasks} = useQuery(TASKS_QUERY, {
         variables: {
             queryOptions: {search: autoCompleteTask, limit: 10, page: 1}
@@ -110,21 +91,7 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
         onCompleted: (data) => setDataTasks(data)
     });
     const [dataPersons, setDataPersons] = useState();
-    const addingDataPersons = (newData) => {
-        // if (!dataStages || !value) return;
-        // const newStages = value.map(a => ({
-        //     id: a.stage ? a.stage.id : null, name: a.stage ? a.stage.name : null,
-        // }));
-        // const existingStages = dataStages.stages ? dataStages.stages.items : [];
-        // const updatedStages = [...existingStages, ...newStages];
-        // setDataStages({
-        //     ...dataStages,
-        //     stages: {
-        //         ...dataStages.stages,
-        //         items: updatedStages,
-        //     },
-        // });
-    }
+
     const {loading: loadingPersons, error: errorPersons, refetch: refetchPersons} = useQuery(PERSONS_QUERY, {
         variables: {
             queryOptions: {search: autoCompletePerson, limit: 10, page: 1}
@@ -236,11 +203,11 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
 
     return (
         <>
-            <StyledFormRegular form={form}
-                               onFinish={handleSubmit}
-                               labelCol={{span: 8}}
-                               labelAlign="left"
-                               wrapperCol={{span: 16}}>
+            <Form form={form}
+                  onFinish={handleSubmit}
+                  labelCol={{span: 8}}
+                  labelAlign="left"
+                  wrapperCol={{span: 16}}>
 
                 <FormItem name={"date_range"} label={"Продолжительность"}>
                     <RangePicker
@@ -255,12 +222,12 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
                     />
                 </FormItem>
 
-                <StyledFormItem name="price" style={{width: '100%'}} label="Стоимость">
+                <Form.Item name="price" style={{width: '100%'}} label="Стоимость">
                     <InputNumber suffix={"₽"} style={{width: '100%'}}
                                  formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                  parser={value => `${value}`.replace(/[^0-9]/g, '')}/>
-                </StyledFormItem>
-                <StyledFormItem name="task_id" label="Задача">
+                </Form.Item>
+                <Form.Item name="task_id" label="Задача">
                     <Select
                         popupMatchSelectWidth={false}
                         allowClear
@@ -272,8 +239,8 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
                         {dataTasks?.tasks?.items?.map(row => (
                             <Select.Option key={row.id} value={row.id}>{row.name}</Select.Option>))}
                     </Select>
-                </StyledFormItem>
-                <StyledFormItem name="inherited_task_ids" label="Наслудует от">
+                </Form.Item>
+                <Form.Item name="inherited_task_ids" label="Наслудует от">
                     <Select
                         popupMatchSelectWidth={false}
                         allowClear
@@ -286,7 +253,7 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
                         {project?.project_tasks?.map(row => (
                             <Select.Option key={row.id} value={row.id}>{row.task.name}</Select.Option>))}
                     </Select>
-                </StyledFormItem>
+                </Form.Item>
 
 
                 <Divider>Исполнители: </Divider>
@@ -350,15 +317,7 @@ const TaskProjectForm = ({tasksProject, project, onClose}) => {
                         </Form.Item>
                     </>)}
                 </Form.List>
-
-                <StyledFormItem labelCol={{span: 24}} wrapperCol={{span: 24}}>
-                    <div style={{textAlign: 'center'}}>
-                        <StyledButtonGreen type="primary" onClick={()=>handleSubmit()}>
-                            Сохранить изменения
-                        </StyledButtonGreen>
-                    </div>
-                </StyledFormItem>
-            </StyledFormRegular>
+            </Form>
             <Modal
                 key={selectedTask?.id}
                 open={addTaskModalVisible}

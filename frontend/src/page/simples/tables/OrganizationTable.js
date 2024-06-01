@@ -5,7 +5,6 @@ import {DELETE_ORGANIZATION_MUTATION} from '../../../graphql/mutationsOrganizati
 import OrganizationForm from "../../../components/form/modelsForms/OrganizationForm";
 import Search from "antd/es/input/Search";
 import StyledLinkManagingDataTable from "../../../components/style/TableStyles";
-import {StyledFormLarge} from "../../../components/style/FormStyles";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
 import {ORGANIZATIONS_QUERY} from "../../../graphql/queries";
 import Title from "antd/es/typography/Title";
@@ -124,7 +123,7 @@ const OrganizationTable = () => {
     };
 
     return <>
-        <StyledFormLarge form={formSearch} layout="horizontal">
+        <Form form={formSearch} layout="horizontal">
             <Divider style={{marginTop: 0}}>
                 <Title style={{marginTop: 0}} level={2}>Справочник Организаций</Title>
             </Divider>
@@ -140,7 +139,7 @@ const OrganizationTable = () => {
                         запись</StyledButtonGreen>
                 </Space>
             </Form.Item>
-        </StyledFormLarge>
+        </Form>
         <Table
             size={'small'}
             sticky={{

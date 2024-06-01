@@ -5,7 +5,6 @@ import {
     ADD_PPI_MUTATION,
     UPDATE_PPI_MUTATION
 } from '../../../graphql/mutationsPerson';
-import {StyledFormItem, StyledFormBig} from '../../style/FormStyles';
 import {NotificationContext} from "../../../NotificationProvider";
 import {PASSPORTS_PLACE_ISSUES_QUERY_BY_ID} from "../../../graphql/queriesByID";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
@@ -58,21 +57,21 @@ const PassportPlaceIssuesForm = ({localObject,initialObject, onCompleted}) => {
 
     return (
         <div>
-            <StyledFormBig form={form} layout="vertical">
-                <StyledFormItem name="name" label="Наименование" rules={[{required: true}]}>
+            <Form form={form} layout="vertical">
+                <Form.Item name="name" label="Наименование" rules={[{required: true}]}>
                     <Input/>
-                </StyledFormItem>
-                <StyledFormItem name="code" label="Код" rules={[{required: true}]}>
+                </Form.Item>
+                <Form.Item name="code" label="Код" rules={[{required: true}]}>
                     <Input/>
-                </StyledFormItem>
+                </Form.Item>
                 <div style={{textAlign: 'center'}}>
-                    <StyledFormItem>
+                    <Form.Item>
                         <StyledButtonGreen style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
                             {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
-                    </StyledFormItem>
+                    </Form.Item>
                 </div>
-            </StyledFormBig>
+            </Form>
         </div>
     );
 };

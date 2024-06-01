@@ -1,15 +1,12 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import {useQuery} from '@apollo/client';
 import {Button, Col, Form, Row} from 'antd';
-import {StyledFormLarge} from '../../../../components/style/FormStyles';
-import {NotificationContext} from '../../../../NotificationProvider';
 import {
 STAGES_QUERY_COMPACT
 } from '../../../../graphql/queriesCompact';
 
 import StageItem from "./StageItem";
 import { PlusOutlined} from "@ant-design/icons";
-import {useProjectStore} from "../Store";
 import dayjs from "dayjs";
 import StagesListHeader from "./StagesListHeader";
 import StagesListFooter from "./StagesListFooter";
@@ -28,7 +25,6 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
         form.setFieldsValue({
             stageList: actualStages && Object.values(actualStages)?.map((row) => ({
                 ...row,
-                stage_id: row?.stage_id ?? null,
                 date_range: [
                     row?.date_range?.[0] ? dayjs(row?.date_range?.[0]) : null,
                     row?.date_range?.[1] ? dayjs(row?.date_range?.[1]) : null
@@ -68,7 +64,7 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
     }
 
     return (
-        <StyledFormLarge layout="vertical" onChange={() => {
+        <Form layout="vertical" onChange={() => {
             handleChange();
         }} form={form}>
 
@@ -119,7 +115,7 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
                     </>
                 )}
             </Form.List>
-        </StyledFormLarge>
+        </Form>
     );
 };
 

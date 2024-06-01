@@ -1,20 +1,17 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Form, Input} from 'antd';
 import {useLazyQuery, useMutation} from '@apollo/client';
-import { StyledFormItem, StyledFormRegular} from '../../style/FormStyles';
-import {StyledBlockRegular} from "../../style/BlockStyles";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {NotificationContext} from "../../../NotificationProvider";
-import {BIKS_QUERY_BY_ID, TASKS_QUERY_BY_ID} from "../../../graphql/queriesByID";
-import {ADD_BIK_MUTATION, UPDATE_BIK_MUTATION} from "../../../graphql/mutationsBik";
+import { TASKS_QUERY_BY_ID} from "../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
+import {ADD_TASK_MUTATION, UPDATE_TASK_MUTATION} from "../../../graphql/mutationsTask";
 
 const TaskForm = ({localObject, initialObject, onCompleted }) => {
     // Первичные данные
     const { openNotification } = useContext(NotificationContext);
     const [form] = Form.useForm();
-    const nameModel = 'БИК';
-    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
+     const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
     const [loadContext, {loading, data}] = useLazyQuery(TASKS_QUERY_BY_ID, {
         variables: {id: initialObject?.id},
         onCompleted: (data) => {
@@ -27,14 +24,14 @@ const TaskForm = ({localObject, initialObject, onCompleted }) => {
     });
 
     // Мутация
-    const [mutate] = useMutation(actualObject ? UPDATE_BIK_MUTATION : ADD_BIK_MUTATION, {
+    const [mutate] = useMutation(actualObject ? UPDATE_TASK_MUTATION : ADD_TASK_MUTATION, {
         onCompleted: (data) => {
-            openNotification('topRight', 'success', `Мутация ${nameModel} выполнена успешно`);
+            openNotification('topRight', 'success', `Мутация  выполнена успешно`);
             form.resetFields();
             onCompleted && onCompleted(data);
         },
         onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении мутации ${nameModel}: ${error.message}`);
+            openNotification('topRight', 'error', `Ошибка при выполнении мутации: ${error.message}`);
         },
     });
 
@@ -59,20 +56,20 @@ const TaskForm = ({localObject, initialObject, onCompleted }) => {
     if (loading) return <LoadingSpinnerStyles/>
 
     return (
-        <StyledBlockRegular label={nameModel}>
-            <StyledFormRegular form={form} layout="vertical">
-                <StyledFormItem name="name" label="Наименование" rules={[{required: true}]}>
+        <>
+            <Form form={form} layout="vertical">
+                <Form.Item name="name" label="Наименование" rules={[{required: true}]}>
                     <Input/>
-                </StyledFormItem>
+                </Form.Item>
                 <div style={{textAlign: 'center'}}>
-                    <StyledFormItem>
+                    <Form.Item>
                         <StyledButtonGreen style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
                             {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
-                    </StyledFormItem>
+                    </Form.Item>
                 </div>
-            </StyledFormRegular>
-        </StyledBlockRegular>
+            </Form>
+        </>
     );
 };
 

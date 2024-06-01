@@ -1,10 +1,10 @@
 import 'react-phone-number-input/style.css';
 import { useMutation } from '@apollo/client';
-import { CONTRACT_PERSON_MUTATION } from '../../graphql/mutationsPerson';
-import {Button, notification} from 'antd';
-import {DownloadOutlined} from "@ant-design/icons";
+import {notification, Typography} from 'antd';
+import {ACT_RENDERING_PROJECT_DOWNLOAD, IRDS_PROJECT_DOWNLOAD} from "../../../graphql/mutationsProject";
+const {Text, Link} = Typography;
 
-const PersonContractFileDownload = ({personId, text}) => {
+const ActRenderingProjectDownload = ({projectId, stageNumber, text}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
 
 
@@ -15,9 +15,10 @@ const PersonContractFileDownload = ({personId, text}) => {
         });
     };
 
-    const [downloadContract] = useMutation(CONTRACT_PERSON_MUTATION, {
+    const [downloadProjectActRendering] = useMutation(ACT_RENDERING_PROJECT_DOWNLOAD, {
         onCompleted: (data) => {
-            handleDownloadClick(data.personOrderFileDownload.url);
+            console.log("data" + data);
+            handleDownloadClick(data.projectActRenderingFileDownload.url);
             openNotification('topRight', 'success', 'Загрузка начата!');
         },
         onError: (error) => {
@@ -26,16 +27,18 @@ const PersonContractFileDownload = ({personId, text}) => {
     });
 
     const handleDownload = () => {
-        console.log(personId);
-        downloadContract({ variables: { id: personId } });
+        console.log(projectId);
+        downloadProjectActRendering({ variables: { id: projectId, stageNumber: stageNumber } });
     };
 
     const handleDownloadClick = async (downloadedFileUrl) => {
         try {
             const link = document.createElement('a');
             console.log(link);
-            link.href = `${LaravelURL}download-contract/${downloadedFileUrl}`;
-            link.download = 'contract.docx';
+
+            link.href = `${LaravelURL}download-projectActRender/${downloadedFileUrl}`;
+            link.download = '${downloadedFileUrl}';
+
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -45,9 +48,9 @@ const PersonContractFileDownload = ({personId, text}) => {
     };
 
     return (
-        <a onClick={handleDownload}>{text ?? 'скачать'}</a>
+        <Link  strong style={{color: "green"}} onClick={handleDownload}>{text ?? 'скачать'}</Link>
     );
 };
 
-export default PersonContractFileDownload;
+export default ActRenderingProjectDownload;
 

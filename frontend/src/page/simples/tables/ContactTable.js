@@ -5,7 +5,6 @@ import {CONTACTS_QUERY} from '../../../graphql/queries';
 import {DELETE_CONTACT_MUTATION} from '../../../graphql/mutationsContact';
 import ContactForm from "../../../components/form/modelsForms/ContactForm";
 import Search from "antd/es/input/Search";
-import {StyledFormLarge} from "../../../components/style/FormStyles";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
 import Title from "antd/es/typography/Title";
 import {format} from "date-fns";
@@ -133,7 +132,7 @@ const ContactTable = () => {
     };
 
     return (<div>
-        <StyledFormLarge form={formSearch} layout="horizontal">
+        <Form form={formSearch} layout="horizontal">
             <Divider style={{marginTop: 0}}>
                 <Title style={{marginTop: 0}} level={2}>Справочник Контактов</Title>
             </Divider>
@@ -150,7 +149,7 @@ const ContactTable = () => {
                         запись</StyledButtonGreen>
                 </Space>
             </Form.Item>
-        </StyledFormLarge>
+        </Form>
         <Table
             size={'small'}
             sticky={{

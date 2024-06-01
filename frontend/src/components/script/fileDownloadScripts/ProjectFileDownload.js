@@ -1,10 +1,10 @@
 import 'react-phone-number-input/style.css';
 import { useMutation } from '@apollo/client';
-import {notification, Typography} from 'antd';
-import {ACT_RENDERING_PROJECT_DOWNLOAD, IRDS_PROJECT_DOWNLOAD} from "../../graphql/mutationsProject";
+import { notification, Typography} from 'antd';
+import {CONTRACT_PROJECT_DOWNLOAD} from "../../../graphql/mutationsProject";
 const {Text, Link} = Typography;
 
-const ActRenderingProjectDownload = ({projectId, stageNumber, text}) => {
+const ProjectFileDownload  = ({projectId, style, text}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
 
 
@@ -15,10 +15,9 @@ const ActRenderingProjectDownload = ({projectId, stageNumber, text}) => {
         });
     };
 
-    const [downloadProjectActRendering] = useMutation(ACT_RENDERING_PROJECT_DOWNLOAD, {
+    const [downloadProjectContract] = useMutation(CONTRACT_PROJECT_DOWNLOAD, {
         onCompleted: (data) => {
-            console.log("data" + data);
-            handleDownloadClick(data.projectActRenderingFileDownload.url);
+            handleDownloadClick(data.projectOrderFileDownload.url);
             openNotification('topRight', 'success', 'Загрузка начата!');
         },
         onError: (error) => {
@@ -28,7 +27,7 @@ const ActRenderingProjectDownload = ({projectId, stageNumber, text}) => {
 
     const handleDownload = () => {
         console.log(projectId);
-        downloadProjectActRendering({ variables: { id: projectId, stageNumber: stageNumber } });
+        downloadProjectContract({ variables: { id: projectId } });
     };
 
     const handleDownloadClick = async (downloadedFileUrl) => {
@@ -36,9 +35,9 @@ const ActRenderingProjectDownload = ({projectId, stageNumber, text}) => {
             const link = document.createElement('a');
             console.log(link);
 
-            link.href = `${LaravelURL}download-projectActRender/${downloadedFileUrl}`;
-            link.download = '${downloadedFileUrl}';
+            link.href = `${LaravelURL}download-projectIrds/${downloadedFileUrl}`;
 
+            link.download = 'contract.docx';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -48,9 +47,9 @@ const ActRenderingProjectDownload = ({projectId, stageNumber, text}) => {
     };
 
     return (
-        <Link onClick={handleDownload}>{text ?? 'скачать'}</Link>
+        <Link style={style} onClick={handleDownload}>{text ?? 'скачать'}</Link>
     );
 };
 
-export default ActRenderingProjectDownload;
+export default ProjectFileDownload;
 

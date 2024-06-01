@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Form, Input} from 'antd';
 import {useLazyQuery, useMutation} from '@apollo/client';
-import {StyledFormItem, StyledFormRegular} from '../../style/FormStyles';
 import {ADD_IRD_MUTATION, UPDATE_IRD_MUTATION} from "../../../graphql/mutationsIrd";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {NotificationContext} from "../../../NotificationProvider";
@@ -59,18 +58,18 @@ const IrdForm = ({localObject,initialObject, onCompleted}) => {
 
     return (
         <div>
-            <StyledFormRegular form={form} layout="vertical">
-                <StyledFormItem name="name" label="Наименование" rules={[{required: true}]}>
+            <Form form={form} layout="vertical">
+                <Form.Item name="name" label="Наименование" rules={[{required: true}]}>
                     <Input/>
-                </StyledFormItem>
+                </Form.Item>
                 <div style={{textAlign: 'center'}}>
-                    <StyledFormItem>
+                    <Form.Item>
                         <StyledButtonGreen style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
                             {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
-                    </StyledFormItem>
+                    </Form.Item>
                 </div>
-            </StyledFormRegular>
+            </Form>
         </div>
     );
 };

@@ -19,7 +19,7 @@ final readonly class UpdateStagesToProject
                     'stage_id' => (string)$stages[$i]["stage_id"]
                 ],
                 [
-                    'number' => isset($stages[$i]["stageNumber"]) ? (int)$stages[$i]["stageNumber"] : null,
+                    'number' => isset($stages[$i]["number"]) ? (int)$stages[$i]["number"] : null,
                     'date_start' => isset($stages[$i]["date_start"]) ? substr((string) $stages[$i]["date_start"], 0, 10) : null,
                     'duration' => isset($stages[$i]["duration"]) ? (int)$stages[$i]["duration"] : null,
                     'date_end' => isset($stages[$i]["date_end"]) ? substr((string) $stages[$i]["date_end"], 0, 10) : null,

@@ -4,9 +4,7 @@ import {Button, Divider, Form, Modal, notification, Space, Table} from 'antd';
 import {STAGES_QUERY} from '../../../graphql/queries';
 import {DELETE_STAGE_MUTATION} from '../../../graphql/mutationsStage';
 import StageForm from "../../../components/form/modelsForms/StageForm";
-import LoadingSpinnerStyles from "../../../components/style/LoadingSpinnerStyles";
 import Search from "antd/es/input/Search";
-import {StyledFormLarge} from "../../../components/style/FormStyles";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
 import Title from "antd/es/typography/Title";
 
@@ -107,7 +105,7 @@ const StageTable = () => {
     };
     return (
         <div>
-            <StyledFormLarge form={formSearch} layout="horizontal">
+            <Form form={formSearch} layout="horizontal">
                 <Divider style={{marginTop: 0}} >
                     <Title style={{marginTop: 0}} level={2}>Справочник наименования этапов</Title>
                 </Divider>
@@ -122,7 +120,7 @@ const StageTable = () => {
                         <StyledButtonGreen    style={{    marginBottom: 0}} onClick={() => handleAdd()}>Создать новую запись</StyledButtonGreen>
                     </Space>
                 </Form.Item>
-            </StyledFormLarge>
+            </Form>
             <Table
                 size={'small'}
                 sticky={{

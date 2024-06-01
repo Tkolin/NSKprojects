@@ -4,25 +4,23 @@ import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import {
     ADD_PERSON_MUTATION, UPDATE_PERSON_MUTATION
 } from '../../../graphql/mutationsPerson';
-import {
-    StyledFormItem, StyledFormRegular
-} from '../../style/FormStyles';
+
 import {DatePicker} from "antd/lib";
 import PassportPlaceIssuesForm from "./PassportPlaceIssuesForm";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {AddressSuggestions} from "react-dadata";
-import { StyledAddressSuggestionsInput} from "../../style/InputStyles";
+import {StyledAddressSuggestionsInput} from "../../style/InputStyles";
 import {NotificationContext} from "../../../NotificationProvider";
 import {
     BANKS_QUERY_COMPACT, BIKS_QUERY_COMPACT,
     PASSPORTS_PLACE_ISSUES_QUERY_COMPACT,
 } from "../../../graphql/queriesCompact";
-import { PERSONS_QUERY_BY_ID} from "../../../graphql/queriesByID";
+import {PERSONS_QUERY_BY_ID} from "../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
-import {StyledFormItemAutoComplete, StyledFormItemAutoCompleteAndCreate} from "../../style/SearchAutoCompleteStyles";
+import {CustomAutoComplete, CustomAutoCompleteAndCreate} from "../../style/SearchAutoCompleteStyles";
 import BikForm from "./BikForm";
 
-const PersonForm = ({localObject,initialObject, onCompleted}) => {
+const PersonForm = ({localObject, initialObject, onCompleted}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
@@ -35,7 +33,7 @@ const PersonForm = ({localObject,initialObject, onCompleted}) => {
         variables: {id: initialObject?.id},
         onCompleted: (data) => {
             setActualObject(data?.contacts?.items[0]);
-            updateForm      (data?.contacts?.items[0]);
+            updateForm(data?.contacts?.items[0]);
         },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
@@ -61,7 +59,7 @@ const PersonForm = ({localObject,initialObject, onCompleted}) => {
             form.resetFields();
             formPassport.resetFields();
             setActualObject(null)
-            setAddress({registration: "", residential: "" })
+            setAddress({registration: "", residential: ""})
             onCompleted && onCompleted(data);
         },
         onError: (error) => {
@@ -75,7 +73,7 @@ const PersonForm = ({localObject,initialObject, onCompleted}) => {
         if (initialObject?.id)
             loadContact();
     }, []);
-    const updateForm = (data) =>  {
+    const updateForm = (data) => {
         if (data) {
             console.log("useEffect");
             form.resetFields();
@@ -111,11 +109,11 @@ const PersonForm = ({localObject,initialObject, onCompleted}) => {
                 ...(actualObject ? {id: actualObject.id} : {}), ...form.getFieldsValue(),
                 ...formPassport.getFieldsValue(),
                 bank_id: bankAutoComplete?.selected ?? null,
-                bik_id:  bikAutoComplete?.selected ?? null,
-                passport_place_issue_id:  ppiAutoComplete?.selected ?? null,
+                bik_id: bikAutoComplete?.selected ?? null,
+                passport_place_issue_id: ppiAutoComplete?.selected ?? null,
                 address_registration: address.registration,
                 address_residential: address.residential
-             }
+            }
         });
     };
     if (loading) return <LoadingSpinnerStyles/>
@@ -123,89 +121,96 @@ const PersonForm = ({localObject,initialObject, onCompleted}) => {
     if (errorPpi || errorBank || errorBik) return `Ошибка! ${errorPpi?.message || errorBank?.message || errorBik?.message}`;
 
 
-
     return (
         <div>
             <Row gutter={8}>
                 <Col span={12}>
-                    <StyledFormRegular form={formPassport}
-                                       layout="horizontal"
-                                       labelCol={{span: 8}}
-                                       labelAlign="left"
-                                       wrapperCol={{span: 16}}>
+                    <Form form={formPassport}
+                          layout="horizontal"
+                          labelCol={{span: 8}}
+                          labelAlign="left"
+                          wrapperCol={{span: 16}}>
                         <Divider orientation={"left"}>ФИО:</Divider>
-                        <StyledFormItem name="lastname" label="Фамилия" rules={[{required: true}]}>
+                        <Form.Item name="lastname" label="Фамилия" rules={[{required: true}]}>
                             <Input/>
-                        </StyledFormItem>
-                        <StyledFormItem name="firstname" label="Имя" rules={[{required: true}]}>
+                        </Form.Item>
+                        <Form.Item name="firstname" label="Имя" rules={[{required: true}]}>
                             <Input/>
-                        </StyledFormItem>
-                        <StyledFormItem name="patronymic" label="Отчество">
+                        </Form.Item>
+                        <Form.Item name="patronymic" label="Отчество">
                             <Input/>
-                        </StyledFormItem>
+                        </Form.Item>
                         <Divider orientation={"left"}>Данные паспорта:</Divider>
-                        <StyledFormItem name="birth_date" label="Дата рождения">
+                        <Form.Item name="birth_date" label="Дата рождения">
                             <DatePicker/>
-                        </StyledFormItem>
-                        <StyledFormItem name="date" label="Дата выдачи">
+                        </Form.Item>
+                        <Form.Item name="date" label="Дата выдачи">
                             <DatePicker/>
-                        </StyledFormItem>
-                        <StyledFormItemAutoCompleteAndCreate
-                            formName={"passport_place_issue_name"}
-                            formLabel={"Место выдачи"}
-                            placeholder={"Начните ввод..."}
-                            firstBtnOnClick={()=>setPpiModalStatus("add")}
+                        </Form.Item>
+                        <Form.Item name="passport_place_issue_name" label="Место выдачи">
+                            <CustomAutoCompleteAndCreate
+                                formName={"passport_place_issue_name"}
+                                formLabel={"Место выдачи"}
+                                placeholder={"Начните ввод..."}
+                                firstBtnOnClick={() => setPpiModalStatus("add")}
 
-                            data={dataPpi?.passportPlaceIssues?.items}
-                            stateSearch={ppiAutoComplete}
-                            setStateSearch={setPpiAutoComplete}
-                         />
-                        <StyledFormItem name="serial" label="Серия">
+                                data={dataPpi?.passportPlaceIssues?.items}
+                                stateSearch={ppiAutoComplete}
+                                setStateSearch={setPpiAutoComplete}
+                            />
+                        </Form.Item>
+                        <Form.Item name="serial" label="Серия">
                             <Input/>
-                        </StyledFormItem>
-                        <StyledFormItem name="number" label="Номер">
+                        </Form.Item>
+                        <Form.Item name="number" label="Номер">
                             <Input/>
-                        </StyledFormItem>
-                        <StyledFormItem name="address_registration" label="Адрес регистрации" minchars={3}
-                                        delay={50}
-                                        style={{
-                                            width: '100%',
-                                        }}>
+                        </Form.Item>
+                        <Form.Item name="address_registration" label="Адрес регистрации" minchars={3}
+                                   delay={50}
+                                   style={{
+                                       width: '100%',
+                                   }}>
                             <AddressSuggestions token={TokenDADATA}
                                                 inputProps={{
                                                     placeholder: 'Введите адрес',
                                                     style: StyledAddressSuggestionsInput,
                                                 }}
                                                 defaultQuery={address.registration}
-                                                onChange={(suggestion)=>setAddress({...address, registration: suggestion?.unrestricted_value })}
+                                                onChange={(suggestion) => setAddress({
+                                                    ...address,
+                                                    registration: suggestion?.unrestricted_value
+                                                })}
                             />
-                        </StyledFormItem>
-                        <StyledFormItem name="address_residential" label="Адрес проживания" minchars={3}
-                                        delay={50}
-                                        style={{
-                                            width: '100%',
-                                        }}>
+                        </Form.Item>
+                        <Form.Item name="address_residential" label="Адрес проживания" minchars={3}
+                                   delay={50}
+                                   style={{
+                                       width: '100%',
+                                   }}>
                             <AddressSuggestions token={TokenDADATA}
                                                 inputProps={{
                                                     placeholder: 'Введите адрес',
                                                     style: StyledAddressSuggestionsInput,
                                                 }}
                                                 defaultQuery={address.residential}
-                                                onChange={(suggestion)=>setAddress({...address, residential: suggestion?.unrestricted_value })}
+                                                onChange={(suggestion) => setAddress({
+                                                    ...address,
+                                                    residential: suggestion?.unrestricted_value
+                                                })}
                             />
-                        </StyledFormItem>
-                    </StyledFormRegular>
+                        </Form.Item>
+                    </Form>
                 </Col>
                 <Col span={12}>
-                    <StyledFormRegular form={form}
-                                       layout="horizontal"
-                                       labelCol={{span: 9}}
-                                       labelAlign="left"
-                                       wrapperCol={{span: 15}}>
+                    <Form form={form}
+                          layout="horizontal"
+                          labelCol={{span: 9}}
+                          labelAlign="left"
+                          wrapperCol={{span: 15}}>
                         <Divider orientation={"left"}>Персональные данные</Divider>
 
 
-                        <StyledFormItem name="phone_number" label="Личный тел." rules={[{
+                        <Form.Item name="phone_number" label="Личный тел." rules={[{
                             pattern: /^\+[0-9\s()-]+$/,
                             message: 'Пожалуйста, введите в формате +79003001234',
                         },]}
@@ -215,67 +220,66 @@ const PersonForm = ({localObject,initialObject, onCompleted}) => {
                                 maxLength={13}
                                 minLength={11}
                             />
-                        </StyledFormItem>
-                        <StyledFormItem name="email" label="e-mail" rules={[{type: 'email'}]}>
+                        </Form.Item>
+                        <Form.Item name="email" label="e-mail" rules={[{type: 'email'}]}>
                             <Input/>
-                        </StyledFormItem>
-                        <StyledFormItem name="email_sibnipi" label="e-mail СибНИПИ" rules={[{type: 'email'}]}>
+                        </Form.Item>
+                        <Form.Item name="email_sibnipi" label="e-mail СибНИПИ" rules={[{type: 'email'}]}>
                             <Input/>
-                        </StyledFormItem>
+                        </Form.Item>
 
 
                         <Divider orientation={"left"}>Реквизиты:</Divider>
-                        <StyledFormItem name="payment_account" label="Расчётный счёт">
+                        <Form.Item name="payment_account" label="Расчётный счёт">
                             <Input/>
-                        </StyledFormItem>
-                        <StyledFormItemAutoComplete
-                            formName="bank_name"
-                            formLabel="Банк"
-                            data={dataBank?.banks?.items}
-                            placeholder="Выберите банк"
-                            stateSearch={bankAutoComplete}
-                            setStateSearch={setBankAutoComplete}
-                        />
+                        </Form.Item>
+                        <Form.Item name="bank_name" label="Банк">
+                            <CustomAutoComplete
+                                data={dataBank?.banks?.items}
+                                placeholder="Выберите банк"
+                                stateSearch={bankAutoComplete}
+                                setStateSearch={setBankAutoComplete}
+                            />
+                        </Form.Item>
+                        <Form.Item name="bik_name" label="Бик" style={{width: "100%"}}>
+                            <CustomAutoCompleteAndCreate
+                                placeholder={"Начните ввод..."}
+                                data={dataBik?.biks?.items}
+                                firstBtnOnClick={() => setBankModalStatus("add")}
+                                stateSearch={bikAutoComplete}
+                                setStateSearch={setBikAutoComplete}
+                            />
+                        </Form.Item>
 
-                        <StyledFormItemAutoCompleteAndCreate
-                            formName={"bik_name"}
-                            formLabel={"Бик"}
-                            placeholder={"Начните ввод..."}
-                            data={dataBik?.biks?.items}
-
-                            firstBtnOnClick={()=>setBankModalStatus("add")}
-                            stateSearch={bikAutoComplete}
-                            setStateSearch={setBikAutoComplete}
-                         />
-                        <StyledFormItem name="INN" label="Инн">
+                        <Form.Item name="INN" label="Инн">
                             <Input/>
-                        </StyledFormItem>
-                        <StyledFormItem name="SHILS" label="Снилс">
+                        </Form.Item>
+                        <Form.Item name="SHILS" label="Снилс">
                             <Input/>
-                        </StyledFormItem>
+                        </Form.Item>
 
 
-                    </StyledFormRegular>
+                    </Form>
                 </Col>
             </Row>
-            <StyledFormItem>
+            <Form.Item>
                 <div style={{textAlign: 'center'}}>
                     <StyledButtonGreen style={{marginBottom: 0}} type="dashed" onClick={handleSubmit}>
                         {actualObject ? `Обновить` : `Создать`}
                     </StyledButtonGreen>
                 </div>
-            </StyledFormItem>
+            </Form.Item>
 
             <Modal
                 key={bikAutoComplete?.selected}
                 open={ppiModalStatus === "add" || ppiModalStatus === "edit"}
                 onCancel={() => setPpiModalStatus(null)}
                 footer={null}
-                onClose={()=> setPpiModalStatus(null)}>
+                onClose={() => setPpiModalStatus(null)}>
                 {ppiModalStatus === "edit" ? (
                     ppiAutoComplete?.selected && (
                         <PassportPlaceIssuesForm onCompleted={() => setPpiModalStatus(null)}
-                                     initialObject={{id: ppiAutoComplete.selected}}/>
+                                                 initialObject={{id: ppiAutoComplete.selected}}/>
                     )
                 ) : (
                     <PassportPlaceIssuesForm onCompleted={() => setPpiModalStatus(null)}/>
@@ -286,11 +290,11 @@ const PersonForm = ({localObject,initialObject, onCompleted}) => {
 
                 onCancel={() => setBikModalStatus(null)}
                 footer={null}
-                onClose={()=>setBikModalStatus(null)}>
+                onClose={() => setBikModalStatus(null)}>
                 {bikModalStatus === "edit" ? (
                     bikAutoComplete?.selected && (
                         <BikForm onCompleted={() => setBikModalStatus(null)}
-                                     initialObject={{id: bikAutoComplete.selected}}/>
+                                 initialObject={{id: bikAutoComplete.selected}}/>
                     )
                 ) : (
                     <BikForm onCompleted={() => setBikModalStatus(null)}/>

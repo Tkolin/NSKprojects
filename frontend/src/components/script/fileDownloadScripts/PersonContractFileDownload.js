@@ -1,10 +1,10 @@
 import 'react-phone-number-input/style.css';
 import { useMutation } from '@apollo/client';
-import { notification, Typography} from 'antd';
-import { PAYMENT_INVOICE_PROJECT_DOWNLOAD} from "../../graphql/mutationsProject";
-const {Text, Link} = Typography;
+import { CONTRACT_PERSON_MUTATION } from '../../../graphql/mutationsPerson';
+import {Button, notification} from 'antd';
+import {DownloadOutlined} from "@ant-design/icons";
 
-const PaymentInvoiceProjectDownload = ({projectId, stageNumber, isPrepayment, text}) => {
+const PersonContractFileDownload = ({personId, text}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
 
 
@@ -15,9 +15,9 @@ const PaymentInvoiceProjectDownload = ({projectId, stageNumber, isPrepayment, te
         });
     };
 
-    const [downloadProjectPaymentInvoice] = useMutation(PAYMENT_INVOICE_PROJECT_DOWNLOAD, {
+    const [downloadContract] = useMutation(CONTRACT_PERSON_MUTATION, {
         onCompleted: (data) => {
-            handleDownloadClick(data.projectPaymentInvoiceFileDownload.url);
+            handleDownloadClick(data.personOrderFileDownload.url);
             openNotification('topRight', 'success', 'Загрузка начата!');
         },
         onError: (error) => {
@@ -26,21 +26,16 @@ const PaymentInvoiceProjectDownload = ({projectId, stageNumber, isPrepayment, te
     });
 
     const handleDownload = () => {
-        console.log(projectId);
-        if(isPrepayment)
-            downloadProjectPaymentInvoice({ variables: { id: projectId, isPrepayment: true } });
-        else
-            downloadProjectPaymentInvoice({ variables: { id: projectId, stageNumber: stageNumber } });
+        console.log(personId);
+        downloadContract({ variables: { id: personId } });
     };
 
     const handleDownloadClick = async (downloadedFileUrl) => {
         try {
             const link = document.createElement('a');
             console.log(link);
-
-            link.href = `${LaravelURL}download-projectPaymentInvoice/${downloadedFileUrl}`;
-            link.download = '${downloadedFileUrl}';
-
+            link.href = `${LaravelURL}download-contract/${downloadedFileUrl}`;
+            link.download = 'contract.docx';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -50,9 +45,9 @@ const PaymentInvoiceProjectDownload = ({projectId, stageNumber, isPrepayment, te
     };
 
     return (
-            <Link onClick={handleDownload}>{text ?? 'скачать' }</Link>
+        <a onClick={handleDownload}>{text ?? 'скачать'}</a>
     );
 };
 
-export default PaymentInvoiceProjectDownload;
+export default PersonContractFileDownload;
 

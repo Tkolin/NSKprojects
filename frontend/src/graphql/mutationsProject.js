@@ -1,6 +1,6 @@
 import {gql} from "@apollo/client";
-import ProjectFileDownload from "../components/script/ProjectFileDownload";
-import StagesProjectFileDownload from "../components/script/StagesProjectFileDownload";
+import ProjectFileDownload from "../components/script/fileDownloadScripts/ProjectFileDownload";
+import StagesProjectFileDownload from "../components/script/fileDownloadScripts/StagesProjectFileDownload";
 import React from "react";
 
 export const ADD_PROJECT_MUTATION = gql`

@@ -1,25 +1,16 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Form, Input, Button, notification, Space, Select, Modal} from 'antd';
+import {Form, Input, Button, Select} from 'antd';
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
-import {GROUP_TYPE_PROJECTS_QUERY, TYPES_PROJECTS_QUERY} from '../../../graphql/queries';
-import { StyledFormItem, StyledFormLarge} from '../../style/FormStyles';
 import {
-    ADD_GROUP_TYPE_PROJECTS_MUTATION,
-    ADD_TYPE_PROJECTS_MUTATION, UPDATE_GROUP_TYPE_PROJECTS_MUTATION,
-    UPDATE_TYPE_PROJECTS_MUTATION
+    ADD_GROUP_TYPE_PROJECTS_MUTATION, UPDATE_GROUP_TYPE_PROJECTS_MUTATION
 } from "../../../graphql/mutationsTypeProject";
-import {StyledBlockLarge} from "../../style/BlockStyles";
 
 import {NotificationContext} from "../../../NotificationProvider";
-import {ADD_CONTACT_MUTATION, UPDATE_CONTACT_MUTATION} from "../../../graphql/mutationsContact";
-import moment from "moment/moment";
 import {
     GROUP_TYPE_PROJECTS_QUERY_COMPACT,
-    ORGANIZATIONS_QUERY_COMPACT,
-    POSITIONS_QUERY_COMPACT
 } from "../../../graphql/queriesCompact";
 import {CONTACTS_QUERY_BY_ID, GROUP_TYPE_PROJECTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
-import {StyledFormItemAutoCompleteAndCreate} from "../../style/SearchAutoCompleteStyles";
+import {CustomAutoCompleteAndCreate} from "../../style/SearchAutoCompleteStyles";
 const {Option} = Select;
 
 const GroupTypeProjectForm = ({ initialObject, onCompleted }) => {
@@ -80,20 +71,20 @@ const GroupTypeProjectForm = ({ initialObject, onCompleted }) => {
 
     return (
         <div>
-            <StyledFormLarge form={form} layout="vertical">
-                <StyledFormItem name="name" label="Наименование"  rules={[{ required: true }]}>
+            <Form form={form} layout="vertical">
+                <Form.Item name="name" label="Наименование"  rules={[{ required: true }]}>
                     <Input />
-                </StyledFormItem>
-                <StyledFormItemAutoCompleteAndCreate
+                </Form.Item>
+                <Form.Item name="name" label="Наименование"  rules={[{ required: true }]}>
+                    <CustomAutoCompleteAndCreate/>
+                </Form.Item>
 
-
-                />
-                <StyledFormItem>
+                <Form.Item>
                     <Button type="primary" onClick={handleSubmit}>
                         {actualObject ? "Сохранить" : "Создать"}
                     </Button>
-                </StyledFormItem>
-            </StyledFormLarge>
+                </Form.Item>
+            </Form>
         </div>
     );
 };

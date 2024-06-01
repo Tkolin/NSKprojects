@@ -118,6 +118,7 @@ const CustomLayout = ({children, currentUser, la}) => {
                 && getItem('Контакт', '/form/contact', null, null),
                 hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','OFF_WORKER','BOOKMAKER','FIN_DIR','PROGRAMMER'])
                 && getItem('Создание нового договора', '/form/new_project', null, null),
+
                 hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','BOOKMAKER','FIN_DIR','PROGRAMMER'])
                 && getItem('Организация', '/form/organizations', null, null),
                 hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','OFF_WORKER','BOOKMAKER','FIN_DIR','PROGRAMMER'])
@@ -146,7 +147,8 @@ const CustomLayout = ({children, currentUser, la}) => {
                 && getItem('Тест 1', '/test/test1', null, null),
                 hasAccess(roleName, ["ADMIN"])
                 && getItem('Тест 2', '/test/test2', null, null),
-
+                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','BOOKMAKER','FIN_DIR','PROGRAMMER'])
+                && getItem('Распределение задач', '/form/tasks_project', null, null),
             ])
         );
     } else {

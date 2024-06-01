@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Form, Steps, theme} from 'antd';
+import {Button, Space, Steps, theme} from 'antd';
 import {StyledBlockLarge, StyledBlockRegular} from "../../../components/style/BlockStyles";
 import StagesProjectForm from "./components/StagesProjectForm";
 
@@ -12,11 +12,10 @@ import {
     UPDATE_PROJECT_MUTATION,
     UPDATE_STAGES_TO_PROJECT_MUTATION
 } from "../../../graphql/mutationsProject";
-import {UPDATE_IRD_MUTATION} from "../../../graphql/mutationsIrd";
-import {UPDATE_STAGE_MUTATION} from "../../../graphql/mutationsStage";
 import {NotificationContext} from "../../../NotificationProvider";
-import dayjs from "dayjs";
+import { rebuildProjectResultQuery, rebuildStagesResultQuery, rebuildIrdsResultQuery, rebuildStagesToQuery, rebuildIrdToQuery, rebuildProjectToQuery } from '../../../components/script/rebuildData/ProjectRebuilderQuery';
 import ProjectDetails from "./components/ProjectDetails";
+import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
 
 
 const Index = ({object}) => {
@@ -36,102 +35,14 @@ const Index = ({object}) => {
     useEffect(() => {
         if (object && object.id) {
             setCurrent(0);
-            console.log("object",object)
+            console.log("object", object)
             reconstructProjectToIrdsAndStages(object);
         }
     }, [object]);
 
     const {token} = theme.useToken();
-    const rebuildProjectResultQuery = (data) => {
-        return {
-            ...data,
-            date_create: data?.date_create ? dayjs(data?.date_create) : null,
-            date_end: data?.date_end ? dayjs(data?.date_end): null,
-            date_signing: data?.date_signing ? dayjs(data?.date_signing): null,
-            delegates_id: data?.delegations?.map(k => k?.id),
-            facility_id: data?.facilities?.map(k => k?.id),
-            organization_customer_id: data?.organization_customer?.id,
-            organization_customer_name: data?.organization_customer?.name,
-            status_id: data?.status?.id,
-            type_project_document_id: data?.type_project_document?.id,
-            type_project_document_name: data?.type_project_document?.name,
-        };
-    };
-    const rebuildStagesResultQuery = (data) => {
-        return data?.map((row, index) => ({
-            ...row,
-            date_range: [
-                row?.date_start ? dayjs(row?.date_start) : null,
-                row?.date_end ? dayjs(row?.date_end) : null],
-            stage_number: index + 1,
-            stage_id: row?.stage?.id,
-            stage_name: row?.stage?.name
-        }));
-    };
-    const rebuildIrdsResultQuery = (data) => {
-        return data?.map((row, index) => ({
-            ...row,
-            receivedDate: row.receivedDate ? dayjs(row.receivedDate?.[1]).format("YYYY-MM-DD") : null,
-            ird_id: row?.IRD?.id,
-            ird_name: row?.IRD?.name
-        }));
-    };
-    const rebuildStagesToQuery = (data) => {
-        if (!data)
-            return [];
-        const dataArray = Object.values(data);
-        console.log("rebuildStagesToQuery", data);
 
-        return dataArray?.map((row, index) => ({
-            id: row?.id ?? null,
-            project_id: project?.id ?? null,
-            date_start: row.date_range?.[0] ? dayjs(row.date_range?.[0]).format("YYYY-MM-DD") : null,
-            date_end: row.date_range?.[1] ? dayjs(row.date_range?.[1]).format("YYYY-MM-DD") : null,
-            duration: row?.duration ?? null,
-            stage_id: row?.stage_id ?? null,
-            stage_number: index + 1,
-            price: row?.price ?? null,
-            percent: row?.percent ?? null,
-            progress: row?.progress ?? null,
-            price_to_paid: row?.price_to_paid ?? null,
-        }));
-    };
-    const rebuildIrdToQuery = (data) => {
-        if (!data)
-            return [];
-        const dataArray = Object.values(data);
 
-        return dataArray?.map((row, index) => ({
-            id: row?.id ?? null,
-            project_id: project?.id ?? null,
-            ird_id: row?.ird_id ?? null,
-            stageNumber: row?.stageNumber ? parseInt(row?.stageNumber) : null,
-            applicationProject: row?.applicationProject ? parseInt(row?.applicationProject) : null,
-            receivedDate: row?.receivedDate ? dayjs(row?.receivedDate).format("YYYY-MM-DD") : null,
-        }));
-    };
-    const rebuildProjectToQuery = (daprojectta) => {
-        if (!project)
-            return [];
-
-        return{
-            id: project?.id ?? null,
-            number: project?.number,
-            name: project?.name,
-            organization_customer_id: project?.organization_customer_id,
-            type_project_document_id: project?.type_project_document_id,
-            date_signing: dayjs(project?.date_signing).format("YYYY-MM-DD"),
-            duration: project?.duration,
-            date_end: dayjs(project?.date_end).format("YYYY-MM-DD"),
-            date_create: dayjs(project?.date_create).format("YYYY-MM-DD"),
-            status_id: project?.status_id,
-            date_completion: dayjs(project?.date_completion).format("YYYY-MM-DD"),
-            price: project?.price,
-            prepayment: project?.prepayment,
-            facility_id: project?.facility_id?.map(row => row[3][0]),
-            delegates_id: project?.delegates_id,
-        };
-    };
     const reconstructProjectToIrdsAndStages = (project) => {
         console.log("reconstructProjectToIrdsAndStages", project);
         console.log("updateProject", rebuildProjectResultQuery(project));
@@ -186,40 +97,22 @@ const Index = ({object}) => {
 
         switch (current) {
             case 0:
-                mutateProject({
-                    variables: {
-                        data: {
-                            id: project?.id ?? null,
-                            number: project?.number,
-                            name: project?.name,
-                            organization_customer_id: project?.organization_customer_id,
-                            type_project_document_id: project?.type_project_document_id,
-                            date_signing: dayjs(project?.date_signing).format("YYYY-MM-DD"),
-                            duration: project?.duration,
-                            date_end: dayjs(project?.date_end).format("YYYY-MM-DD"),
-                            date_create: dayjs(project?.date_create).format("YYYY-MM-DD"),
-                            status_id: project?.status_id,
-                            date_completion: dayjs(project?.date_completion).format("YYYY-MM-DD"),
-                            price: project?.price,
-                            prepayment: project?.prepayment,
-                            facility_id: project?.facility_id?.map(row => row[3][0]),
-                            delegates_id: project?.delegates_id,
-                        }
-                    }
-                });
-
+                mutateProject({variables: {data: rebuildProjectToQuery(project,project)}});
                 break;
             case 1:
-                mutateStage({variables: {data: rebuildStagesToQuery(stages)}});
+                mutateStage({variables: {data: rebuildStagesToQuery(stages,project)}});
                 break;
             case 2:
                 console.log("project", project);
 
-                const data = rebuildIrdToQuery(irds);
+                const data = rebuildIrdToQuery(irds,project);
                 console.log("mutateIrd", data);
                 mutateIrd({variables: {data: data}});
                 break;
             case 3:
+                setCurrent(steps);
+                break;
+            case 4:
                 setCurrent(steps);
 
 
@@ -278,7 +171,6 @@ const Index = ({object}) => {
                     },
                     {
                         title: 'Этап 4',
-                        subTitle: 'waiting for longlong time',
                         status: 'Требует сохранения',
                         description: 'Вывод документов.',
                     },
@@ -287,7 +179,17 @@ const Index = ({object}) => {
             <div style={contentStyle}>
                 {current === 0 ? (
                         <StyledBlockRegular label={"Основные данные об проекте"}>
-                            <ProjectForm actualProject={project} updateProject={(value) => updateProject(value)}/>
+                            <ProjectForm actualProject={project} onCompleted={() => next()}
+                                         updateProject={(value) => {console.log("updateProject",value); updateProject(value);}}
+                                         confirmFormButton={
+                                             <div style={{textAlign: 'center'}}>
+                                                 <Space>
+                                                     <StyledButtonGreen style={{marginBottom: 0}} htmlType="submit">
+                                                         Сохранить проект
+                                                     </StyledButtonGreen>
+                                                 </Space>
+                                             </div>
+                                         }/>
                         </StyledBlockRegular>
                     ) :
                     current === 1 ? (

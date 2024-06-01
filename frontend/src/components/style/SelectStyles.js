@@ -1,9 +1,7 @@
 import React from 'react';
-import {Button, Select, Space} from 'antd';
+import {Button, Form, Select, Space} from 'antd';
 import {EditOutlined, PlusOutlined} from '@ant-design/icons';
-import {StyledButtonGreen} from "./ButtonStyles";
-import {StyledFormItem} from "./FormStyles";
-import styled from "styled-components";
+
 
 const ButtonGreenStyle = {
     background: "#52c41a",
@@ -33,7 +31,8 @@ const BaseStyledFormItemSelect = ({
     size,
                                       wrapperCol
                                   }) => (
-    <StyledFormItem name={formName} labelCol={labelCol} wrapperCol={wrapperCol} label={formLabel} style={{width: width}}>
+
+    <Form.Item name={formName} labelCol={labelCol} wrapperCol={wrapperCol} label={formLabel} style={{width: width}}>
         <Select
             style={{width: width}}
             popupMatchSelectWidth={false}
@@ -54,7 +53,7 @@ const BaseStyledFormItemSelect = ({
                 </Select.Option>
             ))}
         </Select>
-    </StyledFormItem>
+    </Form.Item>
 );
 
 const BaseStyledButtonFormItemSelect = ({onClick, position, type, icon, style,disabled}) => (

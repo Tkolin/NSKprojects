@@ -1,25 +1,26 @@
-import {StyledBlockRegular} from "../../../components/style/BlockStyles";
+import {StyledBlockRegular} from "../style/BlockStyles";
 import {Modal} from "antd";
-import OrganizationForm from "../../../components/form/modelsForms/OrganizationForm";
+import OrganizationForm from "../form/modelsForms/OrganizationForm";
 import React from "react";
 
 const OrganizationModalForm = ({key,object,onClose, mode}) => {
+
     return (
         <Modal
             key={key}
             open={mode === "add" || mode === "edit"}
-            onCancel={() => onClose(null)}
+            onCancel={() => onClose()}
             footer={null}
-            onClose={() => onClose(null)}
+            onClose={() => onClose()}
         >
             <StyledBlockRegular label={"Организация"}>
                 {mode === "edit" ? (
                     object && (
-                        <OrganizationForm onCompleted={() => onClose(null)}
+                        <OrganizationForm onCompleted={() => onClose()}
                                           initialObject={object}/>
                     )
                 ) : (
-                    <OrganizationForm onCompleted={() => onClose(null)}/>
+                    <OrganizationForm onCompleted={() => onClose()}/>
                 )}
             </StyledBlockRegular>
         </Modal>

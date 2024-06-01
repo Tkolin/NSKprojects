@@ -19,6 +19,7 @@ import {NotificationProvider} from "./NotificationProvider";
 import PersonPage from "./page/simples/forms/PersonPage";
 import OrganizationPage from "./page/simples/forms/OrganizationPage";
 import ProjectModules from "./page/modules/project/Index";
+import ProjectTasksModules from "./page/modules/projectTasks/Index";
 import ContactTable from "./page/simples/tables/ContactTable";
 import PersonTable from "./page/simples/tables/PersonTable";
 import OrganizationTable from "./page/simples/tables/OrganizationTable";
@@ -58,6 +59,7 @@ const App = () => {
                             <Route path="/form/persons" element={<PersonPage/>}/>
                             <Route path="/form/organizations" element={<OrganizationPage/>}/>
                             <Route path="/form/new_project" element={<ProjectModules/>}/>
+                            <Route path="/form/tasks_project" element={<ProjectTasksModules/>}/>
 
                             <Route path="/table/contacts" element={<ContactTable/>}/>
                             <Route path="/table/persons" element={<PersonTable/>}/>
