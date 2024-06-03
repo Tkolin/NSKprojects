@@ -8,6 +8,8 @@ import {useProjectStore, useTasksStore} from "./Store";
 import {NotificationContext} from "../../../NotificationProvider";
 import TasksToProjectForm from "./components/TasksToProjectForm";
 import EmployeeToTasksForm from "./components/EmployeeToTasksForm";
+import {useMutation} from "@apollo/client";
+import {UPDATE_TASK_TO_PROJECT_MUTATION} from "../../../graphql/mutationsTask";
 
 
 const Index = ({object}) => {
@@ -23,15 +25,71 @@ const Index = ({object}) => {
 
     const {openNotification} = useContext(NotificationContext);
 
+    useEffect(() => {
+        if (object) {
+            updateProject(object)
+            object?.project_tasks && updateTasks(object?.project_tasks);
+        }
+    }, [object]);
+    useEffect(() => {
+        if (tasks) {
+            console.log("oldTasks", tasks)
+        }
+    }, []);
 
     const {token} = theme.useToken();
+    const [mutateTasksToProject] = useMutation(UPDATE_TASK_TO_PROJECT_MUTATION, {
+        onCompleted: (data) => {
+            console.log("mutateTasksToProject", data);
+            updateTasks({...tasks, ...data?.updateTaskToProject});
+            setCurrent(newCurrent)
+        },
+        onError: (error) => {
+            console.log("mutateTasksToProject error", error.message);
 
+        },
+    });
+    const rebuildTasksToQuery = (treeTasksInForm, listStageNumbersStageInForm, projectId) => {
+        const result = [];
+        if (projectId) {
+            console.error("проекта нет для задачи ");
+        }
+        const processNode = (node, parentKey = null) => {
+            const task = {
+                projectId: 108,//TODO: projectId ? projectId?.toString() : null,
+                inherited_task_ids: parentKey ? [parentKey?.toString()] : [],
+                task_id: node?.key?.toString(),
+            };
 
+            result.push(task);
+            if (node.children) {
+                node.children.forEach(child => processNode(child, node.key));
+            }
+        };
+
+        treeTasksInForm.forEach(node => processNode(node));
+        result.forEach(task => {
+            for (const [stageNumber, taskIds] of Object.entries(listStageNumbersStageInForm)) {
+                if (taskIds.includes(task.task_id)) {
+                    task.stage_number = parseInt(stageNumber);
+                    break;
+                }
+            }
+        });
+
+        return result;
+    };
     const handleStage = (steps) => {
         setNewCurrent(steps)
         switch (current) {
             case 0:
-                setCurrent(steps);
+                mutateTasksToProject({
+                    variables: {
+                        data:
+                            rebuildTasksToQuery(tasks.gData,
+                                tasks.checkedKeys, project.id)
+                    }
+                })
                 break;
             case 1:
                 setCurrent(steps);
@@ -98,7 +156,10 @@ const Index = ({object}) => {
             <div style={contentStyle}>
                 {current === 0 ? (
                         <StyledBlockLarge label={"Создание списка задач"}>
-                            <TasksToProjectForm/>
+                            <TasksToProjectForm
+                                updateTasks={(value) => updateTasks(value)}
+                                actualProject={project}
+                                actualTasks={tasks}/>
                         </StyledBlockLarge>
                     ) :
                     current === 1 ? (

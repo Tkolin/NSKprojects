@@ -5,8 +5,8 @@
 /public/storage
 /storage/*.key
 /vendor
-../../../Music/nsk/backend/.env
 .env.backup
+.env
 .env.production
 .phpunit.result.cache
 Homestead.json

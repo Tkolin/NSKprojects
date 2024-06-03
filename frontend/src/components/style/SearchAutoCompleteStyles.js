@@ -25,6 +25,7 @@ const CustomAutoCompleteComponent = ({
                                          data,
                                          value,
                                          onChange,
+                                         onSelect,
                                          typeData
                                      }) => {
 
@@ -69,6 +70,7 @@ const CustomAutoCompleteComponent = ({
             onClear={()=>onChange({...value, selected: null, output: null})}
             onSearch={handleSearch}
             onSelect={(variable, option) => {
+                onSelect({id: option.data, name: option.value})
                  onChange({...value, selected: option.data, output: option.label});
             }}
             placeholder={placeholder}

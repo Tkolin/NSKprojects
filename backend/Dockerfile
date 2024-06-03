@@ -17,25 +17,20 @@ RUN apk update && apk add --no-cache \
 # Устанавливаем Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Устанавливаем virtualenv
-RUN pip install virtualenv
-
 # Настройка рабочей директории
 WORKDIR /var/www/html/backend
-
-# Создание и активация виртуального окружения
-RUN virtualenv venv
-RUN . venv/bin/activate \
-    && pip install --no-cache-dir -r requirements.txt
 
 # Копируем файлы проекта в контейнер
 COPY . .
 
+# Создаем и активируем виртуальное окружение, устанавливаем зависимости
+RUN python3 -m venv venv \
+    && . venv/bin/activate \
+    && pip install --no-cache-dir -r requirements.txt \
+    && pip install sympy
+
 # Устанавливаем зависимости Laravel
 RUN composer install --no-dev
-
-# Устанавливаем библиотеку SymPy
-RUN pip install sympy
 
 # Открываем порт для веб-сервера (по умолчанию 8000)
 EXPOSE 8000

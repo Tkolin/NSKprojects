@@ -8,11 +8,12 @@ import IrdItem from "./IrdItem";
 import dayjs from "dayjs";
 import StageModalForm from "../../../../components/modal/StageModalForm";
 import {StyledButtonGreen} from "../../../../components/style/ButtonStyles";
+import IrdModalForm from "../../../../components/modal/IrdModalForm";
 
 const IrdsProjectForm = ({localObject, initialObject, onCompleted, updateIrds, actualIrds}) => {
     // Первичные данные
     const [form] = Form.useForm();
-    const [typeProjectModalStatus, setTypeProjectModalStatus] = useState(null);
+    const [irdModalStatus, setIrdModalStatus] = useState(null);
 
     const load = () => {
         console.log(actualIrds);
@@ -56,9 +57,8 @@ const IrdsProjectForm = ({localObject, initialObject, onCompleted, updateIrds, a
                                 {...restField}
                             />
                         ))}
-                        <Row>
-                            <Col span={24} >
-                                <Space.Compact style={{width: '100%'}}>
+
+                                <Space.Compact style={{width: '100%', marginBottom: 10, marginTop: 10}}>
                                     <Button
                                         type="dashed"
                                         onClick={() => add()}
@@ -69,21 +69,20 @@ const IrdsProjectForm = ({localObject, initialObject, onCompleted, updateIrds, a
                                     </Button>
                                     <StyledButtonGreen
                                         type="dashed"
-                                        onClick={() => setTypeProjectModalStatus("add")}
-                                        style={{width: '100%'}}
+                                        onClick={() => setIrdModalStatus("add")}
+                                        style={{width: '30%'}}
                                         icon={<PlusOutlined/>}
                                     >
                                         Создать ИРД
                                     </StyledButtonGreen>
                                 </Space.Compact>
-                            </Col>
-                        </Row>
+
                     </>
                 )}
             </Form.List>
-            <StageModalForm
-                onClose={() => setTypeProjectModalStatus(null)}
-                mode={typeProjectModalStatus}/>
+            <IrdModalForm
+                onClose={() => setIrdModalStatus(null)}
+                mode={irdModalStatus}/>
         </Form>
     )
 };

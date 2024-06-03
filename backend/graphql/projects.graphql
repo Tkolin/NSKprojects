@@ -33,13 +33,13 @@ extend type Mutation{
         items: [StageToProject]
     ): [ProjectStage] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateTaskToProject(
-        data: TasksToProject
+        data: [TasksToProject]
     ): Int @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     deleteTaskToProject(
         id: ID!
     ): String @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     createTaskToProject(
-        data: TasksToProject
+        data: [TasksToProject]
     ): Int @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updatePaymentsToProject(
         project: ID
@@ -178,6 +178,7 @@ input TasksToProject {
     price: Float
     executors: [TaskExecutor]
     description: String
+    stage_number: Int
 }
 input TaskExecutor {
     id: ID

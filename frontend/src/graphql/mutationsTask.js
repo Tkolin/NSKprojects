@@ -9,7 +9,7 @@ export const DELETE_TASK_TO_PROJECT_MUTATION = gql`
     }
 `;export const UPDATE_TASK_TO_PROJECT_MUTATION = gql`
     mutation UpdateTaskToProject(
-        $data: TasksToProject
+        $data: [TasksToProject]
     ) {
         updateTaskToProject(
             data: $data
@@ -18,7 +18,7 @@ export const DELETE_TASK_TO_PROJECT_MUTATION = gql`
 `;
 export const ADD_TASK_TO_PROJECT_MUTATION = gql`
     mutation AddTaskToProject(
-        $data: TasksToProject
+        $data: [TasksToProject]
     ) {
         createTaskToProject(
             data: $data
@@ -26,11 +26,11 @@ export const ADD_TASK_TO_PROJECT_MUTATION = gql`
     }
 `;
 export const UPDATE_TASK_MUTATION = gql`
-    mutation AddAndUpdateTask(
-        $names: [String!]
+    mutation UpdateTask(
+        $name: String
     ) {
         updateTask(
-            names: $names
+            name: $name
         ) {
             id
             name
@@ -38,11 +38,11 @@ export const UPDATE_TASK_MUTATION = gql`
     }
 `;
 export const ADD_TASK_MUTATION = gql`
-    mutation AddAndUpdateTask(
-        $names: [String!]
+    mutation AddTask(
+        $name: String
     ) {
-        updateTask(
-            names: $names
+        createTask(
+            name: $name
         ) {
             id
             name

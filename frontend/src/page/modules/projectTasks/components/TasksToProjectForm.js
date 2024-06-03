@@ -1,79 +1,55 @@
 import React, {useEffect, useState} from 'react';
-import {Col, Divider, Form, Radio, Row} from "antd";
+import {Button, Col, Divider, Form, Radio, Row} from "antd";
 import TaskForm from "../../../../components/form/modelsForms/TaskForm";
 import TasksTreeComponent from "./TasksTreeComponent";
 import {CustomAutoCompleteAndCreateWitchEdit} from "../../../../components/style/SearchAutoCompleteStyles";
-import {useQuery} from "@apollo/client";
-import {LEGAL_FORM_QUERY_COMPACT, TASKS_QUERY_COMPACT} from "../../../../graphql/queriesCompact";
+import {useMutation, useQuery} from "@apollo/client";
+import {TASKS_QUERY_COMPACT} from "../../../../graphql/queriesCompact";
 import LoadingSpinnerStyles from "../../../../components/style/LoadingSpinnerStyles";
-import {colors} from "../../../../components/style/colors";
 import StageRadioComponent from "./StageRadioComponent";
+import {UPDATE_TASK_TO_PROJECT_MUTATION} from "../../../../graphql/mutationsTask";
 
 
 const TasksToProjectForm = ({actualTasks, updateTasks, actualProject}) => {
 
-    //Вынести за компонент
-    const actualStages = [
-        {
-            id: 1,
-            name: "этап 1",
-            number: 1,
-        }, {
-            id: 2,
-            name: "этап 2",
-            number: 2,
-
-        }, {
-            id: 3,
-            name: "этап 3",
-            number: 3,
-
-        }, {
-            id: 4,
-            name: "этап 4",
-            number: 4,
-        },
-    ]
-
-
+    //Вынести за компонен
+    const [formLoad, setFormLoad] = useState(false);
     const [form] = Form.useForm();
     const [stageNumber, setStageNumber] = useState()
 
-
-    // Обновление при наличии tasks
     useEffect(() => {
-
+        setFormLoad(true)
+    }, []);
+    useEffect(() => {
+        if(actualTasks){
+            form.setFieldValue("tasks", actualTasks)
+        }
     }, [actualTasks]);
-    // калбек для изменений
-    const formUpdate = () => {
-
+    const handleChange = () => {
+        if (formLoad) {
+            const value = form.getFieldValue("tasks");
+            if (value)
+                updateTasks(value);
+        }
     }
     // Список задач
     const {
         loading: loadingTasks, error: errorTasks,
         data: dataTasks
     } = useQuery(TASKS_QUERY_COMPACT);
-    const [tasksAutoComplete, setTasksAutoComplete] = useState({options: [], selected: {}});
-    const [tasksModalStatus, setTasksModalStatus] = useState(null);
-
-
-    // Синхронизация компонентов
-    useEffect(() => {
-        if (tasksAutoComplete?.selected > 0) {
+    const [tasksModalStatus, setTasksModalStatus] = useState({options: [], selected: {}});
+    const handleSelectTask = (value) => {
+        if (value?.id > 0) {
             const oldTasks = form.getFieldValue("tasks")
-            const newTask = tasksAutoComplete;
-            console.log("oldTasks ", oldTasks, " newTask", newTask)
+
             form.setFieldValue("tasks", {
                 ...oldTasks,
                 gData: [...oldTasks?.gData ?? [], {
-                    title: newTask.options.find(row => row.data === newTask.selected).label,
-                    key: newTask.selected
+                    title: value.name,
+                    key: value.id
                 }]
             })
         }
-    }, [tasksAutoComplete?.selected]);
-    const handleStageChange = (value) => {
-        form.setFieldValue("stage_radio", value)
     }
 
     if (loadingTasks)
@@ -86,11 +62,15 @@ const TasksToProjectForm = ({actualTasks, updateTasks, actualProject}) => {
                 <TaskForm/>
             </Col>
             <Col span={18}>
-                <Form form={form}>
+                <Form form={form} onChange={() => console.log("onChange")}>
                     <Divider>Список этапов</Divider>
                     <Form.Item name={"stage_radio"}>
                         <StageRadioComponent
-                            actualStages={actualStages}
+                            actualStages={actualProject?.project_stage ?? [{id: 1, name: "s", number: 1}, {
+                                id: 2,
+                                name: "ss",
+                                number: 2
+                            }, {id: 3, name: "sss", number: 3}, {id: 4, name: "ssss", number: 4},]}
                             onChange={(value) => setStageNumber(value?.number)}
                         />
                     </Form.Item>
@@ -99,26 +79,25 @@ const TasksToProjectForm = ({actualTasks, updateTasks, actualProject}) => {
 
                     <Form.Item name={"tasks"}>
                         <TasksTreeComponent
-                            stageNumber={stageNumber }
+                            stageNumber={stageNumber}
+                            value={actualTasks}
                             onChange={(value) => {
-                                console.log("TasksTreeComponent",value);
-                                //updateTasks(checkedKeys, selectedKeys, gData);
+
+                                handleChange()
                             }}/>
                     </Form.Item>
 
+                    <Form.Item name={"task"} label={"Добавить задачу"}>
+                        <CustomAutoCompleteAndCreateWitchEdit
+                            placeholder={"Начните ввод..."}
+                            loading={loadingTasks}
+                            firstBtnOnClick={() => setTasksModalStatus("add")}
+                            secondBtnOnClick={() => setTasksModalStatus("edit")}
+                            onSelect={(value) => handleSelectTask(value)}
 
-                    <CustomAutoCompleteAndCreateWitchEdit
-                        formName={"director_name"}
-                        formLabel={"Добавить задачу"}
-                        placeholder={"Начните ввод..."}
-                        loading={loadingTasks}
-                        firstBtnOnClick={() => setTasksModalStatus("add")}
-                        secondBtnOnClick={() => setTasksModalStatus("edit")}
-
-                         data={dataTasks?.tasks?.items}
-                        stateSearch={tasksAutoComplete}
-                        setStateSearch={setTasksAutoComplete}
-                    />
+                            data={dataTasks?.tasks?.items}
+                        />
+                    </Form.Item>
                 </Form>
 
             </Col>

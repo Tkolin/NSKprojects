@@ -24,7 +24,7 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
     // Внешняя логика
     const [totalToPercent, setTotalToPercent] = useState(0);
     const [totalToDuration,setTotalToDuration] = useState(0);
-    const [typeProjectModalStatus, setTypeProjectModalStatus] = useState(null);
+    const [stageModalStatus, setStageModalStatus] = useState(null);
 
 
     const load = () => {
@@ -105,9 +105,8 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
                         totalToDuration={totalToDuration}
                         totalToPercent={totalToPercent}/>
 
-                        <Row>
-                            <Col span={24} >
-                                <Space.Compact style={{width: '100%'}}>
+
+                                <Space.Compact style={{width: '100%', marginTop: 10, marginBottom: 10}}>
                                     <Button
                                         type="dashed"
                                         onClick={() => add()}
@@ -118,22 +117,21 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
                                     </Button>
                                     <StyledButtonGreen
                                         type="dashed"
-                                        onClick={() => setTypeProjectModalStatus("add")}
-                                        style={{width: '100%'}}
+                                        onClick={() => setStageModalStatus("add")}
+                                        style={{width: '30%'}}
                                         icon={<PlusOutlined/>}
                                     >
                                         Создать этап
                                     </StyledButtonGreen>
                                 </Space.Compact>
-                            </Col>
-                        </Row>
+
 
                     </>
                 )}
             </Form.List>
             <StageModalForm
-                 onClose={() => setTypeProjectModalStatus(null)}
-                mode={typeProjectModalStatus}/>
+                 onClose={() => setStageModalStatus(null)}
+                    mode={stageModalStatus}/>
         </Form>
     );
 };

@@ -7,12 +7,10 @@ const App = ({value, onChange, stageNumber}) => {
     const [expandedKeys, setExpandedKeys] = useState([]);
     const [selectedKeys, setSelectedKeys] = useState();// number: {31,31,13,13}
     const [autoExpandParent, setAutoExpandParent] = useState(true);
-    useEffect(() => {
-        console.log(value?.checkedKeys);
-    }, [value?.checkedKeys]);
-    useEffect(() => {
-        onChange && onChange(value)
 
+    useEffect(() => {
+        console.log("onChangeTree", value);
+        onChange && onChange(value)
     }, [value]);
     const onDragEnter = (info) => {
         console.log(info);
@@ -92,9 +90,11 @@ const App = ({value, onChange, stageNumber}) => {
 
     const updateTreeData = (list) => {
         return list.map(node => {
+            node.disableCheckbox = false;
+
             // Disable the node if it is already checked in other stages
             for (let stage in value?.checkedKeys) {
-                if (stage !== stageNumber.toString() && value?.checkedKeys[stage].includes(node.key)) {
+                if (stage !== stageNumber?.toString() && value?.checkedKeys[stage].includes(node.key)) {
                     node.disableCheckbox = true;
                     break;
                 }
@@ -112,7 +112,7 @@ const App = ({value, onChange, stageNumber}) => {
                 expandedKeys={expandedKeys}
                 autoExpandParent={autoExpandParent}
                 onCheck={onCheck}
-                checkedKeys={ stageNumber && value?.checkedKeys && value?.checkedKeys[stageNumber]}
+                checkedKeys={stageNumber && value?.checkedKeys && value?.checkedKeys[stageNumber]}
                 onSelect={onSelect}
                 selectedKeys={selectedKeys}
 
