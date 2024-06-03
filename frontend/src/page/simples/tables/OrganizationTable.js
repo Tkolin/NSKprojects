@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import { Descriptions, Divider, Form, Modal, notification, Space, Table} from 'antd';
 import {DELETE_ORGANIZATION_MUTATION} from '../../../graphql/mutationsOrganization';
@@ -8,26 +8,23 @@ import StyledLinkManagingDataTable from "../../../components/style/TableStyles";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
 import {ORGANIZATIONS_QUERY} from "../../../graphql/queries";
 import Title from "antd/es/typography/Title";
+import OrganizationModalForm from "../../../components/modal/OrganizationModalForm";
 
 const OrganizationTable = () => {
     // Состояния
-    const [selectedOrganization, setSelectedOrganization] = useState(null);
-    const [editModalVisible, setEditModalVisible] = useState(false);
-    const [addModalVisible, setAddModalVisible] = useState(false);
+    const [organizationModalStatus, setOrganizationModalStatus] = useState(false);
     const [formSearch] = Form.useForm();
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
     // Данные
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
 
-    const [currentSort, setCurrentSort] = useState({});
-
     const [sortField, setSortField] = useState('');
     const [sortOrder, setSortOrder] = useState('');
 
     const [search, setSearch] = useState('');
 
-    const {loading, error, data, refetch} = useQuery(ORGANIZATIONS_QUERY, {
+    const {loading: loading,error: error, data: data, refetch: refetch} = useQuery(ORGANIZATIONS_QUERY, {
         variables: {
             queryOptions: {page, limit, search, sortField, sortOrder}
         }, fetchPolicy: 'network-only',
@@ -52,19 +49,9 @@ const OrganizationTable = () => {
     });
 
     // Обработчик событий
-    const handleClose = () => {
+    useEffect(() => {
         refetch();
-        setEditModalVisible(false);
-        setAddModalVisible(false);
-    };
-    const handleEdit = (organizationId) => {
-        const organization = data.organizations.items.find(organization => organization.id === organizationId);
-        setSelectedOrganization(organization);
-        setEditModalVisible(true);
-    };
-    const handleAdd = () => {
-        setAddModalVisible(true);
-    };
+    }, [organizationModalStatus]);
     const handleDelete = (organizationId) => {
         deleteOrganization({variables: {id: organizationId}});
     };
@@ -110,7 +97,9 @@ const OrganizationTable = () => {
                 <StyledLinkManagingDataTable
                     title={"Удаление организации"}
                     description={"Вы уверены, что нужно удалить эту организацию?"}
-                    handleEdit={() => handleEdit(record.id)}
+                    handleEdit={() =>
+                        setOrganizationModalStatus({organization: record, mode: "edit"})
+                    }
                     handleDelete={() => handleDelete(record.id)}
                 />
             )
@@ -135,7 +124,7 @@ const OrganizationTable = () => {
                         enterButton="Найти"
                         onSearch={onSearch}
                     />
-                    <StyledButtonGreen style={{marginBottom: 0}} onClick={() => handleAdd()}>Создать новую
+                    <StyledButtonGreen style={{marginBottom: 0}} onClick={() => setOrganizationModalStatus({organization: null, mode: "add"})}>Создать новую
                         запись</StyledButtonGreen>
                 </Space>
             </Form.Item>
@@ -189,26 +178,13 @@ const OrganizationTable = () => {
                 ),
             }}
         />
-        <Modal
-            key={selectedOrganization?.id}
-            open={editModalVisible}
-            width={900}
-            onCancel={() => setEditModalVisible(false)}
-            footer={null}
-            onClose={handleClose}
-        >
-            <OrganizationForm organization={selectedOrganization} onClose={handleClose}/>
-        </Modal>
-        <Modal
-            key={selectedOrganization?.id}
-            open={addModalVisible}
-            width={900}
-            onCancel={() => setAddModalVisible(false)}
-            footer={null}
-            onClose={handleClose}
-        >
-            <OrganizationForm contact={null} onClose={handleClose}/>
-        </Modal>
+
+        <OrganizationModalForm
+            key={organizationModalStatus?.organization?.id ?? null}
+            onClose={()=>setOrganizationModalStatus(null)}
+            object={organizationModalStatus?.organization ?? null}
+            mode={organizationModalStatus?.mode ?? null}
+        />
     </>;
 };
 

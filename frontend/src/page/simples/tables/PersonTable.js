@@ -1,33 +1,30 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import {
     Col,
     Descriptions,
     Divider,
     Form,
-    Modal,
-    notification,
+     notification,
     Row,
     Space,
     Table,
 } from 'antd';
 import {PERSONS_QUERY} from '../../../graphql/queries';
 import {DELETE_PERSON_MUTATION} from '../../../graphql/mutationsPerson';
-import PersonForm from "../../../components/form/modelsForms/PersonForm";
-import Search from "antd/es/input/Search";
+ import Search from "antd/es/input/Search";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
 import PersonContractFileDownload from "../../../components/script/fileDownloadScripts/PersonContractFileDownload";
 import Title from "antd/es/typography/Title";
 import {format} from "date-fns";
 import StyledLinkManagingDataTable from "../../../components/style/TableStyles";
+ import PersonModalForm from "../../../components/modal/PersonModalForm";
 
 const PersonTable = () => {
 
     // Состояния
     const [formSearch] = Form.useForm();
-    const [selectedPerson, setSelectedPerson] = useState(null);
-    const [editModalVisible, setEditModalVisible] = useState(false);
-    const [addModalVisible, setAddModalVisible] = useState(false);
+    const [personModalStatus, setPersonModalStatus] = useState(null);
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
 
     // Данные
@@ -41,7 +38,7 @@ const PersonTable = () => {
 
     const [search, setSearch] = useState('');
 
-    const {loading: loading, error: error, data: data, refetch: refetchTable} = useQuery(PERSONS_QUERY, {
+    const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(PERSONS_QUERY, {
         variables: {
             queryOptions: {page, limit, search, sortField, sortOrder}
         }, fetchPolicy: 'network-only',
@@ -58,28 +55,18 @@ const PersonTable = () => {
     const [deletePerson] = useMutation(DELETE_PERSON_MUTATION, {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно удалены!');
-            refetchTable();
+            refetch();
         }, onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
-            refetchTable();
+            refetch();
         },
 
     });
 
     // Обработчик событий
-    const handleClose = () => {
-        refetchTable();
-        setEditModalVisible(false);
-        setAddModalVisible(false);
-    };
-    const handleEdit = (personId) => {
-        const person = data.persons.items.find(person => person.id === personId);
-        setSelectedPerson(person);
-        setEditModalVisible(true);
-    };
-    const handleAdd = () => {
-        setAddModalVisible(true);
-    };
+    useEffect(() => {
+        refetch();
+    }, [personModalStatus]);
     const handleDelete = (personId) => {
         deletePerson({variables: {id: personId}});
     };
@@ -98,7 +85,8 @@ const PersonTable = () => {
             title: 'ФИО',
             dataIndex: 'passport',
             key: 'fio_name',
-            render: (passport) => passport ? `${passport.lastname}  ${passport.firstname} ${passport.patronymic}  ` : "",
+            render: (passport) => passport ? `${passport?.lastname ?? ""}
+              ${passport?.firstname ?? ""} ${passport?.patronymic ?? ""}  ` : "",
         }, {
             title: 'Личный тел.', dataIndex: 'phone_number', key: 'phone_number',
             sorter: true, ellipsis: true,
@@ -124,9 +112,11 @@ const PersonTable = () => {
         }, {
             title: 'Управление', key: 'edit', width: 100, render: (text, record) => (
                 <StyledLinkManagingDataTable
-                    title={"Удаление подрядчика"}
+                    title={"Удаление контакта"}
                     description={"Вы уверены, что нужно удалить этого подрядчика?"}
-                    handleEdit={() => handleEdit(record.id)}
+                    handleEdit={() => {
+                        setPersonModalStatus({person: record, mode: "edit"})
+                    }}
                     handleDelete={() => handleDelete(record.id)}
                 />
             ),
@@ -149,7 +139,8 @@ const PersonTable = () => {
                         enterButton="Найти"
                         onSearch={onSearch}
                     />
-                    <StyledButtonGreen style={{marginBottom: 0}} onClick={() => handleAdd()}>Создать новую
+                    <StyledButtonGreen style={{marginBottom: 0}}
+                                       onClick={() =>  setPersonModalStatus({person: null, mode: "add"})}>Создать новую
                         запись</StyledButtonGreen>
                 </Space>
             </Form.Item>
@@ -216,25 +207,12 @@ const PersonTable = () => {
                 ),
             }}
         />
-        <Modal
-            key={selectedPerson?.id}
-            open={editModalVisible}
-            width={900}
-            onCancel={() => setEditModalVisible(false)}
-            footer={null}
-            onClose={handleClose}
-        >
-            <PersonForm person={selectedPerson} onClose={handleClose}/>
-        </Modal>
-        <Modal
-            open={addModalVisible}
-            width={900}
-            onCancel={() => setAddModalVisible(false)}
-            footer={null}
-            onClose={handleClose}
-        >
-            <PersonForm contact={null} onClose={handleClose}/>
-        </Modal>
+        <PersonModalForm
+            key={personModalStatus?.person?.id ?? null}
+            onClose={()=>setPersonModalStatus(null)}
+            object={personModalStatus?.person ?? null}
+            mode={personModalStatus?.mode ?? null}
+        />
     </div>);
 };
 export default PersonTable;

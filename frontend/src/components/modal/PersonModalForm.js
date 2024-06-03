@@ -1,10 +1,12 @@
-import {StyledBlockRegular} from "../style/BlockStyles";
+import {StyledBlockBig, StyledBlockRegular} from "../style/BlockStyles";
 import {Modal} from "antd";
- import React, {useEffect} from "react";
+import React from "react";
 import ContactForm from "../form/modelsForms/ContactForm";
 import {nanoid} from "nanoid";
+import BikForm from "../form/modelsForms/BikForm";
+import PersonForm from "../form/modelsForms/PersonForm";
 
-const ContactModalForm = ({key,object,objectId,onClose, mode}) => {
+const PersonModalForm = ({key,object,objectId,onClose, mode}) => {
     return (
         <Modal
             key={key ?? nanoid()}
@@ -12,12 +14,13 @@ const ContactModalForm = ({key,object,objectId,onClose, mode}) => {
             onCancel={() => onClose(null)}
             footer={null}
             onClose={() => onClose(null)}
-            width={"600px"}
+            width={"1000px"}
+
         >
-            <StyledBlockRegular label={"Контакт"}>
+            <StyledBlockBig label={"Сотрудник"}>
                 {mode === "edit" ? (
                     (object || objectId) && (
-                        <ContactForm
+                        <PersonForm
                             onCompleted={() =>
                             onClose(null)}
                             initialObject={objectId ? {id: objectId} : null}
@@ -25,11 +28,11 @@ const ContactModalForm = ({key,object,objectId,onClose, mode}) => {
                         />
                     )
                 ) : (
-                    <ContactForm onCompleted={() => onClose(null)}/>
+                    <PersonForm onCompleted={() => onClose(null)}/>
                 )}
-            </StyledBlockRegular>
+            </StyledBlockBig>
         </Modal>
     );
 };
 
-export default ContactModalForm;
+export default PersonModalForm;

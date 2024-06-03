@@ -6,8 +6,7 @@ import {
 } from '../../../graphql/mutationsPerson';
 
 import {DatePicker} from "antd/lib";
-import PassportPlaceIssuesForm from "./PassportPlaceIssuesForm";
-import {StyledButtonGreen} from "../../style/ButtonStyles";
+ import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {AddressSuggestions} from "react-dadata";
 import {StyledAddressSuggestionsInput} from "../../style/InputStyles";
 import {NotificationContext} from "../../../NotificationProvider";
@@ -18,7 +17,9 @@ import {
 import {PERSONS_QUERY_BY_ID} from "../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import {CustomAutoComplete, CustomAutoCompleteAndCreate} from "../../style/SearchAutoCompleteStyles";
-import BikForm from "./BikForm";
+import BikModalForm from "../../modal/BikModalForm";
+import PpiModalForm from "../../modal/PpiModalForm";
+import dayjs from "dayjs";
 
 const PersonForm = ({localObject, initialObject, onCompleted}) => {
     // Первичные данные
@@ -42,15 +43,11 @@ const PersonForm = ({localObject, initialObject, onCompleted}) => {
 
 
     // Состояния
-    const [address, setAddress] = useState({registration: "", residential: ""});
+    const [address, setAddress] =
+        useState({registration: "", residential: ""});
 
     const [bikModalStatus, setBikModalStatus] = useState(null);
-    const [bikAutoComplete, setBikAutoComplete] = useState({options: [], selected: {}});
     const [ppiModalStatus, setPpiModalStatus] = useState(null);
-    const [ppiAutoComplete, setPpiAutoComplete] = useState({options: [], selected: {}});
-    const [bankModalStatus, setBankModalStatus] = useState(null);
-    const [bankAutoComplete, setBankAutoComplete] = useState({options: [], selected: {}});
-
 
     // Мутация
     const [mutate] = useMutation(actualObject ? UPDATE_PERSON_MUTATION : ADD_PERSON_MUTATION, {
@@ -72,23 +69,27 @@ const PersonForm = ({localObject, initialObject, onCompleted}) => {
     useEffect(() => {
         if (initialObject?.id)
             loadContact();
-    }, []);
+    }, [initialObject]);
+    useEffect(() => {
+        if (localObject?.id) {
+            updateForm(localObject);
+        }
+    }, [localObject]);
     const updateForm = (data) => {
+        console.log("updateForm",data)
         if (data) {
-            console.log("useEffect");
             form.resetFields();
             form.setFieldsValue({
                 ...data,
-                bank_name: data?.bank?.name ?? "",
-                bik_name: data?.bik?.name ?? ""
+                bank: {selected: data?.bank?.id, output: data?.bank?.name},
+                bik: {selected: data?.bik?.id, output: data?.bik?.name}
             });
             formPassport.setFieldsValue({
                 ...data?.passport,
-                passport_place_issue_name: data?.passport?.name,
+                passport_place_issue: {selected: data?.passport?.passport_place_issue?.id, output: data?.passport?.passport_place_issue?.name},
+                birth_date: data?.passport?.birth_date ? (dayjs(data?.passport?.birth_date)) : null,
+                date: data?.passport?.date ? (dayjs(data?.passport?.date)) : null,
             });
-            setPpiAutoComplete({selected: data?.Ppi?.id});
-            setBikAutoComplete({selected: data?.organization?.id});
-            setBankAutoComplete({selected: data?.organization?.id});
 
             setAddress({
                 registration: data?.passport?.address_registration,
@@ -104,15 +105,16 @@ const PersonForm = ({localObject, initialObject, onCompleted}) => {
 
 
     const handleSubmit = () => {
+        const formData = form.getFieldsValue();
+        const formDataPassport = formPassport.getFieldsValue();
         mutate({
             variables: {
-                ...(actualObject ? {id: actualObject.id} : {}), ...form.getFieldsValue(),
-                ...formPassport.getFieldsValue(),
-                bank_id: bankAutoComplete?.selected ?? null,
-                bik_id: bikAutoComplete?.selected ?? null,
-                passport_place_issue_id: ppiAutoComplete?.selected ?? null,
-                address_registration: address.registration,
-                address_residential: address.residential
+                ...(actualObject ? {id: actualObject.id} : {}), ...formData, ...formDataPassport,
+                bank_id: formData?.bank?.selected ?? null,
+                bik_id: formData?.bik?.selected ?? null,
+                passport_place_issue_id: formDataPassport?.passport_place_issue?.selected ?? null,
+                address_registration: address?.registration?.unrestricted_value ?? address?.registration ?? null,
+                address_residential: address?.residential?.unrestricted_value ?? address?.residential ?? null
             }
         });
     };
@@ -147,16 +149,14 @@ const PersonForm = ({localObject, initialObject, onCompleted}) => {
                         <Form.Item name="date" label="Дата выдачи">
                             <DatePicker/>
                         </Form.Item>
-                        <Form.Item name="passport_place_issue_name" label="Место выдачи">
+                        <Form.Item name="passport_place_issue" label="Место выдачи">
                             <CustomAutoCompleteAndCreate
-                                formName={"passport_place_issue_name"}
+                                formName={"passport_place_issue"}
                                 formLabel={"Место выдачи"}
                                 placeholder={"Начните ввод..."}
-                                firstBtnOnClick={() => setPpiModalStatus("add")}
-
+                                firstBtnOnClick={() =>
+                                    setPpiModalStatus({ppi_id: null, mode: "add"})}
                                 data={dataPpi?.passportPlaceIssues?.items}
-                                stateSearch={ppiAutoComplete}
-                                setStateSearch={setPpiAutoComplete}
                             />
                         </Form.Item>
                         <Form.Item name="serial" label="Серия">
@@ -171,16 +171,16 @@ const PersonForm = ({localObject, initialObject, onCompleted}) => {
                                        width: '100%',
                                    }}>
                             <AddressSuggestions token={TokenDADATA}
+                                                defaultQuery={address?.registration ?? ""}
                                                 inputProps={{
                                                     placeholder: 'Введите адрес',
                                                     style: StyledAddressSuggestionsInput,
                                                 }}
-                                                defaultQuery={address.registration}
                                                 onChange={(suggestion) => setAddress({
                                                     ...address,
                                                     registration: suggestion?.unrestricted_value
                                                 })}
-                            />
+                                                style={{width: '100%'}}/>
                         </Form.Item>
                         <Form.Item name="address_residential" label="Адрес проживания" minchars={3}
                                    delay={50}
@@ -188,16 +188,16 @@ const PersonForm = ({localObject, initialObject, onCompleted}) => {
                                        width: '100%',
                                    }}>
                             <AddressSuggestions token={TokenDADATA}
+                                                defaultQuery={address?.regisresidentialtration ?? ""}
                                                 inputProps={{
                                                     placeholder: 'Введите адрес',
                                                     style: StyledAddressSuggestionsInput,
                                                 }}
-                                                defaultQuery={address.residential}
                                                 onChange={(suggestion) => setAddress({
                                                     ...address,
                                                     residential: suggestion?.unrestricted_value
                                                 })}
-                            />
+                                                style={{width: '100%'}}/>
                         </Form.Item>
                     </Form>
                 </Col>
@@ -233,21 +233,18 @@ const PersonForm = ({localObject, initialObject, onCompleted}) => {
                         <Form.Item name="payment_account" label="Расчётный счёт">
                             <Input/>
                         </Form.Item>
-                        <Form.Item name="bank_name" label="Банк">
+                        <Form.Item name="bank" label="Банк">
                             <CustomAutoComplete
                                 data={dataBank?.banks?.items}
                                 placeholder="Выберите банк"
-                                stateSearch={bankAutoComplete}
-                                setStateSearch={setBankAutoComplete}
                             />
                         </Form.Item>
-                        <Form.Item name="bik_name" label="Бик" style={{width: "100%"}}>
+                        <Form.Item name="bik" label="Бик" style={{width: "100%"}}>
                             <CustomAutoCompleteAndCreate
                                 placeholder={"Начните ввод..."}
                                 data={dataBik?.biks?.items}
-                                firstBtnOnClick={() => setBankModalStatus("add")}
-                                stateSearch={bikAutoComplete}
-                                setStateSearch={setBikAutoComplete}
+                                firstBtnOnClick={() =>
+                                    setBikModalStatus({bik_id: null, mode: "add"})}
                             />
                         </Form.Item>
 
@@ -270,35 +267,22 @@ const PersonForm = ({localObject, initialObject, onCompleted}) => {
                 </div>
             </Form.Item>
 
-            <Modal
-                key={bikAutoComplete?.selected}
-                open={ppiModalStatus === "add" || ppiModalStatus === "edit"}
-                onCancel={() => setPpiModalStatus(null)}
-                footer={null}
-                onClose={() => setPpiModalStatus(null)}>
-                {ppiModalStatus === "edit" ? (
-                    ppiAutoComplete?.selected && (
-                        <PassportPlaceIssuesForm onCompleted={() => setPpiModalStatus(null)}
-                                                 initialObject={{id: ppiAutoComplete.selected}}/>
-                    )
-                ) : (
-                    <PassportPlaceIssuesForm onCompleted={() => setPpiModalStatus(null)}/>
-                )}            </Modal>
-            <Modal
-                key={bikAutoComplete?.selected}
-                open={bikModalStatus === "add" || bikModalStatus === "edit"}
-
-                onCancel={() => setBikModalStatus(null)}
-                footer={null}
-                onClose={() => setBikModalStatus(null)}>
-                {bikModalStatus === "edit" ? (
-                    bikAutoComplete?.selected && (
-                        <BikForm onCompleted={() => setBikModalStatus(null)}
-                                 initialObject={{id: bikAutoComplete.selected}}/>
-                    )
-                ) : (
-                    <BikForm onCompleted={() => setBikModalStatus(null)}/>
-                )}            </Modal>
+            <PpiModalForm
+                key={ ppiModalStatus?.ppi_id }
+                objectId={ppiModalStatus?.ppi_id ?? null}
+                mode={ppiModalStatus?.mode ?? null}
+                onClose={() => setPpiModalStatus(null)}
+            />
+            <BikModalForm
+                key={bikModalStatus?.bik_id ?? null}
+                onClose={()=>setBikModalStatus(null)}
+                mode={bikModalStatus?.mode}
+            />
+            {/*<BankModalForm*/}
+            {/*    key={bikModalStatus?.bik?.id ?? null}*/}
+            {/*    onClose={()=>setBikModalStatus(null)}*/}
+            {/*    mode={bikModalStatus?.mode ?? null}*/}
+            {/*/>*/}
         </div>);
 };
 

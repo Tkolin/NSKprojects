@@ -1,4 +1,5 @@
 import {gql} from "@apollo/client";
+
 export const DELETE_CONTACT_MUTATION = gql`
     mutation DeletContact($id: ID! ) {
         deleteContact(
@@ -10,8 +11,10 @@ export const DELETE_CONTACT_MUTATION = gql`
             patronymic
             birth_day
             work_phone
+            work_email
             mobile_phone
             email
+
             position {
                 id
                 name
@@ -36,7 +39,7 @@ export const ADD_CONTACT_MUTATION = gql`
         $email: String,
         $position_id: ID,
         $organization_id: ID,
- 
+
     ) {
         createContact(
             first_name: $first_name
@@ -57,8 +60,10 @@ export const ADD_CONTACT_MUTATION = gql`
             patronymic
             birth_day
             work_phone
+            work_email
             mobile_phone
             email
+
             position {
                 id
                 name
@@ -100,8 +105,10 @@ export const UPDATE_CONTACT_MUTATION = gql`
             patronymic
             birth_day
             work_phone
+            work_email
             mobile_phone
             email
+
             position {
                 id
                 name

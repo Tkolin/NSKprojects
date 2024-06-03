@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import {Divider, Form, Modal, notification, Space, Table} from 'antd';
 import {CONTACTS_QUERY} from '../../../graphql/queries';
@@ -9,14 +9,13 @@ import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
 import Title from "antd/es/typography/Title";
 import {format} from "date-fns";
  import StyledLinkManagingDataTable from "../../../components/style/TableStyles";
+import ContactModalForm from "../../../components/modal/ContactModalForm";
 
 const ContactTable = () => {
 
     // Состояния
     const [formSearch] = Form.useForm();
-    const [selectedContact, setSelectedContact] = useState(null);
-    const [editModalVisible, setEditModalVisible] = useState(false);
-    const [addModalVisible, setAddModalVisible] = useState(false);
+    const [contactModalStatus, setContactModalStatus] = useState(null);
 
     // Данные
     const [page, setPage] = useState(1);
@@ -53,19 +52,9 @@ const ContactTable = () => {
     });
 
     // Обработчик событий
-    const handleClose = () => {
+    useEffect(() => {
         refetch();
-        setEditModalVisible(false);
-        setAddModalVisible(false);
-    };
-    const handleEdit = (contactId) => {
-        const contact = data.contacts.items.find(contact => contact.id === contactId);
-        setSelectedContact(contact);
-        setEditModalVisible(true);
-    };
-    const handleAdd = () => {
-        setAddModalVisible(true);
-    };
+    }, [contactModalStatus]);
     const handleDelete = (contactId) => {
         deleteContact({variables: {id: contactId}});
     };
@@ -85,7 +74,7 @@ const ContactTable = () => {
         {
             title: 'ФИО', key: 'FIO',
             sorter: true, ellipsis: true,
-            render: (text, record) => `${record.last_name}  ${record.first_name} ${record.patronymic}`
+            render: (text, record) => `${record?.last_name ?? ""}  ${record?.first_name ?? ""} ${record?.patronymic ?? ""}`
         }, {
             title: 'Личный тел.', dataIndex: 'mobile_phone', key: 'mobile_phone',
             sorter: true, ellipsis: true,
@@ -119,7 +108,7 @@ const ContactTable = () => {
                     title={"Удаление контакта"}
                     description={"Вы уверены, что нужно удалить этот контакт?"}
                     handleEdit={() => {
-                        handleEdit(record.id)
+                        setContactModalStatus({contact: record, mode: "edit"})
                     }}
                     handleDelete={() => handleDelete(record.id)}
                 />
@@ -145,8 +134,12 @@ const ContactTable = () => {
                         enterButton="Найти"
                         onSearch={onSearch}
                     />
-                    <StyledButtonGreen style={{marginBottom: 0}} onClick={() => handleAdd()}>Создать новую
-                        запись</StyledButtonGreen>
+                    <StyledButtonGreen
+                        style={{marginBottom: 0}}
+                        onClick={() => setContactModalStatus({contact: null, mode: "add"})}>
+
+                        Создать новую запись
+                    </StyledButtonGreen>
                 </Space>
             </Form.Item>
         </Form>
@@ -156,7 +149,7 @@ const ContactTable = () => {
                 offsetHeader: '64px',
             }}
             loading={loading}
-            dataSource={data?.contacts?.items?.map((org, index) => ({...org, key: index}))}
+            dataSource={data?.contacts?.items?.map((row) => ({...row, key: row.id}))}
             columns={columns}
             onChange={(pagination, filters, sorter, extra) => onChange(sorter)}
             pagination={{
@@ -175,24 +168,12 @@ const ContactTable = () => {
                 pageSizeOptions: ['10', '50', '100'],
             }}
         />
-        <Modal
-            key={selectedContact?.id}
-            open={editModalVisible}
-            onCancel={() => setEditModalVisible(false)}
-            footer={null}
-            onClose={handleClose}
-        >
-            <ContactForm contact={selectedContact} onClose={handleClose}/>
-        </Modal>
-        <Modal
-            key={selectedContact?.id}
-            open={addModalVisible}
-            onCancel={() => setAddModalVisible(false)}
-            footer={null}
-            onClose={handleClose}
-        >
-            <ContactForm contact={null} onClose={handleClose}/>
-        </Modal>
+        <ContactModalForm
+            key={contactModalStatus?.contact?.id ?? null}
+            onClose={()=>setContactModalStatus(null)}
+            object={contactModalStatus?.contact ?? null}
+            mode={contactModalStatus?.mode ?? null}
+        />
     </div>);
 };
 export default ContactTable;

@@ -3,6 +3,7 @@ import {Modal} from "antd";
  import React, {useEffect} from "react";
 import ContactForm from "../form/modelsForms/ContactForm";
 import {nanoid} from "nanoid";
+import GroupTypeProjectForm from "../form/modelsForms/GroupTypeProjectForm";
 
 const ContactModalForm = ({key,object,objectId,onClose, mode}) => {
     return (
@@ -17,7 +18,7 @@ const ContactModalForm = ({key,object,objectId,onClose, mode}) => {
             <StyledBlockRegular label={"Контакт"}>
                 {mode === "edit" ? (
                     (object || objectId) && (
-                        <ContactForm
+                        <GroupTypeProjectForm
                             onCompleted={() =>
                             onClose(null)}
                             initialObject={objectId ? {id: objectId} : null}
@@ -25,7 +26,7 @@ const ContactModalForm = ({key,object,objectId,onClose, mode}) => {
                         />
                     )
                 ) : (
-                    <ContactForm onCompleted={() => onClose(null)}/>
+                    <GroupTypeProjectForm onCompleted={() => onClose(null)}/>
                 )}
             </StyledBlockRegular>
         </Modal>

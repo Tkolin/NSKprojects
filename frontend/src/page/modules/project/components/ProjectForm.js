@@ -62,6 +62,7 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
     }, [actualProject]);
     useEffect(() => {
         setFormLoad(true)
+        form.setFieldValue("status_id",1)
     }, []);  
     useEffect(() => {
         console.log("newForm",form.getFieldsValue())
@@ -145,13 +146,13 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
                 loading={loadingDelegates}
                 firstBtnOnClick={() =>
                     setDelegatesModalStatus("add")}
-
+                rules={[{required: true}]}
                 onSelect={() => handleChange()}
                 items={dataDelegates?.contacts?.items}
                 formatOptionText={(row) => `${row.last_name ?? ""} ${row.first_name ?? ""}  ${row.patronymic ?? ""}`}
                 typeData={"FIO"}
             />
-            <Form.Item label={"Обьекты"}>
+            <Form.Item label={"Обьекты"} rules={[{required: true}]}>
                 <Collapse size={"small"}>
                     <Collapse.Panel header={"Обьекты"}>
                         <Form.Item name="facility_id" style={{width: "100%"}}>
@@ -172,11 +173,11 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
                     onChange={() => handleChange()}
                     placeholder="Выберите дату" style={{width: '100%'}}/>
             </Form.Item>
-            <Form.Item name="status_id" label="Статус проекта">
+            <Form.Item name="status_id" label="Статус проекта" >
                 <Select loading={loadingStatuses}
                     // disabled={!actualObject}
                         onChange={() => handleChange()}
-
+                        disabled={true}
                         placeholder={"В разработке"}>
                     {dataStatuses?.projectStatuses?.map(status => (
                         <Select.Option key={status.id}
@@ -184,12 +185,12 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
                 </Select>
             </Form.Item>
             <Space.Compact style={{width: '100%'}}>
-                <Form.Item name="price" style={{width: '100%'}} label="Стоимость">
+                <Form.Item name="price" style={{width: '100%'}} label="Стоимость" status_id>
                     <InputNumber suffix={"₽"} style={{width: '100%'}}
                                  formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                  parser={value => `${value}`.replace(/[^0-9]/g, '')}/>
                 </Form.Item>
-                <Form.Item name="prepayment" style={{width: '150px'}} label="Аванс">
+                <Form.Item name="prepayment" style={{width: '150px'}} label="Аванс" rules={[{required: true}]}>
                     <InputNumber suffix={"%"} style={{width: '100%'}}
                                  min={0} max={100}/>
                 </Form.Item>
@@ -206,13 +207,11 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
             onClose={() => setDelegatesModalStatus(null)}
             mode={delegatesModalStatus}/>
         <OrganizationModalForm
-            key={form.getFieldValue("organization_customer") ?? 0}
-            object={{id: form.getFieldValue("organization_customer")?.selected}}
+             object={{id: form.getFieldValue("organization_customer")?.selected}}
             onClose={() => setOrganizationsModalStatus(null)}
             mode={organizationsModalStatus}/>
         <TypeProjectModalForm
-            key={form.getFieldValue("type_project_document")?.selected}
-            object={{id: TypeProjectModalForm?.selected}}
+             object={{id: TypeProjectModalForm?.selected}}
             onClose={() => setTypeProjectModalStatus(null)}
             mode={typeProjectModalStatus}/>
     </div>)

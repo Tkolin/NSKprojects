@@ -1,10 +1,12 @@
 import {StyledBlockRegular} from "../style/BlockStyles";
 import {Modal} from "antd";
- import React, {useEffect} from "react";
+import React from "react";
 import ContactForm from "../form/modelsForms/ContactForm";
 import {nanoid} from "nanoid";
+import BikForm from "../form/modelsForms/BikForm";
+import PassportPlaceIssuesForm from "../form/modelsForms/PassportPlaceIssuesForm";
 
-const ContactModalForm = ({key,object,objectId,onClose, mode}) => {
+const PpiModalForm = ({key,object,objectId,onClose, mode}) => {
     return (
         <Modal
             key={key ?? nanoid()}
@@ -13,11 +15,12 @@ const ContactModalForm = ({key,object,objectId,onClose, mode}) => {
             footer={null}
             onClose={() => onClose(null)}
             width={"600px"}
+
         >
-            <StyledBlockRegular label={"Контакт"}>
+            <StyledBlockRegular label={"Место выдачи"}>
                 {mode === "edit" ? (
                     (object || objectId) && (
-                        <ContactForm
+                        <PassportPlaceIssuesForm
                             onCompleted={() =>
                             onClose(null)}
                             initialObject={objectId ? {id: objectId} : null}
@@ -25,11 +28,11 @@ const ContactModalForm = ({key,object,objectId,onClose, mode}) => {
                         />
                     )
                 ) : (
-                    <ContactForm onCompleted={() => onClose(null)}/>
+                    <PassportPlaceIssuesForm onCompleted={() => onClose(null)}/>
                 )}
             </StyledBlockRegular>
         </Modal>
     );
 };
 
-export default ContactModalForm;
+export default PpiModalForm;

@@ -1,15 +1,18 @@
-import {Button, Col, Form,  Row, } from "antd";
+import {Button, Col, Form, Row, Space,} from "antd";
 import { PlusOutlined, } from "@ant-design/icons";
-import React, { useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {useQuery} from "@apollo/client";
 
 import {IRDS_QUERY_COMPACT} from "../../../../graphql/queriesCompact";
 import IrdItem from "./IrdItem";
 import dayjs from "dayjs";
+import StageModalForm from "../../../../components/modal/StageModalForm";
+import {StyledButtonGreen} from "../../../../components/style/ButtonStyles";
 
 const IrdsProjectForm = ({localObject, initialObject, onCompleted, updateIrds, actualIrds}) => {
     // Первичные данные
     const [form] = Form.useForm();
+    const [typeProjectModalStatus, setTypeProjectModalStatus] = useState(null);
 
     const load = () => {
         console.log(actualIrds);
@@ -54,20 +57,33 @@ const IrdsProjectForm = ({localObject, initialObject, onCompleted, updateIrds, a
                             />
                         ))}
                         <Row>
-                            <Col span={24}>
-                                <Button
-                                    type="dashed"
-                                    onClick={() => add()}
-                                    style={{width: '100%'}}
-                                    icon={<PlusOutlined />}
-                                >
-                                    Добавить ирд
-                                </Button>
+                            <Col span={24} >
+                                <Space.Compact style={{width: '100%'}}>
+                                    <Button
+                                        type="dashed"
+                                        onClick={() => add()}
+                                        style={{width: '100%'}}
+                                        icon={<PlusOutlined/>}
+                                    >
+                                        Добавить ИРД к списку
+                                    </Button>
+                                    <StyledButtonGreen
+                                        type="dashed"
+                                        onClick={() => setTypeProjectModalStatus("add")}
+                                        style={{width: '100%'}}
+                                        icon={<PlusOutlined/>}
+                                    >
+                                        Создать ИРД
+                                    </StyledButtonGreen>
+                                </Space.Compact>
                             </Col>
                         </Row>
                     </>
                 )}
             </Form.List>
+            <StageModalForm
+                onClose={() => setTypeProjectModalStatus(null)}
+                mode={typeProjectModalStatus}/>
         </Form>
     )
 };

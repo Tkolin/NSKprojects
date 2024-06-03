@@ -16,11 +16,13 @@ import {NotificationContext} from "../../../NotificationProvider";
 import { rebuildProjectResultQuery, rebuildStagesResultQuery, rebuildIrdsResultQuery, rebuildStagesToQuery, rebuildIrdToQuery, rebuildProjectToQuery } from '../../../components/script/rebuildData/ProjectRebuilderQuery';
 import ProjectDetails from "./components/ProjectDetails";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
+import {useNavigate} from "react-router-dom";
 
 
 const Index = ({object}) => {
     const current = useProjectStore((state) => state.step);
     const setCurrent = useProjectStore((state) => state.setSteps);
+    const navigate = useNavigate();
 
     const project = useProjectStore((state) => state.project);
     const irds = useProjectStore((state) => state.irds);
@@ -44,8 +46,6 @@ const Index = ({object}) => {
 
 
     const reconstructProjectToIrdsAndStages = (project) => {
-        console.log("reconstructProjectToIrdsAndStages", project);
-        console.log("updateProject", rebuildProjectResultQuery(project));
 
         updateProject(rebuildProjectResultQuery(project));
 
@@ -100,7 +100,7 @@ const Index = ({object}) => {
                 mutateProject({variables: {data: rebuildProjectToQuery(project,project)}});
                 break;
             case 1:
-                mutateStage({variables: {data: rebuildStagesToQuery(stages,project)}});
+                mutateStage({variables: {data: rebuildStagesToQuery(stages, project)}});
                 break;
             case 2:
                 console.log("project", project);
@@ -151,7 +151,7 @@ const Index = ({object}) => {
                 type="navigation"
                 size="small"
                 current={current}
-                onChange={onChangeStep}
+                // onChange={onChangeStep}
                 className="site-navigation-steps"
                 items={[
                     {
@@ -181,21 +181,22 @@ const Index = ({object}) => {
                         <StyledBlockRegular label={"Основные данные об проекте"}>
                             <ProjectForm actualProject={project} onCompleted={() => next()}
                                          updateProject={(value) => {console.log("updateProject",value); updateProject(value);}}
-                                         confirmFormButton={
-                                             <div style={{textAlign: 'center'}}>
-                                                 <Space>
-                                                     <StyledButtonGreen style={{marginBottom: 0}} htmlType="submit">
-                                                         Сохранить проект
-                                                     </StyledButtonGreen>
-                                                 </Space>
-                                             </div>
-                                         }/>
+                                         // confirmFormButton={
+                                         //     <div style={{textAlign: 'center'}}>
+                                         //         <Space>
+                                         //             <StyledButtonGreen style={{marginBottom: 0}} htmlType="submit">
+                                         //                 Сохранить проект
+                                         //             </StyledButtonGreen>
+                                         //         </Space>
+                                         //     </div>
+                                         // }
+                            />
                         </StyledBlockRegular>
                     ) :
                     current === 1 ? (
                             <StyledBlockLarge label={"Этапы"}>
                                 <StagesProjectForm
-                                    updateStages={(value) => updateStages(value)}
+                                    updateStages={(value) => {console.log("updateStages",value); updateStages(value)}}
                                     actualStages={stages}
                                     project={project}/>
                             </StyledBlockLarge>
@@ -212,31 +213,36 @@ const Index = ({object}) => {
                                 <></>
                 }
             </div>
-            <div
-                style={{
-                    marginTop: 24,
-                }}
-            >
+            <div style={{display: 'flex', justifyContent: 'center', marginTop: 24}}>
+
                 {current < 4 - 1 && (
                     <Button type="primary" onClick={() => next()}>
                         Вперёд
                     </Button>
                 )}
                 {current === 4 - 1 && (
-                    <Button type="primary" onClick={() => console.log('Processing complete!')}>
+                    <Button type="primary" onClick={() =>
+                    {
+                        updateProject(null);
+                        updateIrds(null);
+                        updateStages(null);
+                        setCurrent(0);
+                        navigate("/reports/project");
+
+                    }}>
                         Завершить
                     </Button>
                 )}
-                {current > 0 && (
-                    <Button
-                        style={{
-                            margin: '0 8px',
-                        }}
-                        onClick={() => prev()}
-                    >
-                        Назад
-                    </Button>
-                )}
+                {/*{current > 0 && (*/}
+                {/*    // <Button*/}
+                {/*    //     style={{*/}
+                {/*    //         margin: '0 8px',*/}
+                {/*    //     }}*/}
+                {/*    //     onClick={() => prev()}*/}
+                {/*    // >*/}
+                {/*    //     Назад*/}
+                {/*    // </Button>*/}
+                {/*)}*/}
             </div>
         </>
 

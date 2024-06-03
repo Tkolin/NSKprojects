@@ -28,11 +28,12 @@ const BaseStyledFormItemSelect = ({
                                       formatOptionText,
                                       mode,
                                       labelCol,
+                                      rules,
     size,
                                       wrapperCol
                                   }) => (
 
-    <Form.Item name={formName} labelCol={labelCol} wrapperCol={wrapperCol} label={formLabel} style={{width: width}}>
+    <Form.Item name={formName} rules={rules} labelCol={labelCol} wrapperCol={wrapperCol} label={formLabel} style={{width: width}}>
         <Select
             style={{width: width}}
             popupMatchSelectWidth={false}
@@ -79,7 +80,7 @@ const BaseStyledSpaceCompactFormItemSelect = ({width, children}) => (
         {children}
     </Space.Compact>
 );
-const StyledFormItemSelectAndCreate = ({
+const StyledFormItemSelectAndCreate = ({rules,
                                            formName,
                                            formLabel,
                                            onSelect,
@@ -91,7 +92,7 @@ const StyledFormItemSelectAndCreate = ({
                                            formatOptionText,
                                            mode
                                        }) => (
-<BaseStyledSpaceCompactFormItemSelect width={"calc(100% + 32px)"}>
+<BaseStyledSpaceCompactFormItemSelect width={"calc(100% + 32px)"} >
     <BaseStyledFormItemSelect       formName={formName}
                                     formLabel ={formLabel}
                                     onSelect ={onSelect}
@@ -101,6 +102,7 @@ const StyledFormItemSelectAndCreate = ({
                                     onSearch = {onSearch}
                                     formatOptionText ={formatOptionText}
                                     mode = {mode}
+                                    rules={rules}
                                     width={"calc(100% - 32px)"}/>
 
     <BaseStyledButtonFormItemSelect position={0}

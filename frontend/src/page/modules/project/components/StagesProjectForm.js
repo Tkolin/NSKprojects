@@ -1,6 +1,6 @@
 import React, { useEffect, useState} from 'react';
 import {useQuery} from '@apollo/client';
-import {Button, Col, Form, Row} from 'antd';
+import {Button, Col, Form, Row, Space} from 'antd';
 import {
 STAGES_QUERY_COMPACT
 } from '../../../../graphql/queriesCompact';
@@ -10,15 +10,21 @@ import { PlusOutlined} from "@ant-design/icons";
 import dayjs from "dayjs";
 import StagesListHeader from "./StagesListHeader";
 import StagesListFooter from "./StagesListFooter";
+import {StyledButtonGreen} from "../../../../components/style/ButtonStyles";
+import TypeProjectModalForm from "../../../../components/modal/TypeProjectModalForm";
+import {nanoid} from "nanoid";
+import StageModalForm from "../../../../components/modal/StageModalForm";
 
 const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, project }) => {
 
     // Первичные данные
+
     const [form] = Form.useForm();
 
     // Внешняя логика
     const [totalToPercent, setTotalToPercent] = useState(0);
     const [totalToDuration,setTotalToDuration] = useState(0);
+    const [typeProjectModalStatus, setTypeProjectModalStatus] = useState(null);
 
 
     const load = () => {
@@ -100,21 +106,34 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
                         totalToPercent={totalToPercent}/>
 
                         <Row>
-                            <Col span={24}>
-                                <Button
-                                    type="dashed"
-                                    onClick={() => add()}
-                                    style={{width: '100%'}}
-                                    icon={<PlusOutlined/>}
-                                >
-                                    Добавить этап
-                                </Button>
+                            <Col span={24} >
+                                <Space.Compact style={{width: '100%'}}>
+                                    <Button
+                                        type="dashed"
+                                        onClick={() => add()}
+                                        style={{width: '100%'}}
+                                        icon={<PlusOutlined/>}
+                                    >
+                                        Добавить этап к списку
+                                    </Button>
+                                    <StyledButtonGreen
+                                        type="dashed"
+                                        onClick={() => setTypeProjectModalStatus("add")}
+                                        style={{width: '100%'}}
+                                        icon={<PlusOutlined/>}
+                                    >
+                                        Создать этап
+                                    </StyledButtonGreen>
+                                </Space.Compact>
                             </Col>
                         </Row>
 
                     </>
                 )}
             </Form.List>
+            <StageModalForm
+                 onClose={() => setTypeProjectModalStatus(null)}
+                mode={typeProjectModalStatus}/>
         </Form>
     );
 };

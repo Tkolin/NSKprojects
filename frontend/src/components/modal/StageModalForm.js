@@ -2,6 +2,7 @@ import {StyledBlockBig, StyledBlockRegular} from "../style/BlockStyles";
 import {Modal} from "antd";
 import OrganizationForm from "../form/modelsForms/OrganizationForm";
 import React from "react";
+import StageForm from "../form/modelsForms/StageForm";
 
 const OrganizationModalForm = ({key,objectId,object,onClose, mode }) => {
 
@@ -17,14 +18,14 @@ const OrganizationModalForm = ({key,objectId,object,onClose, mode }) => {
             <StyledBlockBig label={"Организация"}>
                 {mode === "edit" ? (
                     (object || objectId) && (
-                        <OrganizationForm
+                        <StageForm
                             localObject={object}
                             onCompleted={() => onClose()}
                             initialObject={objectId ? {id: objectId} : null}
                         />
                     )
                 ) : (
-                    <OrganizationForm onCompleted={() => onClose()}/>
+                    <StageForm onCompleted={() => onClose()}/>
                 )}
             </StyledBlockBig>
         </Modal>

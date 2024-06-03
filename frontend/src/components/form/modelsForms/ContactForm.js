@@ -22,7 +22,6 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
-    const nameModel = 'Контакт';
     const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
     const [loadContext, {loading, data}] = useLazyQuery(CONTACTS_QUERY_BY_ID, {
         variables: {id: initialObject?.id},
@@ -37,19 +36,18 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
 
     // Состояния
     const [organizationModalStatus, setOrganizationModalStatus] = useState(null);
-    const [organizationAutoComplete, setOrganizationAutoComplete] = useState({options: [], selected: {}});
-    const [positionAutoComplete, setPositionAutoComplete] = useState({options: [], selected: {}});
-
-
+    useEffect(() => {
+        console.log("organizationModalStatus",organizationModalStatus);
+    }, [organizationModalStatus]);
     // Мутация
     const [mutate] = useMutation(actualObject ? UPDATE_CONTACT_MUTATION : ADD_CONTACT_MUTATION, {
         onCompleted: (data) => {
-            openNotification('topRight', 'success', `Создание новой записи в таблице ${nameModel} выполнено успешно`);
+            openNotification('topRight', 'success', `Создание новой записи в таблице контакт выполнено успешно`);
             form.resetFields();
             onCompleted && onCompleted(data);
         },
         onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении сооздания ${nameModel}: ${error.message}`);
+            openNotification('topRight', 'error', `Ошибка при выполнении сооздания контакта: ${error.message}`);
         },
     });
 
@@ -59,18 +57,19 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
         if (initialObject?.id)
             loadContext();
     }, [initialObject]);
+    useEffect(() => {
+        if (actualObject?.id)
+            updateForm(actualObject);
+    }, [actualObject]);
     const updateForm = (data) => {
         if (data) {
-            console.log("useEffect");
             form.resetFields();
             form.setFieldsValue({
                 ...data,
-                position_name: data?.position?.name,
-                organization_name: data?.organization?.name,
+                position: {selected: data?.position?.id, output: data?.position?.name},
+                organization: {selected: data?.organization?.id, output: data?.organization?.name} ,
                 birth_day: data?.birth_day ? moment(data.birth_day) : null,
             });
-            setPositionAutoComplete({selected: data?.position?.id});
-            setOrganizationAutoComplete({selected: data?.organization?.id});
         }
     };
 
@@ -83,20 +82,22 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
     } = useQuery(ORGANIZATIONS_QUERY_COMPACT);
 
     const handleSubmit = () => {
+        const formData = form.getFieldsValue();
         mutate({
             variables: {
-                ...(actualObject ? {id: actualObject.id} : {}), ...form.getFieldsValue(),
-                organization_id: organizationAutoComplete?.selected, position_id: positionAutoComplete?.selected
+                ...(actualObject ? {id: actualObject.id} : {}), ...formData,
+                organization_id: formData?.organization?.selected ?? null,
+                position_id: formData?.position?.selected ?? null,
             }
         });
     };
     if (loading) return <LoadingSpinnerStyles/>
-
     if (errorOrganizations || errorPositions) return `Ошибка! ${errorOrganizations?.message || errorPositions?.message}`;
 
     return (
         <div>
             <Form
+                onChange={()=>console.log("change", form.getFieldsValue())}
                 form={form}
                 onFinish={handleSubmit}
                 labelCol={{span: 8}}
@@ -168,27 +169,29 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
 
                 <Divider orientation="left">Данные организации:</Divider>
                 <Form.Item
-                    name={"position_name"}
+                    loading={loadingPositions}
+                    name={"position"}
                     label={"Должность"}
                     style={{width: "100%"}}>
                     <CustomAutoComplete
                         data={dataPositions?.positions?.items}
                         placeholder="Выберите должность"
-                        stateSearch={positionAutoComplete}
-                        setStateSearch={setPositionAutoComplete}
-                    />
+                     />
                 </Form.Item>
                 <Form.Item
-                    name={"organization_name"}
+                    name={"organization"}
                     label={"Организация"}
                     style={{width: "100%"}}>
                     <CustomAutoCompleteAndCreateWitchEdit
+                        loading={loadingOrganizations}
                         data={dataOrganizations?.organizations?.items}
+                        onChange={(value)=>form.setFieldValue("organization",value)}
                         placeholder="Выберите организацию"
-                        stateSearch={organizationAutoComplete}
-                        setStateSearch={setOrganizationAutoComplete}
-                        firstBtnOnClick={() => setOrganizationModalStatus("add")}
-                        secondBtnOnClick={() => setOrganizationModalStatus("edit")}
+                        firstBtnOnClick={() =>
+                            setOrganizationModalStatus({organization_id: form.getFieldValue("organization")?.selected, mode: "add"})}
+                        secondBtnOnClick={() =>
+                            form.getFieldValue("organization")?.selected &&
+                            setOrganizationModalStatus({organization_id: form.getFieldValue("organization")?.selected, mode: "edit"})}
                     />
                 </Form.Item>
                 <Form.Item labelCol={{span: 24}} wrapperCol={{span: 24}}>
@@ -200,10 +203,12 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
                 </Form.Item>
             </Form>
             <OrganizationModalForm
-                key={organizationAutoComplete?.selected}
-                object={organizationAutoComplete?.selected}
-                mode={organizationModalStatus}
-                onClose={() => setOrganizationModalStatus(null)}/>
+                key={organizationModalStatus?.selected?.id ?? organizationModalStatus?.organization_id ?? null}
+                object={organizationModalStatus?.selected ?? null}
+                objectId={organizationModalStatus?.organization_id ?? null}
+                mode={organizationModalStatus?.mode ?? null}
+                onClose={() => setOrganizationModalStatus(null)}
+            />
         </div>
     );
 };
