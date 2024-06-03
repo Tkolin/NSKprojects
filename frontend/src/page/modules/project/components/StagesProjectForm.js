@@ -18,6 +18,7 @@ import StageModalForm from "../../../../components/modal/StageModalForm";
 const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, project }) => {
 
     // Первичные данные
+
     const [form] = Form.useForm();
 
     // Внешняя логика
