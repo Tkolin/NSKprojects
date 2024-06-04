@@ -3,7 +3,7 @@ import {Button, Col, Drawer, Form, Input, InputNumber, Popconfirm, Row, Table, T
 import {Chart} from 'react-google-charts';
 import {useMutation, useQuery} from "@apollo/client";
 import {PROJECTS_QUERY, TASKS_TO_PROJECT_QUERY} from "../../../../graphql/queries";
-import TaskProjectForm from "../projectTasks/components/old/TaskProjectForm";
+import TaskProjectForm from "../projectTasks/components/TaskProjectForm";
 import {DELETE_TASK_TO_PROJECT_MUTATION, UPDATE_TASK_TO_PROJECT_MUTATION} from "../../../../graphql/mutationsTask";
 import {useParams} from "react-router";
 import {StyledButtonGreen} from "../../../style/ButtonStyles";

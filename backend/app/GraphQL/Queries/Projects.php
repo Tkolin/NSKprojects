@@ -1,6 +1,7 @@
 <?php
 
 namespace App\GraphQL\Queries;
+use App\Models\Person;
 use App\Models\Project;
 use App\Services\GrpahQL\QueryService;
 
@@ -13,6 +14,16 @@ final readonly class Projects
             switch ($args['queryType']){
                 case "COMPACT":
                     return ['items' => Project::all()];
+                case "BY_ID":
+                    if (!isset($args['id'])) {
+                        return ['items' => 'Ошибка, отсутствует id'];
+                    }
+                    $data = Project::find($args['id']);
+                    if ($data) {
+                        return ['items' => [$data]];
+                    } else {
+                        return ['items' => 'Ошибка, контакт не найден'];
+                    }
                 default:
                     return ['items' => "Ошибка, не верный тип запрооса"];
             }
@@ -24,6 +35,7 @@ final readonly class Projects
                 ->with('delegations')
                 ->with('project_tasks')
                 ->with('project_irds.IRD')
+                ->with('project_tasks')
                 ->with('project_stages.stage');
 
         $queryService = new QueryService();

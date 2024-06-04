@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Form, Tree} from 'antd';
 
 
-const App = ({value, onChange, stageNumber}) => {
+const TasksTreeComponent = ({value, onChange, stageNumber, mode = "editor", onSelect, selectable}) => {
 
     const [expandedKeys, setExpandedKeys] = useState([]);
     const [selectedKeys, setSelectedKeys] = useState();// number: {31,31,13,13}
@@ -73,18 +73,16 @@ const App = ({value, onChange, stageNumber}) => {
     };
 
     const onExpand = (expandedKeysValue) => {
-        console.log('onExpand', expandedKeysValue);
         // if not set autoExpandParent to false, if children expanded, parent can not collapse.
         // or, you can remove all expanded children keys.
         setExpandedKeys(expandedKeysValue);
         setAutoExpandParent(false);
     };
     const onCheck = (checkedKeysValue) => {
-        console.log('onCheck', checkedKeysValue);
         onChange({...value, checkedKeys: {...value?.checkedKeys, [stageNumber]: checkedKeysValue}});
     };
-    const onSelect = (selectedKeysValue, info) => {
-        console.log('onSelect', info);
+    const onSelectLocal = (selectedKeysValue, info) => {
+        onSelect && onSelect(info.node);
         setSelectedKeys(selectedKeysValue);
     };
 
@@ -113,14 +111,15 @@ const App = ({value, onChange, stageNumber}) => {
                 autoExpandParent={autoExpandParent}
                 onCheck={onCheck}
                 checkedKeys={stageNumber && value?.checkedKeys && value?.checkedKeys[stageNumber]}
-                onSelect={onSelect}
+                onSelect={onSelectLocal}
                 selectedKeys={selectedKeys}
 
+                selectable={selectable}
 
                 className="draggable-tree"
                 defaultExpandedKeys={expandedKeys}
-                draggable
-                blockNode
+                draggable={mode === "editor"}
+                blockNode={mode === "editor"}
                 onDragEnter={onDragEnter}
                 onDrop={onDrop}
                 treeData={updateTreeData(value.gData)}
@@ -128,4 +127,4 @@ const App = ({value, onChange, stageNumber}) => {
 
     );
 };
-export default App;
+export default TasksTreeComponent;

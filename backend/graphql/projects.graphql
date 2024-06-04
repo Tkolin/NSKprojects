@@ -34,7 +34,8 @@ extend type Mutation{
     ): [ProjectStage] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateTaskToProject(
         data: [TasksToProject]
-    ): Int @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+        rules: String
+    ): [ProjectTask] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     deleteTaskToProject(
         id: ID!
     ): String @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
@@ -94,6 +95,7 @@ type ProjectTask{
     id: ID!
     inherited_task_ids: [InheritedTask]
     task: Task
+    stage_number: Int
     date_start: String
     date_end: String
     duration: Int

@@ -7,37 +7,77 @@ import {useMutation, useQuery} from "@apollo/client";
 import {TASKS_QUERY_COMPACT} from "../../../../graphql/queriesCompact";
 import LoadingSpinnerStyles from "../../../../components/style/LoadingSpinnerStyles";
 import StageRadioComponent from "./StageRadioComponent";
-import {UPDATE_TASK_TO_PROJECT_MUTATION} from "../../../../graphql/mutationsTask";
 
 
-const TasksToProjectForm = ({actualTasks, updateTasks, actualProject}) => {
-
+const TasksToProjectForm = ({actualTasks, updateTasks, actualProject, setLoading}) => {
     //Вынести за компонен
     const [formLoad, setFormLoad] = useState(false);
+    const [firstField, setFirstField] = useState(true);
     const [form] = Form.useForm();
-    const [stageNumber, setStageNumber] = useState()
-
-    useEffect(() => {
-        setFormLoad(true)
-    }, []);
-    useEffect(() => {
-        if(actualTasks){
-            form.setFieldValue("tasks", actualTasks)
-        }
-    }, [actualTasks]);
-    const handleChange = () => {
-        if (formLoad) {
-            const value = form.getFieldValue("tasks");
-            if (value)
-                updateTasks(value);
-        }
-    }
+    const [selectedStage, setSelectedStage] = useState()
+    const [tasksModalStatus, setTasksModalStatus] = useState({options: [], selected: {}});
+    const [localData, setLocalData] = useState()
     // Список задач
     const {
         loading: loadingTasks, error: errorTasks,
         data: dataTasks
     } = useQuery(TASKS_QUERY_COMPACT);
-    const [tasksModalStatus, setTasksModalStatus] = useState({options: [], selected: {}});
+    useEffect(() => {
+        setFormLoad(true)
+    }, []);
+    useEffect(() => {
+        if (actualTasks && actualTasks.gData && actualTasks.checkedKeys && firstField) {
+            setFirstField(false)
+            console.log("setFirstFiel",actualTasks);
+            form.setFieldValue("tasks", actualTasks)
+         }
+    }, [actualTasks]);
+    const handleChange = () => {
+        if (formLoad) {
+            const value = form.getFieldValue("tasks");
+            if (value?.gData && value?.checkedKeys && actualProject?.id){
+                setLocalData(value);
+                console.log(value);
+                updateTasks && updateTasks(rebuildFormDataToOutput(value?.gData, value?.checkedKeys, actualProject?.id));
+            }
+        }
+    }
+    const rebuildFormDataToOutput = (treeTasksInForm, listStageNumbersStageInForm, projectId) => {
+        const result = [];
+        console.log("start rebuildFormDataToOutput", treeTasksInForm, listStageNumbersStageInForm, projectId);
+        if (projectId, treeTasksInForm, listStageNumbersStageInForm) {
+            console.error("проекта нет для задачи ");
+        }
+        const processNode = (node, parentKey = null) => {
+            const task = {
+                projectId: projectId,
+                task_id: node.key.toString(),
+            };
+
+            if (parentKey) {
+                task.inherited_task_ids = [parentKey.toString()];
+            }
+
+            result.push(task);
+            if (node.children) {
+                node.children.forEach(child => processNode(child, task.task_id)); // Обновленный вызов с передачей node.key
+            }
+        };
+        console.log("processNode",result);
+        treeTasksInForm.forEach(node => processNode(node));
+        result.forEach(task => {
+            for (const [stageNumber, taskIds] of Object.entries(listStageNumbersStageInForm)) {
+                if (taskIds.includes(task.task_id)) {
+                    task.stage_number = parseInt(stageNumber);
+                    break;
+                }
+            }
+        });
+
+        return result;
+    };
+
+
     const handleSelectTask = (value) => {
         if (value?.id > 0) {
             const oldTasks = form.getFieldValue("tasks")
@@ -66,12 +106,14 @@ const TasksToProjectForm = ({actualTasks, updateTasks, actualProject}) => {
                     <Divider>Список этапов</Divider>
                     <Form.Item name={"stage_radio"}>
                         <StageRadioComponent
-                            actualStages={actualProject?.project_stage ?? [{id: 1, name: "s", number: 1}, {
-                                id: 2,
-                                name: "ss",
-                                number: 2
-                            }, {id: 3, name: "sss", number: 3}, {id: 4, name: "ssss", number: 4},]}
-                            onChange={(value) => setStageNumber(value?.number)}
+                            actualStages={actualProject?.project_stages?.map((row) => ({
+                                    id: row.id,
+                                    name: row?.stage?.name,
+                                    number: row?.number
+                                }
+
+                            ))}
+                            onChange={(value) => setSelectedStage(value?.number)}
                         />
                     </Form.Item>
 
@@ -79,10 +121,11 @@ const TasksToProjectForm = ({actualTasks, updateTasks, actualProject}) => {
 
                     <Form.Item name={"tasks"}>
                         <TasksTreeComponent
-                            stageNumber={stageNumber}
+                            stageNumber={selectedStage}
                             value={actualTasks}
-                            onChange={(value) => {
 
+                            onChange={(value) => {
+                                console.log("TasksTreeComponent", value);
                                 handleChange()
                             }}/>
                     </Form.Item>

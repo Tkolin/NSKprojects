@@ -240,6 +240,7 @@ export const PROJECTS_QUERY_BY_ID = gql`
                     date_start
                     date_end
                     duration
+                    stage_number
                     executors {
                         id
                         price

@@ -67,7 +67,7 @@ const TaskForm = ({localObject, initialObject, onCompleted }) => {
                 </Form.Item>
                 <div style={{textAlign: 'center'}}>
                     <Form.Item>
-                        <StyledButtonGreen style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
+                        <StyledButtonGreen style={{marginBottom: 0, marginTop: 10}} type="primary" onClick={handleSubmit}>
                             {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
                     </Form.Item>

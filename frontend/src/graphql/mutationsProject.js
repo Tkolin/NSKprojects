@@ -74,6 +74,36 @@ export const ADD_PROJECT_MUTATION = gql`
                 percent
                 price
             }
+            project_tasks {
+                id
+                description
+                inherited_task_ids {
+                    project_task_id
+                    project_inherited_task_id
+                }
+                price
+                task {
+                    id
+                    name
+                }
+                date_start
+                duration
+                date_end
+                executors {
+                    id
+                    price
+                    executor {
+                        id
+                        passport {
+                            id
+                            firstname
+                            lastname
+                            patronymic
+                        }
+                        payment_account
+                    }
+                }
+            }
             project_irds {
                 id
                 stageNumber
