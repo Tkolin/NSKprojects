@@ -20,7 +20,6 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
-    const nameModel = 'БИК';
 
     const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
     const [loadContext, {loading, data}] = useLazyQuery(TYPES_PROJECTS_QUERY_BY_ID, {
@@ -37,14 +36,15 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted}) => {
     // Состояния
 
     // Мутация
-    const [mutate, {loading: loadingSave}] = useMutation(actualObject ? UPDATE_TYPE_PROJECTS_MUTATION : ADD_TYPE_PROJECTS_MUTATION, {
+    const [mutate, {loading: loadingSave}] = useMutation((actualObject &&
+    actualObject?.id) ? UPDATE_TYPE_PROJECTS_MUTATION : ADD_TYPE_PROJECTS_MUTATION, {
         onCompleted: (data) => {
-            openNotification('topRight', 'success', `Мутация ${nameModel} выполнена успешно`);
+            openNotification('topRight', 'success', `Мутация  выполнена успешно`);
             form.resetFields();
             onCompleted && onCompleted(data?.createTypeProject || data?.updateTypeProject);
         },
         onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении мутации ${nameModel}: ${error.message}`);
+            openNotification('topRight', 'error', `Ошибка при выполнении мутации: ${error.message}`);
         },
     });
 
@@ -74,7 +74,7 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted}) => {
 
     // Завершение
     const handleSubmit = () => {
-        mutate({variables: {...(actualObject ? {id: actualObject.id} : {}), ...form.getFieldsValue()}});
+        mutate({variables: {...(actualObject ? {id: actualObject.id} : {}), ...form.getFieldsValue(), group_id: form.getFieldValue("group")?.selected}});
     };
     if (loading || loadingSave) return <LoadingSpinnerStyles/>
 
@@ -98,7 +98,8 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted}) => {
                 <div style={{textAlign: 'center'}}>
                     <Form.Item>
                         <StyledButtonGreen style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
-                            {actualObject ? `Обновить` : `Создать`}
+                            {(actualObject &&
+                                actualObject?.id) ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
                     </Form.Item>
                 </div>

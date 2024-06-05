@@ -3,6 +3,7 @@ import {Modal} from "antd";
 import OrganizationForm from "../form/modelsForms/OrganizationForm";
 import React, {useEffect} from "react";
 import TypeProjectForm from "../form/modelsForms/TypeProjectForm";
+import {nanoid} from "nanoid";
 
 const TypeProjectModalForm = ({key,object,onClose, mode, onCompleted, localObject}) => {
     useEffect(() => {
@@ -11,7 +12,7 @@ const TypeProjectModalForm = ({key,object,onClose, mode, onCompleted, localObjec
 
     return (
         <Modal
-            key={key}
+            key={key ?? nanoid()}
             open={mode === "add" || mode === "edit"}
             onCancel={() => onClose(null)}
             footer={null}
@@ -26,7 +27,7 @@ const TypeProjectModalForm = ({key,object,onClose, mode, onCompleted, localObjec
                     )
                     ||
                     (localObject) && (
-                        <TypeProjectForm onCompleted={() => onClose(null)}
+                        <TypeProjectForm onCompleted={onCompleted || onClose}
                                          localObject={localObject}/>
                     )
                 ) : (

@@ -12,17 +12,21 @@ export const DELETE_TYPE_PROJECT_MUTATION = gql`
 export const ADD_TYPE_PROJECTS_MUTATION = gql`
     mutation AddTypeProject(
         $name: String!,
-        $code: String,
-        $group_id: ID,
+        $code: String!,
+        $group_id: ID!,
     ) {
         createTypeProject(
             name: $name
-            group: $group_id
+            group_id: $group_id
             code: $code
         ) {
             id
             name
             code
+            group {
+                id
+                name
+            }
         }
     }
 `;
@@ -30,8 +34,8 @@ export const UPDATE_TYPE_PROJECTS_MUTATION = gql`
     mutation UpdateTypeProject(
         $id: ID!,
         $name: String!,
-        $code: String,        
-        $group_id: ID,
+        $code: String!,        
+        $group_id: ID!,
      ) {
         updateTypeProject(
             id: $id
@@ -42,6 +46,11 @@ export const UPDATE_TYPE_PROJECTS_MUTATION = gql`
         ) {
             id
             name
+            code
+            group {
+                id
+                name
+            }
              
         }
     }

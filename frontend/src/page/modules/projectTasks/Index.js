@@ -26,15 +26,17 @@ const Index = ({object}) => {
     // Активные состояния
     const [newCurrent, setNewCurrent] = useState(current)
     // Мутация
-    const [mutateTasksToProject] = useMutation(UPDATE_TASK_TO_PROJECT_MUTATION,{
+    const [mutateTasksToProject, {loading: loadingMutation}] = useMutation(UPDATE_TASK_TO_PROJECT_MUTATION,{
         onCompleted: (data)=>{
             console.log("UPDATE_TASK_TO_PROJECT_MUTATION",data);
             updateTasks(data.updateTaskToProject);
+            setCurrent(newCurrent);
         },
         onError: (error) => {
 
         }
     });
+
     const rebuildQueryToTasks = (tasksFromQuery) => {
         console.log("start rebuildQueryToTasks", tasksFromQuery);
         if(!tasksFromQuery)

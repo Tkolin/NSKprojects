@@ -9,6 +9,6 @@ final readonly class CreateTypeProject
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
-        return TypeProjectDocument::create($args);
+         return TypeProjectDocument::create($args);
     }
 }
