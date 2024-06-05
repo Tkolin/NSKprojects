@@ -40,6 +40,7 @@ export const GROUP_TYPE_PROJECTS_QUERY_COMPACT = gql`
     query GroupTypeProjectsQueryCompact {
         groupTypeProjects   {
             id
+            code
             name
         }
     }
@@ -117,6 +118,7 @@ export const TYPES_PROJECTS_QUERY_COMPACT = gql`
             items {
                 id
                 name
+                code
                 group {
                     id
                     name

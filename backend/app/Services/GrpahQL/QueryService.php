@@ -65,6 +65,8 @@ class QueryService
         $perPage = $limit ?? 10;
         $currentPage = $page ?? 1;
 
+        $query->orderBy('id', 'desc');
+
         // Выполняем пагинацию
         $paginator = $query->paginate($perPage, ['*'], 'page', $currentPage);
 

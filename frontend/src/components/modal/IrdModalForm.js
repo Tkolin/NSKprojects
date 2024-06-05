@@ -5,7 +5,7 @@ import React from "react";
 import StageForm from "../form/modelsForms/StageForm";
 import IrdForm from "../form/modelsForms/IrdForm";
 
-const OrganizationModalForm = ({key,objectId,object,onClose, mode }) => {
+const OrganizationModalForm = ({key,objectId,object,onClose, mode, onCompleted }) => {
 
     return (
         <Modal
@@ -26,7 +26,7 @@ const OrganizationModalForm = ({key,objectId,object,onClose, mode }) => {
                         />
                     )
                 ) : (
-                    <IrdForm onCompleted={() => onClose()}/>
+                    <IrdForm  onCompleted={onCompleted || onClose}/>
                 )}
             </StyledBlockBig>
         </Modal>

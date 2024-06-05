@@ -26,11 +26,11 @@ const IrdForm = ({localObject, initialObject, onCompleted }) => {
     });
 
     // Мутация
-    const [mutate] = useMutation(actualObject ? UPDATE_STAGE_MUTATION : ADD_STAGE_MUTATION, {
+    const [mutate, {loading: loadingSave}] = useMutation(actualObject ? UPDATE_STAGE_MUTATION : ADD_STAGE_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Мутация ${nameModel} выполнена успешно`);
             form.resetFields();
-            onCompleted && onCompleted(data);
+            onCompleted && onCompleted(data?.createStage || data?.createPerson);
         },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при выполнении мутации ${nameModel}: ${error.message}`);
@@ -59,7 +59,7 @@ const IrdForm = ({localObject, initialObject, onCompleted }) => {
     const handleSubmit = () => {
         mutate({ variables: { ...(actualObject ? { id: actualObject.id } : {}), ...form.getFieldsValue() } });
     };
-    if (loading) return <LoadingSpinnerStyles/>
+    if (loading || loadingSave) return <LoadingSpinnerStyles/>
 
     return (
         <StyledBlockRegular label={nameModel}>

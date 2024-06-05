@@ -40,11 +40,11 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
         console.log("organizationModalStatus",organizationModalStatus);
     }, [organizationModalStatus]);
     // Мутация
-    const [mutate] = useMutation(actualObject ? UPDATE_CONTACT_MUTATION : ADD_CONTACT_MUTATION, {
+    const [mutate, {loading: loadingSave}] = useMutation(actualObject ? UPDATE_CONTACT_MUTATION : ADD_CONTACT_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Создание новой записи в таблице контакт выполнено успешно`);
             form.resetFields();
-            onCompleted && onCompleted(data);
+            onCompleted && onCompleted(data?.createContact || data?.updateContact);
         },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при выполнении сооздания контакта: ${error.message}`);
@@ -91,7 +91,7 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
             }
         });
     };
-    if (loading) return <LoadingSpinnerStyles/>
+    if (loading || loadingSave) return <LoadingSpinnerStyles/>
     if (errorOrganizations || errorPositions) return `Ошибка! ${errorOrganizations?.message || errorPositions?.message}`;
 
     return (

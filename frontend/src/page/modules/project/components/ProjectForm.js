@@ -1,15 +1,14 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {
-    Form, Input, Select, InputNumber, Space, Cascader, Collapse,
+    Form, Input, Select, InputNumber, Space, Collapse, Button,
 } from 'antd';
 import {useQuery} from '@apollo/client';
 
 import {DatePicker} from "antd/lib";
 import dayjs from "dayjs";
-import {StyledFormItemSelectAndCreate} from "../../../../components/style/SelectStyles";
 import {NotificationContext} from "../../../../NotificationProvider";
 import {
-    CONTACTS_QUERY_COMPACT,
+    CONTACTS_QUERY_COMPACT, GROUP_TYPE_PROJECTS_QUERY_COMPACT,
     ORGANIZATIONS_QUERY_COMPACT,
     PROJECT_STATUSES_QUERY_COMPACT,
     TYPES_PROJECTS_QUERY_COMPACT
@@ -22,16 +21,36 @@ import OrganizationModalForm from "../../../../components/modal/OrganizationModa
 import TypeProjectModalForm from "../../../../components/modal/TypeProjectModalForm";
 import ContactModalForm from "../../../../components/modal/ContactModalForm";
 import FacilitiesTreeComponent from "./FacilitiesTreeComponent";
-import {Panel} from "reactflow";
 import DateRangePickerComponent from "./DateRangePickerComponent";
+import {StyledButtonGreen} from "../../../../components/style/ButtonStyles";
+import {PlusOutlined} from "@ant-design/icons";
+import {nanoid} from "nanoid";
 
 
 const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confirmFormButton}) => {
+    // Получение данных для выпадающих списков
+    const {loading: loadingStatuses, error: errorStatuses, data: dataStatuses} =
+        useQuery(PROJECT_STATUSES_QUERY_COMPACT,);
+    const {
+        loading: loadingTypeProject, error: errorTypeProject, data: dataTypeProject
+    } = useQuery(TYPES_PROJECTS_QUERY_COMPACT, {onCompleted: () => updateNumber()});
+    const {
+        loading: loadingGroupProject, error: errorGroupProject, data: dataGroupProject
+    } = useQuery(GROUP_TYPE_PROJECTS_QUERY_COMPACT, {onCompleted: () => updateNumber()});
+
+    const {
+        loading: loadingDelegates, error: errorDelegates, data: dataDelegates
+    } = useQuery(CONTACTS_QUERY_COMPACT);
+    const {
+        loading: loadingOrganizations, error: errorOrganizations, data: dataOrganizations, refetch: refetchOrganizations
+    } = useQuery(ORGANIZATIONS_QUERY_COMPACT);
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
     const [formLoad, setFormLoad] = useState(false);
+    const [selectedGroupTypeProject, setSelectedGroupTypeProject] = useState(false);
     const handleChange = () => {
+
         if (!actualProject?.id)
             updateNumber();
         if (formLoad)
@@ -57,45 +76,34 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
         });
     }
     useEffect(() => {
-        if(!formLoad)
+        console.log("typeProjectModalStatus", typeProjectModalStatus);
+    }, [typeProjectModalStatus]);
+    useEffect(() => {
+        if (!formLoad)
             load();
     }, [actualProject]);
     useEffect(() => {
         setFormLoad(true)
-        form.setFieldValue("status_id",1)
-    }, []);  
+        form.setFieldValue("status_id", 1)
+    }, []);
     useEffect(() => {
-        console.log("newForm",form.getFieldsValue())
+        console.log("newForm", form.getFieldsValue())
     }, [form]);
 
-    // Получение данных для выпадающих списков
-    const {loading: loadingStatuses, error: errorStatuses, data: dataStatuses} =
-        useQuery(PROJECT_STATUSES_QUERY_COMPACT,);
-    const {
-        loading: loadingTypeProject, error: errorTypeProject, data: dataTypeProject
-    } = useQuery(TYPES_PROJECTS_QUERY_COMPACT, {onCompleted:()=>updateNumber()});
-
-    const {
-        loading: loadingDelegates, error: errorDelegates, data: dataDelegates
-    } = useQuery(CONTACTS_QUERY_COMPACT);
-    const {
-        loading: loadingOrganizations, error: errorOrganizations, data: dataOrganizations, refetch: refetchOrganizations
-    } = useQuery(ORGANIZATIONS_QUERY_COMPACT);
 
     // Логика формы
     const updateNumber = () => {
         console.log("actualProject?.id", actualProject?.id);
-        if(actualProject?.id && actualProject?.id > -1)
-        {
+        if (actualProject?.id && actualProject?.id > -1) {
             return;
         }
         const facilitiCode = (
             form.getFieldValue("facility_id")?.checkedObjects &&
             form.getFieldValue("facility_id")?.checkedObjects[0] &&
             form.getFieldValue("facility_id")?.checkedObjects[0]?.key) ?? "__-__-___-___";
-        form.setFieldValue("number", (
-            (dataTypeProject?.typeProjects?.items?.find(row => row.id === form.getFieldValue("type_project_document")?.selected)?.group?.name ?? "___") +
-            "–" +  "24" +
+            form.setFieldValue("number", (
+            (dataGroupProject?.groupTypeProjects?.find(row => row.id === selectedGroupTypeProject)?.code ?? "___") +
+            "–" + "24" +
             "–" + (form.getFieldValue("organization_customer")?.selected ?? "___") +
             "–" + facilitiCode));
     }
@@ -108,28 +116,91 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
             setFormLoad(true);
 
         }} layout="vertical">
-                <EmptyFormItem name={"id"}/>
+            <EmptyFormItem name={"id"}/>
             <Form.Item name="number" label="Номер проекта" rules={[{required: true}]}>
                 <Input disabled={true}/>
             </Form.Item>
             <Form.Item name="name" label="Наименование проекта" rules={[{required: true}]}>
                 <Input/>
             </Form.Item>
-            <Form.Item name="type_project_document" label="Тип документа" rules={[{required: true}]}>
-                <CustomAutoCompleteAndCreate
-                    placeholder={"Начните ввод..."}
-                    loading={loadingTypeProject}
-                    onChange={()=>handleChange()}
-                    firstBtnOnClick={() => setTypeProjectModalStatus("add")}
-                    data={dataTypeProject?.typeProjects?.items}
-                 />
+            <Form.Item name="group_type_project_document_id" label="Тип документа" rules={[{required: true}]}>
+                <Select
+                    status={form.getFieldValue("group_type_project_document_id") ? "" : "warning"}
+                    disabled={actualProject?.id}
+                    loading={loadingGroupProject}
+                    onChange={(value) => {
+                        handleChange();
+                        setSelectedGroupTypeProject(value);
+                        form.setFieldValue("type_project_document_id", null);
+                    }}>
+                    {dataGroupProject?.groupTypeProjects?.map(row => (
+                        <Select.Option key={row.id}
+                                       value={row.id}>{row.code ?? ""} - {row.name ?? ""}</Select.Option>))}
+                </Select>
             </Form.Item>
+            <Space.Compact style={{width: "100%"}}>
+                <Form.Item
+                    style={{width:  "calc(100% - 32px)"}}
+                    name="type_project_document_id" label="Подтип документа" rules={[{required: true}]}>
+                    <Select
+                        style={{width: "100%"}}
+                        status={form.getFieldValue("type_project_document_id") ? "" : "warning"}
+                        loading={loadingTypeProject}
+                        disabled={actualProject?.id}
+                        placeholder={"Сначала выберите тип документа"}
+                        onChange={() => handleChange()}
+                    >
+                        {(() => {
+                            if (!selectedGroupTypeProject && dataTypeProject?.typeProjects) {
+                                return dataTypeProject?.typeProjects?.items?.map(row => (
+                                    <Select.Option key={row.id} value={row.id}>
+                                        {row.code ?? ""} - {row.name ?? ""}
+                                    </Select.Option>
+                                ));
+                            }
+                            const filteredItems = dataTypeProject?.typeProjects?.items?.filter(row => row?.group?.id === selectedGroupTypeProject);
 
-            <Form.Item  name="organization_customer" label="Заказчик" rules={[{required: true}]}>
+                            if (filteredItems?.length === 0) {
+                                return <Select.Option disabled>Данные отсутствуют</Select.Option>;
+                            }
+
+                            return filteredItems?.map(row => (
+                                <Select.Option key={row.id} value={row.id}>
+                                    {row.code ?? ""} - {row.name ?? ""}
+                                </Select.Option>
+                            ));
+                        })()}
+                    </Select>
+                </Form.Item>
+                <div>
+                    <StyledButtonGreen
+                        style={{
+                            marginTop: 30,
+                        }}
+                        disabled={!selectedGroupTypeProject}
+                        type={"dashed"}
+                        icon={<PlusOutlined/>}
+                        onClick={() => {
+                            const group = dataGroupProject?.groupTypeProjects?.find(
+                                row => row.id === selectedGroupTypeProject);
+                            setTypeProjectModalStatus({
+                                object:
+                                    {
+                                        code: group?.code + " - ",
+                                        name: group?.name + " - ",
+                                        group: group
+                                    }, mode: "edit"
+                            })
+                        }}
+                    />
+                </div>
+
+            </Space.Compact>
+
+
+            <Form.Item name="organization_customer" label="Заказчик" rules={[{required: true}]}>
                 <CustomAutoCompleteAndCreate
-                    placeholder={"Начните ввод..."}
-                    loading={loadingOrganizations}
-                    onChange={()=>handleChange()}
+                    onChange={() => handleChange()}
                     firstBtnOnClick={() => {
                         setOrganizationsModalStatus("add");
                     }}
@@ -138,20 +209,20 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
             </Form.Item>
 
 
-            <StyledFormItemSelectAndCreate
-                formName={"delegates_id"}
-                formLabel={"Представители компании"}
-                mode={'multiple'}
-                placeholder={"Начните ввод..."}
-                loading={loadingDelegates}
-                firstBtnOnClick={() =>
-                    setDelegatesModalStatus("add")}
-                rules={[{required: true}]}
-                onSelect={() => handleChange()}
-                items={dataDelegates?.contacts?.items}
-                formatOptionText={(row) => `${row.last_name ?? ""} ${row.first_name ?? ""}  ${row.patronymic ?? ""}`}
-                typeData={"FIO"}
-            />
+            {/*<StyledFormItemSelectAndCreate*/}
+            {/*    formName={"delegates_id"}*/}
+            {/*    formLabel={"Представители компании"}*/}
+            {/*    mode={'multiple'}*/}
+            {/*    placeholder={"Начните ввод..."}*/}
+            {/*    loading={loadingDelegates}*/}
+            {/*    firstBtnOnClick={() =>*/}
+            {/*        setDelegatesModalStatus("add")}*/}
+            {/*    rules={[{required: true}]}*/}
+            {/*    onSelect={() => handleChange()}*/}
+            {/*    items={dataDelegates?.contacts?.items}*/}
+            {/*    formatOptionText={(row) => `${row.last_name ?? ""} ${row.first_name ?? ""}  ${row.patronymic ?? ""}`}*/}
+            {/*    typeData={"FIO"}*/}
+            {/*/>*/}
             <Form.Item label={"Обьекты"} rules={[{required: true}]}>
                 <Collapse size={"small"}>
                     <Collapse.Panel header={"Обьекты"}>
@@ -173,7 +244,7 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
                     onChange={() => handleChange()}
                     placeholder="Выберите дату" style={{width: '100%'}}/>
             </Form.Item>
-            <Form.Item name="status_id" label="Статус проекта" >
+            <Form.Item name="status_id" label="Статус проекта">
                 <Select loading={loadingStatuses}
                     // disabled={!actualObject}
                         onChange={() => handleChange()}
@@ -207,13 +278,14 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
             onClose={() => setDelegatesModalStatus(null)}
             mode={delegatesModalStatus}/>
         <OrganizationModalForm
-             object={{id: form.getFieldValue("organization_customer")?.selected}}
+            object={{id: form.getFieldValue("organization_customer")?.selected}}
             onClose={() => setOrganizationsModalStatus(null)}
             mode={organizationsModalStatus}/>
         <TypeProjectModalForm
-             object={{id: TypeProjectModalForm?.selected}}
+            key={nanoid()}
+            localObject={typeProjectModalStatus?.object}
             onClose={() => setTypeProjectModalStatus(null)}
-            mode={typeProjectModalStatus}/>
+            mode={typeProjectModalStatus?.mode}/>
     </div>)
 };
 

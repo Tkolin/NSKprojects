@@ -1,21 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {AutoComplete, Button, Form, Space} from 'antd';
 import {EditOutlined, PlusOutlined} from '@ant-design/icons';
+import {StyledButtonGreen} from "./ButtonStyles";
 
 
-const ButtonGreenStyle = {
-    background: "#52c41a",
-    color: "#fff",
-    borderColor: "#52c41a",
-    '&:hover': {
-        background: '#389e0d',
-        borderColor: '#389e0d',
-    },
-    '&:active': {
-        background: '#237804',
-        borderColor: '#237804',
-    }
-};
+
 const CustomAutoCompleteComponent = ({
                                          width,
                                          placeholder,
@@ -28,16 +17,14 @@ const CustomAutoCompleteComponent = ({
                                          onSelect,
                                          typeData
                                      }) => {
-
     const getName = (row, typeData) => {
-        if (typeData === "FIO") {
+        if (typeData === "FIO")
             return `${row.last_name || row.lastname} ${row.first_name || row.firstname} ${row.patronymic ?? ""}`;
-        }
+        else if (typeData === "CODENAME")
+            return `${row.code} - ${row.name}`
         return row.name;
     };
-    useEffect(() => {
-        console.log(value);
-    }, [value]);
+
 
 
     const handleSearch = (txt) => {
@@ -50,7 +37,7 @@ const CustomAutoCompleteComponent = ({
                 label: getName(row, typeData),
                 data: row.id
             }));
-         onChange({...value, options: filteredOptions, output: txt, selected: null});
+        onChange({...value, options: filteredOptions, output: txt, selected: null});
     };
 
     return (
@@ -67,19 +54,19 @@ const CustomAutoCompleteComponent = ({
             loading={loading}
             value={value?.output}
             options={value?.options}
-            onClear={()=>onChange({...value, selected: null, output: null})}
+            onClear={() => onChange({...value, selected: null, output: null})}
             onSearch={handleSearch}
             onSelect={(variable, option) => {
-                onSelect({id: option.data, name: option.value})
-                 onChange({...value, selected: option.data, output: option.label});
+                onSelect && onSelect({id: option.data, name: option.value})
+                onChange && onChange({...value, selected: option.data, output: option.label});
             }}
-            placeholder={placeholder}
+            placeholder={placeholder ?? "Начните ввод..."}
         />
     )
 };
 
 const BaseStyledButton = ({onClick, icon, style, disabled}) => (
-    <Button
+    <StyledButtonGreen
         style={{
             ...style,
             marginBottom: 0,
@@ -117,8 +104,7 @@ const CustomAutoCompleteAndCreate = ({
             width={"calc(100% - 32px)"}
             typeData={typeData} data={data} value={value} onChange={onChange}/>
         <BaseStyledButton onClick={firstBtnOnClick}
-                          icon={<PlusOutlined/>}
-                          style={ButtonGreenStyle}/>
+                          icon={<PlusOutlined/>}/>
     </Space.Compact>
 
 );
@@ -184,8 +170,7 @@ const CustomAutoCompleteAndCreateWitchEdit = ({
 
         <BaseStyledButton onClick={firstBtnOnClick}
                           icon={<PlusOutlined/>}
-                          type={'dashed'}
-                          style={ButtonGreenStyle}/>
+                          type={'dashed'}/>
         <BaseStyledButton onClick={secondBtnOnClick}
                           icon={<EditOutlined/>}
                           disable={secondDisable}/>

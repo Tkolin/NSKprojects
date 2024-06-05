@@ -4,6 +4,7 @@ import { Button } from 'antd';
 
 
 export const StyledButtonGreen = styled(Button)`
+    
     background: #52c41a; /* зеленый цвет */
     color: #fff; /* белый цвет текста */
     border-color: #52c41a; /* цвет рамки */

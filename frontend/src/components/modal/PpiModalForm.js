@@ -6,7 +6,7 @@ import {nanoid} from "nanoid";
 import BikForm from "../form/modelsForms/BikForm";
 import PassportPlaceIssuesForm from "../form/modelsForms/PassportPlaceIssuesForm";
 
-const PpiModalForm = ({key,object,objectId,onClose, mode}) => {
+const PpiModalForm = ({key,object,objectId,onClose, mode, onCompleted}) => {
     return (
         <Modal
             key={key ?? nanoid()}
@@ -28,7 +28,12 @@ const PpiModalForm = ({key,object,objectId,onClose, mode}) => {
                         />
                     )
                 ) : (
-                    <PassportPlaceIssuesForm onCompleted={() => onClose(null)}/>
+                    <PassportPlaceIssuesForm
+                        onCompleted={(value) => {
+                            console.log("exitPPI", value);
+                            onCompleted && onCompleted(value);
+                        }}
+                    />
                 )}
             </StyledBlockRegular>
         </Modal>

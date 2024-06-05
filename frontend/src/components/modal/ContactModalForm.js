@@ -4,7 +4,7 @@ import {Modal} from "antd";
 import ContactForm from "../form/modelsForms/ContactForm";
 import {nanoid} from "nanoid";
 
-const ContactModalForm = ({key,object,objectId,onClose, mode}) => {
+const ContactModalForm = ({key,object,objectId,onClose, mode, onCompleted}) => {
     return (
         <Modal
             key={key ?? nanoid()}
@@ -25,7 +25,7 @@ const ContactModalForm = ({key,object,objectId,onClose, mode}) => {
                         />
                     )
                 ) : (
-                    <ContactForm onCompleted={() => onClose(null)}/>
+                    <ContactForm  onCompleted={onCompleted || onClose}/>
                 )}
             </StyledBlockRegular>
         </Modal>

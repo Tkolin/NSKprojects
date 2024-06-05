@@ -13,6 +13,7 @@ class GroupTypeProjectDocument extends Model
 
     protected $fillable = [
         'id',
+        'code',
         'name',
         'technical_specification_id',
     ];

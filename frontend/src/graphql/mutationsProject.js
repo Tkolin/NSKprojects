@@ -23,7 +23,13 @@ export const ADD_PROJECT_MUTATION = gql`
             type_project_document
             {
                 id
+                code
                 name
+                group {
+                    id
+                    code
+                    name
+                }
             }
             facilities {
                 id
@@ -139,7 +145,13 @@ export const UPDATE_PROJECT_MUTATION = gql`
             type_project_document
             {
                 id
+                code
                 name
+                group {
+                    id
+                    code
+                    name
+                }
             }
             facilities {
                 id

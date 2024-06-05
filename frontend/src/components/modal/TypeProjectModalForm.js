@@ -1,10 +1,14 @@
 import {StyledBlockRegular} from "../style/BlockStyles";
 import {Modal} from "antd";
 import OrganizationForm from "../form/modelsForms/OrganizationForm";
-import React from "react";
+import React, {useEffect} from "react";
 import TypeProjectForm from "../form/modelsForms/TypeProjectForm";
 
-const TypeProjectModalForm = ({key,object={id: null},onClose, mode="edit"||"add"}) => {
+const TypeProjectModalForm = ({key,object,onClose, mode, onCompleted, localObject}) => {
+    useEffect(() => {
+        console.log("modela localObject", localObject);
+    }, [localObject]);
+
     return (
         <Modal
             key={key}
@@ -13,16 +17,20 @@ const TypeProjectModalForm = ({key,object={id: null},onClose, mode="edit"||"add"
             footer={null}
             onClose={() => onClose(null)}
             width={"600px"}
-
         >
             <StyledBlockRegular label={"Тип документации"}>
                 {mode === "edit" ? (
-                    object && (
+                    (object) && (
                         <TypeProjectForm onCompleted={() => onClose(null)}
                                           initialObject={object}/>
                     )
+                    ||
+                    (localObject) && (
+                        <TypeProjectForm onCompleted={() => onClose(null)}
+                                         localObject={localObject}/>
+                    )
                 ) : (
-                    <TypeProjectForm  onCompleted={() => onClose(null)}/>
+                    <TypeProjectForm  onCompleted={onCompleted || onClose}/>
                 )}
             </StyledBlockRegular>
         </Modal>

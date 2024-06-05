@@ -11,6 +11,7 @@ import {
 } from "../../../graphql/queriesCompact";
 import {CONTACTS_QUERY_BY_ID, GROUP_TYPE_PROJECTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
 import {CustomAutoCompleteAndCreate} from "../../style/SearchAutoCompleteStyles";
+import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 const {Option} = Select;
 
 const GroupTypeProjectForm = ({ initialObject, onCompleted }) => {
@@ -34,11 +35,11 @@ const GroupTypeProjectForm = ({ initialObject, onCompleted }) => {
         },
     });
     // Мутация
-    const [mutate] = useMutation(actualObject ? UPDATE_GROUP_TYPE_PROJECTS_MUTATION : ADD_GROUP_TYPE_PROJECTS_MUTATION, {
+    const [mutate, {loading: loadingSave}] = useMutation(actualObject ? UPDATE_GROUP_TYPE_PROJECTS_MUTATION : ADD_GROUP_TYPE_PROJECTS_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Создание новой записи в таблице ${nameModel} выполнено успешно`);
             form.resetFields();
-            onCompleted && onCompleted(data);
+            onCompleted && onCompleted(data?.updateTypeProject || data?.updateTypeProject);
         },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при выполнении сооздания ${nameModel}: ${error.message}`);
@@ -66,6 +67,7 @@ const GroupTypeProjectForm = ({ initialObject, onCompleted }) => {
     };
 
     if (errorGroupTypeProject) return `Ошибка! ${errorGroupTypeProject?.message}`;
+    if (loading || loadingSave) return <LoadingSpinnerStyles/>
 
     return (
         <div>

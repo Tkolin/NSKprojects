@@ -29,11 +29,21 @@ export const rebuildProjectResultQuery = (data) => {
         date_signing: data?.date_signing ? dayjs(data?.date_signing) : null,
         delegates_id: data?.delegations?.map(k => k?.id),
         facility_id: {
-            checkedKeys: data?.facilities?.map(k => facilitiesToFullCode(k))
+            checkedKeys: data?.facilities?.map(k => facilitiesToFullCode(k)),
+            checkedObjects: data?.facilities?.map(k =>
+                ({
+                    key: facilitiesToFullCode(k),
+                    title: k.name,
+                    value: [k.id
+                        , k.code
+                    ]
+                })
+            )
         },
         organization_customer: {selected: data?.organization_customer?.id, output: data?.organization_customer?.name},
         status_id: data?.status?.id,
-        type_project_document: {selected: data?.type_project_document?.id, output: data?.type_project_document?.name}
+        type_project_document_id: data?.type_project_document?.id,
+        group_type_project_document_id: data?.type_project_document?.group?.id,
     }
         ;
 };
@@ -100,7 +110,7 @@ export const rebuildProjectToQuery = (data) => {
         number: data?.number,
         name: data?.name,
         organization_customer_id: data?.organization_customer?.selected,
-        type_project_document_id: data?.type_project_document?.selected,
+        type_project_document_id: data?.type_project_document_id,
         date_signing: dayjs(data?.date_signing).format("YYYY-MM-DD"),
         duration: data?.date_range?.duration,
         date_end: dayjs(data?.date_range?.date_end).format("YYYY-MM-DD"),
@@ -109,8 +119,8 @@ export const rebuildProjectToQuery = (data) => {
         date_completion: dayjs(data?.date_completion).format("YYYY-MM-DD"),
         price: data?.price,
         prepayment: data?.prepayment,
-        facility_id: data?.facility_id?.checkedObjects?.map(row => row?.value[0] ?? null),
-        delegates_id: data?.delegates_id,
+        facility_id: data?.facility_id?.checkedObjects?.map(row => row?.value[0] ?? null) ?? null,
+        delegates_id: null //data?.delegates_id,
     };
 };
 

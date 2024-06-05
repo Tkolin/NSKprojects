@@ -6,7 +6,7 @@ import {nanoid} from "nanoid";
 import BikForm from "../form/modelsForms/BikForm";
 import PersonForm from "../form/modelsForms/PersonForm";
 
-const PersonModalForm = ({key,object,objectId,onClose, mode}) => {
+const PersonModalForm = ({key,object,objectId,onClose, mode, onCompleted}) => {
     return (
         <Modal
             key={key ?? nanoid()}
@@ -28,7 +28,7 @@ const PersonModalForm = ({key,object,objectId,onClose, mode}) => {
                         />
                     )
                 ) : (
-                    <PersonForm onCompleted={() => onClose(null)}/>
+                    <PersonForm onCompleted={onCompleted || onClose}/>
                 )}
             </StyledBlockBig>
         </Modal>

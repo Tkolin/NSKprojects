@@ -26,11 +26,11 @@ const BikForm = ({ localObject ,initialObject, onCompleted }) => {
     });
 
     // Мутация
-    const [mutate] = useMutation(actualObject ? UPDATE_BIK_MUTATION : ADD_BIK_MUTATION, {
+    const [mutate, {loading: loadingSave}] = useMutation(actualObject ? UPDATE_BIK_MUTATION : ADD_BIK_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Мутация ${nameModel} выполнена успешно`);
             form.resetFields();
-            onCompleted && onCompleted(data);
+            onCompleted && onCompleted(data?.createBik || data?.updateBik);
         },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при выполнении мутации ${nameModel}: ${error.message}`);
@@ -59,7 +59,7 @@ const BikForm = ({ localObject ,initialObject, onCompleted }) => {
     const handleSubmit = () => {
         mutate({ variables: { ...(actualObject ? { id: actualObject.id } : {}), ...form.getFieldsValue() } });
     };
-    if (loading) return <LoadingSpinnerStyles/>
+    if (loading || loadingSave) return <LoadingSpinnerStyles/>
 
     return (
         <div>

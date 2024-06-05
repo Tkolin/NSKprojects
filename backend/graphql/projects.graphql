@@ -141,7 +141,7 @@ input ProjectInput {
     price: Int!
     prepayment: Int!
     facility_id: [ID]!
-    delegates_id: [ID]!
+    delegates_id: [ID]
 }
 
 # побочные

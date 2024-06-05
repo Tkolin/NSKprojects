@@ -37,11 +37,11 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted}) => {
     // Состояния
 
     // Мутация
-    const [mutate] = useMutation(actualObject ? UPDATE_TYPE_PROJECTS_MUTATION : ADD_TYPE_PROJECTS_MUTATION, {
+    const [mutate, {loading: loadingSave}] = useMutation(actualObject ? UPDATE_TYPE_PROJECTS_MUTATION : ADD_TYPE_PROJECTS_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Мутация ${nameModel} выполнена успешно`);
             form.resetFields();
-            onCompleted && onCompleted(data);
+            onCompleted && onCompleted(data?.createTypeProject || data?.updateTypeProject);
         },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при выполнении мутации ${nameModel}: ${error.message}`);
@@ -54,9 +54,11 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted}) => {
             loadContext();
     }, [initialObject]);
     useEffect(() => {
-        if (localObject?.id)
+        console.log("localObject", localObject);
+        if (localObject)
             updateForm(localObject);
     }, [localObject]);
+
     const updateForm = (data) => {
         if (data) {
             form.resetFields();
@@ -74,7 +76,7 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted}) => {
     const handleSubmit = () => {
         mutate({variables: {...(actualObject ? {id: actualObject.id} : {}), ...form.getFieldsValue()}});
     };
-    if (loading) return <LoadingSpinnerStyles/>
+    if (loading || loadingSave) return <LoadingSpinnerStyles/>
 
 
     return (
@@ -89,8 +91,8 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted}) => {
                 </Form.Item>
                 <Form.Item name="group" label="Группа" rules={[{required: true}]}>
                     <CustomAutoComplete
+                        typeData={"CODENAME"}
                         data={dataGroup?.groupTypeProjects}
-                        placeholder={"Начните ввод..."}
                     />
                 </Form.Item>
                 <div style={{textAlign: 'center'}}>

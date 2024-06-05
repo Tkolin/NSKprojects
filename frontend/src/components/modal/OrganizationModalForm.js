@@ -3,7 +3,7 @@ import {Modal} from "antd";
 import OrganizationForm from "../form/modelsForms/OrganizationForm";
 import React from "react";
 
-const OrganizationModalForm = ({key,objectId,object,onClose, mode }) => {
+const OrganizationModalForm = ({key,objectId,object,onClose, mode, onCompleted }) => {
 
     return (
         <Modal
@@ -24,7 +24,7 @@ const OrganizationModalForm = ({key,objectId,object,onClose, mode }) => {
                         />
                     )
                 ) : (
-                    <OrganizationForm onCompleted={() => onClose()}/>
+                    <OrganizationForm  onCompleted={onCompleted || onClose}/>
                 )}
             </StyledBlockBig>
         </Modal>

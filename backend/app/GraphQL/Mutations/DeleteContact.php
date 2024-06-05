@@ -6,9 +6,8 @@ use App\Models\Contact;
 
 final readonly class DeleteContact
 {
-    public function __invoke($_, array $args): bool
+    public function __invoke($_, array $args)
     {
-        Contact::destroy($args['id']);
-        return true;
+        return Contact::destroy($args['id']);
     }
 }

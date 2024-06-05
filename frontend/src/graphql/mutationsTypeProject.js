@@ -17,7 +17,7 @@ export const ADD_TYPE_PROJECTS_MUTATION = gql`
     ) {
         createTypeProject(
             name: $name
-            group_id: $group_id
+            group: $group_id
             code: $code
         ) {
             id

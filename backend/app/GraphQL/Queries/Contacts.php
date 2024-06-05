@@ -30,6 +30,7 @@ final readonly class Contacts
             }
 
         $contactsQuery = Contact::with('position')->with('organization');
+        $contactsQuery = $contactsQuery->orderBy('id', 'desc');
 
         $queryService = new QueryService();
         $searchColumns = ['id', 'first_name', 'last_name', 'patronymic', 'work_phone', 'work_email', 'mobile_phone', 'email'];

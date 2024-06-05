@@ -8,6 +8,7 @@ import {
 import {NotificationContext} from "../../../NotificationProvider";
 import {PASSPORTS_PLACE_ISSUES_QUERY_BY_ID} from "../../../graphql/queriesByID";
 import {StyledButtonGreen} from "../../style/ButtonStyles";
+import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 
 
 const PassportPlaceIssuesForm = ({localObject,initialObject, onCompleted}) => {
@@ -27,11 +28,12 @@ const PassportPlaceIssuesForm = ({localObject,initialObject, onCompleted}) => {
         },
     });
     // Мутация
-    const [mutate] = useMutation(initialObject ? UPDATE_PPI_MUTATION : ADD_PPI_MUTATION, {
+    const [mutate, {loading: loadingSave}] = useMutation(initialObject ? UPDATE_PPI_MUTATION : ADD_PPI_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Мутация ${nameModel} выполнена успешно`);
+            console.log(data?.createPpi || data?.updatePpi);
             form.resetFields();
-            onCompleted && onCompleted(data);
+            onCompleted && onCompleted(data?.createPpi || data?.updatePpi);
         },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при выполнении мутации ${nameModel}: ${error.message}`);
@@ -58,6 +60,7 @@ const PassportPlaceIssuesForm = ({localObject,initialObject, onCompleted}) => {
     const handleSubmit = () => {
         mutate({variables: {...(initialObject ? {id: initialObject.id} : {}), ...form.getFieldsValue()}});
     };
+    if (loading || loadingSave) return <LoadingSpinnerStyles/>
 
     return (
         <div>

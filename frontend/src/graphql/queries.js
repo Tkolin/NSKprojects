@@ -244,7 +244,13 @@ export const PROJECTS_QUERY = gql`
                 type_project_document
                 {
                     id
+                    code
                     name
+                    group {
+                        id
+                        code
+                        name
+                    }
                 }
                 facilities
                 {

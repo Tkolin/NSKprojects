@@ -5,7 +5,7 @@ import ContactForm from "../form/modelsForms/ContactForm";
 import {nanoid} from "nanoid";
 import GroupTypeProjectForm from "../form/modelsForms/GroupTypeProjectForm";
 
-const ContactModalForm = ({key,object,objectId,onClose, mode}) => {
+const ContactModalForm = ({key,object,objectId,onClose, mode, onCompleted}) => {
     return (
         <Modal
             key={key ?? nanoid()}
@@ -26,7 +26,7 @@ const ContactModalForm = ({key,object,objectId,onClose, mode}) => {
                         />
                     )
                 ) : (
-                    <GroupTypeProjectForm onCompleted={() => onClose(null)}/>
+                    <GroupTypeProjectForm onCompleted={onCompleted || onClose}/>
                 )}
             </StyledBlockRegular>
         </Modal>

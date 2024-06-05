@@ -24,11 +24,11 @@ const TaskForm = ({localObject, initialObject, onCompleted }) => {
     });
 
     // Мутация
-    const [mutate] = useMutation(actualObject ? UPDATE_TASK_MUTATION : ADD_TASK_MUTATION, {
+    const [mutate, {loading: loadingSave}] = useMutation(actualObject ? UPDATE_TASK_MUTATION : ADD_TASK_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Мутация  выполнена успешно`);
             form.resetFields();
-            onCompleted && onCompleted(data);
+            onCompleted && onCompleted(data?.updateTask || data?.createTask);
         },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при выполнении мутации: ${error.message}`);
@@ -57,7 +57,7 @@ const TaskForm = ({localObject, initialObject, onCompleted }) => {
     const handleSubmit = () => {
         mutate({ variables: { ...(actualObject ? { id: actualObject.id } : {}), ...form.getFieldsValue() } });
     };
-    if (loading) return <LoadingSpinnerStyles/>
+    if (loading || loadingSave) return <LoadingSpinnerStyles/>
 
     return (
         <>

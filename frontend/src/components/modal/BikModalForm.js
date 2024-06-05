@@ -4,7 +4,7 @@ import React from "react";
 import {nanoid} from "nanoid";
 import BikForm from "../form/modelsForms/BikForm";
 
-const BikModalForm = ({key,object,objectId,onClose, mode}) => {
+const BikModalForm = ({key,object,objectId,onClose, mode, onCompleted}) => {
     return (
         <Modal
             key={key ?? nanoid()}
@@ -26,7 +26,7 @@ const BikModalForm = ({key,object,objectId,onClose, mode}) => {
                         />
                     )
                 ) : (
-                    <BikForm onCompleted={() => onClose(null)}/>
+                    <BikForm onCompleted={onCompleted || onClose}/>
                 )}
             </StyledBlockRegular>
         </Modal>

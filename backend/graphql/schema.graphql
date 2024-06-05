@@ -136,13 +136,13 @@ type Mutation {
     ): PassportPlaceIssue! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
     createBik(
-        bik: String!
+        BIK: String!
         name: String!
         correspondent_account: String
     ):  bik! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateBik(
         id: ID!
-        bik: String!
+        BIK: String!
         name: String!
         correspondent_account: String
     ):  bik! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
@@ -443,6 +443,7 @@ type IRD{
 type GroupTypeProjectDocument{
     id: ID
     name: String
+    code: String
     technical_specification: TypeTechnicalSpecification
 }
 type TypeTechnicalSpecification{

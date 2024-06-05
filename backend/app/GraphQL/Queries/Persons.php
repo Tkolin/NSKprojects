@@ -28,6 +28,8 @@ final readonly class Persons
                 default:
                     return ['items' => "Ошибка, не верный тип запрооса"];
             }
+
+
             $personQuery = Person::with(['passport', 'passport.passport_place_issue'])
                 ->with('bank')
                 ->with('BIK');
@@ -64,6 +66,8 @@ final readonly class Persons
                 $sortOrder = $args['queryOptions']['sortOrder'];
                 $personQuery = $personQuery->orderBy($sortField, $sortOrder);
             }
+            // Разварот к свежим записям
+            $personQuery = $personQuery->orderBy('id', 'desc');
 
             if (isset($args['queryOptions']['page'])) {
                 $persons = $personQuery->paginate($args['queryOptions']['limit'], ['*'], 'page', $args['queryOptions']['page']);
