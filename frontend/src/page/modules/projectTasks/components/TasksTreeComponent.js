@@ -9,7 +9,6 @@ const TasksTreeComponent = ({value, onChange, stageNumber, mode = "editor", onSe
     const [autoExpandParent, setAutoExpandParent] = useState(true);
 
     useEffect(() => {
-        console.log("onChangeTree", value);
         onChange && onChange(value)
     }, [value]);
     const onDragEnter = (info) => {
@@ -22,7 +21,6 @@ const TasksTreeComponent = ({value, onChange, stageNumber, mode = "editor", onSe
     }
 
     const onDrop = (info) => {
-        console.log(info);
         const dropKey = info.node.key;
         const dragKey = info.dragNode.key;
         const dropPos = info.node.pos.split('-');
@@ -82,7 +80,8 @@ const TasksTreeComponent = ({value, onChange, stageNumber, mode = "editor", onSe
         onChange({...value, checkedKeys: {...value?.checkedKeys, [stageNumber]: checkedKeysValue}});
     };
     const onSelectLocal = (selectedKeysValue, info) => {
-        onSelect && onSelect(info.node);
+
+        onSelect && onSelect(selectedKeysValue, info);
         setSelectedKeys(selectedKeysValue);
     };
 
@@ -115,7 +114,7 @@ const TasksTreeComponent = ({value, onChange, stageNumber, mode = "editor", onSe
             onCheck={onCheck}
             checkedKeys={stageNumber && value?.checkedKeys && value?.checkedKeys[stageNumber]}
             onSelect={onSelectLocal}
-            selectedKeys={selectedKeys}
+             selectedKeys={selectedKeys}
 
             selectable={selectable}
 

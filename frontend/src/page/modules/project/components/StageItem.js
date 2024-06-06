@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {Row, Col, Form, InputNumber, Select, Tooltip, DatePicker, Input} from 'antd';
-import {CaretUpOutlined, CaretDownOutlined, MinusCircleOutlined} from '@ant-design/icons';
+import {Row, Col, Form, InputNumber, Select, Tooltip, DatePicker, Input, Space} from 'antd';
+import {CaretUpOutlined, CaretDownOutlined, MinusCircleOutlined, CloseOutlined} from '@ant-design/icons';
 import {CustomAutoComplete} from "../../../../components/style/SearchAutoCompleteStyles";
 import {EmptyFormItem} from "../../../../components/formComponents/EmptyFormItem";
 import dayjs from "dayjs";
+import {StyledButtonRed} from "../../../../components/style/ButtonStyles";
 
 const {RangePicker} = DatePicker;
 
@@ -46,8 +47,9 @@ const StageItem = ({
         }
     };
     return (
-        <Row key={index} gutter={2} style={{marginBottom: 0}}>
-            <Col span={0.5} style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+        <Row key={index} gutter={0} style={{marginBottom: 0}}>
+            <Space.Compact style={{width: "100%"}}>
+            <Col span={1} style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 {/* Стрелка вверх для перемещения строки вверх */}
                 {!isFirst && (
                     <Tooltip title="Переместить вверх">
@@ -87,7 +89,7 @@ const StageItem = ({
                                  max={25}/>
                 </Tooltip>
             </Col>
-            <Col span={8} style={{width: "100%"}}>
+            <Col span={11} style={{width: "100%"}}>
                 <Tooltip title="Наименование этапа">
                     <Form.Item name={[index, 'stage']}>
                         <CustomAutoComplete
@@ -98,7 +100,7 @@ const StageItem = ({
                     </Form.Item>
                 </Tooltip>
             </Col>
-            <Col span={4}>
+            <Col span={5}>
                 <Tooltip title="Сроки этапа">
                     <Form.Item
                         style={{marginBottom: 0, width: "100%"}}
@@ -121,7 +123,7 @@ const StageItem = ({
             <Col span={0}>
                 <EmptyFormItem name={"duration"}/>
             </Col>
-            <Col span={2}>
+            <Col span={1}>
                 <Tooltip title="Процент от общей стоимости">
                     <Form.Item
                         style={{marginBottom: 0, width: "100%"}}
@@ -138,7 +140,7 @@ const StageItem = ({
                     </Form.Item>
                 </Tooltip>
             </Col>
-            <Col span={3}>
+            <Col span={2}>
                 <Tooltip title="Стоимость этапа">
                     <Form.Item
                         style={{marginBottom: 0, width: "100%"}}
@@ -147,12 +149,13 @@ const StageItem = ({
                             required: true,
                         },]}>
                         <InputNumber
+                            disabled={true}
                             formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                             suffix={"₽"} style={{width: "100%"}}/>
                     </Form.Item>
                 </Tooltip>
             </Col>
-            <Col span={3}>
+            <Col span={2}>
                 <Tooltip title="Сумма к оплате за этап">
                     <Form.Item
                         style={{marginBottom: 0, width: "100%"}}
@@ -161,17 +164,17 @@ const StageItem = ({
                             required: true,
                         },]}>
                         <InputNumber
+                            disabled={true}
                             formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                             suffix={"₽"} style={{width: "100%"}}/>
                     </Form.Item>
                 </Tooltip>
             </Col>
-            <Col span={0.1} style={{marginBottom: 0, width: "0%"}}
+            <Col span={1}
             >
-                <MinusCircleOutlined style={{marginTop: 10, marginLeft: 10}}
-                                     onClick={() => removeItem && removeItem(index)}/>
+                <StyledButtonRed icon={<CloseOutlined/>} onClick={() => removeItem && removeItem(index)}/>
             </Col>
-
+            </Space.Compact>
         </Row>
     );
 };

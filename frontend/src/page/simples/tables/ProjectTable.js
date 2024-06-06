@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import {
     Col,
@@ -56,6 +56,9 @@ const ProjectTable = () => {
     const [formSearch] = Form.useForm();
     const [selectedProject, setSelectedProject] = useState(null);
     const [editModalStatus, setEditModalStatus] = useState(false);
+    useEffect(() => {
+        console.log("editModalStatus", editModalStatus)
+    }, [editModalStatus]);
     const navigate = useNavigate();
     const formatCurrency = (amount) => {
         return amount.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'});
@@ -73,7 +76,7 @@ const ProjectTable = () => {
 
     const [search, setSearch] = useState('');
 
-    const {loading, error, data, refetch} = useQuery(PROJECTS_QUERY, {
+    const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(PROJECTS_QUERY, {
         variables: {
             queryOptions: {
                 page,
@@ -103,6 +106,7 @@ const ProjectTable = () => {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
             setEditModalStatus(null);
+            refetch();
         },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при выполнении сооздания : ${error.message}`);
@@ -579,11 +583,11 @@ const ProjectTable = () => {
                                 actualProject={editModalStatus?.project}
                                 updateProject={(value) => setEditModalStatus({
                                     ...editModalStatus,
-                                    project: value
+                                    project: {...editModalStatus.project, ...value}
                                 })}/>
                             <div>
-                                <StyledButtonGreen onClick={() =>
-                                    mutateProject({variables: {data: rebuildProjectToQuery(editModalStatus?.project)}})}>
+                                <StyledButtonGreen onClick={() =>{
+                                    mutateProject({variables: {data: rebuildProjectToQuery(editModalStatus?.project)}})}}>
                                     Сохранить
                                 </StyledButtonGreen>
                             </div>
@@ -591,13 +595,14 @@ const ProjectTable = () => {
 
                     ) :
                     editModalStatus?.status === "irds" ? (
-                            <StyledBlockLarge >
+                            <StyledBlockLarge label={"Список ИРД"} >
                                 <IrdsProjectForm
                                     actualIrds={editModalStatus?.irds}
                                     updateIrds={(value) => setEditModalStatus({...editModalStatus, irds: value})}
                                     project={editModalStatus?.project}
                                 />
-                                <div>
+                                <Divider/>
+                                <div style={{ width: "100%", textAlign: "center"}}>
                                     <StyledButtonGreen onClick={() =>
                                         mutateIrd({variables: {data: rebuildIrdToQuery(editModalStatus?.irds, editModalStatus?.project)}})}>
                                         Сохранить
@@ -605,7 +610,7 @@ const ProjectTable = () => {
                                 </div>
                             </StyledBlockLarge>) :
                         editModalStatus?.status === "stages" ? (
-                                <StyledBlockLarge>
+                                <StyledBlockLarge label={"Список этапов "} >
                                     <StagesProjectForm
                                         actualStages={editModalStatus?.stages}
                                         updateStages={(value) => setEditModalStatus({
@@ -614,7 +619,8 @@ const ProjectTable = () => {
                                         })}
                                         project={editModalStatus?.project}
                                     />
-                                    <div>
+                                    <Divider/>
+                                    <div style={{ width: "100%", textAlign: "center"}}>
                                         <StyledButtonGreen onClick={() =>
                                             mutateStage({variables: {data: rebuildStagesToQuery(editModalStatus?.stages, editModalStatus?.project)}})}>
                                             Сохранить

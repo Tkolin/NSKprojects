@@ -2,8 +2,7 @@ import 'react-phone-number-input/style.css';
 import dayjs from "dayjs";
 
 export const facilitiesToFullCode = (faclility) => {
-    console.log("faclility", faclility);
-    if (!(faclility && faclility?.group_facility && faclility?.group_facility?.subselection_facility
+     if (!(faclility && faclility?.group_facility && faclility?.group_facility?.subselection_facility
 
         && faclility?.group_facility?.subselection_facility
             ?.selection_facility))
@@ -48,8 +47,7 @@ export const rebuildProjectResultQuery = (data) => {
         ;
 };
 export const rebuildStagesResultQuery = (data) => {
-    console.log('rebuildStagesResultQuery', data);
-    let f = 1;
+     let f = 1;
     return data?.map((row,) => ({
         ...row,
         date_range: [
@@ -59,8 +57,7 @@ export const rebuildStagesResultQuery = (data) => {
     }));
 };
 export const rebuildIrdsResultQuery = (data) => {
-    console.log("rebuildIrdsResultQuery", data)
-    return data?.map((row, index) => ({
+     return data?.map((row, index) => ({
         ...row,
         receivedDate: row.receivedDate ? dayjs(row.receivedDate?.[1]).format("YYYY-MM-DD") : null,
         IRD: {selected: row?.IRD?.id, output: row?.IRD?.name},
@@ -71,7 +68,6 @@ export const rebuildStagesToQuery = (data, project) => {
     if (!data)
         return [];
     const dataArray = Object.values(data);
-    console.log("rebuildStagesToQuery", data);
 
     return dataArray?.map((row, index) => ({
         id: row?.id ?? null,
@@ -91,8 +87,7 @@ export const rebuildIrdToQuery = (data, project) => {
     if (!data)
         return [];
     const dataArray = Object.values(data);
-    console.log("rebuildIrdToQuery", project)
-    return dataArray?.map((row, index) => ({
+     return dataArray?.map((row, index) => ({
         id: row?.id ?? null,
         project_id: project?.id ?? null,
         ird_id: row?.IRD?.selected ?? null,

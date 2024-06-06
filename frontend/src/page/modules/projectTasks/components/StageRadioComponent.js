@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {Form, Radio} from 'antd';
 
 
-const StageRadioComponent = ({value, onChange, actualStages}) => {
+const  StageRadioComponent = ({value, onChange, actualStages}) => {
 
 
     useEffect(() => {

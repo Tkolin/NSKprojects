@@ -6,6 +6,7 @@ import {StyledButtonGreen} from "./ButtonStyles";
 
 
 const CustomAutoCompleteComponent = ({
+                                         style,
                                          width,
                                          placeholder,
                                          loading,
@@ -37,13 +38,13 @@ const CustomAutoCompleteComponent = ({
                 label: getName(row, typeData),
                 data: row.id
             }));
-        onChange({...value, options: filteredOptions, output: txt, selected: null});
+        onChange && onChange({...value, options: filteredOptions, output: txt, selected: null});
     };
 
     return (
         <AutoComplete
             popupMatchSelectWidth={false}
-            style={{width: width}}
+            style={{...style,width: width,maxWidth: width}}
             allowClear
             showSearch
             status={value?.selected ? "" : "warning"}
@@ -54,7 +55,7 @@ const CustomAutoCompleteComponent = ({
             loading={loading}
             value={value?.output}
             options={value?.options}
-            onClear={() => onChange({...value, selected: null, output: null})}
+            onClear={() => onChange && onChange({...value, selected: null, output: null})}
             onSearch={handleSearch}
             onSelect={(variable, option) => {
                 onSelect && onSelect({id: option.data, name: option.value})
@@ -65,8 +66,20 @@ const CustomAutoCompleteComponent = ({
     )
 };
 
-const BaseStyledButton = ({onClick, icon, style, disabled}) => (
+const BaseStyledButtonGreen = ({onClick, icon, style, disabled}) => (
     <StyledButtonGreen
+        style={{
+            ...style,
+            marginBottom: 0,
+        }}
+        type={"dashed"}
+        icon={icon}
+        disabled={disabled}
+        onClick={() => onClick && onClick(true)}
+    />
+);
+const BaseStyledButton = ({onClick, icon, style, disabled}) => (
+    <Button
         style={{
             ...style,
             marginBottom: 0,
@@ -102,14 +115,14 @@ const CustomAutoCompleteAndCreate = ({
             formatOptionText={formatOptionText}
             mode={mode}
             width={"calc(100% - 32px)"}
-            typeData={typeData} data={data} value={value} onChange={onChange}/>
-        <BaseStyledButton onClick={firstBtnOnClick}
+            typeData={typeData} data={data} value={value} onChange={onChange && onChange}/>
+        <BaseStyledButtonGreen onClick={firstBtnOnClick}
                           icon={<PlusOutlined/>}/>
     </Space.Compact>
 
 );
 const CustomAutoComplete = ({
-
+                                style,
                                 onSelect,
                                 placeholder,
                                 loading,
@@ -122,8 +135,8 @@ const CustomAutoComplete = ({
                                 value,
                                 onChange,
                             }) => (
-    <Space.Compact style={{width: "100%", marginBottom: 0}}>
-        <CustomAutoCompleteComponent
+         <CustomAutoCompleteComponent
+             style={style}
             onSelect={onSelect}
             placeholder={placeholder}
             loading={loading}
@@ -131,9 +144,8 @@ const CustomAutoComplete = ({
             onSearch={onSearch}
             formatOptionText={formatOptionText}
             mode={mode}
-            width={"100%"}
-            typeData={typeData} data={data} value={value} onChange={onChange}/>
-    </Space.Compact>
+            width={"calc(100%+64px)"}
+            typeData={typeData} data={data} value={value} onChange={onChange && onChange}/>
 
 );
 const CustomAutoCompleteAndCreateWitchEdit = ({
@@ -166,9 +178,9 @@ const CustomAutoCompleteAndCreateWitchEdit = ({
             typeData={typeData}
             data={data}
             value={value}
-            onChange={onChange}/>
+            onChange={onChange && onChange}/>
 
-        <BaseStyledButton onClick={firstBtnOnClick}
+        <BaseStyledButtonGreen onClick={firstBtnOnClick}
                           icon={<PlusOutlined/>}
                           type={'dashed'}/>
         <BaseStyledButton onClick={secondBtnOnClick}

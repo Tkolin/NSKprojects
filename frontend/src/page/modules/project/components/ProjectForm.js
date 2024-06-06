@@ -33,18 +33,14 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
             useQuery(PROJECT_STATUSES_QUERY_COMPACT,);
         const [dataTypes, setDataTypes] = useState();
         const {
-                loading: loadingTypeProject, error: errorTypeProject, data: dataTypeProject,
-                refetch: refetchTypeProject
-            } = useQuery(TYPES_PROJECTS_QUERY_COMPACT, {
-                    onCompleted: (data) => {
-                        setDataTypes(data?.typeProjects?.items);
-                        updateNumber();
-
-                    }
-
-                }
-            )
-        ;
+            loading: loadingTypeProject, error: errorTypeProject, data: dataTypeProject,
+            refetch: refetchTypeProject
+        } = useQuery(TYPES_PROJECTS_QUERY_COMPACT, {
+            onCompleted: (data) => {
+                setDataTypes(data?.typeProjects?.items);
+                updateNumber();
+            }
+        });
         const {
             loading: loadingGroupProject, error: errorGroupProject, data: dataGroupProject,
             refetch: refetchGroupProject
@@ -61,6 +57,12 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
         const [form] = Form.useForm();
         const [formLoad, setFormLoad] = useState(false);
         const [selectedGroupTypeProject, setSelectedGroupTypeProject] = useState(false);
+        const [dataTypesOutput, setDataTypesOutput] = useState([]);
+
+        useEffect(() => {
+            if (dataTypes && selectedGroupTypeProject)
+                setDataTypesOutput(dataTypes?.filter(row => row?.group?.id === selectedGroupTypeProject));
+        }, [dataTypes, selectedGroupTypeProject]);
         const handleChange = () => {
 
             if (!actualProject?.id)
@@ -80,12 +82,14 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
             console.log("load", actualProject);
             form.setFieldsValue({
                 ...actualProject,
+
                 id: actualProject?.id ?? null,
                 date_signing: actualProject?.date_signing ? dayjs(actualProject?.date_signing) : null,
                 date_end: actualProject?.date_end ? dayjs(actualProject?.date_end) : null,
                 date_create: actualProject?.date_create ? dayjs(actualProject?.date_create) : null,
                 date_completion: actualProject?.date_completion ? dayjs(actualProject?.date_completion) : null,
             });
+            setSelectedGroupTypeProject(actualProject?.type_project_document?.group?.id);
         }
         useEffect(() => {
             console.log("typeProjectModalStatus", typeProjectModalStatus);
@@ -142,7 +146,7 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
                         status={form.getFieldValue("group_type_project_document_id") ? "" : "warning"}
                         disabled={actualProject?.id}
                         loading={loadingGroupProject}
-                        onSelect={()=>handleChange()}
+                        onSelect={() => handleChange()}
 
                         onChange={(value) => {
                             handleChange();
@@ -168,12 +172,12 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
                                 console.log(value);
                                 handleChange();
                             }}
-                            onSelect={()=>handleChange()}
+                            onSelect={() => handleChange()}
                         >
-                            {dataTypes && dataTypes?.filter(row => row?.group?.id === selectedGroupTypeProject)?.map(row => (
-                            <Select.Option key={row.id} value={row.id}>
-                                {row.code ?? ""} - {row.name ?? ""}
-                            </Select.Option>
+                            {dataTypesOutput?.map(row => (
+                                <Select.Option key={row.id} value={row.id}>
+                                    {row.code ?? ""} - {row.name ?? ""}
+                                </Select.Option>
                             ))}
                         </Select>
                     </Form.Item>
@@ -295,7 +299,7 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
                     setDataTypes([...dataTypes, value]);
                     form.setFieldValue("type_project_document_id", value.id);
                     setTypeProjectModalStatus(null);
-handleChange();
+                    handleChange();
                 }}
                 mode={typeProjectModalStatus?.mode}/>
         </div>)

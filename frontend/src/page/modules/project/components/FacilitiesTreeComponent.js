@@ -8,9 +8,7 @@ const FacilitiesTreeComponent = ({ value = { checkedKeys: [] }, onChange }) => {
     const [expandedKeys, setExpandedKeys] = useState([]);
     const [autoExpandParent, setAutoExpandParent] = useState(true);
     const [facility, setFacility] = useState([]);
-    useEffect(() => {
-        console.log(value);
-    }, [value]);
+
     const { loading: loadingFacility } = useQuery(FACILITYS_QUERY, {
         onCompleted: (data) => setFacility(sortFacilitiesForCascader(data.facilities))
     });

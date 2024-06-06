@@ -7,6 +7,7 @@ import {useMutation, useQuery} from "@apollo/client";
 import {TASKS_QUERY_COMPACT} from "../../../../graphql/queriesCompact";
 import LoadingSpinnerStyles from "../../../../components/style/LoadingSpinnerStyles";
 import StageRadioComponent from "./StageRadioComponent";
+import styled, {css} from "styled-components";
 
 
 const TasksToProjectForm = ({actualTasks, updateTasks, actualProject, setLoading}) => {

@@ -1,12 +1,12 @@
-import React, { useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useQuery} from '@apollo/client';
-import {Button, Col, Form, Row, Space} from 'antd';
+import {Button, Col, Divider, Form, Row, Space} from 'antd';
 import {
-STAGES_QUERY_COMPACT
+    STAGES_QUERY_COMPACT
 } from '../../../../graphql/queriesCompact';
 
 import StageItem from "./StageItem";
-import { PlusOutlined} from "@ant-design/icons";
+import {PlusOutlined} from "@ant-design/icons";
 import dayjs from "dayjs";
 import StagesListHeader from "./StagesListHeader";
 import StagesListFooter from "./StagesListFooter";
@@ -15,7 +15,7 @@ import TypeProjectModalForm from "../../../../components/modal/TypeProjectModalF
 import {nanoid} from "nanoid";
 import StageModalForm from "../../../../components/modal/StageModalForm";
 
-const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, project }) => {
+const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, project}) => {
 
     // Первичные данные
 
@@ -23,7 +23,7 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
 
     // Внешняя логика
     const [totalToPercent, setTotalToPercent] = useState(0);
-    const [totalToDuration,setTotalToDuration] = useState(0);
+    const [totalToDuration, setTotalToDuration] = useState(0);
     const [stageModalStatus, setStageModalStatus] = useState(null);
 
 
@@ -73,6 +73,16 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
         <Form layout="vertical" onChange={() => {
             handleChange();
         }} form={form}>
+            <Divider style={{margin: 3}}/>
+            <StyledButtonGreen
+                type="dashed"
+                size={"small"}
+                onClick={() => setStageModalStatus("add")}
+                icon={<PlusOutlined/>}
+            >
+                Создать этап
+            </StyledButtonGreen>
+            <Divider style={{margin: 10, marginTop: 3}}/>
 
             <Form.List name="stageList">
                 {(fields, {add, remove}) => (
@@ -101,37 +111,30 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
 
                         ))}
                         <StagesListFooter
-                        project={project}
-                        totalToDuration={totalToDuration}
-                        totalToPercent={totalToPercent}/>
+                            project={project}
+                            totalToDuration={totalToDuration}
+                            totalToPercent={totalToPercent}/>
 
 
-                                <Space.Compact style={{width: '100%', marginTop: 10, marginBottom: 10}}>
-                                    <Button
-                                        type="dashed"
-                                        onClick={() => add()}
-                                        style={{width: '100%'}}
-                                        icon={<PlusOutlined/>}
-                                    >
-                                        Добавить этап к списку
-                                    </Button>
-                                    <StyledButtonGreen
-                                        type="dashed"
-                                        onClick={() => setStageModalStatus("add")}
-                                        style={{width: '30%'}}
-                                        icon={<PlusOutlined/>}
-                                    >
-                                        Создать этап
-                                    </StyledButtonGreen>
-                                </Space.Compact>
+                        <Space.Compact style={{width: '100%', marginTop: 10, marginBottom: 10}}>
+                            <Button
+                                type="dashed"
+                                onClick={() => add()}
+                                style={{width: '100%'}}
+                                icon={<PlusOutlined/>}
+                            >
+                                Добавить этап к списку
+                            </Button>
+
+                        </Space.Compact>
 
 
                     </>
                 )}
             </Form.List>
             <StageModalForm
-                 onClose={() => setStageModalStatus(null)}
-                    mode={stageModalStatus}/>
+                onClose={() => setStageModalStatus(null)}
+                mode={stageModalStatus}/>
         </Form>
     );
 };

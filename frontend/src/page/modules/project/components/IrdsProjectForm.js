@@ -1,5 +1,5 @@
-import {Button, Col, Form, Row, Space,} from "antd";
-import { PlusOutlined, } from "@ant-design/icons";
+import {Button, Col, Divider, Form, Row, Space,} from "antd";
+import {PlusOutlined,} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
 import {useQuery} from "@apollo/client";
 
@@ -20,7 +20,7 @@ const IrdsProjectForm = ({localObject, initialObject, onCompleted, updateIrds, a
         form.setFieldsValue({
             irdList: actualIrds && Object.values(actualIrds)?.map((row) => ({
                 ...row,
-                receivedDate:  row?.receivedDate ? dayjs(row?.receivedDate) : null,
+                receivedDate: row?.receivedDate ? dayjs(row?.receivedDate) : null,
             }))
         });
     }
@@ -38,10 +38,19 @@ const IrdsProjectForm = ({localObject, initialObject, onCompleted, updateIrds, a
     return (
         <Form layout="vertical"
               onChange={() => {
-                             handleChange();
-                         }}
+                  handleChange();
+              }}
               form={form}>
-
+            <Divider style={{margin: 3}}/>
+            <StyledButtonGreen
+                type="dashed"
+                size={"small"}
+                onClick={() => setIrdModalStatus("add")}
+                icon={<PlusOutlined/>}
+            >
+                Создать ИРД
+            </StyledButtonGreen>
+            <Divider style={{margin: 10, marginTop: 3}}/>
             <Form.List name="irdList">
                 {(fields, {add, remove}) => (
                     <>
@@ -58,24 +67,16 @@ const IrdsProjectForm = ({localObject, initialObject, onCompleted, updateIrds, a
                             />
                         ))}
 
-                                <Space.Compact style={{width: '100%', marginBottom: 10, marginTop: 10}}>
-                                    <Button
-                                        type="dashed"
-                                        onClick={() => add()}
-                                        style={{width: '100%'}}
-                                        icon={<PlusOutlined/>}
-                                    >
-                                        Добавить ИРД к списку
-                                    </Button>
-                                    <StyledButtonGreen
-                                        type="dashed"
-                                        onClick={() => setIrdModalStatus("add")}
-                                        style={{width: '30%'}}
-                                        icon={<PlusOutlined/>}
-                                    >
-                                        Создать ИРД
-                                    </StyledButtonGreen>
-                                </Space.Compact>
+                        <Space.Compact style={{width: '100%', marginBottom: 10, marginTop: 10}}>
+                            <Button
+                                type="dashed"
+                                onClick={() => add()}
+                                style={{width: '100%'}}
+                                icon={<PlusOutlined/>}
+                            >
+                                Добавить ИРД к списку
+                            </Button>
+                        </Space.Compact>
 
                     </>
                 )}

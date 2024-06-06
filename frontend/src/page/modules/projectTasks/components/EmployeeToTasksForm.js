@@ -9,6 +9,8 @@ import LoadingSpinnerStyles from "../../../../components/style/LoadingSpinnerSty
 import StageRadioComponent from "./StageRadioComponent";
 import TasksToProjectForm from "./TasksToProjectForm";
 import TaskProjectForm from "./TaskProjectForm";
+import styled, {css} from "styled-components";
+import {StyledButtonGreen} from "../../../../components/style/ButtonStyles";
 
 
 const EmployeeToTasksForm = ({actualTasks, updateTasks, actualProject, setLoading}) => {
@@ -17,9 +19,11 @@ const EmployeeToTasksForm = ({actualTasks, updateTasks, actualProject, setLoadin
     const [formLoad, setFormLoad] = useState(false);
     const [form] = Form.useForm();
     const [stageNumber, setStageNumber] = useState()
+    const [selectedTaskTree, setSelectedTaskTree] = useState(true);
 
-    const [selectableTaskTree, setSelectableTaskTree] = useState(true);
-
+    useEffect(() => {
+        console.log("setSelectedTaskTree", selectedTaskTree);
+    }, [selectedTaskTree]);
     useEffect(() => {
         setFormLoad(true)
     }, []);
@@ -44,10 +48,12 @@ const EmployeeToTasksForm = ({actualTasks, updateTasks, actualProject, setLoadin
     const [tasksModalStatus, setTasksModalStatus] = useState({options: [], selected: {}});
     const handleSelectTask = (value) => {
         if (value?.id > 0) {
-            console.log(value);
+            console.log("handleSelectTask", value);
         }
     }
-
+    const onSave = () => {
+        console.log("onSave", form.getFieldValue());
+    }
     if (loadingTasks)
         return <LoadingSpinnerStyles/>
 
@@ -62,22 +68,22 @@ const EmployeeToTasksForm = ({actualTasks, updateTasks, actualProject, setLoadin
                     <Divider>Список задач</Divider>
                     <Form.Item name={"tasks"}>
                         <TasksTreeComponent
-                            selectable={selectableTaskTree}
+                            onSelect={(value) => setSelectedTaskTree( value)}
+                            selectable={true}
                             stageNumber={stageNumber}
                             value={actualTasks}
                             mode={"selector"}
-                            onSelected={(value)=>{handleSelectTask(value)}}/>
+                            onSelected={(value) => {
+                                handleSelectTask(value)
+                            }}/>
                     </Form.Item>
                 </Col>
                 <Col span={12}>
                     <Divider>Распределение</Divider>
-                    <TaskProjectForm
-                    //    onCompletion={(form.getValuesData()) => setLoading(false)}   Как нажали на кнопку сохранения
-                    //    mutationResult{(data, error) => error ? {setLoading(false); console.log(error)} :
-                        //    data )
-
-
-                    />
+                    <TaskProjectForm task={{id: selectedTaskTree}}/>
+                    <StyledButtonGreen onClick={() => onSave()}>
+                        Сохранить
+                    </StyledButtonGreen>
                 </Col>
             </Row>
         </Form>

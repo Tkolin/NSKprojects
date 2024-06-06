@@ -17,3 +17,17 @@ export const StyledButtonGreen = styled(Button)`
         border-color: #237804; /* изменение цвета рамки при клике */
     }
 `;
+// Красная кнопка
+export const StyledButtonRed = styled(Button)`
+    background: #ff4d4f; /* красный цвет */
+    color: #fff; /* белый цвет текста */
+    border-color: #ff4d4f; /* цвет рамки */
+    &:hover {
+        background: #d9363e; /* изменение цвета при наведении */
+        border-color: #d9363e; /* изменение цвета рамки при наведении */
+    }
+    &:active {
+        background: #b71a1c; /* изменение цвета при клике */
+        border-color: #b71a1c; /* изменение цвета рамки при клике */
+    }
+`;
