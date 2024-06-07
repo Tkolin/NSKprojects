@@ -9,6 +9,8 @@ final readonly class UpdateIrd
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-            return InitialAuthorizationDocumentation::findOrFail($args['id'])->update($args);
+        $typeProjectDocument = InitialAuthorizationDocumentation::findOrFail($args['id']);
+        $typeProjectDocument->update($args);
+        return $typeProjectDocument;
     }
 }

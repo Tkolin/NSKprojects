@@ -7,14 +7,15 @@ import StageForm from "../../../components/form/modelsForms/StageForm";
 import Search from "antd/es/input/Search";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
 import Title from "antd/es/typography/Title";
+import StyledLinkManagingDataTable from "../../../components/style/TableStyles";
+import ContactModalForm from "../../../components/modal/ContactModalForm";
+import {nanoid} from "nanoid";
+import StageModalForm from "../../../components/modal/StageModalForm";
 
 const StageTable = () => {
-
     // Состояния
-    const [selectedStage, setSelectedStage] = useState(null);
-    const [editModalVisible, setEditModalVisible] = useState(false);
     const [formSearch] = Form.useForm();
-    const [addModalVisible, setAddModalVisible] = useState(false);
+    const [stageModalStatus, setStageModalStatus] = useState(null);
 
     // Данные
     const [page, setPage] = useState(1);
@@ -27,14 +28,15 @@ const StageTable = () => {
 
     const [search, setSearch] = useState('');
 
-    const { loading, error, data, refetch: refetch } = useQuery(STAGES_QUERY, {
+    const {loading, error, data, refetch: refetch} = useQuery(STAGES_QUERY, {
         variables: {
             queryOptions: {
-            page,
-            limit,
-            search,
-            sortField,
-            sortOrder}
+                page,
+                limit,
+                search,
+                sortField,
+                sortOrder
+            }
         },
     });
 
@@ -59,19 +61,10 @@ const StageTable = () => {
     });
 
     // Обработчик событий
-    const handleClose = () => {refetch(); setEditModalVisible(false);};
-    const handleEdit = (stageId) => {
-        const stage = data.stagesTable.stages.find(stage => stage.id === stageId);
-        setSelectedStage(stage);
-        setEditModalVisible(true);
-    };
-    const handleAdd = () => {
-        setAddModalVisible(true);
-    };
     const handleDelete = (stageId) => {
-        deleteStage({ variables: { id: stageId}});
+        deleteStage({variables: {id: stageId}});
     };
-    const onSearch = (value) =>{
+    const onSearch = (value) => {
         setSearch(value);
     };
     // Обработка загрузки и ошибок
@@ -88,16 +81,17 @@ const StageTable = () => {
             ellipsis: true,
         },
         {
-            title: 'Управление',
-            key: 'edit',
-            render: (text, record) => (
-                <div>
-                    <Button  onClick={() => handleEdit(record.id)}>Изменить</Button>
-                    <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
-                </div>
-
+            title: 'Управление', key: 'edit', ellipsis: true, width: 100, render: (text, record) => (
+                <StyledLinkManagingDataTable
+                    title={"Удаление этапа"}
+                    description={"Вы уверены, что нужно удалить этот этап?"}
+                    handleEdit={() => {
+                        setStageModalStatus({stage: record, mode: "edit"})
+                    }}
+                    handleDelete={() => handleDelete(record.id)}
+                />
             ),
-        },
+        }
     ];
     const onChange = (sorter) => {
         setSortField(sorter?.field ?? "");
@@ -106,7 +100,7 @@ const StageTable = () => {
     return (
         <div>
             <Form form={formSearch} layout="horizontal">
-                <Divider style={{marginTop: 0}} >
+                <Divider style={{marginTop: 0}}>
                     <Title style={{marginTop: 0}} level={2}>Справочник наименования этапов</Title>
                 </Divider>
                 <Form.Item label="Поиск:" name="search">
@@ -117,7 +111,12 @@ const StageTable = () => {
                             enterButton="Найти"
                             onSearch={onSearch}
                         />
-                        <StyledButtonGreen    style={{    marginBottom: 0}} onClick={() => handleAdd()}>Создать новую запись</StyledButtonGreen>
+                        <StyledButtonGreen
+                            style={{marginBottom: 0}}
+                            onClick={() => setStageModalStatus({stage: null, mode: "add"})}>
+
+                            Создать новую запись
+                        </StyledButtonGreen>
                     </Space>
                 </Form.Item>
             </Form>
@@ -134,8 +133,7 @@ const StageTable = () => {
                     total: data?.stages?.count,
                     current: page,
                     pageSize: limit,
-                    onChange: (page, limit) =>
-                    {
+                    onChange: (page, limit) => {
                         setPage(page);
                         setLimit(limit)
                     },
@@ -147,26 +145,18 @@ const StageTable = () => {
                     pageSizeOptions: ['10', '50', '100'],
                 }}
             />
-            <Modal
-                key={selectedStage?.id}
-                open={editModalVisible}
-                width={900}
-                onCancel={() => setEditModalVisible(false)}
-                footer={null}
-                onClose={handleClose}
-            >
-                <StageForm stage={selectedStage} onClose={handleClose}/>
-            </Modal>
-            <Modal
-                open={addModalVisible}
-                width={900}
-                onCancel={() => setAddModalVisible(false)}
-                footer={null}
-                onClose={handleClose}
-            >
-                <StageForm stage={null} onClose={handleClose}/>
-            </Modal>
+            <StageModalForm
+                key={stageModalStatus?.stage?.id ?? nanoid()}
+                onClose={() => {
+                    setStageModalStatus(null);
+                    refetch();
+                }}
+                object={stageModalStatus?.stage ?? null}
+                mode={stageModalStatus?.mode ?? null}
+            />
+
         </div>
     );
-};
-export default StageTable;
+}
+    ;
+    export default StageTable;

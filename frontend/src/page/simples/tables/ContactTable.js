@@ -8,8 +8,9 @@ import Search from "antd/es/input/Search";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
 import Title from "antd/es/typography/Title";
 import {format} from "date-fns";
- import StyledLinkManagingDataTable from "../../../components/style/TableStyles";
+import StyledLinkManagingDataTable from "../../../components/style/TableStyles";
 import ContactModalForm from "../../../components/modal/ContactModalForm";
+import {nanoid} from "nanoid";
 
 const ContactTable = () => {
 
@@ -170,8 +171,11 @@ const ContactTable = () => {
             }}
         />
         <ContactModalForm
-            key={contactModalStatus?.contact?.id ?? null}
-            onClose={()=>setContactModalStatus(null)}
+            key={contactModalStatus?.contact?.id ?? nanoid()}
+            onClose={() => {
+                setContactModalStatus(null);
+                refetch();
+            }}
             object={contactModalStatus?.contact ?? null}
             mode={contactModalStatus?.mode ?? null}
         />

@@ -2,6 +2,7 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Models\Bik;
 use App\Models\Stage;
 
 final readonly class UpdateStage
@@ -9,6 +10,7 @@ final readonly class UpdateStage
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        return Stage::findOrFail($args['id'])->update($args);
-    }
+        $typeProjectDocument = Stage::findOrFail($args['id']);
+        $typeProjectDocument->update($args);
+        return $typeProjectDocument;    }
 }

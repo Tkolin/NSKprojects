@@ -231,6 +231,7 @@ const OrganizationForm = ({localObject, initialObject, onCompleted}) => {
                 </Form.Item>
                 <Form.Item name="bik" label="Бик" style={{width: "100%"}}>
                     <CustomAutoCompleteAndCreate
+                        typeData={"CODENAME"}
                         data={dataBik?.biks?.items}
                         firstBtnOnClick={() =>
                             setBikModalStatus({bik_id: null, mode: "add"})}

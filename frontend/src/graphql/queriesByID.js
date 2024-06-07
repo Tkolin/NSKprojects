@@ -1,4 +1,5 @@
 import {gql} from '@apollo/client';
+
 export const TASKS_QUERY_BY_ID = gql`
     query TasksQueryByID  ( $id: ID)  {
         tasks  (queryType: "BY_ID", id: $id)  {
@@ -16,7 +17,7 @@ export const REFERENCES_QUERY_BY_ID = gql`
                 id
                 name
             }
-         }
+        }
     }
 `;
 export const TECHNICAL_SPECIFICATION_QUERY_BY_ID = gql`
@@ -145,6 +146,12 @@ export const TYPES_PROJECTS_QUERY_BY_ID = gql`
             items {
                 id
                 name
+                code
+                group {
+                    id
+                    code
+                    name
+                }
             }
         }
     }
@@ -268,7 +275,7 @@ export const PPI_QUERY_BY_ID = gql`
             items{
                 id
                 name
-                }
+            }
         }
     }
 `;
@@ -410,7 +417,7 @@ export const POSITIONS_QUERY_BY_ID = gql`
             items {
                 id
                 name
-                
+
             }
             count
         }

@@ -22,7 +22,7 @@ const CustomAutoCompleteComponent = ({
         if (typeData === "FIO")
             return `${row.last_name || row.lastname} ${row.first_name || row.firstname} ${row.patronymic ?? ""}`;
         else if (typeData === "CODENAME")
-            return `${row.code} - ${row.name}`
+            return `${row.code ?? row.BIK} - ${row.name}`
         return row.name;
     };
 

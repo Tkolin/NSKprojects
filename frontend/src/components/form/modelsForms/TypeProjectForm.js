@@ -17,11 +17,8 @@ import TypeProjectModalForm from "../../modal/TypeProjectModalForm";
 import {nanoid} from "nanoid";
 
 const TypeProjectForm = ({localObject, initialObject, onCompleted}) => {
-    // Первичные данные
-    const {openNotification} = useContext(NotificationContext);
-    const [form] = Form.useForm();
-
-    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
+    // Получение данных для выпадающих списков
+    const {loading: loadingGroup, error: errorGroup, data: dataGroup} = useQuery(GROUP_TYPE_PROJECTS_QUERY_COMPACT);
     const [loadContext, {loading, data}] = useLazyQuery(TYPES_PROJECTS_QUERY_BY_ID, {
         variables: {id: initialObject?.id},
         onCompleted: (data) => {
@@ -32,6 +29,33 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted}) => {
             openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
         },
     });
+    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
+
+    // Первичные данные
+    const {openNotification} = useContext(NotificationContext);
+    const [form] = Form.useForm();
+
+    //Доп
+    const [groupIdSelected,setGroupIdSelected] = useState(null);
+    useEffect(() => {
+        if (groupIdSelected && dataGroup?.groupTypeProjects) {
+            const group = dataGroup?.groupTypeProjects?.find(row => row.id === groupIdSelected);
+            if (group) {
+                const formData = form.getFieldsValue();
+                const updatedFields = {};
+                if (!formData.name) {
+                    updatedFields.name = group.name + " - ";
+                }
+                if (!formData.code) {
+                    updatedFields.code = group.code + "-";
+                }
+                form.setFieldsValue(updatedFields);
+            }
+        }
+    }, [groupIdSelected, dataGroup]);
+
+
+
 
     // Состояния
 
@@ -68,9 +92,6 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted}) => {
             });
         }
     };
-    // Получение данных для выпадающих списков
-    const {loading: loadingGroup, error: errorGroup, data: dataGroup} = useQuery(GROUP_TYPE_PROJECTS_QUERY_COMPACT);
-
 
     // Завершение
     const handleSubmit = () => {
@@ -92,6 +113,7 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted}) => {
                 <Form.Item name="group" label="Группа" rules={[{required: true}]}>
                     <CustomAutoComplete
                         typeData={"CODENAME"}
+                        onSelect={(value)=>setGroupIdSelected(value.id)}
                         data={dataGroup?.groupTypeProjects}
                     />
                 </Form.Item>

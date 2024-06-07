@@ -14,9 +14,20 @@ final readonly class TypeProjects
             switch ($args['queryType']){
                 case "COMPACT":
                     return ['items' => TypeProjectDocument::all()];
+                case "BY_ID":
+                    if (!isset($args['id'])) {
+                        return ['items' => 'Ошибка, отсутствует id'];
+                    }
+                    $data = TypeProjectDocument::find($args['id']);
+                    if ($data) {
+                        return ['items' => [$data]];
+                    } else {
+                        return ['items' => 'Ошибка, контакт не найден'];
+                    }
                 default:
                     return ['items' => "Ошибка, не верный тип запрооса"];
             }
+
         $typeProjectsQuery = TypeProjectDocument::with(['group', 'group.technical_specification']);
 
         $queryService = new QueryService();

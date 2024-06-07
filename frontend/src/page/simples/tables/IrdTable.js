@@ -7,14 +7,16 @@ import IrdForm from "../../../components/form/modelsForms/IrdForm";
 import Search from "antd/es/input/Search";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
 import Title from "antd/es/typography/Title";
+import StyledLinkManagingDataTable from "../../../components/style/TableStyles";
+import ContactModalForm from "../../../components/modal/ContactModalForm";
+import {nanoid} from "nanoid";
+import IrdModalForm from "../../../components/modal/IrdModalForm";
 
 const IrdTable = () => {
 
     // Состояния
-    const [selectedIrd, setSelectedIrd] = useState(null);
-    const [editModalVisible, setEditModalVisible] = useState(false);
     const [formSearch] = Form.useForm();
-    const [addModalVisible, setAddModalVisible] = useState(false);
+    const [irdModalStatus, setIrdModalStatus] = useState(null);
 
     // Данные
     const [page, setPage] = useState(1);
@@ -60,20 +62,8 @@ const IrdTable = () => {
     });
 
     // Обработчик событий
-    const handleClose = () => {
-        refetch();
-        setEditModalVisible(false);
-        setAddModalVisible(false);
 
-    };
-    const handleEdit = (irdId) => {
-        const ird = data.irds.items.find(ird => ird.id === irdId);
-        setSelectedIrd(ird);
-        setEditModalVisible(true);
-    };
-    const handleAdd = () => {
-        setAddModalVisible(true);
-    };
+
     const handleDelete = (irdId) => {
         deleteIrd({variables: {id: irdId}});
     };
@@ -93,18 +83,18 @@ const IrdTable = () => {
             ellipsis: true,
         },
         {
-            title: 'Управление',
-            key: 'edit',             ellipsis: true,
-
-            render: (text, record) => (
-
-                <div>
-                    <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
-                    <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
-                </div>
-
+            title: 'Управление', key: 'edit', ellipsis: true, width: 100, render: (text, record) => (
+                <StyledLinkManagingDataTable
+                    title={"Удаление ИРД"}
+                    description={"Вы уверены, что нужно удалить этот ИРД?"}
+                    handleEdit={() => {
+                        setIrdModalStatus({ird: record, mode: "edit"})
+                    }}
+                    handleDelete={() => handleDelete(record.id)}
+                />
             ),
-        },
+        }
+
     ];
     const onChange = (pagination, filters, sorter) => {
 
@@ -144,8 +134,12 @@ const IrdTable = () => {
                             enterButton="Найти"
                             onSearch={onSearch}
                         />
-                        <StyledButtonGreen style={{marginBottom: 0}} onClick={() => handleAdd()}>Создать новую
-                            запись</StyledButtonGreen>
+                        <StyledButtonGreen
+                            style={{marginBottom: 0}}
+                            onClick={() => setIrdModalStatus({ird: null, mode: "add"})}>
+
+                            Создать новую запись
+                        </StyledButtonGreen>
                     </Space>
                 </Form.Item>
             </Form>
@@ -173,22 +167,14 @@ const IrdTable = () => {
                     pageSizeOptions: ['10', '20', '50', '100'],
                 }}
             />
-            <Modal
-                open={editModalVisible}
-                onCancel={() => setEditModalVisible(false)}
-                footer={null}
-                onClose={handleClose}
-            >
-                <IrdForm ird={selectedIrd} onClose={handleClose}/>
-            </Modal>
-            <Modal
-                open={addModalVisible}
-                onCancel={() => setAddModalVisible(false)}
-                footer={null}
-                onClose={handleClose}
-            >
-                <IrdForm onClose={handleClose}/>
-            </Modal>
+            <IrdModalForm
+                key={irdModalStatus?.ird?.id ??  nanoid()}
+                onClose={()=> {
+                    setIrdModalStatus(null);
+                refetch();}}
+                object={irdModalStatus?.ird ?? null}
+                mode={irdModalStatus?.mode ?? null}
+            />
         </div>
     );
 };

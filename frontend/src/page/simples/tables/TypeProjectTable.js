@@ -7,14 +7,16 @@ import TypeProjectForm from "../../../components/form/modelsForms/TypeProjectFor
 
 import Search from "antd/es/input/Search";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
+import ContactModalForm from "../../../components/modal/ContactModalForm";
+import StyledLinkManagingDataTable from "../../../components/style/TableStyles";
+import TypeProjectModalForm from "../../../components/modal/TypeProjectModalForm";
+import {nanoid} from "nanoid";
 
 const TypeProjectTable = () => {
 
     // Состояния
-    const [selectedTypeProject, setSelectedTypeProject] = useState(null);
-    const [editModalVisible, setEditModalVisible] = useState(false);
-    const [addModalVisible, setAddModalVisible] = useState(false);
     const [formSearch] = Form.useForm();
+    const [typeProjectModalStatus, setTypeProjectModalStatus] = useState(false);
 
     // Данные
     const [page, setPage] = useState(1);
@@ -60,18 +62,6 @@ const TypeProjectTable = () => {
     });
 
     // Обработчик событий
-    const handleClose = () => {
-        refetch();
-        setEditModalVisible(false);
-    };
-    const handleEdit = (typeProjectId) => {
-        const typeProject = data.typeProjects.items.find(typeProject => typeProject.id === typeProjectId);
-        setSelectedTypeProject(typeProject);
-        setEditModalVisible(true);
-    };
-    const handleAdd = () => {
-        setAddModalVisible(true);
-    };
     const handleDelete = (typeProjectId) => {
         deleteTypeProject({variables: {id: typeProjectId}});
     };
@@ -100,16 +90,17 @@ const TypeProjectTable = () => {
             ellipsis: true,
         },
         {
-            title: 'Управление',
-            key: 'edit',
-            render: (text, record) => (
-                <div>
-                    <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
-                    <Button danger={true} onClick={() => handleDelete(record.id)}>Удалить</Button>
-                </div>
-
+            title: 'Управление', key: 'edit', ellipsis: true, width: 100, render: (text, record) => (
+                <StyledLinkManagingDataTable
+                    title={"Удаление типа организации"}
+                    description={"Вы уверены, что нужно удалить этот тип?"}
+                    handleEdit={() => {
+                        setTypeProjectModalStatus({typeProject: record, mode: "edit"})
+                    }}
+                    handleDelete={() => handleDelete(record.id)}
+                />
             ),
-        },
+        }
     ];
     const onChange = (sorter) => {
         setSortField(sorter?.field ?? "");
@@ -127,7 +118,8 @@ const TypeProjectTable = () => {
                             enterButton="Найти"
                             onSearch={onSearch}
                         />
-                        <StyledButtonGreen style={{marginBottom: 0}} onClick={() => handleAdd()}>Создать новую
+                        <StyledButtonGreen style={{marginBottom: 0}}
+                                           onClick={() => setTypeProjectModalStatus({typeProject: null, mode: "add"})}>Создать новую
                             запись</StyledButtonGreen>
                     </Space>
                 </Form.Item>
@@ -157,25 +149,17 @@ const TypeProjectTable = () => {
                     pageSizeOptions: ['10', '20', '50', '100'],
                 }}
             />
-            <Modal
-                key={selectedTypeProject?.id}
-                open={editModalVisible}
-                width={900}
-                onCancel={() => setEditModalVisible(false)}
-                footer={null}
-                onClose={handleClose}
-            >
-                <TypeProjectForm typeProject={selectedTypeProject} onClose={handleClose}/>
-            </Modal>
-            <Modal
-                open={addModalVisible}
-                width={900}
-                onCancel={() => setAddModalVisible(false)}
-                footer={null}
-                onClose={handleClose}
-            >
-                <TypeProjectForm typeProject={null} onClose={handleClose}/>
-            </Modal>
+            <TypeProjectModalForm
+                key={typeProjectModalStatus?.typeProject?.id ?? nanoid()}
+                onClose={()=>
+                {
+                    setTypeProjectModalStatus(null);
+                    refetch();
+                }}
+                object={typeProjectModalStatus?.typeProject ?? null}
+                mode={typeProjectModalStatus?.mode ?? null}
+            />
+
         </div>
     );
 };

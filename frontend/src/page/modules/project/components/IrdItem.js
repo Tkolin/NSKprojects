@@ -1,4 +1,4 @@
-import Reactfrom 'react';
+import React, {useEffect, useState} from 'react';
 import {Row, Col, Form, InputNumber, Tooltip, DatePicker, Space} from 'antd';
 import {
     CloseOutlined,

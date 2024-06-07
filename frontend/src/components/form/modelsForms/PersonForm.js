@@ -243,6 +243,7 @@ const PersonForm = ({localObject, initialObject, onCompleted}) => {
                         </Form.Item>
                         <Form.Item name="bik" label="Бик" style={{width: "100%"}}>
                             <CustomAutoCompleteAndCreate
+                                typeData={"CODENAME"}
                                 placeholder={"Начните ввод..."}
                                 data={dataBik?.biks?.items}
                                 firstBtnOnClick={() =>

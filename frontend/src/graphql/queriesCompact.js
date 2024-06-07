@@ -236,6 +236,7 @@ export const BIKS_QUERY_COMPACT = gql`
             items {
                 id
                 name
+                BIK
             }
         }
     }
