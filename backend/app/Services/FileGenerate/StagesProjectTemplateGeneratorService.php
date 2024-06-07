@@ -94,7 +94,7 @@ class StagesProjectTemplateGeneratorService
 
         $templateProcessor->cloneRowAndSetValues('projectStages.number' , $table);
         // Сохранение отредактированного документа
-        $fileName = 'График_рабыот.docx';
+        $fileName =  $project['number'].'_ГРАФИК_ВЫПОЛНЕНИЯ_ЭТАПОВ_РАБОТ_И_ПЛАТЕЖЕЙ.docx';
 
 
 

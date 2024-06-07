@@ -85,8 +85,8 @@ class TheActRenderingServicesTemplateGeneratorService
         foreach ($replacements as $key => $value) {
             $templateProcessor->setValue($key, $value);
         }
+        $fileName =  $project['number'].'_АКТ_ВЫПОЛНЕНЫХ_РАБОТ' .("_НОМЕР_".$stageNumber).'.docx';
 
-        $fileName = 'Акт_об_оказании_услуг'.'.docx';
 
         $filePath = storage_path('app/' . $fileName);
         $templateProcessor->saveAs($filePath);

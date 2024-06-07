@@ -35,7 +35,7 @@ const ProjectFileDownload  = ({projectId, style, text}) => {
             const link = document.createElement('a');
             console.log(link);
 
-            link.href = `${LaravelURL}download-projectIrds/${downloadedFileUrl}`;
+            link.href = `${LaravelURL}download-project/${downloadedFileUrl}`;
 
             link.download = 'contract.docx';
             document.body.appendChild(link);

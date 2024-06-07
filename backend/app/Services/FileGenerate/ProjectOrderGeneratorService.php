@@ -128,7 +128,7 @@ class ProjectOrderGeneratorService
             $templateProcessor->setValue($key, $value);
         }
 
-        $fileName = 'Договор_подряда.docx';
+        $fileName = $project['number'].'_ДОГОВОР_ПОДРЯДА.docx';
 
         $filePath = storage_path('app/' . $fileName);
         $templateProcessor->saveAs($filePath);

@@ -68,7 +68,7 @@ class IrdsProjectTemplateGeneratorService
         $templateProcessor->cloneRowAndSetValues('project_irds.number' , $table);
 
         // Сохранение отредактированного документа
-        $fileName = 'Список_ИРД.docx';
+        $fileName = $project['number'].'_ПЕРЕЧЕНЬ_ИСХОДНО-РАЗРЕШИТЕЛЬНОЙ_ДОКУМЕНТАЦИИ.docx';
         $filePath = storage_path('app/' . $fileName);
         $templateProcessor->saveAs($filePath);
 

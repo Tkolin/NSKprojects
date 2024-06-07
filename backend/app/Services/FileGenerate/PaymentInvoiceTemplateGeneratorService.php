@@ -96,7 +96,7 @@ class PaymentInvoiceTemplateGeneratorService
         //        $templateProcessor->cloneRowAndSetValues('projectStages.number' , $table);
         $currentDate = date('Ymd');
 
-        $fileName = 'Счёт_на_оплату'.'.docx';
+        $fileName =  $project['number'].'_СЧЕТ_НА_ОПЛАТУ'.($stageNumber ? ("_НОМЕР_".$stageNumber) : "_АВАНС").'.docx';
 
         $filePath = storage_path('app/' . $fileName);
         $templateProcessor->saveAs($filePath);
