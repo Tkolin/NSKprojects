@@ -70,7 +70,9 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
             setTotalToPercent(totalProcent);
         }
     }
-
+    useEffect(() => {
+        console.log("project", project);
+    }, [project]);
     return (
         <Form layout="vertical" onChange={() => {
             handleChange();
@@ -97,7 +99,10 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
                                     {...restField}
 
                                     form={form}
-
+                                    durationSetting={{
+                                        minDate: project?.date_range?.dateStart,
+                                        maxDate: project?.date_range?.dateEnd
+                                    }}
                                     projectPrice={project?.price ?? 0}
                                     prepayment={project?.prepayment ?? 0}
 
@@ -110,7 +115,7 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
                                         handleChange();
                                     }}
                                     onChange={(value) => {
-                                        console.log("stageList",form.getFieldValue("stageList"));
+                                        console.log("stageList", form.getFieldValue("stageList"));
                                         handleChange();
                                     }}
                                     isFirst={index === 0}

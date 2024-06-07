@@ -11,6 +11,7 @@ const {RangePicker} = DatePicker;
 
 const StageItem = ({
                        projectPrice,
+                       durationSetting,
                        prepayment,
                        onChange,
                        index,
@@ -26,6 +27,8 @@ const StageItem = ({
     useEffect(() => {
         handlePriceChange(form.getFieldValue(["stageList", index, "percent"]));
     }, []);
+    useEffect(() => {
+console.log("durationSetting", durationSetting);    }, [durationSetting]);
 
 
     // Обработчик изменения даты
@@ -110,7 +113,10 @@ const StageItem = ({
                             required: true,
                         },]}
                     >
-                        <DateRangePickerComponent onChange={() => onChange()}/>
+                        <DateRangePickerComponent
+                            minDate={durationSetting.minDate}
+                            maxDate={durationSetting.maxDate}
+                            onChange={() => onChange()}/>
 
 
                     </Form.Item>

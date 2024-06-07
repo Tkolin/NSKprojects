@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { InputNumber, Space, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 
-const DateRangePickerComponent = ({ value = { dateStart: null, dateEnd: null, duration: null }, onChange }) => {
+const DateRangePickerComponent = ({ value = { dateStart: null, dateEnd: null, duration: null }, onChange , maxDate , minDate}) => {
 
     const handleDateStartChange = (date) => {
         const newDuration = date && value.dateEnd ? dayjs(value.dateEnd).diff(date, 'day') : value.duration;
@@ -26,7 +26,8 @@ const DateRangePickerComponent = ({ value = { dateStart: null, dateEnd: null, du
                     placeholder="Дата начала"
                     onChange={handleDateStartChange}
                     value={value.dateStart}
-                    maxDate={value.dateEnd}
+                    minDate={minDate  ?? null}
+                    maxDate={value.dateEnd ?? maxDate}
                 />
                 <InputNumber
                     placeholder="Продолжительность"
@@ -41,7 +42,9 @@ const DateRangePickerComponent = ({ value = { dateStart: null, dateEnd: null, du
                     onChange={handleDateEndChange}
                     value={value.dateEnd}
                     disabledDate={(current) => value.dateStart && current && current < value.dateStart}
-                    minDate={value.dateStart}
+                    minDate={value.dateStart ?? minDate}
+                    maxDate={maxDate ?? null}
+
                 />
             </Space.Compact>
         </div>
