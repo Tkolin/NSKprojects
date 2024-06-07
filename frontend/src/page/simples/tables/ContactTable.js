@@ -73,33 +73,34 @@ const ContactTable = () => {
     const columns = [
         {
             title: 'ФИО', key: 'FIO',
-            sorter: true, ellipsis: true,
-            render: (text, record) => `${record?.last_name ?? ""}  ${record?.first_name ?? ""} ${record?.patronymic ?? ""}`
+            sorter: true, ellipsis: false,
+            render: (text, record) =>
+                `${record?.last_name ?? ""}  ${record?.first_name ?? ""} ${record?.patronymic ?? ""}`
         }, {
             title: 'Личный тел.', dataIndex: 'mobile_phone', key: 'mobile_phone',
-            sorter: true, ellipsis: true,
+            sorter: true, ellipsis: false,
         }, {
             title: 'Рабочий тел.', dataIndex: 'work_phone', key: 'work_phone',
-            sorter: true, ellipsis: true,
+            sorter: true, ellipsis: false,
         }, {
             title: 'Личный E-mail', dataIndex: 'email', key: 'email',
-            sorter: true, ellipsis: true,
+            sorter: true, ellipsis: false,
         }, {
             title: 'Рабочий E-mail', dataIndex: 'work_email', key: 'work_email',
-            sorter: true, ellipsis: true,
+            sorter: true, ellipsis: false,
         }, {
             title: 'Дата рождения', dataIndex: 'birth_day', key: 'birth_day',
-            sorter: true, ellipsis: true,
+            sorter: true, ellipsis: false,
             render: (birthDay) => birthDay ? formatDate(birthDay) : "",
         }, {
             title: 'Должность',
             dataIndex: 'position',
-            key: 'position', ellipsis: true,
+            key: 'position', ellipsis: false,
             render: (position) => position?.name ?? null,
         }, {
             title: 'Организация',
             dataIndex: 'organization',
-            key: 'organization', ellipsis: true,
+            key: 'organization', ellipsis: false,
             render: (organization) => organization?.name ?? null,
         },
         {

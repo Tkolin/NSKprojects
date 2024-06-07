@@ -1,11 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import Reactfrom 'react';
 import {Row, Col, Form, InputNumber, Tooltip, DatePicker, Space} from 'antd';
 import {
     CloseOutlined,
-    MinusCircleOutlined,
 } from '@ant-design/icons';
 import {CustomAutoComplete} from "../../../../components/style/SearchAutoCompleteStyles";
-import {EmptyFormItem} from "../../../../components/formComponents/EmptyFormItem";
 import {StyledButtonRed} from "../../../../components/style/ButtonStyles";
 
 
@@ -29,7 +27,8 @@ const IrdItem = ({
                                 style={{marginBottom: 0, width: "100%"}}
                                 placeholder={"Выбор ИРД..."}
                                 data={irdData}
-                                onChange={() => console.log("1 CustomAutoComplete")}
+                                onSelect={()    =>  onChange()}
+                                onChange={() => onChange()}
                             />
                         </Form.Item>
                     </Tooltip>

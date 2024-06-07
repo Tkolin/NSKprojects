@@ -32,6 +32,7 @@ const IrdsProjectForm = ({localObject, initialObject, onCompleted, updateIrds, a
         useQuery(IRDS_QUERY_COMPACT);
 
     const handleChange = () => {
+        console.log("updateIrds({...form.getFieldValue(irdLis)}",...form.getFieldValue("irdList"));
         updateIrds({...form.getFieldValue("irdList")});
     }
 
@@ -56,14 +57,14 @@ const IrdsProjectForm = ({localObject, initialObject, onCompleted, updateIrds, a
                     <>
                         {fields.map(({key, name, ...restField}, index) => (
                             <IrdItem
+                                {...restField}
                                 form={form}
                                 key={key}
                                 index={index}
                                 value={name}
                                 irdData={dataIrds?.irds?.items}
-                                removeItem={remove}
+                                removeItem={(value)=>{remove(value); handleChange();}}
                                 onChange={handleChange}
-                                {...restField}
                             />
                         ))}
 

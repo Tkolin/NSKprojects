@@ -5,6 +5,7 @@ import {CustomAutoComplete} from "../../../../components/style/SearchAutoComplet
 import {EmptyFormItem} from "../../../../components/formComponents/EmptyFormItem";
 import dayjs from "dayjs";
 import {StyledButtonRed} from "../../../../components/style/ButtonStyles";
+import DateRangePickerComponent from "./DateRangePickerComponent";
 
 const {RangePicker} = DatePicker;
 
@@ -28,13 +29,13 @@ const StageItem = ({
 
 
     // Обработчик изменения даты
-    const handleDateRangeChange = (dates) => {
-        if (dates && dates[0] && dates[1]) {
-            form.setFieldValue(["stageList", index, "duration"],
-                dayjs(dates[1]).diff(dayjs(dates[0]), 'day') + 1); // обновляем поле продолжительности
-            onChange(); // вызываем onChange для обновления данных
-        }
-    };
+    // const handleDateRangeChange = (dates) => {
+    //     if (dates && dates[0] && dates[1]) {
+    //         form.setFieldValue(["stageList", index, "duration"],
+    //             dayjs(dates[1]).diff(dayjs(dates[0]), 'day') + 1); // обновляем поле продолжительности
+    //         onChange(); // вызываем onChange для обновления данных
+    //     }
+    // };
     // Обработчик цен
     const handlePriceChange = (percent) => {
         if (percent) {
@@ -109,14 +110,9 @@ const StageItem = ({
                             required: true,
                         },]}
                     >
-                        <RangePicker
-                            style={{width: "100%"}}
-                            onChange={handleDateRangeChange}
-                            id={{
-                                start: 'date_start',
-                                end: 'date_end',
-                            }}
-                        />
+                        <DateRangePickerComponent onChange={() => onChange()}/>
+
+
                     </Form.Item>
                 </Tooltip>
             </Col>

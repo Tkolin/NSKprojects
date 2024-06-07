@@ -28,13 +28,15 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
 
 
     const load = () => {
+        console.log("load", actualStages);
         form.setFieldsValue({
             stageList: actualStages && Object.values(actualStages)?.map((row) => ({
                 ...row,
-                date_range: [
-                    row?.date_range?.[0] ? dayjs(row?.date_range?.[0]) : null,
-                    row?.date_range?.[1] ? dayjs(row?.date_range?.[1]) : null
-                ]
+                date_range: {
+                    dateStart: row?.date_range?.dateStart ? dayjs(row?.date_range?.dateStart) : null,
+                    dateEnd: row?.date_range?.dateEnd ? dayjs(row?.date_range?.dateEnd) : null,
+                    duration: row?.date_range?.duration ?? null
+                }
             }))
 
         });
@@ -92,6 +94,8 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
                         {fields.map(({key, name, ...restField}, index) => (
                             <>
                                 <StageItem
+                                    {...restField}
+
                                     form={form}
 
                                     projectPrice={project?.price ?? 0}
@@ -101,11 +105,16 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
                                     index={index}
                                     value={name}
                                     stagesData={dataStages?.stages?.items}
-                                    removeItem={remove}
-                                    onChange={handleChange}
+                                    removeItem={(value) => {
+                                        remove(value);
+                                        handleChange();
+                                    }}
+                                    onChange={(value) => {
+                                        console.log("stageList",form.getFieldValue("stageList"));
+                                        handleChange();
+                                    }}
                                     isFirst={index === 0}
                                     isLast={index === fields.length - 1}
-                                    {...restField}
                                 />
                             </>
 

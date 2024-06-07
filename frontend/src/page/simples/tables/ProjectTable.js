@@ -57,7 +57,8 @@ const ProjectTable = () => {
     const [selectedProject, setSelectedProject] = useState(null);
     const [editModalStatus, setEditModalStatus] = useState(false);
     useEffect(() => {
-        console.log("editModalStatus", editModalStatus)
+        if(!editModalStatus)
+            refetch();
     }, [editModalStatus]);
     const navigate = useNavigate();
     const formatCurrency = (amount) => {

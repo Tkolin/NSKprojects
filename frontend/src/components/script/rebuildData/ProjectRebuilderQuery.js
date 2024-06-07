@@ -2,7 +2,7 @@ import 'react-phone-number-input/style.css';
 import dayjs from "dayjs";
 
 export const facilitiesToFullCode = (faclility) => {
-     if (!(faclility && faclility?.group_facility && faclility?.group_facility?.subselection_facility
+    if (!(faclility && faclility?.group_facility && faclility?.group_facility?.subselection_facility
 
         && faclility?.group_facility?.subselection_facility
             ?.selection_facility))
@@ -47,17 +47,19 @@ export const rebuildProjectResultQuery = (data) => {
         ;
 };
 export const rebuildStagesResultQuery = (data) => {
-     let f = 1;
+    let f = 1;
     return data?.map((row,) => ({
         ...row,
-        date_range: [
-            row?.date_start ? dayjs(row?.date_start) : null,
-            row?.date_end ? dayjs(row?.date_end) : null],
+        date_range: {
+            dateStart: row?.date_start ? dayjs(row?.date_start) : null,
+            dateEnd: row?.date_end ? dayjs(row?.date_end) : null,
+            duration: row?.duration ?? null
+        },
         stage: {selected: row?.stage?.id, output: row?.stage?.name},
     }));
 };
 export const rebuildIrdsResultQuery = (data) => {
-     return data?.map((row, index) => ({
+    return data?.map((row, index) => ({
         ...row,
         receivedDate: row.receivedDate ? dayjs(row.receivedDate?.[1]).format("YYYY-MM-DD") : null,
         IRD: {selected: row?.IRD?.id, output: row?.IRD?.name},
@@ -72,9 +74,9 @@ export const rebuildStagesToQuery = (data, project) => {
     return dataArray?.map((row, index) => ({
         id: row?.id ?? null,
         project_id: project?.id ?? null,
-        date_start: row.date_range?.[0] ? dayjs(row.date_range?.[0]).format("YYYY-MM-DD") : null,
-        date_end: row.date_range?.[1] ? dayjs(row.date_range?.[1]).format("YYYY-MM-DD") : null,
-        duration: row?.duration ?? null,
+        date_start: row.date_range?.dateStart ? dayjs(row.date_range?.dateStart).format("YYYY-MM-DD") : null,
+        date_end: row.date_range?.dateEnd ? dayjs(row.date_range?.dateEnd).format("YYYY-MM-DD") : null,
+        duration: row?.date_range?.duration ?? null,
         stage_id: row?.stage?.selected ?? null,
         number: index + 1,
         price: row?.price ?? null,
@@ -87,7 +89,7 @@ export const rebuildIrdToQuery = (data, project) => {
     if (!data)
         return [];
     const dataArray = Object.values(data);
-     return dataArray?.map((row, index) => ({
+    return dataArray?.map((row, index) => ({
         id: row?.id ?? null,
         project_id: project?.id ?? null,
         ird_id: row?.IRD?.selected ?? null,
@@ -97,6 +99,7 @@ export const rebuildIrdToQuery = (data, project) => {
     }));
 };
 export const rebuildProjectToQuery = (data) => {
+    console.log("rebuildProjectToQuery", data);
     if (!data)
         return [];
 
@@ -106,10 +109,10 @@ export const rebuildProjectToQuery = (data) => {
         name: data?.name,
         organization_customer_id: data?.organization_customer?.selected,
         type_project_document_id: data?.type_project_document_id,
-        date_signing: dayjs(data?.date_signing).format("YYYY-MM-DD"),
+        date_signing: dayjs(data?.date_range?.dateStart).format("YYYY-MM-DD"),
         duration: data?.date_range?.duration,
-        date_end: dayjs(data?.date_range?.date_end).format("YYYY-MM-DD"),
-        date_create: dayjs(data?.date_range?.date_create).format("YYYY-MM-DD"),
+        date_end: dayjs(data?.date_range?.dateEnd).format("YYYY-MM-DD"),
+        date_create: dayjs(data?.date_signing).format("YYYY-MM-DD"),
         status_id: data?.status_id,
         date_completion: dayjs(data?.date_completion).format("YYYY-MM-DD"),
         price: data?.price,
