@@ -93,7 +93,7 @@ console.log("durationSetting", durationSetting);    }, [durationSetting]);
                                  max={25}/>
                 </Tooltip>
             </Col>
-            <Col span={11} style={{width: "100%"}}>
+            <Col span={10} style={{width: "100%"}}>
                 <Tooltip title="Наименование этапа">
                     <Form.Item name={[index, 'stage']}>
                         <CustomAutoComplete
@@ -104,7 +104,7 @@ console.log("durationSetting", durationSetting);    }, [durationSetting]);
                     </Form.Item>
                 </Tooltip>
             </Col>
-            <Col span={5}>
+            <Col span={6}>
                 <Tooltip title="Сроки этапа">
                     <Form.Item
                         style={{marginBottom: 0, width: "100%"}}

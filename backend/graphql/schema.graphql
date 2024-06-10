@@ -7,6 +7,7 @@
 type Query {
     contacts(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): ContactsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     organizations(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): OrganizationsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    organizationsAndEmployee(id: ID, queryOptions: QueryOptions, organizationId: ID): OrganizationsAndEmployeesResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     positions(id: ID, queryOptions: QueryOptions, queryType: String): PositionsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     irds(id: ID, queryOptions: QueryOptions, queryType: String): IrdsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     stages(id: ID, queryOptions: QueryOptions, queryType: String): StagesResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
@@ -347,6 +348,26 @@ type Organization{
     bik:  bik
     payment_account: String
     director: Contact
+}type OrganizationAndEmployees{
+    id: ID!
+    legal_form: LegalForm!
+    name: String!
+    full_name: String
+    address_legal: String
+    office_number_legal: String
+    address_mail: String
+    office_number_mail: String
+    phone_number: String
+    fax_number: String
+    email: String
+    INN: String
+    OGRN: String
+    OKPO: String
+    KPP: String
+    bik:  bik
+    payment_account: String
+    director: Contact
+    employees: [Contact]
 }
 type LegalForm{
     id: ID!

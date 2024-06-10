@@ -43,9 +43,9 @@ class StagesProjectTemplateGeneratorService
         // Формируем массив для отображения в таблице
         $table[] =  [
             'projectStages.number' => '',
-            "projectStages.stage.name" => 'Аванс',
-            "projectStages.stage.duration" => '0',
-            "projectStages.stage.price" => number_format(($project["price"] * $project["prepayment"] / 100), 0, ',', ' ')." р.",
+            "projectStages.stage.name" => 'Аванс ' . $project["prepayment"] . "%",
+            "projectStages.stage.duration" => '',
+            "projectStages.stage.price" => "",
             "projectStages.stage.endPrice" => number_format(($project["price"] * $project["prepayment"] / 100), 0, ',', ' ')." р.",
             "projectStages.payDay" =>  "В течение 5 банковских дней с даты подписания договора",
         ];

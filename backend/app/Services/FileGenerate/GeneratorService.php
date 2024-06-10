@@ -13,7 +13,7 @@ class GeneratorService
     {
         return Organization
             ::with('legal_form')
-            ->with('contacts')
+            ->with('employees')
             ->with('bik')
             ->find(0);
     }

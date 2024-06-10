@@ -1,17 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import { Descriptions, Divider, Form, Modal, notification, Space, Table} from 'antd';
+import {Col, Descriptions, Divider, Form, notification, Row, Space, Table} from 'antd';
 import {DELETE_ORGANIZATION_MUTATION} from '../../../graphql/mutationsOrganization';
-import OrganizationForm from "../../../components/form/modelsForms/OrganizationForm";
 import Search from "antd/es/input/Search";
-import StyledLinkManagingDataTable from "../../../components/style/TableStyles";
+import {DeleteAndEditStyledLinkManagingDataTable} from "../../../components/style/TableStyles";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
-import {ORGANIZATIONS_QUERY} from "../../../graphql/queries";
+import { ORGANIZATIONS_QUERY_AND_EMPLOYEE} from "../../../graphql/queries";
 import Title from "antd/es/typography/Title";
 import OrganizationModalForm from "../../../components/modal/OrganizationModalForm";
 
+import OrganizationContactsCompactTable from "./components/OrganizationContactsCompactTable";
+
 const OrganizationTable = () => {
     // Состояния
+
     const [organizationModalStatus, setOrganizationModalStatus] = useState(false);
     const [formSearch] = Form.useForm();
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
@@ -24,7 +26,7 @@ const OrganizationTable = () => {
 
     const [search, setSearch] = useState('');
 
-    const {loading: loading,error: error, data: data, refetch: refetch} = useQuery(ORGANIZATIONS_QUERY, {
+    const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(ORGANIZATIONS_QUERY_AND_EMPLOYEE, {
         variables: {
             queryOptions: {page, limit, search, sortField, sortOrder}
         }, fetchPolicy: 'network-only',
@@ -58,6 +60,7 @@ const OrganizationTable = () => {
     const onSearch = (value) => {
         setSearch(value);
     }
+
     // Обработка загрузки и ошибок
     if (error) return `Ошибка! ${error.message}`;
 
@@ -67,7 +70,7 @@ const OrganizationTable = () => {
         {
             title: 'Тип',
             dataIndex: 'legal_form',
-            key: 'legal_form', width: 60,             ellipsis: true,
+            key: 'legal_form', width: 60, ellipsis: true,
 
             render: (legal_form) => legal_form ? legal_form.name : '',
         }, {
@@ -76,7 +79,7 @@ const OrganizationTable = () => {
         }, {
             title: 'Директор',
             dataIndex: 'director',
-            key: 'director',             ellipsis: true,
+            key: 'director', ellipsis: true,
 
             render: (director) => {
                 if (director) {
@@ -87,14 +90,14 @@ const OrganizationTable = () => {
             },
         }, {
             title: 'email', dataIndex: 'email', key: 'email', width: 200,
-            sorter: true,  ellipsis: true,
+            sorter: true, ellipsis: true,
         }, {
             title: 'номер телефона', dataIndex: 'phone_number', key: 'phone_number', width: 200,
-            sorter: true,  ellipsis: true,
+            sorter: true, ellipsis: true,
         },
         {
             title: 'Управление', key: 'edit', width: 100, render: (text, record) => (
-                <StyledLinkManagingDataTable
+                <DeleteAndEditStyledLinkManagingDataTable
                     title={"Удаление организации"}
                     description={"Вы уверены, что нужно удалить эту организацию?"}
                     handleEdit={() =>
@@ -124,7 +127,9 @@ const OrganizationTable = () => {
                         enterButton="Найти"
                         onSearch={onSearch}
                     />
-                    <StyledButtonGreen style={{marginBottom: 0}} onClick={() => setOrganizationModalStatus({organization: null, mode: "add"})}>Создать новую
+                    <StyledButtonGreen style={{marginBottom: 0}}
+                                       onClick={() => setOrganizationModalStatus({organization: null, mode: "add"})}>Создать
+                        новую
                         запись</StyledButtonGreen>
                 </Space>
             </Form.Item>
@@ -135,11 +140,11 @@ const OrganizationTable = () => {
                 offsetHeader: '64px',
             }}
             loading={loading}
-            dataSource={data?.organizations?.items?.map((org, index) => ({...org, key: index}))}
+            dataSource={data?.organizationsAndEmployee?.items?.map((org, index) => ({...org, key: index}))}
             columns={columns}
             onChange={(pagination, filters, sorter, extra) => onChange(sorter)}
             pagination={{
-                total: data?.organizations?.count,
+                total: data?.organizationsAndEmployee?.count,
                 current: page,
                 pageSize: limit,
                 onChange: (page, limit) => {
@@ -161,28 +166,38 @@ const OrganizationTable = () => {
                     setExpandedRowKeys(keys);
                 },
                 expandedRowRender: (record) => (
-                    <Descriptions size={"small"} column={1}>
-                        <Descriptions.Item label="Полное наименование">{record.full_name}</Descriptions.Item>
-                        <Descriptions.Item
-                            label="Юридический адрес">{record.address_legal} {record.office_number_legal}</Descriptions.Item>
-                        <Descriptions.Item
-                            label="Почтовый адрес">{record.address_mail} {record.office_number_mail}</Descriptions.Item>
-                        <Descriptions.Item label="Электронный адресс">{record.email}</Descriptions.Item>
-                        <Descriptions.Item label="Факс">{record.fax_number}</Descriptions.Item>
-                        <Descriptions.Item label="ИНН">{record.INN}</Descriptions.Item>
-                        <Descriptions.Item label="ОГРН">{record.OGRN}</Descriptions.Item>
-                        <Descriptions.Item label="ОКПО">{record.OKPO}</Descriptions.Item>
-                        <Descriptions.Item label="КПП">{record.KPP}</Descriptions.Item>
-                        <Descriptions.Item label="БИК">{record?.bik?.BIK} - {record?.bik?.name}</Descriptions.Item>
-                        <Descriptions.Item label="Расчетный счет">{record.payment_account}</Descriptions.Item>
-                    </Descriptions>
+                    <Row>
+                        <Col span={12}>
+                            <Descriptions size={"small"} column={1}>
+                                <Descriptions.Item label="Полное наименование">{record.full_name}</Descriptions.Item>
+                                <Descriptions.Item
+                                    label="Юридический адрес">{record.address_legal} {record.office_number_legal}</Descriptions.Item>
+                                <Descriptions.Item
+                                    label="Почтовый адрес">{record.address_mail} {record.office_number_mail}</Descriptions.Item>
+                                <Descriptions.Item label="Электронный адресс">{record.email}</Descriptions.Item>
+                                <Descriptions.Item label="Факс">{record.fax_number}</Descriptions.Item>
+                                <Descriptions.Item label="ИНН">{record.INN}</Descriptions.Item>
+                                <Descriptions.Item label="ОГРН">{record.OGRN}</Descriptions.Item>
+                                <Descriptions.Item label="ОКПО">{record.OKPO}</Descriptions.Item>
+                                <Descriptions.Item label="КПП">{record.KPP}</Descriptions.Item>
+                                <Descriptions.Item
+                                    label="БИК">{record?.bik?.BIK} - {record?.bik?.name}</Descriptions.Item>
+                                <Descriptions.Item label="Расчетный счет">{record.payment_account}</Descriptions.Item>
+                            </Descriptions>
+                        </Col>
+                        <Col span={12}>
+                          <OrganizationContactsCompactTable data={record?.employees} refetch={()=>refetch()}/>
+                        </Col>
+
+                    </Row>
+
                 ),
             }}
         />
 
         <OrganizationModalForm
             key={organizationModalStatus?.organization?.id ?? null}
-            onClose={()=>setOrganizationModalStatus(null)}
+            onClose={() => setOrganizationModalStatus(null)}
             object={organizationModalStatus?.organization ?? null}
             mode={organizationModalStatus?.mode ?? null}
         />

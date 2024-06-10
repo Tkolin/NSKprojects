@@ -132,7 +132,6 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
             <Form onFinish={() => onCompleted && onCompleted()} form={form} onChange={() => {
                 handleChange();
                 setFormLoad(true);
-
             }} layout="vertical">
                 <EmptyFormItem name={"id"}/>
                 <Form.Item name="number" label="Номер проекта" rules={[{required: true}]}>

@@ -33,10 +33,10 @@ final readonly class ProjectPaymentInvoiceFileDownload
 
 
             $projectGenerator = new PaymentInvoiceTemplateGeneratorService();
-            if (isset($args['isPrepayment']))
-                $contractFilePath = $projectGenerator->generate($projectData, null, true);
+            if (isset($args['isPrepayment']) && $args['isPrepayment'])
+                error_log("Аванс") && $contractFilePath = $projectGenerator->generate($projectData, null, true);
             else
-                $contractFilePath = $projectGenerator->generate($projectData, $args["stageNumber"], false);
+                error_log("Не Аванс") && $contractFilePath = $projectGenerator->generate($projectData, $args["stageNumber"], false);
 
             return ['url' => $contractFilePath];
 

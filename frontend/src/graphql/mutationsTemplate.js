@@ -9,6 +9,15 @@ export const UPDATE_STAGES_TEMPLATE_MUTATION = gql`
         ) 
     }
 `;
+export const CREATE_TEMPLATE_BASED_ON_PROJECT = gql`
+    mutation UpdateStagesTemplate(
+        $projectId: ID
+    ) {
+        createTemplateBasedOnProject(
+            projectId: $projectID
+        ) 
+    }
+`;
 
 export const UPDATE_IRDS_TEMPLATE_MUTATION = gql`
     mutation UpdateIrdsTemplate(

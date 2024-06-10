@@ -33,7 +33,6 @@ final readonly class Organizations
 
         $organizationsQuery = Organization
             ::with('legal_form')
-            ->with('contacts')
             ->with('bik');
 
         $queryService = new QueryService();

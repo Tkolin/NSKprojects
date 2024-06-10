@@ -1,6 +1,9 @@
 # Мутации с основными данными
 extend type Mutation {
-    updateIrdsTemplate(
+    createTemplateBasedOnProject(
+        projectId: ID
+    ) : Boolean @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+      updateIrdsTemplate(
         typeProjectId: ID
         listIrds_id: [ID]
         listStageNumber: [Int]

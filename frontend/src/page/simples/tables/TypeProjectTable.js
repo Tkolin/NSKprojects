@@ -8,7 +8,7 @@ import TypeProjectForm from "../../../components/form/modelsForms/TypeProjectFor
 import Search from "antd/es/input/Search";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
 import ContactModalForm from "../../../components/modal/ContactModalForm";
-import StyledLinkManagingDataTable from "../../../components/style/TableStyles";
+import {DeleteAndEditStyledLinkManagingDataTable} from "../../../components/style/TableStyles";
 import TypeProjectModalForm from "../../../components/modal/TypeProjectModalForm";
 import {nanoid} from "nanoid";
 
@@ -91,7 +91,7 @@ const TypeProjectTable = () => {
         },
         {
             title: 'Управление', key: 'edit', ellipsis: true, width: 100, render: (text, record) => (
-                <StyledLinkManagingDataTable
+                <DeleteAndEditStyledLinkManagingDataTable
                     title={"Удаление типа организации"}
                     description={"Вы уверены, что нужно удалить этот тип?"}
                     handleEdit={() => {

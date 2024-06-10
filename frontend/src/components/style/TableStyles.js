@@ -6,7 +6,7 @@ import { QuestionCircleOutlined} from "@ant-design/icons";
 export const StyledTable = styled(Table)`
 
 `;
-const StyledLinkManagingDataTable = ({
+export  const DeleteAndEditStyledLinkManagingDataTable = ({
                                          title,
                                          description,
                                          handleEdit,
@@ -37,4 +37,14 @@ const StyledLinkManagingDataTable = ({
         </Row>
     </div>
 );
-export default StyledLinkManagingDataTable;
+export const EditStyledLinkManagingDataTable = ({
+                                         handleEdit,
+                                         }) => (
+    <div>
+        <Row style={{margin: 'auto'}}>
+            <Typography.Link onClick={handleEdit}>
+                Изменить
+            </Typography.Link>
+        </Row>
+    </div>
+);

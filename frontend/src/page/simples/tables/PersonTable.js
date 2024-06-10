@@ -17,7 +17,7 @@ import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
 import PersonContractFileDownload from "../../../components/script/fileDownloadScripts/PersonContractFileDownload";
 import Title from "antd/es/typography/Title";
 import {format} from "date-fns";
-import StyledLinkManagingDataTable from "../../../components/style/TableStyles";
+import {DeleteAndEditStyledLinkManagingDataTable} from "../../../components/style/TableStyles";
  import PersonModalForm from "../../../components/modal/PersonModalForm";
 
 const PersonTable = () => {
@@ -111,7 +111,7 @@ const PersonTable = () => {
             ),
         }, {
             title: 'Управление', key: 'edit', width: 100, render: (text, record) => (
-                <StyledLinkManagingDataTable
+                <DeleteAndEditStyledLinkManagingDataTable
                     title={"Удаление контакта"}
                     description={"Вы уверены, что нужно удалить этого подрядчика?"}
                     handleEdit={() => {

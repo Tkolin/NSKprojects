@@ -8,7 +8,7 @@ import Search from "antd/es/input/Search";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
 import Title from "antd/es/typography/Title";
 import {format} from "date-fns";
-import StyledLinkManagingDataTable from "../../../components/style/TableStyles";
+import {DeleteAndEditStyledLinkManagingDataTable} from "../../../components/style/TableStyles";
 import ContactModalForm from "../../../components/modal/ContactModalForm";
 import {nanoid} from "nanoid";
 
@@ -106,7 +106,7 @@ const ContactTable = () => {
         },
         {
             title: 'Управление', key: 'edit', ellipsis: true, width: 100, render: (text, record) => (
-                <StyledLinkManagingDataTable
+                <DeleteAndEditStyledLinkManagingDataTable
                     title={"Удаление контакта"}
                     description={"Вы уверены, что нужно удалить этот контакт?"}
                     handleEdit={() => {

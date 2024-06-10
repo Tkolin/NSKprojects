@@ -3,7 +3,6 @@ import {useMutation, useQuery} from '@apollo/client';
 import {Button, notification, Table} from 'antd';
 import {CONTACTS_QUERY} from '../../../graphql/queries';
 import {DELETE_CONTACT_MUTATION} from '../../../graphql/mutationsContact';
-import LoadingSpinnerStyles from "../../../components/style/LoadingSpinnerStyles";
 
 const BikTable = () => {
 

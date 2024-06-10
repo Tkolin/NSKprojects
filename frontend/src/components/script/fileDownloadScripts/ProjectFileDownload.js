@@ -47,7 +47,7 @@ const ProjectFileDownload  = ({projectId, style, text}) => {
     };
 
     return (
-        <Link style={style} onClick={handleDownload}>{text ?? 'скачать'}</Link>
+        <Link type={"success"} onClick={handleDownload}>{text ?? 'скачать'}</Link>
     );
 };
 

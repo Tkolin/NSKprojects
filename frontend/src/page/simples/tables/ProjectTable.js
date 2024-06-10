@@ -1,14 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import {
-    Col,
-    Collapse,
-    Descriptions,
     Divider,
     Form,
     Modal,
-    notification,
-    Row,
+    notification, Popconfirm, Popover, Row,
     Space,
     Table,
     Tooltip,
@@ -24,7 +20,6 @@ import ActRenderingProjectDownload from "../../../components/script/fileDownload
 import PaymentInvoiceProjectDownload
     from "../../../components/script/fileDownloadScripts/PaymentInvoiceProjectDownload";
 import ProjectTasks from "../../modules/projectTasks/Index";
-import TaskExecutorContractDownload from "../../../components/script/fileDownloadScripts/TaskExecutorContractDownload";
 import {useNavigate} from "react-router-dom";
 import ProjectForm from "../../modules/project/components/ProjectForm";
 import StagesProjectForm from "../../modules/project/components/StagesProjectForm";
@@ -43,10 +38,16 @@ import {
     UPDATE_IRDS_TO_PROJECT_MUTATION,
     UPDATE_PROJECT_MUTATION, UPDATE_STAGES_TO_PROJECT_MUTATION
 } from "../../../graphql/mutationsProject";
-import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../../components/style/BlockStyles";
+import {StyledBlockLarge, StyledBlockRegular} from "../../../components/style/BlockStyles";
 import Link from "antd/es/typography/Link";
 import dayjs from "dayjs";
-import {DeleteOutlined, DownloadOutlined, EditOutlined} from "@ant-design/icons";
+import {
+    DeleteOutlined,
+    DownloadOutlined,
+    EditOutlined,
+    QuestionCircleOutlined, SaveOutlined,
+    SubnodeOutlined, TrademarkCircleOutlined
+} from "@ant-design/icons";
 
 const {Text} = Typography;
 
@@ -57,7 +58,7 @@ const ProjectTable = () => {
     const [selectedProject, setSelectedProject] = useState(null);
     const [editModalStatus, setEditModalStatus] = useState(false);
     useEffect(() => {
-        if(!editModalStatus)
+        if (!editModalStatus)
             refetch();
     }, [editModalStatus]);
     const navigate = useNavigate();
@@ -110,7 +111,7 @@ const ProjectTable = () => {
             refetch();
         },
         onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении сооздания : ${error.message}`);
+            openNotification('topRight', 'error', `Ошибка при выполнении создания : ${error.message}`);
         },
     });
 
@@ -120,7 +121,7 @@ const ProjectTable = () => {
             setEditModalStatus(null);
         },
         onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении сооздания ирд : ${error.message}`);
+            openNotification('topRight', 'error', `Ошибка при выполнении создания ирд : ${error.message}`);
         },
     });
 
@@ -130,9 +131,12 @@ const ProjectTable = () => {
             setEditModalStatus(null);
         },
         onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении сооздания этапа : ${error.message}`);
+            openNotification('topRight', 'error', `Ошибка при выполнении создания этапа : ${error.message}`);
         },
     });
+    const createTemplate = (projectId) => {
+        console.log("create template to ", projectId);
+    }
     // Обработка загрузки и ошибок
     if (error) return `Ошибка! ${error.message}`;
 
@@ -143,16 +147,36 @@ const ProjectTable = () => {
             width: "2%",
             render: (text, record) => (
                 <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
-                        <Link type={"warning"}>
-                            <EditOutlined
-                                onClick={() => setEditModalStatus({
-                                    status: "base",
-                                    project: rebuildProjectResultQuery(record)
-                                })}/>
-                        </Link>
+                    <Link type={"warning"}>
+                        <EditOutlined
+                            onClick={() => setEditModalStatus({
+                                status: "base",
+                                project: rebuildProjectResultQuery(record)
+                            })}/>
+                    </Link>
                     <Link type={"danger"}>
-                            <DeleteOutlined/>
-                        </Link>
+                        <DeleteOutlined/>
+                    </Link>
+                    <div>
+                        <Row style={{margin: 'auto'}}>
+                            <Popconfirm
+                                title={"Создание шаблона на основе этого проекта"}
+                                description={"Вы уверены? это изменит существующий шаблон!"}
+                                onConfirm={()=> createTemplate(record.id)}
+                                icon={
+                                    <Text type={"danger"}>
+                                    <SaveOutlined />
+                                    </Text>
+                                }
+                            >
+                                <Link type={"secondary"}>
+                                    <SaveOutlined />
+                                </Link>
+                            </Popconfirm>
+                        </Row>
+                    </div>
+
+
                 </Space.Compact>
             ),
         },
@@ -167,7 +191,7 @@ const ProjectTable = () => {
                     <Title level={5} style={{marginTop: 0}}>{record.name}</Title>
                     <Text>{record.number}</Text>
                     <Text>{record.type_project_document.name}</Text>
-                    <ProjectFileDownload  style={{color: "green"}} text={"Скачать договор"} projectId={record.id}/>
+                    <ProjectFileDownload text={"Скачать договор"} projectId={record.id}/>
                 </Space.Compact>
             ),
 
@@ -236,7 +260,6 @@ const ProjectTable = () => {
                             :
                             <Text type="danger">Не задана дата окончания</Text>
                     }
-                    <Text> </Text>
                     {
                         record.date_end && record.date_signing ?
                             (
@@ -269,9 +292,10 @@ const ProjectTable = () => {
                     <Space>
                         <Tooltip title={"График выполнения работ"}>
                             <Text style={{marginRight: 10}}>Список Этапов</Text>
-                            <StagesProjectFileDownload  style={{color: "green"}} text={<DownloadOutlined/>} projectId={project.id}/>
+                            <StagesProjectFileDownload style={{color: "green"}} text={<DownloadOutlined/>}
+                                                       projectId={project.id}/>
                         </Tooltip>
-                        <Link  type={"warning"}>
+                        <Link type={"warning"}>
                             <EditOutlined
                                 onClick={() => setEditModalStatus({
                                     status: "stages",
@@ -305,9 +329,9 @@ const ProjectTable = () => {
                         align: "left",
                         render: (text, record) => (
                             <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
-                                {record.prepayment ?
+                                {record?.type === "prepayment" ?
                                     <PaymentInvoiceProjectDownload isPrepayment={true}
-                                                                   projectId={record.id} type="acts"/>
+                                                                   projectId={project.id} type="acts"/>
                                     :
                                     <PaymentInvoiceProjectDownload stageNumber={record.number}
                                                                    projectId={project.id} type="acts"/>
@@ -322,7 +346,7 @@ const ProjectTable = () => {
                         align: "left",
                         render: (text, record) => (
                             <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
-                                {record.prepayment ?
+                                {record?.type === "prepayment" ?
                                     ("-")
                                     :
                                     <ActRenderingProjectDownload stageNumber={record.number}
@@ -339,9 +363,10 @@ const ProjectTable = () => {
                         <Tooltip title={"Список ИРД"}>
 
                             <Text style={{marginRight: 10}}>Список ИРД</Text>
-                            <IrdsProjectFileDownload style={{color: "green"}} text={<DownloadOutlined/>} projectId={project.id}/>
+                            <IrdsProjectFileDownload style={{color: "green"}} text={<DownloadOutlined/>}
+                                                     projectId={project.id}/>
                         </Tooltip>
-                        <Link  type={"warning"}>
+                        <Link type={"warning"}>
 
                             <EditOutlined onClick={() => setEditModalStatus({
                                 status: "irds",
@@ -574,7 +599,7 @@ const ProjectTable = () => {
                 onCancel={() => setEditModalStatus(null)}
                 footer={null}
                 width={1500}
-                 onClose={() => setEditModalStatus(null)}
+                onClose={() => setEditModalStatus(null)}
             >
                 {editModalStatus?.status === "base" ? (
 
@@ -587,8 +612,9 @@ const ProjectTable = () => {
                                     project: {...editModalStatus.project, ...value}
                                 })}/>
                             <div>
-                                <StyledButtonGreen onClick={() =>{
-                                    mutateProject({variables: {data: rebuildProjectToQuery(editModalStatus?.project)}})}}>
+                                <StyledButtonGreen onClick={() => {
+                                    mutateProject({variables: {data: rebuildProjectToQuery(editModalStatus?.project)}})
+                                }}>
                                     Сохранить
                                 </StyledButtonGreen>
                             </div>
@@ -596,14 +622,14 @@ const ProjectTable = () => {
 
                     ) :
                     editModalStatus?.status === "irds" ? (
-                            <StyledBlockLarge label={"Список ИРД"} >
+                            <StyledBlockLarge label={"Список ИРД"}>
                                 <IrdsProjectForm
                                     actualIrds={editModalStatus?.irds}
                                     updateIrds={(value) => setEditModalStatus({...editModalStatus, irds: value})}
                                     project={editModalStatus?.project}
                                 />
                                 <Divider/>
-                                <div style={{ width: "100%", textAlign: "center"}}>
+                                <div style={{width: "100%", textAlign: "center"}}>
                                     <StyledButtonGreen onClick={() =>
                                         mutateIrd({variables: {data: rebuildIrdToQuery(editModalStatus?.irds, editModalStatus?.project)}})}>
                                         Сохранить
@@ -611,7 +637,7 @@ const ProjectTable = () => {
                                 </div>
                             </StyledBlockLarge>) :
                         editModalStatus?.status === "stages" ? (
-                                <StyledBlockLarge label={"Список этапов "} >
+                                <StyledBlockLarge label={"Список этапов "}>
                                     <StagesProjectForm
                                         actualStages={editModalStatus?.stages}
                                         updateStages={(value) => setEditModalStatus({
@@ -621,7 +647,7 @@ const ProjectTable = () => {
                                         project={editModalStatus?.project}
                                     />
                                     <Divider/>
-                                    <div style={{ width: "100%", textAlign: "center"}}>
+                                    <div style={{width: "100%", textAlign: "center"}}>
                                         <StyledButtonGreen onClick={() =>
                                             mutateStage({variables: {data: rebuildStagesToQuery(editModalStatus?.stages, editModalStatus?.project)}})}>
                                             Сохранить

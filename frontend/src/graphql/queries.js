@@ -181,6 +181,60 @@ export const ORGANIZATIONS_QUERY = gql`
         }
     }
 `;
+export const ORGANIZATIONS_QUERY_AND_EMPLOYEE = gql`
+    query OrganizationsQuery ($queryOptions: QueryOptions, $organizationId: ID) {
+        organizationsAndEmployee (queryOptions: $queryOptions, organizationId: $organizationId){
+            items {
+                id
+                name
+                full_name
+                legal_form{
+                    id
+                    name
+                }
+                address_legal
+                office_number_legal
+                address_mail
+                office_number_mail
+                phone_number
+                fax_number
+                email
+                INN
+                OGRN
+                OKPO
+                KPP
+                bik{
+                    id
+                    BIK
+                    name
+                }
+                payment_account
+                director{
+                    id
+                    first_name
+                    last_name
+                    patronymic
+                }
+                employees {
+                    id
+                    first_name
+                    last_name
+                    work_email
+                    work_phone
+                    mobile_phone
+                    email
+                    patronymic
+                    birth_day
+                    position {
+                        id
+                        name
+                    }
+                }
+            }
+            count
+        }
+    }
+`;
 export const ORGANIZATIONS_SHORT_QUERY = gql`
     query OrganizationsQuery ($queryOptions: QueryOptions) {
         organizations (queryOptions: $queryOptions) {

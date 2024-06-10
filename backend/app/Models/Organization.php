@@ -49,7 +49,7 @@ class Organization extends Model
     {
         return $this->hasMany(Project::class);
     }
-    public function contacts(): HasMany
+    public function employees(): HasMany
     {
         return $this->hasMany(Contact::class);
     }

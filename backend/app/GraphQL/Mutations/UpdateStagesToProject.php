@@ -10,7 +10,7 @@ final readonly class UpdateStagesToProject
     public function __invoke($_, array $args)
     {
         $stages = $args['items'];
-        error_log('nen');
+        error_log('этапы'. $args['items'][0]["price"]);
         $count = count($stages);
         for ($i = 0; $i < $count; $i++) {
             ProjectStage::updateOrCreate(
@@ -24,8 +24,8 @@ final readonly class UpdateStagesToProject
                     'duration' => isset($stages[$i]["duration"]) ? (int)$stages[$i]["duration"] : null,
                     'date_end' => isset($stages[$i]["date_end"]) ? substr((string) $stages[$i]["date_end"], 0, 10) : null,
                     'percent' => isset($stages[$i]["percent"]) ? (int)$stages[$i]["percent"] : null,
-                    'price' => isset($stages[$i]["price"]) ? (int)$stages[$i]["price"] : null,
-                    'price_to_paid' => isset($stages[$i]["price"]) ? (int)$stages[$i]["price_to_paid"] : null,
+                    'price' => isset($stages[$i]["price"]) ? (float)$stages[$i]["price"] : null,
+                    'price_to_paid' => isset($stages[$i]["price"]) ? (float)$stages[$i]["price_to_paid"] : null,
                 ]
             );
         }
