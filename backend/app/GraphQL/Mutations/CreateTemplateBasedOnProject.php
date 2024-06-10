@@ -8,5 +8,6 @@ final readonly class CreateTemplateBasedOnProject
     public function __invoke(null $_, array $args)
     {
         $projectId =$args["projectId"];
+        error_log("projectId ".$projectId);
     }
 }

@@ -180,11 +180,12 @@ const ProjectTable = () => {
                 </Space.Compact>
             ),
         },
+
         {
             title: 'Основные данные',
             dataIndex: 'main_data',
             key: 'main_data',
-            width: "50%",
+            width: "52%",
             align: "left",
             render: (text, record) => (
                 <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>

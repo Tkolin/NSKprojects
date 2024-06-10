@@ -8,6 +8,7 @@ type Query {
     contacts(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): ContactsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     organizations(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): OrganizationsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     organizationsAndEmployee(id: ID, queryOptions: QueryOptions, organizationId: ID): OrganizationsAndEmployeesResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    countProjectByOrganizations(organizationId: ID): CountProjectByOrganizationsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     positions(id: ID, queryOptions: QueryOptions, queryType: String): PositionsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     irds(id: ID, queryOptions: QueryOptions, queryType: String): IrdsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     stages(id: ID, queryOptions: QueryOptions, queryType: String): StagesResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
@@ -368,6 +369,9 @@ type Organization{
     payment_account: String
     director: Contact
     employees: [Contact]
+}type CountProjectByOrganizations{
+    organization_id: ID!
+    count_project: Int!
 }
 type LegalForm{
     id: ID!

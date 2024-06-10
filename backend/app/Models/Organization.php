@@ -47,7 +47,7 @@ class Organization extends Model
     }
     public function project(): HasMany
     {
-        return $this->hasMany(Project::class);
+        return $this->hasMany(Project::class, "organization_customer_id");
     }
     public function employees(): HasMany
     {

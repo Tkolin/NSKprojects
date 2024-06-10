@@ -22,6 +22,8 @@ type BikResult {
 }type OrganizationsAndEmployeesResult {
     items: [OrganizationAndEmployees]
     count: Int
+}type CountProjectByOrganizationsResult {
+    items: [CountProjectByOrganizations]
 }type PositionsResult {
     items: [Position]
     count: Int

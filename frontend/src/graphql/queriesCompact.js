@@ -1,4 +1,5 @@
 import {gql} from '@apollo/client';
+
 export const TASKS_QUERY_COMPACT = gql`
     query TasksQueryCompact    {
         tasks  (queryType: "COMPACT")  {
@@ -16,7 +17,7 @@ export const REFERENCES_QUERY_COMPACT = gql`
                 id
                 name
             }
-         }
+        }
     }
 `;
 export const TECHNICAL_SPECIFICATION_QUERY_COMPACT = gql`
@@ -92,6 +93,16 @@ export const ORGANIZATIONS_QUERY_COMPACT = gql`
         }
     }
 `;
+export const PROJECT_COUNT_BY_ORGANIZATION = gql`
+    query CountProjectByOrganizations ($organizationId: ID) {
+        countProjectByOrganizations (organizationId: $organizationId ){
+            items {
+                count_project
+                organization_id
+            }
+        }
+    }
+`;
 export const ORGANIZATIONS_SHORT_QUERY_COMPACT = gql`
     query OrganizationsQueryCompact  {
         organizations (queryType: "COMPACT") {
@@ -143,7 +154,7 @@ export const PPI_QUERY_COMPACT = gql`
             items{
                 id
                 name
-                }
+            }
         }
     }
 `;

@@ -2,14 +2,14 @@ import React, {useContext, useEffect, useState} from 'react';
 import {
     Form, Input, Select, InputNumber, Space, Collapse, Button,
 } from 'antd';
-import {useQuery} from '@apollo/client';
+import {useLazyQuery, useQuery} from '@apollo/client';
 
 import {DatePicker} from "antd/lib";
 import dayjs from "dayjs";
 import {NotificationContext} from "../../../../NotificationProvider";
 import {
     CONTACTS_QUERY_COMPACT, GROUP_TYPE_PROJECTS_QUERY_COMPACT,
-    ORGANIZATIONS_QUERY_COMPACT,
+    ORGANIZATIONS_QUERY_COMPACT, PROJECT_COUNT_BY_ORGANIZATION, PROJECT_COUNT_BY_PROJECT,
     PROJECT_STATUSES_QUERY_COMPACT,
     TYPES_PROJECTS_QUERY_COMPACT
 } from "../../../../graphql/queriesCompact";
@@ -25,12 +25,24 @@ import DateRangePickerComponent from "./DateRangePickerComponent";
 import {StyledButtonGreen} from "../../../../components/style/ButtonStyles";
 import {PlusOutlined} from "@ant-design/icons";
 import {nanoid} from "nanoid";
+import {CONTACTS_QUERY_BY_ID} from "../../../../graphql/queriesByID";
 
 
 const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confirmFormButton}) => {
         // Получение данных для выпадающих списков
         const {loading: loadingStatuses, error: errorStatuses, data: dataStatuses} =
             useQuery(PROJECT_STATUSES_QUERY_COMPACT,);
+        const [countProjectByOrg, setCountProjectByOrg] = useState();
+
+        const [loadCount, {}] = useLazyQuery(PROJECT_COUNT_BY_ORGANIZATION, {
+            onCompleted: (data) => {
+                console.log(data);
+                setCountProjectByOrg(data?.countProjectByOrganizations?.items[0].count_project + 1);
+            },
+            onError: (error) => {
+                openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
+            },
+        });
         const [dataTypes, setDataTypes] = useState();
         const {
             loading: loadingTypeProject, error: errorTypeProject, data: dataTypeProject,
@@ -79,8 +91,7 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
         const [typeProjectModalStatus, setTypeProjectModalStatus] = useState(null);
 // Подгрузка при обновлении
         const load = () => {
-            console.log("load", actualProject);
-            form.setFieldsValue({
+             form.setFieldsValue({
                 ...actualProject,
 
                 id: actualProject?.id ?? null,
@@ -91,9 +102,7 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
             });
             setSelectedGroupTypeProject(actualProject?.type_project_document?.group?.id);
         }
-        useEffect(() => {
-            console.log("typeProjectModalStatus", typeProjectModalStatus);
-        }, [typeProjectModalStatus]);
+
         useEffect(() => {
             if (!formLoad)
                 load();
@@ -103,13 +112,17 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
             form.setFieldValue("status_id", 1)
         }, []);
         useEffect(() => {
-            console.log("newForm", form.getFieldsValue())
-        }, [form]);
+            console.log("countProjectByOrg", countProjectByOrg);
+           handleChange();
+        }, [countProjectByOrg]);
+
 
 
 // Логика формы
         const updateNumber = () => {
             console.log("actualProject?.id", actualProject?.id);
+            const orgCostumer = form.getFieldValue("organization_customer")?.selected;
+            orgCostumer && loadCount({variables: {organizationId: orgCostumer}});
             if (actualProject?.id && actualProject?.id > -1) {
                 return;
             }
@@ -121,7 +134,8 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
                 (dataGroupProject?.groupTypeProjects?.find(row => row.id === selectedGroupTypeProject)?.code ?? "___") +
                 "–" + "24" +
                 "–" + (form.getFieldValue("organization_customer")?.selected ?? "___") +
-                "–" + facilitiCode));
+                "–" + facilitiCode +
+                "–" + (countProjectByOrg ? countProjectByOrg?.toString()?.padStart(2, '0') : "__")));
         }
         useEffect(() => {
             console.log("dataTypes", dataTypes)
