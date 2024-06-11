@@ -14,6 +14,7 @@ class TypeProjectDocument extends Model
         'code',
         'name',
         'group_id',
+        'template_project_id'
     ];
 
     public function group(): BelongsTo

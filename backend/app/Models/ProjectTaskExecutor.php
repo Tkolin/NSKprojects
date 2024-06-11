@@ -13,9 +13,11 @@ class ProjectTaskExecutor extends Model
         "id",
         "project_tasks_id",
         "executor_id",
+        "date_start",
+        "date_end",
         "price"
     ];
-    public function project_tasks(): BelongsTo
+    public function project_task(): BelongsTo
     {
         return $this->belongsTo(ProjectTasks::class,"project_tasks_id");
     }

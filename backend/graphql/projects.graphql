@@ -1,10 +1,11 @@
- # Мутации с основными данными
+# Мутации с основными данными
 extend type Mutation{
     updateProject(
         data: ProjectInput
     ): Project! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     createProject(
         data: ProjectInput
+        templates: ProjectTemplatesSetting
     ): Project! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateSectionReferenceToProject(
         items: [SectionReferencesToProject]
@@ -38,13 +39,17 @@ extend type Mutation{
     ): [ProjectTask] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     deleteTaskToProject(
         id: ID!
-    ): String @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): Project @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     createTaskToProject(
         data: [TasksToProject]
-    ): Int @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): Project @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updatePaymentsToProject(
         project: ID
-    ): Int @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): Project @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    changeTemplateTypeProject(
+        typeProject: ID!
+        newTemplate: ID!
+    ): TypeProjectDocument @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 }
 
 # Основная модель проекта
@@ -67,7 +72,7 @@ type Project{
     project_irds: [ProjectIRD]
     project_stages: [ProjectStage]
     project_tasks: [ProjectTask]
- }
+}
 
 # Перечисления внутри основной модели
 type ProjectIRD{
@@ -112,19 +117,19 @@ type InheritedTask{
     project_task_id: ID!
     project_inherited_task_id: ID!
 }
- input StageToProject {
-     id: ID
-     project_id: ID
-     stage_id: ID
-     number: Int
-     price: Float
-     percent: Int
-     date_start: String
-     duration: Int
-     date_end: String
-     progress: Int
-     price_to_paid: Float
- }
+input StageToProject {
+    id: ID
+    project_id: ID
+    stage_id: ID
+    number: Int
+    price: Float
+    percent: Int
+    date_start: String
+    duration: Int
+    date_end: String
+    progress: Int
+    price_to_paid: Float
+}
 # Данные для запроса
 input ProjectInput {
     id: ID
@@ -142,6 +147,9 @@ input ProjectInput {
     prepayment: Int!
     facility_id: [ID]!
     delegates_id: [ID]
+}input ProjectTemplatesSetting {
+    project_id_to_stages: [ID]
+    project_id_to_irds: [ID]
 }
 
 # побочные
@@ -187,12 +195,12 @@ input TaskExecutor {
     executor_id: ID
     price: Int
 }
- input IrdToProject {
-     id: ID
-     project_id: ID
-     ird_id: ID
-     stageNumber: Int
-     applicationProject: Int
-     receivedDate: String
- }
+input IrdToProject {
+    id: ID
+    project_id: ID
+    ird_id: ID
+    stageNumber: Int
+    applicationProject: Int
+    receivedDate: String
+}
 

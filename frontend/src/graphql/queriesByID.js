@@ -1,5 +1,31 @@
 import {gql} from '@apollo/client';
 
+export const EMPLOYEES_TO_TASK_BY_PROJECT_TASK_ID = gql`
+    query EmpToTaskByProjectTaskId  ( $taskId: ID)  {
+        projectTasksExecutors  (taskId: $taskId)  {
+            items {
+                id
+                project_task {
+                    id
+                    task {
+                        id
+                        name
+                    }
+                }
+                executor {
+                    id
+                    passport {
+                        id
+                        firstname
+                        lastname
+                        patronymic
+                        birth_date
+                    }
+                }
+            }
+        }
+    }
+`;
 export const TASKS_QUERY_BY_ID = gql`
     query TasksQueryByID  ( $id: ID)  {
         tasks  (queryType: "BY_ID", id: $id)  {

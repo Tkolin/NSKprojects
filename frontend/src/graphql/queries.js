@@ -300,6 +300,7 @@ export const PROJECTS_QUERY = gql`
                     id
                     code
                     name
+                    template_project_id
                     group {
                         id
                         code

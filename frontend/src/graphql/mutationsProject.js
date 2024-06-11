@@ -4,27 +4,21 @@ import StagesProjectFileDownload from "../components/script/fileDownloadScripts/
 import React from "react";
 
 export const ADD_PROJECT_MUTATION = gql`
-    mutation AddProject(
-        $data: ProjectInput
-    ) {
-        createProject(
-            data: $data
-
-        ) {
+    mutation AddProject($data: ProjectInput) {
+        createProject(data: $data) {
             id
             number
             name
             prepayment
-            organization_customer
-            {
+            organization_customer {
                 id
                 name
             }
-            type_project_document
-            {
+            type_project_document {
                 id
                 code
                 name
+                template_project_id
                 group {
                     id
                     code
@@ -55,8 +49,7 @@ export const ADD_PROJECT_MUTATION = gql`
             duration
             date_end
             date_create
-            status
-            {
+            status {
                 id
                 name
             }
@@ -80,36 +73,6 @@ export const ADD_PROJECT_MUTATION = gql`
                 percent
                 price
             }
-            project_tasks {
-                id
-                description
-                inherited_task_ids {
-                    project_task_id
-                    project_inherited_task_id
-                }
-                price
-                task {
-                    id
-                    name
-                }
-                date_start
-                duration
-                date_end
-                executors {
-                    id
-                    price
-                    executor {
-                        id
-                        passport {
-                            id
-                            firstname
-                            lastname
-                            patronymic
-                        }
-                        payment_account
-                    }
-                }
-            }
             project_irds {
                 id
                 stageNumber
@@ -121,32 +84,28 @@ export const ADD_PROJECT_MUTATION = gql`
                 receivedDate
             }
             price
+        
         }
     }
+    
 `;
+
 export const UPDATE_PROJECT_MUTATION = gql`
-    mutation UpdateProject(
-        $data: ProjectInput
-
-    ) {
-        updateProject(
-            data: $data
-   
-        ) {
+    mutation UpdateProject($data: ProjectInput) {
+        updateProject(data: $data) {
             id
             number
             name
             prepayment
-            organization_customer
-            {
+            organization_customer {
                 id
                 name
             }
-            type_project_document
-            {
+            type_project_document {
                 id
                 code
                 name
+                template_project_id
                 group {
                     id
                     code
@@ -177,8 +136,7 @@ export const UPDATE_PROJECT_MUTATION = gql`
             duration
             date_end
             date_create
-            status
-            {
+            status {
                 id
                 name
             }
@@ -213,18 +171,17 @@ export const UPDATE_PROJECT_MUTATION = gql`
                 receivedDate
             }
             price
+        
         }
     }
+    
 `;
+
 export const UPDATE_IRDS_TO_PROJECT_MUTATION = gql`
-    mutation UpdateIrdsToProject(
-        $data: [IrdToProject]
-    ) {
-        updateIrdsToProject(
-            items: $data
-        ){
+    mutation UpdateIrdsToProject($data: [IrdToProject]) {
+        updateIrdsToProject(items: $data) {
             id
-            IRD{
+            IRD {
                 id
                 name
             }
@@ -236,12 +193,8 @@ export const UPDATE_IRDS_TO_PROJECT_MUTATION = gql`
 `;
 
 export const UPDATE_STAGES_TO_PROJECT_MUTATION = gql`
-    mutation UpdateStagesToProject(
-        $data: [StageToProject]
-    ) {
-        updateStagesToProject(
-            items: $data
-        ){
+    mutation UpdateStagesToProject($data: [StageToProject]) {
+        updateStagesToProject(items: $data) {
             id
             number
             stage {
@@ -257,101 +210,101 @@ export const UPDATE_STAGES_TO_PROJECT_MUTATION = gql`
         }
     }
 `;
-export const UPDATE_TASKS_TO_PROJECT_MUTATION = gql`
-    mutation UpdateTasksToProject(
-        $data: [TasksToProject]
-    ) {
-        updateTaskToProject(
-            data: $data
-        )
-    }
-`;
-export const UPDATE_PAYMENTS_TO_PROJECT_MUTATION = gql`
-    mutation UpdatePaymentsToProject(
-        $ProjectId: ID!,
-    ) {
-        updatePaymentsToProject(
-            project: $ProjectId
-        )
-    }
-`;
-export const IRDS_PROJECT_DOWNLOAD = gql`
-    mutation IrdsProjectFileDownload(
-        $id: ID!,
-    ) {
-        projectIrdsFileDownload(
-            projectId: $id
-        )
-        {
-            url
+export const CHANGE_TEMPLATE_TYPE_PROJECT = gql`
+    mutation ChangeTemplateTypeProject ( $typeProject: ID! ,$newTemplate: ID!) {
+        changeTemplateTypeProject(typeProject: $typeProject ,newTemplate: $newTemplate) {
+            template_project_id
+            id
         }
     }
 `;
-export const PAYMENT_INVOICE_PROJECT_DOWNLOAD = gql`
-    mutation IrdsProjectFileDownload(
-        $id: ID!,
-        $stageNumber: ID
-        $isPrepayment: Boolean
-    ) {
-        projectPaymentInvoiceFileDownload(
-            projectId: $id
-            stageNumber: $stageNumber
-            isPrepayment: $isPrepayment
-        )
-        {
-            url
-        }
-    }
-`;
-export const ACT_RENDERING_PROJECT_DOWNLOAD = gql`
-    mutation IrdsProjectFileDownload(
-        $id: ID!,
-        $stageNumber: Int
-    ) {
-        projectActRenderingFileDownload(
-            projectId: $id
-            stageNumber: $stageNumber
-        )
-        {
-            url
-        }
-    }`;
-export const TASK_EXECUTOR_CONTRACT_DOWNLOAD = gql`
-    mutation TaskExecutorContractDownload(
-        $projectId: ID!,
-        $executorId: ID!
-    ) {
-        taskExecutorContractFileDownload(
-            projectId: $projectId
-            executorId: $executorId
 
-        )
-        {
+export const UPDATE_TASKS_TO_PROJECT_MUTATION = gql`
+    mutation UpdateTasksToProject($data: [TasksToProject]) {
+        updateTaskToProject(data: $data) {
+            id
+            description
+            inherited_task_ids {
+                project_task_id
+                project_inherited_task_id
+            }
+            price
+            task {
+                id
+                name
+            }
+            date_start
+            duration
+            date_end
+            executors {
+                id
+                price
+                executor {
+                    id
+                    passport {
+                        id
+                        firstname
+                        lastname
+                        patronymic
+                    }
+                    payment_account
+                }
+            }
+        }
+    }
+`;
+
+export const UPDATE_PAYMENTS_TO_PROJECT_MUTATION = gql`
+    mutation UpdatePaymentsToProject($ProjectId: ID!) {
+        updatePaymentsToProject(project: $ProjectId)
+    }
+`;
+
+export const IRDS_PROJECT_DOWNLOAD = gql`
+    mutation IrdsProjectFileDownload($id: ID!) {
+        projectIrdsFileDownload(projectId: $id) {
             url
         }
     }
 `;
+
+export const PAYMENT_INVOICE_PROJECT_DOWNLOAD = gql`
+    mutation PaymentInvoiceProjectFileDownload($id: ID!, $stageNumber: ID, $isPrepayment: Boolean) {
+        projectPaymentInvoiceFileDownload(projectId: $id, stageNumber: $stageNumber, isPrepayment: $isPrepayment) {
+            url
+        }
+    }
+`;
+
+export const ACT_RENDERING_PROJECT_DOWNLOAD = gql`
+    mutation ActRenderingProjectFileDownload($id: ID!, $stageNumber: Int) {
+        projectActRenderingFileDownload(projectId: $id, stageNumber: $stageNumber) {
+            url
+        }
+    }
+`;
+
+export const TASK_EXECUTOR_CONTRACT_DOWNLOAD = gql`
+    mutation TaskExecutorContractDownload($projectId: ID!, $executorId: ID!) {
+        taskExecutorContractFileDownload(projectId: $projectId, executorId: $executorId) {
+            url
+        }
+    }
+`;
+
 export const STAGE_PROJECT_DOWNLOAD = gql`
-    mutation ProjectFileDownload(
-        $id: ID!,
-    ) {
-        projectStagesFileDownload(
-            projectId: $id
-        )
-        {
+    mutation StageProjectFileDownload($id: ID!) {
+        projectStagesFileDownload(projectId: $id) {
             url
         }
     }
 `;
+
 export const CONTRACT_PROJECT_DOWNLOAD = gql`
-    mutation StagesProjectFileDownload(
-        $id: ID!,
-    ) {
-        projectOrderFileDownload(
-            projectId: $id
-        )
-        {
+    mutation ContractProjectFileDownload($id: ID!) {
+        projectOrderFileDownload(projectId: $id) {
             url
         }
     }
 `;
+

@@ -1,4 +1,59 @@
 import {gql} from "@apollo/client";
+
+
+export const UPDATE_EMPLOYEES_TO_TASK = gql`
+    mutation DeleteTaskToProject(
+        $id: ID!
+    ) {
+        deleteTaskToProject(
+            id: $id
+        )
+    }
+`;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export const DELETE_TASK_TO_PROJECT_MUTATION = gql`
     mutation DeleteTaskToProject(
         $id: ID!

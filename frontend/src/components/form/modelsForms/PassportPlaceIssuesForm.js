@@ -15,7 +15,7 @@ const PassportPlaceIssuesForm = ({localObject,initialObject, onCompleted}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
-    const nameModel = 'Адресс регистрации';
+    const nameModel = 'Адрес регистрации';
     const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
     const [loadContext, {loading, data}] = useLazyQuery(PASSPORTS_PLACE_ISSUES_QUERY_BY_ID, {
         variables: {id: 0},

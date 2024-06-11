@@ -35,6 +35,7 @@ import {
 } from '../../../components/script/rebuildData/ProjectRebuilderQuery';
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
 import {
+    CHANGE_TEMPLATE_TYPE_PROJECT,
     UPDATE_IRDS_TO_PROJECT_MUTATION,
     UPDATE_PROJECT_MUTATION, UPDATE_STAGES_TO_PROJECT_MUTATION
 } from "../../../graphql/mutationsProject";
@@ -44,9 +45,9 @@ import dayjs from "dayjs";
 import {
     DeleteOutlined,
     DownloadOutlined,
-    EditOutlined,
+    EditOutlined, MoreOutlined, PushpinFilled, PushpinOutlined,
     QuestionCircleOutlined, SaveOutlined,
-    SubnodeOutlined, TrademarkCircleOutlined
+    SubnodeOutlined, TeamOutlined, TrademarkCircleOutlined
 } from "@ant-design/icons";
 
 const {Text} = Typography;
@@ -57,6 +58,7 @@ const ProjectTable = () => {
     const [formSearch] = Form.useForm();
     const [selectedProject, setSelectedProject] = useState(null);
     const [editModalStatus, setEditModalStatus] = useState(false);
+    const [employeeToStageModalStatus, setEmployeeToStageModalStatus] = useState(false);
     useEffect(() => {
         if (!editModalStatus)
             refetch();
@@ -134,8 +136,17 @@ const ProjectTable = () => {
             openNotification('topRight', 'error', `Ошибка при выполнении создания этапа : ${error.message}`);
         },
     });
-    const createTemplate = (projectId) => {
-        console.log("create template to ", projectId);
+    const [mutateChangeTemplate] = useMutation(CHANGE_TEMPLATE_TYPE_PROJECT, {
+        onCompleted: (data) => {
+            openNotification('topRight', 'success', `Шаблон изменён`);
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при изменении шаблона : ${error.message}`);
+        },
+    });
+    const createTemplate = (projectId, typeProjectId) => {
+        if(projectId && typeProjectId)
+            mutateChangeTemplate({variables: {typeProject: typeProjectId ,newTemplate: projectId}});
     }
     // Обработка загрузки и ошибок
     if (error) return `Ошибка! ${error.message}`;
@@ -158,22 +169,34 @@ const ProjectTable = () => {
                         <DeleteOutlined/>
                     </Link>
                     <div>
-                        <Row style={{margin: 'auto'}}>
-                            <Popconfirm
-                                title={"Создание шаблона на основе этого проекта"}
-                                description={"Вы уверены? это изменит существующий шаблон!"}
-                                onConfirm={()=> createTemplate(record.id)}
-                                icon={
-                                    <Text type={"danger"}>
-                                    <SaveOutlined />
-                                    </Text>
-                                }
-                            >
-                                <Link type={"secondary"}>
-                                    <SaveOutlined />
-                                </Link>
-                            </Popconfirm>
-                        </Row>
+                        {record.id === record?.type_project_document?.template_project_id ?
+                            (
+                                <Row style={{margin: 'auto'}}>
+                                    <Tooltip title={"Является шаблоном"}>
+                                        <Link type={"secondary"}>
+                                            <PushpinFilled />
+                                        </Link>
+                                    </Tooltip>
+                                </Row>)
+                            :
+
+                            <Row style={{margin: 'auto'}}>
+                                <Popconfirm
+                                    title={"Создание шаблона на основе этого проекта"}
+                                    description={"Вы уверены? это изменит существующий шаблон!"}
+                                    onConfirm={() => createTemplate(record.id, record?.type_project_document?.id)}
+                                    icon={
+                                        <Text type={"danger"}>
+                                            <PushpinOutlined />
+                                        </Text>
+                                    }
+                                >
+                                    <Link type={"danger"}>
+                                        <PushpinOutlined />
+                                    </Link>
+                                </Popconfirm>
+                            </Row>
+                        }
                     </div>
 
 
@@ -191,7 +214,7 @@ const ProjectTable = () => {
                 <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
                     <Title level={5} style={{marginTop: 0}}>{record.name}</Title>
                     <Text>{record.number}</Text>
-                    <Text>{record.type_project_document.name}</Text>
+                    <Text>({record.type_project_document.code}) {record.type_project_document.name}</Text>
                     <ProjectFileDownload text={"Скачать договор"} projectId={record.id}/>
                 </Space.Compact>
             ),
@@ -355,7 +378,23 @@ const ProjectTable = () => {
                                 }
                             </Space.Compact>
                         ),
-                    },]
+                    },
+                    {
+                        dataIndex: 'act',
+                        key: 'act',
+                        align: "left",
+                        render: (text, record) => (
+                            <Tooltip title={"Распределение сотрудников"}>
+                                <Link >
+                                    <TeamOutlined onClick={()=>setEmployeeToStageModalStatus({
+                                        taskId: record.number,
+                                        projectId: project.number
+                                    })}/>
+                                </Link>
+                            </Tooltip>
+                        ),
+                    },
+                ]
             }
             ];
             const columnsIrds = [{
@@ -380,7 +419,7 @@ const ProjectTable = () => {
                     {
                         width: '45%',
 
-                        title: 'Основаня информация',
+                        title: 'Основная информация',
                         dataIndex: 'ird',
                         key: 'ird',
                         align: "left",

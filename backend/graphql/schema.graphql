@@ -19,6 +19,8 @@ type Query {
     passportPlaceIssues(id: ID, queryOptions: QueryOptions, queryType: String): PassportPlaceIssueResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     banks(id: ID, queryOptions: QueryOptions, queryType: String): BanksResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
+    projectTasksExecutors(taskId: ID): ProjectTaskExecutorResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+
     typeProjects(id: ID, queryOptions: QueryOptions, queryType: String): TypeProjectsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     technicalSpecification: TechnicalSpecificationResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     typeTechnicalSpecification: TypeTechnicalSpecification @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
@@ -329,6 +331,13 @@ type Content {
 type Position {
     id: ID!
     name: String!
+}type ProjectTaskExecutor {
+    id: ID!
+    executor: Person
+    project_task: ProjectTask!
+    price: Float
+    date_start: String
+    date_end: String
 }
 type Organization{
     id: ID!
@@ -459,6 +468,7 @@ type TypeProjectDocument{
     name: String!
     code: String!
     group: GroupTypeProjectDocument
+    template_project_id: ID!
 }
 type IRD{
     id: ID!

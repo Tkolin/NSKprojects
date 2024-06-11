@@ -12,6 +12,7 @@ use App\Models\ProjectTasksInherited;
 use App\Models\TemplateIrdsTypeProjects;
 use App\Models\TemplateStagesTypeProjects;
 use App\Models\TemplateTasksTypeProject;
+use App\Models\TypeProjectDocument;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
@@ -27,7 +28,9 @@ final readonly class CreateProject
     public function __invoke(null $_, array $args): Project
     {
         return DB::transaction(function () use ($args) {
-            // Создаем новый проект
+            ////////
+            // Регистрация проекта
+            ////////
             $project = Project::create([
                 'number' => $args['data']['number'],
                 'name' => $args['data']['name'] ?? null,
@@ -44,72 +47,99 @@ final readonly class CreateProject
             ]);
 
             // Связываем проект с указанными объектами
-            if (isset($project['id'])) {
-                if (isset($args['data']['facility_id'])) {
-                    foreach ($args['data']['facility_id'] as $facilityId) {
-                        ProjectFacilities::updateOrCreate([
-                            'project_id' => $project['id'],
-                            'facility_id' => $facilityId
-                        ]);
-                    }
-                    ProjectFacilities::where('project_id', $project['id'])
-                        ->whereNotIn('facility_id', $args['data']['facility_id'])
-                        ->delete();
+            if ($project->id && isset($args['data']['facility_id'])) {
+                foreach ($args['data']['facility_id'] as $facilityId) {
+                    ProjectFacilities::updateOrCreate([
+                        'project_id' => $project->id,
+                        'facility_id' => $facilityId
+                    ]);
                 }
+                ProjectFacilities::where('project_id', $project->id)
+                    ->whereNotIn('facility_id', $args['data']['facility_id'])
+                    ->delete();
             }
 
-            $tempStage = TemplateStagesTypeProjects
-                ::where('project_type_id', $project->type_project_document_id)
-                ->get();
-            if (isset($tempStage) && $tempStage->isNotEmpty())
-                foreach ($tempStage as $key => $value) {
-                    ProjectStage::create(
-                        [
+            ////////
+            // Шаблоны
+            ////////
+
+            // Проверяем существуют ли требования к шаблонам
+            if (isset($args["templates"]) || $project->type_project_document_id) {
+                $projectTemplateId = $project->type_project_document->template_project_id ?? null;
+
+                $templates = $args["templates"] ?? [
+                    'stages' => [$projectTemplateId],
+                    'irds' => [$projectTemplateId]
+                ];
+
+                if (!empty($templates["stages"])) {
+                    $projectsIdsOrStageSearch = $templates["stages"];
+                    $allTemplateStages = collect();
+                    foreach ($projectsIdsOrStageSearch as $projectId) {
+                        $allTemplateStages = $allTemplateStages->merge(ProjectStage::where('project_id', $projectId)->get());
+                    }
+                    foreach ($allTemplateStages as $projectStage) {
+                        ProjectStage::create([
                             'project_id' => $project->id,
-                            'stage_id' => $tempStage[$key]->stage_id ?? null,
-                            'duration' => $tempStage[$key]->duration ?? null,
-                            'percent' => $tempStage[$key]->percentage ?? null,
-                            'number' => $tempStage[$key]->number ?? null,
-                        ]
-                    );
+                            'stage_id' => $projectStage->stage_id,
+                            'number' => $projectStage->number,
+                            'duration' => $projectStage->duration,
+                            'percent' => $projectStage->percent,
+                        ]);
+                    }
                 }
-//            $tempTasks = TemplateTasksTypeProject
-//                ::where('project_type_id', $project->type_project_document_id)
-//                ->get();
-//            if (isset($tempTasks) && $tempTasks->isNotEmpty())
-//                foreach ($tempStage as $key => $value) {
-//                    ProjectTasks::create(
-//                        [
-//                            'task_id' => $tempTasks[$key]->task_id ?? null,
-//                            'project_id' => $project->id ?? null,
-//                            'stage_number' => $tempTasks[$key]->stage_number ?? null,
-//                        ]
-//                    );
-//                    if (isset($tempTasks[$key]->inherited_task_id)) {
-//                        ProjectTasksInherited::create(
-//                            [
-//                                'project_task_id' => $tempTasks[$key]->task_id ?? null,
-//                                'project_inherited_task_id' => $tempTasks[$key]->inherited_task_id ?? null,
-//                            ]
-//                        );
-//                    }
-//                }
-            $tempIrd = TemplateIrdsTypeProjects
-                ::where('project_type_id', $project->type_project_document_id)
-                ->get();
-            if (isset($tempIrd) && $tempIrd->isNotEmpty())
-                foreach ($tempIrd as $key => $value) {
-                    ProjectIrds::create(
-                        [
-                            'project_id' => $project->id ?? null,
-                            'ird_id' => $tempIrd[$key]->ird_id ?? null,
-                            'stageNumber' => $tempIrd[$key]->stage_number ?? null,
-                            'applicationProject' => $tempIrd[$key]->application_to_project ?? null,
-                        ]
-                    );
+
+                if (!empty($templates["irds"])) {
+                    $projectsIdsOrIrdsSearch = $templates["irds"];
+                    $allTemplateIrds = collect();
+                    foreach ($projectsIdsOrIrdsSearch as $projectId) {
+                        $allTemplateIrds = $allTemplateIrds->merge(ProjectIrds::where('project_id', $projectId)->get());
+                    }
+                    foreach ($allTemplateIrds as $projectIrd) {
+                        ProjectIrds::create([
+                            'stageNumber' => $projectIrd->stageNumber,
+                            'applicationProject' => $projectIrd->applicationProject,
+                            'project_id' => $project->id,
+                            'ird_id' => $projectIrd->ird_id,
+                        ]);
+                    }
                 }
+            }
 
             return $project;
         });
     }
+
+            //            $tempTasks = TemplateTasksTypeProject
+            //                ::where('project_type_id', $project->type_project_document_id)
+            //                ->get();
+            //            if (isset($tempTasks) && $tempTasks->isNotEmpty())
+            //                foreach ($tempStage as $key => $value) {
+            //                    ProjectTasks::create(
+            //                        [
+            //                            'task_id' => $tempTasks[$key]->task_id ?? null,
+            //                            'project_id' => $project->id ?? null,
+            //                            'stage_number' => $tempTasks[$key]->stage_number ?? null,
+            //                        ]
+            //                    );
+            //                    if (isset($tempTasks[$key]->inherited_task_id)) {
+            //                        ProjectTasksInherited::create(
+            //                            [
+            //                                'project_task_id' => $tempTasks[$key]->task_id ?? null,
+            //                                'project_inherited_task_id' => $tempTasks[$key]->inherited_task_id ?? null,
+            //                            ]
+            //                        );
+            //                    }
+            //                }
 }
+//
+//
+//            return $project;
+//        });
+//            }
+//
+//
+//            return $project;
+//        });
+    //}
+//}

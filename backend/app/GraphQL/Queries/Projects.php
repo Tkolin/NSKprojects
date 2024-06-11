@@ -44,7 +44,7 @@ final readonly class Projects
         $projectsQuery = $queryService->buildQueryOptions($projectsQuery, $args['queryOptions'],$searchColumns);
 
         $count = $projectsQuery->count();
-        $irds = $queryService->paginate($projectsQuery, $args['queryOptions']['limit'], $args['queryOptions']['page']);
-        return ['items' => $irds, 'count' => $count];
+        $projects = $queryService->paginate($projectsQuery, $args['queryOptions']['limit'], $args['queryOptions']['page']);
+        return ['items' => $projects, 'count' => $count];
     }
 }
