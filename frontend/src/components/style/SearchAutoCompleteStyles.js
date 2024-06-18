@@ -122,6 +122,7 @@ const CustomAutoCompleteAndCreate = ({
 
 );
 const CustomAutoComplete = ({
+                                size,
                                 style,
                                 onSelect,
                                 placeholder,
@@ -136,6 +137,7 @@ const CustomAutoComplete = ({
                                 onChange,
                             }) => (
          <CustomAutoCompleteComponent
+             size={size}
              style={style}
             onSelect={onSelect}
             placeholder={placeholder}

@@ -219,41 +219,6 @@ export const CHANGE_TEMPLATE_TYPE_PROJECT = gql`
     }
 `;
 
-export const UPDATE_TASKS_TO_PROJECT_MUTATION = gql`
-    mutation UpdateTasksToProject($data: [TasksToProject]) {
-        updateTaskToProject(data: $data) {
-            id
-            description
-            inherited_task_ids {
-                project_task_id
-                project_inherited_task_id
-            }
-            price
-            task {
-                id
-                name
-            }
-            date_start
-            duration
-            date_end
-            executors {
-                id
-                price
-                executor {
-                    id
-                    passport {
-                        id
-                        firstname
-                        lastname
-                        patronymic
-                    }
-                    payment_account
-                }
-            }
-        }
-    }
-`;
-
 export const UPDATE_PAYMENTS_TO_PROJECT_MUTATION = gql`
     mutation UpdatePaymentsToProject($ProjectId: ID!) {
         updatePaymentsToProject(project: $ProjectId)

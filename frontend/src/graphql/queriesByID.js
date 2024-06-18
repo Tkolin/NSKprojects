@@ -243,6 +243,7 @@ export const PROJECTS_QUERY_BY_ID = gql`
                     stage {
                         id
                         name
+                        task_id
                     }
                     date_start
                     duration
@@ -262,6 +263,7 @@ export const PROJECTS_QUERY_BY_ID = gql`
                 }
                 project_tasks {
                     id
+                    projectId
                     task {
                         id
                         name
@@ -276,6 +278,10 @@ export const PROJECTS_QUERY_BY_ID = gql`
                     stage_number
                     executors {
                         id
+                        duration
+                        date_start
+                        date_end
+                        description
                         price
                         executor {
                             id

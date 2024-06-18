@@ -6,6 +6,7 @@ export const TASKS_QUERY_COMPACT = gql`
             items {
                 id
                 name
+                __typename
             }
         }
     }

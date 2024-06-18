@@ -12,10 +12,11 @@ class  Stage extends Model
 
     protected $fillable = [
         'name',
+        'task_id',
     ];
-    public function project_stage(): HasMany
+    public function task(): HasMany
     {
-        return $this->hasMany(ProjectStage::class);
+        return $this->hasMany(Task::class);
     }
     public function template_stages_type_projects(): HasMany
     {

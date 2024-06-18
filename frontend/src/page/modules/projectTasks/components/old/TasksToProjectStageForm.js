@@ -145,25 +145,8 @@ const TasksToProjectStageForm = ({project, onSubmit}) => {
             openNotification('topRight', 'error', 'Ошибка при обновлении данных: ' + error.message);
         }
     });
-    const [addTasksToProject] = useMutation(ADD_TASK_TO_PROJECT_MUTATION, {
-        onCompleted: () => {
-            openNotification('topRight', 'success', 'Этапы зарегистрированны как задачи"!');
-        }, onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при регистрации этапов как задач: ' + error.message);
-        }
-    });
+
     const handleSubmit = () => {
-
-
-        const tasksNames = null; // Получить из ArrayStage имена
-
-        addTasksToProject({
-                variables: {
-                    names: tasksNames
-                }
-            }
-        );
-
         const data = extractDataFromTree(dataSource); //Перебрать иерархию задач по этапам (которые теперь тоже задачи)
 
         updateTasksToProject({

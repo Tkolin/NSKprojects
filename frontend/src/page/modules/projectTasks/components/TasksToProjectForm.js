@@ -1,95 +1,92 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Col, Divider, Form, Radio, Row} from "antd";
+import {Button, Col, Divider, Form, Radio, Row, Space, Typography} from "antd";
 import TaskForm from "../../../../components/form/modelsForms/TaskForm";
 import TasksTreeComponent from "./TasksTreeComponent";
 import {CustomAutoCompleteAndCreateWitchEdit} from "../../../../components/style/SearchAutoCompleteStyles";
 import {useMutation, useQuery} from "@apollo/client";
 import {TASKS_QUERY_COMPACT} from "../../../../graphql/queriesCompact";
 import LoadingSpinnerStyles from "../../../../components/style/LoadingSpinnerStyles";
-import StageRadioComponent from "./StageRadioComponent";
-import styled, {css} from "styled-components";
+import {StyledButtonGreen} from "../../../../components/style/ButtonStyles";
+import {CREATE_TASKS_TO_PROJECT} from "../../../../graphql/mutationsTask";
 
+const {Text} = Typography;
 
-const TasksToProjectForm = ({actualTasks, updateTasks, actualProject, setLoading}) => {
+const TasksToProjectForm = ({actualProject, setLoading}) => {
     //Вынести за компонен
-    const [formLoad, setFormLoad] = useState(false);
-    const [firstField, setFirstField] = useState(true);
     const [form] = Form.useForm();
-    const [selectedStage, setSelectedStage] = useState()
-    const [tasksModalStatus, setTasksModalStatus] = useState({options: [], selected: {}});
-    const [localData, setLocalData] = useState()
+     const [tasksModalStatus, setTasksModalStatus] = useState({options: [], selected: {}});
+
     // Список задач
     const {
         loading: loadingTasks, error: errorTasks,
         data: dataTasks
     } = useQuery(TASKS_QUERY_COMPACT);
-    useEffect(() => {
-        setFormLoad(true)
-    }, []);
-    useEffect(() => {
-        if (actualTasks && actualTasks.gData && actualTasks.checkedKeys && firstField) {
-            setFirstField(false)
-            console.log("setFirstFiel",actualTasks);
-            form.setFieldValue("tasks", actualTasks)
-         }
-    }, [actualTasks]);
-    const handleChange = () => {
-        if (formLoad) {
-            const value = form.getFieldValue("tasks");
-            if (value?.gData && value?.checkedKeys && actualProject?.id){
-                setLocalData(value);
-                console.log(value);
-                updateTasks && updateTasks(rebuildFormDataToOutput(value?.gData, value?.checkedKeys, actualProject?.id));
-            }
-        }
-    }
-    const rebuildFormDataToOutput = (treeTasksInForm, listStageNumbersStageInForm, projectId) => {
+
+
+    const extractKeys = (tasksByStage, project ) => {
         const result = [];
-        console.log("start rebuildFormDataToOutput", treeTasksInForm, listStageNumbersStageInForm, projectId);
-        if (projectId, treeTasksInForm, listStageNumbersStageInForm) {
-            console.error("проекта нет для задачи ");
-        }
-        const processNode = (node, parentKey = null) => {
+        const projectStages = project.project_stages;
+
+        // Создание задач из этапов проекта
+        projectStages.forEach(stage => {
             const task = {
-                projectId: projectId,
-                task_id: node.key.toString(),
+                project_id: project.id,
+                task_id: stage?.stage?.task_id?.toString(),
+                stage_number: stage.number,
+                inherited_from_task_id: null,
             };
-
-            if (parentKey) {
-                task.inherited_task_ids = [parentKey.toString()];
-            }
-
             result.push(task);
-            if (node.children) {
-                node.children.forEach(child => processNode(child, task.task_id)); // Обновленный вызов с передачей node.key
-            }
-        };
-        console.log("processNode",result);
-        treeTasksInForm.forEach(node => processNode(node));
-        result.forEach(task => {
-            for (const [stageNumber, taskIds] of Object.entries(listStageNumbersStageInForm)) {
-                if (taskIds.includes(task.task_id)) {
-                    task.stage_number = parseInt(stageNumber);
-                    break;
-                }
-            }
         });
+
+        const traverse = (nodes, stageNumber, parentKey = null) => {
+            nodes.forEach(node => {
+                const task = {
+                    project_id: project.id,
+                    task_id: node.key,
+                    stage_number: stageNumber,
+                    inherited_from_task_id: parentKey || result.find(t => t.stage_number === stageNumber)?.task_id || null
+                };
+                result.push(task);
+                if (node.children) {
+                    traverse(node.children, stageNumber, node.key);
+                }
+            });
+        };
+
+        for (const [stageNumber, tasks] of Object.entries(tasksByStage)) {
+            traverse(tasks, parseInt(stageNumber));
+        }
 
         return result;
     };
+    const [mutateTasksToProject, {loading: loadingMutation}] = useMutation(CREATE_TASKS_TO_PROJECT,{
+        onCompleted: (data)=>{
+            console.log("CREATE_TASKS_TO_PROJECT",data);
+        },
+        onError: (error) => {
+            console.log("CREATE_TASKS_TO_PROJECT",error);
 
+        }
+    });
+    const handleSubmit = () => {
+        mutateTasksToProject({variables: {data:
+            extractKeys(Object.entries(form.getFieldsValue()).reduce((acc, [stageNumber, stageData]) => {
+                acc[stageNumber] = stageData.tasks || [];
+                return acc;
+            }, {}), actualProject)}})
 
-    const handleSelectTask = (value) => {
+    }
+    const handleSelectTask = (index, value) => {
         if (value?.id > 0) {
-            const oldTasks = form.getFieldValue("tasks")
+            const oldTasks = form.getFieldValue([index, "tasks"]);
 
-            form.setFieldValue("tasks", {
-                ...oldTasks,
-                gData: [...oldTasks?.gData ?? [], {
+            form.setFieldValue([index, "tasks"], [
+                ...oldTasks ?? [],
+                {
                     title: value.name,
                     key: value.id
-                }]
-            })
+                }
+            ])
         }
     }
 
@@ -105,43 +102,43 @@ const TasksToProjectForm = ({actualTasks, updateTasks, actualProject, setLoading
             <Col span={18}>
                 <Form form={form} onChange={() => console.log("onChange")}>
                     <Divider>Список этапов</Divider>
-                    <Form.Item name={"stage_radio"}>
-                        <StageRadioComponent
-                            actualStages={actualProject?.project_stages?.map((row) => ({
-                                    id: row.id,
-                                    name: row?.stage?.name,
-                                    number: row?.number
-                                }
+                    {actualProject?.project_stages?.map((row) => (
+                        <Space.Compact style={{width: "100%"}} direction={"vertical"}>
+                            <div style={{width: "100%"}}>
+                                <Typography.Title level={4}>
+                                    {row?.number ?? "s"}. {row?.stage?.name}. {row?.stage?.task_id}
+                                </Typography.Title>
+                            </div>
+                            <div style={{width: "100%"}}>
+                                <Form.Item name={[row.number, "tasks"]}>
+                                    <TasksTreeComponent draggable/>
+                                </Form.Item>
 
-                            ))}
-                            onChange={(value) => setSelectedStage(value?.number)}
-                        />
-                    </Form.Item>
+                                <Form.Item name={[row.number, "task_adder"]} label={"Добавить задачу"}>
+                                    <CustomAutoCompleteAndCreateWitchEdit
+                                        placeholder={"Начните ввод..."}
+                                        loading={loadingTasks}
+                                        firstBtnOnClick={() => setTasksModalStatus("add")}
+                                        secondBtnOnClick={() => setTasksModalStatus("edit")}
+                                        onSelect={(value) => handleSelectTask(row.number, value)}
+                                        data={dataTasks?.tasks?.items}
+                                    />
+                                </Form.Item>
+                            </div>
+                            <div style={{width: "100%"}}>
+                                <Divider/>
+                            </div>
+                        </Space.Compact>
+                    ))}
+                    <div style={{alignContent: "center", width: "100%"}}>
+                        <StyledButtonGreen onClick={() => {
+                            handleSubmit();
 
-                    <Divider>Структура задач</Divider>
 
-                    <Form.Item name={"tasks"}>
-                        <TasksTreeComponent
-                            stageNumber={selectedStage}
-                            value={actualTasks}
-
-                            onChange={(value) => {
-                                console.log("TasksTreeComponent", value);
-                                handleChange()
-                            }}/>
-                    </Form.Item>
-
-                    <Form.Item name={"task"} label={"Добавить задачу"}>
-                        <CustomAutoCompleteAndCreateWitchEdit
-                            placeholder={"Начните ввод..."}
-                            loading={loadingTasks}
-                            firstBtnOnClick={() => setTasksModalStatus("add")}
-                            secondBtnOnClick={() => setTasksModalStatus("edit")}
-                            onSelect={(value) => handleSelectTask(value)}
-
-                            data={dataTasks?.tasks?.items}
-                        />
-                    </Form.Item>
+                        }}>
+                            Извлечь
+                        </StyledButtonGreen>
+                    </div>
                 </Form>
 
             </Col>

@@ -22,7 +22,7 @@ class ProjectTasks extends Model
 
     public function executors(): HasMany
     {
-        return $this->hasMany(ProjectTaskExecutor::class);
+        return $this->hasMany(ProjectTaskExecutor::class, "project_tasks_id");
     }
     public function inherited_task_ids()
     {

@@ -68,6 +68,17 @@ const StyledBlockSmall = ({label, children}) => {
         </StyledBlockWrapperSmall>
     );
 };
+const StyledContextBlock = ({label, children}) => {
+    return (
+        <StyledBlockWrapper>
+            <Divider style={{marginBottom: '0px', marginTop: '0px'}}>
+                <Title style={{margin: 2}} level={5}>{label}</Title>
+            </Divider>
+            {children}
+            <Divider style={{marginBottom: '0px', marginTop: '20px'}}/>
+        </StyledBlockWrapper>
+    );
+};
 const StyledBlockRegular = ({label, children}) => {
     return (
         <StyledBlockWrapperRegular>
@@ -101,4 +112,4 @@ const StyledBlockLarge = ({label, children}) => {
         </StyledBlockWrapperLarge>
     );
 };
-export {StyledBlockSmall, StyledBlockRegular, StyledBlockBig, StyledBlockLarge, StyledBlock};
+export {StyledBlockSmall, StyledBlockRegular, StyledBlockBig, StyledBlockLarge, StyledBlock, StyledContextBlock};

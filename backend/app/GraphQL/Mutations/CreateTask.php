@@ -9,6 +9,7 @@ final readonly class CreateTask
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
+
         return Task::create($args);
     }
 }

@@ -10,7 +10,7 @@ class Task extends Model
 {
     protected $fillable = [
         'name',
-    ];
+     ];
     public function project_task(): HasMany
     {
         return $this->hasMany(ProjectTasks::class);

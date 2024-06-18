@@ -1,49 +1,56 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, DatePicker, Form, Input, Space} from 'antd';
-import {useLazyQuery, useMutation} from "@apollo/client";
+import {Button, Col, DatePicker, Divider, Form, InputNumber, Row, Space, Tooltip} from 'antd';
+import {useLazyQuery, useMutation, useQuery} from "@apollo/client";
 import {NotificationContext} from "../../../../NotificationProvider";
-import {UPDATE_EMPLOYEES_TO_TASK} from "../../../../graphql/mutationsTask";
+import {UPDATE_EMPLOYEES_TO_TASKS} from "../../../../graphql/mutationsTask";
 import {EMPLOYEES_TO_TASK_BY_PROJECT_TASK_ID} from "../../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../../../components/style/LoadingSpinnerStyles";
-import {StyledButtonGreen} from "../../../../components/style/ButtonStyles";
-import IrdItem from "../../../modules/project/components/IrdItem";
-import {PlusOutlined} from "@ant-design/icons";
+import {CloseOutlined, PlusOutlined} from "@ant-design/icons";
+import {PERSONS_QUERY_COMPACT} from "../../../../graphql/queriesCompact";
+import {StyledButtonGreen, StyledButtonRed} from "../../../../components/style/ButtonStyles";
+import {CustomAutoComplete} from "../../../../components/style/SearchAutoCompleteStyles";
 
 
-const BikForm = ({taskId, onCompleted}) => {
+const PersonsByStagesCompactForm = ({tasks,projectId,stageNumber, onCompleted}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
-    const nameModel = 'БИК';
     const [actualObject, setActualObject] = useState();
-    const [loadContext, {loading, data}] = useLazyQuery(EMPLOYEES_TO_TASK_BY_PROJECT_TASK_ID, {
-        variables: {taskId: taskId},
-        onCompleted: (data) => {
-            setActualObject(data?.projectTasksExecutors?.items);
-            updateForm(data?.projectTasksExecutors?.items)
-        },
-        onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
-        },
-    });
-
-    // Мутация
-    const [mutate, {loading: loadingSave}] = useMutation(UPDATE_EMPLOYEES_TO_TASK, {
-        onCompleted: (data) => {
-            openNotification('topRight', 'success', `Мутация ${nameModel} выполнена успешно`);
-            form.resetFields();
-            onCompleted && onCompleted(data?.createBik || data?.updateBik);
-        },
-        onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении мутации ${nameModel}: ${error.message}`);
-        },
-    });
-
-    // Подгрузка при обновлении
     useEffect(() => {
-        if (taskId)
-            loadContext();
-    }, []);
+        console.log("tasks", tasks, "projectId", projectId);
+        if (tasks) {
+            // Получаем список уникальных исполнителей
+            const uniqueExecutors = tasks
+                .flatMap(task => task.executors.map(executor => executor.executor))
+                .filter((executor, index, self) =>
+                    index === self.findIndex((e) => e.id === executor.id)
+                );
+
+            form.setFieldsValue({
+                executorsList: uniqueExecutors.map((row) =>  ({executor: {
+                    selected: row.id,
+                    output: row.passport.lastname + " " + row.passport.firstname + " " + row.passport.patronymic}
+                }))
+            });
+
+            console.log('Unique Executors List:', uniqueExecutors.map((row) => ({executor: {
+                selected: row.id,
+                output: row.passport.lastname + " " + row.passport.firstname + " " + row.passport.patronymic}
+            })));
+        }
+    }, [tasks]);
+
+    const {loading: loadingPersons, data: dataPersons} = useQuery(PERSONS_QUERY_COMPACT);
+    // Мутация
+    const [mutate, {loading: loadingSave}] = useMutation(UPDATE_EMPLOYEES_TO_TASKS, {
+        onCompleted: (data) => {
+            onCompleted && onCompleted();
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при выполнении мутации: ${error.message}`);
+        },
+    });
+
 
     const updateForm = (data) => {
         if (data) {
@@ -56,79 +63,67 @@ const BikForm = ({taskId, onCompleted}) => {
 
     // Завершение
     const handleSubmit = () => {
-        //  mutate({ variables: { ...(actualObject ? { id: actualObject.id } : {}), ...form.getFieldsValue() } });
+         mutate({ variables: {
+                 employeesIds: form.getFieldsValue().executorsList.map((row)=>row.executor.selected),
+                 tasksIds: tasks.map(row=>row.id),
+                 stageNumber: stageNumber
+             }} );
     };
-    if (loading || loadingSave) return <LoadingSpinnerStyles/>
 
     return (
         <div>
-            <Form form={form}>
-                <Form.List name="irdList">
+            <Form size={"small"} form={form} onChange={console.log(form.getFieldsValue())}>
+                <Form.List name="executorsList">
+
                     {(fields, {add, remove}) => (
                         <>
+                            <strong> <Row gutter={0} style={{marginBottom: 0}}>
+                                <Space.Compact style={{width: "100%"}}>
+
+                                    <Col span={2}>
+                                        №
+
+                                    </Col>
+                                    <Col span={21}>
+                                        ФИО исполнителя
+                                    </Col>
+                                    <Col span={1}>
+
+                                    </Col>
+
+                                </Space.Compact>
+                            </Row>
+                            <Divider style={{margin: 4}}/>
+                            </strong>
                             {fields.map(({key, name, ...restField}, index) => (
                                 <Row key={index} gutter={0} style={{marginBottom: 0}}>
                                     <Space.Compact style={{width: "100%"}}>
-                                        <Col span={14}>
-                                            <Tooltip title="Наименование ИРД">
 
-                                                <Form.Item name={[index, 'IRD']}>
-
+                                        <Col span={2}>
+                                            <Tooltip title="Номер">
+                                                <InputNumber disabled={true}
+                                                             style={{width: "100%"}}
+                                                             value={index + 1}
+                                                             min={1}
+                                                             max={25}/>
+                                            </Tooltip>
+                                        </Col>
+                                        <Col span={21}>
+                                            <Tooltip title="Наименование этапа">
+                                                <Form.Item name={[index, 'executor']}>
                                                     <CustomAutoComplete
-                                                        style={{marginBottom: 0, width: "100%"}}
-                                                        placeholder={"Выбор ИРД..."}
-                                                        data={irdData}
-                                                        onSelect={() => onChange()}
-                                                        onChange={() => onChange()}
+                                                        size={"small"}
+                                                        typeData = "FIO"
+                                                        style={{width: "100%"}}
+                                                        placeholder={"Выбор исполнителя..."}
+                                                        data={dataPersons?.persons?.items.map((row)=>({ ...row.passport, id: row.id}))}
                                                     />
                                                 </Form.Item>
                                             </Tooltip>
-
                                         </Col>
-                                        <Col span={3}>
-                                            <Tooltip title="Номер этапа">
-                                                <Form.Item
-                                                    name={[index, 'stageNumber']}
-                                                    style={{marginBottom: 0, width: "100%"}}
-                                                >
-                                                    <InputNumber max={100}
-                                                                 style={{marginBottom: 0, width: "100%"}}
-                                                                 min={0} prefix={"№"}/>
-                                                </Form.Item>
-                                            </Tooltip>
-                                        </Col>
-                                        <Col span={3}>
-                                            <Tooltip title="Номер в приложении">
-                                                <Form.Item
-                                                    name={[index, 'applicationProject']}
-                                                    style={{marginBottom: 0, width: "100%"}}
-                                                >
-                                                    <InputNumber max={100} min={0}
-                                                                 style={{marginBottom: 0, width: "100%"}}
-                                                                 prefix={"№"}/>
-                                                </Form.Item>
-                                            </Tooltip>
-                                        </Col>
-
-                                        <Col span={3}>
-                                            <Tooltip title="Дата получения">
-                                                <Form.Item
-                                                    name={[index, 'receivedDate']}
-                                                    style={{marginBottom: 0, width: "100%"}}
-
-                                                >
-                                                    <DatePicker
-                                                        style={{marginBottom: 0, width: "100%"}}
-                                                        onChange={() => onChange()}
-                                                        status={"warning"}
-                                                        placeholder="Получено"/>
-                                                </Form.Item>
-                                            </Tooltip>
-                                        </Col>
-
                                         <Col span={1}>
-                                            <StyledButtonRed icon={<CloseOutlined/>}
-                                                             onClick={() => removeItem && removeItem(index)}/>
+                                            <StyledButtonRed icon={<CloseOutlined/>} onClick={() => remove && remove(index)}/>
+
                                         </Col>
                                     </Space.Compact>
                                 </Row>
@@ -141,13 +136,21 @@ const BikForm = ({taskId, onCompleted}) => {
                                     style={{width: '100%'}}
                                     icon={<PlusOutlined/>}
                                 >
-                                    Добавить ИРД к списку
+                                    Добавить исполнителя на этап
                                 </Button>
+
                             </Space.Compact>
 
                         </>
                     )}
                 </Form.List>
+                <div style={{width: "100%", textAlign: "center"}}>
+                    <StyledButtonGreen
+                        onClick={() => handleSubmit()}
+                    >
+                        Сохранить изменения
+                    </StyledButtonGreen>
+                </div>
 
 
             </Form>
@@ -155,4 +158,4 @@ const BikForm = ({taskId, onCompleted}) => {
     );
 };
 
-export default BikForm;
+export default PersonsByStagesCompactForm;

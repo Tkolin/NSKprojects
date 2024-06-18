@@ -14,6 +14,8 @@ class ProjectTaskExecutor extends Model
         "project_tasks_id",
         "executor_id",
         "date_start",
+        "duration",
+        "description",
         "date_end",
         "price"
     ];

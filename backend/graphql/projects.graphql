@@ -34,14 +34,16 @@ extend type Mutation{
         items: [StageToProject]
     ): [ProjectStage] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateTaskToProject(
-        data: [TasksToProject]
-        rules: String
-    ): [ProjectTask] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+        data: [TasksToProject]!
+    ): Project @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     deleteTaskToProject(
         id: ID!
     ): Project @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     createTaskToProject(
         data: [TasksToProject]
+    ): Project @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    createTasksToProject(
+        data: [TasksToProjectExs]!
     ): Project @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updatePaymentsToProject(
         project: ID
@@ -50,6 +52,14 @@ extend type Mutation{
         typeProject: ID!
         newTemplate: ID!
     ): TypeProjectDocument @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    updateEmployeesToTasks(
+        tasksIds: [ID]
+        employeesIds: [ID]
+        stageNumber: Int
+    ): [ProjectTask] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    updateExecutorToTasks(
+       data: [ExecutorToTask]!
+    ): [Project] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 }
 
 # Основная модель проекта
@@ -98,6 +108,7 @@ type ProjectStage{
 }
 type ProjectTask{
     id: ID!
+    projectId: ID
     inherited_task_ids: [InheritedTask]
     task: Task
     stage_number: Int
@@ -111,6 +122,10 @@ type ProjectTask{
 type TaskExecutorData{
     id: ID!
     executor: Person
+    date_start: String
+    duration: Int
+    date_end: String
+    description: String
     price: Int
 }
 type InheritedTask{
@@ -150,6 +165,13 @@ input ProjectInput {
 }input ProjectTemplatesSetting {
     project_id_to_stages: [ID]
     project_id_to_irds: [ID]
+}input ExecutorToTask {
+    project_tasks_id : ID
+    executor_id : ID
+    date_start : String
+    duration : Int
+    date_end : String
+    price: Float
 }
 
 # побочные
@@ -179,15 +201,20 @@ input ProjectIrdInput {
 }
 input TasksToProject {
     id: ID
-    projectId: ID!
+    projectId: ID
+    description: String
     inherited_task_ids: [ID]
-    task_id: ID!
+    task_id: ID
     date_start: String
     date_end: String
-    duration: String
+    duration: Int
     price: Float
-    executors: [TaskExecutor]
     description: String
+    stage_number: Int
+}input TasksToProjectExs {
+    project_id: ID!
+    inherited_from_task_id: ID
+    task_id: ID!
     stage_number: Int
 }
 input TaskExecutor {

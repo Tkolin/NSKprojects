@@ -285,7 +285,7 @@ const App = ({ typeProjectId, triggerMethod, setTriggerMethod, disabled }) => {
                 onCancel={() => setViewListProjectTasksStageModalVisible(false)}
                 footer={null}
                 onClose={handleViewListProjectTasksStage}>
-                <TasksToProjectStageForm />
+                {/*<TasksToProjectStageForm />*/}
             </Modal>
             <StyledButtonGreen
                 disabled={disabled}

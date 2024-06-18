@@ -27,6 +27,7 @@ import IrdTable from "./page/simples/tables/IrdTable";
 import TypeProjectTable from "./page/simples/tables/TypeProjectTable";
 import StageTable from "./page/simples/tables/StageTable";
 import ProjectTable from "./page/simples/tables/ProjectTable";
+import TasksChartForm from "./page/modules/projectTasks/components/TasksChartForm";
 
 
 const App = () => {
@@ -53,7 +54,7 @@ const App = () => {
                     <CustomLayout currentUser={currentUser}>
                         <Routes>
                             <Route path="/" element={<Home/>}/>
-                            {/*<Route path="/test1" element={<Test/>}/>*/}
+                            <Route path="/test1" element={<TasksChartForm/>}/>
                             {/*<Route path="/test2" element={<Test2/>}/>*/}
                             <Route path="/form/contact" element={<ContactPage/>}/>
                             <Route path="/form/persons" element={<PersonPage/>}/>

@@ -2,7 +2,6 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Button, Form, Steps, theme} from 'antd';
 import {StyledBlockLarge, StyledBlockRegular} from "../../../components/style/BlockStyles";
 
-import {useProjectStore, useTasksStore} from "./Store";
 
 
 import {NotificationContext} from "../../../NotificationProvider";
@@ -11,31 +10,18 @@ import EmployeeToTasksForm from "./components/EmployeeToTasksForm";
 import {useLazyQuery, useMutation} from "@apollo/client";
 import {UPDATE_TASK_TO_PROJECT_MUTATION} from "../../../graphql/mutationsTask";
 import {CONTACTS_QUERY_BY_ID, PROJECTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
+import TasksChartForm from "./components/TasksChartForm";
 
 const Index = ({object}) => {
     const {openNotification} = useContext(NotificationContext);
     const {token} = theme.useToken();
     // Хранилище
-    const current = useTasksStore((state) => state.step);
-    const setCurrent = useTasksStore((state) => state.setSteps);
-    const loading = useTasksStore((state) => state.loading);
-    const setLoading = useTasksStore((state) => state.setLoading);
-    const project = useTasksStore((state) => state.project);
-    const setProject = useTasksStore((state) => state.setProject);
-    const updateTasks = useTasksStore((state) => state.updateTasks)
-    // Активные состояния
+
+    const [current, setCurrent] =useState(0);
+    const [loading, setLoading] = useState(false)
+    const [project, setProject] = useState();
     const [newCurrent, setNewCurrent] = useState(current)
     // Мутация
-    const [mutateTasksToProject, {loading: loadingMutation}] = useMutation(UPDATE_TASK_TO_PROJECT_MUTATION,{
-        onCompleted: (data)=>{
-            console.log("UPDATE_TASK_TO_PROJECT_MUTATION",data);
-            updateTasks(data.updateTaskToProject);
-            setCurrent(newCurrent);
-        },
-        onError: (error) => {
-
-        }
-    });
 
     const rebuildQueryToTasks = (tasksFromQuery) => {
         console.log("start rebuildQueryToTasks", tasksFromQuery);
@@ -98,36 +84,14 @@ const Index = ({object}) => {
         loadContext();
     }, []);
 
-    // Прослушка
-    useEffect(() => {
-        if (object) {
-            //setProject(object)
-            object?.project_tasks && updateTasks(object?.project_tasks);
-        }
-    }, [object]);
-
-
-
     const handleStage = (steps) => {
         setNewCurrent(steps)
         switch (current) {
             case 0:
-                mutateTasksToProject({
-                    variables: {
-                        data: project.project_tasks,
-                        rules: "delete_inherited"
-                    }
-                })
+                setCurrent(steps);
                 break;
             case 1:
-                // mutateTasksToProject({
-                //     variables: {
-                //         data:
-                //             rebuildTasksToQuery(project.project_tasks.gData,
-                //                 project.project_tasks.checkedKeys, project.id),
-                //         rules: "not_delete"
-                //     }
-                // })
+                setCurrent(steps);
                 break;
             case 2:
                 setCurrent(steps);
@@ -153,14 +117,6 @@ const Index = ({object}) => {
     };
 
 
-    const contentStyle = {
-        lineHeight: '260px',
-        color: token.colorTextTertiary,
-        backgroundColor: token.colorFillAlter,
-        borderRadius: token.borderRadiusLG,
-        border: `1px dashed ${token.colorBorder}`,
-        marginTop: 16,
-    };
 
     return (
         <>
@@ -188,12 +144,10 @@ const Index = ({object}) => {
                     }
                 ]}
             />
-            <div style={contentStyle}>
+            <div >
                 {current === 0 ? (
                         <StyledBlockLarge label={"Создание списка задач"}>
                             <TasksToProjectForm
-                                updateTasks={(value) => updateTasks(value)}
-                                actualTasks={project?.project_tasks ? rebuildQueryToTasks(project?.project_tasks) :  []}
                                 actualProject={project}
                                 setLoading={setLoading}/>
                         </StyledBlockLarge>
@@ -201,15 +155,13 @@ const Index = ({object}) => {
                     current === 1 ? (
                             <StyledBlockLarge label={"Распределение задач по сотрудникам"}>
                                 <EmployeeToTasksForm
-                                    updateTasks={(value) => updateTasks(value)}
-                                    actualTasks={project?.project_tasks ? rebuildQueryToTasks(project?.project_tasks) :  []}
                                     actualProject={project}
                                     setLoading={setLoading}/>
                             </StyledBlockLarge>
                         ) :
                         current === 2 ? (
-                                <StyledBlockLarge label={"График"}>
-
+                                <StyledBlockLarge label={"График ганта"}>
+                                    <TasksChartForm actualProject={project}/>
                                 </StyledBlockLarge>) :
                             <></>
                 }

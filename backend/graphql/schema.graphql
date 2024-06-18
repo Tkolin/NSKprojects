@@ -468,7 +468,7 @@ type TypeProjectDocument{
     name: String!
     code: String!
     group: GroupTypeProjectDocument
-    template_project_id: ID!
+    template_project_id: ID
 }
 type IRD{
     id: ID!
@@ -493,6 +493,7 @@ type SectionReference{
 type Stage{
     id: ID!
     name: String
+    task_id: Int
 }
 type Task{
     id: ID!

@@ -1,89 +1,87 @@
 import React, {useEffect, useState} from 'react';
-import {Col, Divider, Form, Row} from "antd";
-import TaskForm from "../../../../components/form/modelsForms/TaskForm";
+import {Button, Col, Divider, Form, Row} from "antd";
 import TasksTreeComponent from "./TasksTreeComponent";
-import {CustomAutoCompleteAndCreateWitchEdit} from "../../../../components/style/SearchAutoCompleteStyles";
-import {useQuery} from "@apollo/client";
-import {TASKS_QUERY_COMPACT} from "../../../../graphql/queriesCompact";
-import LoadingSpinnerStyles from "../../../../components/style/LoadingSpinnerStyles";
-import StageRadioComponent from "./StageRadioComponent";
-import TasksToProjectForm from "./TasksToProjectForm";
 import TaskProjectForm from "./TaskProjectForm";
-import styled, {css} from "styled-components";
-import {StyledButtonGreen} from "../../../../components/style/ButtonStyles";
 
 
-const EmployeeToTasksForm = ({actualTasks, updateTasks, actualProject, setLoading}) => {
+
+const EmployeeToTasksForm = ({actualProject, setLoading}) => {
 
     //Вынести за компонен
-    const [formLoad, setFormLoad] = useState(false);
     const [form] = Form.useForm();
-    const [stageNumber, setStageNumber] = useState()
-    const [selectedTaskTree, setSelectedTaskTree] = useState(true);
+    const [selectedTaskId, setSelectedTaskId] = useState();
+    const rebuider = (tasks) => {
+        console.log("preBuilder", tasks)
+        const taskMap = {};
+        const tree = [];
+
+        // Создаем хэш-таблицу для быстрого доступа к задачам по их ID
+        tasks.forEach((task) => {
+            const newTask = {
+                key: task.id,
+                title: task.id + ":" + task.task.name,
+                children: []
+            };
+            taskMap[task.id] = newTask;
+        });
+
+        // Строим дерево
+        tasks.forEach((task) => {
+            if (task.inherited_task_ids.length === 0) {
+                tree.push(taskMap[task.id]);
+            } else {
+                task.inherited_task_ids.forEach((inheritedTask) => {
+                    const parentId = inheritedTask.project_inherited_task_id;
+                    if (taskMap[parentId]) {
+                        taskMap[parentId].children.push(taskMap[task.id]);
+                    }
+                });
+            }
+        });
+
+
+        console.log("postBuilder", tree)
+        return tree;
+    }
+
 
     useEffect(() => {
-        console.log("setSelectedTaskTree", selectedTaskTree);
-    }, [selectedTaskTree]);
-    useEffect(() => {
-        setFormLoad(true)
-    }, []);
-    useEffect(() => {
-        if (actualTasks) {
-            console.log("newActualTasksetfield", actualTasks)
-            form.setFieldValue("tasks", actualTasks)
+        if (actualProject && actualProject?.project_tasks) {
+            rebuider(actualProject?.project_tasks)
+            form.setFieldValue("tasks", rebuider(actualProject?.project_tasks))
         }
-    }, [actualTasks]);
-    const handleChange = () => {
-        if (formLoad) {
-            const value = form.getFieldValue("tasks");
-            if (value)
-                updateTasks(value);
-        }
-    }
-    // Список задач
-    const {
-        loading: loadingTasks, error: errorTasks,
-        data: dataTasks
-    } = useQuery(TASKS_QUERY_COMPACT);
-    const [tasksModalStatus, setTasksModalStatus] = useState({options: [], selected: {}});
-    const handleSelectTask = (value) => {
-        if (value?.id > 0) {
-            console.log("handleSelectTask", value);
-        }
-    }
-    const onSave = () => {
-        console.log("onSave", form.getFieldValue());
-    }
-    if (loadingTasks)
-        return <LoadingSpinnerStyles/>
+    }, [actualProject]);
+
 
     return (
         <Form form={form} style={{width: "100%"}} onChange={() => console.log("onChange")}>
             <Row gutter={4}>
-                <Col span={6}>
-                    <Divider>Пулл сотрудников</Divider>
-                    <TaskForm/>
-                </Col>
-                <Col span={6}>
+
+                <Col span={8}>
+                    <Button onClick={() => actualProject && console.log("actualProject", actualProject)}>
+                        Проверить проект
+                    </Button>
+                    <Button onClick={() => form.setFieldValue("tasks", rebuider(actualProject?.project_tasks))}>
+                        Перегрузка
+                    </Button>
                     <Divider>Список задач</Divider>
                     <Form.Item name={"tasks"}>
                         <TasksTreeComponent
-                            onSelect={(value) => setSelectedTaskTree( value)}
                             selectable={true}
-                            stageNumber={stageNumber}
-                            value={actualTasks}
-                            mode={"selector"}
-                            onSelected={(value) => {
-                                handleSelectTask(value)
-                            }}/>
+                            onSelect={(value) => {
+                                setSelectedTaskId(value ? value[0] : null)
+
+                            }}
+                        />
                     </Form.Item>
                 </Col>
-                <Col span={12}>
+                <Col span={16}>
                     <Divider>Распределение</Divider>
-                    <TaskProjectForm task={{id: selectedTaskTree}}/>
-                    <StyledButtonGreen onClick={() => onSave()}>
-                        Сохранить
-                    </StyledButtonGreen>
+                    <TaskProjectForm
+                        actualTaskToProject={selectedTaskId ? actualProject?.project_tasks.find(row => row.id === selectedTaskId) : null}/>
+                    {/*<StyledButtonGreen onClick={() => onSave()}>*/}
+                    {/*    Сохранить*/}
+                    {/*</StyledButtonGreen>*/}
                 </Col>
             </Row>
         </Form>
