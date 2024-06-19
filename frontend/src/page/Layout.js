@@ -14,7 +14,7 @@ import {useQuery} from "@apollo/client";
 import {CURRENT_USER_QUERY} from "../graphql/queries";
 import {useNavigate} from "react-router-dom";
 import {Cookies} from "react-cookie";
-import LoadingSpinnerStyles from "../components/style/LoadingSpinnerStyles";
+import LoadingSpinnerStyles from "./components/style/LoadingSpinnerStyles";
 import {Header} from "antd/es/layout/layout";
 import {Content, Footer} from "antd/lib/layout/layout";
 import Logo from "../resursed/logo512.png";
@@ -129,7 +129,7 @@ const CustomLayout = ({children, currentUser, la}) => {
             hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
             && getItem('Отчёты', '/reports/', <SolutionOutlined/>, [
                 hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
-                && getItem('Проекты', '/reports/project', null, null)
+                && getItem('Проекты', '/reports/createNewProject', null, null)
             ]),
             hasAccess(roleName, ["ADMIN"])
             && getItem('Расчёты', '/computs/', <CalculatorOutlined/>, [

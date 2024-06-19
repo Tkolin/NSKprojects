@@ -1,7 +1,6 @@
 import React from 'react';
-import catImage from '../cat.jpg';
 import { Typography } from "antd";
-import {StyledBlockRegular} from "../components/style/BlockStyles";
+import {StyledBlockRegular} from "./components/style/BlockStyles";
 import '../style.css'; // Подключаем файл со стилями для анимации
 const { Text, Title } = Typography;
 

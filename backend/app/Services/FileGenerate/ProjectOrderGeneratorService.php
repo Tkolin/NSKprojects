@@ -41,7 +41,7 @@ class ProjectOrderGeneratorService
                 'myOrg.full_name' => $myOrg['full_name'] ?? '(данные отсутвуют)',
                 'myOrg.nameOrType' => $myOrg["legal_form"]['name'] . " " . $myOrg['name'],
                 'myOrg.director.full_name' => $NCLNameCaseRu->q( $myOrg['director']['last_name'] . ' ' . $myOrg['director']['first_name'] . ' ' . $myOrg['director']['patronymic'],NCL::$VINITELN) ?? '',
-                'myOrg.director.position.name' => $myOrg['director']['position']['name'] ?? '(данные отсутвуют)', 'project.name' => $project['name'] ?? '',
+                'myOrg.director.position.name' => $myOrg['director']['position']['name'] ?? '(данные отсутвуют)', 'createNewProject.name' => $project['name'] ?? '',
                 'myOrg.INN' => $myOrg['INN'] ?? '(данные отсутвуют)',
                 'myOrg.KPP' => $myOrg['KPP'] ?? '(данные отсутвуют)',
                 'myOrg.address_legal' => $myOrg['address_legal'] ?? '(данные отсутвуют)',
@@ -56,15 +56,15 @@ class ProjectOrderGeneratorService
                 'myOrg.payment_account' => $myOrg['payment_account'] ?? '(данные отсутвуют)',
 
 
-                'project.avansPecent' => $project['prepayment'],
+                'createNewProject.avansPecent' => $project['prepayment'],
 
 
-                'project.price' => $project['price'] ?? '(данные отсутвуют)',
-                'project.number' => $project['number'] ?? '(данные отсутвуют)',
+                'createNewProject.price' => $project['price'] ?? '(данные отсутвуют)',
+                'createNewProject.number' => $project['number'] ?? '(данные отсутвуют)',
                 'dayCreate' => $day,
                 'mountCreate' => $month,
                 'yearCreate' => $year,
-                "project.typeProject.Specification" => $project["type_project_document"]["group"]["technical_specification"]['name'] ?? '(данные отсутвуют)',
+                "createNewProject.typeProject.Specification" => $project["type_project_document"]["group"]["technical_specification"]['name'] ?? '(данные отсутвуют)',
                 'projectOrganization.director.full_name' => isset($project["organization_customer"]['director']) ?
                     $NCLNameCaseRu->q($project["organization_customer"]['director']['last_name'] . ' ' .
                         $project["organization_customer"]['director']['first_name'] . ' ' .

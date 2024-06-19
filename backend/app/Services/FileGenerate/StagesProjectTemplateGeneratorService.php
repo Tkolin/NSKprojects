@@ -23,7 +23,7 @@ class StagesProjectTemplateGeneratorService
         copy($templateFilePath, $tempFilePath);
         // Загрузка шаблона в PhpWord
         $templateProcessor = new TemplateProcessor($tempFilePath);
-    //    $date = $project["date_create"];
+    //    $date = $createNewProject["date_create"];
 
       //  $dateComponents = explode('-', $date);
 
@@ -67,8 +67,8 @@ class StagesProjectTemplateGeneratorService
             ];
         }
         $replacements = [
-            'project.number' => $project['number'] ?? '(данные отсутвуют)',
-            'project.name' => $project['name'] ?? '(данные отсутвуют)',
+            'createNewProject.number' => $project['number'] ?? '(данные отсутвуют)',
+            'createNewProject.name' => $project['name'] ?? '(данные отсутвуют)',
 
             'dayCreate' => $day,
             'mountCreate' => $month,

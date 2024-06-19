@@ -1330,7 +1330,7 @@ INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `ro
 (26, '22222', '2ы2222@mail.ru', NULL, '$2y$12$haORsUSiFT5pM2R9iQw95u3Mvs.AVF21grq55Y1i7a.ZBC.iHM/r2', 2, NULL, '2024-02-09 17:53:16', '2024-02-09 17:53:16');
 
 --
--- Indexes for dumped tables
+-- Indexes for dumped simplesTables
 --
 
 --
@@ -1593,7 +1593,7 @@ ALTER TABLE `users`
   ADD KEY `users_role_id_foreign` (`role_id`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT for dumped simplesTables
 --
 
 --
@@ -1789,7 +1789,7 @@ ALTER TABLE `users`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
--- Constraints for dumped tables
+-- Constraints for dumped simplesTables
 --
 
 --

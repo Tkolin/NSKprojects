@@ -9,7 +9,7 @@ final readonly class ProjectStages
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
-        $projectsQuery = ProjectStage::with('project:id,name')
+        $projectsQuery = ProjectStage::with('createNewProject:id,name')
             ->with('stage');
 
         if (isset($args['projectId'])) {

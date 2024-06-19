@@ -10,7 +10,7 @@ use Nuwave\Lighthouse\GraphQL;
 Route::get('/download-contract/{filename}', [ExecutorContractController::class, 'downloadExecutorContract']);
 Route::get('/download-taskExecutorContract/{filename}', [ExecutorContractController::class, 'TaskExecutorContract']);
 
-Route::get('/download-project/{filename}', [ProjectController::class, 'downloadProject']);
+Route::get('/download-createNewProject/{filename}', [ProjectController::class, 'downloadProject']);
 Route::get('/download-projectIrds/{filename}', [ProjectController::class, 'downloadIrdsProject']);
 Route::get('/download-projectStages/{filename}', [ProjectController::class, 'downloadStageProject']);
 

@@ -10,24 +10,23 @@ import {createGlobalStyle} from "styled-components";
 import CustomLayout from './page/Layout';
 
 import Home from './page/Home';
-import LoadingSpinnerStyles from "./components/style/LoadingSpinnerStyles";
-
-import LoginPage from "./page/modules/auth/loginPage";
-import RegisterPage from "./page/modules/auth/RegisterPage";
-import ContactPage from "./page/simples/forms/ContactPage";
+import LoadingSpinnerStyles from "./page/components/style/LoadingSpinnerStyles";
+import ContactPage from "./page/simplesForms/ContactPage";
+import PersonPage from "./page/simplesForms/PersonPage";
+import OrganizationPage from "./page/simplesForms/OrganizationPage";
+import DistributionTasksByProject from "./page/distributionTasksByProject/Index";
+import CreateNewProject from "./page/createNewProject/Index";
+import ContactTable from "./page/simplesTables/ContactTable";
+import PersonTable from "./page/simplesTables/PersonTable";
+import OrganizationTable from "./page/simplesTables/OrganizationTable";
+import IrdTable from "./page/simplesTables/IrdTable";
+import TypeProjectTable from "./page/simplesTables/TypeProjectTable";
+import StageTable from "./page/simplesTables/StageTable";
+import ProjectTable from "./page/simplesTables/ProjectTable";
+import RegisterPage from "./page/simplesForms/RegisterPage";
+import LoginPage from "./page/simplesForms/loginPage";
 import {NotificationProvider} from "./NotificationProvider";
-import PersonPage from "./page/simples/forms/PersonPage";
-import OrganizationPage from "./page/simples/forms/OrganizationPage";
-import ProjectModules from "./page/modules/project/Index";
-import ProjectTasksModules from "./page/modules/projectTasks/Index";
-import ContactTable from "./page/simples/tables/ContactTable";
-import PersonTable from "./page/simples/tables/PersonTable";
-import OrganizationTable from "./page/simples/tables/OrganizationTable";
-import IrdTable from "./page/simples/tables/IrdTable";
-import TypeProjectTable from "./page/simples/tables/TypeProjectTable";
-import StageTable from "./page/simples/tables/StageTable";
-import ProjectTable from "./page/simples/tables/ProjectTable";
-import TasksChartForm from "./page/modules/projectTasks/components/TasksChartForm";
+import TasksChartForm from "./page/distributionTasksByProject/components/TasksChartForm";
 
 
 const App = () => {
@@ -59,8 +58,8 @@ const App = () => {
                             <Route path="/form/contact" element={<ContactPage/>}/>
                             <Route path="/form/persons" element={<PersonPage/>}/>
                             <Route path="/form/organizations" element={<OrganizationPage/>}/>
-                            <Route path="/form/new_project" element={<ProjectModules/>}/>
-                            <Route path="/form/tasks_project" element={<ProjectTasksModules/>}/>
+                            <Route path="/form/new_project" element={<CreateNewProject/>}/>
+                            <Route path="/form/tasks_project" element={<DistributionTasksByProject/>}/>
 
                             <Route path="/table/contacts" element={<ContactTable/>}/>
                             <Route path="/table/persons" element={<PersonTable/>}/>
@@ -72,7 +71,7 @@ const App = () => {
 
                             <Route path="/auth/register" element={<RegisterPage/>}/>
                             <Route path="/auth/login" element={<LoginPage/>}/>
-                         </Routes>
+                        </Routes>
                     </CustomLayout>
                 </Router>
             </NotificationProvider>

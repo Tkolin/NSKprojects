@@ -10,7 +10,7 @@ final readonly class ProjectSectionReferences
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-            $query = ProjectSectionsReference::with('project:id,name')
+            $query = ProjectSectionsReference::with('createNewProject:id,name')
                 ->with('section_reference');
 
             if (isset($args['projectId'])) {

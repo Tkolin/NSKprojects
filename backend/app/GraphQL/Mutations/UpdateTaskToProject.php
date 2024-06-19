@@ -43,7 +43,7 @@ final readonly class UpdateTaskToProject
 //            $duration = $startDate && $endDate ? $startDate->diff($endDate)->days + 1 : null;
 //
 //            // Создание родительской записи без зависимых
-//            $projectTasks = ProjectTasks::updateOrCreate(
+//            $distributionTasksByProject = ProjectTasks::updateOrCreate(
 //                ['project_id' => $projectId, 'task_id' => $task_id],
 //                [
 //                    'stage_number' => $stage_number,
@@ -56,7 +56,7 @@ final readonly class UpdateTaskToProject
 //            );
 //
 //            // Сохраняем id только что созданной родительской записи
-//            $createdTasks[$projectId][$task_id] = $projectTasks->id;
+//            $createdTasks[$projectId][$task_id] = $distributionTasksByProject->id;
 //        }
 //
 //        // 2. Создание зависимых записей
@@ -119,10 +119,10 @@ final readonly class UpdateTaskToProject
 //        }
 //
 //        // Fetch the updated ProjectTasks with the relationships loaded
-//        $projectTasks = ProjectTasks::where('project_id', $projectId)->with('executors', 'inherited_task_ids', 'task')->get();
+//        $distributionTasksByProject = ProjectTasks::where('project_id', $projectId)->with('executors', 'inherited_task_ids', 'task')->get();
 //
 //        // Transform the data into the desired format
-//        $tasksArray = $projectTasks->map(function ($task) {
+//        $tasksArray = $distributionTasksByProject->map(function ($task) {
 //            return [
 //                'id' => $task->id,
 //                'description' => $task->description,

@@ -15,7 +15,7 @@ final readonly class CountProjectByOrganizations
 
         // Если organizationId передан, получаем одну организацию с количеством проектов
         if ($organizationId) {
-            $organization = Organization::withCount('project')->find($organizationId);
+            $organization = Organization::withCount('createNewProject')->find($organizationId);
             if (!$organization) {
                 throw new \Exception("Organization not found");
             }
@@ -30,7 +30,7 @@ final readonly class CountProjectByOrganizations
         }
 
         // Если organizationId не передан, возвращаем список всех организаций с количеством проектов
-        $organizations = Organization::withCount('project')->get();
+        $organizations = Organization::withCount('createNewProject')->get();
 
         // Формируем список в требуемом формате
         $result = $organizations->map(function ($organization) {
