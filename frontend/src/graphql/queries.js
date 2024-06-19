@@ -354,8 +354,9 @@ export const PROJECTS_QUERY = gql`
                     date_start
                     duration
                     date_end
-                    percent
+                    percent 
                     price
+                    
                 }
                 project_irds {
                     id

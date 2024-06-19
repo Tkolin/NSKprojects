@@ -216,6 +216,8 @@ input TasksToProject {
     inherited_from_task_id: ID
     task_id: ID!
     stage_number: Int
+    date_start: String
+    date_end: String
 }
 input TaskExecutor {
     id: ID

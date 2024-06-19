@@ -10,7 +10,7 @@ import {useLazyQuery} from "@apollo/client";
 import { PROJECTS_QUERY_BY_ID} from "../../graphql/queriesByID";
 import TasksChartForm from "./components/TasksChartForm";
 
-const Index = ({ProjectId}) => {
+const Index = ({projectId}) => {
     const {openNotification} = useContext(NotificationContext);
     const {token} = theme.useToken();
     // Хранилище
@@ -72,7 +72,7 @@ const Index = ({ProjectId}) => {
 
     // TODO: Для проверки
     const [loadContext, {data: data}] = useLazyQuery(PROJECTS_QUERY_BY_ID, {
-        variables: {id: ProjectId.id},
+        variables: {id: projectId},
         onCompleted: (data) => {
             setProject(data?.projects?.items[0]);
         },
@@ -81,9 +81,9 @@ const Index = ({ProjectId}) => {
         },
     });
     useEffect(() => {
-        if (ProjectId?.id)
+        if (projectId)
             loadContext();
-    }, [ProjectId]);
+    }, [projectId]);
 
     const handleStage = (steps) => {
         setNewCurrent(steps)

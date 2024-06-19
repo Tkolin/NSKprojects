@@ -6,6 +6,7 @@ import {StyledButtonGreen} from "./ButtonStyles";
 
 
 const CustomAutoCompleteComponent = ({
+                                         saveSelected = true,
                                          style,
                                          width,
                                          placeholder,
@@ -58,8 +59,9 @@ const CustomAutoCompleteComponent = ({
             onClear={() => onChange && onChange({...value, selected: null, output: null})}
             onSearch={handleSearch}
             onSelect={(variable, option) => {
-                onSelect && onSelect({id: option.data, name: option.value})
-                onChange && onChange({...value, selected: option.data, output: option.label});
+                onSelect && onSelect({id: option.data, name: option.value});
+                onChange && saveSelected ? onChange({...value, selected: option.data, output: option.label}) : onChange({...value, selected: null, output: null});
+
             }}
             placeholder={placeholder ?? "Начните ввод..."}
         />
@@ -151,7 +153,7 @@ const CustomAutoComplete = ({
 
 );
 const CustomAutoCompleteAndCreateWitchEdit = ({
-
+                                                  saveSelected,
                                                   onSelect,
                                                   placeholder,
                                                   loading,
@@ -161,6 +163,7 @@ const CustomAutoCompleteAndCreateWitchEdit = ({
                                                   secondBtnOnClick,
                                                   formatOptionText,
                                                   mode,
+
                                                   secondDisable,
                                                   data,
                                                   value,
@@ -169,6 +172,7 @@ const CustomAutoCompleteAndCreateWitchEdit = ({
                                               }) => (
     <Space.Compact style={{width: "100%", marginBottom: 0}}>
         <CustomAutoCompleteComponent
+            saveSelected={saveSelected}
             onSelect={onSelect}
             onSearch={onSearch}
             placeholder={placeholder}

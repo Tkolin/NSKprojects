@@ -9,7 +9,7 @@ use App\Models\ProjectTasksInherited;
 
 final readonly class CreateTasksToProject
 {
-    /** @param  array{}  $args */
+    /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
         $projectId = $args['data'][0]['project_id'];
@@ -31,7 +31,9 @@ final readonly class CreateTasksToProject
                 [
                     'project_id' => $taskData['project_id'] ?? null,
                     'task_id' => $taskData['task_id'] ?? null,
-                    'stage_number' => $taskData['stage_number'] ?? null
+                    'stage_number' => $taskData['stage_number'] ?? null,
+                    'date_start' => $taskData['date_start'] ?? null,
+                    'date_end' => $taskData['date_end'] ?? null,
                 ]);
 
             // Сохраняем ID созданной или обновленной записи

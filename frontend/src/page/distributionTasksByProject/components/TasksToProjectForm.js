@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Col, Divider, Form, Row, Space, Typography} from "antd";
+import React, {useContext, useState} from 'react';
+import {Col, Divider, Form, notification, Row, Space, Typography} from "antd";
 import TaskForm from "../../components/form/modelsForms/TaskForm";
 import TasksTreeComponent from "./TasksTreeComponent";
 import {CustomAutoCompleteAndCreateWitchEdit} from "../../components/style/SearchAutoCompleteStyles";
@@ -8,13 +8,16 @@ import {TASKS_QUERY_COMPACT} from "../../../graphql/queriesCompact";
 import LoadingSpinnerStyles from "../../components/style/LoadingSpinnerStyles";
 import {StyledButtonGreen} from "../../components/style/ButtonStyles";
 import {CREATE_TASKS_TO_PROJECT} from "../../../graphql/mutationsTask";
+import {NotificationContext} from "../../../NotificationProvider";
+import dayjs from "dayjs";
 
 const {Text} = Typography;
 
 const TasksToProjectForm = ({actualProject, setLoading}) => {
     //Вынести за компонен
     const [form] = Form.useForm();
-     const [tasksModalStatus, setTasksModalStatus] = useState({options: [], selected: {}});
+    const [tasksModalStatus, setTasksModalStatus] = useState({options: [], selected: {}});
+    const {openNotification} = useContext(NotificationContext);
 
     // Список задач
     const {
@@ -23,7 +26,7 @@ const TasksToProjectForm = ({actualProject, setLoading}) => {
     } = useQuery(TASKS_QUERY_COMPACT);
 
 
-    const extractKeys = (tasksByStage, project ) => {
+    const extractKeys = (tasksByStage, project) => {
         const result = [];
         const projectStages = project.project_stages;
 
@@ -33,6 +36,8 @@ const TasksToProjectForm = ({actualProject, setLoading}) => {
                 project_id: project.id,
                 task_id: stage?.stage?.task_id?.toString(),
                 stage_number: stage.number,
+                date_start: stage.date_start,
+                date_end: stage.date_end,
                 inherited_from_task_id: null,
             };
             result.push(task);
@@ -52,28 +57,32 @@ const TasksToProjectForm = ({actualProject, setLoading}) => {
                 }
             });
         };
-
         for (const [stageNumber, tasks] of Object.entries(tasksByStage)) {
             traverse(tasks, parseInt(stageNumber));
+
         }
 
         return result;
     };
-    const [mutateTasksToProject, {loading: loadingMutation}] = useMutation(CREATE_TASKS_TO_PROJECT,{
-        onCompleted: (data)=>{
-            console.log("CREATE_TASKS_TO_PROJECT",data);
+    const [mutateTasksToProject, {loading: loadingMutation}] = useMutation(CREATE_TASKS_TO_PROJECT, {
+        onCompleted: (data) => {
+            openNotification('topRight', 'success', `Создание новой записи в таблице контакт выполнено успешно`);
         },
         onError: (error) => {
-            console.log("CREATE_TASKS_TO_PROJECT",error);
+            openNotification('topRight', 'error', `Ошибка при выполнении сооздания контакта: ${error.message}`);
 
         }
     });
     const handleSubmit = () => {
-        mutateTasksToProject({variables: {data:
-            extractKeys(Object.entries(form.getFieldsValue()).reduce((acc, [stageNumber, stageData]) => {
-                acc[stageNumber] = stageData.tasks || [];
-                return acc;
-            }, {}), actualProject)}})
+        mutateTasksToProject({
+            variables: {
+                data:
+                    extractKeys(Object.entries(form.getFieldsValue()).reduce((acc, [stageNumber, stageData]) => {
+                        acc[stageNumber] = stageData.tasks || [];
+                        return acc;
+                    }, {}), actualProject)
+            }
+        })
 
     }
     const handleSelectTask = (index, value) => {
@@ -117,11 +126,15 @@ const TasksToProjectForm = ({actualProject, setLoading}) => {
                                 <Form.Item name={[row.number, "task_adder"]} label={"Добавить задачу"}>
                                     <CustomAutoCompleteAndCreateWitchEdit
                                         placeholder={"Начните ввод..."}
+
                                         loading={loadingTasks}
                                         firstBtnOnClick={() => setTasksModalStatus("add")}
                                         secondBtnOnClick={() => setTasksModalStatus("edit")}
+                                        saveSelected={false}
                                         onSelect={(value) => handleSelectTask(row.number, value)}
-                                        data={dataTasks?.tasks?.items}
+                                        data={dataTasks?.tasks?.items.filter((task) =>
+                                            !actualProject.project_stages.flatMap(stage => stage.stage.task_id).includes(parseInt(task.id))
+                                        )}
                                     />
                                 </Form.Item>
                             </div>

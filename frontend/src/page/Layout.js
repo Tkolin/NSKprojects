@@ -129,7 +129,7 @@ const CustomLayout = ({children, currentUser, la}) => {
             hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
             && getItem('Отчёты', '/reports/', <SolutionOutlined/>, [
                 hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
-                && getItem('Проекты', '/reports/createNewProject', null, null)
+                && getItem('Проекты', '/reports/project', null, null)
             ]),
             hasAccess(roleName, ["ADMIN"])
             && getItem('Расчёты', '/computs/', <CalculatorOutlined/>, [

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import {Divider, Form, notification, Space, Table} from 'antd';
 import {CONTACTS_QUERY} from '../../graphql/queries';
@@ -10,10 +10,13 @@ import {format} from "date-fns";
 import {DeleteAndEditStyledLinkManagingDataTable} from "../components/style/TableStyles";
 import ContactModalForm from "../components/modal/ContactModalForm";
 import {nanoid} from "nanoid";
+import {NotificationContext} from "../../NotificationProvider";
 
 const ContactTable = () => {
 
     // Состояния
+    const {openNotification} = useContext(NotificationContext);
+
     const [formSearch] = Form.useForm();
     const [contactModalStatus, setContactModalStatus] = useState(null);
 
@@ -31,15 +34,11 @@ const ContactTable = () => {
     const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(CONTACTS_QUERY, {
         variables: {
             queryOptions: {page, limit, search, sortField, sortOrder}
-        }, fetchPolicy: 'network-only',
+        },
     });
 
     // Функции уведомлений
-    const openNotification = (placement, type, message) => {
-        notification[type]({
-            message: message, placement,
-        });
-    };
+
 
     // Мутация для удаления
     const [deleteContact] = useMutation(DELETE_CONTACT_MUTATION, {
