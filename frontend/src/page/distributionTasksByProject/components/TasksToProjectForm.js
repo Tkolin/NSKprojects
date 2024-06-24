@@ -29,42 +29,26 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
     } = useQuery(TASKS_QUERY_COMPACT);
 
 
-    const extractKeys = (tasksByStage, project) => {
+    const extractKeys = (tasks) => {
         const result = [];
-        const projectStages = project.project_stages;
 
-        // Создание задач из этапов проекта
-        projectStages.forEach(stage => {
-            const task = {
-                project_id: project.id,
-                task_id: stage?.stage?.task_id?.toString(),
-                stage_number: stage.number,
-                date_start: stage.date_start,
-                date_end: stage.date_end,
-                inherited_from_task_id: null,
+        const transfer = (task, parent = null) => {
+            const newTask = {
+                task_id: task.key,
+                inherited: parent,
             };
-            result.push(task);
+            result.push(newTask);
+
+            if (task.children) {
+                task.children.forEach((child) => transfer(child, task.key));
+            }
+        };
+
+        tasks.forEach((task) => {
+            transfer(task);
         });
 
-        const traverse = (nodes, stageNumber, parentKey = null) => {
-            nodes.forEach(node => {
-                const task = {
-                    project_id: project.id,
-                    task_id: node.key,
-                    stage_number: stageNumber,
-                    inherited_from_task_id: parentKey || result.find(t => t.stage_number === stageNumber)?.task_id || null
-                };
-                result.push(task);
-                if (node.children) {
-                    traverse(node.children, stageNumber, node.key);
-                }
-            });
-        };
-        for (const [stageNumber, tasks] of Object.entries(tasksByStage)) {
-            traverse(tasks, parseInt(stageNumber));
-
-        }
-
+        console.log("formTasks", result);
         return result;
     };
     const [mutateTasksToProject, {loading: loadingMutation}] = useMutation(CREATE_TASKS_TO_PROJECT, {
@@ -80,10 +64,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
         mutateTasksToProject({
             variables: {
                 data:
-                    extractKeys(Object.entries(form.getFieldsValue()).reduce((acc, [stageNumber, stageData]) => {
-                        acc[stageNumber] = stageData.tasks || [];
-                        return acc;
-                    }, {}), actualProject)
+                    extractKeys(form.getFieldValue("tasks"), actualProject)
             }
         })
 
@@ -116,7 +97,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
                 key: task.id,
                 id: task.id,
                 disabled: task?.inherited_task_ids?.length === 0,
-                title:task?.inherited_task_ids?.length === 0 ? ("Этап " + task.stage_number + " :" + task.task.name) : task.task.name,
+                title: task?.inherited_task_ids?.length === 0 ? ("Этап " + task.stage_number + " :" + task.task.name) : task.task.name,
                 children: []
             };
             taskMap[task.id] = newTask;
@@ -138,7 +119,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
         return tree;
     }
 
-     useEffect(() => {
+    useEffect(() => {
         if (actualProject?.project_tasks)
             form.setFieldValue("tasks", rebuider(actualProject?.project_tasks));
     }, [actualProject]);
