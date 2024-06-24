@@ -89,11 +89,11 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
 
 
     }
-    const handleSelectTask = (value) => {
+    const handleSelectTask = (index, value) => {
         if (value?.id > 0) {
-            const oldTasks = form.getFieldValue("tasks");
+            const oldTasks = form.getFieldValue([index, "tasks"]);
 
-            form.setFieldValue("tasks", [
+            form.setFieldValue([index, "tasks"], [
                 ...oldTasks ?? [],
                 {
                     title: value.name,
@@ -102,45 +102,51 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
             ])
         }
     }
-    const rebuider = (tasks) => {
-        const taskMap = {};
-        const tree = [];
-        if (!tasks || !tasks.length) {
-            console.error('Tasks data is null or empty.');
-            return;
-        }
-
-        // Создаем хэш-таблицу для быстрого доступа к задачам по их ID
-        tasks.forEach((task) => {
-            const newTask = {
-                key: task.id,
-                id: task.id,
-                disabled: task?.inherited_task_ids?.length === 0,
-                title:task?.inherited_task_ids?.length === 0 ? ("Этап " + task.stage_number + " :" + task.task.name) : task.task.name,
-                children: []
-            };
-            taskMap[task.id] = newTask;
-        });
-
-        // Строим дерево
-        tasks.forEach((task) => {
-            if (task?.inherited_task_ids?.length === 0) {
-                tree.push(taskMap[task.id]);
-            } else {
-                task?.inherited_task_ids?.forEach((inheritedTask) => {
-                    const parentId = inheritedTask.project_inherited_task_id;
-                    if (taskMap[parentId]) {
-                        taskMap[parentId].children.push(taskMap[task.id]);
-                    }
-                });
-            }
-        });
-        return tree;
-    }
-
-     useEffect(() => {
-        if (actualProject?.project_tasks)
-            form.setFieldValue("tasks", rebuider(actualProject?.project_tasks));
+    // const rebuider = (tasks) => {
+    //     const taskMap = {};
+    //     let tree = {};
+    //
+    //     // Создаем хэш-таблицу для быстрого доступа к задачам по их ID
+    //     tasks.forEach((task) => {
+    //         const newTask = {
+    //             key: task.id,
+    //             id: task.id,
+    //             stage_number: task.stage_number,
+    //             title: task.id + ":" + task.task.name,
+    //             children: []
+    //         };
+    //         taskMap[task.id] = newTask;
+    //     });
+    //
+    //     // Строим дерево
+    //     tasks.forEach((task) => {
+    //         if (task.inherited_task_ids.length === 0) {
+    //             console.log("1");
+    //             const ftask = taskMap[task.id];
+    //             tree = {...tree ?? null, [ftask.stage_number]: [...tree[ftask?.stage_number] ?? [], ftask]};
+    //         } else {
+    //             console.log("2");
+    //             task.inherited_task_ids.forEach((inheritedTask) => {
+    //                 const parentId = inheritedTask.project_inherited_task_id;
+    //                 if (taskMap[parentId]) {
+    //                     taskMap[parentId].children.push(taskMap[task.id]);
+    //                 }
+    //             });
+    //         }
+    //     });
+    // }
+    //
+    // const flattenChildren = (obj) => {
+    //     const result = {};
+    //     Object.keys(obj).forEach((key) => {
+    //         result[key] = obj[key].reduce((acc, cur) => {
+    //             acc[cur.key] = cur;
+    //             return acc;
+    //         }, {});
+    //     });
+    //     return result;
+    // };
+    useEffect(() => {
     }, [actualProject]);
     if (loadingTasks)
         return <LoadingSpinnerStyles/>
@@ -148,29 +154,39 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
     return (
         <Row gutter={1}>
             <Col span={24}>
+                <Divider>Создание новой задачи</Divider>
+                <TaskForm onCompleted={()=>refetchTasks()}/>
                 <Form form={form} onChange={() => console.log("onChange")}>
-                    <Divider>Список задач</Divider>
+                    <Divider>Список этапов</Divider>
+                    {actualProject?.project_stages?.map((row) => (
+                        <Space.Compact style={{width: "100%"}} direction={"vertical"}>
+                            <div style={{width: "100%"}}>
+                                <Typography.Title level={4}>
+                                    {row?.number ?? "s"}. {row?.stage?.name}. {row?.stage?.task_id}
+                                </Typography.Title>
+                            </div>
+                            <div style={{width: "100%"}}>
+                                <Form.Item name={[row.number, "tasks"]}>
+                                    <TasksTreeComponent draggable/>
+                                </Form.Item>
 
-                    <Space.Compact style={{width: "100%"}} direction={"vertical"}>
-
-                        <div style={{width: "100%"}}>
-                            <Form.Item name={"tasks"}>
-                                <TasksTreeComponent draggable/>
-                            </Form.Item>
-
-                            <Form.Item name={"task_adder"} label={"Добавить задачу к списку"}>
-                                <CustomAutoComplete
-                                    placeholder={"Начните ввод..."}
-                                    loading={loadingTasks}
-                                    saveSelected={false}
-                                    onSelect={(value) => handleSelectTask(value)}
-                                    data={dataTasks?.tasks?.items.filter((task) =>
-                                        !actualProject.project_stages.flatMap(stage => stage.stage.task_id).includes(parseInt(task.id))
-                                    )}
-                                />
-                            </Form.Item>
-                        </div>
-                    </Space.Compact>
+                                <Form.Item name={[row.number, "task_adder"]} label={"Добавить задачу"}>
+                                    <CustomAutoComplete
+                                        placeholder={"Начните ввод..."}
+                                        loading={loadingTasks}
+                                        saveSelected={false}
+                                        onSelect={(value) => handleSelectTask(row.number, value)}
+                                        data={dataTasks?.tasks?.items.filter((task) =>
+                                            !actualProject.project_stages.flatMap(stage => stage.stage.task_id).includes(parseInt(task.id))
+                                        )}
+                                    />
+                                </Form.Item>
+                            </div>
+                            <div style={{width: "100%"}}>
+                                <Divider/>
+                            </div>
+                        </Space.Compact>
+                    ))}
                     <div style={{alignContent: "center", width: "100%"}}>
                         {/*<StyledButtonGreen onClick={() => {*/}
                         {/*    console.log("1",*/}

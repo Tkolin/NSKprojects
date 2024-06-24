@@ -22,9 +22,6 @@ type BikResult {
 }type OrganizationsResult {
     items: [Organization]
     count: Int
-}type OrganizationsAndEmployeesResult {
-    items: [OrganizationAndEmployees]
-    count: Int
 }type CountProjectByOrganizationsResult {
     items: [CountProjectByOrganizations]
 }type PositionsResult {
@@ -50,9 +47,6 @@ type BikResult {
     count: Int
 }type TypeProjectsResult {
     items: [TypeProjectDocument]
-    count: Int
-}type TechnicalSpecificationResult {
-    items: [TechnicalSpecification]
     count: Int
 }type SectionReferenceResult {
     items: [SectionReference]

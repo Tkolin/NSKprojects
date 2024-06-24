@@ -4,86 +4,86 @@ import {StyledBlockLarge} from "../components/style/BlockStyles";
 
 
 import {NotificationContext} from "../../NotificationProvider";
-import TasksToProjectForm from "./components/TasksToProjectForm";
+import NewTasksToProjectForm from "./components/NewTasksToProjectForm";
 import EmployeeToTasksForm from "./components/EmployeeToTasksForm";
 import {useLazyQuery} from "@apollo/client";
-import { PROJECTS_QUERY_BY_ID} from "../../graphql/queriesByID";
+import {PROJECTS_QUERY_BY_ID} from "../../graphql/queriesByID";
 import TasksChartForm from "./components/TasksChartForm";
+import TasksToProjectForm from "./components/TasksToProjectForm";
 
-const Index = ({projectId}) => {
+const Index = ({project, onChange}) => {
     const {openNotification} = useContext(NotificationContext);
     const {token} = theme.useToken();
     // Хранилище
 
     const [current, setCurrent] = useState(0);
     const [loading, setLoading] = useState(false)
-    const [project, setProject] = useState();
     const [newCurrent, setNewCurrent] = useState(current)
     // Мутация
 
-    const rebuildQueryToTasks = (tasksFromQuery) => {
-        console.log("start rebuildQueryToTasks", tasksFromQuery);
-        if (!tasksFromQuery)
-            return null;
-
-        const map = {};
-        const roots = [];
-        const checkedKeys = {};
-
-        // Создание карты задач по их ID для быстрого доступа
-        tasksFromQuery.forEach(task => {
-            map[task.id] = {
-                title: task?.task?.name,
-                key: task?.task?.id,
-                disableCheckbox: false,
-                children: [],
-            };
-        });
-
-        // Построение дерева задач на основе inherited_task_ids
-        tasksFromQuery.forEach(task => {
-            if (task?.inherited_task_ids && task?.inherited_task_ids.length > 0) {
-                const parentKey = task.inherited_task_ids[0].project_inherited_task_id;
-                if (map[parentKey]) {
-                    map[parentKey].children.push(map[task.id]);
-                }
-            } else {
-                roots.push(map[task.id]);
-            }
-        });
-
-        // Создание checkedKeys
-        tasksFromQuery.forEach(row => {
-            if (!checkedKeys[row.stage_number]) {
-                checkedKeys[row.stage_number] = [];
-            }
-            checkedKeys[row.stage_number].push(row?.task?.id);
-        });
-        console.log("end rebuildQueryToTasks checkedKeys", {
-            gData: roots,
-            checkedKeys: checkedKeys
-        });
-
-        return {
-            gData: roots,
-            checkedKeys: checkedKeys
-        };
-    };
+    // const rebuildQueryToTasks = (tasksFromQuery) => {
+    //     console.log("start rebuildQueryToTasks", tasksFromQuery);
+    //     if (!tasksFromQuery)
+    //         return null;
+    //
+    //     const map = {};
+    //     const roots = [];
+    //     const checkedKeys = {};
+    //
+    //     // Создание карты задач по их ID для быстрого доступа
+    //     tasksFromQuery.forEach(task => {
+    //         map[task.id] = {
+    //             title: task?.task?.name,
+    //             key: task?.task?.id,
+    //             disableCheckbox: false,
+    //             children: [],
+    //         };
+    //     });
+    //
+    //     // Построение дерева задач на основе inherited_task_ids
+    //     tasksFromQuery.forEach(task => {
+    //         if (task?.inherited_task_ids && task?.inherited_task_ids.length > 0) {
+    //             const parentKey = task.inherited_task_ids[0].project_inherited_task_id;
+    //             if (map[parentKey]) {
+    //                 map[parentKey].children.push(map[task.id]);
+    //             }
+    //         } else {
+    //             roots.push(map[task.id]);
+    //         }
+    //     });
+    //
+    //     // Создание checkedKeys
+    //     tasksFromQuery.forEach(row => {
+    //         if (!checkedKeys[row.stage_number]) {
+    //             checkedKeys[row.stage_number] = [];
+    //         }
+    //         checkedKeys[row.stage_number].push(row?.task?.id);
+    //     });
+    //     console.log("end rebuildQueryToTasks checkedKeys", {
+    //         gData: roots,
+    //         checkedKeys: checkedKeys
+    //     });
+    //
+    //     return {
+    //         gData: roots,
+    //         checkedKeys: checkedKeys
+    //     };
+    // };
 
     // TODO: Для проверки
     const [loadContext, {data: data}] = useLazyQuery(PROJECTS_QUERY_BY_ID, {
-        variables: {id: projectId},
+        variables: {id: project.id},
         onCompleted: (data) => {
-            setProject(data?.projects?.items[0]);
         },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
         },
     });
     useEffect(() => {
-        if (projectId)
+        console.log("./useEffect", project);
+        if (project?.id)
             loadContext();
-    }, [projectId]);
+    }, [project]);
 
     const handleStage = (steps) => {
         setNewCurrent(steps)
@@ -143,18 +143,37 @@ const Index = ({projectId}) => {
                         description: 'График ганта.',
                     }
                 ]}
-            />
+            /> <Button type="primary" onClick={() => console.log("чек еп", project)}>
+            чек
+        </Button>
             <div>
-                {current === 0 ? (
-                        <StyledBlockLarge label={"Создание списка задач"}>
-                            <TasksToProjectForm
-                                actualProject={project}
-                                setLoading={setLoading}/>
-                        </StyledBlockLarge>
-                    ) :
+                {current === 0 ?
+
+
+                    (   project.project_tasks.lenght !== 0 ?
+
+                            (
+                                <StyledBlockLarge label={"Настройка задач"}>
+                                    <TasksToProjectForm
+                                        onChange={onChange && onChange()}
+                                        actualProject={project}
+                                        setLoading={setLoading}/>
+                                </StyledBlockLarge>
+                            ) : (
+                                <StyledBlockLarge label={"Первичная настройка задач"}>
+                                    <NewTasksToProjectForm
+                                        onChange={onChange && onChange()}
+                                        actualProject={project}
+                                        setLoading={setLoading}/>
+                                </StyledBlockLarge>
+                            )
+                    )
+
+                    :
                     current === 1 ? (
                             <StyledBlockLarge label={"Распределение задач по сотрудникам"}>
                                 <EmployeeToTasksForm
+                                    onChange={() => onChange && onChange()}
                                     actualProject={project}
                                     setLoading={setLoading}/>
                             </StyledBlockLarge>

@@ -18,12 +18,11 @@ final readonly class UpdateTaskToProject
         $tasks = $args["data"];
 
         $count = count($tasks);
-
-        for ($i = 0; $i < $count; $i++) {
+         for ($i = 0; $i < $count; $i++) {
             $ProjectTask = ProjectTasks::findOrFail($tasks[$i]['id']);
             $ProjectTask->update($tasks[$i]);
         }
-        return Project::where('id', $tasks[0]['projectId'])->first();
+        return Project::where('id', $tasks[0]['project_id'])->first();
 
 //        $createdTasks = [];
 //        $projectId = 0;

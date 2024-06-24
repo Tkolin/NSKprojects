@@ -5,35 +5,7 @@ export const DELETE_ORGANIZATION_MUTATION = gql`
     mutation DeletOrganization($id: ID! ) {
         deleteOrganization(
             id: $id
-        ) {
-            name
-            full_name
-            legal_form{
-                id
-                name
-            }
-            address_legal
-            office_number_legal
-            address_mail
-            office_number_mail
-            phone_number
-            fax_number
-            email
-            INN
-            OGRN
-            OKPO
-            KPP
-            bik{
-                id
-                name
-            }
-            payment_account
-            director{
-                id
-                first_name
-                last_name
-            }
-        }
+        )
     }
 `;
 
@@ -76,6 +48,7 @@ export const ADD_ORGANIZATION_MUTATION = gql`
             payment_account: $payment_account
             director_id: $director_id
         ) {
+            id
             name
             full_name
             legal_form{
@@ -148,6 +121,7 @@ export const UPDATE_ORGANIZATION_MUTATION = gql`
             payment_account: $payment_account
             director_id: $director_id
         ) {
+            id
             name
             full_name
             legal_form{

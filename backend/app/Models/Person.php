@@ -40,6 +40,10 @@ class Person extends Model
     {
         return $this->hasMany(ProjectResponsiblePerson::class);
     }
+    public function project_tasks(): HasMany
+    {
+        return $this->hasMany(ProjectTasks::class);
+    }
     public function education_person(): HasMany
     {
         return $this->hasMany(EducationPerson::class);

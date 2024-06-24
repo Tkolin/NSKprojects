@@ -139,7 +139,7 @@ const OrganizationContactsCompactTable = ({data, refetch}) => {
                 key={contactModalStatus?.contact_id ?? nanoid()}
                 onClose={() => {
                     setContactModalStatus(null);
-                    refetch();
+                    refetch && refetch();
                 }}
                 objectId={contactModalStatus?.contact_id ?? null}
                 mode={contactModalStatus?.mode ?? null}

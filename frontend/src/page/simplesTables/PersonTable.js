@@ -41,7 +41,7 @@ const PersonTable = () => {
     const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(PERSONS_QUERY, {
         variables: {
             queryOptions: {page, limit, search, sortField, sortOrder}
-        }, fetchPolicy: 'network-only',
+        }
     });
 
     // Функции уведомлений
@@ -64,9 +64,7 @@ const PersonTable = () => {
     });
 
     // Обработчик событий
-    useEffect(() => {
-        refetch();
-    }, [personModalStatus]);
+
     const handleDelete = (personId) => {
         deletePerson({variables: {id: personId}});
     };
@@ -140,8 +138,8 @@ const PersonTable = () => {
                         onSearch={onSearch}
                     />
                     <StyledButtonGreen style={{marginBottom: 0}}
-                                       onClick={() =>  setPersonModalStatus({person: null, mode: "add"})}>Создать новую
-                        запись</StyledButtonGreen>
+                                       onClick={() =>  setPersonModalStatus({person: null, mode: "add"})}>Создать новую запись
+                    </StyledButtonGreen>
                 </Space>
             </Form.Item>
         </Form>
@@ -196,10 +194,8 @@ const PersonTable = () => {
                                     <Descriptions.Item label="Банк>">{record?.bank?.name}</Descriptions.Item>
                                     <Descriptions.Item
                                         label="Бик">{record?.bik?.BIK} - {record?.bik?.name}</Descriptions.Item>
-
                                     <Descriptions.Item label="Инн">{record?.INN}</Descriptions.Item>
                                     <Descriptions.Item label="Снилс">{record?.SHILS}</Descriptions.Item>
-
                                 </Descriptions>
                             </Col>
                         </Row>

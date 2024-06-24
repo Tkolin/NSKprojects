@@ -2,12 +2,10 @@
 #import file_downloads.graphql
 #import projects.graphql
 #import result.graphql
-#import templates.graphql
 #import fenrir.graphql
 type Query {
     contacts(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): ContactsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     organizations(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): OrganizationsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
-    organizationsAndEmployee(id: ID, queryOptions: QueryOptions, organizationId: ID): OrganizationsAndEmployeesResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     countProjectByOrganizations(organizationId: ID): CountProjectByOrganizationsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     positions(id: ID, queryOptions: QueryOptions, queryType: String): PositionsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     irds(id: ID, queryOptions: QueryOptions, queryType: String): IrdsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
@@ -22,15 +20,9 @@ type Query {
     projectTasksExecutors(taskId: ID): ProjectTaskExecutorResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
     typeProjects(id: ID, queryOptions: QueryOptions, queryType: String): TypeProjectsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
-    technicalSpecification: TechnicalSpecificationResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     typeTechnicalSpecification: TypeTechnicalSpecification @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     sectionReferences: SectionReferenceResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     groupTypeProjects(id: ID): [GroupTypeProjectDocument] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
-
-    templatesIrdsTypeProjects(typeProject: ID): [TemplateIRD] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
-    templatesStagesTypeProjects(typeProject: ID): [TemplateStage] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
-    templatesTasksTypeProjects(typeProject: ID): [TemplateTask] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
-    templatesSectionReferencesTypeProjects(typeProject: ID): [TemplateSectionReference] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
     projectIrds( projectId: ID): [ProjectIRD] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     projectStages( projectId: ID): [ProjectStage] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
@@ -177,7 +169,7 @@ type Mutation {
     ): Contact! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     deleteContact (
         id: ID!
-    ): Contact @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): Boolean @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
 
     createOrganization(
@@ -358,26 +350,8 @@ type Organization{
     bik:  bik
     payment_account: String
     director: Contact
-}type OrganizationAndEmployees{
-    id: ID!
-    legal_form: LegalForm!
-    name: String!
-    full_name: String
-    address_legal: String
-    office_number_legal: String
-    address_mail: String
-    office_number_mail: String
-    phone_number: String
-    fax_number: String
-    email: String
-    INN: String
-    OGRN: String
-    OKPO: String
-    KPP: String
-    bik:  bik
-    payment_account: String
-    director: Contact
     employees: [Contact]
+
 }type CountProjectByOrganizations{
     organization_id: ID!
     count_project: Int!

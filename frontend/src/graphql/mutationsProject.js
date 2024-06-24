@@ -157,6 +157,13 @@ export const UPDATE_PROJECT_MUTATION = gql`
                 date_end
                 percent
                 price
+            }     
+            project_tasks {
+                id
+                date_start
+                duration
+                date_end
+                price
             }
             project_irds {
                 id

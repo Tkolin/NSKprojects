@@ -263,7 +263,7 @@ export const PROJECTS_QUERY_BY_ID = gql`
                 }
                 project_tasks {
                     id
-                    projectId
+                    project_id
                     task {
                         id
                         name
@@ -275,23 +275,19 @@ export const PROJECTS_QUERY_BY_ID = gql`
                     date_start
                     date_end
                     duration
+                    
                     stage_number
-                    executors {
-                        id
-                        duration
-                        date_start
-                        date_end
-                        description
-                        price
+            
                         executor {
                             id
                             passport {
+                                id
                                 firstname
                                 lastname
                                 patronymic
                             }
                         }
-                    }
+                    
                     price
                     description
                 }
@@ -317,6 +313,7 @@ export const PERSONS_QUERY_BY_ID = gql`
             items {
                 id
                 passport{
+                    id
                     firstname
                     lastname
                     patronymic

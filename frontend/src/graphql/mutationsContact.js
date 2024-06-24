@@ -4,26 +4,7 @@ export const DELETE_CONTACT_MUTATION = gql`
     mutation DeletContact($id: ID! ) {
         deleteContact(
             id: $id
-        ) {
-            id
-            first_name
-            last_name
-            patronymic
-            birth_day
-            work_phone
-            work_email
-            mobile_phone
-            email
-
-            position {
-                id
-                name
-            }
-            organization {
-                id
-                name
-            }
-        }
+        ) 
     }
 `;
 
@@ -63,7 +44,6 @@ export const ADD_CONTACT_MUTATION = gql`
             work_email
             mobile_phone
             email
-
             position {
                 id
                 name
@@ -108,7 +88,6 @@ export const UPDATE_CONTACT_MUTATION = gql`
             work_email
             mobile_phone
             email
-
             position {
                 id
                 name

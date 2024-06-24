@@ -30,7 +30,7 @@ const CustomAutoCompleteComponent = ({
 
 
     const handleSearch = (txt) => {
-        console.log(txt.toLowerCase());
+       // console.log(txt.toLowerCase());
         if (!data) return;
         const filteredOptions = data
             .filter(row => getName(row, typeData).toLowerCase().includes(txt.toLowerCase()))
@@ -104,7 +104,8 @@ const CustomAutoCompleteAndCreate = ({
                                          typeData,
                                          data,
                                          value,
-                                         onChange
+                                         onChange,
+                                         saveSelected,
                                      }) => (
     <Space.Compact style={{width: "100%", marginBottom: 0}}>
 
@@ -114,6 +115,7 @@ const CustomAutoCompleteAndCreate = ({
             loading={loading}
             items={items}
             onSearch={onSearch}
+            saveSelected={saveSelected}
             formatOptionText={formatOptionText}
             mode={mode}
             width={"calc(100% - 32px)"}

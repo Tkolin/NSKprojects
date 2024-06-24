@@ -176,45 +176,6 @@ export const ORGANIZATIONS_QUERY = gql`
                     last_name
                     patronymic
                 }
-            }
-            count
-        }
-    }
-`;
-export const ORGANIZATIONS_QUERY_AND_EMPLOYEE = gql`
-    query OrganizationsQuery ($queryOptions: QueryOptions, $organizationId: ID) {
-        organizationsAndEmployee (queryOptions: $queryOptions, organizationId: $organizationId){
-            items {
-                id
-                name
-                full_name
-                legal_form{
-                    id
-                    name
-                }
-                address_legal
-                office_number_legal
-                address_mail
-                office_number_mail
-                phone_number
-                fax_number
-                email
-                INN
-                OGRN
-                OKPO
-                KPP
-                bik{
-                    id
-                    BIK
-                    name
-                }
-                payment_account
-                director{
-                    id
-                    first_name
-                    last_name
-                    patronymic
-                }
                 employees {
                     id
                     first_name
@@ -235,6 +196,7 @@ export const ORGANIZATIONS_QUERY_AND_EMPLOYEE = gql`
         }
     }
 `;
+
 export const ORGANIZATIONS_SHORT_QUERY = gql`
     query OrganizationsQuery ($queryOptions: QueryOptions) {
         organizations (queryOptions: $queryOptions) {
@@ -282,7 +244,7 @@ export const TYPES_PROJECTS_QUERY = gql`
         }
     }
 `;
-export const PROJECTS_QUERY = gql`
+export const  PROJECTS_QUERY = gql`
     query ProjectQuery($queryOptions: QueryOptions, $projectId: ID) {
         projects (queryOptions: $queryOptions, projectId: $projectId) {
             items{
@@ -350,11 +312,12 @@ export const PROJECTS_QUERY = gql`
                     stage {
                         id
                         name
+                        task_id
                     }
                     date_start
                     duration
                     date_end
-                    percent 
+                    percent
                     price
                     
                 }
@@ -370,6 +333,7 @@ export const PROJECTS_QUERY = gql`
                 }
                 project_tasks {
                     id
+                    project_id
                     task {
                         id
                         name
@@ -382,16 +346,13 @@ export const PROJECTS_QUERY = gql`
                     date_end
                     duration
                     stage_number
-                    executors {
+                    executor {
                         id
-                        price
-                        executor {
+                        passport {
                             id
-                            passport {
-                                firstname
-                                lastname
-                                patronymic
-                            }
+                            firstname
+                            lastname
+                            patronymic
                         }
                     }
                     price
@@ -420,6 +381,7 @@ export const PERSONS_QUERY = gql`
             items {
                 id
                 passport{
+                    id
                     firstname
                     lastname
                     patronymic
@@ -461,6 +423,7 @@ export const PERSONS_SHORT_QUERY = gql`
             items {
                 id
                 passport{
+                    id
                     firstname
                     lastname
                     patronymic
@@ -570,79 +533,7 @@ export const PAYMENTS_QUERY = gql`
         }
     }
 `;
-export const TEMPLATE_IRDS_TYPE_PROJECTS_QUERY = gql`
-    query TemplatesIrdsTypeProjectsQuery ($typeProject: ID) {
-        templatesIrdsTypeProjects(typeProject: $typeProject)  {
-            id
-            project_type{
-                id
-                name
-            }
-            ird{
-                id
-                name
-            }
-            stage_number
-            application_to_project
-        }
-    }
-`;
-export const TEMPLATE_SECTION_REFERENCES_TYPE_PROJECTS_QUERY = gql`
-    query SectionReferencesQuery ($typeProject: ID) {
-        templatesSectionReferencesTypeProjects(typeProject: $typeProject)  {
-            id
-            project_type{
-                id
-                name
-            }
-            section_reference{
-                id
-                name
-                values
 
-            }
-            values
-        }
-    }
-`;
-export const TEMPLATE_STAGES_TYPE_PROJECTS_QUERY = gql`
-    query TemplatesStagesTypeProjectsQuery ($typeProject: ID) {
-        templatesStagesTypeProjects(typeProject: $typeProject)  {
-            id
-            stage{
-                id
-                name
-            }
-            project_type{
-                id
-                name
-            }
-            duration
-            number
-            percentage
-        }
-    }
-`;
-export const TEMPLATE_TASKS_TYPE_PROJECTS_QUERY = gql`
-    query TemplatesTasksTypeProjectsQuery ($typeProject: ID) {
-        templatesTasksTypeProjects(typeProject: $typeProject)  {
-            id
-            task{
-                id
-                name
-            }
-            inheritedTask{
-                id
-                task {
-                    id
-                    name
-                }
-            }
-            inherited_task_id
-            stage_number
-        }
-    }
-`;
 export const POSITIONS_QUERY = gql`
     query PositionsQuery ($queryOptions: QueryOptions) {
         positions(queryOptions: $queryOptions)  {
@@ -730,16 +621,13 @@ export const TASKS_TO_PROJECT_QUERY = gql`
             date_start
             date_end
             duration
-            executors {
+            executor {
                 id
-                price
-                executor {
+                passport {
                     id
-                    passport {
-                        firstname
-                        lastname
-                        patronymic
-                    }
+                    firstname
+                    lastname
+                    patronymic
                 }
             }
             price

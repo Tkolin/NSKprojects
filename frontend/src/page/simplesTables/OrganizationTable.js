@@ -5,7 +5,7 @@ import {DELETE_ORGANIZATION_MUTATION} from '../../graphql/mutationsOrganization'
 import Search from "antd/es/input/Search";
 import {DeleteAndEditStyledLinkManagingDataTable} from "../components/style/TableStyles";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import { ORGANIZATIONS_QUERY_AND_EMPLOYEE} from "../../graphql/queries";
+import {ORGANIZATIONS_QUERY, ORGANIZATIONS_QUERY_AND_EMPLOYEE} from "../../graphql/queries";
 import Title from "antd/es/typography/Title";
 import OrganizationModalForm from "../components/modal/OrganizationModalForm";
 
@@ -26,10 +26,10 @@ const OrganizationTable = () => {
 
     const [search, setSearch] = useState('');
 
-    const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(ORGANIZATIONS_QUERY_AND_EMPLOYEE, {
+    const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(ORGANIZATIONS_QUERY, {
         variables: {
             queryOptions: {page, limit, search, sortField, sortOrder}
-        }, fetchPolicy: 'network-only',
+        }
     });
 
     // Функции уведомлений
@@ -51,9 +51,6 @@ const OrganizationTable = () => {
     });
 
     // Обработчик событий
-    useEffect(() => {
-        refetch();
-    }, [organizationModalStatus]);
     const handleDelete = (organizationId) => {
         deleteOrganization({variables: {id: organizationId}});
     };
@@ -140,11 +137,11 @@ const OrganizationTable = () => {
                 offsetHeader: '64px',
             }}
             loading={loading}
-            dataSource={data?.organizationsAndEmployee?.items?.map((org, index) => ({...org, key: index}))}
+            dataSource={data?.organizations?.items?.map((org, index) => ({...org, key: index}))}
             columns={columns}
             onChange={(pagination, filters, sorter, extra) => onChange(sorter)}
             pagination={{
-                total: data?.organizationsAndEmployee?.count,
+                total: data?.organizations?.count,
                 current: page,
                 pageSize: limit,
                 onChange: (page, limit) => {
@@ -186,7 +183,7 @@ const OrganizationTable = () => {
                             </Descriptions>
                         </Col>
                         <Col span={12}>
-                          <OrganizationContactsCompactTable data={record?.employees} refetch={()=>refetch()}/>
+                          <OrganizationContactsCompactTable data={record?.employees} />
                         </Col>
 
                     </Row>

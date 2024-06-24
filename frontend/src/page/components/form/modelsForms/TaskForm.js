@@ -1,17 +1,17 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Form, Input} from 'antd';
+import {Col, Form, Input, Row, Space} from 'antd';
 import {useLazyQuery, useMutation} from '@apollo/client';
 import {StyledButtonGreen} from "../../style/ButtonStyles";
 import {NotificationContext} from "../../../../NotificationProvider";
-import { TASKS_QUERY_BY_ID} from "../../../../graphql/queriesByID";
+import {TASKS_QUERY_BY_ID} from "../../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import {ADD_TASK_MUTATION, UPDATE_TASK_MUTATION} from "../../../../graphql/mutationsTask";
 
-const TaskForm = ({localObject, initialObject, onCompleted }) => {
+const TaskForm = ({localObject, initialObject, onCompleted}) => {
     // Первичные данные
-    const { openNotification } = useContext(NotificationContext);
+    const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
-     const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
+    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
     const [loadContext, {loading, data}] = useLazyQuery(TASKS_QUERY_BY_ID, {
         variables: {id: initialObject?.id},
         onCompleted: (data) => {
@@ -26,12 +26,12 @@ const TaskForm = ({localObject, initialObject, onCompleted }) => {
     // Мутация
     const [mutate, {loading: loadingSave}] = useMutation(actualObject ? UPDATE_TASK_MUTATION : ADD_TASK_MUTATION, {
         onCompleted: (data) => {
-            openNotification('topRight', 'success', `Мутация  выполнена успешно`);
+            openNotification('topRight', 'success', `Задача создана`);
             form.resetFields();
             onCompleted && onCompleted(data?.updateTask || data?.createTask);
         },
         onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении мутации: ${error.message}`);
+            openNotification('topRight', 'error', `Ошибка при создании задачи: ${error.message}`);
         },
     });
 
@@ -55,23 +55,24 @@ const TaskForm = ({localObject, initialObject, onCompleted }) => {
 
     // Завершение
     const handleSubmit = () => {
-        mutate({ variables: { ...(actualObject ? { id: actualObject.id } : {}), ...form.getFieldsValue() } });
+        mutate({variables: {...(actualObject ? {id: actualObject.id} : {}), ...form.getFieldsValue()}});
     };
     if (loading || loadingSave) return <LoadingSpinnerStyles/>
 
     return (
         <>
-            <Form form={form} layout="vertical">
-                <Form.Item name="name" label="Наименование" rules={[{required: true}]}>
-                    <Input/>
-                </Form.Item>
-                <div style={{textAlign: 'center'}}>
-                    <Form.Item>
-                        <StyledButtonGreen style={{marginBottom: 0, marginTop: 10}} type="primary" onClick={handleSubmit}>
-                            {actualObject ? `Обновить` : `Создать`}
-                        </StyledButtonGreen>
+            <Form form={form} layout="horizontal">
+
+                        <Space.Compact style={{width: "100%"}}>
+                    <Form.Item style={{width: "100%"}} name="name" label="Наименование" rules={[{required: true}]}>
+                        <Input/>
                     </Form.Item>
-                </div>
+
+                    <StyledButtonGreen    type="primary" onClick={handleSubmit}>
+                        {actualObject ? `Обновить` : `Создать`}
+                    </StyledButtonGreen>
+                        </Space.Compact>
+
             </Form>
         </>
     );

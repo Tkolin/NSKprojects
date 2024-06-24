@@ -8,6 +8,7 @@ final readonly class DeleteContact
 {
     public function __invoke($_, array $args)
     {
-        return Contact::destroy($args['id']);
+        Contact::destroy($args['id']);
+        return true;
     }
 }

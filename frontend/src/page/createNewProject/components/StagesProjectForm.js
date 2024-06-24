@@ -24,23 +24,30 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
     const [totalToDuration, setTotalToDuration] = useState(0);
     const [stageModalStatus, setStageModalStatus] = useState(null);
 
+    const [isChangeStageNumber, setIsChangeStageNumber] = useState(true);
 
     const load = () => {
         console.log("load", actualStages);
-        form.setFieldsValue({
-            stageList: actualStages && Object.values(actualStages)?.map((row) => ({
+        let stageList = actualStages && Object.values(actualStages)
+            .map((row) => ({
                 ...row,
                 date_range: {
                     dateStart: row?.date_range?.dateStart ? dayjs(row?.date_range?.dateStart) : null,
                     dateEnd: row?.date_range?.dateEnd ? dayjs(row?.date_range?.dateEnd) : null,
                     duration: row?.date_range?.duration ?? null
                 }
-            }))
+            }));
 
-        });
-    }
+        if (isChangeStageNumber) {
+            console.log("s");
+            stageList = stageList.sort((a, b) => a.number - b.number);
+        }
+
+        form.setFieldsValue({ stageList });
+    };
+
     useEffect(() => {
-        load();
+        actualStages && load();
     }, [actualStages]);
 
     const {loading: loadingStages, error: errorStages, data: dataStages} =
@@ -67,6 +74,19 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
             }, 0);
             setTotalToPercent(totalProcent);
         }
+    }
+    const moveItem = (index, newIndex) => {
+        const stageList = form.getFieldValue('stageList');
+        if (newIndex < 0 || newIndex >= stageList.length) return;
+
+        const [movedItem] = stageList.splice(index, 1);
+        stageList.splice(newIndex, 0, movedItem);
+
+        form.setFieldsValue({ stageList });
+
+        setIsChangeStageNumber(false);
+
+        handleChange();
     }
     useEffect(() => {
         console.log("project", project);
@@ -95,7 +115,7 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
                             <>
                                 <StageItem
                                     {...restField}
-
+                                    moveItem={moveItem}
                                     form={form}
                                     durationSetting={{
                                         minDate: project?.date_range?.dateStart,

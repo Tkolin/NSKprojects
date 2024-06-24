@@ -18,11 +18,16 @@ class ProjectTasks extends Model
         'date_start',
         'date_end',
         'duration',
+        'executor_id',
     ];
 
     public function executors(): HasMany
     {
         return $this->hasMany(ProjectTaskExecutor::class, "project_tasks_id");
+    }
+    public function executor(): BelongsTo
+    {
+        return $this->belongsTo(Person::class);
     }
     public function inherited_task_ids()
     {

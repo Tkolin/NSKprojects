@@ -27,7 +27,7 @@ const IrdTable = () => {
 
     const [search, setSearch] = useState('');
 
-    const {loading, error, data, refetch} = useQuery(IRDS_QUERY, {
+    const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(IRDS_QUERY, {
         variables: {
             queryOptions: {
                 page,
@@ -168,8 +168,7 @@ const IrdTable = () => {
             <IrdModalForm
                 key={irdModalStatus?.ird?.id ??  nanoid()}
                 onClose={()=> {
-                    setIrdModalStatus(null);
-                refetch();}}
+                    setIrdModalStatus(null);}}
                 object={irdModalStatus?.ird ?? null}
                 mode={irdModalStatus?.mode ?? null}
             />

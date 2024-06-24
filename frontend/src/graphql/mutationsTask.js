@@ -47,18 +47,13 @@ export const UPDATE_EXECUTORS_TO_TASKS = gql`
                 duration
                 date_end
                 stage_number
-                executors {
+                executor {
                     id
-                    price
-                    executor {
+                    passport {
                         id
-                        passport {
-                            id
-                            firstname
-                            lastname
-                            patronymic
-                        }
-                        payment_account
+                        firstname
+                        lastname
+                        patronymic
                     }
                 }
             }
@@ -91,6 +86,15 @@ export const UPDATE_TASK_TO_PROJECT_MUTATION = gql`
                     id
                     name
                 }
+                executor {
+                    id
+                    passport {
+                        id
+                        firstname
+                        lastname
+                        patronymic
+                    }
+                }
                 date_start
                 duration
                 date_end
@@ -120,18 +124,13 @@ export const CREATE_TASKS_TO_PROJECT = gql`
                 duration
                 date_end
                 stage_number
-                executors {
+                executor {
                     id
-                    price
-                    executor {
+                    passport {
                         id
-                        passport {
-                            id
-                            firstname
-                            lastname
-                            patronymic
-                        }
-                        payment_account
+                        firstname
+                        lastname
+                        patronymic
                     }
                 }
             }

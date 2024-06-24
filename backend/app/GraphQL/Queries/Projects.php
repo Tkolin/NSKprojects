@@ -33,10 +33,9 @@ final readonly class Projects
                 ->with('facilities')
                 ->with('status')
                 ->with('delegations')
+                 ->with('project_irds.IRD')
                 ->with('project_tasks')
-                ->with('project_irds.IRD')
-                ->with('project_tasks')
-                ->with('project_stages.stage');
+                 ->with('project_stages.stage');
 
         $queryService = new QueryService();
         $searchColumns = ['id','name','organization_customer_id','type_project_document_id','facility_id','date_signing',

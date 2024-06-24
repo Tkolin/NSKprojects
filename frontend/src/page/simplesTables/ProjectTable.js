@@ -80,8 +80,11 @@ const ProjectTable = () => {
         const [sortOrder, setSortOrder] = useState('');
 
         const [search, setSearch] = useState('');
-
-        const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(PROJECTS_QUERY, {
+const refetch = ( ) => {
+    console.log("ВЛарпогфшщВРАПГШОЦКРУПФЦЫР");
+    refetchData();
+}
+        const {loading: loading, error: error, data: data, refetch: refetchData} = useQuery(PROJECTS_QUERY, {
             variables: {
                 queryOptions: {
                     page,
@@ -177,7 +180,6 @@ const ProjectTable = () => {
                             </Tooltip>
                         </Link>
                         {!(record.project_stages.find(row => {
-                            console.log(row);
                             return (row.date_end && row.date_start)
                         })) ? (
                             <Link type={"danger"}>
@@ -191,7 +193,7 @@ const ProjectTable = () => {
 
                                     <ReconciliationOutlined onClick={() => {
                                         setProjectTasksModalStatus({
-                                            projectId: record.id,
+                                            project_id: record.id,
                                             mode: "create",
                                         })
                                     }}/>
@@ -224,7 +226,7 @@ const ProjectTable = () => {
                                                 </Text>
                                             }
                                         >
-                                            <Link >
+                                            <Link>
                                                 <PushpinOutlined/>
                                             </Link>
                                         </Popconfirm>
@@ -527,7 +529,7 @@ const ProjectTable = () => {
                         {/*<IrdsProjectFileDownload text={<DownloadOutlined/>} projectId={createNewProject.id}/>*/}
                         <EditOutlined onClick={() => setEditModalStatus({
                             status: "tasks",
-                            project: rebuildProjectResultQuery(project)
+                            project:  project
                         })}/>
                     </Space>,
                 children: [
@@ -646,8 +648,7 @@ const ProjectTable = () => {
                             break;
                     }
                 }
-            } else
-                console.log("Фильтры сохранены");
+            }
         };
         return (
             <div>
@@ -703,54 +704,49 @@ const ProjectTable = () => {
                     }}
                 />
                 <Modal
-                    key={projectTasksModalStatus.projectId}
+                    key={projectTasksModalStatus?.project?.id}
                     open={projectTasksModalStatus?.mode}
                     onCancel={() => setProjectTasksModalStatus({
-                        projectId: null,
+                        project_id: null,
                         mode: null,
                     })}
                     footer={null}
                     width={1400}
 
                     onClose={() => setProjectTasksModalStatus({
-                        projectId: null,
+                        project_id: null,
                         mode: null,
                     })}
                 >
                     <StyledBlockLarge label={"Создание задач"}>
-                        <ProjectTasks projectId={projectTasksModalStatus.projectId}/>
+                        <ProjectTasks onChange={()=>refetch()} project={data?.projects?.items?.find(row => row.id === projectTasksModalStatus.project_id)}/>
                     </StyledBlockLarge>
                 </Modal>
-                <Modal
-                    key={employeeToStageModalStatus.projectId}
-                    open={employeeToStageModalStatus?.mode}
-                    onCancel={() => setEmployeeToStageModalStatus({
-                        projectId: null,
-                        tasks: null,
-                        mode: null,
-                        stageNumber: null
-                    })}
-                    footer={null}
-                    width={500}
-                    onClose={() => setEmployeeToStageModalStatus({
-                        projectId: null,
-                        tasks: null,
-                        mode: null,
-                        stageNumber: null
-                    })}
-                >
-                    <StyledBlockRegular label={"Список исполнителей"}>
-                        <PersonsByStagesCompactForm tasks={employeeToStageModalStatus.tasks}
-                                                    stageNumber={employeeToStageModalStatus.stageNumber}
-                                                    projectId={employeeToStageModalStatus.projectId}
-                                                    onCompleted={() => setEmployeeToStageModalStatus({
-                                                        projectId: null,
-                                                        tasks: null,
-                                                        mode: null,
-                                                        stageNumber: null
-                                                    })}/>
-                    </StyledBlockRegular>
-                </Modal>
+                {/*<Modal*/}
+                {/*    key={employeeToStageModalStatus.projectId}*/}
+                {/*    open={employeeToStageModalStatus?.mode}*/}
+                {/*    onCancel={() => setEmployeeToStageModalStatus({*/}
+                {/*        projectId: null,*/}
+                {/*        tasks: null,*/}
+                {/*        mode: null,*/}
+                {/*        stageNumber: null*/}
+                {/*    })}*/}
+                {/*    footer={null}*/}
+                {/*    width={500}*/}
+                {/*    onClose={() => setEmployeeToStageModalStatus({*/}
+                {/*        projectId: null,*/}
+                {/*        tasks: null,*/}
+                {/*        mode: null,*/}
+                {/*        stageNumber: null*/}
+                {/*    })}*/}
+                {/*>*/}
+                {/*    <StyledBlockRegular label={"Список исполнителей"}>*/}
+                {/*        <PersonsByStagesCompactForm tasks={data?.projects?.find(row=>row.id === employeeToStageModalStatus.projectId).project_tasks}*/}
+                {/*                                    stageNumber={employeeToStageModalStatus.stageNumber}*/}
+                {/*                                    projectId={employeeToStageModalStatus.projectId}*/}
+                {/*                                    onCompleted={()=>refetch()}/>*/}
+                {/*    </StyledBlockRegular>*/}
+                {/*</Modal>*/}
                 <Modal
                     key={editModalStatus?.project?.id}
                     open={editModalStatus?.status}
@@ -816,6 +812,7 @@ const ProjectTable = () => {
                                 editModalStatus?.status === "tasks" ? (
                                         <StyledBlockLarge>
                                             <ProjectTasks
+                                                onChange={()=>refetch()}
                                                 actualStages={editModalStatus?.stages}
                                                 updateStages={(value) => setEditModalStatus({
                                                     ...editModalStatus,

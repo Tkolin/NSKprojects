@@ -6,8 +6,6 @@ import {DownloadOutlined} from "@ant-design/icons";
 
 const PersonContractFileDownload = ({personId, text}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
-
-
     const openNotification = (placement, type, message) => {
         notification[type]({
             message: message,

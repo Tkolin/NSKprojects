@@ -58,7 +58,7 @@ extend type Mutation{
         stageNumber: Int
     ): [ProjectTask] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateExecutorToTasks(
-       data: [ExecutorToTask]!
+        data: [ExecutorToTask]!
     ): [Project] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 }
 
@@ -108,14 +108,14 @@ type ProjectStage{
 }
 type ProjectTask{
     id: ID!
-    projectId: ID
+    project_id: ID
     inherited_task_ids: [InheritedTask]
     task: Task
     stage_number: Int
     date_start: String
     date_end: String
     duration: Int
-    executors: [TaskExecutorData]
+    executor: Person
     price: Float
     description: String
 }
@@ -201,7 +201,7 @@ input ProjectIrdInput {
 }
 input TasksToProject {
     id: ID
-    projectId: ID
+    project_id: ID
     description: String
     inherited_task_ids: [ID]
     task_id: ID
@@ -209,12 +209,13 @@ input TasksToProject {
     date_end: String
     duration: Int
     price: Float
+    executor_id: ID
     description: String
     stage_number: Int
 }input TasksToProjectExs {
     project_id: ID!
-    inherited_from_task_id: ID
-    task_id: ID!
+    inherited_from_task_ids: ID
+    task_id: ID
     stage_number: Int
     date_start: String
     date_end: String

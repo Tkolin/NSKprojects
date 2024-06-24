@@ -51,9 +51,6 @@ const ContactTable = () => {
     });
 
     // Обработчик событий
-    useEffect(() => {
-        refetch();
-    }, [contactModalStatus]);
     const handleDelete = (contactId) => {
         deleteContact({variables: {id: contactId}});
     };
@@ -172,7 +169,6 @@ const ContactTable = () => {
             key={contactModalStatus?.contact?.id ?? nanoid()}
             onClose={() => {
                 setContactModalStatus(null);
-                refetch();
             }}
             object={contactModalStatus?.contact ?? null}
             mode={contactModalStatus?.mode ?? null}

@@ -29,14 +29,6 @@ const DateRangePickerComponent = ({ value = { dateStart: null, dateEnd: null, du
                     minDate={minDate  ?? null}
                     maxDate={value.dateEnd ?? maxDate}
                 />
-                <InputNumber
-                    placeholder="Продолжительность"
-                    formatter={(value) => `${value}`.replace(/[^0-9]/g, '')}
-                    parser={(value) => `${value}`.replace(/[^0-9]/g, '')}
-                    value={value.duration}
-                    onChange={handleDurationChange}
-                />
-
                 <DatePicker
                     placeholder="Дата окончания"
                     onChange={handleDateEndChange}
@@ -45,6 +37,13 @@ const DateRangePickerComponent = ({ value = { dateStart: null, dateEnd: null, du
                     minDate={value.dateStart ?? minDate}
                     maxDate={maxDate ?? null}
 
+                />
+                <InputNumber
+                    placeholder="Продолжительность"
+                    formatter={(value) => `${value}`.replace(/[^0-9]/g, '')}
+                    parser={(value) => `${value}`.replace(/[^0-9]/g, '')}
+                    value={value.duration}
+                    onChange={handleDurationChange}
                 />
             </Space.Compact>
         </div>
