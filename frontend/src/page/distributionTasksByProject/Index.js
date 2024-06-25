@@ -150,23 +150,26 @@ const Index = ({project, onChange}) => {
                 {current === 0 ?
 
 
-                    (   project.project_tasks.lenght !== 0 ?
-
-                            (
-                                <StyledBlockLarge label={"Настройка задач"}>
-                                    <TasksToProjectForm
-                                        onChange={onChange && onChange()}
-                                        actualProject={project}
-                                        setLoading={setLoading}/>
-                                </StyledBlockLarge>
-                            ) : (
-                                <StyledBlockLarge label={"Первичная настройка задач"}>
-                                    <NewTasksToProjectForm
-                                        onChange={onChange && onChange()}
-                                        actualProject={project}
-                                        setLoading={setLoading}/>
-                                </StyledBlockLarge>
-                            )
+                    // (   project?.project_tasks?.length >= 1 ?
+                    //
+                    //         (
+                    //             <StyledBlockLarge label={"Настройка задач"}>
+                    //                 kk
+                    //                 <TasksToProjectForm
+                    //                     onChange={onChange && onChange()}
+                    //                     actualProject={project}
+                    //                     setLoading={setLoading}/>
+                    //             </StyledBlockLarge>
+                    //         ) : (
+                    (
+                        <StyledBlockLarge label={"Первичная настройка задач"}>
+                            ss
+                            <NewTasksToProjectForm
+                                onChange={onChange && onChange()}
+                                actualProject={project}
+                                setLoading={setLoading}/>
+                        </StyledBlockLarge>
+                        //)
                     )
 
                     :

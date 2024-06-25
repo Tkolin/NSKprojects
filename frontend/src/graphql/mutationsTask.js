@@ -34,10 +34,7 @@ export const UPDATE_EXECUTORS_TO_TASKS = gql`
             project_tasks {
                 id
                 description
-                inherited_task_ids {
-                    project_task_id
-                    project_inherited_task_id
-                }
+                project_task_inherited_id
                 price
                 task {
                     id
@@ -77,10 +74,7 @@ export const UPDATE_TASK_TO_PROJECT_MUTATION = gql`
             project_tasks {
                 id
                 description
-                inherited_task_ids {
-                    project_task_id
-                    project_inherited_task_id
-                }
+                project_task_inherited_id
                 price
                 task {
                     id
@@ -111,10 +105,7 @@ export const CREATE_TASKS_TO_PROJECT = gql`
             project_tasks {
                 id
                 description
-                inherited_task_ids {
-                    project_task_id
-                    project_inherited_task_id
-                }
+                project_task_inherited_id
                 price
                 task {
                     id

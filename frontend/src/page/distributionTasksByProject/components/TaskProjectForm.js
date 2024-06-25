@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Button, Col, Divider, Form, InputNumber, Row, Space, Tooltip, Typography} from 'antd';
 
 
@@ -13,27 +13,19 @@ import {PERSONS_QUERY_COMPACT} from "../../../graphql/queriesCompact";
 import LoadingSpinnerStyles from "../../components/style/LoadingSpinnerStyles";
 import dayjs from "dayjs";
 import {
-     UPDATE_TASK_TO_PROJECT_MUTATION
+    UPDATE_TASK_TO_PROJECT_MUTATION
 } from "../../../graphql/mutationsTask";
+import {NotificationContext} from "../../../NotificationProvider";
 
- const {Text} = Typography;
+const {Text} = Typography;
 
 const TaskProjectForm = ({actualTaskToProject, onCompletion, onChange}) => {
     // Состояния
     const [form] = Form.useForm();
     const [multipleTasks, setMultipleTasks] = useState(false);
+    const {openNotification} = useContext(NotificationContext);
 
-    useEffect(() => {
-        console.log("actualTaskToProject",actualTaskToProject);
-        if(actualTaskToProject?.length >= 2)
-           setMultipleTasks(true)
-        else
-            setMultipleTasks(false)
-    }, [actualTaskToProject]);
 
-    useEffect(() => {
-        console.log(".actualTaskToProject", actualTaskToProject);
-    }, [actualTaskToProject]);
     // TODO: Вынести при необходимости
     const {
         loading: loadingDelegates, error: errorDelegates, data: personsList
@@ -43,10 +35,11 @@ const TaskProjectForm = ({actualTaskToProject, onCompletion, onChange}) => {
         onCompleted: (data) => {
             if (onChange) {
                 onChange();
-            }            console.log("UPDATE_TASK_TO_PROJECT_MUTATION", data);
+            }
+            openNotification('topRight', 'success', `Создание новой записи выполнено успешно`);
         },
         onError: (error) => {
-            console.log("UPDATE_TASK_TO_PROJECT_MUTATION", error);
+            openNotification('topRight', 'error', `Ошибка при выполнении создания: ${error.message}`);
         }
     });
 
@@ -59,7 +52,14 @@ const TaskProjectForm = ({actualTaskToProject, onCompletion, onChange}) => {
         })));
     }, [personsList]);
     useEffect(() => {
-        if (actualTaskToProject?.length === 1) {
+        console.log("actualTaskToProject", actualTaskToProject);
+        if (actualTaskToProject?.length >= 2)
+            setMultipleTasks(true)
+        else
+            setMultipleTasks(false)
+        if (actualTaskToProject?.length === 0)
+            form.resetFields();
+        if (actualTaskToProject?.length >= 1) {
             form.resetFields();
             form.setFieldsValue({
 
@@ -69,19 +69,16 @@ const TaskProjectForm = ({actualTaskToProject, onCompletion, onChange}) => {
                     duration: actualTaskToProject[0].duration ?? null
                 },
                 price: actualTaskToProject[0].price,
-                executor: {
+                executor: actualTaskToProject[0]?.executor ? {
                     selected: actualTaskToProject[0]?.executor?.id,
                     output: actualTaskToProject[0]?.executor?.passport?.lastname ?? null + " " +
                         actualTaskToProject[0]?.executor?.passport?.firstname ?? null + " " + actualTaskToProject[0]?.executor?.passport?.patronymic ?? null,
-                },
+                } : null,
                 description: actualTaskToProject[0].description
 
             })
         }
-        else
-        {
-            form.resetFields();
-        }
+
     }, [actualTaskToProject]);
     const handleComplete = () => {
         console.log("actualTaskToProject", actualTaskToProject);
@@ -92,15 +89,12 @@ const TaskProjectForm = ({actualTaskToProject, onCompletion, onChange}) => {
                 data: actualTaskToProject?.map((row) => ({
 
                     id: row.id,
-                     inherited_task_ids: row.inherited_task_ids?.map(row=> row.project_inherited_task_id) ?? null,
-                    task_id: row.task_id,
-                    project_id: row.project_id,
+
 
                     description: row.description,
-                    stage_number: row.stage_number,
-                    projectId: row.projectId,
+                    project_id: row.project_id,
 
-                    executor_id: formData.executor.selected,
+                    executor_id: formData?.executor?.selected ?? null,
                     price: formData.price,
                     date_start: formData.date_range?.dateStart ? dayjs(formData.date_range.dateStart).format('YYYY-MM-DD') : null,
                     date_end: formData.date_range?.dateEnd ? dayjs(formData.date_range.dateEnd).format('YYYY-MM-DD') : null,
@@ -119,7 +113,7 @@ const TaskProjectForm = ({actualTaskToProject, onCompletion, onChange}) => {
             <Form form={form}
                   labelAlign="left">
                 {multipleTasks && (
-                <Text style={{marginTop: 0, width: "100%"}} type={"danger"}>Групповое изменение задач</Text>)}
+                    <Text style={{marginTop: 0, width: "100%"}} type={"danger"}>Групповое изменение задач</Text>)}
                 <FormItem name={"date_range"} labelCol={{span: 8}} wrapperCol={{span: 16}}
                           label={"Продолжительность задачи"}>
                     <DateRangePickerComponent/>
@@ -149,7 +143,7 @@ const TaskProjectForm = ({actualTaskToProject, onCompletion, onChange}) => {
 
 
                 <div style={{alignContent: "center", width: "100%"}}>
-                    <StyledButtonGreen   onClick={() => handleComplete()}
+                    <StyledButtonGreen onClick={() => handleComplete()}
                                        icon={<PlusOutlined/>}>
                         Сохранить
                     </StyledButtonGreen>

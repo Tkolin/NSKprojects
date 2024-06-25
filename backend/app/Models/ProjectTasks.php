@@ -13,6 +13,7 @@ class ProjectTasks extends Model
         'task_id',
         'id',
         'project_id',
+        'project_task_inherited_id',
         'stage_number',
         'price',
         'date_start',
@@ -33,6 +34,7 @@ class ProjectTasks extends Model
     {
         return $this->hasMany(ProjectTasksInherited::class, 'project_task_id')->select('project_task_id','project_inherited_task_id');
     }
+
     public function task(): BelongsTo
     {
         return $this->belongsTo(Task::class, 'task_id');

@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Button, Col, Divider, Form, Row, Typography} from "antd";
 import TasksTreeComponent from "./TasksTreeComponent";
 import TaskProjectForm from "./TaskProjectForm";
 import {nanoid} from "nanoid";
+import {NotificationContext} from "../../../NotificationProvider";
 
 const {Text} = Typography;
 
@@ -12,19 +13,22 @@ const EmployeeToTasksForm = ({actualProject, setLoading, onChange}) => {
     //Вынести за компонен
     const [form] = Form.useForm();
     const [checkedTasksId, setCheckedTasksId] = useState([]);
+    const {openNotification} = useContext(NotificationContext);
+
     useEffect(() => {
         console.log(".checkedTasks",checkedTasksId);
     }, [checkedTasksId]);
     const rebuider = (tasks) => {
         const taskMap = {};
         const tree = [];
+
         if (!tasks || !tasks.length) {
             console.error('Tasks data is null or empty.');
             return;
         }
 
         // Создаем хэш-таблицу для быстрого доступа к задачам по их ID
-        tasks.forEach((task) => {
+         tasks.forEach((task) => {
             const newTask = {
                 key: task.id,
                 id: task.id,
@@ -33,22 +37,21 @@ const EmployeeToTasksForm = ({actualProject, setLoading, onChange}) => {
             };
             taskMap[task.id] = newTask;
         });
-
         // Строим дерево
         tasks.forEach((task) => {
-            if (task?.inherited_task_ids?.length === 0) {
+            if (!task.project_task_inherited_id) {
                 tree.push(taskMap[task.id]);
             } else {
-                task?.inherited_task_ids?.forEach((inheritedTask) => {
-                    const parentId = inheritedTask.project_inherited_task_id;
-                    if (taskMap[parentId]) {
-                        taskMap[parentId].children.push(taskMap[task.id]);
-                    }
-                });
+                const parentId = task.project_task_inherited_id;
+                if (taskMap[parentId]) {
+                    taskMap[parentId].children.push(taskMap[task.id]);
+                }
             }
         });
+
         return tree;
-    }
+    };
+
 
 
     useEffect(() => {

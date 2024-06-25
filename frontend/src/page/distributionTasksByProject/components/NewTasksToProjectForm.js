@@ -21,7 +21,8 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
     const [form] = Form.useForm();
     const [tasksModalStatus, setTasksModalStatus] = useState({options: [], selected: {}});
     const {openNotification} = useContext(NotificationContext);
-
+    const [selectedTasksIds, setSelectedTasksIds] = useState([]);
+    const [stageTaskArray, setStageTaskArray] = useState([]);
     // Список задач
     const {
         loading: loadingTasks, error: errorTasks,
@@ -41,19 +42,30 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
                 stage_number: stage.number,
                 date_start: stage.date_start,
                 date_end: stage.date_end,
-                inherited_from_task_id: null,
+                project_task_inherited_id: null,
             };
             result.push(task);
         });
 
         const traverse = (nodes, stageNumber, parentKey = null) => {
             nodes.forEach(node => {
-                const task = {
+                let task = {
                     project_id: project.id,
                     task_id: node.key,
                     stage_number: stageNumber,
-                    inherited_from_task_id: parentKey || result.find(t => t.stage_number === stageNumber)?.task_id || null
+                    project_task_inherited_id: parentKey || result.find(t => t.stage_number === stageNumber)?.task_id || null,
+                    date_start: result.find(t => t.stage_number === stageNumber)?.date_start || null,
+                    date_end: result.find(t => t.stage_number === stageNumber)?.date_end || null
                 };
+                if (project.project_tasks.length > 0) {
+                    const oldData = project.project_tasks.find(row => {
+                            console.log(row.task.id, " === ",node.key, " : " , (row.task.id === node.key)  );
+                             return ((row.task.id === node.key))
+                        }
+                    );
+                    console.log("oldData", oldData)
+                     task = {...task, date_start: oldData?.date_start, date_end: oldData?.date_end}
+                }
                 result.push(task);
                 if (node.children) {
                     traverse(node.children, stageNumber, node.key);
@@ -69,10 +81,10 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
     };
     const [mutateTasksToProject, {loading: loadingMutation}] = useMutation(CREATE_TASKS_TO_PROJECT, {
         onCompleted: (data) => {
-            openNotification('topRight', 'success', `Создание новой записи в таблице контакт выполнено успешно`);
+            openNotification('topRight', 'success', `Создание новой записи выполнено успешно`);
         },
         onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении сооздания контакта: ${error.message}`);
+            openNotification('topRight', 'error', `Ошибка при выполнении создания: ${error.message}`);
 
         }
     });
@@ -91,6 +103,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
     }
     const handleSelectTask = (index, value) => {
         if (value?.id > 0) {
+            setSelectedTasksIds([...selectedTasksIds, parseInt(value.id)]);
             const oldTasks = form.getFieldValue([index, "tasks"]);
 
             form.setFieldValue([index, "tasks"], [
@@ -102,51 +115,77 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
             ])
         }
     }
-    // const rebuider = (tasks) => {
-    //     const taskMap = {};
-    //     let tree = {};
-    //
-    //     // Создаем хэш-таблицу для быстрого доступа к задачам по их ID
-    //     tasks.forEach((task) => {
-    //         const newTask = {
-    //             key: task.id,
-    //             id: task.id,
-    //             stage_number: task.stage_number,
-    //             title: task.id + ":" + task.task.name,
-    //             children: []
-    //         };
-    //         taskMap[task.id] = newTask;
-    //     });
-    //
-    //     // Строим дерево
-    //     tasks.forEach((task) => {
-    //         if (task.inherited_task_ids.length === 0) {
-    //             console.log("1");
-    //             const ftask = taskMap[task.id];
-    //             tree = {...tree ?? null, [ftask.stage_number]: [...tree[ftask?.stage_number] ?? [], ftask]};
-    //         } else {
-    //             console.log("2");
-    //             task.inherited_task_ids.forEach((inheritedTask) => {
-    //                 const parentId = inheritedTask.project_inherited_task_id;
-    //                 if (taskMap[parentId]) {
-    //                     taskMap[parentId].children.push(taskMap[task.id]);
-    //                 }
-    //             });
-    //         }
-    //     });
-    // }
-    //
-    // const flattenChildren = (obj) => {
-    //     const result = {};
-    //     Object.keys(obj).forEach((key) => {
-    //         result[key] = obj[key].reduce((acc, cur) => {
-    //             acc[cur.key] = cur;
-    //             return acc;
-    //         }, {});
-    //     });
-    //     return result;
-    // };
+
+    const rebuider = (tasks) => {
+        const taskMap = {};
+        const tree = [];
+
+        if (!tasks || !tasks.length) {
+            console.error('Tasks data is null or empty.');
+            return;
+        }
+
+        // Создаем хэш-таблицу для быстрого доступа к задачам по их ID
+        tasks.forEach((task) => {
+            const newTask = {
+                stage_number: task.stage_number,
+                key: task.task.id,
+                id: task.task.id,
+                title: task.id + ":" + task.task.name,
+                children: []
+            };
+            taskMap[task.id] = newTask;
+        });
+
+
+        // Строим дерево
+        tasks.forEach((task) => {
+            if (!task.project_task_inherited_id) {
+                tree.push(taskMap[task.id]);
+            } else {
+                const parentId = task.project_task_inherited_id;
+                if (taskMap[parentId]) {
+                    taskMap[parentId].children.push(taskMap[task.id]);
+                }
+            }
+        });
+
+
+        return tree;
+    };
+    const groupTasksByStageNumber = (tasks) => {
+        return tasks.reduce((acc, task) => {
+            const stageNumber = task.stage_number;
+            if (!acc[stageNumber]) {
+                acc[stageNumber] = {tasks: []};
+            }
+            acc[stageNumber].tasks.push(task);
+            return acc;
+        }, {});
+    };
     useEffect(() => {
+        setSelectedTasksIds(actualProject.project_stages.map(row => row.stage.task_id));
+
+        if (actualProject.project_tasks.length > 0) {
+            setSelectedTasksIds([...selectedTasksIds, ...actualProject.project_tasks.map(row => row.task_id)])
+            const taskStagesIdsArray = actualProject.project_tasks.filter(row => row.project_task_inherited_id === null).map(row => row.id);
+
+
+            form.setFieldsValue((groupTasksByStageNumber(rebuider(actualProject.project_tasks.filter(row => row.project_task_inherited_id !== null).map(
+                row => {
+                    console.log(taskStagesIdsArray, " + ", row.project_task_inherited_id, " = ", taskStagesIdsArray.includes(row.project_task_inherited_id));
+                    if (
+                        (taskStagesIdsArray.includes(row.project_task_inherited_id))) {
+                        return ({
+                            ...row,
+                            project_task_inherited_id: null,
+                        })
+                    } else {
+                        return row
+                    }
+                }
+            )))));
+        }
     }, [actualProject]);
     if (loadingTasks)
         return <LoadingSpinnerStyles/>
@@ -155,7 +194,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
         <Row gutter={1}>
             <Col span={24}>
                 <Divider>Создание новой задачи</Divider>
-                <TaskForm onCompleted={()=>refetchTasks()}/>
+                <TaskForm onCompleted={() => refetchTasks()}/>
                 <Form form={form} onChange={() => console.log("onChange")}>
                     <Divider>Список этапов</Divider>
                     {actualProject?.project_stages?.map((row) => (
@@ -177,7 +216,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
                                         saveSelected={false}
                                         onSelect={(value) => handleSelectTask(row.number, value)}
                                         data={dataTasks?.tasks?.items.filter((task) =>
-                                            !actualProject.project_stages.flatMap(stage => stage.stage.task_id).includes(parseInt(task.id))
+                                            !selectedTasksIds.includes(parseInt(task.id))
                                         )}
                                     />
                                 </Form.Item>

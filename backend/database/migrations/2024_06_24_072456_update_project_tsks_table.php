@@ -16,7 +16,8 @@ return new class extends Migration
 
             $table->foreign('executor_id')->references('id')->on('persons');
 
-        });    }
+        });
+    }
 
     /**
      * Reverse the migrations.

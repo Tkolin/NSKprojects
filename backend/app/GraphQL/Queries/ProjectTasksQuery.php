@@ -11,7 +11,7 @@ final readonly class ProjectTasksQuery
     public function __invoke(null $_, array $args)
     {
          $projectTasks = ProjectTasks::with('task')
-            ->with('executors.executor')
+            ->with('executor')
              ->with('inherited_task_ids')
             ->where('project_id', $args['projectId'])
             ->get();

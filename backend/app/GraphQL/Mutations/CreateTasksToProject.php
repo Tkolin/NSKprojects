@@ -12,92 +12,77 @@ final readonly class CreateTasksToProject
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
-        $projectId = $args['data'][0]['project_id'];
-        $newTaskIds = [];
-        $newStageNumbers = [];
+        $tasks = $args["data"];
+        $projectId = $args["data"][0]["project_id"];
 
-        // Массив для хранения соответствий task_id и их ID в таблице project_tasks
-        $taskIdsMap = [];
-        // Массив для отслеживания новых связей
-        $newInheritedTasks = [];
 
-        // Обновляем или создаем записи для каждой задачи
-        foreach ($args['data'] as $taskData) {
-            $projectTask = ProjectTasks::updateOrCreate([
-                'project_id' => $taskData['project_id'],
-                'task_id' => $taskData['task_id'],
-                'stage_number' => $taskData['stage_number']
-            ],
+        foreach ($tasks as $i => $task) {
+            $projectTask = ProjectTasks::updateOrCreate(
                 [
-                    'project_id' => $taskData['project_id'] ?? null,
-                    'task_id' => $taskData['task_id'] ?? null,
-                    'stage_number' => $taskData['stage_number'] ?? null,
-                    'date_start' => $taskData['date_start'] ?? null,
-                    'date_end' => $taskData['date_end'] ?? null,
-                ]);
+                    "project_id" => $task["project_id"],
+                    "task_id" => $task["task_id"],
+                ],
+                [
+                    "project_id" => $task["project_id"],
+                    "task_id" => $task["task_id"],
+                    "stage_number" => $task["stage_number"],
+                    "date_start" => $task["date_start"],
+                    "date_end" => $task["date_end"],
+                    "duration" => $task["duration"] ?? (strtotime($task["date_end"]) - strtotime($task["date_start"])) / (60 * 60 * 24),
 
-            // Сохраняем ID созданной или обновленной записи
-            $taskIdsMap[$taskData['task_id']] = $projectTask->id;
+                    "project_task_inherited_id" => null
 
-            // Сохраняем task_id и stage_number для дальнейшей проверки
-            $newTaskIds[] = $taskData['task_id'];
-            $newStageNumbers[] = $taskData['stage_number'];
+                ]
+            );
+             $tasks[$i]["id"] = $projectTask->id;
+
         }
 
-        // Получаем список всех существующих записей для данного проекта
-        $existingTasks = ProjectTasks::where('project_id', $projectId)->get();
+        foreach ($tasks as $i => $task) {
 
-        // Удаляем записи из project_tasks_inherited, которые не присутствуют в новых данных
-        $existingInheritedTasks = ProjectTasksInherited::whereIn('project_task_id', $existingTasks->pluck('id'))
-            ->orWhereIn('project_inherited_task_id', $existingTasks->pluck('id'))
-            ->get();
+            error_log(json_encode($task).  $task["project_task_inherited_id"]);
 
-        foreach ($existingInheritedTasks as $existingInheritedTask) {
-            $existsInNew = false;
-            foreach ($args['data'] as $taskData) {
-                if (isset($taskData['inherited_from_task_id'])) {
-                    $inheritedFromTaskId = $taskData['inherited_from_task_id'];
-                    if (isset($taskIdsMap[$inheritedFromTaskId])) {
-                        $projectTaskId = $taskIdsMap[$taskData['task_id']];
-                        $projectInheritedTaskId = $taskIdsMap[$inheritedFromTaskId];
 
-                        if ($existingInheritedTask->project_task_id == $projectTaskId &&
-                            $existingInheritedTask->project_inherited_task_id == $projectInheritedTaskId) {
-                            $existsInNew = true;
-                            break;
-                        }
+            if (isset($task["project_task_inherited_id"])) {
+                 $inheritedTask = null;
+                foreach ($tasks as $row) {
+                    if ($row['task_id'] == $task["project_task_inherited_id"]) {
+                        $inheritedTask = $row;
+                        break;
                     }
                 }
-            }
-            if (!$existsInNew) {
-                $existingInheritedTask->delete();
-            }
-        }
 
-        // Удаляем записи из project_tasks, которые не присутствуют в новых данных
-        foreach ($existingTasks as $existingTask) {
-            if (!in_array($existingTask->task_id, $newTaskIds) || !in_array($existingTask->stage_number, $newStageNumbers)) {
-                $existingTask->delete();
-            }
-        }
-
-        // Обновляем таблицу project_tasks_inherited
-        foreach ($args['data'] as $taskData) {
-            if (isset($taskData['inherited_from_task_id'])) {
-                $inheritedFromTaskId = $taskData['inherited_from_task_id'];
-
-                if (isset($taskIdsMap[$inheritedFromTaskId])) {
-                    $projectTaskId = $taskIdsMap[$taskData['task_id']];
-                    $projectInheritedTaskId = $taskIdsMap[$inheritedFromTaskId];
-
-                    ProjectTasksInherited::updateOrCreate([
-                        'project_task_id' => $projectTaskId,
-                        'project_inherited_task_id' => $projectInheritedTaskId
-                    ]);
+                if ($inheritedTask) {
+                    $projectTask = ProjectTasks::updateOrCreate(
+                        [
+                            'id' => $task["id"]
+                        ],
+                        [
+                            'project_task_inherited_id' => $inheritedTask['id']
+                        ]
+                    );
+                } else {
+                    error_log("Inherited task with task_id " . $task["project_task_inherited_id"] . " not found.");
                 }
             }
+
         }
 
-        return Project::where('id', $projectId)->first();
+        //project_id:"134"
+        //task_id:"23"
+        //stage_number:1
+        //inherited_from_task_ids:"4"
+
+        //project_id:"134"
+        //task_id:"1"
+        //stage_number:2
+        //date_start:"2024-06-01"
+        //date_end:"2024-06-20"
+        //inherited_from_task_ids:null
+
+
+        // Отбор задач - этапов
+
+        return  Project::where('id', $projectId)->first();
     }
 }

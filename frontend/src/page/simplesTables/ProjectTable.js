@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import {
     Divider,
@@ -51,6 +51,33 @@ import {
 import PersonsByStagesCompactForm from "./components/PersonsByStagesCompactForm";
 
 const {Text} = Typography;
+const groupTasksByExecutorExstra = (tasks) => {
+    return tasks.reduce((acc, task) => {
+        const executor = task.executor ? task.executor : {id: 'no_executor'};
+        const executorTasks = acc.find((item) => item.executor.id === executor.id);
+        if (executorTasks) {
+            executorTasks.tasks.push(task);
+        } else {
+            acc.push({executor, tasks: [task]});
+        }
+        return acc;
+    }, []);
+};
+const groupTasksByExecutor = (tasks) => {
+    return tasks.reduce((acc, task) => {
+        if (!task.executor) {
+            return acc; // Пропускаем задачи без исполнителя
+        }
+        const executor = task.executor;
+        const executorTasks = acc.find((item) => item.executor.id === executor.id);
+        if (executorTasks) {
+            executorTasks.tasks.push(task);
+        } else {
+            acc.push({ executor, tasks: [task] });
+        }
+        return acc;
+    }, []);
+};
 
 const ProjectTable = () => {
 
@@ -80,10 +107,10 @@ const ProjectTable = () => {
         const [sortOrder, setSortOrder] = useState('');
 
         const [search, setSearch] = useState('');
-const refetch = ( ) => {
-    console.log("ВЛарпогфшщВРАПГШОЦКРУПФЦЫР");
-    refetchData();
-}
+        const refetch = () => {
+            console.log("ВЛарпогфшщВРАПГШОЦКРУПФЦЫР");
+            refetchData();
+        }
         const {loading: loading, error: error, data: data, refetch: refetchData} = useQuery(PROJECTS_QUERY, {
             variables: {
                 queryOptions: {
@@ -94,6 +121,9 @@ const refetch = ( ) => {
                     sortOrder
                 }
             },
+            onCompleted: (data) => {
+                console.log("queri IPA", data);
+            }
         });
 
         // Функции уведомлений
@@ -299,7 +329,7 @@ const refetch = ( ) => {
                                 </Text>
                             }
                             <Text strong>Представители:</Text>
-                            {record.delegations && record.delegations?.length > 0 ? (record.delegations.map(delegate => (
+                            {record.delegations && record.delegations?.length > 0 ? (record?.delegations?.map(delegate => (
                                     <Link style={{marginLeft: 8}}
                                           key={delegate.id}>{delegate?.last_name ?? ""} {delegate?.first_name ?? ""} {delegate?.patronymic ?? ""}
                                     </Link>
@@ -413,10 +443,10 @@ const refetch = ( ) => {
                             <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
                                 {record?.type === "prepayment" ?
                                     <PaymentInvoiceProjectDownload isPrepayment={true}
-                                                                   projectId={project.id} type="acts"/>
+                                                                   projectId={project?.id} type="acts"/>
                                     :
                                     <PaymentInvoiceProjectDownload stageNumber={record.number}
-                                                                   projectId={project.id} type="acts"/>
+                                                                   projectId={project?.id} type="acts"/>
                                 }
                             </Space.Compact>
                         ),
@@ -432,7 +462,7 @@ const refetch = ( ) => {
                                     ("-")
                                     :
                                     <ActRenderingProjectDownload stageNumber={record.number}
-                                                                 projectId={project.id} type="acts"/>
+                                                                 projectId={project?.id} type="acts"/>
                                 }
                             </Space.Compact>
                         ),
@@ -464,7 +494,7 @@ const refetch = ( ) => {
 
                             <Text style={{marginRight: 10}}>Список ИРД</Text>
                             <IrdsProjectFileDownload style={{color: "green"}} text={<DownloadOutlined/>}
-                                                     projectId={project.id}/>
+                                                     projectId={project?.id}/>
                         </Tooltip>
                         <Link type={"warning"}>
 
@@ -529,13 +559,12 @@ const refetch = ( ) => {
                         {/*<IrdsProjectFileDownload text={<DownloadOutlined/>} projectId={createNewProject.id}/>*/}
                         <EditOutlined onClick={() => setEditModalStatus({
                             status: "tasks",
-                            project:  project
+                            project: project
                         })}/>
                     </Space>,
                 children: [
                     {
                         title: 'Исполнитель',
-                        dataIndex: 'executor',
                         width: '45%',
                         key: 'executor',
                         align: "left",
@@ -543,7 +572,7 @@ const refetch = ( ) => {
 
                             <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
                                 <Text>
-                                    {record.passport.lastname} {record.passport.firstname} {record.passport.patronymic}
+                                    {record.executor.passport.lastname} {record.executor.passport.firstname} {record.executor.passport.patronymic}
                                 </Text>
 
                             </Space.Compact>
@@ -552,18 +581,20 @@ const refetch = ( ) => {
                     },
                     {
                         title: 'Список задач',
-                        dataIndex: 'tasks',
                         width: '40%',
                         key: 'tasks',
                         align: "left",
                         render: (text, record) => (
                             <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
+                                {console.log("record",record)}
+                                {record.tasks.map(row=>(<Text>
+                                    {row.task.name}
+                                </Text>))}
                             </Space.Compact>
                         ),
                     },
                     {
                         title: 'Договор',
-                        dataIndex: 'contract',
                         width: '15%',
                         key: 'contract',
                         align: "left",
@@ -617,11 +648,7 @@ const refetch = ( ) => {
                         size={"small"}
                         columns={columnsExecutors}
                         dataSource={
-                            project.project_tasks
-                                .flatMap(task => task.executors.map(executor => executor.executor))
-                                .filter((executor, index, self) =>
-                                    index === self.findIndex((e) => e.id === executor.id)
-                                )}
+                            groupTasksByExecutor(project.project_tasks)}
                         pagination={false}
                     />
                 </Space.Compact>
@@ -650,6 +677,7 @@ const refetch = ( ) => {
                 }
             }
         };
+
         return (
             <div>
                 <Divider style={{marginTop: 0}}>
@@ -719,7 +747,8 @@ const refetch = ( ) => {
                     })}
                 >
                     <StyledBlockLarge label={"Создание задач"}>
-                        <ProjectTasks onChange={()=>refetch()} project={data?.projects?.items?.find(row => row.id === projectTasksModalStatus.project_id)}/>
+                         <ProjectTasks onChange={()=>refetch()}
+                                       project={data?.projects?.items?.find(row => row.id === projectTasksModalStatus.project_id)}/>
                     </StyledBlockLarge>
                 </Modal>
                 {/*<Modal*/}
@@ -812,7 +841,7 @@ const refetch = ( ) => {
                                 editModalStatus?.status === "tasks" ? (
                                         <StyledBlockLarge>
                                             <ProjectTasks
-                                                onChange={()=>refetch()}
+                                                onChange={() => refetch()}
                                                 actualStages={editModalStatus?.stages}
                                                 updateStages={(value) => setEditModalStatus({
                                                     ...editModalStatus,

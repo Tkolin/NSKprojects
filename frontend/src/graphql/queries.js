@@ -338,10 +338,7 @@ export const  PROJECTS_QUERY = gql`
                         id
                         name
                     }
-                    inherited_task_ids{
-                        project_task_id
-                        project_inherited_task_id
-                    }
+                    project_task_inherited_id
                     date_start
                     date_end
                     duration
@@ -614,10 +611,7 @@ export const TASKS_TO_PROJECT_QUERY = gql`
                 id
                 name
             }
-            inherited_task_ids{
-                project_task_id
-                project_inherited_task_id
-            }
+            project_task_inherited_id
             date_start
             date_end
             duration
