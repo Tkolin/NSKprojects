@@ -588,7 +588,7 @@ const ProjectTable = () => {
                             <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
                                 {console.log("record",record)}
                                 {record.tasks.map(row=>(<Text>
-                                    {row.task.name}
+                                    - {row.task.name}
                                 </Text>))}
                             </Space.Compact>
                         ),

@@ -74,6 +74,8 @@ const Index = ({project, onChange}) => {
     const [loadContext, {data: data}] = useLazyQuery(PROJECTS_QUERY_BY_ID, {
         variables: {id: project.id},
         onCompleted: (data) => {
+            openNotification('topRight', 'success', `Данные подгружены.`);
+
         },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
@@ -143,9 +145,10 @@ const Index = ({project, onChange}) => {
                         description: 'График ганта.',
                     }
                 ]}
-            /> <Button type="primary" onClick={() => console.log("чек еп", project)}>
-            чек
-        </Button>
+            />
+        {/*    <Button type="primary" onClick={() => console.log("чек еп", project)}>*/}
+        {/*    чек*/}
+        {/*</Button>*/}
             <div>
                 {current === 0 ?
 
@@ -163,8 +166,7 @@ const Index = ({project, onChange}) => {
                     //         ) : (
                     (
                         <StyledBlockLarge label={"Первичная настройка задач"}>
-                            ss
-                            <NewTasksToProjectForm
+                             <NewTasksToProjectForm
                                 onChange={onChange && onChange()}
                                 actualProject={project}
                                 setLoading={setLoading}/>
