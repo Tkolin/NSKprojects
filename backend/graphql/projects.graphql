@@ -35,6 +35,7 @@ extend type Mutation{
     ): [ProjectStage] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateTaskToProject(
         data: [TasksToProject]!
+        type: String
     ): Project @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     deleteTaskToProject(
         id: ID!

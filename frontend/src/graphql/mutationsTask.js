@@ -68,8 +68,8 @@ export const DELETE_TASK_TO_PROJECT_MUTATION = gql`
     }
 `;
 export const UPDATE_TASK_TO_PROJECT_MUTATION = gql`
-    mutation UpdateTaskToProject($data: [TasksToProject]!) {
-        updateTaskToProject(data: $data) {
+    mutation UpdateTaskToProject($data: [TasksToProject]!, $type: String) {
+        updateTaskToProject(data: $data, type: $type) {
             id
             project_tasks {
                 id
