@@ -189,19 +189,23 @@ export const PROJECTS_QUERY_BY_ID = gql`
                 id
                 number
                 name
-                duration
-                organization_customer
-                {
+                prepayment
+                organization_customer {
                     id
                     name
                 }
-                type_project_document
-                {
+                type_project_document {
                     id
+                    code
                     name
+                    template_project_id
+                    group {
+                        id
+                        code
+                        name
+                    }
                 }
-                facilities
-                {
+                facilities {
                     id
                     name
                     code
@@ -222,16 +226,15 @@ export const PROJECTS_QUERY_BY_ID = gql`
                     }
                 }
                 date_signing
-                date_create
+                duration
                 date_end
-                prepayment
-                status
-                {
+                date_create
+                status {
                     id
                     name
                 }
                 date_completion
-                delegations{
+                delegations {
                     id
                     first_name
                     last_name
@@ -243,12 +246,18 @@ export const PROJECTS_QUERY_BY_ID = gql`
                     stage {
                         id
                         name
-                        task_id
                     }
                     date_start
                     duration
                     date_end
                     percent
+                    price
+                }
+                project_tasks {
+                    id
+                    date_start
+                    duration
+                    date_end
                     price
                 }
                 project_irds {
@@ -260,34 +269,6 @@ export const PROJECTS_QUERY_BY_ID = gql`
                         name
                     }
                     receivedDate
-                }
-                project_tasks {
-                    id
-                    project_id
-                    task {
-                        id
-                        name
-                    }
-                    project_task_inherited_id
-
-                    date_start
-                    date_end
-                    duration
-                    
-                    stage_number
-            
-                        executor {
-                            id
-                            passport {
-                                id
-                                firstname
-                                lastname
-                                patronymic
-                            }
-                        }
-                    
-                    price
-                    description
                 }
                 price
             }

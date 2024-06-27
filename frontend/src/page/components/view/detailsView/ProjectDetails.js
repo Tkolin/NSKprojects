@@ -6,9 +6,9 @@ import IrdsTemplateForm from "../../form/composedForm/template/templateForm/Irds
 import StagesTemplateForm from "../../form/composedForm/template/templateForm/StagesTemplateForm";
 import {TYPES_PROJECTS_QUERY} from "../../../graphql/queries";
 import {useQuery} from "@apollo/client";
-import ProjectForm from "../../form/modelsForms/ProjectForm";
-import IrdsProjectForm from "../../form/composedForm/createNewProject/components/IrdsProjectForm";
-import StagesProjectForm from "../../form/composedForm/createNewProject/components/StagesProjectForm";
+import ProjectForm from "../../form/modelsForms/Index";
+import IrdsProjectForm from "../../form/composedForm/CreateNewProject/components/IrdsProjectForm";
+import StagesProjectForm from "../../form/composedForm/CreateNewProject/components/Index";
 
 
 const {Option} = Select;

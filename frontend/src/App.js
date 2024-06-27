@@ -14,19 +14,19 @@ import LoadingSpinnerStyles from "./page/components/style/LoadingSpinnerStyles";
 import ContactPage from "./page/simplesForms/ContactPage";
 import PersonPage from "./page/simplesForms/PersonPage";
 import OrganizationPage from "./page/simplesForms/OrganizationPage";
-import DistributionTasksByProject from "./page/distributionTasksByProject/Index";
-import CreateNewProject from "./page/createNewProject/Index";
+import DistributionTasksByProject from "./page/DistributionTasksByProject/Index";
+import CreateNewProject from "./page/CreateNewProject/Index";
 import ContactTable from "./page/simplesTables/ContactTable";
 import PersonTable from "./page/simplesTables/PersonTable";
 import OrganizationTable from "./page/simplesTables/OrganizationTable";
 import IrdTable from "./page/simplesTables/IrdTable";
 import TypeProjectTable from "./page/simplesTables/TypeProjectTable";
 import StageTable from "./page/simplesTables/StageTable";
-import ProjectTable from "./page/simplesTables/ProjectTable";
+import ProjectTable from "./page/ProjectTable/Index";
 import RegisterPage from "./page/simplesForms/RegisterPage";
 import LoginPage from "./page/simplesForms/loginPage";
 import {NotificationProvider} from "./NotificationProvider";
-import TasksChartForm from "./page/distributionTasksByProject/components/TasksChartForm";
+import moment from "moment";
 
 
 const App = () => {
@@ -39,6 +39,7 @@ const App = () => {
     if (data) if (error) return `Ошибка! ${error.message}`;
 
     const currentUser = data?.currentUser;
+    moment.locale('ru');
 
     const GlobalStyles = createGlobalStyle`
         body {
@@ -53,8 +54,7 @@ const App = () => {
                     <CustomLayout currentUser={currentUser}>
                         <Routes>
                             <Route path="/" element={<Home/>}/>
-                            <Route path="/test1" element={<TasksChartForm/>}/>
-                            {/*<Route path="/test2" element={<Test2/>}/>*/}
+                             {/*<Route path="/test2" element={<Test2/>}/>*/}
                             <Route path="/form/contact" element={<ContactPage/>}/>
                             <Route path="/form/persons" element={<PersonPage/>}/>
                             <Route path="/form/organizations" element={<OrganizationPage/>}/>

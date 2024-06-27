@@ -54,8 +54,8 @@ class PaymentInvoiceTemplateGeneratorService
 
         $replacements = [
 
-            'createNewProject.number' => $project['number'] ?? '(данные отсутвуют)',
-            'createNewProject.name' => $project['name'] ?? '(данные отсутвуют)',
+            'project.number' => $project['number'] ?? '(данные отсутвуют)',
+            'project.name' => $project['name'] ?? '(данные отсутвуют)',
 
 
             'dayCreate' => $day,

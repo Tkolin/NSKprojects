@@ -56,8 +56,7 @@ const EmployeeToTasksForm = ({actualProject, setLoading, onChange}) => {
 
     useEffect(() => {
         if (actualProject && actualProject?.project_tasks) {
-            rebuider(actualProject?.project_tasks)
-            form.setFieldValue("tasks", rebuider(actualProject?.project_tasks))
+             form.setFieldValue("tasks", rebuider(actualProject?.project_tasks))
         }
     }, [actualProject]);
 

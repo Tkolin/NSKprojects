@@ -2,47 +2,47 @@ import React, {useContext, useEffect, useState} from 'react';
 import {
     Form, Input, Select, InputNumber, Space, Collapse, Button,
 } from 'antd';
-import {useLazyQuery, useQuery} from '@apollo/client';
+import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 
 import {DatePicker} from "antd/lib";
 import dayjs from "dayjs";
-import {NotificationContext} from "../../../NotificationProvider";
+import {NotificationContext} from "../../NotificationProvider";
 import {
     CONTACTS_QUERY_COMPACT, GROUP_TYPE_PROJECTS_QUERY_COMPACT,
     ORGANIZATIONS_QUERY_COMPACT, PROJECT_COUNT_BY_ORGANIZATION,
     PROJECT_STATUSES_QUERY_COMPACT,
     TYPES_PROJECTS_QUERY_COMPACT
-} from "../../../graphql/queriesCompact";
+} from "../../graphql/queriesCompact";
 
-import {CustomAutoCompleteAndCreate} from "../../components/style/SearchAutoCompleteStyles";
-import {EmptyFormItem} from "../../components/formComponents/EmptyFormItem";
+import {CustomAutoCompleteAndCreate} from "../components/style/SearchAutoCompleteStyles";
+import {EmptyFormItem} from "../components/formComponents/EmptyFormItem";
 
-import OrganizationModalForm from "../../components/modal/OrganizationModalForm";
-import TypeProjectModalForm from "../../components/modal/TypeProjectModalForm";
-import ContactModalForm from "../../components/modal/ContactModalForm";
-import FacilitiesTreeComponent from "./FacilitiesTreeComponent";
-import DateRangePickerComponent from "./DateRangePickerComponent";
-import {StyledButtonGreen} from "../../components/style/ButtonStyles";
+import OrganizationModalForm from "../components/modal/OrganizationModalForm";
+import TypeProjectModalForm from "../components/modal/TypeProjectModalForm";
+import ContactModalForm from "../components/modal/ContactModalForm";
+import FacilitiesTreeComponent from "./components/FacilitiesTreeComponent";
+import DateRangePickerComponent from "../components/DateRangePickerComponent";
+import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {PlusOutlined} from "@ant-design/icons";
 import {nanoid} from "nanoid";
+import {ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION} from "../../graphql/mutationsProject";
+import {rebuildProjectToQuery} from "../components/script/rebuildData/ProjectRebuilderQuery";
+import {CustomDatePicker} from "../components/FormattingDateElementComponent";
 
 
-const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confirmFormButton}) => {
+const Index = ({onCompleted, project}) => {
         // Получение данных для выпадающих списков
         const {loading: loadingStatuses, error: errorStatuses, data: dataStatuses} =
             useQuery(PROJECT_STATUSES_QUERY_COMPACT,);
-        const [countProjectByOrg, setCountProjectByOrg] = useState();
 
         const [loadCount, {}] = useLazyQuery(PROJECT_COUNT_BY_ORGANIZATION, {
             onCompleted: (data) => {
-                console.log(data);
                 setCountProjectByOrg(data?.countProjectByOrganizations?.items[0].count_project + 1);
             },
             onError: (error) => {
-                openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
+                openNotification('topRight', 'error', `1 Ошибка при загрузке данных: ${error.message}`);
             },
         });
-        const [dataTypes, setDataTypes] = useState();
         const {
             loading: loadingTypeProject, error: errorTypeProject, data: dataTypeProject,
             refetch: refetchTypeProject
@@ -63,66 +63,75 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
         const {
             loading: loadingOrganizations, error: errorOrganizations, data: dataOrganizations, refetch: refetchOrganizations
         } = useQuery(ORGANIZATIONS_QUERY_COMPACT);
-// Первичные данные
+
+        // Состояния
+        const [delegatesModalStatus, setDelegatesModalStatus] = useState(null);
+        const [organizationsModalStatus, setOrganizationsModalStatus] = useState(null);
+        const [typeProjectModalStatus, setTypeProjectModalStatus] = useState(null);
+
         const {openNotification} = useContext(NotificationContext);
         const [form] = Form.useForm();
         const [formLoad, setFormLoad] = useState(false);
         const [selectedGroupTypeProject, setSelectedGroupTypeProject] = useState(false);
         const [dataTypesOutput, setDataTypesOutput] = useState([]);
 
+        const [countProjectByOrg, setCountProjectByOrg] = useState();
+        const [dataTypes, setDataTypes] = useState();
+
         useEffect(() => {
             if (dataTypes && selectedGroupTypeProject)
                 setDataTypesOutput(dataTypes?.filter(row => row?.group?.id === selectedGroupTypeProject));
         }, [dataTypes, selectedGroupTypeProject]);
-        const handleChange = () => {
 
-            if (!actualProject?.id)
-                updateNumber();
-            if (formLoad)
-                updateProject(form.getFieldsValue())
-        }
-        useEffect(() => {
-            actualProject && console.log(actualProject);
-        }, []);
-// Состояния
-        const [delegatesModalStatus, setDelegatesModalStatus] = useState(null);
-        const [organizationsModalStatus, setOrganizationsModalStatus] = useState(null);
-        const [typeProjectModalStatus, setTypeProjectModalStatus] = useState(null);
-// Подгрузка при обновлении
+
+
+        // Подгрузка при обновлении
         const load = () => {
-             form.setFieldsValue({
-                ...actualProject,
-
-                id: actualProject?.id ?? null,
-                date_signing: actualProject?.date_signing ? dayjs(actualProject?.date_signing) : null,
-                date_end: actualProject?.date_end ? dayjs(actualProject?.date_end) : null,
-                date_create: actualProject?.date_create ? dayjs(actualProject?.date_create) : null,
-                date_completion: actualProject?.date_completion ? dayjs(actualProject?.date_completion) : null,
+            form.setFieldsValue({
+                ...project,
+                id: project?.id ?? null,
+                date_signing: project?.date_signing ? dayjs(project?.date_signing) : null,
+                date_end: project?.date_end ? dayjs(project?.date_end) : null,
+                date_create: project?.date_create ? dayjs(project?.date_create) : null,
+                date_completion: project?.date_completion ? dayjs(project?.date_completion) : null,
             });
-            setSelectedGroupTypeProject(actualProject?.type_project_document?.group?.id);
+            setSelectedGroupTypeProject(project?.type_project_document?.group?.id);
         }
 
         useEffect(() => {
-            if (!formLoad)
-                load();
-        }, [actualProject]);
+            project && load();
+        }, [project]);
         useEffect(() => {
             setFormLoad(true)
             form.setFieldValue("status_id", 1)
         }, []);
         useEffect(() => {
             console.log("countProjectByOrg", countProjectByOrg);
-           handleChange();
+            handleChange();
         }, [countProjectByOrg]);
 
 
-
-// Логика формы
+        // Логика формы
+        const [mutateProject] = useMutation(project?.id ? UPDATE_PROJECT_MUTATION : ADD_PROJECT_MUTATION, {
+            onCompleted: (data) => {
+                openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
+                onCompleted && onCompleted(data?.createProject || data?.updateProject);
+                },
+            onError: (error) => {
+                openNotification('topRight', 'error', `Ошибка при выполнении сооздания : ${error.message}`);
+            },
+        });
+        const handleChange = () => {
+            if (!project?.id)
+                updateNumber();
+        }
+        const handleSave = () => {
+            mutateProject({variables: {data: rebuildProjectToQuery(form.getFieldsValue())}});
+        }
         const updateNumber = () => {
-            console.log("actualProject?.id", actualProject?.id);
             const orgCostumer = form.getFieldValue("organization_customer")?.selected;
             orgCostumer && loadCount({variables: {organizationId: orgCostumer}});
-            if (actualProject?.id && actualProject?.id > -1) {
+            if (project?.id && project?.id > -1) {
                 return;
             }
             const facilitiCode = (
@@ -134,11 +143,9 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
                 "–" + "24" +
                 "–" + (countProjectByOrg ? countProjectByOrg?.toString()?.padStart(2, '0') : "__") +
                 "–" + (form.getFieldValue("organization_customer")?.selected?.padStart(3, '0') ?? "___") +
-                "–" + facilitiCode ));
+                "–" + facilitiCode));
         }
-        useEffect(() => {
-            console.log("dataTypes", dataTypes)
-        }, [dataTypes]);
+
         if (errorStatuses || errorTypeProject || errorDelegates || errorOrganizations) return `Ошибка! ${errorStatuses?.message || errorTypeProject?.message || errorDelegates?.message || errorOrganizations?.message}`;
 
         return (<div>
@@ -156,7 +163,7 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
                 <Form.Item name="group_type_project_document_id" label="Тип документа" rules={[{required: true}]}>
                     <Select
                         status={form.getFieldValue("group_type_project_document_id") ? "" : "warning"}
-                        disabled={actualProject?.id}
+                        disabled={project?.id}
                         loading={loadingGroupProject}
                         onSelect={() => handleChange()}
 
@@ -178,7 +185,7 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
                             style={{width: "100%"}}
                             status={form.getFieldValue("type_project_document_id") ? "" : "warning"}
                             loading={loadingTypeProject}
-                            disabled={actualProject?.id}
+                            disabled={project?.id}
                             placeholder={"Сначала выберите тип документа"}
                             onChange={(value) => {
                                 console.log(value);
@@ -261,7 +268,7 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
                     <DateRangePickerComponent onChange={() => handleChange()}/>
                 </Form.Item>
                 <Form.Item name="date_create" label="Дата создания договора" style={{width: '50%'}}>
-                    <DatePicker
+                    <CustomDatePicker
                         onChange={() => handleChange()}
                         placeholder="Выберите дату" style={{width: '100%'}}/>
                 </Form.Item>
@@ -288,9 +295,7 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
                     </Form.Item>
                 </Space.Compact>
 
-                {
-                    confirmFormButton
-                }
+                <StyledButtonGreen onClick={() => handleSave()}>Сохранить</StyledButtonGreen>
 
 
             </Form>
@@ -304,7 +309,7 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
                 mode={organizationsModalStatus}/>
             <TypeProjectModalForm
                 key={nanoid()}
-                localObject={typeProjectModalStatus?.object}
+                project={typeProjectModalStatus?.object}
                 onClose={() => setTypeProjectModalStatus(null)}
                 onCompleted={(value) => {
                     refetchTypeProject();
@@ -318,4 +323,4 @@ const ProjectForm = ({onCompleted, onChange, updateProject, actualProject, confi
     }
 ;
 
-export default ProjectForm;
+export default Index;

@@ -298,6 +298,7 @@ export const  PROJECTS_QUERY = gql`
                 {
                     id
                     name
+                    name_key
                 }
                 date_completion
                 delegations{

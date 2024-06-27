@@ -1,5 +1,5 @@
 import {gql} from "@apollo/client";
- 
+
 
 export const ADD_PROJECT_MUTATION = gql`
     mutation AddProject($data: ProjectInput) {
@@ -71,6 +71,13 @@ export const ADD_PROJECT_MUTATION = gql`
                 percent
                 price
             }
+            project_tasks {
+                id
+                date_start
+                duration
+                date_end
+                price
+            }
             project_irds {
                 id
                 stageNumber
@@ -82,10 +89,10 @@ export const ADD_PROJECT_MUTATION = gql`
                 receivedDate
             }
             price
-        
+
         }
     }
-    
+
 `;
 
 export const UPDATE_PROJECT_MUTATION = gql`
@@ -157,7 +164,7 @@ export const UPDATE_PROJECT_MUTATION = gql`
                 date_end
                 percent
                 price
-            }     
+            }
             project_tasks {
                 id
                 date_start
@@ -176,10 +183,10 @@ export const UPDATE_PROJECT_MUTATION = gql`
                 receivedDate
             }
             price
-        
+
         }
     }
-    
+
 `;
 
 export const UPDATE_IRDS_TO_PROJECT_MUTATION = gql`
@@ -205,13 +212,15 @@ export const UPDATE_STAGES_TO_PROJECT_MUTATION = gql`
             stage {
                 id
                 name
+                task_id
             }
-            price_to_paid
             date_start
             duration
             date_end
             percent
             price
+
+         
         }
     }
 `;

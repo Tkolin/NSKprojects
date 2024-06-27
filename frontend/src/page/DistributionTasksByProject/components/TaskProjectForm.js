@@ -6,7 +6,7 @@ import {CloseOutlined, PlusOutlined} from "@ant-design/icons";
 import {DatePicker} from "antd/lib";
 import FormItem from "antd/es/form/FormItem";
 import {CustomAutoComplete} from "../../components/style/SearchAutoCompleteStyles";
-import DateRangePickerComponent from "../../createNewProject/components/DateRangePickerComponent";
+import DateRangePickerComponent from "../../components/DateRangePickerComponent";
 import {StyledButtonGreen, StyledButtonRed} from "../../components/style/ButtonStyles";
 import {useMutation, useQuery} from "@apollo/client";
 import {PERSONS_QUERY_COMPACT} from "../../../graphql/queriesCompact";

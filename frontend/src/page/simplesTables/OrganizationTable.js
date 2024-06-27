@@ -5,11 +5,11 @@ import {DELETE_ORGANIZATION_MUTATION} from '../../graphql/mutationsOrganization'
 import Search from "antd/es/input/Search";
 import {DeleteAndEditStyledLinkManagingDataTable} from "../components/style/TableStyles";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import {ORGANIZATIONS_QUERY, ORGANIZATIONS_QUERY_AND_EMPLOYEE} from "../../graphql/queries";
+import {ORGANIZATIONS_QUERY} from "../../graphql/queries";
 import Title from "antd/es/typography/Title";
 import OrganizationModalForm from "../components/modal/OrganizationModalForm";
 
-import OrganizationContactsCompactTable from "./components/OrganizationContactsCompactTable";
+import OrganizationContactsCompactTable from "../ProjectTable/components/OrganizationContactsCompactTable";
 
 const OrganizationTable = () => {
     // Состояния

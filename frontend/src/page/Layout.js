@@ -91,7 +91,7 @@ const CustomLayout = ({children, currentUser, la}) => {
     const hasAccess = (currentRole, allowedRoles) => {
         return allowedRoles.includes(currentRole);
     };
-    items.push(getItem('Главная', '0', <HomeOutlined/>, null, "/"));
+    items.push(getItem('Главная', '', <HomeOutlined/>, null, "/"));
     if (data && data.currentUser) {
         const roleName = data.currentUser.role.name;
         items.push(

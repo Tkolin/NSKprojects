@@ -66,14 +66,14 @@ export const rebuildIrdsResultQuery = (data) => {
 
     }));
 };
-export const rebuildStagesToQuery = (data, project) => {
+export const rebuildStagesToQuery = (data, projectId) => {
     if (!data)
         return [];
     const dataArray = Object.values(data);
 
     return dataArray?.map((row, index) => ({
         id: row?.id ?? null,
-        project_id: project?.id ?? null,
+        project_id: projectId ?? null,
         date_start: row.date_range?.dateStart ? dayjs(row.date_range?.dateStart).format("YYYY-MM-DD") : null,
         date_end: row.date_range?.dateEnd ? dayjs(row.date_range?.dateEnd).format("YYYY-MM-DD") : null,
         duration: row?.date_range?.duration ?? null,

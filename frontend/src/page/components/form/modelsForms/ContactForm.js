@@ -17,6 +17,7 @@ import {
 import {CONTACTS_QUERY_BY_ID} from "../../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import OrganizationModalForm from "../../modal/OrganizationModalForm";
+import {CustomDatePicker} from "../../FormattingDateElementComponent";
 
 const ContactForm = ({localObject, initialObject, onCompleted}) => {
     // Первичные данные
@@ -164,7 +165,7 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
                     <Input placeholder="Введите e-mail"/>
                 </Form.Item>
                 <Form.Item name="birth_day" label="Дата рождения">
-                    <DatePicker placeholder="Выберите дату"/>
+                    <CustomDatePicker placeholder="Выберите дату"/>
                 </Form.Item>
 
                 <Divider orientation="left">Данные организации:</Divider>

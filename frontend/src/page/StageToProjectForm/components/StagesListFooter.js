@@ -31,14 +31,14 @@ const StagesListFooter = ({project, totalToPercent, totalToDuration}) => {
                     {/*           style={{*/}
                     {/*               marginLeft: 20,*/}
                     {/*               width: 90,*/}
-                    {/*               background: totalToDuration > createNewProject?.duration ? '#EE4848' : totalToDuration < createNewProject?.duration ? '#FFD700' : '#7DFF7D'*/}
+                    {/*               background: totalToDuration > CreateNewProject?.duration ? '#EE4848' : totalToDuration < CreateNewProject?.duration ? '#FFD700' : '#7DFF7D'*/}
                     {/*           }}/>*/}
-                    {/*    <Input value={createNewProject?.duration} disableв*/}
+                    {/*    <Input value={CreateNewProject?.duration} disableв*/}
                     {/*           style={{width: 90}}/>*/}
                     {/*    <Form.Item*/}
                     {/*        style={{marginBottom: 0, display: 'flex'}} name="totalRange_item">*/}
                     {/*        <RangePicker*/}
-                    {/*            value={[createNewProject?.date_signing ? dayjs(createNewProject.date_signing) : null, createNewProject?.date_end ? dayjs(createNewProject.date_end) : null]}*/}
+                    {/*            value={[CreateNewProject?.date_signing ? dayjs(CreateNewProject.date_signing) : null, CreateNewProject?.date_end ? dayjs(CreateNewProject.date_end) : null]}*/}
                     {/*            disabled={true}/>*/}
                     {/*    </Form.Item>*/}
                     {/*</div>*/}

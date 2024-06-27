@@ -11,7 +11,7 @@
 // import {StyledButtonGreen} from "../../../style/ButtonStyles";
 // import TechnicalSpecificationForm from "../../simpleForm/TechnicalSpecificationForm";
 //
-// const TechnicalSpecificationProjectForm = ({createNewProject, setProject, onSubmit, disable}) => {
+// const TechnicalSpecificationProjectForm = ({CreateNewProject, setProject, onSubmit, disable}) => {
 //     // Состояния
 //     const [formTechnicalSpecification] = Form.useForm();
 //     const [autoCompleteTechnicalSpecification, setAutoCompleteTechnicalSpecification] = useState('');
@@ -99,11 +99,11 @@
 //         }
 //     };
 //     useEffect(() => {
-//         console.log('useEffectStart', createNewProject);
-//         if (createNewProject) {
-//             refetchProject({queryOptions: {id: Number(createNewProject?.id)}});
-//             console.log('useEffectStart', createNewProject?.project_TechnicalSpecifications?.map((pTechnicalSpecifications) => pTechnicalSpecifications.TechnicalSpecification));
-//             addingTechnicalSpecifications(createNewProject?.project_TechnicalSpecifications?.map((pTechnicalSpecifications) => pTechnicalSpecifications.TechnicalSpecification));
+//         console.log('useEffectStart', CreateNewProject);
+//         if (CreateNewProject) {
+//             refetchProject({queryOptions: {id: Number(CreateNewProject?.id)}});
+//             console.log('useEffectStart', CreateNewProject?.project_TechnicalSpecifications?.map((pTechnicalSpecifications) => pTechnicalSpecifications.TechnicalSpecification));
+//             addingTechnicalSpecifications(CreateNewProject?.project_TechnicalSpecifications?.map((pTechnicalSpecifications) => pTechnicalSpecifications.TechnicalSpecification));
 //         }
 //
 //     }, []);
@@ -111,7 +111,7 @@
 //         loadTemplate();
 //     }, [actualityProjectData]);
 //     const {data: projectData, refetch: refetchProject, loading: projectLoading} = useQuery(PROJECTS_QUERY, {
-//         variables: {queryOptions: {id: createNewProject?.id}},
+//         variables: {queryOptions: {id: CreateNewProject?.id}},
 //         fetchPolicy: 'network-only',
 //         onCompleted: (data) => {
 //             if (data.projects.items[0]) {

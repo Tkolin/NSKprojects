@@ -16,6 +16,7 @@ final readonly class UpdateIrdsToProject
         error_log('nen');
         $count = count($irds);
         for ($i = 0; $i < $count; $i++) {
+            error_log($irds[$i]["receivedDate"] . ' fadfgad');
             ProjectIrds::updateOrCreate(
                 [
                     'project_id' => $irds[$i]["project_id"],
@@ -24,7 +25,7 @@ final readonly class UpdateIrdsToProject
                 [
                     'stageNumber' => isset($irds[$i]["stageNumber"]) ? (int)$irds[$i]["stageNumber"] : null,
                     'applicationProject' => isset($irds[$i]["applicationProject"]) ? (int)$irds[$i]["applicationProject"] : null,
-                    'receivedDate' => isset($stages[$i]["receivedDate"]) ? substr((string) $stages[$i]["receivedDate"], 0, 10) : null,
+                    'receivedDate' => isset($irds[$i]["receivedDate"]) ? $irds[$i]["receivedDate"] : null,
 
                 ]
             );

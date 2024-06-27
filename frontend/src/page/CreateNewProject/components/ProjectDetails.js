@@ -69,7 +69,7 @@ const ProjectDetails = ({project, totalToPercent, totalToDuration}) => {
                         <Descriptions column={1}>
                             <Text>Договор</Text>
                         </Descriptions>
-                        {/*{createNewProject.project_tasks?.reduce((acc, task) => {*/}
+                        {/*{CreateNewProject.project_tasks?.reduce((acc, task) => {*/}
                         {/*    task.executors.forEach((executor) => {*/}
                         {/*        // Добавляем исполнителя в аккумулятор, если его еще нет*/}
                         {/*        if (!acc.some((e) => e.id === executor.executor.id)) {*/}
@@ -81,7 +81,7 @@ const ProjectDetails = ({project, totalToPercent, totalToDuration}) => {
                         {/*    <>*/}
                         {/*        <Descriptions title={"Исполнитель"}   column={1}>{executor.passport.lastname} {executor.passport.firstname} {executor.passport.patronymic}</Descriptions>*/}
                         {/*        <Descriptions title={"Договор"}  column={1}>*/}
-                        {/*            <TaskExecutorContractDownload executorId={executor.id} projectId={createNewProject.id} type="acts"/>*/}
+                        {/*            <TaskExecutorContractDownload executorId={executor.id} projectId={CreateNewProject.id} type="acts"/>*/}
                         {/*        </Descriptions>*/}
                         {/*    </>*/}
                         {/*))}*/}

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { InputNumber, Space, DatePicker } from 'antd';
 import dayjs from 'dayjs';
+import {CustomDatePicker} from "./FormattingDateElementComponent";
 
 const DateRangePickerComponent = ({ value = { dateStart: null, dateEnd: null, duration: null }, onChange , maxDate , minDate}) => {
 
@@ -22,14 +23,14 @@ const DateRangePickerComponent = ({ value = { dateStart: null, dateEnd: null, du
     return (
         <div>
             <Space.Compact style={{ alignItems: 'flex-end' }}>
-                <DatePicker
+                <CustomDatePicker
                     placeholder="Дата начала"
                     onChange={handleDateStartChange}
                     value={value.dateStart}
                     minDate={minDate  ?? null}
                     maxDate={value.dateEnd ?? maxDate}
                 />
-                <DatePicker
+                <CustomDatePicker
                     placeholder="Дата окончания"
                     onChange={handleDateEndChange}
                     value={value.dateEnd}

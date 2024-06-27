@@ -21,6 +21,7 @@ import BikModalForm from "../../modal/BikModalForm";
 import PpiModalForm from "../../modal/PpiModalForm";
 import dayjs from "dayjs";
 import {nanoid} from "nanoid";
+import {CustomDatePicker} from "../../FormattingDateElementComponent";
 
 const PersonForm = ({localObject, initialObject, onCompleted}) => {
     // Первичные данные
@@ -149,10 +150,10 @@ const PersonForm = ({localObject, initialObject, onCompleted}) => {
                         </Form.Item>
                         <Divider orientation={"left"}>Данные паспорта:</Divider>
                         <Form.Item name="birth_date" label="Дата рождения">
-                            <DatePicker/>
+                            <CustomDatePicker/>
                         </Form.Item>
                         <Form.Item name="date" label="Дата выдачи">
-                            <DatePicker/>
+                            <CustomDatePicker/>
                         </Form.Item>
                         <Form.Item name="passport_place_issue" label="Место выдачи">
                             <CustomAutoCompleteAndCreate

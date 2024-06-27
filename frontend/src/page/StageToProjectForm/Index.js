@@ -1,19 +1,25 @@
-import React, {useEffect, useState} from 'react';
-import {useQuery} from '@apollo/client';
-import {Button,  Divider, Form,  Space} from 'antd';
+import React, {useContext, useEffect, useState} from 'react';
+import {useMutation, useQuery} from '@apollo/client';
+import {Button, Divider, Form, Space} from 'antd';
 import {
     STAGES_QUERY_COMPACT
-} from '../../../graphql/queriesCompact';
+} from '../../graphql/queriesCompact';
 
-import StageItem from "./StageItem";
+import StageItem from "./components/StageItem";
 import {PlusOutlined} from "@ant-design/icons";
 import dayjs from "dayjs";
-import StagesListHeader from "./StagesListHeader";
-import StagesListFooter from "./StagesListFooter";
-import {StyledButtonGreen} from "../../components/style/ButtonStyles";
-import StageModalForm from "../../components/modal/StageModalForm";
+import StagesListHeader from "./components/StagesListHeader";
+import StagesListFooter from "./components/StagesListFooter";
+import {StyledButtonGreen} from "../components/style/ButtonStyles";
+import StageModalForm from "../components/modal/StageModalForm";
+import {
+    rebuildStagesResultQuery,
+    rebuildStagesToQuery
+} from "../components/script/rebuildData/ProjectRebuilderQuery";
+import {UPDATE_STAGES_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
+import {NotificationContext} from "../../NotificationProvider";
 
-const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, project}) => {
+const Index = ({onCompleted, project}) => {
 
     // Первичные данные
 
@@ -23,39 +29,50 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
     const [totalToPercent, setTotalToPercent] = useState(0);
     const [totalToDuration, setTotalToDuration] = useState(0);
     const [stageModalStatus, setStageModalStatus] = useState(null);
+     const [isChangeStageNumber, setIsChangeStageNumber] = useState(true);
+    const {openNotification} = useContext(NotificationContext);
 
-    const [isChangeStageNumber, setIsChangeStageNumber] = useState(true);
+    const [mutateStage] = useMutation(UPDATE_STAGES_TO_PROJECT_MUTATION, {
+        onCompleted: (data) => {
+            openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
+            console.log("upd data data data ",data);
+            onCompleted && onCompleted();
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при выполнении создания этапа : ${error.message}`);
+        },
+    });
+     const load = () => {
+        console.log("load", project.project_stages);
+        if (project.project_stages) {
+            let stageList = project.project_stages && Object.values(project.project_stages)
+                .map((row) => ({
+                    ...row,
+                    date_range: {
+                        dateStart: row?.date_start ? dayjs(row?.date_start) : null,
+                        dateEnd: row?.date_end ? dayjs(row?.date_end) : null,
+                        duration: row?.duration ?? null
+                    },
+                    stage: {selected: row?.stage?.id, output: row?.stage?.name},
+                }));
 
-    const load = () => {
-        console.log("load", actualStages);
-        let stageList = actualStages && Object.values(actualStages)
-            .map((row) => ({
-                ...row,
-                date_range: {
-                    dateStart: row?.date_range?.dateStart ? dayjs(row?.date_range?.dateStart) : null,
-                    dateEnd: row?.date_range?.dateEnd ? dayjs(row?.date_range?.dateEnd) : null,
-                    duration: row?.date_range?.duration ?? null
-                }
-            }));
+            if (isChangeStageNumber) {
+                console.log("s");
+                stageList = stageList.sort((a, b) => a?.number - b?.number);
+            }
 
-        if (isChangeStageNumber) {
-            console.log("s");
-            stageList = stageList.sort((a, b) => a.number - b.number);
+            form.setFieldsValue({stageList});
         }
-
-        form.setFieldsValue({ stageList });
     };
 
     useEffect(() => {
-        actualStages && load();
-    }, [actualStages]);
+        project && load();
+    }, [project]);
 
     const {loading: loadingStages, error: errorStages, data: dataStages} =
         useQuery(STAGES_QUERY_COMPACT);
 
     const handleChange = () => {
-        console.log("stageFormChange", form.getFieldsValue())
-        updateStages({...form.getFieldValue("stageList")});
         handleFooterUpdate();
     }
     const handleFooterUpdate = () => {
@@ -82,15 +99,16 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
         const [movedItem] = stageList.splice(index, 1);
         stageList.splice(newIndex, 0, movedItem);
 
-        form.setFieldsValue({ stageList });
+        form.setFieldsValue({stageList});
 
         setIsChangeStageNumber(false);
 
         handleChange();
     }
-    useEffect(() => {
-        console.log("project", project);
-    }, [project]);
+    const handleSave = () => {
+        mutateStage({variables: {data: rebuildStagesToQuery(form.getFieldValue("stageList"), project.id)}});
+    }
+
     return (
         <Form layout="vertical" onChange={() => {
             handleChange();
@@ -160,7 +178,7 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
 
                         </Space.Compact>
 
-
+                        <Button onClick={() => handleSave()}>Сохранить</Button>
                     </>
                 )}
             </Form.List>
@@ -171,4 +189,4 @@ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, p
     );
 };
 
-export default StagesProjectForm;
+export default Index;

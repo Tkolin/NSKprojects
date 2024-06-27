@@ -10,6 +10,7 @@ class ProjectStatus extends Model
 {
     protected $fillable = [
         'name',
+        'name_key',
     ];
     public function project(): HasMany
     {

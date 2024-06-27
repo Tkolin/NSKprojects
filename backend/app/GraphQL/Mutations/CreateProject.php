@@ -105,14 +105,14 @@ final readonly class CreateProject
     }
 
             //            $tempTasks = TemplateTasksTypeProject
-            //                ::where('project_type_id', $createNewProject->type_project_document_id)
+            //                ::where('project_type_id', $CreateNewProject->type_project_document_id)
             //                ->get();
             //            if (isset($tempTasks) && $tempTasks->isNotEmpty())
             //                foreach ($tempStage as $key => $value) {
             //                    ProjectTasks::create(
             //                        [
             //                            'task_id' => $tempTasks[$key]->task_id ?? null,
-            //                            'project_id' => $createNewProject->id ?? null,
+            //                            'project_id' => $CreateNewProject->id ?? null,
             //                            'stage_number' => $tempTasks[$key]->stage_number ?? null,
             //                        ]
             //                    );
@@ -128,12 +128,12 @@ final readonly class CreateProject
 }
 //
 //
-//            return $createNewProject;
+//            return $CreateNewProject;
 //        });
 //            }
 //
 //
-//            return $createNewProject;
+//            return $CreateNewProject;
 //        });
     //}
 //}

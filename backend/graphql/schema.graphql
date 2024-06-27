@@ -286,6 +286,7 @@ type Contact {
 type ProjectStatus{
     id: ID!
     name: String!
+    name_key: String!
 }
 type PositionName {
     id: ID!
