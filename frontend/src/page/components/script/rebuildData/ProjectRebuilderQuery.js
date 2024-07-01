@@ -40,7 +40,7 @@ export const rebuildProjectResultQuery = (data) => {
             )
         },
         organization_customer: {selected: data?.organization_customer?.id, output: data?.organization_customer?.name},
-        status_id: data?.status?.id,
+        status_id: data?.status?.name_key,
         type_project_document_id: data?.type_project_document?.id,
         group_type_project_document_id: data?.type_project_document?.group?.id,
     }

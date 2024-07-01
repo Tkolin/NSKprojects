@@ -23,8 +23,7 @@ const TableStages = ({setEditModalStatus,project}) => {
                 <Link type={"warning"}>
                     <EditOutlined
                         onClick={() => setEditModalStatus && setEditModalStatus({
-                            status: "stages",
-                            stages:  project.project_stages ,
+                            type: "stages",
                             project:  project
                         })}/>
                 </Link>

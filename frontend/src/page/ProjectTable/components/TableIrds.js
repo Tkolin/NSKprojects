@@ -22,8 +22,7 @@ const TableIrds = ({setEditModalStatus, project}) => {
                 <Link type={"warning"}>
 
                     <EditOutlined onClick={() => setEditModalStatus && setEditModalStatus({
-                        status: "irds",
-                        irds:  project.project_irds ,
+                        type: "irds",
                         project:  project
                     })}/>
                 </Link>

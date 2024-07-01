@@ -29,20 +29,20 @@ const Index = ({onCompleted, project}) => {
     const [totalToPercent, setTotalToPercent] = useState(0);
     const [totalToDuration, setTotalToDuration] = useState(0);
     const [stageModalStatus, setStageModalStatus] = useState(null);
-     const [isChangeStageNumber, setIsChangeStageNumber] = useState(true);
+    const [isChangeStageNumber, setIsChangeStageNumber] = useState(true);
     const {openNotification} = useContext(NotificationContext);
 
     const [mutateStage] = useMutation(UPDATE_STAGES_TO_PROJECT_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
-            console.log("upd data data data ",data);
+            console.log("upd data data data ", data);
             onCompleted && onCompleted();
         },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при выполнении создания этапа : ${error.message}`);
         },
     });
-     const load = () => {
+    const load = () => {
         console.log("load", project.project_stages);
         if (project.project_stages) {
             let stageList = project.project_stages && Object.values(project.project_stages)
@@ -177,8 +177,9 @@ const Index = ({onCompleted, project}) => {
                             </Button>
 
                         </Space.Compact>
-
-                        <Button onClick={() => handleSave()}>Сохранить</Button>
+                        <Space style={{ justifyContent: "center", width: "100%"}}>
+                            <StyledButtonGreen onClick={() => handleSave()}>Сохранить</StyledButtonGreen>
+                        </Space>
                     </>
                 )}
             </Form.List>

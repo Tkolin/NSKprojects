@@ -71,7 +71,7 @@ export const PASSPORTS_PLACE_ISSUES_QUERY_COMPACT = gql`
 export const PROJECT_STATUSES_QUERY_COMPACT = gql`
     query ProjectStatusesQueryCompact {
         projectStatuses   {
-            id
+            name_key
             name
         }
     }

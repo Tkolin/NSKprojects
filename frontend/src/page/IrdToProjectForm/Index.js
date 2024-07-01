@@ -122,7 +122,9 @@ const Index = ({project,  onCompleted}) => {
                     </>
                 )}
             </Form.List>
-            <StyledButtonGreen onClick={()=>handleSave()}>Сохранить</StyledButtonGreen>
+            <Space style={{ justifyContent: "center", width: "100%"}}>
+                <StyledButtonGreen onClick={() => handleSave()}>Сохранить</StyledButtonGreen>
+            </Space>
             <IrdModalForm
                 onClose={() => setIrdModalStatus(null)}
                 mode={irdModalStatus}/>

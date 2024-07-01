@@ -22,6 +22,7 @@ import {useNavigate} from "react-router-dom";
 import {useMutation, useQuery} from "@apollo/client";
 import {CHANGE_TEMPLATE_TYPE_PROJECT} from "../../../graphql/mutationsProject";
 import {PROJECTS_QUERY} from "../../../graphql/queries";
+import {nanoid} from "nanoid";
 
 const {Text} = Typography;
 
@@ -31,7 +32,10 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
     const [sortField, setSortField] = useState('');
     const [sortOrder, setSortOrder] = useState('');
     const [selectedProject, setSelectedProject] = useState(null);
-    const [editModalStatus, setEditModalStatus] = useState(false);
+    const [editModalStatus, setEditModalStatus] = useState({});
+    useEffect(() => {
+        console.log("editModalStatus", editModalStatus);
+    }, [editModalStatus]);
     const [employeeToStageModalStatus, setEmployeeToStageModalStatus] = useState(false);
     const [projectTasksModalStatus, setProjectTasksModalStatus] = useState(false);
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
@@ -146,12 +150,14 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
                 <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
                     <Link>
                         <Tooltip title={"Изменить данные проекта"}>
-
                             <EditOutlined
-                                onClick={() => setEditModalStatus({
-                                    status: "base",
-                                    project: rebuildProjectResultQuery(record)
-                                })}/>
+                                onClick={() => {
+                                    setEditModalStatus({
+                                        type: "project",
+                                        project: record
+                                    })
+                                    console.log("dsa");
+                                }}/>
                         </Tooltip>
 
                     </Link>
@@ -471,48 +477,47 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
             {/*    </StyledBlockRegular>*/}
             {/*</Modal>*/}
             <Modal
-                key={editModalStatus?.project?.id}
-                open={editModalStatus?.status}
+                key={nanoid()}
+                open={editModalStatus?.type}
                 onCancel={() => setEditModalStatus(null)}
                 footer={null}
-                width={1500}
-                onClose={() => setEditModalStatus(null)}
+                width={editModalStatus?.type === "project" ? 300 : 1200}
+                 onClose={() => setEditModalStatus(null)}
             >
-                {editModalStatus?.status === "base" ? (
+                {editModalStatus?.type === "project" ? (
 
-                        <StyledBlockRegular>
                             <ProjectForm
-                                project={editModalStatus?.project}
-                                onCompleted={setEditModalStatus(null)}/>
+                                style={{width: "300px"}}
 
-                        </StyledBlockRegular>
+                                project={editModalStatus?.project}
+                                onCompleted={()=>refetch() && setEditModalStatus(null)}
+                             //   onCompleted={setEditModalStatus(null)}
+                            />
 
                     ) :
-                    editModalStatus?.status === "irds" ? (
-                            <StyledBlockLarge label={"Список ИРД"}>
+                    editModalStatus?.type === "irds" ? (
                                 <IrdsProjectForm
-                                    onCompleted={setEditModalStatus()}
+                                 //   onCompleted={setEditModalStatus(null)}
+                                    onCompleted={()=>refetch() && setEditModalStatus(null)}
                                     project={editModalStatus?.project}
                                 />
-                                <Divider/>
-
-                            </StyledBlockLarge>) :
-                        editModalStatus?.status === "stages" ? (
-                                <StyledBlockLarge label={"Список этапов "}>
-                                    <StageToProjectForm
-                                        onCompleted={setEditModalStatus()}
+                           ) :
+                        editModalStatus?.type === "stages" ? (
+                                     <StageToProjectForm
+                                       //  onCompleted={setEditModalStatus(null)}
+                                         onCompleted={()=>refetch() && setEditModalStatus(null)}
                                         project={editModalStatus?.project}
                                     />
-                                    <Divider/>
-                                </StyledBlockLarge>)
+
+                    )
                             :
-                            editModalStatus?.status === "tasks" ? (
-                                    <StyledBlockLarge>
+                            editModalStatus?.type === "tasks" ? (
                                         <ProjectTasks
-                                            onCompleted={setEditModalStatus()}
+                                         //   onCompleted={setEditModalStatus(null)}
+                                            onCompleted={()=>refetch() && setEditModalStatus(null)}
                                             project={editModalStatus?.project}
                                         />
-                                    </StyledBlockLarge>)
+                                   )
                                 : null}
             </Modal>
 

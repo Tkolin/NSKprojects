@@ -26,7 +26,7 @@ import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {PlusOutlined} from "@ant-design/icons";
 import {nanoid} from "nanoid";
 import {ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION} from "../../graphql/mutationsProject";
-import {rebuildProjectToQuery} from "../components/script/rebuildData/ProjectRebuilderQuery";
+import {rebuildProjectResultQuery, rebuildProjectToQuery} from "../components/script/rebuildData/ProjectRebuilderQuery";
 import {CustomDatePicker} from "../components/FormattingDateElementComponent";
 
 
@@ -89,11 +89,13 @@ const Index = ({onCompleted, project}) => {
         const load = () => {
             form.setFieldsValue({
                 ...project,
+                ...rebuildProjectResultQuery(project),
                 id: project?.id ?? null,
                 date_signing: project?.date_signing ? dayjs(project?.date_signing) : null,
                 date_end: project?.date_end ? dayjs(project?.date_end) : null,
                 date_create: project?.date_create ? dayjs(project?.date_create) : null,
                 date_completion: project?.date_completion ? dayjs(project?.date_completion) : null,
+
             });
             setSelectedGroupTypeProject(project?.type_project_document?.group?.id);
         }
@@ -103,7 +105,6 @@ const Index = ({onCompleted, project}) => {
         }, [project]);
         useEffect(() => {
             setFormLoad(true)
-            form.setFieldValue("status_id", 1)
         }, []);
         useEffect(() => {
             console.log("countProjectByOrg", countProjectByOrg);
@@ -115,7 +116,7 @@ const Index = ({onCompleted, project}) => {
         const [mutateProject] = useMutation(project?.id ? UPDATE_PROJECT_MUTATION : ADD_PROJECT_MUTATION, {
             onCompleted: (data) => {
                 openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
-                onCompleted && onCompleted(data?.createProject || data?.updateProject);
+                onCompleted && (onCompleted(data?.createProject || data?.updateProject) || onCompleted());
                 },
             onError: (error) => {
                 openNotification('topRight', 'error', `Ошибка при выполнении сооздания : ${error.message}`);
@@ -126,7 +127,10 @@ const Index = ({onCompleted, project}) => {
                 updateNumber();
         }
         const handleSave = () => {
-            mutateProject({variables: {data: rebuildProjectToQuery(form.getFieldsValue())}});
+            const facility_id =  form.getFieldValue("facility_id")?.checkedObjects?.map(row => row?.value[0] ?? null) ??
+                project.facility_id;
+            console.log(facility_id);
+            mutateProject({variables: {data: {...rebuildProjectToQuery(form.getFieldsValue()),facility_id}}});
         }
         const updateNumber = () => {
             const orgCostumer = form.getFieldValue("organization_customer")?.selected;
@@ -152,7 +156,9 @@ const Index = ({onCompleted, project}) => {
             <Form form={form} onChange={() => {
                 handleChange();
                 setFormLoad(true);
-            }} layout="vertical">
+
+            }} layout="vertical"
+                >
                 <EmptyFormItem name={"id"}/>
                 <Form.Item name="number" label="Номер проекта" rules={[{required: true}]}>
                     <Input disabled={true}/>
@@ -276,15 +282,15 @@ const Index = ({onCompleted, project}) => {
                     <Select loading={loadingStatuses}
                         // disabled={!actualObject}
                             onChange={() => handleChange()}
-                            disabled={true}
+                            //disabled={true}
                             placeholder={"В разработке"}>
                         {dataStatuses?.projectStatuses?.map(status => (
-                            <Select.Option key={status.id}
-                                           value={status.id}>{status.name}</Select.Option>))}
+                            <Select.Option key={status.name_key}
+                                           value={status.name_key}>{status.name}</Select.Option>))}
                     </Select>
                 </Form.Item>
                 <Space.Compact style={{width: '100%'}}>
-                    <Form.Item name="price" style={{width: '100%'}} label="Стоимость" status_id>
+                    <Form.Item name="price" style={{width: '100%'}} label="Стоимость">
                         <InputNumber suffix={"₽"} style={{width: '100%'}}
                                      formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                      parser={value => `${value}`.replace(/[^0-9]/g, '')}/>
@@ -295,8 +301,9 @@ const Index = ({onCompleted, project}) => {
                     </Form.Item>
                 </Space.Compact>
 
-                <StyledButtonGreen onClick={() => handleSave()}>Сохранить</StyledButtonGreen>
-
+                <Space style={{ justifyContent: "center", width: "100%"}}>
+                    <StyledButtonGreen onClick={() => handleSave()}>Сохранить</StyledButtonGreen>
+                </Space>
 
             </Form>
 
