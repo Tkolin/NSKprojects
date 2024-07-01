@@ -149,7 +149,7 @@ const Index = ({onCompleted, project}) => {
         if (errorStatuses || errorTypeProject || errorDelegates || errorOrganizations) return `Ошибка! ${errorStatuses?.message || errorTypeProject?.message || errorDelegates?.message || errorOrganizations?.message}`;
 
         return (<div>
-            <Form onFinish={() => onCompleted && onCompleted()} form={form} onChange={() => {
+            <Form form={form} onChange={() => {
                 handleChange();
                 setFormLoad(true);
             }} layout="vertical">

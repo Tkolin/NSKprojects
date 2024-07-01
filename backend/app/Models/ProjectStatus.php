@@ -12,9 +12,9 @@ class ProjectStatus extends Model
         'name',
         'name_key',
     ];
-    public function project(): HasMany
+    public function projects(): HasMany
     {
-        return $this->hasMany(Project::class);
+        return $this->hasMany(Project::class, 'status_id', 'name_key');
     }
 
 }

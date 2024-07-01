@@ -95,7 +95,7 @@ export const PASSPORTS_PLACE_ISSUES_QUERY_BY_ID = gql`
 export const PROJECT_STATUSES_QUERY_BY_ID = gql`
     query ProjectStatusesQueryByID ( $id: ID){
         projectStatuses   {
-            id
+            name_key
             name
         }
     }
@@ -230,7 +230,7 @@ export const PROJECTS_QUERY_BY_ID = gql`
                 date_end
                 date_create
                 status {
-                    id
+                    name_key
                     name
                 }
                 date_completion
@@ -339,6 +339,32 @@ export const STAGES_QUERY_BY_ID = gql`
     }
 `;
 export const CONTACTS_QUERY_BY_ID = gql`
+    query ContactsQueryByID  ( $id: ID){
+        contacts(queryType: "BY_ID", id: $id) {
+            items {
+                id
+                first_name
+                last_name
+                patronymic
+                birth_day
+                work_phone
+                work_email
+                mobile_phone
+                email
+                position {
+                    id
+                    name
+                }
+                organization {
+                    id
+                    name
+                }
+            }
+        }
+    }
+`;
+//TODO: Нету
+export const REQUEST_QUERY_BY_ID = gql`
     query ContactsQueryByID  ( $id: ID){
         contacts(queryType: "BY_ID", id: $id) {
             items {

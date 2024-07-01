@@ -8,23 +8,30 @@
 }
 
 .my-ant-table-row-archive {
-    background-color: #d9d9d9; /* или любой другой стиль для активной строки */
+    background-color: #eeeeee; /* или любой другой стиль для активной строки */
 }
-
-.my-ant-table-row-development {
-    background-color: #cce6ff; /* или любой другой стиль для активной строки */
-}
-
-.my-ant-table-row-examination {
-    background-color: #ffd591; /* или любой другой стиль для активной строки */
-}
-
 .my-ant-table-row-completed {
-    background-color: #d9f7be; /* или любой другой стиль для активной строки */
+    background-color: #eeeeee; /* или любой другой стиль для активной строки */
 }
 
-.my-ant-table-row-customer_approval {
-    background-color: #fff566; /* или любой другой стиль для активной строки */
+.my-ant-table-row-working {
+    background-color: #f2f9ff; /* или любой другой стиль для активной строки */
+}
+
+.my-ant-table-row-approval_agreement {
+    background-color: #fcfbf0; /* или любой другой стиль для активной строки */
+
+}
+
+.my-ant-table-row-waiting_source {
+    background-color: #f8fff2; /* или любой другой стиль для активной строки */
+}
+
+.my-ant-table-row-approval_kp {
+    background-color: #fff2f2; /* или любой другой стиль для активной строки */
+}
+.my-ant-table-row-design_request {
+    background-color: #f7f2ff; /* или любой другой стиль для активной строки */
 
 }
 
@@ -40,27 +47,37 @@
 }
 
 .my-ant-table-row-archive:hover .ant-table-cell {
-    background-color: #e6e6e6 !important;
+    background-color: #eeeeee !important;
 
 }
-
-.my-ant-table-row-development:hover .ant-table-cell {
-    background-color: #b3d9ff !important;
-
-}
-
-.my-ant-table-row-examination:hover .ant-table-cell {
-    background-color: #ffebcc !important;
-
-}
-
 .my-ant-table-row-completed:hover .ant-table-cell {
-    background-color: #cce8b5 !important;
+    background-color: #eeeeee !important;
 
 }
 
-.my-ant-table-row-customer_approval:hover .ant-table-cell {
-    background-color: #ffffb3 !important;
+.my-ant-table-row-working:hover .ant-table-cell {
+    background-color: #f2f9ff !important;
+
+}
+
+.my-ant-table-row-approval_agreement:hover .ant-table-cell {
+    background-color: #fcfbf0 !important;
+
+}
+
+.my-ant-table-row-waiting_source:hover .ant-table-cell {
+    background-color: #f8fff2 !important;
+
+}
+
+.my-ant-table-row-approval_kp:hover .ant-table-cell {
+    background-color: #fff2f2 !important;
+
+
+}
+.my-ant-table-row-design_request:hover .ant-table-cell {
+    background-color: #f7f2ff !important;
+
 
 }
 

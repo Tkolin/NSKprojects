@@ -1,7 +1,7 @@
 <?php
 
 namespace App\GraphQL\Queries;
-use App\Models\Person;
+use App\Models\ProjectStatus;
 use App\Models\Project;
 use App\Services\GrpahQL\QueryService;
 
@@ -43,6 +43,9 @@ final readonly class Projects
         $projectsQuery = $queryService->buildQueryOptions($projectsQuery, $args['queryOptions'],$searchColumns);
 
         $count = $projectsQuery->count();
+        if (isset($args["projectStatuses"])) {
+            $projectsQuery->where('status_id', $args["projectStatuses"]);
+        }
         $projects = $queryService->paginate($projectsQuery, $args['queryOptions']['limit'], $args['queryOptions']['page']);
         return ['items' => $projects, 'count' => $count];
     }

@@ -48,7 +48,7 @@ export const ADD_PROJECT_MUTATION = gql`
             date_end
             date_create
             status {
-                id
+                name_key
                 name
             }
             date_completion
@@ -142,7 +142,7 @@ export const UPDATE_PROJECT_MUTATION = gql`
             date_end
             date_create
             status {
-                id
+                name_key
                 name
             }
             date_completion

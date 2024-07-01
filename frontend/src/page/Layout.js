@@ -96,6 +96,20 @@ const CustomLayout = ({children, currentUser, la}) => {
         const roleName = data.currentUser.role.name;
         items.push(
             hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
+            && getItem('Проекты', '/request', <ProfileOutlined/>, [
+                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
+                && getItem('Зарегистрировать заявку', '/request/new', null, null),
+                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
+                && getItem('Список заявок', '/project/table/request', null, null),
+                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
+                && getItem('Проекты на согласовании КП', '/project/table/kp', null, null),
+                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
+                && getItem('Проекты на согласовании договора', '/project/table/contract', null, null),
+                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
+
+            ]),
+
+            hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
             && getItem('Справочники', '/table', <ProfileOutlined/>, [
                 hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
                 && getItem('Контакты', '/table/contacts', null, null),
@@ -109,8 +123,6 @@ const CustomLayout = ({children, currentUser, la}) => {
                 && getItem('Типы документации', '/table/type_projects', null, null),
                 hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','OFF_WORKER','FIN_DIR','PROGRAMMER'])
                 && getItem('Этапы проекта', '/table/stage_projects', null, null),
-                // hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','FIN_DIR','PROGRAMMER'])
-                // && getItem('Разделы технического задания', '/table/technical', null, null),
             ]),
             hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','OFF_WORKER','BOOKMAKER','FIN_DIR','PROGRAMMER'])
             && getItem('Формы', '/form/', <FormOutlined/>, [

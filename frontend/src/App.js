@@ -27,6 +27,8 @@ import RegisterPage from "./page/simplesForms/RegisterPage";
 import LoginPage from "./page/simplesForms/loginPage";
 import {NotificationProvider} from "./NotificationProvider";
 import moment from "moment";
+import RequestPage from "./page/simplesForms/RequestPage";
+import ProjectTableComponent from "./page/ProjectTable/components/ProjectTableComponent";
 
 
 const App = () => {
@@ -54,12 +56,21 @@ const App = () => {
                     <CustomLayout currentUser={currentUser}>
                         <Routes>
                             <Route path="/" element={<Home/>}/>
+                            <Route path="/request/new" element={<RequestPage/>}/>
+                            <Route path="/project/table/request" element={<ProjectTableComponent projectStatuses={"DESIGN_REQUEST"}/>}/>
+                            <Route path="/project/table/kp" element={<ProjectTableComponent projectStatuses={"APPROVAL_KP"}/>}/>
+                            <Route path="/project/table/contract" element={<ProjectTableComponent projectStatuses={"APPROVAL_AGREEMENT"}/>}/>
+
+
+
                              {/*<Route path="/test2" element={<Test2/>}/>*/}
                             <Route path="/form/contact" element={<ContactPage/>}/>
                             <Route path="/form/persons" element={<PersonPage/>}/>
                             <Route path="/form/organizations" element={<OrganizationPage/>}/>
                             <Route path="/form/new_project" element={<CreateNewProject/>}/>
                             <Route path="/form/tasks_project" element={<DistributionTasksByProject/>}/>
+
+
 
                             <Route path="/table/contacts" element={<ContactTable/>}/>
                             <Route path="/table/persons" element={<PersonTable/>}/>

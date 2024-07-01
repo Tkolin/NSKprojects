@@ -11,7 +11,7 @@ type Query {
     irds(id: ID, queryOptions: QueryOptions, queryType: String): IrdsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     stages(id: ID, queryOptions: QueryOptions, queryType: String): StagesResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     tasks(id: ID, queryOptions: QueryOptions, queryType: String): TasksResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
-    projects(id: ID, queryOptions: QueryOptions, queryType: String, projectId: ID): ProjectsResult
+    projects(id: ID, queryOptions: QueryOptions, queryType: String, projectId: ID, projectStatuses: String): ProjectsResult
     persons(id: ID, queryOptions: QueryOptions, queryType: String): PersonsResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     biks(id: ID, queryOptions: QueryOptions, queryType: String): BikResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     passportPlaceIssues(id: ID, queryOptions: QueryOptions, queryType: String): PassportPlaceIssueResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
@@ -28,6 +28,7 @@ type Query {
     projectStages( projectId: ID): [ProjectStage] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     projectTasksQuery(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [ProjectTask] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     projectSectionReferences(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [ProjectSectionReference] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    projectsStatistic: [ProjectStatistic] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
 
     formulaByKey(id: ID, queryOptions: QueryOptions ,keys: [String!]): FormulaResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     references(id: ID, queryOptions: QueryOptions): ReferenceResult @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
@@ -284,7 +285,6 @@ type Contact {
     organization: Organization
 }
 type ProjectStatus{
-    id: ID!
     name: String!
     name_key: String!
 }
@@ -437,6 +437,9 @@ type ProjectSectionReference{
     project: Project
     section_reference: SectionReference
     values: String
+}type ProjectStatistic{
+    status: ProjectStatus
+    project_ids: [ID]
 }
 type TypeProjectDocument{
     id: ID!

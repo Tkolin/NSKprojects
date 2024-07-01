@@ -1,40 +1,53 @@
 import React from 'react';
-import {Space} from "antd";
+import {Card, Col, Row, Space, Statistic} from "antd";
+import {ArrowDownOutlined, ArrowUpOutlined} from "@ant-design/icons";
+import {useQuery} from "@apollo/client";
+import {STATUS_PROJECTS_QUERY} from "../../../graphql/queriesSpecial";
+import LoadingSpinnerStyles from "../../components/style/LoadingSpinnerStyles";
 
-const LegendItem = ({ color, text , backgroundImage}) => (
-    <div style={{
-        backgroundImage: backgroundImage,
-        backgroundColor: color,
-        padding: '8px',
-        marginBottom: '4px',
-        borderRadius: '4px',
-        color: '#000',
-        display: 'flex',
-        alignItems: 'center'
-    }}>
-        {text}
-    </div>
+const LegendItem = ({color, text, value}) => (
+    <Card bordered={false}
+          style={{
+              height: "150px",
+              backgroundColor: color,
+              marginBottom: 20
+          }}>
+        <Statistic
+            title={text}
+            value={value}
+        />
+    </Card>
 );
 
 const StatusLegend = () => {
-    const legendItems = [
-        { status: 'ARCHIVE', color: '#d9d9d9', text: 'В Архиве' },
-        { status: 'DEVELOPMENT', color: '#cce6ff', text: 'В разработке' },
-        { status: 'EXAMINATION', color: '#ffd591', text: 'В экспертизе' },
-        { status: 'COMPLETED', color: '#d9f7be', text: 'Выполнен' },
-        { status: 'CUSTOMER_APPROVAL', color: '#fff566', text: 'На согласовании Заказчиком' },
-        { status: 'DANGER', backgroundImage: 'linear-gradient(90deg, #ff4d4d 1%, rgba(182, 238, 174, 0) 5%)', text: 'Просрочка по срокам' },
-        { status: 'WARNING', backgroundImage: 'linear-gradient(90deg, rgb(255, 162, 81) 1%, rgba(182, 238, 174, 0) 5%)', text: 'Ожидание действий' }
+    const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(STATUS_PROJECTS_QUERY);
 
-    ];
-
+    const legendItems = ({
+        'ARCHIVE': {color: '#eeeeee', text: 'В Архиве', disable: true},
+        'COMPLETED': {color: '#eeeeee', text: 'Завершён'},
+        'DESIGN_REQUEST': {color: '#f7f2ff', text: 'Запрос на проектирование'},
+        'APPROVAL_KP': {color: '#fff2f2', text: 'Согласование КП'},
+        'APPROVAL_AGREEMENT': {color: '#fcfbf0', text: 'Согласование договора'},
+        'WAITING_SOURCE': {color: '#f8fff2', text: 'Ожидание исходных материалов'},
+        'WORKING': {color: '#f2f9ff', text: 'В работе'}
+    });
     return (
-        <Space.Compact direction={"vertical"} >
-            {legendItems.map(item => (
-                <LegendItem key={item.status} color={item?.color ?? null} text={item.text}
-                            backgroundImage={item?.backgroundImage ?? null}/>
+        <Row gutter={5}>
+
+            {data?.projectsStatistic?.map(item => (
+
+                item.status.name_key !== 'ARCHIVE' ? (
+                    <Col span={4}>
+                        <LegendItem key={item?.status?.name_key}
+                                    color={legendItems[item?.status?.name_key]?.color ?? null}
+                                    text={item?.status?.name}
+                                    value={item?.project_ids?.length ?? 0}
+                        />
+                    </Col>) : (<></>)
+
             ))}
-        </Space.Compact>
+        </Row>
+
     );
 };
 

@@ -2,17 +2,16 @@ import {useState} from 'react';
 import {Spin} from 'antd';
 import {LoadingOutlined} from '@ant-design/icons';
 
-const GrowingTree = () => {
+const GrowingTree = ({style}) => {
     const [size, setSize] = useState(0);
 
     const startGrowing = () => {
-        setSize(100); // Установите желаемую высоту дерева
+        setSize(100); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     };
 
     return (
-        <div>
 
-            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: "25"}}>
                 <Spin
                     indicator={
                         <LoadingOutlined
@@ -25,8 +24,7 @@ const GrowingTree = () => {
                     }
                 />
             </div>
-        </div>
-    );
+     );
 };
 
 export default GrowingTree;

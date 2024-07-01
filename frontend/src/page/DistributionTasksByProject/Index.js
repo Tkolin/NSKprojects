@@ -11,7 +11,7 @@ import {PROJECTS_QUERY_BY_ID} from "../../graphql/queriesByID";
 import TasksChartForm from "./components/TasksChartForm";
 import TasksToProjectForm from "./components/TasksToProjectForm";
 
-const Index = ({project, onChange}) => {
+const Index = ({project, onCompleted}) => {
     const {openNotification} = useContext(NotificationContext);
     const {token} = theme.useToken();
     // Хранилище
@@ -167,7 +167,7 @@ const Index = ({project, onChange}) => {
                     (
                         <StyledBlockLarge label={"Первичная настройка задач"}>
                              <NewTasksToProjectForm
-                                onChange={onChange && onChange()}
+                                onCompleted={onCompleted && onCompleted()}
                                 actualProject={project}
                                 setLoading={setLoading}/>
                         </StyledBlockLarge>
@@ -178,7 +178,7 @@ const Index = ({project, onChange}) => {
                     current === 1 ? (
                             <StyledBlockLarge label={"Распределение задач по сотрудникам"}>
                                 <EmployeeToTasksForm
-                                    onChange={() => onChange && onChange()}
+                                    onCompleted={() => onCompleted && onCompleted()}
                                     actualProject={project}
                                     setLoading={setLoading}/>
                             </StyledBlockLarge>

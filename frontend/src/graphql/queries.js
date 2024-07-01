@@ -129,7 +129,7 @@ export const PASSPORTS_PLACE_ISSUES_QUERY = gql`
 export const PROJECT_STATUSES_QUERY = gql`
     query ProjectStatuses {
         projectStatuses  {
-            id
+            name_key
             name
         }
     }
@@ -245,8 +245,8 @@ export const TYPES_PROJECTS_QUERY = gql`
     }
 `;
 export const  PROJECTS_QUERY = gql`
-    query ProjectQuery($queryOptions: QueryOptions, $projectId: ID) {
-        projects (queryOptions: $queryOptions, projectId: $projectId) {
+    query ProjectQuery($queryOptions: QueryOptions, $projectId: ID, $projectStatuses: String) {
+        projects (queryOptions: $queryOptions, projectId: $projectId, projectStatuses: $projectStatuses) {
             items{
                 id
                 number
@@ -296,8 +296,7 @@ export const  PROJECTS_QUERY = gql`
                 prepayment
                 status
                 {
-                    id
-                    name
+                     name
                     name_key
                 }
                 date_completion

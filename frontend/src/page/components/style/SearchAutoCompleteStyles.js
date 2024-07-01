@@ -167,9 +167,9 @@ const CustomAutoCompleteAndCreateWitchEdit = ({
                                                   secondBtnOnClick,
                                                   formatOptionText,
                                                   mode,
-
-                                                  secondDisable,
                                                   data,
+                                                  secondDisable,
+
                                                   value,
                                                   onChange,
                                                   typeData

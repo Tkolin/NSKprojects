@@ -7,6 +7,13 @@ extend type Mutation{
         data: ProjectInput
         templates: ProjectTemplatesSetting
     ): Project! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    updateRequests(
+        data: RequestInput
+    ): Project! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    createRequests(
+        data: RequestInput
+
+    ): Project! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateSectionReferenceToProject(
         items: [SectionReferencesToProject]
     ): Int @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
@@ -159,7 +166,7 @@ input ProjectInput {
     duration: Int
     date_end: String
     date_create: String
-    status_id: ID
+    status_id: String
     date_completion: String
     price: Int!
     prepayment: Int!
@@ -235,5 +242,15 @@ input IrdToProject {
     stageNumber: Int
     applicationProject: Int
     receivedDate: String
+}
+input RequestInput {
+    name: ID!
+    organization_id: ID!
+    type_project: ID
+    contact_id: ID!
+    message: String
+    number_message: String!
+    date_send: String!
+    file_name: String
 }
 
