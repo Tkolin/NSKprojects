@@ -21,8 +21,11 @@ class ProjectOrderGeneratorService
         copy($templateFilePath, $tempFilePath);
 
         $templateProcessor = new TemplateProcessor($tempFilePath);
+        $date = date('Y-m-d');
+        error_log("Сегодняшняя дата: " . $date);
+//        $date = $project["date_create"];
+//        error_log('.=fa'.$date);
 
-        $date = $project["date_create"];
         $dateComponents = explode('-', $date);
 
         $year = $dateComponents[0] ?? "__";

@@ -25,7 +25,8 @@ class TaskExecutorContractGeneratorService
 
         // Получение пути к шаблону документа
         $templateFilePath = storage_path('app/templates/PersonContractToProject.docx');
-
+        $date = date('Y-m-d');
+        error_log("Сегодняшняя дата: " . $date);
         // Создание временного файла копии шаблона
         $tempFilePath = tempnam(sys_get_temp_dir(), 'contractToProject');
         copy($templateFilePath, $tempFilePath);

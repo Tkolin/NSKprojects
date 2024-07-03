@@ -226,6 +226,7 @@ input TasksToProject {
     project_id: ID!
     project_task_inherited_id: ID
     task_id: ID
+    price: Float
     stage_number: Int
     date_start: String
     date_end: String

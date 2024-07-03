@@ -1,4 +1,4 @@
-import {Divider, Form, Modal, notification, Popconfirm, Row, Space, Table, Tooltip, Typography} from "antd";
+import {Card, Divider, Form, Modal, notification, Popconfirm, Row, Space, Table, Tooltip, Typography} from "antd";
 import Title from "antd/es/typography/Title";
 import Search from "antd/es/input/Search";
 import {StyledBlockLarge, StyledBlockRegular} from "../../components/style/BlockStyles";
@@ -31,12 +31,10 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
     const [limit, setLimit] = useState(10);
     const [sortField, setSortField] = useState('');
     const [sortOrder, setSortOrder] = useState('');
-    const [selectedProject, setSelectedProject] = useState(null);
     const [editModalStatus, setEditModalStatus] = useState({});
     useEffect(() => {
         console.log("editModalStatus", editModalStatus);
     }, [editModalStatus]);
-    const [employeeToStageModalStatus, setEmployeeToStageModalStatus] = useState(false);
     const [projectTasksModalStatus, setProjectTasksModalStatus] = useState(false);
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
     const [currentSort, setCurrentSort] = useState({});
@@ -86,6 +84,20 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
     const createTemplate = (projectId, typeProjectId) => {
         if (projectId && typeProjectId)
             mutateChangeTemplate({variables: {typeProject: typeProjectId, newTemplate: projectId}});
+    }
+    const getNameModalView = (type) => {
+        switch (type) {
+            case 'project':
+                return "Данные проекта";
+            case 'irds':
+                return "Список ИРД";
+            case 'stages':
+                return "Список этапов";
+            case 'tasks':
+                return "Список задач";
+            default:
+                return null;
+        }
     }
 // Таблица
     const columnProgress = (status) => {
@@ -361,8 +373,8 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
             <Space.Compact style={{width: "100%", margin: 0}}>
                 <TableStages project={project} setEditModalStatus={setEditModalStatus}/>
                 <TableIrds project={project} setEditModalStatus={setEditModalStatus}/>
-                <TableExecutors project={project} setEditModalStatus={setEditModalStatus}/>
-            </Space.Compact>
+                     <TableExecutors project={project} setEditModalStatus={setEditModalStatus}/>
+             </Space.Compact>
         )
     }
 
@@ -440,88 +452,51 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
                 })}
                 footer={null}
                 width={1400}
-
+                title={"Создание задач"}
                 onClose={() => setProjectTasksModalStatus({
                     project_id: null,
                     mode: null,
                 })}
             >
-                <StyledBlockLarge label={"Создание задач"}>
-                    <ProjectTasks onChange={() => refetch()}
-                                  project={data?.projects?.items?.find(row => row.id === projectTasksModalStatus.project_id)}/>
-                </StyledBlockLarge>
+                <ProjectTasks onChange={() => refetch()}
+                              project={data?.projects?.items?.find(row => row.id === projectTasksModalStatus.project_id)}/>
             </Modal>
-            {/*<Modal*/}
-            {/*    key={employeeToStageModalStatus.projectId}*/}
-            {/*    open={employeeToStageModalStatus?.mode}*/}
-            {/*    onCancel={() => setEmployeeToStageModalStatus({*/}
-            {/*        projectId: null,*/}
-            {/*        tasks: null,*/}
-            {/*        mode: null,*/}
-            {/*        stageNumber: null*/}
-            {/*    })}*/}
-            {/*    footer={null}*/}
-            {/*    width={500}*/}
-            {/*    onClose={() => setEmployeeToStageModalStatus({*/}
-            {/*        projectId: null,*/}
-            {/*        tasks: null,*/}
-            {/*        mode: null,*/}
-            {/*        stageNumber: null*/}
-            {/*    })}*/}
-            {/*>*/}
-            {/*    <StyledBlockRegular label={"Список исполнителей"}>*/}
-            {/*        <PersonsByStagesCompactForm tasks={data?.projects?.find(row=>row.id === employeeToStageModalStatus.projectId).project_tasks}*/}
-            {/*                                    stageNumber={employeeToStageModalStatus.stageNumber}*/}
-            {/*                                    projectId={employeeToStageModalStatus.projectId}*/}
-            {/*                                    onCompleted={()=>refetch()}/>*/}
-            {/*    </StyledBlockRegular>*/}
-            {/*</Modal>*/}
             <Modal
                 key={nanoid()}
                 open={editModalStatus?.type}
                 onCancel={() => setEditModalStatus(null)}
                 footer={null}
-                width={editModalStatus?.type === "project" ? 300 : 1200}
-                 onClose={() => setEditModalStatus(null)}
+                title={getNameModalView(editModalStatus?.type)}
+                width={editModalStatus?.type === "project" ? 500 : 1300}
+                onClose={() => setEditModalStatus(null)}
             >
-                {editModalStatus?.type === "project" ? (
-
-                            <ProjectForm
-                                style={{width: "300px"}}
-
-                                project={editModalStatus?.project}
-                                onCompleted={()=>refetch() && setEditModalStatus(null)}
-                             //   onCompleted={setEditModalStatus(null)}
-                            />
-
-                    ) :
-                    editModalStatus?.type === "irds" ? (
-                                <IrdsProjectForm
-                                 //   onCompleted={setEditModalStatus(null)}
-                                    onCompleted={()=>refetch() && setEditModalStatus(null)}
-                                    project={editModalStatus?.project}
-                                />
-                           ) :
-                        editModalStatus?.type === "stages" ? (
-                                     <StageToProjectForm
-                                       //  onCompleted={setEditModalStatus(null)}
-                                         onCompleted={()=>refetch() && setEditModalStatus(null)}
-                                        project={editModalStatus?.project}
-                                    />
-
-                    )
-                            :
-                            editModalStatus?.type === "tasks" ? (
-                                        <ProjectTasks
-                                         //   onCompleted={setEditModalStatus(null)}
-                                            onCompleted={()=>refetch() && setEditModalStatus(null)}
-                                            project={editModalStatus?.project}
-                                        />
-                                   )
-                                : null}
+                {renderEditModalContent(editModalStatus, refetch, setEditModalStatus)}
             </Modal>
 
         </div>
     );
 }
+const renderEditModalContent = (editModalStatus, refetch, setEditModalStatus) => {
+    const commonProps = {
+        onCompleted: () => {
+            refetch();
+            setEditModalStatus(null);
+        },
+        project: editModalStatus?.project,
+    };
+
+    switch (editModalStatus?.type) {
+        case 'project':
+            return <ProjectForm style={{width: '500px'}} {...commonProps} />;
+        case 'irds':
+            return <IrdsProjectForm {...commonProps} />;
+        case 'stages':
+            return <StageToProjectForm {...commonProps} />;
+        case 'tasks':
+            return <ProjectTasks {...commonProps} />;
+        default:
+            return null;
+    }
+};
+
 export default ProjectTableComponent;

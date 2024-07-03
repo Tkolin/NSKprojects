@@ -113,17 +113,6 @@ const Index = ({onCompleted, project}) => {
         <Form layout="vertical" onChange={() => {
             handleChange();
         }} form={form}>
-            <Divider style={{margin: 3}}/>
-            <StyledButtonGreen
-                type="dashed"
-                size={"small"}
-                onClick={() => setStageModalStatus("add")}
-                icon={<PlusOutlined/>}
-            >
-                Создать этап
-            </StyledButtonGreen>
-            <Divider style={{margin: 10, marginTop: 3}}/>
-
             <Form.List name="stageList">
                 {(fields, {add, remove}) => (
                     <>
@@ -141,7 +130,7 @@ const Index = ({onCompleted, project}) => {
                                     }}
                                     projectPrice={project?.price ?? 0}
                                     prepayment={project?.prepayment ?? 0}
-
+                                    setStageModalStatus={setStageModalStatus}
                                     key={key}
                                     index={index}
                                     value={name}
@@ -160,23 +149,26 @@ const Index = ({onCompleted, project}) => {
                             </>
 
                         ))}
+
                         <StagesListFooter
                             project={project}
                             totalToDuration={totalToDuration}
-                            totalToPercent={totalToPercent}/>
+                            totalToPercent={totalToPercent} freeCol={
+                                 <Button
+                                    type="primary"
+                                    size={"small"}
+                                    onClick={() => add()}
+                                    style={{width: '100%'}}
+                                    icon={<PlusOutlined/>}
+                                >
+                                    Добавить этап к списку
+                                </Button>
 
 
-                        <Space.Compact style={{width: '100%', marginTop: 10, marginBottom: 10}}>
-                            <Button
-                                type="dashed"
-                                onClick={() => add()}
-                                style={{width: '100%'}}
-                                icon={<PlusOutlined/>}
-                            >
-                                Добавить этап к списку
-                            </Button>
+                        }/>
 
-                        </Space.Compact>
+
+
                         <Space style={{ justifyContent: "center", width: "100%"}}>
                             <StyledButtonGreen onClick={() => handleSave()}>Сохранить</StyledButtonGreen>
                         </Space>
@@ -185,7 +177,14 @@ const Index = ({onCompleted, project}) => {
             </Form.List>
             <StageModalForm
                 onClose={() => setStageModalStatus(null)}
-                mode={stageModalStatus}/>
+                onCompleted={(value)=> {
+                     const newRow = [...form.getFieldValue("stageList")];
+                    newRow[stageModalStatus?.key] = {stage: {selected: value.id, output: value.name}};
+                    form.setFieldValue("stageList",newRow);
+                    setStageModalStatus(null);
+                    //console.log(value)
+                }}
+                mode={stageModalStatus?.mode}/>
         </Form>
     );
 };

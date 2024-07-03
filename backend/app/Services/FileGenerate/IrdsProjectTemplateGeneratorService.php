@@ -26,7 +26,9 @@ class IrdsProjectTemplateGeneratorService
         //   $year = $dateComponents[0];
         //   $month = $dateComponents[1];
         //   $day = $dateComponents[2];
-        $date = $project["date_create"];
+        $date = date('Y-m-d');
+        error_log("Сегодняшняя дата: " . $date);
+//        $date = $project["date_create"];
         $dateComponents = explode('-', $date);
 
         $year = $dateComponents[0] ?? "__";

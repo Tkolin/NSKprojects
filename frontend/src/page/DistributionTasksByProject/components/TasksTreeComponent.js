@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Tree} from 'antd';
 
 const App = ({value, onChange, onSelect, draggable, selectable, multiple, checkable, onCheck}) => {
@@ -48,19 +48,20 @@ const App = ({value, onChange, onSelect, draggable, selectable, multiple, checka
     return (
         <Tree
             checkable={checkable}
-            onCheck={(value) => {
-                //console.log("..onCheck",value)
-                onCheck && onCheck(value)
-            }
-            }
+
+            showLine={true}
             className="draggable-tree"
             draggable={draggable}
             multiple={multiple}
             blockNode
+
+            onCheck={(value) => {
+                 onCheck && onCheck(value)
+            }}
+
             selectable={selectable}
             onSelect={(value) => {
-                //console.log("treeComponent onSelected", value)
-                onSelect && onSelect(value)
+                 onSelect && onSelect(value)
             }}
             onDrop={onDrop}
             treeData={value}

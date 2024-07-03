@@ -62,8 +62,7 @@ const IrdForm = ({localObject, initialObject, onCompleted }) => {
     if (loading || loadingSave) return <LoadingSpinnerStyles/>
 
     return (
-        <StyledBlockRegular label={nameModel}>
-            <Form form={form} layout="vertical">
+             <Form form={form} layout="vertical">
                 <Form.Item name="name" label="Наименование" rules={[{required: true}]}>
                     <Input/>
                 </Form.Item>
@@ -75,8 +74,7 @@ const IrdForm = ({localObject, initialObject, onCompleted }) => {
                     </Form.Item>
                 </div>
             </Form>
-        </StyledBlockRegular>
-);
+ );
 };
 
 export default IrdForm;

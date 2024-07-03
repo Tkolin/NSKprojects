@@ -50,13 +50,10 @@ class Project extends Model
         return $this->belongsTo(ProjectStatus::class, 'status_id', 'name_key');
     }
 
-    public function project_responsible_person(): HasMany
-    {
-        return $this->hasMany(ProjectResponsiblePerson::class);
-    }
+
     public function project_stages(): HasMany
     {
-        return $this->hasMany(ProjectStage::class);
+        return $this->hasMany(ProjectStage::class)->orderBy('number');
     }
     public function project_status(): HasMany
     {

@@ -28,7 +28,8 @@ final readonly class CreateTasksToProject
                     "stage_number" => $task["stage_number"],
                     "date_start" => $task["date_start"],
                     "date_end" => $task["date_end"],
-                    "duration" => $task["duration"] ?? (strtotime($task["date_end"]) - strtotime($task["date_start"])) / (60 * 60 * 24),
+                    "duration" => isset($task["duration"]) ? $task["duration"] :
+                        (strtotime($task["date_end"]) - strtotime($task["date_start"])) / (60 * 60 * 24) ?? 0,
 
                     "project_task_inherited_id" => null
 

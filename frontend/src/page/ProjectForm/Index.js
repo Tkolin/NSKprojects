@@ -84,7 +84,6 @@ const Index = ({onCompleted, project}) => {
         }, [dataTypes, selectedGroupTypeProject]);
 
 
-
         // Подгрузка при обновлении
         const load = () => {
             form.setFieldsValue({
@@ -117,7 +116,7 @@ const Index = ({onCompleted, project}) => {
             onCompleted: (data) => {
                 openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
                 onCompleted && (onCompleted(data?.createProject || data?.updateProject) || onCompleted());
-                },
+            },
             onError: (error) => {
                 openNotification('topRight', 'error', `Ошибка при выполнении сооздания : ${error.message}`);
             },
@@ -127,10 +126,10 @@ const Index = ({onCompleted, project}) => {
                 updateNumber();
         }
         const handleSave = () => {
-            const facility_id =  form.getFieldValue("facility_id")?.checkedObjects?.map(row => row?.value[0] ?? null) ??
+            const facility_id = form.getFieldValue("facility_id")?.checkedObjects?.map(row => row?.value[0] ?? null) ??
                 project.facility_id;
             console.log(facility_id);
-            mutateProject({variables: {data: {...rebuildProjectToQuery(form.getFieldsValue()),facility_id}}});
+            mutateProject({variables: {data: {...rebuildProjectToQuery(form.getFieldsValue()), facility_id}}});
         }
         const updateNumber = () => {
             const orgCostumer = form.getFieldValue("organization_customer")?.selected;
@@ -158,7 +157,7 @@ const Index = ({onCompleted, project}) => {
                 setFormLoad(true);
 
             }} layout="vertical"
-                >
+            >
                 <EmptyFormItem name={"id"}/>
                 <Form.Item name="number" label="Номер проекта" rules={[{required: true}]}>
                     <Input disabled={true}/>
@@ -282,7 +281,7 @@ const Index = ({onCompleted, project}) => {
                     <Select loading={loadingStatuses}
                         // disabled={!actualObject}
                             onChange={() => handleChange()}
-                            //disabled={true}
+                        //disabled={true}
                             placeholder={"В разработке"}>
                         {dataStatuses?.projectStatuses?.map(status => (
                             <Select.Option key={status.name_key}
@@ -301,7 +300,7 @@ const Index = ({onCompleted, project}) => {
                     </Form.Item>
                 </Space.Compact>
 
-                <Space style={{ justifyContent: "center", width: "100%"}}>
+                <Space style={{justifyContent: "center", width: "100%"}}>
                     <StyledButtonGreen onClick={() => handleSave()}>Сохранить</StyledButtonGreen>
                 </Space>
 
@@ -313,6 +312,12 @@ const Index = ({onCompleted, project}) => {
             <OrganizationModalForm
                 object={{id: form.getFieldValue("organization_customer")?.selected}}
                 onClose={() => setOrganizationsModalStatus(null)}
+                onCompleted={(value) => {
+                    refetchOrganizations();
+                    form.setFieldValue("organization_customer", {selected: value.id, output: value.name});
+                    setOrganizationsModalStatus(null);
+                    handleChange();
+                }}
                 mode={organizationsModalStatus}/>
             <TypeProjectModalForm
                 key={nanoid()}

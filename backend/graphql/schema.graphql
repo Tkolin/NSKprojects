@@ -57,8 +57,21 @@ input QueryOptions {
     sortField: String
     sortOrder: String
 }
+type Attachment {
+    name: String
+    path: String
+}
 
+type Email {
+    subject: String
+    date: String
+    body: String
+    attachments: [Attachment]
+}
 type Mutation {
+    sendSMS(
+        id: String
+    ): String @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateTask(
         name: String
     ): Task @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])

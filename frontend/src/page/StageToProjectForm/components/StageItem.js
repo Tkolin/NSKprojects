@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {Row, Col, Form, InputNumber, Tooltip, DatePicker, Space} from 'antd';
 import {CaretUpOutlined, CaretDownOutlined, CloseOutlined} from '@ant-design/icons';
-import {CustomAutoComplete} from "../../components/style/SearchAutoCompleteStyles";
+import {CustomAutoComplete, CustomAutoCompleteExtension} from "../../components/style/SearchAutoCompleteStyles";
 import {EmptyFormItem} from "../../components/formComponents/EmptyFormItem";
 import {StyledButtonRed} from "../../components/style/ButtonStyles";
 import DateRangePickerComponent from "../../components/DateRangePickerComponent";
@@ -19,7 +19,8 @@ const StageItem = ({
                        moveItem,
                        removeItem,
                        isFirst,
-                       isLast
+                       isLast,
+                       setStageModalStatus,
                    }) => {
     useEffect(() => {
         handlePriceChange(form.getFieldValue(["stageList", index, "percent"]));
@@ -84,7 +85,10 @@ const StageItem = ({
                 <Col span={10} style={{width: "100%"}}>
                     <Tooltip title="Наименование этапа">
                         <Form.Item name={[index, 'stage']}>
-                            <CustomAutoComplete
+                            <CustomAutoCompleteExtension
+                                visibleMode={"CREATE_WHERE_NON_SELECTED"}
+                                firstBtnOnClick={() =>
+                                    setStageModalStatus({mode: "add",key: index})}
                                 style={{width: "100%"}}
                                 placeholder={"Выбор этапа..."}
                                 data={stagesData}/>

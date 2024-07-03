@@ -29,6 +29,7 @@ import {NotificationProvider} from "./NotificationProvider";
 import moment from "moment";
 import RequestPage from "./page/simplesForms/RequestPage";
 import ProjectTableComponent from "./page/ProjectTable/components/ProjectTableComponent";
+import TestMail from "./page/TestMail";
 
 
 const App = () => {
@@ -69,6 +70,9 @@ const App = () => {
                             <Route path="/form/organizations" element={<OrganizationPage/>}/>
                             <Route path="/form/new_project" element={<CreateNewProject/>}/>
                             <Route path="/form/tasks_project" element={<DistributionTasksByProject/>}/>
+
+
+                            <Route path="/testMail" element={<TestMail/>}/>
 
 
 

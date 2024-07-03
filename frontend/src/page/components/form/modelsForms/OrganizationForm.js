@@ -55,6 +55,7 @@ const OrganizationForm = ({localObject, initialObject, onCompleted}) => {
             openNotification('topRight', 'success', `Создание новой записи в таблице организаций выполнено успешно`);
             form.resetFields();
             setAddress({legal: "", mail: ""});
+            console.log(`Создание новой записи в таблице организаций выполнено успешно`, data?.updateOrganization || data?.createOrganization);
             onCompleted && onCompleted(data?.updateOrganization || data?.createOrganization);
         },
         onError: (error) => {

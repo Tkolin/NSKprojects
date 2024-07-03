@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { InputNumber, Space, DatePicker } from 'antd';
+import {InputNumber, Space, DatePicker, Button} from 'antd';
 import dayjs from 'dayjs';
 import {CustomDatePicker} from "./FormattingDateElementComponent";
+const { RangePicker } = DatePicker;
 
 const DateRangePickerComponent = ({ value = { dateStart: null, dateEnd: null, duration: null }, onChange , maxDate , minDate}) => {
 
@@ -14,6 +15,16 @@ const DateRangePickerComponent = ({ value = { dateStart: null, dateEnd: null, du
         const newDuration = date && value.dateStart ? dayjs(date).diff(value.dateStart, 'day') : value.duration;
         onChange && onChange({ ...value, dateEnd: date, duration: newDuration });
     };
+    const handleDateChange = (date) => {
+         console.log(date);
+         if(!date)
+         {
+             onChange && onChange({ dateStart: null, dateEnd: null, duration: value?.duration ?? 0 });
+            return;
+         }
+        const newDuration = (date[0] && date[1]) ? dayjs(date[1]).diff(dayjs(date[0]), 'day') : 0;
+         onChange && onChange({ dateStart: date[0] ?? null, dateEnd: date[1] ?? null, duration: newDuration });
+    };
 
     const handleDurationChange = (duration) => {
         const newDateEnd = value.dateStart ? dayjs(value.dateStart).add(duration, 'day') : value.dateEnd;
@@ -23,22 +34,30 @@ const DateRangePickerComponent = ({ value = { dateStart: null, dateEnd: null, du
     return (
         <div>
             <Space.Compact style={{ alignItems: 'flex-end' }}>
-                <CustomDatePicker
-                    placeholder="Дата начала"
-                    onChange={handleDateStartChange}
-                    value={value.dateStart}
-                    minDate={minDate  ?? null}
-                    maxDate={value.dateEnd ?? maxDate}
-                />
-                <CustomDatePicker
-                    placeholder="Дата окончания"
-                    onChange={handleDateEndChange}
-                    value={value.dateEnd}
-                    disabledDate={(current) => value.dateStart && current && current < value.dateStart}
-                    minDate={value.dateStart ?? minDate}
-                    maxDate={maxDate ?? null}
+                <RangePicker
+                    placeholder={"Продолжительность"}
+                    value={[value.dateStart, value.dateEnd]}
+                    onChange={handleDateChange}
+                    minDate={minDate}
+                    maxDate={maxDate}
+                 >
 
-                />
+                </RangePicker>
+                {/*<CustomDatePicker*/}
+                {/*    placeholder="Дата начала"*/}
+                {/*    onChange={handleDateStartChange}*/}
+                {/*    minDate={minDate  ?? null}*/}
+                {/*    maxDate={value.dateEnd ?? maxDate}*/}
+                {/*/>*/}
+                {/*<CustomDatePicker*/}
+                {/*    placeholder="Дата окончания"*/}
+                {/*    onChange={handleDateEndChange}*/}
+                {/*    value={value.dateEnd}*/}
+                {/*    disabledDate={(current) => value.dateStart && current && current < value.dateStart}*/}
+                {/*    minDate={value.dateStart ?? minDate}*/}
+                {/*    maxDate={maxDate ?? null}*/}
+
+                {/*/>*/}
                 <InputNumber
                     placeholder="Продолжительность"
                     formatter={(value) => `${value}`.replace(/[^0-9]/g, '')}

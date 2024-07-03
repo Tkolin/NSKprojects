@@ -29,6 +29,14 @@ export const ADD_TYPE_PROJECTS_MUTATION = gql`
             }
         }
     }
+`;export const SEND_SMS = gql`
+    mutation sendSMS(
+        $id: String!,
+    ) {
+        sendSMS(
+            id: $id
+        )  
+    }
 `;
 export const UPDATE_TYPE_PROJECTS_MUTATION = gql`
     mutation UpdateTypeProject(

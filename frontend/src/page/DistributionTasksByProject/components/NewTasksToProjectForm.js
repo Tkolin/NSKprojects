@@ -1,17 +1,18 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Col, Divider, Form, Row, Space, Typography} from "antd";
+import {Card, Col, Divider, Form, Row, Space, Typography} from "antd";
 import TaskForm from "../../components/form/modelsForms/TaskForm";
 import TasksTreeComponent from "./TasksTreeComponent";
 import {
-    CustomAutoComplete,
+    CustomAutoComplete, CustomAutoCompleteAndCreate,
     CustomAutoCompleteAndCreateWitchEdit
 } from "../../components/style/SearchAutoCompleteStyles";
 import {useMutation, useQuery} from "@apollo/client";
 import {TASKS_QUERY_COMPACT} from "../../../graphql/queriesCompact";
 import LoadingSpinnerStyles from "../../components/style/LoadingSpinnerStyles";
 import {StyledButtonGreen} from "../../components/style/ButtonStyles";
-import {CREATE_TASKS_TO_PROJECT} from "../../../graphql/mutationsTask";
+import {ADD_TASK_MUTATION, CREATE_TASKS_TO_PROJECT, UPDATE_TASK_MUTATION} from "../../../graphql/mutationsTask";
 import {NotificationContext} from "../../../NotificationProvider";
+import {PlusOutlined, SaveOutlined} from "@ant-design/icons";
 
 
 const {Text} = Typography;
@@ -23,6 +24,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
     const {openNotification} = useContext(NotificationContext);
     const [selectedTasksIds, setSelectedTasksIds] = useState([]);
     const [stageTaskArray, setStageTaskArray] = useState([]);
+    // const [addMarker, setAddMarker] = useState();
     // Список задач
     const {
         loading: loadingTasks, error: errorTasks,
@@ -59,12 +61,12 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
                 };
                 if (project.project_tasks.length > 0) {
                     const oldData = project.project_tasks.find(row => {
-                            console.log(row.task.id, " === ",node.key, " : " , (row.task.id === node.key)  );
-                             return ((row.task.id === node.key))
+                            console.log(row.task.id, " === ", node.key, " : ", (row.task.id === node.key));
+                            return ((row.task.id === node.key))
                         }
                     );
                     console.log("oldData", oldData)
-                     task = {...task, date_start: oldData?.date_start, date_end: oldData?.date_end}
+                    task = {...task, date_start: oldData?.date_start, date_end: oldData?.date_end}
                 }
                 result.push(task);
                 if (node.children) {
@@ -187,59 +189,65 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
             )))));
         }
     }, [actualProject]);
+    const [mutate, {loading: loadingSave}] = useMutation(ADD_TASK_MUTATION, {
+        onCompleted: (data) => {
+            refetchTasks();
+            const rowID = mutate.rowID;
+            console.log('rowID', rowID, "data", data);
+            openNotification('topRight', 'success', `Задача создана`);
+            handleSelectTask(rowID, data?.createTask);
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при создании задачи: ${error.message}`);
+        },
+    });
     if (loadingTasks)
         return <LoadingSpinnerStyles/>
 
     return (
         <Row gutter={1}>
             <Col span={24}>
-                <Divider>Создание новой задачи</Divider>
-                <TaskForm onCompleted={() => refetchTasks()}/>
-                <Form form={form} onChange={() => console.log("onChange")}>
-                    <Divider>Список этапов</Divider>
-                    {actualProject?.project_stages?.map((row) => (
-                        <Space.Compact style={{width: "100%"}} direction={"vertical"}>
-                            <div style={{width: "100%"}}>
-                                <Typography.Title level={4}>
-                                    {row?.number ?? "s"}. {row?.stage?.name}. {row?.stage?.task_id}
-                                </Typography.Title>
-                            </div>
-                            <div style={{width: "100%"}}>
-                                <Form.Item name={[row.number, "tasks"]}>
-                                    <TasksTreeComponent draggable/>
-                                </Form.Item>
 
-                                <Form.Item name={[row.number, "task_adder"]} label={"Добавить задачу"}>
-                                    <CustomAutoComplete
-                                        placeholder={"Начните ввод..."}
-                                        loading={loadingTasks}
-                                        saveSelected={false}
-                                        onSelect={(value) => handleSelectTask(row.number, value)}
-                                        data={dataTasks?.tasks?.items.filter((task) =>
-                                            !selectedTasksIds.includes(parseInt(task.id))
-                                        )}
-                                    />
-                                </Form.Item>
-                            </div>
-                            <div style={{width: "100%"}}>
-                                <Divider/>
-                            </div>
-                        </Space.Compact>
+                <Form form={form} onChange={() => console.log("onChange")}>
+                    {actualProject?.project_stages?.map((row) => (
+                        <Card style={{marginBottom: 5, paddingTop: 0}} title={row?.number + " " + row?.stage?.name}>
+                            <Space.Compact style={{width: "100%"}} direction={"vertical"}>
+                                <div style={{width: "100%"}}>
+                                    <Form.Item name={[row.number, "tasks"]}>
+                                        <TasksTreeComponent draggable/>
+                                    </Form.Item>
+
+                                    <Form.Item name={[row.number, "task_adder"]}>
+                                        <CustomAutoCompleteAndCreate
+                                            size={"small"}
+                                            placeholder={"Начните ввод для поиска этапа..."}
+                                            loading={loadingTasks}
+
+                                            firstBtnOnClick={() => {
+                                                mutate.rowID = row.number;
+
+                                                mutate({
+                                                    variables: {name: form.getFieldValue([row.number, "task_adder"])?.output ?? ""}
+                                                })
+                                            }}
+                                            saveSelected={false}
+                                            onSelect={(value) => handleSelectTask(row.number, value)}
+                                            data={dataTasks?.tasks?.items.filter((task) =>
+                                                !selectedTasksIds.includes(parseInt(task.id))
+                                            )}
+                                        />
+                                    </Form.Item>
+                                </div>
+                            </Space.Compact>
+
+                        </Card>
+
                     ))}
-                    <div style={{alignContent: "center", width: "100%"}}>
-                        {/*<StyledButtonGreen onClick={() => {*/}
-                        {/*    console.log("1",*/}
-                        {/*        form.getFieldsValue());*/}
-                        {/*    console.log("2", rebuider(actualProject.project_tasks));*/}
-                        {/*}}>*/}
-                        {/*    Извлеч*/}
-                        {/*</StyledButtonGreen> */}
-                        <StyledButtonGreen
-                            onClick={() =>
-                                handleSubmit()}>
-                            Сохранить
-                        </StyledButtonGreen>
-                    </div>
+                    <Space style={{justifyContent: "center", width: "100%", marginTop: 10}}>
+                        <StyledButtonGreen onClick={() => handleSubmit()} icon={<SaveOutlined/>}>Сохранить</StyledButtonGreen>
+                    </Space>
+
+
                 </Form>
 
             </Col>

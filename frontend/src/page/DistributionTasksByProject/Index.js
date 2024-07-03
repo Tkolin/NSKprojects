@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Steps, theme} from 'antd';
+import {Button, Card, Steps, theme} from 'antd';
 import {StyledBlockLarge} from "../components/style/BlockStyles";
 
 
@@ -9,7 +9,6 @@ import EmployeeToTasksForm from "./components/EmployeeToTasksForm";
 import {useLazyQuery} from "@apollo/client";
 import {PROJECTS_QUERY_BY_ID} from "../../graphql/queriesByID";
 import TasksChartForm from "./components/TasksChartForm";
-import TasksToProjectForm from "./components/TasksToProjectForm";
 
 const Index = ({project, onCompleted}) => {
     const {openNotification} = useContext(NotificationContext);
@@ -146,9 +145,9 @@ const Index = ({project, onCompleted}) => {
                     }
                 ]}
             />
-        {/*    <Button type="primary" onClick={() => console.log("чек еп", project)}>*/}
-        {/*    чек*/}
-        {/*</Button>*/}
+            {/*    <Button type="primary" onClick={() => console.log("чек еп", project)}>*/}
+            {/*    чек*/}
+            {/*</Button>*/}
             <div>
                 {current === 0 ?
 
@@ -165,23 +164,25 @@ const Index = ({project, onCompleted}) => {
                     //             </StyledBlockLarge>
                     //         ) : (
                     (
-                        <StyledBlockLarge label={"Первичная настройка задач"}>
-                             <NewTasksToProjectForm
+                        <Card title={"Первичная настройка задач"}>
+
+                            <NewTasksToProjectForm
                                 onCompleted={onCompleted && onCompleted()}
                                 actualProject={project}
                                 setLoading={setLoading}/>
-                        </StyledBlockLarge>
+                        </Card>
                         //)
                     )
 
                     :
                     current === 1 ? (
-                            <StyledBlockLarge label={"Распределение задач по сотрудникам"}>
+                            <Card title={"Распределение задач по сотрудникам"}>
                                 <EmployeeToTasksForm
                                     onCompleted={() => onCompleted && onCompleted()}
                                     actualProject={project}
                                     setLoading={setLoading}/>
-                            </StyledBlockLarge>
+                            </Card>
+
                         ) :
                         current === 2 ? (
                                 <StyledBlockLarge label={"График ганта"}>
@@ -189,32 +190,6 @@ const Index = ({project, onCompleted}) => {
                                 </StyledBlockLarge>) :
                             <></>
                 }
-            </div>
-            <div
-                style={{
-                    marginTop: 24,
-                }}
-            >
-                {current < 3 - 1 && (
-                    <Button type="primary" onClick={() => next()}>
-                        Вперёд
-                    </Button>
-                )}
-                {current === 3 - 1 && (
-                    <Button type="primary" onClick={() => console.log('Processing complete!')}>
-                        Завершить
-                    </Button>
-                )}
-                {current > 0 && (
-                    <Button
-                        style={{
-                            margin: '0 8px',
-                        }}
-                        onClick={() => prev()}
-                    >
-                        Назад
-                    </Button>
-                )}
             </div>
         </>
 

@@ -3,7 +3,11 @@ import {Row, Col, Form, InputNumber, Tooltip, DatePicker, Space} from 'antd';
 import {
     CloseOutlined,
 } from '@ant-design/icons';
-import {CustomAutoComplete} from "../../components/style/SearchAutoCompleteStyles";
+import {
+    CustomAutoComplete,
+    CustomAutoCompleteAndCreate,
+    CustomAutoCompleteExtension
+} from "../../components/style/SearchAutoCompleteStyles";
 import {StyledButtonRed} from "../../components/style/ButtonStyles";
 
 const IrdItem = ({
@@ -11,20 +15,31 @@ const IrdItem = ({
                      index,
                      irdData,
                      removeItem,
+                     setIrdModalStatus,
                  }) => {
+
     return (
         <Row key={index} gutter={0} style={{marginBottom: 0}}>
             <Space.Compact style={{width: "100%"}}>
                 <Col span={14}>
                     <Tooltip title="Наименование ИРД">
                         <Form.Item name={[index, 'IRD']}>
-                            <CustomAutoComplete
+                            <CustomAutoCompleteExtension
                                 style={{marginBottom: 0, width: "100%"}}
                                 placeholder={"Выбор ИРД..."}
+                                visibleMode={"CREATE_WHERE_NON_SELECTED"}
+                                firstBtnOnClick={() =>
+                                    setIrdModalStatus({mode: "add",key: index})}
                                 data={irdData}
-                                onSelect={()    => onChange && onChange()}
-                                onChange={() =>  onChange && onChange()}
+                                onSelect={() => {
+                                    onChange && onChange();
+                                }}
+                                onChange={() => {
+                                    onChange && onChange()
+                                }}
                             />
+
+
                         </Form.Item>
                     </Tooltip>
                 </Col>
@@ -63,7 +78,7 @@ const IrdItem = ({
                         </Form.Item>
                     </Tooltip>
                 </Col>
-                <Col span={1} >
+                <Col span={1}>
                     <StyledButtonRed icon={<CloseOutlined/>} onClick={() => removeItem && removeItem(index)}/>
                 </Col>
             </Space.Compact>

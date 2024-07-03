@@ -1,22 +1,23 @@
 import {StyledBlockBig} from "../style/BlockStyles";
-import {Modal} from "antd";
+import {Divider, Modal} from "antd";
 import OrganizationForm from "../form/modelsForms/OrganizationForm";
 import React from "react";
+import {nanoid} from "nanoid";
 
 const OrganizationModalForm = ({key,objectId,object,onClose, mode, onCompleted }) => {
 
     return (
         <Modal
-            key={key}
+            key={key ?? nanoid()}
             open={mode === "add" || mode === "edit"}
             onCancel={() => onClose()}
             footer={null}
             onClose={() => onClose()}
-            width={"1000px"}
+            width={"900px"}
         >
-            <StyledBlockBig label={"Организация"}>
-                {mode === "edit" ? (
-                    (object || objectId) && (
+            <Divider>Организация</Divider>
+            {mode === "edit" ? (
+                (object) && (
                         <OrganizationForm
                             localObject={object}
                             onCompleted={() => onClose()}
@@ -26,8 +27,7 @@ const OrganizationModalForm = ({key,objectId,object,onClose, mode, onCompleted }
                 ) : (
                     <OrganizationForm  onCompleted={onCompleted || onClose}/>
                 )}
-            </StyledBlockBig>
-        </Modal>
+         </Modal>
     );
 };
 

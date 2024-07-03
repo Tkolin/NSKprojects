@@ -7,7 +7,7 @@ import moment from "moment/moment";
 const {RangePicker} = DatePicker;
 
 
-const StagesListFooter = ({project, totalToPercent, totalToDuration}) => {
+const StagesListFooter = ({project, totalToPercent, totalToDuration, freeCol}) => {
 
     return (
         <Row gutter={0}>
@@ -16,8 +16,11 @@ const StagesListFooter = ({project, totalToPercent, totalToDuration}) => {
                 <Col span={1} />
                 {/*Номера*/}
                 <Col span={1}/>
-                {/*Наименование этапа*/}
-                <Col span={11}/>
+
+                <Col span={10}>
+                    {/*Наименование этапа*/}
+                    {freeCol}
+                </Col>
                 {/*Даты*/}
                 <Col span={5} style={{justifyContent: "center"}}>
                     <div style={{width: "100%", textAlign: "right"}}>
@@ -44,7 +47,7 @@ const StagesListFooter = ({project, totalToPercent, totalToDuration}) => {
                     {/*</div>*/}
 
                 </Col>
-
+                <Col span={1}/>
                 <Col span={1}>
                     <div style={{width: "100%", textAlign: "center"}}>
                     <Input

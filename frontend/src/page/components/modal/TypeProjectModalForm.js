@@ -1,13 +1,10 @@
 import {StyledBlockRegular} from "../style/BlockStyles";
-import {Modal} from "antd";
+import {Divider, Modal} from "antd";
 import React, {useEffect} from "react";
 import TypeProjectForm from "../form/modelsForms/TypeProjectForm";
 import {nanoid} from "nanoid";
 
 const TypeProjectModalForm = ({key,object,onClose, mode, onCompleted, localObject}) => {
-    useEffect(() => {
-        console.log("modela localObject", localObject);
-    }, [localObject]);
 
     return (
         <Modal
@@ -18,8 +15,9 @@ const TypeProjectModalForm = ({key,object,onClose, mode, onCompleted, localObjec
             onClose={() => onClose(null)}
             width={"600px"}
         >
-            <StyledBlockRegular label={"Тип документации"}>
-                {mode === "edit" ? (
+            <Divider> Тип документации </Divider>
+
+                 {mode === "edit" ? (
                     (object) && (
                         <TypeProjectForm onCompleted={() => onClose(null)}
                                           initialObject={object}/>
@@ -32,8 +30,7 @@ const TypeProjectModalForm = ({key,object,onClose, mode, onCompleted, localObjec
                 ) : (
                     <TypeProjectForm  onCompleted={onCompleted || onClose}/>
                 )}
-            </StyledBlockRegular>
-        </Modal>
+         </Modal>
     );
 };
 

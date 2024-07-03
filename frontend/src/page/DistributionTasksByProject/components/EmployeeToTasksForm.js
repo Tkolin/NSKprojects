@@ -1,7 +1,8 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Col, Divider, Form, Row, Typography} from "antd";
+import {Button, Card, Col, Divider, Form, Row, Space, Typography} from "antd";
 import TasksTreeComponent from "./TasksTreeComponent";
 import TaskProjectForm from "./TaskProjectForm";
+import TasksPriceTotal from "./TasksPriceTotal";
 import {nanoid} from "nanoid";
 import {NotificationContext} from "../../../NotificationProvider";
 
@@ -10,14 +11,38 @@ const {Text} = Typography;
 
 const EmployeeToTasksForm = ({actualProject, setLoading, onChange}) => {
 
-    //Вынести за компонен
+    //Вынести за компонент
     const [form] = Form.useForm();
-    const [checkedTasksId, setCheckedTasksId] = useState([]);
+    const [checkedTasksId, setCheckedTasksId] = useState();
+
     const {openNotification} = useContext(NotificationContext);
 
-    useEffect(() => {
-        console.log(".checkedTasks",checkedTasksId);
-    }, [checkedTasksId]);
+    const isTaskExclusivity = (taskId, projectTasks) => {
+        if (!taskId && !projectTasks) return false;
+        const startTask = projectTasks.find(row => row.id === taskId);
+
+        if (startTask?.executor?.id) return true;
+        return false;
+    }
+    const findMainTask = (taskId, projectTasks) => {
+        if (!taskId && !projectTasks) return;
+        const startTask = projectTasks.find(row => row.id === taskId);
+        if (!startTask) return;
+        if (!startTask.project_task_inherited_id) {
+            console.log("!startTask.project_task_inherited_id: ", !startTask.project_task_inherited_id);
+            return null;
+        }
+        const transparent = (task) => {
+            const inheritedTask = projectTasks.find(row => row.id === task.project_task_inherited_id);
+            if (!inheritedTask) {
+                return task?.executor?.id ? task : null;
+            } else {
+                return transparent(inheritedTask);
+            }
+        }
+        return transparent(startTask);
+    }
+
     const rebuider = (tasks) => {
         const taskMap = {};
         const tree = [];
@@ -28,7 +53,7 @@ const EmployeeToTasksForm = ({actualProject, setLoading, onChange}) => {
         }
 
         // Создаем хэш-таблицу для быстрого доступа к задачам по их ID
-         tasks.forEach((task) => {
+        tasks.forEach((task) => {
             const newTask = {
                 key: task.id,
                 id: task.id,
@@ -53,44 +78,47 @@ const EmployeeToTasksForm = ({actualProject, setLoading, onChange}) => {
     };
 
 
-
     useEffect(() => {
         if (actualProject && actualProject?.project_tasks) {
-             form.setFieldValue("tasks", rebuider(actualProject?.project_tasks))
+            form.setFieldValue("tasks", rebuider(actualProject?.project_tasks))
         }
     }, [actualProject]);
 
 
     return (
         <Form form={form} style={{width: "100%"}} onChange={() => console.log("onChange")}>
+            <Divider>Статистика</Divider>
+            <Space>
+                <TasksPriceTotal data={{
+                    project_tasks: actualProject?.project_tasks,
+                    project_stages: actualProject?.project_stages
+                }}/>
+            </Space>
+            <Divider>Распределение</Divider>
             <Row gutter={4}>
+                <Col span={10}>
+                    <Card title={"Список задач"}>
+                        <Form.Item name={"tasks"}>
+                            <TasksTreeComponent
+                                onSelect={(value) => {
+                                    setCheckedTasksId(value[0] ?? null)
+                                }}
+                            />
+                        </Form.Item>
+                    </Card>
 
-                <Col span={8}>
-                    {/*<Button onClick={() => actualProject && console.log("actualProject", actualProject)}>*/}
-                    {/*    Проверить проект*/}
-                    {/*</Button>*/}
-                    {/*<Button onClick={() => form.setFieldValue("tasks", rebuider(actualProject?.project_tasks))}>*/}
-                    {/*    Перегрузка*/}
-                    {/*</Button>*/}
-                    <Divider>Список задач</Divider>
-                    <Form.Item name={"tasks"}>
-                        <TasksTreeComponent
-                            checkable
-                            selectable={true}
-                            onCheck={(value) => {
-                                setCheckedTasksId(value ?? null)
-                            }}
-                        />
-                    </Form.Item>
                 </Col>
-                <Col span={16}>
-                    <Divider>Распределение</Divider>
-                     <TaskProjectForm
-                         onChange={()=>onChange && onChange()}
-                        actualTaskToProject={checkedTasksId ? actualProject?.project_tasks.filter(row => checkedTasksId.includes(row.id)) : null}/>
-                    {/*<StyledButtonGreen onClick={() => onSave()}>*/}
-                    {/*    Сохранить*/}
-                    {/*</StyledButtonGreen>*/}
+                <Col span={14}>
+                    <Card title={"Параметры"}>
+                        <TaskProjectForm
+                            onChange={() => onChange && onChange()}
+                            mainTaskToProject={
+                                checkedTasksId &&
+                                !isTaskExclusivity(checkedTasksId, actualProject.project_tasks) &&
+                                findMainTask(checkedTasksId, actualProject.project_tasks)}
+                            taskToProject={checkedTasksId ? actualProject?.project_tasks.find(row => checkedTasksId === row.id) : null}
+                        />
+                    </Card>
                 </Col>
             </Row>
         </Form>

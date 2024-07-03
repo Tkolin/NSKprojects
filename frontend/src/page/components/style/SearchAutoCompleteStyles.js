@@ -4,7 +4,6 @@ import {EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {StyledButtonGreen} from "./ButtonStyles";
 
 
-
 const CustomAutoCompleteComponent = ({
                                          saveSelected = true,
                                          style,
@@ -28,9 +27,8 @@ const CustomAutoCompleteComponent = ({
     };
 
 
-
     const handleSearch = (txt) => {
-       // console.log(txt.toLowerCase());
+        // console.log(txt.toLowerCase());
         if (!data) return;
         const filteredOptions = data
             .filter(row => getName(row, typeData).toLowerCase().includes(txt.toLowerCase()))
@@ -45,7 +43,7 @@ const CustomAutoCompleteComponent = ({
     return (
         <AutoComplete
             popupMatchSelectWidth={false}
-            style={{...style,width: width,maxWidth: width}}
+            style={{...style, width: width, maxWidth: width}}
             allowClear
             showSearch
             status={value?.selected ? "" : "warning"}
@@ -60,7 +58,11 @@ const CustomAutoCompleteComponent = ({
             onSearch={handleSearch}
             onSelect={(variable, option) => {
                 onSelect && onSelect({id: option.data, name: option.value});
-                onChange && saveSelected ? onChange({...value, selected: option.data, output: option.label}) : onChange({...value, selected: null, output: null});
+                onChange && saveSelected ? onChange({
+                    ...value,
+                    selected: option.data,
+                    output: option.label
+                }) : onChange({...value, selected: null, output: null});
 
             }}
             placeholder={placeholder ?? "Начните ввод..."}
@@ -68,12 +70,13 @@ const CustomAutoCompleteComponent = ({
     )
 };
 
-const BaseStyledButtonGreen = ({onClick, icon, style, disabled}) => (
+const BaseStyledButtonGreen = ({onClick, icon, style, disabled, size}) => (
     <StyledButtonGreen
         style={{
             ...style,
             marginBottom: 0,
         }}
+        size={size ?? "regular"}
         type={"dashed"}
         icon={icon}
         disabled={disabled}
@@ -106,25 +109,31 @@ const CustomAutoCompleteAndCreate = ({
                                          value,
                                          onChange,
                                          saveSelected,
-                                     }) => (
-    <Space.Compact style={{width: "100%", marginBottom: 0}}>
 
-        <CustomAutoCompleteComponent
-            onSelect={onSelect}
-            placeholder={placeholder}
-            loading={loading}
-            items={items}
-            onSearch={onSearch}
-            saveSelected={saveSelected}
-            formatOptionText={formatOptionText}
-            mode={mode}
-            width={"calc(100% - 32px)"}
-            typeData={typeData} data={data} value={value} onChange={onChange && onChange}/>
-        <BaseStyledButtonGreen onClick={firstBtnOnClick}
-                          icon={<PlusOutlined/>}/>
-    </Space.Compact>
+                                         visibleMode,
+...props
+                                     }) =>
 
-);
+    (<Space.Compact style={{width: "100%", marginBottom: 0}}>
+
+            <CustomAutoCompleteComponent
+                {...props}
+                onSelect={onSelect}
+                placeholder={placeholder}
+                loading={loading}
+                items={items}
+                onSearch={onSearch}
+                saveSelected={saveSelected}
+                formatOptionText={formatOptionText}
+                mode={mode}
+                width={"calc(100% - 32px)"}
+                typeData={typeData} data={data} value={value} onChange={onChange && onChange}/>
+
+            <BaseStyledButtonGreen onClick={firstBtnOnClick}
+                                   size={props?.size}
+                                   icon={<PlusOutlined/>}/>
+        </Space.Compact>
+    );
 const CustomAutoComplete = ({
                                 size,
                                 saveSelected,
@@ -141,19 +150,19 @@ const CustomAutoComplete = ({
                                 value,
                                 onChange,
                             }) => (
-         <CustomAutoCompleteComponent
-             size={size}
-             style={style}
-             saveSelected={saveSelected}
-            onSelect={onSelect}
-            placeholder={placeholder}
-            loading={loading}
-            items={items}
-            onSearch={onSearch}
-            formatOptionText={formatOptionText}
-            mode={mode}
-            width={"calc(100%+64px)"}
-            typeData={typeData} data={data} value={value} onChange={onChange && onChange}/>
+    <CustomAutoCompleteComponent
+        size={size}
+        style={style}
+        saveSelected={saveSelected}
+        onSelect={onSelect}
+        placeholder={placeholder}
+        loading={loading}
+        items={items}
+        onSearch={onSearch}
+        formatOptionText={formatOptionText}
+        mode={mode}
+        width={"calc(100%+64px)"}
+        typeData={typeData} data={data} value={value} onChange={onChange && onChange}/>
 
 );
 const CustomAutoCompleteAndCreateWitchEdit = ({
@@ -191,16 +200,35 @@ const CustomAutoCompleteAndCreateWitchEdit = ({
             onChange={onChange && onChange}/>
 
         <BaseStyledButtonGreen onClick={firstBtnOnClick}
-                          icon={<PlusOutlined/>}
-                          type={'dashed'}/>
+                               icon={<PlusOutlined/>}
+                               type={'dashed'}/>
         <BaseStyledButton onClick={secondBtnOnClick}
                           icon={<EditOutlined/>}
                           disable={secondDisable}/>
     </Space.Compact>
 
 );
+const CustomAutoCompleteExtension = ({
+                                         visibleMode = "IGNORE",
+                                         ...props
+                                     }) => {
+    useEffect(() => {
+        console.log(props?.value?.selected);
+    }, [props.value]);
+    switch (visibleMode) {
+        case "IGNORE":
+            return <CustomAutoCompleteAndCreate {...props} />
+        case "CREATE_WHERE_NON_SELECTED":
+            if (props?.value?.selected) {
+                return <CustomAutoCompleteComponent {...props} />
+            } else return <CustomAutoCompleteAndCreate {...props} />
+    }
+};
 
 export {
+    CustomAutoCompleteExtension,
+
+
     CustomAutoCompleteAndCreate,
     CustomAutoCompleteAndCreateWitchEdit,
     CustomAutoComplete

@@ -1,9 +1,9 @@
 import {StyledBlockBig} from "../style/BlockStyles";
-import {Modal} from "antd";
+import {Divider, Modal} from "antd";
 import React from "react";
 import StageForm from "../form/modelsForms/StageForm";
 
-const OrganizationModalForm = ({key,objectId,object,onClose, mode, onCompleted }) => {
+const OrganizationModalForm = ({key,object,onClose, mode, onCompleted }) => {
 
     return (
         <Modal
@@ -12,21 +12,20 @@ const OrganizationModalForm = ({key,objectId,object,onClose, mode, onCompleted }
             onCancel={() => onClose()}
             footer={null}
             onClose={() => onClose()}
-            width={"1000px"}
+            width={"500px"}
         >
-            <StyledBlockBig label={"Организация"}>
+            <Divider> Этап </Divider>
                 {mode === "edit" ? (
-                    (object || objectId) && (
+                    (object) && (
                         <StageForm
-                            localObject={object}
-                            onCompleted={() => onClose()}
-                            initialObject={objectId ? {id: objectId} : null}
+
+                            onCompleted={() => onClose(null)}
+                            initialObject={object}
                         />
                     )
                 ) : (
                     <StageForm onCompleted={onCompleted || onClose}/>
                 )}
-            </StyledBlockBig>
         </Modal>
     );
 };
