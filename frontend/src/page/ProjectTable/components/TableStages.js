@@ -101,13 +101,8 @@ const TableStages = ({setEditModalStatus,project}) => {
     ];
     return (
         <Table
-            style={{
-                margin: 0,
-                width: "33%",
-                borderWidth: "1px",
-                borderStyle: "solid",
-                borderColor: "grey",
-            }}
+            style={{margin: 0, width: "100%"}}
+
             size={"small"}
             columns={columnsStages}
             dataSource={project?.project_stages ? [{

@@ -1,4 +1,4 @@
-import {Card, Divider, Form, Modal, notification, Popconfirm, Row, Space, Table, Tooltip, Typography} from "antd";
+import {Card, Col, Divider, Form, Modal, notification, Popconfirm, Row, Space, Table, Tooltip, Typography} from "antd";
 import Title from "antd/es/typography/Title";
 import Search from "antd/es/input/Search";
 import {StyledBlockLarge, StyledBlockRegular} from "../../components/style/BlockStyles";
@@ -370,11 +370,16 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
     ];
     const expandedRowRender = (project) => {
         return (
-            <Space.Compact style={{width: "100%", margin: 0}}>
-                <TableStages project={project} setEditModalStatus={setEditModalStatus}/>
-                <TableIrds project={project} setEditModalStatus={setEditModalStatus}/>
-                     <TableExecutors project={project} setEditModalStatus={setEditModalStatus}/>
-             </Space.Compact>
+            <Space.Compact>
+
+                        <TableStages project={project} setEditModalStatus={setEditModalStatus}/>
+
+                        <TableIrds project={project} setEditModalStatus={setEditModalStatus}/>
+
+                        <TableExecutors project={project} setEditModalStatus={setEditModalStatus}/>
+
+            </Space.Compact>
+
         )
     }
 
@@ -439,7 +444,9 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
                         setExpandedRowKeys(keys);
                     },
                     expandedRowRender: (record) => (
-                        expandedRowRender(record)
+                        <div style={{padding: 2}}>
+                            {expandedRowRender(record)}
+                        </div>
                     ),
                 }}
             />

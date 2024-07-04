@@ -23,7 +23,7 @@ import IrdTable from "./page/simplesTables/IrdTable";
 import TypeProjectTable from "./page/simplesTables/TypeProjectTable";
 import StageTable from "./page/simplesTables/StageTable";
 import ProjectTable from "./page/ProjectTable/Index";
-import RegisterPage from "./page/simplesForms/RegisterPage";
+ import RegisterPage from "./page/simplesForms/RegisterPage";
 import LoginPage from "./page/simplesForms/loginPage";
 import {NotificationProvider} from "./NotificationProvider";
 import moment from "moment";

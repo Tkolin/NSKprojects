@@ -7,6 +7,7 @@ import {
     rebuildIrdsResultQuery,
     rebuildProjectResultQuery
 } from "../../components/script/rebuildData/ProjectRebuilderQuery";
+
 const {Text} = Typography;
 
 const TableIrds = ({setEditModalStatus, project}) => {
@@ -23,7 +24,7 @@ const TableIrds = ({setEditModalStatus, project}) => {
 
                     <EditOutlined onClick={() => setEditModalStatus && setEditModalStatus({
                         type: "irds",
-                        project:  project
+                        project: project
                     })}/>
                 </Link>
             </Space>,
@@ -72,17 +73,12 @@ const TableIrds = ({setEditModalStatus, project}) => {
     ];
     return (
         <Table
-        style={{
-            margin: 0,
-            width: "35%",
-            borderWidth: "1px",
-            borderStyle: "solid",
-            borderColor: "grey",
-        }}
-        size={"small"}
-        columns={columnsIrds}
-        dataSource={project.project_irds}
-        pagination={false}
-    />);
+            style={{margin: 0, width: "100%"}}
+
+            size={"small"}
+            columns={columnsIrds}
+            dataSource={project.project_irds}
+            pagination={false}
+        />);
 }
 export default TableIrds;

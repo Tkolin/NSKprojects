@@ -156,6 +156,8 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
         return tree;
     };
     const groupTasksByStageNumber = (tasks) => {
+        if(!tasks)
+            return null;
         return tasks.reduce((acc, task) => {
             const stageNumber = task.stage_number;
             if (!acc[stageNumber]) {

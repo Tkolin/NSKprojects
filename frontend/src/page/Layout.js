@@ -95,17 +95,17 @@ const CustomLayout = ({children, currentUser, la}) => {
     if (data && data.currentUser) {
         const roleName = data.currentUser.role.name;
         items.push(
-            hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
+            hasAccess(roleName, ["ADMIN",  'BOOKMAKER' ])
             && getItem('Проекты', '/request', <ProfileOutlined/>, [
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
+                hasAccess(roleName, ["ADMIN",  'BOOKMAKER' ])
                 && getItem('Зарегистрировать заявку', '/request/new', null, null),
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
+                hasAccess(roleName, ["ADMIN",  'BOOKMAKER' ])
                 && getItem('Список заявок', '/project/table/request', null, null),
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
+                hasAccess(roleName, ["ADMIN",  'BOOKMAKER' ])
                 && getItem('Проекты на согласовании КП', '/project/table/kp', null, null),
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
+                hasAccess(roleName, ["ADMIN",  'BOOKMAKER' ])
                 && getItem('Проекты на согласовании договора', '/project/table/contract', null, null),
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
+                hasAccess(roleName, ["ADMIN",  'BOOKMAKER' ])
 
             ]),
 

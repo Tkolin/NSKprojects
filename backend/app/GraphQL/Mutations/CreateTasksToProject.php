@@ -14,8 +14,9 @@ final readonly class CreateTasksToProject
     {
         $tasks = $args["data"];
         $projectId = $args["data"][0]["project_id"];
-
-
+        $date_start = $task["date_start"] ?? date("Y-m-d");
+        $date_end = $task["date_end"] ?? date("Y-m-d");
+        error_log( $date_start );
         foreach ($tasks as $i => $task) {
             $projectTask = ProjectTasks::updateOrCreate(
                 [
@@ -26,10 +27,10 @@ final readonly class CreateTasksToProject
                     "project_id" => $task["project_id"],
                     "task_id" => $task["task_id"],
                     "stage_number" => $task["stage_number"],
-                    "date_start" => $task["date_start"],
-                    "date_end" => $task["date_end"],
+                    "date_start" => $date_start,
+                    "date_end" => $date_end,
                     "duration" => isset($task["duration"]) ? $task["duration"] :
-                        (strtotime($task["date_end"]) - strtotime($task["date_start"])) / (60 * 60 * 24) ?? 0,
+                        (strtotime($date_end) - strtotime($date_start)) / (60 * 60 * 24) ?? 0,
 
                     "project_task_inherited_id" => null
 

@@ -84,11 +84,11 @@ const TasksPriceTotal = ({data = {project_tasks: [], project_stages: []}}) => {
     //     'WORKING': {color: '#f2f9ff', text: 'В работе'}
     // });
     return (
-        <Row gutter={5}>
+        <Row gutter={1}>
 
             {Object.values(outputData)?.map(item => {
                 console.log(item);
-                return (<Col span={12}>
+                return (<Col span={8}>
                         <TaskItem {...item}/>
                 </Col>
                 )
