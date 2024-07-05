@@ -13,8 +13,7 @@ const Index = ({projectStatuses}) => {
         return (
             <div>
 
-
-                 <StatusLegend  />
+                <StatusLegend  />
                 <Divider/>
                 <Form form={formSearch} layout="horizontal">
                     <Form.Item label="Поиск:" name="search">

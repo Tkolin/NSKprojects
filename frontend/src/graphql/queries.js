@@ -430,16 +430,24 @@ export const PERSONS_SHORT_QUERY = gql`
         }
     }
 `;
-export const CURRENT_USER_QUERY = gql`
+export const GET_CURRENT_USER = gql`
     query CurrentUser {
         currentUser {
-            id
-            name
-            email
-            role {
+            user {
                 id
                 name
+                email
             }
+            permissions {
+                description
+                name
+            }
+            roles {
+                description
+                name
+
+            }
+            access_token
         }
     }
 `;

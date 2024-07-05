@@ -87,9 +87,7 @@ const Index = ({project, onCompleted}) => {
         <Form layout="vertical"
             //  onChange={() => {handleChange();}}
               form={form}>
-            <Divider style={{margin: 3}}/>
 
-            <Divider style={{margin: 10, marginTop: 3}}/>
             <Form.List name="irdList">
                 {(fields, {add, remove}) => (
                     <>

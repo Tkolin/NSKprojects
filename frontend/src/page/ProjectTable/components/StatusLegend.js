@@ -31,6 +31,10 @@ const StatusLegend = () => {
         'WAITING_SOURCE': {color: '#f8fff2', text: 'Ожидание исходных материалов'},
         'WORKING': {color: '#f2f9ff', text: 'В работе'}
     });
+    if(loading)
+        return <LoadingSpinnerStyles/>
+    if(error)
+        return error.message;
     return (
         <Row gutter={5}>
 

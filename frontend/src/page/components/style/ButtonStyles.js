@@ -2,7 +2,16 @@ import styled from 'styled-components';
 import { Button } from 'antd';
 
 
+export const StyledButtonGreenGhost = styled(Button)`
+    color: #52c41a; /* белый цвет текста */
 
+    &:hover {
+        color: #52c41a !important;
+        background-color: rgba(82, 196, 26, 0.1) !important; /* изменение цвета при наведении */
+    }
+
+ 
+`;
 export const StyledButtonGreen = styled(Button)`
     
     background: #52c41a; /* зеленый цвет */

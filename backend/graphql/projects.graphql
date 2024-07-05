@@ -2,21 +2,21 @@
 extend type Mutation{
     updateProject(
         data: ProjectInput
-    ): Project! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): Project! @checkRole(permission:  ["update-project"])
     createProject(
         data: ProjectInput
         templates: ProjectTemplatesSetting
-    ): Project! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): Project! @checkRole(permission:  ["create-project"])
     updateRequests(
         data: RequestInput
-    ): Project! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): Project! @checkRole(permission:  ["update-request"])
     createRequests(
         data: RequestInput
 
-    ): Project! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): Project! @checkRole(permission:  ["create-request"])
     updateSectionReferenceToProject(
         items: [SectionReferencesToProject]
-    ): Int @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): Int @checkRole(permission:  ["update-project"])
 
     updateProjectStage(
         id: ID!
@@ -25,51 +25,51 @@ extend type Mutation{
         progress: String!
         date_start: String!
         duration: String!
-    ): ProjectStage!
+    ): ProjectStage! @checkRole(permission:  ["create-project-stage"])
     createProjectStage(
         project_id: ID!
         stage_id: ID!
         progress: String!
         date_start: String!
         duration: String!
-    ): ProjectStage! @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): ProjectStage! @checkRole(permission:  ["update-project-stage"])
 
     updateIrdsToProject(
         items: [IrdToProject]
-    ): [ProjectIRD] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): [ProjectIRD] @checkRole(permission:  ["update-project-ird"])
     updateStagesToProject(
         items: [StageToProject]
-    ): [ProjectStage] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): [ProjectStage] @checkRole(permission:  ["update-project-stage"])
     updateTaskToProject(
         data: [TasksToProject]!
         type: String
-    ): Project @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): Project @checkRole(permission:  ["update-project-task"])
     deleteTaskToProject(
         id: ID!
-    ): Project @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): Project @checkRole(permission:  ["delete-project-task"])
     createTaskToProject(
         data: [TasksToProject]
-    ): Project @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): Project @checkRole(permission:  ["create-project-task"])
     createTasksToProject(
         data: [TasksToProjectExs]!
-    ): Project @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): Project @checkRole(permission:  ["create-project-task"])
 
 
     updatePaymentsToProject(
         project: ID
-    ): Project @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): Project
     changeTemplateTypeProject(
         typeProject: ID!
         newTemplate: ID!
-    ): TypeProjectDocument @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): TypeProjectDocument
     updateEmployeesToTasks(
         tasksIds: [ID]
         employeesIds: [ID]
         stageNumber: Int
-    ): [ProjectTask] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): [ProjectTask] @checkRole(permission:  ["update-project-task-executor"])
     updateExecutorToTasks(
         data: [ExecutorToTask]!
-    ): [Project] @checkRole(roles:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+    ): [Project] @checkRole(permission:  ["update-project-task-executor"])
 }
 
 # Основная модель проекта

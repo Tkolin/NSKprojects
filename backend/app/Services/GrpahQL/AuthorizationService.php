@@ -18,4 +18,16 @@ class AuthorizationService
 
         return false;
     }
+    public static function checkPermisions($accessToken, $allowedRoles)
+    {
+        if ($accessToken) {
+            $user = Auth::guard('api')->user();
+
+            if ($user && in_array($user->role->name, $allowedRoles)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

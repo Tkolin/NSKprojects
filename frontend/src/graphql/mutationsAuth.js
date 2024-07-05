@@ -8,6 +8,15 @@ export const REGISTER_MUTATION = gql`
                 name
                 email
             }
+            permissions {
+                description
+                name
+            }
+            roles {
+                description
+                name
+
+            }
             access_token
         }
     }
@@ -19,10 +28,15 @@ export const LOGIN_MUTATION = gql`
                 id
                 name
                 email
-                role {
-                    id
-                    name
-                }
+            }
+            permissions {
+                description
+                name
+            }
+            roles {
+                description
+                name
+
             }
             access_token
         }

@@ -1,36 +1,18 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+
+import {useLocation, useNavigate} from 'react-router-dom';
+import {Layout, Menu, Image, Dropdown, Avatar, Badge, Alert, Card, Breadcrumb} from 'antd';
 import {
-    BarChartOutlined,
-    BugOutlined,
-    CalculatorOutlined,
-    FormOutlined,
-    HomeOutlined,
-    LogoutOutlined,
-    ProfileOutlined,
-    SolutionOutlined,
+
+    UserOutlined,
 } from '@ant-design/icons';
-import {Button, Layout, Menu, Space, Typography} from 'antd';
-import {useQuery} from "@apollo/client";
-import {CURRENT_USER_QUERY} from "../graphql/queries";
-import {useNavigate} from "react-router-dom";
-import {Cookies} from "react-cookie";
-import LoadingSpinnerStyles from "./components/style/LoadingSpinnerStyles";
-import {Header} from "antd/es/layout/layout";
-import {Content, Footer} from "antd/lib/layout/layout";
-import Logo from "../resursed/logo512.png";
+import Logo from '../resursed/logo512.png';
+import {UserCard} from "./UserCard";
+import Link from "antd/es/typography/Link";
+import {MenuItemsByPermission, MenuItems} from "./MenuItems";
 
-const {Text} = Typography;
-const {Content: Contents, Footer: Footers, Sider: Siders} = Layout;
+const {Header, Content, Footer} = Layout;
 
-function getItem(label, key, icon, children, type) {
-    return {
-        key,
-        icon,
-        children,
-        label,
-        type,
-    };
-}
 
 const styles = {
     header: {
@@ -68,136 +50,108 @@ const styles = {
     },
 };
 
+export const getErrorLayout = (error) => {
+    switch (error) {
+        case 'Failed to fetch':
+            return <div>Сервер не доступен</div>
+        default:
+            return <>Ошибка</>
+    }
+};
 
-const CustomLayout = ({children, currentUser, la}) => {
-    const [isFenrirPage, setIsFenrirPage] = useState(false);
-    // Логика
+
+const AppLayout = ({children, currentUser, error}) => {
     const navigate = useNavigate();
-    const cookies = new Cookies();
-    const {loading, error, data} = useQuery(CURRENT_USER_QUERY);
-    const [current, setCurrent] = useState('1');
-    const handleLogout = () => {
-        cookies.remove('accessToken'); // Удаление токена из куки
-        navigate('/');
-        window.location.reload();
+    const location = useLocation();
+    const [current, setCurrent] = useState(location.pathname);
+    const [items, setItems] = useState( );
+    const [title, setTitle] = useState();
+    useEffect(() => {
+        setItems(MenuItemsByPermission(currentUser?.currentUser ?? {}));
+        console.log("1 currentUser", currentUser)
+    }, [currentUser]);
+    useEffect(() => {
+        setCurrent(location.pathname); // Обновить current при изменении пути
+        console.log("2 location.pathname", location.pathname)
+
+    }, [location.pathname]);
+    useEffect(() => {
+        console.log("3 current, items", current, items)
+
+        const label = findMenuItemByKey(current, MenuItems)?.label;
+        console.log("label",label);
+        if (label)
+            setTitle(label); // Обновить current при изменении пути
+
+    }, [current, currentUser, location.pathname, children]);
+    const findMenuItemByKey = (key, menuItems) => {
+        console.log("!key || !items", !key || !menuItems)
+        if (!key || !menuItems)
+            return null;
+
+         const findItem = (items) => {
+            for (const item of items) {
+                if (item?.key === key) {
+                    return item;
+                }
+                if (item?.children) {
+                    const found = findItem(item.children);
+                    if (found) return found;
+                }
+            }
+            return null;
+        };
+        console.log("Я ищу");
+
+        return findItem(menuItems);
     };
 
-    // Обработка загрузки и ошибок
-    if (loading) return <LoadingSpinnerStyles/>;
-    if (data && error) return `Ошибка! ${error.message}`;
-
-    // Меню
-    const items = [];
-    const hasAccess = (currentRole, allowedRoles) => {
-        return allowedRoles.includes(currentRole);
-    };
-    items.push(getItem('Главная', '', <HomeOutlined/>, null, "/"));
-    if (data && data.currentUser) {
-        const roleName = data.currentUser.role.name;
-        items.push(
-            hasAccess(roleName, ["ADMIN",  'BOOKMAKER' ])
-            && getItem('Проекты', '/request', <ProfileOutlined/>, [
-                hasAccess(roleName, ["ADMIN",  'BOOKMAKER' ])
-                && getItem('Зарегистрировать заявку', '/request/new', null, null),
-                hasAccess(roleName, ["ADMIN",  'BOOKMAKER' ])
-                && getItem('Список заявок', '/project/table/request', null, null),
-                hasAccess(roleName, ["ADMIN",  'BOOKMAKER' ])
-                && getItem('Проекты на согласовании КП', '/project/table/kp', null, null),
-                hasAccess(roleName, ["ADMIN",  'BOOKMAKER' ])
-                && getItem('Проекты на согласовании договора', '/project/table/contract', null, null),
-                hasAccess(roleName, ["ADMIN",  'BOOKMAKER' ])
-
-            ]),
-
-            hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
-            && getItem('Справочники', '/table', <ProfileOutlined/>, [
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
-                && getItem('Контакты', '/table/contacts', null, null),
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
-                && getItem('Подрядчики', '/table/persons', null, null),
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
-                && getItem('Организации', '/table/organizations', null, null),
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','FIN_DIR','PROGRAMMER'])
-                && getItem('ИРД', '/table/ird', null, null),
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR',"EMPLOYEE",'OFF_WORKER','FIN_DIR','PROGRAMMER'])
-                && getItem('Типы документации', '/table/type_projects', null, null),
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','OFF_WORKER','FIN_DIR','PROGRAMMER'])
-                && getItem('Этапы проекта', '/table/stage_projects', null, null),
-            ]),
-            hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','OFF_WORKER','BOOKMAKER','FIN_DIR','PROGRAMMER'])
-            && getItem('Формы', '/form/', <FormOutlined/>, [
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','OFF_WORKER','BOOKMAKER','FIN_DIR','PROGRAMMER'])
-                && getItem('Контакт', '/form/contact', null, null),
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','OFF_WORKER','BOOKMAKER','FIN_DIR','PROGRAMMER'])
-                && getItem('Создание нового договора', '/form/new_project', null, null),
-
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','BOOKMAKER','FIN_DIR','PROGRAMMER'])
-                && getItem('Организация', '/form/organizations', null, null),
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','OFF_WORKER','BOOKMAKER','FIN_DIR','PROGRAMMER'])
-                && getItem('Подрядчик', '/form/persons', null, null),
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','OFF_WORKER','FIN_DIR','PROGRAMMER'])
-                && getItem('Шаблоны по типу проекта', '/form/template_project', null, null),
-            ]),
-            hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
-            && getItem('Отчёты', '/reports/', <SolutionOutlined/>, [
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','OFF_WORKER','BOOKMAKER','LAWYAR','FIN_DIR','PROGRAMMER'])
-                && getItem('Проекты', '/reports/project', null, null)
-            ]),
-            hasAccess(roleName, ["ADMIN"])
-            && getItem('Расчёты', '/computs/', <CalculatorOutlined/>, [
-                // getItem('1', '4-5', null, null),
-                // getItem('Рабочий стол', '4-1', null, null),
-                // getItem('Создание справочника данных', '4-2', null, null),
-                // getItem('Создание формулы', '4-3', null, null),
-                // getItem('Форма расчёта', '4-4', null, null),
-
-            ]),
-            hasAccess(roleName, ["ADMIN"])
-            && getItem('Экономика', '5', <BarChartOutlined/>, []),
-            getItem('', '6', <BugOutlined/>, [
-                hasAccess(roleName, ["ADMIN"])
-                && getItem('Тест 1', '/test/test1', null, null),
-                hasAccess(roleName, ["ADMIN"])
-                && getItem('Тест 2', '/test/test2', null, null),
-                hasAccess(roleName, ["ADMIN", 'GEN_DIR','TECH_DIR','BOOKMAKER','FIN_DIR','PROGRAMMER'])
-                && getItem('Распределение задач', '/form/tasks_project', null, null),
-            ])
-        );
-    } else {
-        items.push(
-            getItem('Регистрация', '/auth/register', null, null),
-            getItem('Авторизация', '/auth/login', null, null)
-        );
-    }
     const onClick = (e) => {
-        navigate(e.key);
-        setCurrent(e.key);
-    }
-    // Вывод слоя
+        navigate(e?.key);
+        setCurrent(e?.key);
+    };
+
+
     return (
         <Layout style={{minHeight: '100vh'}}>
             <Header style={styles.header}>
-                <img src={Logo} style={styles.logo}/>
+                {!error ? (<>
+                    <Image src={Logo} style={styles.logo}/>
 
-                <Menu onClick={onClick} mode="horizontal" style={{width: '100%'}} items={items}
-                      selectedKeys={[current]}/>
-
-                <div style={styles.user}>
-                    {data && data.currentUser && (
-                        <Space>
-                            {data.currentUser.name}
-                            <Button type="primary" danger onClick={handleLogout} style={styles.logoutButton}>
-                                <LogoutOutlined/>
-                                Выход
-                            </Button>
-                        </Space>
-                    )}
-                </div>
+                    <Menu onClick={onClick} mode="horizontal" style={{width: '100%'}} items={items}
+                          selectedKeys={[current]}/>
+                    <Dropdown
+                        placement={"bottomRight"}
+                        dropdownRender={() =>
+                            (
+                                <UserCard user={currentUser?.currentUser ?? null}/>
+                            )}
+                        children={
+                            <Badge count={currentUser?.currentUser ? 0 : '!'}>
+                                <Link>
+                                    <Avatar
+                                        children={currentUser?.currentUser ? currentUser?.currentUser.user?.name?.slice(0, 2) :
+                                            <UserOutlined/>}/>
+                                </Link>
+                            </Badge>
+                        }/>
+                </>) : <Alert message={<>
+                    {"Ошибка: " + error}
+                </>} type="error"/>}
             </Header>
 
             <Layout style={{marginTop: 64, paddingRight: 20, paddingLeft: 20}}>
                 <Content style={styles.content}>
-                    <div className="site-layout-content">{children}</div>
+                    {/*<Breadcrumb items={createBreadcrumbs(current)}/>*/}
+
+                    {!error ? (
+                        <Card title={title} style={styles.card}>
+                            {children}
+                        </Card>) : (
+                        <>
+                            {getErrorLayout(error)}
+                        </>
+                    )}
                 </Content>
 
                 <Footer style={styles.footer}>
@@ -206,5 +160,6 @@ const CustomLayout = ({children, currentUser, la}) => {
             </Layout>
         </Layout>
     );
-}
-export default CustomLayout;
+};
+
+export default AppLayout;

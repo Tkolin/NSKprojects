@@ -18,8 +18,13 @@ const LoginForm = () => {
             const {access_token} = response.data.login;
             const cookies = new Cookies();
             cookies.set('accessToken', access_token);
-            navigate('/');
-            window.location.reload();
+            setTimeout(() => {
+                navigate('/');
+                cookies.set('accessToken', access_token);
+                window.location.reload();
+                cookies.set('accessToken', access_token);
+            }, 2000); // Задержка в 100 миллисекунд
+
         } catch (error) {
             message.error(error.message);
         }

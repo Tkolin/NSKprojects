@@ -3,6 +3,7 @@
 namespace App\GraphQL\Directives;
 
 use App\Services\GrpahQL\AuthorizationService;
+use Illuminate\Support\Facades\Auth;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Schema\Directives\BaseDirective;
 use Nuwave\Lighthouse\Schema\Values\FieldValue;
@@ -20,21 +21,53 @@ class CheckRoleDirective extends BaseDirective implements FieldMiddleware
                 """
                 The required role.
                 """
-                roles: [String!]
+                permission: [String!]
             ) on FIELD_DEFINITION | OBJECT
         GRAPHQL;
     }
 
     public function handleField(FieldValue $fieldValue): void
     {
-        $allowedRoles = $this->directiveArgValue('roles');
+        $allowedPermissions = $this->directiveArgValue('permission');
 
-        $fieldValue->wrapResolver(function ($previousResolver) use ($allowedRoles) {
-            return function ($root, $args, $context, $resolveInfo) use ($allowedRoles, $previousResolver) {
-                if (!AuthorizationService::checkAuthorization($context->request()->header('Authorization'), $allowedRoles)) {
-                    throw new AuthenticationException('Отказано в доступе');
+        // Обертываем существующий резолвер
+        $fieldValue->wrapResolver(function ($previousResolver) use ($allowedPermissions) {
+            return function ($root, $args, $context, $resolveInfo) use ($allowedPermissions, $previousResolver) {
+                $accessToken = $context->request()->header('Authorization');
+
+                if ($accessToken) {
+                    // Проверяем, авторизован ли пользователь
+                    if (Auth::guard('api')->check()) {
+                        $user = Auth::guard('api')->user();
+                         $roles = $user->roles->map(function ($role) {
+                            return [
+                                'permissions' => $role->permissions->map(function ($permission) {
+                                    return $permission->name;
+                                })->toArray()
+                            ];
+                        });
+                        $userPermissions = $roles->flatMap(function ($role) {
+                            return $role['permissions'];
+                        })->unique()->values()->toArray();
+                        // Логируем права пользователя и необходимые права
+                        error_log("User permissions: " . print_r($userPermissions, true));
+                        error_log("Required permissions: " . print_r($allowedPermissions, true));
+
+                        // Проверяем, есть ли у пользователя хотя бы одно из необходимых разрешений
+                        foreach ($allowedPermissions as $permission) {
+                            if (in_array($permission, $userPermissions)) {
+                                return $previousResolver($root, $args, $context, $resolveInfo);
+                            }
+                        }
+
+                        // Если ни одно из разрешений не найдено, выбрасываем исключение
+                        throw new AuthenticationException('Отказано в доступе');
+                    } else {
+                        throw new AuthenticationException('Unauthorized');
+                    }
+                } else {
+                    throw new AuthenticationException('Unauthorized');
                 }
-                return $previousResolver($root, $args, $context, $resolveInfo);
             };
         });
     }

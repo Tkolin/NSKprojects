@@ -119,9 +119,7 @@ const ContactTable = () => {
 
     return (<div>
         <Form form={formSearch} layout="horizontal">
-            <Divider style={{marginTop: 0}}>
-                <Title style={{marginTop: 0}} level={2}>Справочник Контактов</Title>
-            </Divider>
+
 
             <Form.Item label="Поиск:" name="search">
                 <Space>
