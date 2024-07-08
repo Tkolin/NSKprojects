@@ -34,7 +34,7 @@ class Project extends Model
     }
     public function project_tasks(): HasMany
     {
-        return $this->hasMany(ProjectTasks::class);
+        return $this->hasMany(ProjectTasks::class, 'project_id', 'id');
     }
     public function organization_customer(): BelongsTo
     {

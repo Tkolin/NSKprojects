@@ -4,7 +4,7 @@ import { CONTRACT_PERSON_MUTATION } from '../../../../graphql/mutationsPerson';
 import {Button, notification} from 'antd';
 import {DownloadOutlined} from "@ant-design/icons";
 
-const PersonContractFileDownload = ({personId, text}) => {
+const PersonContractFileDownload = ({personId, tasksId, text}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
     const openNotification = (placement, type, message) => {
         notification[type]({
@@ -25,7 +25,7 @@ const PersonContractFileDownload = ({personId, text}) => {
 
     const handleDownload = () => {
         console.log(personId);
-        downloadContract({ variables: { id: personId } });
+        downloadContract({ variables: { id: personId, tasksId: tasksId } });
     };
 
     const handleDownloadClick = async (downloadedFileUrl) => {

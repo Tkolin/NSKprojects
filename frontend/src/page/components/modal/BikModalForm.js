@@ -5,6 +5,9 @@ import {nanoid} from "nanoid";
 import BikForm from "../form/modelsForms/BikForm";
 
 const BikModalForm = ({key,object,objectId,onClose, mode, onCompleted}) => {
+    const header = {
+        color: "red",
+    }
     return (
         <Modal
             key={key ?? nanoid()}
@@ -13,10 +16,9 @@ const BikModalForm = ({key,object,objectId,onClose, mode, onCompleted}) => {
             footer={null}
             onClose={() => onClose(null)}
             width={"600px"}
-
+            title={"Бик"}
         >
-            <StyledBlockRegular label={"Бик"}>
-                {mode === "edit" ? (
+                 {mode === "edit" ? (
                     (object || objectId) && (
                         <BikForm
                             onCompleted={() =>
@@ -28,8 +30,7 @@ const BikModalForm = ({key,object,objectId,onClose, mode, onCompleted}) => {
                 ) : (
                     <BikForm onCompleted={onCompleted || onClose}/>
                 )}
-            </StyledBlockRegular>
-        </Modal>
+         </Modal>
     );
 };
 

@@ -28,7 +28,7 @@ import ContactModalForm from "../../modal/ContactModalForm";
 import BikModalForm from "../../modal/BikModalForm";
 import {nanoid} from "nanoid";
 
-const OrganizationForm = ({localObject, initialObject, onCompleted}) => {
+const OrganizationForm = ({localObject, initialObject, onCompleted, style}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
@@ -118,213 +118,214 @@ const OrganizationForm = ({localObject, initialObject, onCompleted}) => {
     if (errorContacts || errorBik) return `Ошибка! ${errorContacts?.message || errorBik?.message}`;
 
 
-    return (<div>
-        <Form
-            form={form}
-            onFinish={handleSubmit}
-            onChange={() => console.log("change", form.getFieldsValue())}
-        >
-            <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
-                <Form.Item name="name"
-                           label={"Наименование компании"}
-                           rules={[{required: true, message: "Укажите наименование компании"}]}
-                           style={{width: "90%"}}>
-                    <Input style={{width: "100%)"}}
-                           placeholder={"Наименование"}/>
-                </Form.Item>
-                <Form.Item style={{width: "10%"}} name="legal_form_id"
-                           rules={[{required: true, message: "Укажите тип организации"}]}>
-                    <Select placeholder={"Форма"} style={{width: "100%)"}}
-                            onChange={(value, option) => {
-                                if (!form.getFieldValue("name"))
-                                    form.setFieldValue("name",
-                                        option.children + " ");
-                            }}
+    return (
+        <div>
+            <Form
+                form={form}
+                onFinish={handleSubmit}
+                onChange={() => console.log("change", form.getFieldsValue())}
+            >
+                <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
+                    <Form.Item name="name"
+                               label={"Наименование компании"}
+                               rules={[{required: true, message: "Укажите наименование компании"}]}
+                               style={{width: "90%"}}>
+                        <Input style={{width: "100%)"}}
+                               placeholder={"Наименование"}/>
+                    </Form.Item>
+                    <Form.Item style={{width: "10%"}} name="legal_form_id"
+                               rules={[{required: true, message: "Укажите тип организации"}]}>
+                        <Select placeholder={"Форма"} style={{width: "100%)"}}
+                                onChange={(value, option) => {
+                                    if (!form.getFieldValue("name"))
+                                        form.setFieldValue("name",
+                                            option.children + " ");
+                                }}
                                 loading={loadingLegalForm}>
                             {dataLegalForm?.legalForms?.map(row => (
                                 <Select.Option key={row.id} value={row.id}>{row.name}</Select.Option>))}
-                </Select>
-            </Form.Item>
-        </Space.Compact>
-        <Form.Item name="full_name" label="Полное наименование"
-                   rules={[{required: true, message: "Укажите полное наименование компании"}]}>
-            <Input/>
-        </Form.Item>
-        <Form.Item name="director" label="Руководитель">
-            <CustomAutoCompleteAndCreateWitchEdit
-                data={dataContacts?.contacts?.items}
-                typeData={"FIO"}
-                firstBtnOnClick={() =>
-                    setContactModalStatus({contact_id: null, mode: "add"})}
-                secondBtnOnClick={() =>
-                    form.getFieldValue("director")?.selected &&
-                    setContactModalStatus({
-                        contact_id:
-                        form.getFieldValue("director")?.selected, mode: "edit"
-                    })}
-            />
-        </Form.Item>
-
-        <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
-            <Form.Item name="address_legal" label="Юридический адрес" minchars={3}
-                       delay={50}
-                       style={{width: '80%'}}>
-                <AddressSuggestions token={TokenDADATA}
-                                    defaultQuery={address?.legal ?? ""}
-                                    inputProps={{
-                                        placeholder: 'Введите адрес',
-                                        style: StyledAddressSuggestionsInput,
-                                    }}
-                                    onChange={(suggestion) => setAddress({
-                                        ...address,
-                                        legal: suggestion?.unrestricted_value
-                                    })}
-                                    style={{width: '100%'}}/>
-            </Form.Item>
-            <Form.Item name="office_number_legal" style={{width: "10%"}}>
-                <Input placeholder="Офис" style={{width: '100%'}}/>
-            </Form.Item>
-        </Space.Compact>
-        <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
-            <Form.Item name="address_mail" label="Почтовый адрес" minchars={3}
-                       delay={50}
-                       style={{width: '90%'}}>
-                <AddressSuggestions token={TokenDADATA}
-                                    defaultQuery={address?.mail ?? ""}
-                                    inputProps={{
-                                        placeholder: 'Введите адрес',
-                                        style: StyledAddressSuggestionsInput,
-                                    }}
-                                    onChange={(suggestion) => setAddress({
-                                        ...address,
-                                        mail: suggestion?.unrestricted_value
-                                    })}
-                                    style={{width: '100%'}}/>
-            </Form.Item>
-            <Form.Item
-                name="office_number_mail"
-                style={{width: "10%"}}>
-                <Input placeholder="Офис" style={{width: '100%'}}/>
-            </Form.Item>
-        </Space.Compact>
-        <Row gutter={8}>
-            <Col span={12}>
-                <Form.Item name="phone_number" label="Телефон" rules={[{
-                    pattern: /^\+[0-9\s()-]+$/,
-                    message: 'Пожалуйста, введите в формате +79003001234',
-                },]}>
-                    <Input
-                        placeholder="+790031001234"
-                        maxLength={12}
-                        minLength={11}
-                    />
+                        </Select>
+                    </Form.Item>
+                </Space.Compact>
+                <Form.Item name="full_name" label="Полное наименование"
+                           rules={[{required: true, message: "Укажите полное наименование компании"}]}>
+                    <Input/>
                 </Form.Item>
-                <Form.Item name="fax_number" label="Факс">
-                    <Input placeholder="Введите номер факса"/>
-                </Form.Item>
-                <Form.Item name="email" label="e-mail" rules={[{
-                    type: "email", message: 'Пожалуйста, введите корректный почтовый адрес',
-                },]}>
-                    <Input placeholder="Введите почтовый адрес"/>
-                </Form.Item>
-                <Form.Item name="payment_account" label="Расчётынй счёт">
-                    <Input placeholder="Введите номер расчётного счёта"/>
-                </Form.Item>
-                <Form.Item name="bik" label="Бик" style={{width: "100%"}}>
-                    <CustomAutoCompleteAndCreate
-                        typeData={"CODENAME"}
-                        data={dataBik?.biks?.items}
+                <Form.Item name="director" label="Руководитель">
+                    <CustomAutoCompleteAndCreateWitchEdit
+                        data={dataContacts?.contacts?.items}
+                        typeData={"FIO"}
                         firstBtnOnClick={() =>
-                            setBikModalStatus({bik_id: null, mode: "add"})}
+                            setContactModalStatus({contact_id: null, mode: "add"})}
+                        secondBtnOnClick={() =>
+                            form.getFieldValue("director")?.selected &&
+                            setContactModalStatus({
+                                contact_id:
+                                form.getFieldValue("director")?.selected, mode: "edit"
+                            })}
                     />
                 </Form.Item>
-            </Col>
-            <Col span={12}>
-                <Form.Item name="INN" label="ИНН" rules={[{
-                    pattern: /^[\d\s]+$/, message: 'Пожалуйста, введите корректный номер ИНН',
-                },]}>
-                    <Input
-                        placeholder="Введите номер ИНН"
-                        maxLength={12}
-                        minLength={10}
-                        pattern="\d*"
-                    />
-                </Form.Item>
-                <Form.Item name="OGRN" label="ОГРН" rules={[{
-                    pattern: /^[\d\s]+$/, message: 'Пожалуйста, введите корректный номер ОГРН',
-                },]}>
-                    <Input
-                        placeholder="Введите номер ОГРН"
-                        maxLength={13}
-                        minLength={13}
-                        pattern="\d*"
-                    />
-                </Form.Item>
-                <Form.Item name="OKPO" label="ОКПО" rules={[{
-                    pattern: /^[\d\s]+$/, message: 'Пожалуйста, введите корректный номер ОКПО',
-                },]}>
-                    <Input
-                        placeholder="Введите номер ОКПО"
-                        maxLength={10}
-                        minLength={8}
-                        pattern="\d*"
-                    />
-                </Form.Item>
-                <Form.Item name="KPP" label="КПП" rules={[{
-                    pattern: /^[\d\s]+$/, message: 'Пожалуйста, введите корректный номер КПП',
-                },]}>
-                    <Input
-                        placeholder="Введите номер КПП"
-                        maxLength={9}
-                        minLength={9}
-                        pattern="\d*"
-                    />
-                </Form.Item>
-            </Col>
-        </Row>
 
-        <Form.Item>
-            <div style={{textAlign: 'center'}}>
-                <StyledButtonGreen type="dashed" htmlType={"submit"}>
-                    {actualObject ? `Обновить` : `Создать`}
-                </StyledButtonGreen>
-            </div>
-        </Form.Item>
-    </Form>
-    {/*
+                <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
+                    <Form.Item name="address_legal" label="Юридический адрес" minchars={3}
+                               delay={50}
+                               style={{width: '80%'}}>
+                        <AddressSuggestions token={TokenDADATA}
+                                            defaultQuery={address?.legal ?? ""}
+                                            inputProps={{
+                                                placeholder: 'Введите адрес',
+                                                style: StyledAddressSuggestionsInput,
+                                            }}
+                                            onChange={(suggestion) => setAddress({
+                                                ...address,
+                                                legal: suggestion?.unrestricted_value
+                                            })}
+                                            style={{width: '100%'}}/>
+                    </Form.Item>
+                    <Form.Item name="office_number_legal" style={{width: "10%"}}>
+                        <Input placeholder="Офис" style={{width: '100%'}}/>
+                    </Form.Item>
+                </Space.Compact>
+                <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
+                    <Form.Item name="address_mail" label="Почтовый адрес" minchars={3}
+                               delay={50}
+                               style={{width: '90%'}}>
+                        <AddressSuggestions token={TokenDADATA}
+                                            defaultQuery={address?.mail ?? ""}
+                                            inputProps={{
+                                                placeholder: 'Введите адрес',
+                                                style: StyledAddressSuggestionsInput,
+                                            }}
+                                            onChange={(suggestion) => setAddress({
+                                                ...address,
+                                                mail: suggestion?.unrestricted_value
+                                            })}
+                                            style={{width: '100%'}}/>
+                    </Form.Item>
+                    <Form.Item
+                        name="office_number_mail"
+                        style={{width: "10%"}}>
+                        <Input placeholder="Офис" style={{width: '100%'}}/>
+                    </Form.Item>
+                </Space.Compact>
+                <Row gutter={8}>
+                    <Col span={12}>
+                        <Form.Item name="phone_number" label="Телефон" rules={[{
+                            pattern: /^\+[0-9\s()-]+$/,
+                            message: 'Пожалуйста, введите в формате +79003001234',
+                        },]}>
+                            <Input
+                                placeholder="+790031001234"
+                                maxLength={12}
+                                minLength={11}
+                            />
+                        </Form.Item>
+                        <Form.Item name="fax_number" label="Факс">
+                            <Input placeholder="Введите номер факса"/>
+                        </Form.Item>
+                        <Form.Item name="email" label="e-mail" rules={[{
+                            type: "email", message: 'Пожалуйста, введите корректный почтовый адрес',
+                        },]}>
+                            <Input placeholder="Введите почтовый адрес"/>
+                        </Form.Item>
+                        <Form.Item name="payment_account" label="Расчётынй счёт">
+                            <Input placeholder="Введите номер расчётного счёта"/>
+                        </Form.Item>
+                        <Form.Item name="bik" label="Бик" style={{width: "100%"}}>
+                            <CustomAutoCompleteAndCreate
+                                typeData={"CODENAME"}
+                                data={dataBik?.biks?.items}
+                                firstBtnOnClick={() =>
+                                    setBikModalStatus({bik_id: null, mode: "add"})}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item name="INN" label="ИНН" rules={[{
+                            pattern: /^[\d\s]+$/, message: 'Пожалуйста, введите корректный номер ИНН',
+                        },]}>
+                            <Input
+                                placeholder="Введите номер ИНН"
+                                maxLength={12}
+                                minLength={10}
+                                pattern="\d*"
+                            />
+                        </Form.Item>
+                        <Form.Item name="OGRN" label="ОГРН" rules={[{
+                            pattern: /^[\d\s]+$/, message: 'Пожалуйста, введите корректный номер ОГРН',
+                        },]}>
+                            <Input
+                                placeholder="Введите номер ОГРН"
+                                maxLength={13}
+                                minLength={13}
+                                pattern="\d*"
+                            />
+                        </Form.Item>
+                        <Form.Item name="OKPO" label="ОКПО" rules={[{
+                            pattern: /^[\d\s]+$/, message: 'Пожалуйста, введите корректный номер ОКПО',
+                        },]}>
+                            <Input
+                                placeholder="Введите номер ОКПО"
+                                maxLength={10}
+                                minLength={8}
+                                pattern="\d*"
+                            />
+                        </Form.Item>
+                        <Form.Item name="KPP" label="КПП" rules={[{
+                            pattern: /^[\d\s]+$/, message: 'Пожалуйста, введите корректный номер КПП',
+                        },]}>
+                            <Input
+                                placeholder="Введите номер КПП"
+                                maxLength={9}
+                                minLength={9}
+                                pattern="\d*"
+                            />
+                        </Form.Item>
+                    </Col>
+                </Row>
+
+                <Form.Item>
+                    <div style={{textAlign: 'center'}}>
+                        <StyledButtonGreen type="dashed" htmlType={"submit"}>
+                            {actualObject ? `Обновить` : `Создать`}
+                        </StyledButtonGreen>
+                    </div>
+                </Form.Item>
+            </Form>
+            {/*
             Модальные окна редактирования
             */
-    }
-    {/* Бики */
-    }
-    <BikModalForm
-        key={bikModalStatus?.bik_id ?? nanoid()}
-        onClose={() => setBikModalStatus(null)}
-        onCompleted={(value) => {
-            form.setFieldValue("bik", {selected: value?.id, output: value?.name});
-            setBikModalStatus(null);
-        }}
-        mode={bikModalStatus?.mode ?? null}
-    />
+            }
+            {/* Бики */
+            }
+            <BikModalForm
+                key={bikModalStatus?.bik_id ?? nanoid()}
+                onClose={() => setBikModalStatus(null)}
+                onCompleted={(value) => {
+                    form.setFieldValue("bik", {selected: value?.id, output: value?.name});
+                    setBikModalStatus(null);
+                }}
+                mode={bikModalStatus?.mode ?? null}
+            />
 
-    {/* контакты */
-    }
-    <ContactModalForm
-        key={contactModalStatus?.contact_id ?? nanoid()}
-        objectId={contactModalStatus?.contact_id ?? null}
-        onClose={() => setContactModalStatus(null)}
-        onCompleted={(value) => {
-            console.log(value);
-            form.setFieldValue("director", {selected: value?.id, output: value?.name});
-            setContactModalStatus(null);
-        }}
-        mode={contactModalStatus?.mode ?? null}
-    />
+            {/* контакты */
+            }
+            <ContactModalForm
+                key={contactModalStatus?.contact_id ?? nanoid()}
+                objectId={contactModalStatus?.contact_id ?? null}
+                onClose={() => setContactModalStatus(null)}
+                onCompleted={(value) => {
+                    console.log(value);
+                    form.setFieldValue("director", {selected: value?.id, output: value?.name});
+                    setContactModalStatus(null);
+                }}
+                mode={contactModalStatus?.mode ?? null}
+            />
 
-</div>
+        </div>
 
-)
-    ;
+    )
+        ;
 };
 
 export default OrganizationForm;

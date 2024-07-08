@@ -9,10 +9,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Permission extends Model
 {
+
     protected $fillable = [
+        'name_key',
         'name',
         'description',
     ];
+    protected $primaryKey = 'name_key';
+    public $incrementing = false;
+    protected $keyType = 'string';
     /**
      * The roles that belong to the permission.
      *
@@ -20,6 +25,6 @@ class Permission extends Model
      */
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class, 'permission_roles');
+        return $this->belongsToMany(Role::class, 'permission_roles', 'permission_id', 'role_id');
     }
 }

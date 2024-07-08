@@ -31,11 +31,13 @@ const MenuItems =
             label: 'Справочники',
             key: '/references',
             icon: <ProfileOutlined/>,
+            permission: 'references',
             children: [
                 {
                     label: 'Контакты',
                     key: '/references/contact',
                     icon: <ContactsOutlined/>,
+                    permission: ['read-contact', 'create-contact'],
                     children: [
                         {
                             label: 'Просмотр контактов',
@@ -57,6 +59,7 @@ const MenuItems =
                     label: 'Подрядчики',
                     key: '/references/person/',
                     icon: <IdcardOutlined/>,
+                    permission: ['read-person', 'create-person'],
                     children: [
                         {
                             label: 'Просмотр подрядчиков',
@@ -78,6 +81,7 @@ const MenuItems =
                     label: 'Организации',
                     key: '/references/organization/',
                     icon: <TeamOutlined/>,
+                    permission: ['read-organization', 'create-organization'],
                     children: [
                         {
                             label: 'Просмотр организаций',
@@ -101,6 +105,7 @@ const MenuItems =
             label: 'Проекты',
             key: '/project',
             icon: <ProfileOutlined/>,
+            permission: ['read-work', 'create-work', 'read-contract', 'create-contract', 'read-kp', 'create-kp', 'read-request', 'create-request', 'dev'],
             children: [
                 {
                     label: 'Все проекты',
@@ -113,6 +118,7 @@ const MenuItems =
                     label: 'Стадия: Заявка',
                     key: '/project/request',
                     icon: <FileAddOutlined/>,
+                    permission: ['read-request', 'create-request'],
                     children: [
                         {
                             label: 'Список заявок',
@@ -122,7 +128,7 @@ const MenuItems =
                             permission: 'read-request'
                         },
                         {
-                            label: 'Создать нового подрядчика',
+                            label: 'Создать новую заявку',
                             key: '/project/request/form',
                             icon: <FormOutlined/>,
                             children: null,
@@ -134,6 +140,7 @@ const MenuItems =
                     label: 'Стадия: Согласовании КП',
                     key: '/project/kp',
                     icon: <AuditOutlined/>,
+                    permission: ['read-kp', 'create-kp'],
                     children: [
                         {
                             label: 'Список проектов',
@@ -149,27 +156,28 @@ const MenuItems =
                             children: null,
                             permission: 'create-kp',
                             status: 'dev'
-                        }
+                    }
                     ]
                 },
                 {
                     label: 'Стадия: Согласовании договора',
                     key: '/project/contract',
                     icon: <FileProtectOutlined/>,
+                    permission: ['read-contract', 'create-contract'],
                     children: [
                         {
                             label: 'Список проектов',
                             key: '/project/contract/table',
                             icon: <EyeOutlined/>,
                             children: null,
-                            permission: 'read-person'
+                            permission: 'read-contract'
                         },
                         {
                             label: 'Создать нового подрядчика',
                             key: '/project/contract/form',
                             icon: <FormOutlined/>,
                             children: null,
-                            permission: 'create-person'
+                            permission: 'create-contract'
                         }
                     ]
                 },
@@ -177,20 +185,21 @@ const MenuItems =
                     label: 'Стадия: В работе',
                     key: '/project/work',
                     icon: <SyncOutlined/>,
+                    permission: ['read-work', 'create-work'],
                     children: [
                         {
                             label: 'Список проектов',
                             key: '/project/work/table',
                             icon: <EyeOutlined/>,
                             children: null,
-                            permission: 'read-person'
+                            permission: 'read-work'
                         },
                         {
                             label: 'Создать нового подрядчика',
                             key: '/project/work/form',
                             icon: <FormOutlined/>,
                             children: null,
-                            permission: 'create-person'
+                            permission: 'create-work'
                         }
                     ]
                 }
@@ -214,11 +223,13 @@ const MenuItems =
             label: 'Пользователи',
             key: '/user/',
             icon: <IdcardOutlined/>,
+            permission: ['create-user-role', 'read-user-role','read-user', 'create-user'],
             children: [
                 {
                     label: 'Учётные записи',
                     key: '/user/person',
                     icon: null,
+                    permission: ['read-user', 'create-user'],
                     children: [
                         {
                             label: 'Регистрация учётной записи',
@@ -240,6 +251,7 @@ const MenuItems =
                     label: 'Роли и права доступа',
                     key: '/user/role',
                     icon: null,
+                    permission: ['create-user-role', 'read-user-role'],
                     children: [
                         {
                             label: 'Создать роль',
@@ -309,15 +321,15 @@ const MenuItemsByPermission = (currentUser) => {
         return [];
     console.log("MenuItemsByPermission",currentUser);
     // Получаем список прав пользователя
-    const userPermissions =  currentUser?.permissions?.map(p => p.name) ?? [];
+    const userPermissions =  currentUser?.permissions?.map(p => p.name_key) ?? [];
     const hasPermission = (userPermissions, requiredPermission) => {
-        return userPermissions.includes(requiredPermission);
+        return requiredPermission.includes(userPermissions);
     };
     // Функция для фильтрации элементов меню
     const filterMenuItems = (items, userPermissions) => {
         return items
             .filter(item => {
-                if (item.permission) {
+                if (item.permission && item.permission.lenght > 0 && item.status) {
                     return hasPermission(userPermissions, item.permission);
                 }
                 return true;

@@ -84,6 +84,17 @@ export const TYPES_PAYMENT_QUERY_COMPACT = gql`
         }
     }
 `;
+export const PERMISSIONS_QUERY_COMPACT = gql`
+    query PermissionsQuery {
+        permissions (queryType: "COMPACT")  {
+            items{
+                description
+                name_key
+                name
+            }
+        }
+    }
+`;
 export const ORGANIZATIONS_QUERY_COMPACT = gql`
     query OrganizationsQuery  {
         organizations (queryType: "COMPACT"){

@@ -23,7 +23,7 @@ import dayjs from "dayjs";
 import {nanoid} from "nanoid";
 import {CustomDatePicker} from "../../FormattingDateElementComponent";
 
-const PersonForm = ({localObject, initialObject, onCompleted}) => {
+const PersonForm = ({localObject, initialObject, onCompleted,...props}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
@@ -129,7 +129,7 @@ const PersonForm = ({localObject, initialObject, onCompleted}) => {
 
 
     return (
-        <div>
+        <div  >
             <Row gutter={8}>
                 <Col span={12}>
                     <Form form={formPassport}

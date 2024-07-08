@@ -14,8 +14,7 @@ const ContactModalForm = ({key,object,objectId,onClose, mode, onCompleted}) => {
             onClose={() => onClose(null)}
             width={"600px"}
         >
-            <StyledBlockRegular label={"Контакт"}>
-                {mode === "edit" ? (
+                 {mode === "edit" ? (
                     (object || objectId) && (
                         <GroupTypeProjectForm
                             onCompleted={() =>
@@ -27,8 +26,7 @@ const ContactModalForm = ({key,object,objectId,onClose, mode, onCompleted}) => {
                 ) : (
                     <GroupTypeProjectForm onCompleted={onCompleted || onClose}/>
                 )}
-            </StyledBlockRegular>
-        </Modal>
+         </Modal>
     );
 };
 

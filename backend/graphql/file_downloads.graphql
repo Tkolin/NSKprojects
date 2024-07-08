@@ -1,6 +1,7 @@
 extend type Mutation {
     personOrderFileDownload(
         personId: ID
+        tasksId: [ID]
     ): File!
     projectPaymentInvoiceFileDownload(
         projectId: ID!

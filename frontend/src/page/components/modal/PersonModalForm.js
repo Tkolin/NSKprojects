@@ -13,10 +13,9 @@ const PersonModalForm = ({key,object,objectId,onClose, mode, onCompleted}) => {
             footer={null}
             onClose={() => onClose(null)}
             width={"1000px"}
-
+            title={"Сотрудник"}
         >
-            <StyledBlockBig label={"Сотрудник"}>
-                {mode === "edit" ? (
+                 {mode === "edit" ? (
                     (object || objectId) && (
                         <PersonForm
                             onCompleted={() =>
@@ -28,8 +27,7 @@ const PersonModalForm = ({key,object,objectId,onClose, mode, onCompleted}) => {
                 ) : (
                     <PersonForm onCompleted={onCompleted || onClose}/>
                 )}
-            </StyledBlockBig>
-        </Modal>
+         </Modal>
     );
 };
 

@@ -12,7 +12,8 @@ export const FENRIR_QUERY = gql`
             count
         }
     }
-`;export const FENRIR_TEMPLATE_QUERY = gql`
+`;
+export const FENRIR_TEMPLATE_QUERY = gql`
     query FenrirTemplateQuery  ($projectId: ID) {
         templateFenrirsTypeProject  (projectId: $projectId) {
             items {
@@ -24,7 +25,8 @@ export const FENRIR_QUERY = gql`
             count
         }
     }
-`;export const TASKS_QUERY = gql`
+`;
+export const TASKS_QUERY = gql`
     query TasksQuery  ($queryOptions: QueryOptions) {
         tasks  (queryOptions: $queryOptions) {
             items {
@@ -244,7 +246,7 @@ export const TYPES_PROJECTS_QUERY = gql`
         }
     }
 `;
-export const  PROJECTS_QUERY = gql`
+export const PROJECTS_QUERY = gql`
     query ProjectQuery($queryOptions: QueryOptions, $projectId: ID, $projectStatuses: String) {
         projects (queryOptions: $queryOptions, projectId: $projectId, projectStatuses: $projectStatuses) {
             items{
@@ -296,7 +298,7 @@ export const  PROJECTS_QUERY = gql`
                 prepayment
                 status
                 {
-                     name
+                    name
                     name_key
                 }
                 date_completion
@@ -319,7 +321,7 @@ export const  PROJECTS_QUERY = gql`
                     date_end
                     percent
                     price
-                    
+
                 }
                 project_irds {
                     id
@@ -440,17 +442,19 @@ export const GET_CURRENT_USER = gql`
             }
             permissions {
                 description
+                name_key
                 name
             }
             roles {
                 description
+                name_key
                 name
-
             }
             access_token
         }
     }
 `;
+
 export const STAGES_QUERY = gql`
     query StagesQuery( $queryOptions: QueryOptions) {
         stages (queryOptions: $queryOptions) {
@@ -482,6 +486,49 @@ export const CONTACTS_QUERY = gql`
                 organization {
                     id
                     name
+                }
+            }
+            count
+        }
+    }
+`;
+export const USERS_QUERY = gql`
+    query UsersQuery ($queryOptions: QueryOptions) {
+        users(queryOptions: $queryOptions) {
+            items {
+                id
+                email
+                roles{
+                    name_key
+                    name
+                    description
+                    permissions {
+                        name_key
+                        name
+                        description
+                    }
+                }
+                person {
+                    id
+                }
+                organization {
+                    id
+                    name
+                }
+            }
+            count
+        }
+    }
+`;
+export const ROLES_TABLE = gql`
+    query RolesQuery ($queryOptions: QueryOptions) {
+        roles(queryOptions: $queryOptions) {
+            items {
+                name
+                description
+                permissions {
+                    name
+                    description
                 }
             }
             count

@@ -42,7 +42,7 @@ class Person extends Model
     }
     public function project_tasks(): HasMany
     {
-        return $this->hasMany(ProjectTasks::class);
+        return $this->hasMany(ProjectTasks::class, 'executor_id','id');
     }
     public function education_person(): HasMany
     {

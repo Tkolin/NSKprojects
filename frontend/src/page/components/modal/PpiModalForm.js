@@ -13,10 +13,9 @@ const PpiModalForm = ({key,object,objectId,onClose, mode, onCompleted}) => {
             footer={null}
             onClose={() => onClose(null)}
             width={"600px"}
-
+            title={"Место выдачи"}
         >
-            <StyledBlockRegular label={"Место выдачи"}>
-                {mode === "edit" ? (
+                 {mode === "edit" ? (
                     (object || objectId) && (
                         <PassportPlaceIssuesForm
                             onCompleted={() =>
@@ -33,8 +32,7 @@ const PpiModalForm = ({key,object,objectId,onClose, mode, onCompleted}) => {
                         }}
                     />
                 )}
-            </StyledBlockRegular>
-        </Modal>
+         </Modal>
     );
 };
 

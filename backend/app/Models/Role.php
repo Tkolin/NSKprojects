@@ -8,9 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 class Role extends Model
 {
-    use HasFactory;
+    protected $primaryKey = 'name_key';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
         'name',
+        'name_key',
         'description',
     ];
     /**
@@ -20,7 +24,7 @@ class Role extends Model
      */
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'user_roles');
+        return $this->belongsToMany(User::class, 'role_user', 'user_id', 'user_id');
     }
 
     /**
@@ -30,6 +34,6 @@ class Role extends Model
      */
     public function permissions(): BelongsToMany
     {
-        return $this->belongsToMany(Permission::class, 'permission_role');
+        return $this->belongsToMany(Permission::class, 'permission_role', 'role_id', 'permission_id');
     }
 }

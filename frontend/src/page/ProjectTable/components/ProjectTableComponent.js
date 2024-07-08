@@ -370,13 +370,16 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
     ];
     const expandedRowRender = (project) => {
         return (
-            <Space.Compact>
+            <Space.Compact direction={"horizontal"}>
 
                         <TableStages project={project} setEditModalStatus={setEditModalStatus}/>
 
+
                         <TableIrds project={project} setEditModalStatus={setEditModalStatus}/>
 
+
                         <TableExecutors project={project} setEditModalStatus={setEditModalStatus}/>
+
 
             </Space.Compact>
 

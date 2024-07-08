@@ -13,8 +13,17 @@ type BikResult {
 }type ContactsResult {
     items: [Contact]
     count: Int
+}type UsersResult {
+    items: [User]
+    count: Int
+}type RolesResult {
+    items: [Role]
+    count: Int
 }type BanksResult {
     items: [Bank]
+    count: Int
+}type PermissionResult {
+    items: [Permission]
     count: Int
 }type ProjectTaskExecutorResult {
     items: [ProjectTaskExecutor]

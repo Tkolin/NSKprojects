@@ -5,10 +5,10 @@ import {StyledBlockBig} from "../components/style/BlockStyles";
 
 const OrganizationPage = () => {
     return (
-        <StyledBlockBig label={"Организация"}>
-            <OrganizationForm/>
+        <StyledBlockBig>
+              <OrganizationForm />
         </StyledBlockBig>
-    );
+     );
 };
 
 export default OrganizationPage;

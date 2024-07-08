@@ -1,14 +1,15 @@
 import React from 'react';
 import RequestForm from "../components/form/modelsForms/RequestForm";
 import {StyledBlockBig} from "../components/style/BlockStyles";
+import UserForm from "../components/form/modelsForms/UserForm";
 
 
-const RequestPage = () => {
+const UserPage = () => {
     return (
         <StyledBlockBig>
-            <RequestForm/>
+            <UserForm/>
         </StyledBlockBig>
-    );
+     );
 };
 
-export default RequestPage;
+export default UserPage;

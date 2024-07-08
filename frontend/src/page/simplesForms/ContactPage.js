@@ -5,10 +5,12 @@ import {StyledBlockBig, StyledBlockRegular} from "../components/style/BlockStyle
 
 const ContactPage = () => {
     return (
-        <StyledBlockRegular label={"Контакт"}>
+        <StyledBlockRegular>
             <ContactForm/>
+
+
         </StyledBlockRegular>
-    );
+     );
 };
 
 export default ContactPage;

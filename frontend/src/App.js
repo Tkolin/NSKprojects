@@ -30,6 +30,9 @@ import moment from "moment";
 import RequestPage from "./page/simplesForms/RequestPage";
 import ProjectTableComponent from "./page/ProjectTable/components/ProjectTableComponent";
 import TestMail from "./page/TestMail";
+import UserTable from "./page/simplesTables/UserTable";
+import RoleTable from "./page/simplesTables/RoleTable";
+import RolePage from "./page/simplesForms/RolePage";
 
 
 const App = () => {
@@ -100,7 +103,11 @@ const App = () => {
                             <Route path="/project/work" element={<Home/>}/>
                             <Route path="/project/work/table" element={<ProjectTableComponent projectStatuses={"WORKING"}/>}/>
                             <Route path="/project/work/form" element={<Home/>}/>
+                            {/*Учётки*/}
+                            <Route path="/user/person/table" element={<UserTable/>}/>
+                            <Route path="/user/role/table" element={<RoleTable/>}/>
 
+                            <Route path="/user/role/form" element={<RolePage/>}/>
 
 
 

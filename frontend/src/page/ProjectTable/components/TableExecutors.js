@@ -1,6 +1,8 @@
 import {Space, Table, Tooltip, Typography} from "antd";
 import {DownloadOutlined, EditOutlined} from "@ant-design/icons";
 import React from "react";
+import PersonContractFileDownload from "../../components/script/fileDownloadScripts/PersonContractFileDownload";
+import TaskExecutorContractDownload from "../../components/script/fileDownloadScripts/TaskExecutorContractDownload";
 const {Text} = Typography;
 
 const TableExecutors = ({setEditModalStatus, project}) => {
@@ -70,6 +72,7 @@ const TableExecutors = ({setEditModalStatus, project}) => {
                 align: "left",
                 render: (text, record) => (
                     <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
+                        <TaskExecutorContractDownload projectId={record.id} personId={record.executor.id}/>
                     </Space.Compact>
                 ),
             }]

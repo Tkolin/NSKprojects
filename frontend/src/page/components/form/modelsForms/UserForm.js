@@ -16,8 +16,7 @@ import {
 } from "../../style/SearchAutoCompleteStyles";
 import {CONTACTS_QUERY_BY_ID} from "../../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
-import OrganizationModalForm from "../../modal/OrganizationModalForm";
-import {CustomDatePicker} from "../../FormattingDateElementComponent";
+ import {CustomDatePicker} from "../../FormattingDateElementComponent";
 
 const ContactForm = ({localObject, initialObject, onCompleted}) => {
     // Первичные данные
@@ -27,19 +26,19 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
     const [loadContext, {loading, data}] = useLazyQuery(CONTACTS_QUERY_BY_ID, {
         variables: {id: initialObject?.id},
         onCompleted: (data) => {
-            setActualObject(data?.contacts?.items[0]);
-            updateForm(data?.contacts?.items[0])
+            setActualObject(data?.users?.items[0]);
+            updateForm(data?.users?.items[0])
         },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
         },
     });
 
-    // Состояния
-    const [organizationModalStatus, setOrganizationModalStatus] = useState(null);
-    useEffect(() => {
-        console.log("organizationModalStatus",organizationModalStatus);
-    }, [organizationModalStatus]);
+ //   // Состояния
+  //   const [organizationModalStatus, setOrganizationModalStatus] = useState(null);
+  //   useEffect(() => {
+  //       console.log("organizationModalStatus",organizationModalStatus);
+  //   }, [organizationModalStatus]);
     // Мутация
     const [mutate, {loading: loadingSave}] = useMutation(actualObject ? UPDATE_CONTACT_MUTATION : ADD_CONTACT_MUTATION, {
         onCompleted: (data) => {
@@ -177,7 +176,7 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
                     <CustomAutoComplete
                         data={dataPositions?.positions?.items}
                         placeholder="Выберите должность"
-                     />
+                    />
                 </Form.Item>
                 <Form.Item
                     name={"organization"}
@@ -188,11 +187,11 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
                         data={dataOrganizations?.organizations?.items}
                         onChange={(value)=>form.setFieldValue("organization",value)}
                         placeholder="Выберите организацию"
-                        firstBtnOnClick={() =>
-                            setOrganizationModalStatus({organization_id: form.getFieldValue("organization")?.selected, mode: "add"})}
-                        secondBtnOnClick={() =>
-                            form.getFieldValue("organization")?.selected &&
-                            setOrganizationModalStatus({organization_id: form.getFieldValue("organization")?.selected, mode: "edit"})}
+                        // firstBtnOnClick={() =>
+                        //     setOrganizationModalStatus({organization_id: form.getFieldValue("organization")?.selected, mode: "add"})}
+                        // secondBtnOnClick={() =>
+                        //     form.getFieldValue("organization")?.selected &&
+                        //     setOrganizationModalStatus({organization_id: form.getFieldValue("organization")?.selected, mode: "edit"})}
                     />
                 </Form.Item>
                 <Form.Item labelCol={{span: 24}} wrapperCol={{span: 24}}>
@@ -203,13 +202,13 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
                     </div>
                 </Form.Item>
             </Form>
-            <OrganizationModalForm
-                key={organizationModalStatus?.selected?.id ?? organizationModalStatus?.organization_id ?? null}
-                object={organizationModalStatus?.selected ?? null}
-                objectId={organizationModalStatus?.organization_id ?? null}
-                mode={organizationModalStatus?.mode ?? null}
-                onClose={() => setOrganizationModalStatus(null)}
-            />
+            {/*<OrganizationModalForm*/}
+            {/*    key={organizationModalStatus?.selected?.id ?? organizationModalStatus?.organization_id ?? null}*/}
+            {/*    object={organizationModalStatus?.selected ?? null}*/}
+            {/*    objectId={organizationModalStatus?.organization_id ?? null}*/}
+            {/*    mode={organizationModalStatus?.mode ?? null}*/}
+            {/*    onClose={() => setOrganizationModalStatus(null)}*/}
+            {/*/>*/}
         </div>
     );
 };

@@ -5,7 +5,7 @@ import {StyledBlockRegular} from "../components/style/BlockStyles";
 
 const RegisterPage = () => {
     return (
-        <StyledBlockRegular label={"Регистрация"}>
+        <StyledBlockRegular>
             <RegisterForm/>
         </StyledBlockRegular>
     );

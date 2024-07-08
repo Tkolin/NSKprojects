@@ -13,9 +13,9 @@ const OrganizationModalForm = ({key,object,onClose, mode, onCompleted }) => {
             footer={null}
             onClose={() => onClose()}
             width={"500px"}
+            title={"Этап"}
         >
-            <Divider> Этап </Divider>
-                {mode === "edit" ? (
+                 {mode === "edit" ? (
                     (object) && (
                         <StageForm
 

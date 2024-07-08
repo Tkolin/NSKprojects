@@ -42,7 +42,7 @@ class CheckRoleDirective extends BaseDirective implements FieldMiddleware
                          $roles = $user->roles->map(function ($role) {
                             return [
                                 'permissions' => $role->permissions->map(function ($permission) {
-                                    return $permission->name;
+                                    return $permission->name_key;
                                 })->toArray()
                             ];
                         });

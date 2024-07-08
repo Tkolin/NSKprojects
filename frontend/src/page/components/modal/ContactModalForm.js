@@ -12,10 +12,11 @@ const ContactModalForm = ({key,object,objectId,onClose, mode, onCompleted}) => {
             onCancel={() => onClose(null)}
             footer={null}
             onClose={() => onClose(null)}
-            width={"600px"}
-        >
-            <StyledBlockRegular label={"Контакт"}>
-                {mode === "edit" ? (
+            width={"300px"}
+             title={"Контакт"}
+            styles={{header: {textAlign: "center"} }}
+         >
+                 {mode === "edit" ? (
                     (object || objectId) && (
                         <ContactForm
                             onCompleted={() =>
@@ -27,8 +28,7 @@ const ContactModalForm = ({key,object,objectId,onClose, mode, onCompleted}) => {
                 ) : (
                     <ContactForm  onCompleted={onCompleted || onClose}/>
                 )}
-            </StyledBlockRegular>
-        </Modal>
+         </Modal>
     );
 };
 

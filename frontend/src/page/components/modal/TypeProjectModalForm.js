@@ -14,8 +14,9 @@ const TypeProjectModalForm = ({key,object,onClose, mode, onCompleted, localObjec
             footer={null}
             onClose={() => onClose(null)}
             width={"600px"}
+            title={"Тип документации"}
+            styles={{header: {textAlign: "center"}}}
         >
-            <Divider> Тип документации </Divider>
 
                  {mode === "edit" ? (
                     (object) && (

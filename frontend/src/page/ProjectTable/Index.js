@@ -3,8 +3,7 @@ import './Styles.css'; // Импорт вашего CSS файла
 import StatusLegend from "./components/StatusLegend";
 import ProjectTableComponent from "./components/ProjectTableComponent";
 import {Divider, Form, Space} from "antd";
-import Title from "antd/es/typography/Title";
-import Search from "antd/es/input/Search";
+ import Search from "antd/es/input/Search";
 
 
 const Index = ({projectStatuses}) => {

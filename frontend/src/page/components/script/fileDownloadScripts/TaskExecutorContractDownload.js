@@ -29,7 +29,7 @@ const TaskExecutorContractDownload = ({projectId, executorId, text}) => {
 
     const handleDownload = () => {
         console.log(projectId);
-        downloadTaskExecutorContract({ variables: { projectId: projectId, executorId: executorId } });
+        downloadTaskExecutorContract({ variables: { projectId: '152', executorId: '9' } });
     };
 
     const handleDownloadClick = async (downloadedFileUrl) => {

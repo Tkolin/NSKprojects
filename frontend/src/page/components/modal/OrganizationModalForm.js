@@ -14,9 +14,10 @@ const OrganizationModalForm = ({key,objectId,object,onClose, mode, onCompleted }
             footer={null}
             onClose={() => onClose()}
             width={"900px"}
+
+            title={"Организация"}
         >
-            <Divider>Организация</Divider>
-            {mode === "edit" ? (
+             {mode === "edit" ? (
                 (object) && (
                         <OrganizationForm
                             localObject={object}

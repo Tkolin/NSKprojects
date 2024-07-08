@@ -34,6 +34,7 @@ const styles = {
 
         float: 'left',
     },
+
     user: {
         display: 'flex',
         alignItems: 'center',
@@ -64,7 +65,7 @@ const AppLayout = ({children, currentUser, error}) => {
     const navigate = useNavigate();
     const location = useLocation();
     const [current, setCurrent] = useState(location.pathname);
-    const [items, setItems] = useState( );
+    const [items, setItems] = useState();
     const [title, setTitle] = useState();
     useEffect(() => {
         setItems(MenuItemsByPermission(currentUser?.currentUser ?? {}));
@@ -79,7 +80,7 @@ const AppLayout = ({children, currentUser, error}) => {
         console.log("3 current, items", current, items)
 
         const label = findMenuItemByKey(current, MenuItems)?.label;
-        console.log("label",label);
+        console.log("label", label);
         if (label)
             setTitle(label); // Обновить current при изменении пути
 
@@ -89,7 +90,7 @@ const AppLayout = ({children, currentUser, error}) => {
         if (!key || !menuItems)
             return null;
 
-         const findItem = (items) => {
+        const findItem = (items) => {
             for (const item of items) {
                 if (item?.key === key) {
                     return item;
@@ -119,7 +120,7 @@ const AppLayout = ({children, currentUser, error}) => {
                     <Image src={Logo} style={styles.logo}/>
 
                     <Menu onClick={onClick} mode="horizontal" style={{width: '100%'}} items={items}
-                          selectedKeys={[current]}/>
+                          selectedKeys={[current]} className={"biba"}/>
                     <Dropdown
                         placement={"bottomRight"}
                         dropdownRender={() =>
@@ -145,7 +146,10 @@ const AppLayout = ({children, currentUser, error}) => {
                     {/*<Breadcrumb items={createBreadcrumbs(current)}/>*/}
 
                     {!error ? (
-                        <Card title={title} style={styles.card}>
+                        <Card title={title}   style={styles.card} styles={{ title: {
+                                textAlign: 'center',
+                                fontSize: "23px"
+                            }}}>
                             {children}
                         </Card>) : (
                         <>

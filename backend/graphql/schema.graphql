@@ -19,6 +19,10 @@ type Query {
 
     projectTasksExecutors(taskId: ID): ProjectTaskExecutorResult @checkRole(permission:  ["read-project-task-executor"])
 
+    permissions(taskId: ID, queryOptions: QueryOptions, queryType: String): PermissionResult @checkRole(permission:  ["dev"])
+    users(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): UsersResult @checkRole(permission:  ["dev"])
+    roles(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): RolesResult @checkRole(permission:  ["dev"])
+
     typeProjects(id: ID, queryOptions: QueryOptions, queryType: String): TypeProjectsResult
     typeTechnicalSpecification: TypeTechnicalSpecification
     sectionReferences: SectionReferenceResult
@@ -333,12 +337,17 @@ type User {
     id: ID
     name: String
     email: String
-
+    roles: [Role]
+    person: Person
+    organization: Organization
 }
 type Role {
+    permissions: [Permission]
     description: String
     name: String
+    name_key: String
 }type Permission {
+    name_key: String
     name: String
     description: String
 }

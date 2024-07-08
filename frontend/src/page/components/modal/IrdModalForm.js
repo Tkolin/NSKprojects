@@ -13,9 +13,9 @@ const OrganizationModalForm = ({key,objectId,object,onClose, mode, onCompleted }
             footer={null}
             onClose={() => onClose()}
             width={"1000px"}
+            title={"ИРД"}
         >
-            <StyledBlockBig label={"ИРД"}>
-                {mode === "edit" ? (
+                 {mode === "edit" ? (
                     (object || objectId) && (
                         <IrdForm
                             localObject={object}
@@ -26,8 +26,7 @@ const OrganizationModalForm = ({key,objectId,object,onClose, mode, onCompleted }
                 ) : (
                     <IrdForm  onCompleted={onCompleted || onClose}/>
                 )}
-            </StyledBlockBig>
-        </Modal>
+         </Modal>
     );
 };
 

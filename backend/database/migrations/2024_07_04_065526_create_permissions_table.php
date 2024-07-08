@@ -11,26 +11,42 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // migration for permissions table
+        Schema::dropIfExists('roles');
+        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('role_user');
+        Schema::dropIfExists('permission_role');
+
         Schema::create('permissions', function (Blueprint $table) {
-            $table->id();
             $table->string('name')->nullable();
+            $table->string('name_key')->primary();
             $table->text('description')->nullable();
             $table->timestamps();
         });
 
-// pivot table for users and roles
-        Schema::create('role_user', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained("users")->nullable();
-            $table->foreignId('role_id')->constrained("roles")->nullable();
+        Schema::create('roles', function (Blueprint $table) {
+            $table->string('name')->nullable();
+            $table->string('name_key')->primary();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
 
-// pivot table for roles and permissions
-        Schema::create('permission_role', function (Blueprint $table) {
-            $table->foreignId('role_id')->constrained("roles")->nullable();
-            $table->foreignId('permission_id')->constrained("permissions")->nullable();
+        Schema::create('role_user', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id');
+            $table->string('role_id'); // Use string instead of foreignId
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('role_id')->references('name_key')->on('roles')->onDelete('cascade');
+        });
+
+        // pivot table for roles and permissions
+        Schema::create('permission_role', function (Blueprint $table) {
+            $table->string('role_id'); // Use string instead of foreignId
+            $table->string('permission_id'); // Use string instead of foreignId
+            $table->timestamps();
+
+            $table->foreign('role_id')->references('name_key')->on('roles')->onDelete('cascade');
+            $table->foreign('permission_id')->references('name_key')->on('permissions')->onDelete('cascade');
         });
     }
 
@@ -39,11 +55,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('permissions');
-
+        Schema::dropIfExists('permission_role');
         Schema::dropIfExists('role_user');
 
-        Schema::dropIfExists('permission_role');
+        Schema::dropIfExists('permissions');
+
+
 
     }
 };

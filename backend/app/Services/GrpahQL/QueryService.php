@@ -60,12 +60,12 @@ class QueryService
         return $query;
     }
 
-    public function paginate(Builder $query, ?int $limit, ?int $page): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    public function paginate(Builder $query, ?int $limit, ?int $page, string $mode = "ID"): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         $perPage = $limit ?? 10;
         $currentPage = $page ?? 1;
-
-        $query->orderBy('id', 'desc');
+        if($mode != "NOID")
+            $query->orderBy('id', 'desc');
 
         // Выполняем пагинацию
         $paginator = $query->paginate($perPage, ['*'], 'page', $currentPage);

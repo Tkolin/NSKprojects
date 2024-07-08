@@ -68,9 +68,10 @@ class TaskExecutorContractGeneratorService
         // Загрузка шаблона в PhpWord
         $templateProcessor = new TemplateProcessor($tempFilePath);
         $id = "___";
-        $date = $projectData["date_create"];
+        $date = date('Y-m-d');
+        error_log("Сегодняшняя дата: " . $date);
+//        $date = $project["date_create"];
         $dateComponents = explode('-', $date);
-
         $year = $dateComponents[0] ?? "__";
         $month = $dateComponents[1] ? MonthEnum::getMonthName($dateComponents[1]) : "__";
         $day = $dateComponents[2] ?? "__";
@@ -99,9 +100,9 @@ class TaskExecutorContractGeneratorService
             'person.passport.address_registration' => $personData['passport']['address_registration'] ?? ' ',
             'person.INN' => $personData['INN'],
             'person.SNILS' => $personData['SHILS'],
-            'person.BIK.name' => $personData['BIK']['name'],
-            'person.BIK.bik' => $personData['BIK']['BIK'],
-            'person.BIK.correspondent_account' => $personData['BIK']['correspondent_account'],
+            'person.BIK.name' => isset($personData['BIK']) ? $personData['BIK']['name'] : ' ',
+            'person.BIK.bik' => isset($personData['BIK'])? $personData['BIK']['BIK']  : ' ',
+            'person.BIK.correspondent_account' => isset($personData['BIK']) ? $personData['BIK']['correspondent_account'] : ' ',
             'person.payment_account' => $personData['payment_account'],
             'myOrg.director.ShortFullName' => $myOrg['director']['last_name'] . ' ' . substr((string)$myOrg['director']['first_name'], 0, 2) . '.' . substr((string)$myOrg['director']['patronymic'], 0, 2) . '.',
             'person.FullName' => $personData['passport']['lastname'] . ' ' . $personData['passport']['firstname'] . ' ' . $personData['passport']['patronymic'],

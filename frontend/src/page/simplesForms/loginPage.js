@@ -5,7 +5,7 @@ import {StyledBlockRegular} from "../components/style/BlockStyles";
 
 const LoginPage = () => {
     return (
-        <StyledBlockRegular label={"Авторизация"}>
+        <StyledBlockRegular>
             <LoginForm/>
         </StyledBlockRegular>
     );
