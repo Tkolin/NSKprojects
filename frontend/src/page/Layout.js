@@ -68,7 +68,9 @@ const AppLayout = ({children, currentUser, error}) => {
     const [items, setItems] = useState();
     const [title, setTitle] = useState();
     useEffect(() => {
-        setItems(MenuItemsByPermission(currentUser?.currentUser ?? {}));
+             setItems(MenuItemsByPermission(currentUser?.currentUser ?? null));
+
+
         console.log("1 currentUser", currentUser)
     }, [currentUser]);
     useEffect(() => {
@@ -116,7 +118,7 @@ const AppLayout = ({children, currentUser, error}) => {
     return (
         <Layout style={{minHeight: '100vh'}}>
             <Header style={styles.header}>
-                {!error ? (<>
+                {/*{!error ? (<>*/}
                     <Image src={Logo} style={styles.logo}/>
 
                     <Menu onClick={onClick} mode="horizontal" style={{width: '100%'}} items={items}
@@ -136,26 +138,28 @@ const AppLayout = ({children, currentUser, error}) => {
                                 </Link>
                             </Badge>
                         }/>
-                </>) : <Alert message={<>
-                    {"Ошибка: " + error}
-                </>} type="error"/>}
+
+                {/*// ) : <Alert message={<>*/}
+                {/*//     /!*{"Ошибка: " + error}*!/*/}
+                {/*// </>} type="error"/>}*/}
             </Header>
 
             <Layout style={{marginTop: 64, paddingRight: 20, paddingLeft: 20}}>
                 <Content style={styles.content}>
                     {/*<Breadcrumb items={createBreadcrumbs(current)}/>*/}
 
-                    {!error ? (
+                    {/*{!error ? (*/}
                         <Card title={title}   style={styles.card} styles={{ title: {
                                 textAlign: 'center',
                                 fontSize: "23px"
                             }}}>
                             {children}
-                        </Card>) : (
-                        <>
-                            {getErrorLayout(error)}
-                        </>
-                    )}
+                        </Card>)
+                    {/*//     : (*/}
+                    {/*//     // <>*/}
+                    {/*//     //     {getErrorLayout(error)}*/}
+                    {/*//     // </>*/}
+                    {/*// )}*/}
                 </Content>
 
                 <Footer style={styles.footer}>

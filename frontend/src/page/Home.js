@@ -24,7 +24,7 @@ const Home = () => {
 
     return (
         <>
-            {MenuItemsByPermission(currentUser?.currentUser ?? {})?.map((main_row) => {
+            {MenuItemsByPermission(currentUser?.currentUser ?? null)?.map((main_row) => {
                 if (!main_row || !main_row.children)
                     return null;
                 return (
