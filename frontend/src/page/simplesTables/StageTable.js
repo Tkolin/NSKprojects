@@ -111,7 +111,8 @@ const StageTable = () => {
                         />
                         <StyledButtonGreen
                             style={{marginBottom: 0}}
-                            onClick={() => setStageModalStatus({stage: null, mode: "add"})}>
+                            onClick={() => setStageModalStatus({stage: null, mode: "add"})}
+                            data-permission={"create-stage"}>
 
                             Создать новую запись
                         </StyledButtonGreen>

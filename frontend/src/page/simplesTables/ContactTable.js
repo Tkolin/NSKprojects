@@ -129,13 +129,14 @@ const ContactTable = () => {
                         enterButton="Найти"
                         onSearch={onSearch}
                     />
-                    <StyledButtonGreen
-                        style={{marginBottom: 0}}
-                        onClick={() => setContactModalStatus({contact: null, mode: "add"})}>
+                         <StyledButtonGreen
+                             data-permission={"create-contact"}
+                             style={{marginBottom: 0}}
+                            onClick={() => setContactModalStatus({contact: null, mode: "add"})}>
 
-                        Создать новую запись
-                    </StyledButtonGreen>
-                </Space>
+                            Создать новую запись
+                        </StyledButtonGreen>
+                 </Space>
             </Form.Item>
         </Form>
         <Table

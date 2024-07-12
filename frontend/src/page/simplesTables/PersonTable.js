@@ -134,9 +134,11 @@ const PersonTable = () => {
                         enterButton="Найти"
                         onSearch={onSearch}
                     />
-                    <StyledButtonGreen style={{marginBottom: 0}}
-                                       onClick={() =>  setPersonModalStatus({person: null, mode: "add"})}>Создать новую запись
-                    </StyledButtonGreen>
+                    <StyledButtonGreen
+                        style={{marginBottom: 0}}
+                        onClick={() =>  setPersonModalStatus({person: null, mode: "add"})}
+                        data-permission={"create-person"}>
+                        Создать новую запись</StyledButtonGreen>
                 </Space>
             </Form.Item>
         </Form>

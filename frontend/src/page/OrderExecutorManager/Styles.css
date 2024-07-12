@@ -1,0 +1,83 @@
+
+.my-ant-table-row-danger {
+    background-image: linear-gradient(90deg, #ff4d4d 1%, rgba(182, 238, 174, 0) 5%);
+}
+
+.my-ant-table-row-warning {
+    background-image: linear-gradient(90deg, rgb(255, 162, 81) 1%, rgba(182, 238, 174, 0) 5%);
+}
+
+.my-ant-table-row-archive {
+    background-color: #eeeeee; /* или любой другой стиль для активной строки */
+}
+.my-ant-table-row-completed {
+    background-color: #eeeeee; /* или любой другой стиль для активной строки */
+}
+
+.my-ant-table-row-working {
+    background-color: #f2f9ff; /* или любой другой стиль для активной строки */
+}
+
+.my-ant-table-row-approval_agreement {
+    background-color: #fcfbf0; /* или любой другой стиль для активной строки */
+
+}
+
+.my-ant-table-row-waiting_source {
+    background-color: #f8fff2; /* или любой другой стиль для активной строки */
+}
+
+.my-ant-table-row-approval_kp {
+    background-color: #fff2f2; /* или любой другой стиль для активной строки */
+}
+.my-ant-table-row-design_request {
+    background-color: #f7f2ff; /* или любой другой стиль для активной строки */
+
+}
+
+/* Определяем стили наведения для каждой строки */
+.my-ant-table-row-danger:hover .ant-table-cell {
+    background-color: #ffb3b3 !important;
+
+}
+
+.my-ant-table-row-warning:hover .ant-table-cell {
+    background-color: #ffcc99 !important;
+
+}
+
+.my-ant-table-row-archive:hover .ant-table-cell {
+    background-color: #eeeeee !important;
+
+}
+.my-ant-table-row-completed:hover .ant-table-cell {
+    background-color: #eeeeee !important;
+
+}
+
+.my-ant-table-row-working:hover .ant-table-cell {
+    background-color: #f2f9ff !important;
+
+}
+
+.my-ant-table-row-approval_agreement:hover .ant-table-cell {
+    background-color: #fcfbf0 !important;
+
+}
+
+.my-ant-table-row-waiting_source:hover .ant-table-cell {
+    background-color: #f8fff2 !important;
+
+}
+
+.my-ant-table-row-approval_kp:hover .ant-table-cell {
+    background-color: #fff2f2 !important;
+
+
+}
+.my-ant-table-row-design_request:hover .ant-table-cell {
+    background-color: #f7f2ff !important;
+
+
+}
+

@@ -1,11 +1,16 @@
-import {Space, Table, Tooltip, Typography} from "antd";
-import {DownloadOutlined, EditOutlined} from "@ant-design/icons";
-import React from "react";
+import {Modal, Space, Table, Tooltip, Typography} from "antd";
+import {DownloadOutlined, EditOutlined, EyeOutlined} from "@ant-design/icons";
+import React, {useState} from "react";
 import PersonContractFileDownload from "../../components/script/fileDownloadScripts/PersonContractFileDownload";
 import TaskExecutorContractDownload from "../../components/script/fileDownloadScripts/TaskExecutorContractDownload";
+import Link from "antd/es/typography/Link";
+import {nanoid} from "nanoid";
+import OrderExecutorManager from "../../OrderExecutorManager";
+
 const {Text} = Typography;
 
 const TableExecutors = ({setEditModalStatus, project}) => {
+    const [executorOrderModalStatus, setExecutorOrderModalStatus] = useState()
     const groupTasksByExecutor = (tasks) => {
         return tasks.reduce((acc, task) => {
             if (!task.executor) {
@@ -16,7 +21,7 @@ const TableExecutors = ({setEditModalStatus, project}) => {
             if (executorTasks) {
                 executorTasks.tasks.push(task);
             } else {
-                acc.push({ executor, tasks: [task] });
+                acc.push({executor, tasks: [task]});
             }
             return acc;
         }, []);
@@ -24,11 +29,9 @@ const TableExecutors = ({setEditModalStatus, project}) => {
     const columnsExecutors = [{
         title:
             <Space>
-                <Tooltip title={'Список Исполнителей (В разработке)'}>
+                <Text style={{marginRight: 10}}>Список Исполнителей (В разработке)</Text>
 
-                    <Text style={{marginRight: 10}}>Список Исполнителей (В разработке)</Text>
-                    <DownloadOutlined/>
-                </Tooltip>
+
                 {/*<IrdsProjectFileDownload text={<DownloadOutlined/>} projectId={CreateNewProject.id}/>*/}
                 {/*<EditOutlined onClick={() => setEditModalStatus && setEditModalStatus({*/}
                 {/*    status: "tasks",*/}
@@ -59,26 +62,36 @@ const TableExecutors = ({setEditModalStatus, project}) => {
                 align: "left",
                 render: (text, record) => (
                     <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
-                        {record.tasks.map(row=>(<Text>
+                        {record.tasks.map(row => (<Text>
                             - {row.task.name}
                         </Text>))}
                     </Space.Compact>
                 ),
             },
             {
-                title: 'Договор',
+                title: 'Договоры',
                 width: '15%',
                 key: 'contract',
                 align: "left",
-                render: (text, record) => (
-                    <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
-                        <TaskExecutorContractDownload projectId={record.id} personId={record.executor.id}/>
-                    </Space.Compact>
-                ),
+                render: (text, record) => {
+                    const s = project?.project_tasks?.filter(row => row?.executor?.id === record?.executor.id);
+                     return (
+                         <Link onClick={()=>setExecutorOrderModalStatus({projectTasks: s, executor: record.executor})}>
+                             Догова <EyeOutlined/>
+                         </Link>
+
+                        //  <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
+                        //     <TaskExecutorContractDownload
+                        //         projectTasksIds={s}/>
+                        // </Space.Compact>
+                    )
+                },
             }]
     }
     ];
     return (
+<>
+
 
         <Table
             style={{margin: 0, width: "100%"}}
@@ -88,6 +101,18 @@ const TableExecutors = ({setEditModalStatus, project}) => {
                 groupTasksByExecutor(project.project_tasks)}
             pagination={false}
         />
+    <Modal
+        key={nanoid()}
+        open={executorOrderModalStatus?.executor && executorOrderModalStatus?.projectTasks}
+        onCancel={() => setExecutorOrderModalStatus(null)}
+        footer={null}
+        title={"Договора с исполнителем"}
+        width={ 1300}
+        onClose={() => setExecutorOrderModalStatus(null)}
+    >
+       <OrderExecutorManager executor={executorOrderModalStatus?.executor} projectTasks={executorOrderModalStatus?.projectTasks}/>
+    </Modal>
+</>
     )
 }
 export default TableExecutors;

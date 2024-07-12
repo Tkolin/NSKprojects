@@ -22,8 +22,9 @@ class CurrentUser
                 return [
                     'id' => $role->id,
                     'name' => $role->name,
+                    'name_key' => $role->name_key,
                     'permissions' => $role->permissions->map(function ($permission) {
-                        return $permission->name;
+                        return ['name' => $permission->name, 'name_key' => $permission->name_key];
                     })->toArray()
                 ];
             });
@@ -36,9 +37,9 @@ class CurrentUser
             // Создаем токен доступа
             $accessToken = $user->createToken('authToken')->accessToken;
             // Преобразуем массив строк в массив объектов
-            $permissions = $permissions->map(function ($permission) {
-                return ['name' => $permission];
-            })->toArray();
+//            $permissions = $permissions->map(function ($permission) {
+//                return ['name' => $permission, 'name_key' => $permission];
+//            })->toArray();
             // Выводим данные в журнал ошибок для отладки
             // error_log('User: ' . print_r($user, true));
             // error_log('Roles: ' . print_r($roles, true));

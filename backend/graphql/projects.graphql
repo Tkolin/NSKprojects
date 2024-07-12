@@ -92,6 +92,7 @@ type Project{
     project_irds: [ProjectIRD]
     project_stages: [ProjectStage]
     project_tasks: [ProjectTask]
+    executor_orders: [ExecutorOrder]
 }
 
 # Перечисления внутри основной модели

@@ -2,30 +2,42 @@ extend type Mutation {
     personOrderFileDownload(
         personId: ID
         tasksId: [ID]
-    ): File!
+    ): Url!
     projectPaymentInvoiceFileDownload(
         projectId: ID!
         stageNumber: ID
         isPrepayment: Boolean
-    ): File!
+    ): Url!
     projectActRenderingFileDownload(
         projectId: ID
         stageNumber: Int
-    ): File!
+    ): Url!
     projectOrderFileDownload(
         projectId: ID
-    ): File!
+    ): Url!
     projectIrdsFileDownload(
         projectId: ID
-    ): File!
+    ): Url!
     projectStagesFileDownload(
         projectId: ID
-    ): File!
+    ): Url!
     taskExecutorContractFileDownload(
-        projectId: ID
-        executorId: ID
-    ): File!
+        projectTasksIds: [ID]
+    ): Url!
+    executorOrderGenerated(
+        project_task_ids: [ID]
+    ): GenerateFileResult!
 }
-type File {
+type GenerateFileResult {
+    url: String
+    file: File
+}type File {
+    id: ID
+    name: String
+    path: String
+    size: String
+    mime_type: String
+}
+type Url {
     url: String
 }

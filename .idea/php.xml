@@ -151,6 +151,8 @@
       <path value="$PROJECT_DIR$/backend/vendor/sebastian/complexity" />
       <path value="$PROJECT_DIR$/backend/vendor/webklex/php-imap" />
       <path value="$PROJECT_DIR$/backend/vendor/webklex/laravel-imap" />
+      <path value="$PROJECT_DIR$/backend/vendor/icewind/streams" />
+      <path value="$PROJECT_DIR$/backend/vendor/icewind/smb" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />

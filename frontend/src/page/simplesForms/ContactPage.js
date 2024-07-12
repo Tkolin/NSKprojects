@@ -7,8 +7,6 @@ const ContactPage = () => {
     return (
         <StyledBlockRegular>
             <ContactForm/>
-
-
         </StyledBlockRegular>
      );
 };

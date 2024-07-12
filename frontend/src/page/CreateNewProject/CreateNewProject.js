@@ -5,23 +5,14 @@ import StageToProjectForm from "../StageToProjectForm/Index";
 
 import ProjectForm from "../ProjectForm/Index";
 import IrdsProjectForm from "../IrdToProjectForm/Index";
-import {useLazyQuery, useMutation} from "@apollo/client";
-import {
-    UPDATE_IRDS_TO_PROJECT_MUTATION,
-
-} from "../../graphql/mutationsProject";
+import {useLazyQuery} from "@apollo/client";
 import {NotificationContext} from "../../NotificationProvider";
-import {
-    rebuildProjectResultQuery,
-    rebuildIrdsResultQuery, rebuildIrdToQuery,
-    rebuildProjectToQuery
-} from '../components/script/rebuildData/ProjectRebuilderQuery';
 import ProjectDetails from "./components/ProjectDetails";
 import {useNavigate} from "react-router-dom";
 import {PROJECTS_QUERY_BY_ID} from "../../graphql/queriesByID";
 
 
-const Index = ({projectId }) => {
+const CreateNewProject = ({projectId }) => {
     const [current, setCurrent] = useState(0);
     const navigate = useNavigate();
     const {openNotification} = useContext(NotificationContext);
@@ -167,4 +158,4 @@ const Index = ({projectId }) => {
 
 };
 
-export default Index;
+export default CreateNewProject;

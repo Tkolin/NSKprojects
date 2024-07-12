@@ -29,7 +29,13 @@ return [
     */
 
     'disks' => [
-
+        'smb' => [
+            'driver' => 'smb',
+            'host' => '192.168.2.125',
+            'username' => 'sys_LaravelFileManager',
+            'password' => 'NX2AaF&B)8::&nlzc*g7#D9)m0s\e3',
+            'root' => 'serverdata/ERP_FILES',
+        ],
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),

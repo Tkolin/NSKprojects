@@ -3,17 +3,16 @@ import './Styles.css'; // Импорт вашего CSS файла
 import StatusLegend from "./components/StatusLegend";
 import ProjectTableComponent from "./components/ProjectTableComponent";
 import {Divider, Form, Space} from "antd";
-import Title from "antd/es/typography/Title";
 import Search from "antd/es/input/Search";
+import index from "../CreateNewCommercialOffer";
 
 
-const Index = ({projectStatuses}) => {
-    const [formSearch] = Form.useForm();
-    const [search, setSearch] = useState('');
+const ProjectTable = ({projectStatuses}) => {
+        const [formSearch] = Form.useForm();
+        const [search, setSearch] = useState('');
         return (
             <div>
-
-                <StatusLegend  />
+                <StatusLegend data-permission={"read-project-statistic"}/>
                 <Divider/>
                 <Form form={formSearch} layout="horizontal">
                     <Form.Item label="Поиск:" name="search">
@@ -27,7 +26,6 @@ const Index = ({projectStatuses}) => {
                         </Space>
                     </Form.Item>
                 </Form>
-
                 <ProjectTableComponent projectStatuses={projectStatuses} search={search}/>
             </div>
 
@@ -35,4 +33,4 @@ const Index = ({projectStatuses}) => {
     }
 ;
 
-export default Index;
+export default ProjectTable;

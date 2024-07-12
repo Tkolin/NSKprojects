@@ -16,7 +16,7 @@ import {
 } from "../components/script/rebuildData/ProjectRebuilderQuery";
 import {NotificationContext} from "../../NotificationProvider";
 
-const Index = ({project, onCompleted}) => {
+const IrdToProjectForm = ({project, onCompleted}) => {
     const {openNotification} = useContext(NotificationContext);
 
     // Первичные данные
@@ -142,10 +142,10 @@ const Index = ({project, onCompleted}) => {
                     newRow[irdModalStatus?.key] = {IRD: {selected: value.id, output: value.name}};
                     form.setFieldValue("irdList",newRow);
                     setIrdModalStatus(null);
-                 }}
+                }}
                 mode={irdModalStatus?.mode}/>
         </Form>
     )
 };
 
-export default Index;
+export default IrdToProjectForm;

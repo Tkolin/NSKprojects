@@ -3,17 +3,17 @@ import './Styles.css'; // Импорт вашего CSS файла
 import StatusLegend from "./components/StatusLegend";
 import ProjectTableComponent from "./components/ProjectTableComponent";
 import {Divider, Form, Space} from "antd";
- import Search from "antd/es/input/Search";
+import Title from "antd/es/typography/Title";
+import Search from "antd/es/input/Search";
 
 
-const Index = ({projectStatuses}) => {
-    const [formSearch] = Form.useForm();
-    const [search, setSearch] = useState('');
+const DistributionPermissionsRole = ({projectStatuses}) => {
+        const [formSearch] = Form.useForm();
+        const [search, setSearch] = useState('');
         return (
             <div>
 
-
-                 <StatusLegend  />
+                <StatusLegend  />
                 <Divider/>
                 <Form form={formSearch} layout="horizontal">
                     <Form.Item label="Поиск:" name="search">
@@ -35,4 +35,4 @@ const Index = ({projectStatuses}) => {
     }
 ;
 
-export default Index;
+export default DistributionPermissionsRole;

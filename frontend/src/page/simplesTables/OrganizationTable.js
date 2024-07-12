@@ -122,10 +122,11 @@ const OrganizationTable = () => {
                         enterButton="Найти"
                         onSearch={onSearch}
                     />
-                    <StyledButtonGreen style={{marginBottom: 0}}
-                                       onClick={() => setOrganizationModalStatus({organization: null, mode: "add"})}>Создать
-                        новую
-                        запись</StyledButtonGreen>
+                    <StyledButtonGreen
+                        data-permission={"create-organization"}
+                        style={{marginBottom: 0}}
+                        onClick={() => setOrganizationModalStatus({organization: null, mode: "add"})}>
+                        Создать новую запись</StyledButtonGreen>
                 </Space>
             </Form.Item>
         </Form>

@@ -10,7 +10,7 @@ import {useLazyQuery} from "@apollo/client";
 import {PROJECTS_QUERY_BY_ID} from "../../graphql/queriesByID";
 import TasksChartForm from "./components/TasksChartForm";
 
-const Index = ({project, onCompleted}) => {
+const DistributionTasksByProject = ({project, onCompleted}) => {
     const {openNotification} = useContext(NotificationContext);
     const {token} = theme.useToken();
     // Хранилище
@@ -19,55 +19,6 @@ const Index = ({project, onCompleted}) => {
     const [loading, setLoading] = useState(false)
     const [newCurrent, setNewCurrent] = useState(current)
     // Мутация
-
-    // const rebuildQueryToTasks = (tasksFromQuery) => {
-    //     console.log("start rebuildQueryToTasks", tasksFromQuery);
-    //     if (!tasksFromQuery)
-    //         return null;
-    //
-    //     const map = {};
-    //     const roots = [];
-    //     const checkedKeys = {};
-    //
-    //     // Создание карты задач по их ID для быстрого доступа
-    //     tasksFromQuery.forEach(task => {
-    //         map[task.id] = {
-    //             title: task?.task?.name,
-    //             key: task?.task?.id,
-    //             disableCheckbox: false,
-    //             children: [],
-    //         };
-    //     });
-    //
-    //     // Построение дерева задач на основе inherited_task_ids
-    //     tasksFromQuery.forEach(task => {
-    //         if (task?.inherited_task_ids && task?.inherited_task_ids.length > 0) {
-    //             const parentKey = task.inherited_task_ids[0].project_inherited_task_id;
-    //             if (map[parentKey]) {
-    //                 map[parentKey].children.push(map[task.id]);
-    //             }
-    //         } else {
-    //             roots.push(map[task.id]);
-    //         }
-    //     });
-    //
-    //     // Создание checkedKeys
-    //     tasksFromQuery.forEach(row => {
-    //         if (!checkedKeys[row.stage_number]) {
-    //             checkedKeys[row.stage_number] = [];
-    //         }
-    //         checkedKeys[row.stage_number].push(row?.task?.id);
-    //     });
-    //     console.log("end rebuildQueryToTasks checkedKeys", {
-    //         gData: roots,
-    //         checkedKeys: checkedKeys
-    //     });
-    //
-    //     return {
-    //         gData: roots,
-    //         checkedKeys: checkedKeys
-    //     };
-    // };
 
     // TODO: Для проверки
     const [loadContext, {data: data}] = useLazyQuery(PROJECTS_QUERY_BY_ID, {
@@ -198,4 +149,4 @@ const Index = ({project, onCompleted}) => {
 
 };
 
-export default Index;
+export default DistributionTasksByProject;

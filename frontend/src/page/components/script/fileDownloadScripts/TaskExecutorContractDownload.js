@@ -5,7 +5,7 @@ import {TASK_EXECUTOR_CONTRACT_DOWNLOAD
 } from "../../../../graphql/mutationsProject";
 const {Text, Link} = Typography;
 
-const TaskExecutorContractDownload = ({projectId, executorId, text}) => {
+const TaskExecutorContractDownload = ({projectTasksIds, text}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
 
 
@@ -28,8 +28,8 @@ const TaskExecutorContractDownload = ({projectId, executorId, text}) => {
     });
 
     const handleDownload = () => {
-        console.log(projectId);
-        downloadTaskExecutorContract({ variables: { projectId: '152', executorId: '9' } });
+        console.log("projectTasksIds", projectTasksIds);
+         downloadTaskExecutorContract({ variables: { projectTasksIds: projectTasksIds } });
     };
 
     const handleDownloadClick = async (downloadedFileUrl) => {

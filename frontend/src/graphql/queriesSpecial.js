@@ -10,4 +10,19 @@ export const STATUS_PROJECTS_QUERY = gql`
             }
         }
     }
+`;export const EXECUTOR_ORDERS_QUERY = gql`
+    query ExecutorOrders ($projectId: ID!,  $executorId: ID!) {
+        executorOrders(projectId: $projectId,  executorId: $executorId
+        ) {
+            id
+            date_generate
+            date_order
+            date_attachment
+            file_id
+            project_tasks {
+                id
+            }
+        }
+    }
+
 `;

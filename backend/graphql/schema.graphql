@@ -4,6 +4,9 @@
 #import result.graphql
 #import fenrir.graphql
 type Query {
+    executorOrders(projectId: ID!, executorId: ID!): [ExecutorOrder!]
+
+
     contacts(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): ContactsResult @checkRole(permission:  ["read-contact"])
     organizations(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): OrganizationsResult @checkRole(permission:  ["read-organization"])
     countProjectByOrganizations(organizationId: ID): CountProjectByOrganizationsResult @checkRole(permission:  ["read-organization"])
@@ -76,7 +79,16 @@ input QueryOptions {
 type Attachment {
     name: String
     path: String
-}
+}type   ExecutorOrder {
+    id: ID!
+    created_at: String
+    updated_at: String
+    date_generate: String!
+    date_order: String!
+    date_attachment: String
+    file_id: ID
+    project_tasks: [ProjectTask]
+ }
 
 type Email {
     subject: String

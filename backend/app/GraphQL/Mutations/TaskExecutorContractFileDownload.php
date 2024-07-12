@@ -4,6 +4,7 @@ namespace App\GraphQL\Mutations;
 
 use App\Models\Person;
 use App\Models\Project;
+use App\Models\ProjectTasks;
 use App\Services\FileGenerate\TaskExecutorContractGeneratorService;
 use Exception;
 
@@ -12,35 +13,53 @@ final readonly class TaskExecutorContractFileDownload
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
+        // Проверка на верность
+        if (!isset($args['projectTasksIds']))
+            throw new Exception('Неверно переданы данные');
 
+        $projectTasksIds = $args['projectTasksIds'];
+
+        // Набор данных для задач
+        $projectTasksData = ProjectTasks::with(['task', 'executor'])
+            ->whereIn('id', $projectTasksIds)
+            ->get();
+        error_log($projectTasksData . '$projectTasksData[0]');
+
+        if (!isset($projectTasksData))
+            throw new Exception('Неверно переданы данные');
+        // Проверка все ли данные об одном
+        $executorId = $projectTasksData[0]->executor_id;
+        $projectId = $projectTasksData[0]->project_id;
+//        foreach ($projectTasksData as $projectTask) {
+//            if ($executorId != $projectTask->executor_id || $projectId != $projectTask->project_id) {
+//                throw new Exception('Неверно переданы данные');
+//            }
+//        }
+
+        // Добор данных
         $projectData = Project::with('organization_customer')
-            ->with('type_project_document')
-            ->with('type_project_document.group')
-            ->with('type_project_document.group.technical_specification')
-             ->with('project_tasks')
-            ->with('status')
-            ->with('project_delegations')
-            ->with('project_irds.IRD')
-            ->with('project_stages.stage')
-            ->find($args["projectId"]);
+            ->find($projectId)
+            ->get()
+            ->first();
 
 
         $personData = Person::with(['passport', 'passport.passport_place_issue'])
             ->with('bank')
             ->with('BIK')
-            ->find($args['executorId']);
+            ->find($executorId)
+            ->get()
+            ->first();
 
 
-        // projectId
-        // executorId
-
-        if (!$projectData) {
+        // Проверка данных
+        if (!isset($projectData))
             throw new Exception('Проект не найден');
-        }
-        $executorId = $args['executorId'];
-        $projectGenerator = new TaskExecutorContractGeneratorService();
-        $contractFilePath = $projectGenerator->generate($projectData, $personData, $executorId);
+        if (!isset($personData))
+            throw new Exception('Исполнитель не найден');
 
+        // Генерация файла
+        $projectGenerator = new TaskExecutorContractGeneratorService();
+        $contractFilePath = $projectGenerator->generate($projectData, $personData, $projectTasksData);
         return ['url' => $contractFilePath];
 
 

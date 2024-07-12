@@ -1,9 +1,11 @@
-import {Avatar, Button, Card, Divider, Space, Typography} from "antd";
+import {Avatar, Badge, Button, Card, Divider, Dropdown, Space, Typography} from "antd";
 import {LoginOutlined, LogoutOutlined, MailOutlined, UserOutlined} from "@ant-design/icons";
 import React, {useEffect} from "react";
 import {StyledButtonGreen, StyledButtonGreenGhost} from "./components/style/ButtonStyles";
 import {useNavigate} from "react-router-dom";
 import {Cookies} from "react-cookie";
+import catImage from '../resursed/cat.jpg'; // Убедитесь, что путь правильный
+
 
 const {Text, Link} = Typography;
 
@@ -127,7 +129,7 @@ export const UserCard = ({
               style={{minWidth: "300px", justifyContent: 'center', alignItems: 'center'}}>
             <Space.Compact size={"large"} direction="vertical"
                            style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                <Avatar shape="square" size={64} icon={<UserOutlined/>}/>
+                <Avatar shape="square" size={64} icon={<UserOutlined/>} src={user ? catImage : null}/>
                 <Text style={{fontSize: "16px"}} strong>{user?.user?.name ?? "Неизвестно"}</Text>
                 <Link type={"secondary"}>{user?.user?.email ?? "Неизвестно"}</Link>
             </Space.Compact>
@@ -154,3 +156,25 @@ export const UserCard = ({
         </Card>
     )
 }
+export  const UserMenuHeaderDropdown = ({currentUser}) => {
+    return (  <Dropdown
+        placement={"bottomRight"}
+        dropdownRender={() =>
+            (
+                <UserCard user={currentUser ?? null}/>
+            )}
+        children={
+            <Badge count={currentUser ? 0 : '!'}>
+                <Link>
+
+                    <Avatar
+                        src={currentUser ? catImage : null}
+                        icon={<UserOutlined/>}
+                        children={ currentUser ? currentUser.user?.name?.slice(0, 2) :
+                          <UserOutlined/>}
+                    />
+                </Link>
+            </Badge>
+        }/>)
+}
+export default {UserMenuHeaderDropdown, UserCard};

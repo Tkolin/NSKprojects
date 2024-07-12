@@ -264,8 +264,8 @@ export const ACT_RENDERING_PROJECT_DOWNLOAD = gql`
 `;
 
 export const TASK_EXECUTOR_CONTRACT_DOWNLOAD = gql`
-    mutation TaskExecutorContractDownload($projectId: ID!, $executorId: ID!) {
-        taskExecutorContractFileDownload(projectId: $projectId, executorId: $executorId) {
+    mutation TaskExecutorContractDownload($projectTasksIds: [ID]!) {
+        taskExecutorContractFileDownload(projectTasksIds: $projectTasksIds) {
             url
         }
     }

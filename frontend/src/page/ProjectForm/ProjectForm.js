@@ -30,7 +30,7 @@ import {rebuildProjectResultQuery, rebuildProjectToQuery} from "../components/sc
 import {CustomDatePicker} from "../components/FormattingDateElementComponent";
 
 
-const Index = ({onCompleted, project}) => {
+const ProjectForm = ({onCompleted, project}) => {
         // Получение данных для выпадающих списков
         const {loading: loadingStatuses, error: errorStatuses, data: dataStatuses} =
             useQuery(PROJECT_STATUSES_QUERY_COMPACT,);
@@ -335,4 +335,4 @@ const Index = ({onCompleted, project}) => {
     }
 ;
 
-export default Index;
+export default ProjectForm;

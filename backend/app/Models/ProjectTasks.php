@@ -22,17 +22,15 @@ class ProjectTasks extends Model
         'executor_id',
     ];
 
-    public function executors(): HasMany
-    {
-        return $this->hasMany(ProjectTaskExecutor::class, "project_tasks_id");
-    }
+
     public function executor(): BelongsTo
     {
         return $this->belongsTo(Person::class);
     }
-    public function inherited_task_ids()
+
+    public function executor_order(): HasMany
     {
-        return $this->hasMany(ProjectTasksInherited::class, 'project_task_id')->select('project_task_id','project_inherited_task_id');
+        return $this->hasMany(ExecutorOrder::class, 'project_id', 'id', 'id');
     }
 
     public function task(): BelongsTo

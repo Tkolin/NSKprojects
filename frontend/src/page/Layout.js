@@ -7,7 +7,7 @@ import {
     UserOutlined,
 } from '@ant-design/icons';
 import Logo from '../resursed/logo512.png';
-import {UserCard} from "./UserCard";
+import {UserMenuHeaderDropdown} from "./UserCard";
 import Link from "antd/es/typography/Link";
 import {MenuItemsByPermission, MenuItems} from "./MenuItems";
 
@@ -69,26 +69,19 @@ const AppLayout = ({children, currentUser, error}) => {
     const [title, setTitle] = useState();
     useEffect(() => {
              setItems(MenuItemsByPermission(currentUser?.currentUser ?? null));
-
-
-        console.log("1 currentUser", currentUser)
-    }, [currentUser]);
+             }, [currentUser]);
     useEffect(() => {
         setCurrent(location.pathname); // Обновить current при изменении пути
-        console.log("2 location.pathname", location.pathname)
 
     }, [location.pathname]);
     useEffect(() => {
-        console.log("3 current, items", current, items)
-
-        const label = findMenuItemByKey(current, MenuItems)?.label;
-        console.log("label", label);
+        const item = findMenuItemByKey(current, MenuItems);
+        const label = <>{item?.icon}  {item?.label}</>;
         if (label)
             setTitle(label); // Обновить current при изменении пути
 
     }, [current, currentUser, location.pathname, children]);
     const findMenuItemByKey = (key, menuItems) => {
-        console.log("!key || !items", !key || !menuItems)
         if (!key || !menuItems)
             return null;
 
@@ -104,7 +97,6 @@ const AppLayout = ({children, currentUser, error}) => {
             }
             return null;
         };
-        console.log("Я ищу");
 
         return findItem(menuItems);
     };
@@ -123,43 +115,19 @@ const AppLayout = ({children, currentUser, error}) => {
 
                     <Menu onClick={onClick} mode="horizontal" style={{width: '100%'}} items={items}
                           selectedKeys={[current]} className={"biba"}/>
-                    <Dropdown
-                        placement={"bottomRight"}
-                        dropdownRender={() =>
-                            (
-                                <UserCard user={currentUser?.currentUser ?? null}/>
-                            )}
-                        children={
-                            <Badge count={currentUser?.currentUser ? 0 : '!'}>
-                                <Link>
-                                    <Avatar
-                                        children={currentUser?.currentUser ? currentUser?.currentUser.user?.name?.slice(0, 2) :
-                                            <UserOutlined/>}/>
-                                </Link>
-                            </Badge>
-                        }/>
-
-                {/*// ) : <Alert message={<>*/}
-                {/*//     /!*{"Ошибка: " + error}*!/*/}
-                {/*// </>} type="error"/>}*/}
+                  <UserMenuHeaderDropdown currentUser={currentUser?.currentUser}/>
             </Header>
 
             <Layout style={{marginTop: 64, paddingRight: 20, paddingLeft: 20}}>
                 <Content style={styles.content}>
-                    {/*<Breadcrumb items={createBreadcrumbs(current)}/>*/}
 
-                    {/*{!error ? (*/}
                         <Card title={title}   style={styles.card} styles={{ title: {
                                 textAlign: 'center',
-                                fontSize: "23px"
+                                fontSize: "23px",
+                                color: "#1677ff"
                             }}}>
                             {children}
-                        </Card>)
-                    {/*//     : (*/}
-                    {/*//     // <>*/}
-                    {/*//     //     {getErrorLayout(error)}*/}
-                    {/*//     // </>*/}
-                    {/*// )}*/}
+                        </Card>
                 </Content>
 
                 <Footer style={styles.footer}>

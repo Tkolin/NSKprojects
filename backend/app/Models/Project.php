@@ -24,6 +24,19 @@ class Project extends Model
         'price',
         'date_create',
         ];
+    public function executor_orders()
+    {
+        return $this->hasManyThrough(
+            ExecutorOrder::class,
+            ProjectTasks::class,
+            'project_id', // Foreign key on ProjectTask table...
+            'id', // Foreign key on ExecutorOrder table...
+            'id', // Local key on Project table...
+            'task_id' // Local key on ProjectTask table...
+        )
+            ->join('executor_order_task', 'executor_order_task.project_task_id', '=', 'project_tasks.id')
+            ->distinct();
+    }
     public function delegations(): BelongsToMany
     {
         return $this->belongsToMany(Contact::class, "project_delegations","project_id","delegation_id");

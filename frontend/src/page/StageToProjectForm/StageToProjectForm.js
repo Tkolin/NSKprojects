@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, Divider, Form, Space} from 'antd';
+import {Button, Form, Space} from 'antd';
 import {
     STAGES_QUERY_COMPACT
 } from '../../graphql/queriesCompact';
@@ -13,13 +13,12 @@ import StagesListFooter from "./components/StagesListFooter";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import StageModalForm from "../components/modal/StageModalForm";
 import {
-    rebuildStagesResultQuery,
     rebuildStagesToQuery
 } from "../components/script/rebuildData/ProjectRebuilderQuery";
 import {UPDATE_STAGES_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
 import {NotificationContext} from "../../NotificationProvider";
 
-const Index = ({onCompleted, project}) => {
+const StageToProjectForm = ({onCompleted, project}) => {
 
     // Первичные данные
 
@@ -154,15 +153,15 @@ const Index = ({onCompleted, project}) => {
                             project={project}
                             totalToDuration={totalToDuration}
                             totalToPercent={totalToPercent} freeCol={
-                                 <Button
-                                    type="primary"
-                                    size={"small"}
-                                    onClick={() => add()}
-                                    style={{width: '100%'}}
-                                    icon={<PlusOutlined/>}
-                                >
-                                    Добавить этап к списку
-                                </Button>
+                            <Button
+                                type="primary"
+                                size={"small"}
+                                onClick={() => add()}
+                                style={{width: '100%'}}
+                                icon={<PlusOutlined/>}
+                            >
+                                Добавить этап к списку
+                            </Button>
 
 
                         }/>
@@ -178,7 +177,7 @@ const Index = ({onCompleted, project}) => {
             <StageModalForm
                 onClose={() => setStageModalStatus(null)}
                 onCompleted={(value)=> {
-                     const newRow = [...form.getFieldValue("stageList")];
+                    const newRow = [...form.getFieldValue("stageList")];
                     newRow[stageModalStatus?.key] = {stage: {selected: value.id, output: value.name}};
                     form.setFieldValue("stageList",newRow);
                     setStageModalStatus(null);
@@ -189,4 +188,4 @@ const Index = ({onCompleted, project}) => {
     );
 };
 
-export default Index;
+export default StageToProjectForm;

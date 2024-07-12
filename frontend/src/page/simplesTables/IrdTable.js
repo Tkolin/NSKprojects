@@ -133,6 +133,8 @@ const IrdTable = () => {
                             onSearch={onSearch}
                         />
                         <StyledButtonGreen
+                            data-permission={"create-ird"}
+
                             style={{marginBottom: 0}}
                             onClick={() => setIrdModalStatus({ird: null, mode: "add"})}>
 

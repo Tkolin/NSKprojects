@@ -15,7 +15,7 @@ import {
     FileAddOutlined,
     AuditOutlined,
     FileProtectOutlined,
-    SyncOutlined, FileZipOutlined,
+    SyncOutlined, FileZipOutlined, LoginOutlined,
 } from '@ant-design/icons';
 
 
@@ -31,7 +31,7 @@ const MenuItems =
             label: 'Справочники',
             key: '/references',
             icon: <ProfileOutlined/>,
-            permission: 'references',
+            permission: ['read-contact', 'create-contact', 'read-person', 'create-person'],
             children: [
                 {
                     label: 'Контакты',
@@ -44,14 +44,14 @@ const MenuItems =
                             key: '/references/contact/table',
                             icon: <EyeOutlined/>,
                             children: null,
-                            permission: 'read-contact'
+                            permission: ['read-contact']
                         },
                         {
                             label: 'Создать новый контакт',
                             key: '/references/contact/form',
                             icon: <FormOutlined/>,
                             children: null,
-                            permission: 'create-contact'
+                            permission: ['create-contact']
                         }
                     ]
                 },
@@ -66,14 +66,14 @@ const MenuItems =
                             key: '/references/person/table',
                             icon: <EyeOutlined/>,
                             children: null,
-                            permission: 'read-person'
+                            permission: ['read-person']
                         },
                         {
                             label: 'Создать нового подрядчика',
                             key: '/references/person/form',
                             icon: <FormOutlined/>,
                             children: null,
-                            permission: 'create-person'
+                            permission: ['create-person']
                         }
                     ]
                 },
@@ -88,14 +88,14 @@ const MenuItems =
                             key: '/references/organization/table',
                             icon: <EyeOutlined/>,
                             children: null,
-                            permission: 'read-organization'
+                            permission: ['read-organization']
                         },
                         {
                             label: 'Создать новую организацию',
                             key: '/references/organization/form',
                             icon: <FormOutlined/>,
                             children: null,
-                            permission: 'create-organization'
+                            permission: ['create-organization']
                         }
                     ]
                 }
@@ -105,14 +105,14 @@ const MenuItems =
             label: 'Проекты',
             key: '/project',
             icon: <ProfileOutlined/>,
-            permission: ['read-work', 'create-work', 'read-contract', 'create-contract', 'read-kp', 'create-kp', 'read-request', 'create-request', 'dev'],
+            permission: ['read-work', 'create-work', 'read-contract', 'create-contract', 'read-kp', 'create-kp', 'read-request', 'create-request'],
             children: [
                 {
                     label: 'Все проекты',
                     key: '/project/extra',
                     icon: <FileZipOutlined/>,
                     children: null,
-                    permission: 'dev'
+                    permission: ['read-work', 'create-work', 'read-contract', 'create-contract', 'read-kp', 'create-kp', 'read-request', 'create-request']
                 },
                 {
                     label: 'Стадия: Заявка',
@@ -125,14 +125,14 @@ const MenuItems =
                             key: '/project/request/table',
                             icon: <EyeOutlined/>,
                             children: null,
-                            permission: 'read-request'
+                            permission: ['read-request']
                         },
                         {
                             label: 'Создать новую заявку',
                             key: '/project/request/form',
                             icon: <FormOutlined/>,
                             children: null,
-                            permission: 'create-request'
+                            permission: ['create-request']
                         }
                     ]
                 },
@@ -147,15 +147,14 @@ const MenuItems =
                             key: '/project/kp/table',
                             icon: <EyeOutlined/>,
                             children: null,
-                            permission: 'read-kp'
+                            permission: ['read-kp']
                         },
                         {
                             label: 'Создать проект на согласовании',
                             key: '/project/kp/form',
                             icon: <FormOutlined/>,
                             children: null,
-                            permission: 'create-kp',
-                            status: 'dev'
+                            permission: ['dev'],
                     }
                     ]
                 },
@@ -170,14 +169,14 @@ const MenuItems =
                             key: '/project/contract/table',
                             icon: <EyeOutlined/>,
                             children: null,
-                            permission: 'read-contract'
+                            permission: ['read-contract']
                         },
                         {
                             label: 'Создать нового подрядчика',
                             key: '/project/contract/form',
                             icon: <FormOutlined/>,
                             children: null,
-                            permission: 'create-contract'
+                            permission: ['create-contract']
                         }
                     ]
                 },
@@ -192,14 +191,14 @@ const MenuItems =
                             key: '/project/work/table',
                             icon: <EyeOutlined/>,
                             children: null,
-                            permission: 'read-work'
+                            permission: ['read-work']
                         },
                         {
                             label: 'Создать нового подрядчика',
                             key: '/project/work/form',
                             icon: <FormOutlined/>,
                             children: null,
-                            permission: 'create-work'
+                            permission: ['create-work']
                         }
                     ]
                 }
@@ -215,7 +214,7 @@ const MenuItems =
         //             key: '/report/project',
         //             icon: null,
         //             children: null,
-        //             permission: 'read-project'
+        //             permission: ['read-project'
         //         }
         //     ]
         // },
@@ -236,14 +235,14 @@ const MenuItems =
                             key: '/user/person/form',
                             icon: null,
                             children: null,
-                            permission: 'create-user'
+                            permission: ['create-user']
                         },
                         {
                             label: 'Список учётных записей',
                             key: '/user/person/table',
                             icon: null,
                             children: null,
-                            permission: 'read-user'
+                            permission: ['read-user']
                         }
                     ]
                 },
@@ -258,14 +257,14 @@ const MenuItems =
                             key: '/user/role/form',
                             icon: null,
                             children: null,
-                            permission: 'create-user-role'
+                            permission: ['create-user-role']
                         },
                         {
                             label: 'Список ролей и прав доступа',
                             key: '/user/role/table',
                             icon: null,
                             children: null,
-                            permission: 'read-user-role'
+                            permission: ['read-user-role']
                         }
                     ]
                 }
@@ -276,19 +275,19 @@ const MenuItems =
         //     key: '/computs/',
         //     icon: <CalculatorOutlined/>,
         //     children: [],
-        //     permission: 'dev1'
+        //     permission: ['dev1'
         // },
         // {
         //     label: 'Экономика',
         //     key: '5',
         //     icon: <BarChartOutlined/>,
         //     children: [],
-        //     permission: 'dev1'
+        //     permission: ['dev1'
         // },
         {
             label: '',
             key: '/test',
-            permission: 'bug',
+            permission: ['dev'],
             icon: <BugOutlined/>,
             children: [
                 {
@@ -296,40 +295,54 @@ const MenuItems =
                     key: '/test/test1',
                     icon: null,
                     children: null,
-                    permission: 'read-test1'
+                    permission: ['dev']
                 },
                 {
                     label: 'Тест 2',
                     key: '/test/test2',
                     icon: null,
                     children: null,
-                    permission: 'read-test2'
+                    permission: ['dev']
                 },
                 {
                     label: 'Распределение задач',
                     key: '/form/tasks_project',
                     icon: null,
                     children: null,
-                    permission: 'read-tasks-distribution'
+                    permission: ['dev']
                 }
             ]
+        },
+        // Без индексации
+        {
+            label: 'Авторизация',
+            key: '/auth/login',
+            permission: ['bug'],
+            disable: true,
+            icon: <LoginOutlined/>,
         }
     ];
 
 const MenuItemsByPermission = (currentUser) => {
     if(!currentUser)
         return [];
-    console.log("MenuItemsByPermission",currentUser);
-    // Получаем список прав пользователя
+     // Получаем список прав пользователя
     const userPermissions =  currentUser?.permissions?.map(p => p.name_key) ?? [];
-    const hasPermission = (userPermissions, requiredPermission) => {
-        return requiredPermission.includes(userPermissions);
+    const hasPermission = (userPermissions, requiredPermissions) => {
+        // console.log(userPermissions, requiredPermissions);
+        // console.log("fffffffffffffffffffffffffffff",userPermissions.some(row=>requiredPermissions.includes(row)));
+        // console.log("fffffffffffffffffffffffffffff",userPermissions.some(row=>requiredPermissions.includes(row)));
+         //requiredPermissions.map(row=>userPermissions.includes(row));
+        //return userPermissions.includes(requiredPermissions);
+        return requiredPermissions.some(row=>userPermissions.includes(row));
     };
     // Функция для фильтрации элементов меню
     const filterMenuItems = (items, userPermissions) => {
         return items
             .filter(item => {
-                if (item.permission && item.permission.lenght > 0 && item.status) {
+                if(item.disable)
+                    return false
+                if (item.permission && item.permission.length > 0) {
                     return hasPermission(userPermissions, item.permission);
                 }
                 return true;

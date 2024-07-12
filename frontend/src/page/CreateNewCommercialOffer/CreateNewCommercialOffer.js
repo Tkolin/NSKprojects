@@ -1,27 +1,18 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Button, Steps, theme} from 'antd';
 import {StyledBlockLarge, StyledBlockRegular} from "../components/style/BlockStyles";
-import StageToProjectForm from "../StageToProjectForm/Index";
+import StageToProjectForm from "../StageToProjectForm";
 
-import ProjectForm from "../ProjectForm/Index";
-import IrdsProjectForm from "../IrdToProjectForm/Index";
-import {useLazyQuery, useMutation} from "@apollo/client";
-import {
-    UPDATE_IRDS_TO_PROJECT_MUTATION,
-
-} from "../../graphql/mutationsProject";
+import ProjectForm from "../ProjectForm";
+import IrdsProjectForm from "../IrdToProjectForm";
+import {useLazyQuery} from "@apollo/client";
 import {NotificationContext} from "../../NotificationProvider";
-import {
-    rebuildProjectResultQuery,
-    rebuildIrdsResultQuery, rebuildIrdToQuery,
-    rebuildProjectToQuery
-} from '../components/script/rebuildData/ProjectRebuilderQuery';
 import ProjectDetails from "./components/ProjectDetails";
 import {useNavigate} from "react-router-dom";
 import {PROJECTS_QUERY_BY_ID} from "../../graphql/queriesByID";
 
 
-const Index = ({projectId }) => {
+const CreateNewCommercialOffer = ({projectId}) => {
     const [current, setCurrent] = useState(0);
     const navigate = useNavigate();
     const {openNotification} = useContext(NotificationContext);
@@ -60,7 +51,6 @@ const Index = ({projectId }) => {
         setCurrent(value);
     };
 
-
     const contentStyle = {
         lineHeight: '260px',
         color: token.colorTextTertiary,
@@ -69,7 +59,6 @@ const Index = ({projectId }) => {
         border: `1px dashed ${token.colorBorder}`,
         marginTop: 16,
     };
-
 
     return (
         <>
@@ -117,14 +106,14 @@ const Index = ({projectId }) => {
                             <StyledBlockLarge label={"Этапы"}>
                                 <StageToProjectForm
                                     onCompleted={() => next()}
-                                project={project?.projects?.items[0] ?? null}/>
+                                    project={project?.projects?.items[0] ?? null}/>
                             </StyledBlockLarge>
                         ) :
                         current === 2 ? (
                                 <StyledBlockLarge label={"Ирд"}>
                                     <IrdsProjectForm
                                         onCompleted={() => next()}
-                                    project={project?.projects?.items[0] ?? null}/>
+                                        project={project?.projects?.items[0] ?? null}/>
                                 </StyledBlockLarge>) :
                             current === 3 ? (<>
                                     <ProjectDetails project={project.projects.items[0]}/>
@@ -167,4 +156,4 @@ const Index = ({projectId }) => {
 
 };
 
-export default Index;
+export default CreateNewCommercialOffer;
