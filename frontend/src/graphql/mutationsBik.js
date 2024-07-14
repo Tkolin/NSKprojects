@@ -31,8 +31,6 @@ export const UPDATE_BIK_MUTATION = gql`
             BIK: $BIK
             name: $name
             correspondent_account: $correspondent_account
-
-
         ) {
             id
             name

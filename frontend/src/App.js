@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {BrowserRouter as Router, Route, Routes, useNavigate} from 'react-router-dom';
 import {Cookies} from "react-cookie";
 import {ConfigProvider} from "antd";
@@ -39,7 +39,7 @@ const App = () => {
     const [data, setData] = useState()
     const {loading, error, refetch: refetchCurr} = useQuery(GET_CURRENT_USER, {
         //pollInterval: 60000, // Интервал опроса в миллисекундах (например, 60000 мс = 1 минута)
-        fetchPolicy: 'network-only', // Всегда берет данные с сервера, а не из кэша
+        fetchPolicy: 'cache-and-network', // Всегда берет данные с сервера, а не из кэша
         onCompleted: (data) => {
             console.log(data);
             setData(data);

@@ -2,14 +2,11 @@
 
 namespace App\Services\FileGenerate;
 
+use App\Models\ExecutorOrder;
+use App\Models\File;
 use App\Models\Organization;
 use App\Services\MonthEnum;
-use Icewind\SMB\ServerFactory;
-use League\Flysystem\Filesystem;
-use League\Flysystem\UnixVisibility\PortableVisibilityConverter;
-use League\Flysystem\SMB\SMBAdapter;
-use Icewind\SMB\Server;
-use Icewind\SMB\BasicAuth;
+use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 class TaskExecutorContractGeneratorService
@@ -22,18 +19,14 @@ class TaskExecutorContractGeneratorService
             ->with('bik')
             ->find(0);
     }
-    private static function addLeadingZeros(int $number, int $length)
+
+    public static function formatWithLeadingZeros(int $number, int $length): string
     {
         return str_pad((string)$number, $length, '0', STR_PAD_LEFT);
     }
 
-    public static function generate($projectData, $personData, $projectTasksData)
+    public static function generate($projectData, $personData, $projectTasksData, $numberOrders)
     {
-
-        $serverFactory = new ServerFactory();
-        $auth = new BasicAuth('sys_LaravelFileManager', 'SIBNIPI', 'NX2AaF&B)8::&nlzc*g7#D9)m0s\e3');
-        $server = $serverFactory->createServer('192.168.2.125', $auth);
-
         // Получение данных об организации
         $myOrg = self::getOrganizationData();
 
@@ -42,48 +35,33 @@ class TaskExecutorContractGeneratorService
         $templateFilePath = storage_path('app/templates/PersonContractToProject.docx');
         $date = date('Y-m-d');
         error_log("Сегодняшняя дата: " . $date);
-
         // Создание временного файла копии шаблона
         $tempFilePath = tempnam(sys_get_temp_dir(), 'contractToProject');
         copy($templateFilePath, $tempFilePath);
 
+        $contractPrice = 0;
+
+        foreach ($projectTasksData as $projectTask) {
+                $contractPrice += $projectTask->price;
+        }
+        //$contractDuration = $contractDateEnd->diff($contractDateStart)->days;
+        error_log('$personData' . $personData['passport']);
 
         // Загрузка шаблона в PhpWord
         $templateProcessor = new TemplateProcessor($tempFilePath);
-
-        error_log($projectData->id.'$projectData');
-
-        // заполнение данных
-        $id = self::addLeadingZeros($projectData->id, 3) . '-' . self::addLeadingZeros($personData['id'], 3).'-' . date('ymd');
-
         $date = date('Y-m-d');
         error_log("Сегодняшняя дата: " . $date);
 
         $dateComponents = explode('-', $date);
-        $year = $dateComponents[0];
-        $month = MonthEnum::getMonthName($dateComponents[1]);
-        $day = $dateComponents[2];
-
-
-        $projectTasksNames = '';
-        $projectTasksToDateEnd = '';
-        $projectTasksToPrice = '';
-        $sumPrice = 0.0;
-
-        foreach ($projectTasksData as $key => $value) {
-            $projectTasksNames .= " ".$value['task']['name'] . ",";
-            $projectTasksToDateEnd .=  " ".$value['task']['name'] . " (".( (new \DateTime($value['date_end']))->format('d.m.Y') ?? "-")."),";
-            $projectTasksToPrice .= " ".$value['task']['name'] . " (".($value['price'] ?? "-")."),";
-            $sumPrice += $value['price'];
-        }
-        $projectTasksNames = substr($projectTasksNames,0,-1);
-        $projectTasksToDateEnd = substr($projectTasksToDateEnd,0,-1);
-        $projectTasksToPrice = substr($projectTasksToPrice,0,-1);
+        $year = $dateComponents[0] ?? "__";
+        $month = $dateComponents[1] ? MonthEnum::getMonthName($dateComponents[1]) : "__";
+        $day = $dateComponents[2] ?? "__";
+        $orderNumber = self::formatWithLeadingZeros($projectData->id, 3) . "-" . self::formatWithLeadingZeros($personData->id, 3) . "-" . "240" . self::formatWithLeadingZeros($numberOrders, 3);
         $replacements = [
-            'id' => $id,
             'day' => $day,
             'month' => $month,
             'year' => $year,
+            'id' => $orderNumber,
 
             'myOrg.name' => $myOrg['name'],
             'myOrg.full_name' => $myOrg['full_name'],
@@ -97,8 +75,6 @@ class TaskExecutorContractGeneratorService
             'myOrg.address_mail' => $myOrg['address_mail'],
             'myOrg.office_number_legal' => $myOrg['office_number_legal'],
             'myOrg.office_number_mail' => $myOrg['office_number_mail'],
-            'myOrg.director.ShortFullName' => $myOrg['director']['last_name'] . ' ' . substr((string)$myOrg['director']['first_name'], 0, 2) . '.' . substr((string)$myOrg['director']['patronymic'], 0, 2) . '.',
-
             'person.passport.serial' => $personData['passport']['serial'] ?? ' ',
             'person.passport.number' => $personData['passport']['number'] ?? ' ',
             'person.passport.date' => $personData['passport']['date'] ?? ' ',
@@ -108,42 +84,65 @@ class TaskExecutorContractGeneratorService
             'person.INN' => $personData['INN'],
             'person.SNILS' => $personData['SHILS'],
             'person.BIK.name' => isset($personData['BIK']) ? $personData['BIK']['name'] : ' ',
-            'person.BIK.bik' => isset($personData['BIK'])? $personData['BIK']['BIK']  : ' ',
+            'person.BIK.bik' => isset($personData['BIK']) ? $personData['BIK']['BIK'] : ' ',
             'person.BIK.correspondent_account' => isset($personData['BIK']) ? $personData['BIK']['correspondent_account'] : ' ',
             'person.payment_account' => $personData['payment_account'],
+            'myOrg.director.ShortFullName' => $myOrg['director']['last_name'] . ' ' . substr((string)$myOrg['director']['first_name'], 0, 2) . '.' . substr((string)$myOrg['director']['patronymic'], 0, 2) . '.',
             'person.FullName' => $personData['passport']['lastname'] . ' ' . $personData['passport']['firstname'] . ' ' . $personData['passport']['patronymic'],
             'person.ShortFullName' => $personData['passport']['lastname'] . ' ' . substr((string)$personData['passport']['firstname'], 0, 2) . '.' . substr((string)$personData['passport']['patronymic'], 0, 2) . '.',
 
-            'project_tasks.names' => $projectTasksNames,
-            'project_tasks.names_to_date_end' => $projectTasksToDateEnd,
-            'project_tasks.names_to_price' => $projectTasksToPrice,
-
-
-            'total_price' => $sumPrice . ".00 руб.",
+            'contract.price' => $contractPrice,
         ];
 
         foreach ($replacements as $key => $value) {
             $templateProcessor->setValue($key, $value);
         }
 
-        foreach ($replacements as $key => $value) {
-            $templateProcessor->setValue($key, $value);
-        }
+        $fileName = $orderNumber . '_ДОГОВОР_С_ИСПОЛНИТЕЛЕМ' . '.docx'; // 'Договор_с_исполнителем.docx';
 
-        $fileName = 'Договор_с_исполнителем.docx';
-        $localFilePath = storage_path('app/' . $fileName);
-        $templateProcessor->saveAs($localFilePath);
+        // Сохраняем отредактированный документ
+        $filePath = storage_path('app/' . $fileName);
+        $templateProcessor->saveAs($filePath);
 
-        // Путь к сетевой папке (UNC path)
-        $smbPath = '\\\\192.168.2.125\serverdatа\ERP_FILES' . $fileName;
-        if (copy($localFilePath, $smbPath)) {
-            // Удаление временного файла
-            unlink($localFilePath);
+        // Чтение содержимого файла
+        $fileContents = file_get_contents($filePath);
 
-            return response()->json(['message' => 'File saved successfully', 'file_path' => $smbPath]);
-        } else {
-            throw new \Exception('Error saving file to SMB path.');
-        }
+        // Определяем путь к файлу в сетевой папке
+        $storagePath = "/" . $projectData->path_project_folder . "/Договора_с_исполнителями/" . $fileName;
+
+        // Помещение файла в сетевую папку
+        Storage::disk('localMySQLDUMPS')->put($storagePath, $fileContents);
+
+        // Получение размера файла
+        $fileSize = filesize($filePath);
+
+        // Определение MIME-типа файла
+        $mimeType = mime_content_type($filePath);
+
+        // Создание записи о файле в базе данных
+        $file = File::create([
+            'name' => $fileName,
+            'path' => $storagePath,
+            'size' => $fileSize,
+            'mime_type' => $mimeType,
+        ]);
+
+        // Создание записи о заказе в базе данных
+        $executorOrder = ExecutorOrder::create([
+            'number' => $orderNumber,
+            'date_generate' => $date,
+            'date_order' => $date,
+            'date_attachment' => $date,
+            'file_id' => $file->id,
+        ]);
+        $taskIds = $projectTasksData->pluck('id')->toArray();
+
+        $executorOrder->project_tasks()->attach($taskIds);
+        // Удаление временного файла
+        unlink($filePath);
+
+        return $fileName;
     }
+
 
 }

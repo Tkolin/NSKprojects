@@ -2,6 +2,7 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Models\ExecutorOrder;
 use App\Models\Person;
 use App\Models\Project;
 use App\Models\ProjectTasks;
@@ -51,6 +52,8 @@ final readonly class TaskExecutorContractFileDownload
             ->first();
 
 
+        $numberOrders = ExecutorOrder::count();
+
         // Проверка данных
         if (!isset($projectData))
             throw new Exception('Проект не найден');
@@ -59,7 +62,7 @@ final readonly class TaskExecutorContractFileDownload
 
         // Генерация файла
         $projectGenerator = new TaskExecutorContractGeneratorService();
-        $contractFilePath = $projectGenerator->generate($projectData, $personData, $projectTasksData);
+        $contractFilePath = $projectGenerator->generate($projectData, $personData, $projectTasksData, $numberOrders);
         return ['url' => $contractFilePath];
 
 

@@ -2,6 +2,7 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Models\ExecutorOrder;
 use App\Models\Person;
 use App\Models\Project;
 use App\Models\ProjectTasks;
@@ -22,18 +23,13 @@ final readonly class ExecutorOrderGenerated
         $projectTasksData = ProjectTasks::with(['task', 'executor'])
             ->whereIn('id', $projectTasksIds)
             ->get();
-        error_log($projectTasksData . '$projectTasksData[0]');
 
         if (!isset($projectTasksData))
             throw new \Exception('Неверно переданы данные');
         // Проверка все ли данные об одном
         $executorId = $projectTasksData[0]->executor_id;
         $projectId = $projectTasksData[0]->project_id;
-//        foreach ($projectTasksData as $projectTask) {
-//            if ($executorId != $projectTask->executor_id || $projectId != $projectTask->project_id) {
-//                throw new Exception('Неверно переданы данные');
-//            }
-//        }
+
 
         // Добор данных
         $projectData = Project::with('organization_customer')
@@ -49,7 +45,11 @@ final readonly class ExecutorOrderGenerated
             ->get()
             ->first();
 
+        $numberOrders = ExecutorOrder::whereHas('project_tasks', function ($query) use ($projectId) {
+            $query->where('project_id', $projectId);
+        })->count();
 
+        error_log($numberOrders . ' $numberOrders');
         // Проверка данных
         if (!isset($projectData))
             throw new Exception('Проект не найден');
@@ -58,7 +58,7 @@ final readonly class ExecutorOrderGenerated
 
         // Генерация файла
         $projectGenerator = new TaskExecutorContractGeneratorService();
-        $contractFilePath = $projectGenerator->generate($projectData, $personData, $projectTasksData);
+        $contractFilePath = $projectGenerator->generate($projectData, $personData, $projectTasksData,  $numberOrders);
         return ['url' => $contractFilePath];
 
     }

@@ -23,6 +23,7 @@ class Project extends Model
         'date_completion',
         'price',
         'date_create',
+        'path_project_folder',
         ];
     public function executor_orders()
     {

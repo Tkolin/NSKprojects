@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class ExecutorOrder extends Model
 {
     protected $fillable = [
+        'number',
         'date_generate',
         'date_order',
         'date_attachment',
@@ -19,6 +20,7 @@ class ExecutorOrder extends Model
     {
         return $this->belongsTo(File::class);
     }
+
 
     public function project_tasks(): BelongsToMany
     {

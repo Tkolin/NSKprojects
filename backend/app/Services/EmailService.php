@@ -7,6 +7,7 @@ use Webklex\IMAP\Facades\Client;
 
 class EmailService
 {
+
     public static function fetchAllEmails()
     {
         try {

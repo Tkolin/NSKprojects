@@ -10,7 +10,7 @@ WORKDIR /usr/src/app
 COPY . .
 
 # Устанавливаем зависимости
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Собираем React приложение
 RUN npm run build

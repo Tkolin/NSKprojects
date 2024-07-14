@@ -29,16 +29,15 @@ return [
     */
 
     'disks' => [
-        'smb' => [
-            'driver' => 'smb',
-            'host' => '192.168.2.125',
-            'username' => 'sys_LaravelFileManager',
-            'password' => 'NX2AaF&B)8::&nlzc*g7#D9)m0s\e3',
-            'root' => 'serverdata/ERP_FILES',
-        ],
+
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
+            'throw' => false,
+        ],
+        'localMySQLDUMPS' => [
+            'driver' => 'local',
+            'root' => 'Z:\\',
             'throw' => false,
         ],
 
@@ -47,18 +46,6 @@ return [
             'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
-            'throw' => false,
-        ],
-
-        's3' => [
-            'driver' => 's3',
-            'key' => env('AWS_ACCESS_KEY_ID'),
-            'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION'),
-            'bucket' => env('AWS_BUCKET'),
-            'url' => env('AWS_URL'),
-            'endpoint' => env('AWS_ENDPOINT'),
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
         ],
 
