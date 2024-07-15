@@ -56,6 +56,23 @@ class TaskExecutorContractGeneratorService
         $year = $dateComponents[0] ?? "__";
         $month = $dateComponents[1] ? MonthEnum::getMonthName($dateComponents[1]) : "__";
         $day = $dateComponents[2] ?? "__";
+
+
+        $projectTasksNames = '';
+        $projectTasksToDateEnd = '';
+        $projectTasksToPrice = '';
+        $sumPrice = 0.0;
+
+        foreach ($projectTasksData as $key => $value) {
+            $projectTasksNames .= " ".$value['task']['name'] . ",";
+            $projectTasksToDateEnd .=  " ".$value['task']['name'] . " (".( (new \DateTime($value['date_end']))->format('d.m.Y') ?? "-")."),";
+            $projectTasksToPrice .= " ".$value['task']['name'] . " (".($value['price'] ?? "-")."),";
+            $sumPrice += $value['price'];
+        }
+        $projectTasksNames = substr($projectTasksNames,0,-1);
+        $projectTasksToDateEnd = substr($projectTasksToDateEnd,0,-1);
+        $projectTasksToPrice = substr($projectTasksToPrice,0,-1);
+
         $orderNumber = self::formatWithLeadingZeros($projectData->id, 3) . "-" . self::formatWithLeadingZeros($personData->id, 3) . "-" . "240" . self::formatWithLeadingZeros($numberOrders, 3);
         $replacements = [
             'day' => $day,
@@ -91,7 +108,12 @@ class TaskExecutorContractGeneratorService
             'person.FullName' => $personData['passport']['lastname'] . ' ' . $personData['passport']['firstname'] . ' ' . $personData['passport']['patronymic'],
             'person.ShortFullName' => $personData['passport']['lastname'] . ' ' . substr((string)$personData['passport']['firstname'], 0, 2) . '.' . substr((string)$personData['passport']['patronymic'], 0, 2) . '.',
 
-            'contract.price' => $contractPrice,
+            'project_tasks.names' => $projectTasksNames,
+            'project_tasks.names_to_date_end' => $projectTasksToDateEnd,
+            'project_tasks.names_to_price' => $projectTasksToPrice,
+
+
+            'total_price' => $sumPrice . ".00 руб.",
         ];
 
         foreach ($replacements as $key => $value) {
