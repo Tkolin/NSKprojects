@@ -1,22 +1,25 @@
-import {Alert, Card, Divider, Form, Tree} from "antd";
+import {Alert, Button, Card, Divider, Form, Tree} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import {StyledButtonGreen} from "../../components/style/ButtonStyles";
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {CarryOutOutlined} from "@ant-design/icons";
 import {useMutation} from "@apollo/client";
 import {UPDATE_TASK_TO_PROJECT_MUTATION} from "../../../graphql/mutationsTask";
 import {EXECUTOR_ORDER_GENERATED} from "../../../graphql/mutationsFileGenerated";
+import {NotificationContext} from "../../../NotificationProvider";
 
 const GenerateOrderForm = ({executorOrders, projectTasks, onCompleted}) => {
+    const {openNotification} = useContext(NotificationContext);
+
     const [form] = Form.useForm();
     const [checkedKeys, setCheckedKeys] = useState();
     const [generatedOrder, {loading: loadingGenerated}] = useMutation(EXECUTOR_ORDER_GENERATED, {
         onCompleted: (data) => {
             onCompleted && onCompleted(data)
-            console.log(data);
-        },
+            openNotification('topRight', 'success', `Данные обновлены`);
+            },
         onError: (error) => {
-            console.log(error.message);
+            openNotification('topRight', 'success', `Ошибка: ` + error.message);
         }
     });
     const handleSubmit = () => {
@@ -42,7 +45,7 @@ const GenerateOrderForm = ({executorOrders, projectTasks, onCompleted}) => {
     };
 
     return (
-        <Card layout="vertical">
+        <Card layout="vertical" loading={loadingGenerated}>
             <Alert message="Выберите задачи которые необходимо указать в договре." type="info" showIcon/>
             <Divider/>
             <Tree showIcon showLine checkable checkedKeys={checkedKeys} onCheck={(data)=>setCheckedKeys(data)}

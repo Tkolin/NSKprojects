@@ -4,7 +4,7 @@ import {useMutation} from "@apollo/client";
 
 const {Link} = Typography;
 
-const LinkToDownload = ({children, fileId}) => {
+const LinkToDownload = ({children, fileId, ...props}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
     const openNotification = (placement, type, message) => {
         notification[type]({
@@ -39,6 +39,6 @@ const LinkToDownload = ({children, fileId}) => {
         }
     };
 
-    return <Link onClick={()=>handleDownload()}>{children}</Link>
+    return <Link  onClick={()=>handleDownload()} {...props}>{children}</Link>
 }
 export default LinkToDownload;

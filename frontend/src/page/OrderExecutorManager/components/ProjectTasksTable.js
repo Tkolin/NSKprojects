@@ -39,7 +39,14 @@ export const ProjectTasksTable = ({projectTasks}) => {
     const columns = [{
         title: "Договор",
         width: "10%",
-        key: "status"
+        key: "status",
+        render: (record, text) =>
+            (<Text>{record?.executor_orders?.length ?
+                record.executor_orders.map(second_row=>
+                <>{second_row?.number}</>)
+                :
+                <> - </>}</Text>)
+
 
     },{
         title: "Задача",

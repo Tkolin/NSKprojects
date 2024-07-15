@@ -29,14 +29,7 @@ const TableExecutors = ({setEditModalStatus, project, onUpdated}) => {
     const columnsExecutors = [{
         title:
             <Space>
-                <Text style={{marginRight: 10}}>Список Исполнителей (В разработке)</Text>
-
-
-                {/*<IrdsProjectFileDownload text={<DownloadOutlined/>} projectId={CreateNewProject.id}/>*/}
-                {/*<EditOutlined onClick={() => setEditModalStatus && setEditModalStatus({*/}
-                {/*    status: "tasks",*/}
-                {/*    project: project*/}
-                {/*})}/>*/}
+                <Text style={{marginRight: 10}}>Список Исполнителей</Text>
             </Space>,
         children: [
             {
@@ -77,13 +70,8 @@ const TableExecutors = ({setEditModalStatus, project, onUpdated}) => {
                     const s = project?.project_tasks?.filter(row => row?.executor?.id === record?.executor.id);
                      return (
                          <Link onClick={()=>setExecutorOrderModalStatus({projectTasks: s, executor: record.executor})}>
-                             Догова <EyeOutlined/>
+                             Договора...
                          </Link>
-
-                        //  <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
-                        //     <TaskExecutorContractDownload
-                        //         projectTasksIds={s}/>
-                        // </Space.Compact>
                     )
                 },
             }]

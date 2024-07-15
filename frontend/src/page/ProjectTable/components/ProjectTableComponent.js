@@ -51,6 +51,7 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
                 sortOrder
             }
         },
+        fetchPolicy: "cache-and-network",
         onCompleted: (data) => {
             console.log("queri IPA", data);
         }
@@ -99,7 +100,7 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
                 <TableIrds data-permission={"read-project-ird"} project={project}
                            setEditModalStatus={setEditModalStatus}/>
                 <TableExecutors data-permission={"read-project-task-executor"}
-                                onUpdated={refetch()}
+                                //onUpdated={refetch()}
                                 project={project}
                                 setEditModalStatus={setEditModalStatus}/>
             </Space.Compact>

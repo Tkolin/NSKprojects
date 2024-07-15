@@ -120,6 +120,7 @@ type ProjectStage{
 type ProjectTask{
     id: ID!
     project_id: ID
+    executor_orders: [ExecutorOrder]
     project_task_inherited_id: ID
     task: Task
     stage_number: Int

@@ -22,14 +22,11 @@ const IrdToProjectForm = ({project, onCompleted}) => {
     // Первичные данные
     const [form] = Form.useForm();
     const [irdModalStatus, setIrdModalStatus] = useState(null);
-    useEffect(() => {
-        console.log("irdModalStatus", irdModalStatus)
-    }, [irdModalStatus]);
+
     const [mutateIrd] = useMutation(UPDATE_IRDS_TO_PROJECT_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
-            console.log("datatda da ta ", data);
-            onCompleted && onCompleted(data);
+             onCompleted && onCompleted(data);
         },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при выполнении создания ирд : ${error.message}`);

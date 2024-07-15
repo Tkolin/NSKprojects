@@ -3,6 +3,8 @@
 #import projects.graphql
 #import result.graphql
 #import fenrir.graphql
+scalar Upload
+
 type Query {
     executorOrders(projectId: ID!, executorId: ID!): [ExecutorOrder!]
 
@@ -54,11 +56,17 @@ type Query {
 directive @checkRole(permission: [String!]) on FIELD_DEFINITION | FIELD
 extend type Mutation {
     downloadFile(id: ID!): Url!
+    uploadFile(file: Upload!): File!
+    uploadFileLink(url: String!): UploadFileLinkResponse!
+
 
     register(input: RegisterInput!): AuthPayload!
     login(input:  LoginInput!): AuthPayload!
 }
-
+type UploadFileLinkResponse {
+    success: Boolean!
+    file: File
+}
 input QueryOptions {
     id: Int
     page: Int
@@ -83,6 +91,7 @@ type Attachment {
     path: String
 }type   ExecutorOrder {
     id: ID!
+    number: String
     created_at: String
     updated_at: String
     date_generate: String!

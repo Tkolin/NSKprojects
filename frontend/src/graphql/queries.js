@@ -344,6 +344,10 @@ export const PROJECTS_QUERY = gql`
                     date_start
                     date_end
                     duration
+                    executor_orders {
+                        id
+                        number
+                    }
                     stage_number
                     executor {
                         id

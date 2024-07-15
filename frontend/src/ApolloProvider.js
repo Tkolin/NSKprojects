@@ -1,19 +1,18 @@
-import React, { useMemo } from 'react';
-import { ApolloClient, InMemoryCache, ApolloProvider as ApolloHooksProvider, createHttpLink } from '@apollo/client';
-import { setContext } from '@apollo/client/link/context';
-import { Cookies } from 'react-cookie';
-const httpLink = createHttpLink({
+import React, {useMemo} from 'react';
+import {ApolloClient, InMemoryCache, ApolloProvider as ApolloHooksProvider, createHttpLink} from '@apollo/client';
+import {setContext} from '@apollo/client/link/context';
+import {Cookies} from 'react-cookie';
+import getCsrfToken from "./setupAxios";
 
+const httpLink = createHttpLink({
     uri: `${process.env.REACT_APP_API_URL}graphql/`,
 });
-console.log(process.env.REACT_APP_API_URL);
 
 const createApolloClient = () => {
-    const authLink = setContext((_, { headers }) => {
+    const authLink = setContext((_, {headers}) => {
         const cookies = new Cookies();
         const token = cookies.get('accessToken');
-        const CsrfToken = localStorage.getItem('csrf_token'); // Предположим, что ваш CSRF токен хранится в localStorage
-
+        const CsrfToken = getCsrfToken();
         return {
             headers: {
                 ...headers,
@@ -29,7 +28,7 @@ const createApolloClient = () => {
     });
 };
 
-const ApolloProvider = ({ children }) => {
+const ApolloProvider = ({children}) => {
     const client = useMemo(() => createApolloClient(), []);
     return <ApolloHooksProvider client={client}>{children}</ApolloHooksProvider>;
 };

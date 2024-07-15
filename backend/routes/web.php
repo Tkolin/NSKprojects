@@ -23,3 +23,9 @@ Route::get('/download-projectActRender/{filename}', [ProjectController::class, '
 Route::get('/download-projectPaymentInvoice/{filename}', [ProjectController::class, 'downloadPaymentInvoiceProject']);
 
 Route::get('/temporary/{filename}', [FileController::class, 'downloadFile']);
+Route::post('/upload', [\App\Http\Controllers\FileUploadController::class, 'upload']);
+Route::post('/project/upload/executor_order/{orderId}', [\App\Http\Controllers\FileUploadController::class, 'uploadExecutorOrder']);
+
+Route::get('/csrf-token', function () {
+    return response()->json(['csrfToken' => csrf_token()]);
+});

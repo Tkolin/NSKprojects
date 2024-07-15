@@ -35,11 +35,11 @@ final readonly class Projects
             ->with('status')
             ->with('delegations')
             ->with('project_irds.IRD')
-            ->with('project_tasks')
+            ->with('project_tasks.executor_orders')
             ->with('executor_orders')
             ->with('project_stages.stage');
 
-        $queryService = new QueryService();
+         $queryService = new QueryService();
         $searchColumns = ['id', 'name', 'organization_customer_id', 'type_project_document_id', 'facility_id', 'date_signing',
             'duration', 'date_end', 'status_id', 'date_completion', 'delegate_id'];
         $projectsQuery = $queryService->buildQueryOptions($projectsQuery, $args['queryOptions'], $searchColumns);
@@ -49,6 +49,8 @@ final readonly class Projects
             $projectsQuery->where('status_id', $args["projectStatuses"]);
         }
         $projects = $queryService->paginate($projectsQuery, $args['queryOptions']['limit'], $args['queryOptions']['page']);
+
+
         return ['items' => $projects, 'count' => $count];
     }
 }

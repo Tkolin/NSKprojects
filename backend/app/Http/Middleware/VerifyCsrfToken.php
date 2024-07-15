@@ -12,6 +12,8 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        //
+        //TODO: Надо реализовать csft Токены
+        'api/upload',
+        'project/upload/executor_order/*'
     ];
 }
