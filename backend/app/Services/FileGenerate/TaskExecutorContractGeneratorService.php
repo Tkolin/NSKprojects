@@ -111,7 +111,7 @@ class TaskExecutorContractGeneratorService
         $storagePath = "/" . $projectData->path_project_folder . "/Договора_с_исполнителями/" . $fileName;
 
         // Помещение файла в сетевую папку
-        Storage::disk('localMySQLDUMPS')->put($storagePath, $fileContents);
+        Storage::disk('localERPFiles')->put($storagePath, $fileContents);
 
         // Получение размера файла
         $fileSize = filesize($filePath);
@@ -133,7 +133,7 @@ class TaskExecutorContractGeneratorService
             'date_generate' => $date,
             'date_order' => $date,
             'date_attachment' => $date,
-            'file_id' => $file->id,
+            'original_file_id' => $file->id,
         ]);
         $taskIds = $projectTasksData->pluck('id')->toArray();
 

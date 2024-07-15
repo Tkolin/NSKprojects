@@ -18,7 +18,8 @@ export const STATUS_PROJECTS_QUERY = gql`
             date_generate
             date_order
             date_attachment
-            file_id
+            original_file_id
+            signed_file_id
             project_tasks {
                 id
             }

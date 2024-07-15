@@ -432,6 +432,7 @@ export const PERSONS_SHORT_QUERY = gql`
         }
     }
 `;
+
 export const GET_CURRENT_USER = gql`
     query CurrentUser {
         currentUser {

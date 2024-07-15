@@ -14,11 +14,15 @@ class ExecutorOrder extends Model
         'date_generate',
         'date_order',
         'date_attachment',
-        'file_id',
+        'signed_file_id',
+        'original_file_id',
     ];
-    public function file(): BelongsTo
+    public function signed_file(): BelongsTo
     {
-        return $this->belongsTo(File::class);
+        return $this->belongsTo(File::class, 'signed_file_id','id');
+    }    public function original_file(): BelongsTo
+    {
+        return $this->belongsTo(File::class, 'original_file_id','id');
     }
 
 

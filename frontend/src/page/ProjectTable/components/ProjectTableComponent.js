@@ -98,7 +98,9 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
                              setEditModalStatus={setEditModalStatus}/>
                 <TableIrds data-permission={"read-project-ird"} project={project}
                            setEditModalStatus={setEditModalStatus}/>
-                <TableExecutors data-permission={"read-project-task-executor"} project={project}
+                <TableExecutors data-permission={"read-project-task-executor"}
+                                onUpdated={refetch()}
+                                project={project}
                                 setEditModalStatus={setEditModalStatus}/>
             </Space.Compact>
 

@@ -35,7 +35,12 @@ return [
             'root' => storage_path('app'),
             'throw' => false,
         ],
-        'localMySQLDUMPS' => [
+//        'localMySQLDUMPS' => [
+//            'driver' => 'local',
+//            'root' => 'Z:\\',
+//            'throw' => false,
+//        ],
+        'localERPFiles' => [
             'driver' => 'local',
             'root' => 'Z:\\',
             'throw' => false,

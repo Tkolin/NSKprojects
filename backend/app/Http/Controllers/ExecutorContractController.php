@@ -11,7 +11,7 @@ class ExecutorContractController extends Controller
             abort(404);
         }
 
-        return response()->download($filePath, 'Договор_с_исполнителем.docx')->deleteFileAfterSend(true);
+        return response()->download($filePath, $filename)->deleteFileAfterSend(true);
     }
     public function TaskExecutorContract($filename)
     {

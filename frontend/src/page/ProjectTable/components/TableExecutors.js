@@ -9,7 +9,7 @@ import OrderExecutorManager from "../../OrderExecutorManager";
 
 const {Text} = Typography;
 
-const TableExecutors = ({setEditModalStatus, project}) => {
+const TableExecutors = ({setEditModalStatus, project, onUpdated}) => {
     const [executorOrderModalStatus, setExecutorOrderModalStatus] = useState()
     const groupTasksByExecutor = (tasks) => {
         return tasks.reduce((acc, task) => {
@@ -110,7 +110,7 @@ const TableExecutors = ({setEditModalStatus, project}) => {
         width={ 1300}
         onClose={() => setExecutorOrderModalStatus(null)}
     >
-       <OrderExecutorManager executor={executorOrderModalStatus?.executor} projectTasks={executorOrderModalStatus?.projectTasks}/>
+       <OrderExecutorManager  onUpdated={()=>onUpdated()} executor={executorOrderModalStatus?.executor} projectTasks={executorOrderModalStatus?.projectTasks}/>
     </Modal>
 </>
     )

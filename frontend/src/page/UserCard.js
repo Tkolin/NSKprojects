@@ -17,14 +17,16 @@ export const UserCard = ({
 
     const navigate = useNavigate();
     const cookies = new Cookies();
-    const { refetch: refetchCurrentUser} = useQuery(GET_CURRENT_USER);
+    const { refetch: refetchCurrentUser} = useQuery(GET_CURRENT_USER, {onCompleted: () => {
+            navigate('/auth/login');
+            window.location.reload();
+        }});
 
     const handleLogout = () => {
 
         cookies.set('accessToken', null);
         refetchCurrentUser && refetchCurrentUser();
-        navigate('/auth/login');
-        window.location.reload();
+
      };
     const handleLogin = () => {
         navigate('auth/login');

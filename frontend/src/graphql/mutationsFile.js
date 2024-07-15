@@ -7,3 +7,10 @@ export const DELETE_CONTACT_MUTATION = gql`
         )
     }
 `;
+export const DOWNLOAD_FILE = gql`
+    mutation DownloadFile($id: ID! ) {
+        downloadFile(id: $id) {
+            url
+        }
+    }
+`;

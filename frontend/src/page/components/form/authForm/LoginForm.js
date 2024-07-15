@@ -1,17 +1,25 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Form, Input, Button, message} from 'antd';
-import {useMutation, useQuery} from '@apollo/client';
+import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import {LOGIN_MUTATION} from '../../../../graphql/mutationsAuth';
 import {useNavigate} from 'react-router-dom';
  import {Cookies} from "react-cookie";
 import {GET_CURRENT_USER} from "../../../../graphql/queries";
+import {NotificationContext} from "../../../../NotificationProvider";
 
 const LoginForm = () => {
     const [form] = Form.useForm();
     const [login, {loading, error}] = useMutation(LOGIN_MUTATION);
+    const {openNotification} = useContext(NotificationContext);
 
     const navigate = useNavigate();
-    const { refetch: refetchCurrentUser} = useQuery(GET_CURRENT_USER);
+    const [  loadUser, {loadingUser, dataUser}] = useLazyQuery(GET_CURRENT_USER, {onCompleted: ()=> {
+
+            openNotification('topRight', 'success', 'Вход выполнен!');
+            navigate('/');
+        }, onError: (error)=>{
+            openNotification('topRight', 'error', 'Ошибка авторизации!');
+        }});
     const onFinish = async (values) => {
         const {email, password} = values; // Извлекаем значения email и password из формы
         try {
@@ -19,9 +27,8 @@ const LoginForm = () => {
             const {access_token} = response.data.login;
             const cookies = new Cookies();
             cookies.set('accessToken', access_token);
-            refetchCurrentUser && refetchCurrentUser();
-            navigate('/');
-            // setTimeout(() => {
+            loadUser && loadUser();
+                        // setTimeout(() => {
             //     navigate('/');
             //     cookies.set('accessToken', access_token);
             //     window.location.reload();

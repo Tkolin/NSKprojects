@@ -3,6 +3,7 @@
 
 use App\Http\Controllers\ExecutorContractController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\FileController;
 
 use Illuminate\Support\Facades\Route;
 use Nuwave\Lighthouse\GraphQL;
@@ -21,3 +22,4 @@ Route::get('/download-projectStages/{filename}', [ProjectController::class, 'dow
 Route::get('/download-projectActRender/{filename}', [ProjectController::class, 'downloadActRenderingServicesProject']);
 Route::get('/download-projectPaymentInvoice/{filename}', [ProjectController::class, 'downloadPaymentInvoiceProject']);
 
+Route::get('/temporary/{filename}', [FileController::class, 'downloadFile']);

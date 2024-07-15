@@ -1,5 +1,6 @@
 import {Space, Table, Typography} from "antd";
 import {useEffect} from "react";
+import LinkToDownload from "../../components/script/fileDownloadScripts/LinkToDownload";
 
 const {Text} = Typography;
 
@@ -22,14 +23,18 @@ export const ExecutorOrdersTable = ({executorOrders}) => {
         key: "orderNumber",
         render: (record, text) => (
             <Space.Compact>
-                {record?.file_id ?
+                {record?.signed_file_id ?
                     (
                         <Space.Compact direction={"vertical"}>
-                            <Text>Скачать файл</Text>
+                            <LinkToDownload fileId={record.signed_file_id}>Скачать файл</LinkToDownload>
                             <Text type={"secondary"}>{record.date_order}</Text>
 
                         </Space.Compact>
-                    ) : (<>Файла нет надо загрузить</>)}
+                    ) :
+                    (<Space.Compact direction={"vertical"}>
+                        <LinkToDownload fileId={record.original_file_id}>Скачать неподписанный файл</LinkToDownload>
+                        <Text type={"secondary"}>{record.date_order}</Text>
+                    </Space.Compact>)}
             </Space.Compact>)
     },]
     return (
