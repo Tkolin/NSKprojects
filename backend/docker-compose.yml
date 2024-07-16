@@ -8,8 +8,9 @@ services:
             - "8000:8000"
         volumes:
             - .:/app
+            - Z:\:/fileserver/ERP_file
         env_file:
-            - ../../../Music/nsk/backend/.env
+            - .env
         environment:
             - APP_KEY=${APP_KEY}
         networks:

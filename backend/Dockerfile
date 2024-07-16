@@ -18,16 +18,10 @@ RUN apk update && apk add --no-cache \
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Настройка рабочей директории
-WORKDIR /var/www/html/backend
+WORKDIR /app
 
 # Копируем файлы проекта в контейнер
 COPY . .
-
-# Создаем и активируем виртуальное окружение, устанавливаем зависимости
-RUN python3 -m venv venv \
-    && . venv/bin/activate \
-    && pip install --no-cache-dir -r requirements.txt \
-    && pip install sympy
 
 # Устанавливаем зависимости Laravel
 RUN composer install --no-dev
