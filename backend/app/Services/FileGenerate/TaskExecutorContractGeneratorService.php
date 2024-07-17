@@ -34,8 +34,7 @@ class TaskExecutorContractGeneratorService
         // Получение пути к шаблону документа
         $templateFilePath = storage_path('app/templates/PersonContractToProject.docx');
         $date = date('Y-m-d');
-        error_log("Сегодняшняя дата: " . $date);
-        // Создание временного файла копии шаблона
+         // Создание временного файла копии шаблона
         $tempFilePath = tempnam(sys_get_temp_dir(), 'contractToProject');
         copy($templateFilePath, $tempFilePath);
 
@@ -44,13 +43,10 @@ class TaskExecutorContractGeneratorService
         foreach ($projectTasksData as $projectTask) {
                 $contractPrice += $projectTask->price;
         }
-        //$contractDuration = $contractDateEnd->diff($contractDateStart)->days;
-        error_log('$personData' . $personData['passport']);
 
         // Загрузка шаблона в PhpWord
         $templateProcessor = new TemplateProcessor($tempFilePath);
         $date = date('Y-m-d');
-        error_log("Сегодняшняя дата: " . $date);
 
         $dateComponents = explode('-', $date);
         $year = $dateComponents[0] ?? "__";
@@ -65,7 +61,7 @@ class TaskExecutorContractGeneratorService
 
         foreach ($projectTasksData as $key => $value) {
             $projectTasksNames .= " ".$value['task']['name'] . ",";
-            $projectTasksToDateEnd .=  " ".$value['task']['name'] . " (".( (new \DateTime($value['date_end']))->format('d.m.Y') ?? "-")."),";
+            $projectTasksToDateEnd .=  " ".$value['task']['name'] . " (начало работ: ".( (new \DateTime($value['date_start']))->format('d.m.Y') ?? "___")." - окончание работ: ". ( (new \DateTime($value['date_end']))->format('d.m.Y') ?? "___"). "),";
             $projectTasksToPrice .= " ".$value['task']['name'] . " (".($value['price'] ?? "-")."),";
             $sumPrice += $value['price'];
         }
@@ -112,6 +108,7 @@ class TaskExecutorContractGeneratorService
             'project_tasks.names_to_date_end' => $projectTasksToDateEnd,
             'project_tasks.names_to_price' => $projectTasksToPrice,
 
+            'project.name' => $projectData->name,
 
             'total_price' => $sumPrice . ".00 руб.",
         ];

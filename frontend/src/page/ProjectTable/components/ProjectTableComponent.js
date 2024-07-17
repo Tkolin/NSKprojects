@@ -51,7 +51,7 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
                 sortOrder
             }
         },
-        fetchPolicy: "cache-and-network",
+        fetchPolicy: "network-only",
         onCompleted: (data) => {
             console.log("queri IPA", data);
         }

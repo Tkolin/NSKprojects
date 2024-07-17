@@ -30,20 +30,25 @@ final readonly class ExecutorOrderGenerated
         $executorId = $projectTasksData[0]->executor_id;
         $projectId = $projectTasksData[0]->project_id;
 
-
         // Добор данных
         $projectData = Project::with('organization_customer')
-            ->find($projectId)
-            ->get()
+            ->where('id', $projectId)
             ->first();
 
+        error_log('======================================');
+
+        error_log($projectData . ' $projectData->id');
+        error_log($projectId . ' $projectId');
 
         $personData = Person::with(['passport', 'passport.passport_place_issue'])
             ->with('bank')
             ->with('BIK')
-            ->find($executorId)
-            ->get()
+            ->where('id',$executorId,'id')
             ->first();
+
+        error_log($personData . ' $personData->id');
+        error_log($executorId . ' $executorId');
+        error_log('======================================');
 
         $numberOrders = ExecutorOrder::whereHas('project_tasks', function ($query) use ($projectId) {
             $query->where('project_id', $projectId);

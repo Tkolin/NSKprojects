@@ -1,5 +1,5 @@
 # Используем образ с PHP
-FROM php:8.2-alpine
+FROM php:8.3-alpine
 
 # Устанавливаем необходимые пакеты
 RUN apk update && apk add --no-cache \

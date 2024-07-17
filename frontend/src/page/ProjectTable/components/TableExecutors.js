@@ -67,7 +67,7 @@ const TableExecutors = ({setEditModalStatus, project, onUpdated}) => {
                 key: 'contract',
                 align: "left",
                 render: (text, record) => {
-                    const s = project?.project_tasks?.filter(row => row?.executor?.id === record?.executor.id);
+                     const s = project?.project_tasks?.filter(row => row?.executor?.id === record?.executor.id);
                      return (
                          <Link onClick={()=>setExecutorOrderModalStatus({projectTasks: s, executor: record.executor})}>
                              Договора...
