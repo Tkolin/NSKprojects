@@ -9,6 +9,7 @@ final readonly class CreatePpi
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        return PasspotPlaceIssue::create($args);
+        $data = $args['data'];
+        return PasspotPlaceIssue::create($data);
     }
 }

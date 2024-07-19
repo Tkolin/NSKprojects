@@ -8,12 +8,8 @@ import IrdItem from "./components/IrdItem";
 import dayjs from "dayjs";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import IrdModalForm from "../components/modal/IrdModalForm";
-import {UPDATE_IRDS_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
-import {
-    rebuildIrdsResultQuery,
-    rebuildIrdToQuery,
-    rebuildStagesToQuery
-} from "../components/script/rebuildData/ProjectRebuilderQuery";
+import {PROJECT_IRDS_SYNC_MUTATION} from "../../graphql/mutationsProject";
+
 import {NotificationContext} from "../../NotificationProvider";
 
 const IrdToProjectForm = ({project, onCompleted}) => {
@@ -23,10 +19,10 @@ const IrdToProjectForm = ({project, onCompleted}) => {
     const [form] = Form.useForm();
     const [irdModalStatus, setIrdModalStatus] = useState(null);
 
-    const [mutateIrd] = useMutation(UPDATE_IRDS_TO_PROJECT_MUTATION, {
+    const [mutateIrd, {loading: loading}] = useMutation(PROJECT_IRDS_SYNC_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
-             onCompleted && onCompleted(data);
+            onCompleted && onCompleted();
         },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при выполнении создания ирд : ${error.message}`);
@@ -37,37 +33,35 @@ const IrdToProjectForm = ({project, onCompleted}) => {
     const load = () => {
         console.log("project.project_irds", project.project_irds?.map((row) => ({
             ...row,
-            receivedDate: row.receivedDate ? dayjs(row.receivedDate) : null,
-            IRD: {selected: row?.IRD?.id, output: row?.IRD?.name},
+            received_date: row.received_date ? dayjs(row.received_date) : null,
+            ird: {selected: row?.ird?.id, output: row?.ird?.name},
         })));
         project && project.project_irds &&
         form.setFieldsValue({
             irdList: project.project_irds && Object.values(project.project_irds)?.map((row) => ({
                 ...row,
-                receivedDate: row.receivedDate ? dayjs(row.receivedDate) : null,
-                IRD: {selected: row?.IRD?.id, output: row?.IRD?.name},
+                received_date: row.received_date ? dayjs(row.received_date) : null,
+                ird: {selected: row?.ird?.id, output: row?.ird?.name},
             }))
         });
     }
     const handleSave = () => {
         console.log("form DATA", form.getFieldValue("irdList").map(row => ({
-                id: row?.id ?? null,
                 project_id: project?.id ?? null,
-                ird_id: row?.IRD?.selected ?? null,
-                stageNumber: row?.stageNumber ? parseInt(row?.stageNumber) : null,
-                applicationProject: row?.applicationProject ? parseInt(row?.applicationProject) : null,
-                receivedDate: row?.receivedDate ? dayjs(row?.receivedDate).format("YYYY-MM-DD") : null,
+                ird_id: row?.ird?.selected ?? null,
+            stage_number: row?.stageNumber ? parseInt(row?.stage_number) : null,
+            application_project: row?.application_project ? parseInt(row?.application_project) : null,
+            received_date: row?.received_date ? dayjs(row?.received_date).format("YYYY-MM-DD") : null,
             }))
         );
         mutateIrd({
             variables: {
                 data: form.getFieldValue("irdList").map(row => ({
-                    id: row?.id ?? null,
                     project_id: project?.id ?? null,
-                    ird_id: row?.IRD?.selected ?? null,
-                    stageNumber: row?.stageNumber ? parseInt(row?.stageNumber) : null,
-                    applicationProject: row?.applicationProject ? parseInt(row?.applicationProject) : null,
-                    receivedDate: row?.receivedDate ? dayjs(row?.receivedDate).format("YYYY-MM-DD") : null,
+                    ird_id: row?.ird?.selected ?? null,
+                    stage_number: row?.stage_number ? parseInt(row?.stage_number) : null,
+                    application_project: row?.application_project ? parseInt(row?.application_project) : null,
+                    received_date: row?.received_date ? dayjs(row?.received_date).format("YYYY-MM-DD") : null,
                 }))
             }
         });
@@ -130,13 +124,13 @@ const IrdToProjectForm = ({project, onCompleted}) => {
                 )}
             </Form.List>
             <Space style={{justifyContent: "center", width: "100%"}}>
-                <StyledButtonGreen onClick={() => handleSave()}>Сохранить</StyledButtonGreen>
+                <StyledButtonGreen  loading={loading} onClick={() => handleSave()}>Сохранить</StyledButtonGreen>
             </Space>
             <IrdModalForm
                 onClose={() => setIrdModalStatus(null)}
                 onCompleted={(value) => {
                     const newRow = [...form.getFieldValue("irdList")];
-                    newRow[irdModalStatus?.key] = {IRD: {selected: value.id, output: value.name}};
+                    newRow[irdModalStatus?.key] = {ird: {selected: value.id, output: value.name}};
                     form.setFieldValue("irdList",newRow);
                     setIrdModalStatus(null);
                 }}

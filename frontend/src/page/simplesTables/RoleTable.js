@@ -111,6 +111,7 @@ const RoleTable = () => {
                         onSearch={onSearch}
                     />
                     <StyledButtonGreen
+                        loading={loading}
                         style={{marginBottom: 0}}
                         onClick={() => setContactModalStatus({contact: null, mode: "add"})}>
 

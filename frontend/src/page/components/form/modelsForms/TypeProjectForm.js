@@ -36,7 +36,7 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted}) => {
     const [form] = Form.useForm();
 
     //Доп
-    const [groupIdSelected,setGroupIdSelected] = useState(null);
+    const [groupIdSelected, setGroupIdSelected] = useState(null);
     useEffect(() => {
         if (groupIdSelected && dataGroup?.groupTypeProjects) {
             const group = dataGroup?.groupTypeProjects?.find(row => row.id === groupIdSelected);
@@ -55,13 +55,11 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted}) => {
     }, [groupIdSelected, dataGroup]);
 
 
-
-
     // Состояния
 
     // Мутация
     const [mutate, {loading: loadingSave}] = useMutation((actualObject &&
-    actualObject?.id) ? UPDATE_TYPE_PROJECTS_MUTATION : ADD_TYPE_PROJECTS_MUTATION, {
+        actualObject?.id) ? UPDATE_TYPE_PROJECTS_MUTATION : ADD_TYPE_PROJECTS_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Мутация  выполнена успешно`);
             form.resetFields();
@@ -95,7 +93,13 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted}) => {
 
     // Завершение
     const handleSubmit = () => {
-        mutate({variables: {...(actualObject ? {id: actualObject.id} : {}), ...form.getFieldsValue(), group_id: form.getFieldValue("group")?.selected}});
+        mutate({
+            variables: {
+                ...(actualObject ? {id: actualObject.id} : {}), data: {
+                    ...form.getFieldsValue(), group_id: form.getFieldValue("group")?.selected
+                }
+            }
+        });
     };
     if (loading || loadingSave) return <LoadingSpinnerStyles/>
 
@@ -113,13 +117,13 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted}) => {
                 <Form.Item name="group" label="Группа" rules={[{required: true}]}>
                     <CustomAutoComplete
                         typeData={"CODENAME"}
-                        onSelect={(value)=>setGroupIdSelected(value.id)}
+                        onSelect={(value) => setGroupIdSelected(value.id)}
                         data={dataGroup?.groupTypeProjects}
                     />
                 </Form.Item>
                 <div style={{textAlign: 'center'}}>
                     <Form.Item>
-                        <StyledButtonGreen style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
+                        <StyledButtonGreen loading={loading} style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
                             {(actualObject &&
                                 actualObject?.id) ? `Обновить` : `Создать`}
                         </StyledButtonGreen>

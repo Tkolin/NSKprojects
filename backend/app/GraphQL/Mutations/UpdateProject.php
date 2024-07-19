@@ -11,7 +11,7 @@ final readonly class UpdateProject
     /** @param array{} $args */
     public function __invoke(null $_, array $args): Project
     {
-        $project = Project::findOrFail($args['data']['id']);
+        $project = Project::findOrFail($args['id']);
 
         $project->update([
             'name' => $args['data']['name'] ?? null,

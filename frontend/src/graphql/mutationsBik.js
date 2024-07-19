@@ -3,14 +3,10 @@ import {gql} from "@apollo/client";
 
 export const ADD_BIK_MUTATION = gql`
     mutation AddBik(
-        $name: String!,
-        $BIK:String!,
-        $correspondent_account: String!
+        $data: BikInput
     ) {
         createBik(
-            BIK: $BIK
-            name: $name
-            correspondent_account: $correspondent_account
+            data: $data
         ) {
             id
             name
@@ -22,15 +18,12 @@ export const ADD_BIK_MUTATION = gql`
 export const UPDATE_BIK_MUTATION = gql`
     mutation UpdateBik(
         $id: ID!,
-        $name: String!,
-        $BIK: String!,
-        $correspondent_account: String!
+        $data: BikInput
+
     ) {
         updateBik(
             id: $id
-            BIK: $BIK
-            name: $name
-            correspondent_account: $correspondent_account
+            data: $data
         ) {
             id
             name

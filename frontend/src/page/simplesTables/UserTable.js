@@ -112,6 +112,7 @@ const UserTable = () => {
                         onSearch={onSearch}
                     />
                     <StyledButtonGreen
+                        loading={true}
                         style={{marginBottom: 0}}
                         onClick={() => setContactModalStatus({contact: null, mode: "add"})}>
 

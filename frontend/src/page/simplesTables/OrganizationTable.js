@@ -123,6 +123,7 @@ const OrganizationTable = () => {
                         onSearch={onSearch}
                     />
                     <StyledButtonGreen
+                        loading={loading}
                         data-permission={"create-organization"}
                         style={{marginBottom: 0}}
                         onClick={() => setOrganizationModalStatus({organization: null, mode: "add"})}>

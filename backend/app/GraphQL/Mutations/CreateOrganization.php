@@ -9,6 +9,7 @@ final readonly class CreateOrganization
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        return Organization::create($args);
+        $data = $args['data'];
+        return Organization::create($data);
     }
 }

@@ -24,7 +24,29 @@ const createApolloClient = () => {
 
     return new ApolloClient({
         link: authLink.concat(httpLink),
-        cache: new InMemoryCache(),
+        cache: new InMemoryCache({
+            typePolicies: {
+                Project: {
+                    fields: {
+                        project_irds: {
+                            merge(existing = [], incoming) {
+                                return incoming;
+                            }
+                        },
+                        project_stages: {
+                            merge(existing = [], incoming) {
+                                return incoming;
+                            }
+                        },
+                        project_tasks: {
+                            merge(existing = [], incoming) {
+                                return incoming;
+                            }
+                        }
+                    }
+                }
+            }
+        })
     });
 };
 

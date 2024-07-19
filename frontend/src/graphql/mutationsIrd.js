@@ -12,10 +12,10 @@ export const DELETE_IRD_MUTATION = gql`
 
 export const ADD_IRD_MUTATION = gql`
     mutation AddIrd(
-        $name: String!,
+        $data: IrdInput,
     ) {
         createIrd(
-            name: $name
+            data: $data
         ) {
             id
             name
@@ -25,11 +25,11 @@ export const ADD_IRD_MUTATION = gql`
 export const UPDATE_IRD_MUTATION = gql`
     mutation UpdateIrd(
         $id: ID!,
-        $name: String!,
+        $data: IrdInput,
     ) {
         updateIrd(
             id: $id
-            name: $name
+            data: $data
         ) {
             id
             name

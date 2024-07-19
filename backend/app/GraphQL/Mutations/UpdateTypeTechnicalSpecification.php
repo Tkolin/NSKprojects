@@ -10,7 +10,7 @@ final readonly class UpdateTypeTechnicalSpecification
     /** @param array{} $args */
     public function __invoke(null $_, array $args): TechnicalSpecification
     {
-        return TypeTechnicalSpecification::findOrFail($args['id'])->update($args);
+        return TypeTechnicalSpecification::findOrFail($args['id'])->update($args["data"]);
 
     }
 }

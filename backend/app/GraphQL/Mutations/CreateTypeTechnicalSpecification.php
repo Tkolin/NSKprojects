@@ -9,6 +9,7 @@ final readonly class CreateTypeTechnicalSpecification
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        return TypeTechnicalSpecification::create($args);
+        $data = $args["data"];
+        return TypeTechnicalSpecification::create($data);
     }
 }

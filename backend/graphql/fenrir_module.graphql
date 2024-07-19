@@ -1,12 +1,36 @@
-extend type Mutation{
+#
+#   QUERY
+#
+extend type Query {
+    formulaByKey(id: ID, queryOptions: QueryOptions ,keys: [String!]): FormulaResult
+    fenrirs(id: ID, queryOptions: QueryOptions): FenrirsResult
+    templateFenrirs(id: ID, queryOptions: QueryOptions): FenrirsResult
+    templateFenrirsTypeProject(projectId: ID): FenrirsResult
+    projectFenrirs(typeProject: ID): FenrirsResult
+
+}
+# INPUTS:
+
+# TYPES:
+
+
+#
+#   MUTATIONS
+#
+extend type Mutation {
     createFormula(data: FormulaInput): Int @checkRole(permission:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     updateFormula(data: FormulaInput): Int @checkRole(permission:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     createReference(data: ReferenceInput): Int @checkRole(permission:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
-
     computeFormulas(formulas: [String]): [String] @checkRole(permission:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
-
     createFenrir(data: FenrirInput): Int  @checkRole(permission:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
     createFenrirTemplate(data: FenrirInput): Int @checkRole(permission:  ["ADMIN", "GEN_DIR","TECH_DIR","EMPLOYEE","OFF_WORKER","BOOKMAKER","LAWYAR","FIN_DIR","PROGRAMMER"])
+
+}
+# INPUTS:
+input FenrirInput{
+    name: String
+    description: String
+    models: String
 }
 input FormulaInput{
     id: ID
@@ -28,39 +52,4 @@ input VariableInput{
     name_key: String!
     description: String
 }
-input FenrirInput{
-    name: String
-    description: String
-    models: String
-}
-type Reference {
-    id: ID
-    name: String
-    description: String
-    reference_values: String
-}type Formula {
-    id: ID
-    latex_formula: String
-    original_formula: String
-    rpn_formula: String
-    name_key: String!
-    name: String!
-    description: String!
-    variable_data: [FormulaVariable]
-}type FormulaVariable {
-    description: String
-    name_key: String
-    name: String
-    formula_id: ID
-    id: ID
-}
-
-type Fenrir {
-    id: ID
-    name: String
-    description: String
-    models: String
-}
-
-
-
+#-RESULTS:

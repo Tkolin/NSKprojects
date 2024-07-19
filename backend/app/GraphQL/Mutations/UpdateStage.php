@@ -10,7 +10,6 @@ final readonly class UpdateStage
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        $typeProjectDocument = Stage::findOrFail($args['id']);
-        $typeProjectDocument->update($args);
-        return $typeProjectDocument;    }
+        return Stage::findOrFail($args['id'])->update($args["data"]);
+    }
 }

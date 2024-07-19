@@ -22,7 +22,7 @@ final readonly class ProjectPaymentInvoiceFileDownload
                 ->with('project_facilitys')
                 ->with('status')
                 ->with('project_delegations')
-                ->with('project_irds.IRD')
+                ->with('project_irds.ird')
                 ->with('project_stages.stage')
                 ->find($args["projectId"]);
 
@@ -36,7 +36,7 @@ final readonly class ProjectPaymentInvoiceFileDownload
             if (isset($args['isPrepayment']) && $args['isPrepayment'])
                 error_log("Аванс") && $contractFilePath = $projectGenerator->generate($projectData, null, true);
             else
-                error_log("Не Аванс") && $contractFilePath = $projectGenerator->generate($projectData, $args["stageNumber"], false);
+                error_log("Не Аванс") && $contractFilePath = $projectGenerator->generate($projectData, $args["stage_number"], false);
 
             return ['url' => $contractFilePath];
 

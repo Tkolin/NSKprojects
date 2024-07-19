@@ -9,8 +9,8 @@ final readonly class CreateBik
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        return Bik::create($args);
-
+        $data = $args['data'];
+        return Bik::create($data);
     }
 }
 

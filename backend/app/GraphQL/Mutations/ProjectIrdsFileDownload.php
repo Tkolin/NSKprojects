@@ -18,7 +18,7 @@ final readonly class ProjectIrdsFileDownload
                 ->with('project_facilitys')
                 ->with('status')
                 ->with('project_delegations')
-                ->with('project_irds.IRD')
+                ->with('project_irds.ird')
                 ->with('project_stages.stage')
                 ->find($args["projectId"]);
 

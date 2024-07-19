@@ -19,23 +19,23 @@ const DistributionTasksByProject = ({project, onCompleted}) => {
     const [loading, setLoading] = useState(false)
     const [newCurrent, setNewCurrent] = useState(current)
     // Мутация
-
-    // TODO: Для проверки
-    const [loadContext, {data: data}] = useLazyQuery(PROJECTS_QUERY_BY_ID, {
-        variables: {id: project.id},
-        onCompleted: (data) => {
-            openNotification('topRight', 'success', `Данные подгружены.`);
-
-        },
-        onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
-        },
-    });
-    useEffect(() => {
-        console.log("./useEffect", project);
-        if (project?.id)
-            loadContext();
-    }, [project]);
+    //
+    // // TODO: Для проверки
+    // const [loadContext, {data: data}] = useLazyQuery(PROJECTS_QUERY_BY_ID, {
+    //     variables: {id: project.id},
+    //     onCompleted: (data) => {
+    //         openNotification('topRight', 'success', `Данные подгружены.`);
+    //
+    //     },
+    //     onError: (error) => {
+    //         openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
+    //     },
+    // });
+    // useEffect(() => {
+    //     console.log("./useEffect", project);
+    //     if (project?.id)
+    //         loadContext();
+    // }, [project]);
 
     const handleStage = (steps) => {
         setNewCurrent(steps)

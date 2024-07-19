@@ -62,8 +62,8 @@ const GroupTypeProjectForm = ({ initialObject, onCompleted }) => {
 
 
     const handleSubmit = () => {
-        mutate({variables: {...(actualObject ? {id: actualObject.id} : {}), ...form.getFieldsValue(),
-                organization_id: organizationAutoComplete?.selected, position_id: positionAutoComplete?.selected}});
+        mutate({variables: {...(actualObject ? {id: actualObject.id} : {}), data: { ...form.getFieldsValue(),
+                organization_id: organizationAutoComplete?.selected, position_id: positionAutoComplete?.selected}}});
     };
 
     if (errorGroupTypeProject) return `Ошибка! ${errorGroupTypeProject?.message}`;

@@ -9,6 +9,6 @@ final readonly class UpdatePpi
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
-        return PasspotPlaceIssue::findOrFail($args['id'])->update($args);
+        return PasspotPlaceIssue::findOrFail($args['id'])->update($args["data"]);
     }
 }

@@ -134,7 +134,7 @@ const IrdTable = () => {
                         />
                         <StyledButtonGreen
                             data-permission={"create-ird"}
-
+                            loading={loading}
                             style={{marginBottom: 0}}
                             onClick={() => setIrdModalStatus({ird: null, mode: "add"})}>
 

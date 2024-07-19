@@ -40,7 +40,7 @@ const PersonsByStagesCompactForm = ({tasks,projectId,stageNumber, onCompleted}) 
 
     const {loading: loadingPersons, data: dataPersons} = useQuery(PERSONS_QUERY_COMPACT);
     // Мутация
-    const [mutate, {loading: loadingSave}] = useMutation(UPDATE_EMPLOYEES_TO_TASKS, {
+    const [mutate, {loading: loading}] = useMutation(UPDATE_EMPLOYEES_TO_TASKS, {
         onCompleted: (data) => {
             onCompleted && onCompleted();
         },
@@ -64,7 +64,7 @@ const PersonsByStagesCompactForm = ({tasks,projectId,stageNumber, onCompleted}) 
          mutate({ variables: {
                  employeesIds: form.getFieldsValue().executorsList.map((row)=>row.executor.selected),
                  tasksIds: tasks.map(row=>row.id),
-                 stageNumber: stageNumber
+                 stage_number: stageNumber
              }} );
     };
 
@@ -144,6 +144,7 @@ const PersonsByStagesCompactForm = ({tasks,projectId,stageNumber, onCompleted}) 
                 </Form.List>
                 <div style={{width: "100%", textAlign: "center"}}>
                     <StyledButtonGreen
+                        loading={loading}
                         onClick={() => handleSubmit()}
                     >
                         Сохранить изменения

@@ -112,7 +112,7 @@ const ProjectForm = ({onCompleted, project}) => {
 
 
         // Логика формы
-        const [mutateProject] = useMutation(project?.id ? UPDATE_PROJECT_MUTATION : ADD_PROJECT_MUTATION, {
+        const [mutateProject, {loading: loading}] = useMutation(project?.id ? UPDATE_PROJECT_MUTATION : ADD_PROJECT_MUTATION, {
             onCompleted: (data) => {
                 openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
                 onCompleted && (onCompleted(data?.createProject || data?.updateProject) || onCompleted());
@@ -128,8 +128,8 @@ const ProjectForm = ({onCompleted, project}) => {
         const handleSave = () => {
             const facility_id = form.getFieldValue("facility_id")?.checkedObjects?.map(row => row?.value[0] ?? null) ??
                 project.facility_id;
-            console.log(facility_id);
-            mutateProject({variables: {data: {...rebuildProjectToQuery(form.getFieldsValue()), facility_id}}});
+            const id = form.getFieldValue('id');
+            mutateProject({variables: { ...(id ? { id: id } : {}), data: {...rebuildProjectToQuery(form.getFieldsValue()), facility_id}}});
         }
         const updateNumber = () => {
             const orgCostumer = form.getFieldValue("organization_customer")?.selected;
@@ -207,6 +207,7 @@ const ProjectForm = ({onCompleted, project}) => {
                     </Form.Item>
                     <div>
                         <StyledButtonGreen
+                            loading={loading}
                             style={{
                                 marginTop: 30,
                             }}
@@ -301,7 +302,7 @@ const ProjectForm = ({onCompleted, project}) => {
                 </Space.Compact>
 
                 <Space style={{justifyContent: "center", width: "100%"}}>
-                    <StyledButtonGreen onClick={() => handleSave()}>Сохранить</StyledButtonGreen>
+                    <StyledButtonGreen loading={loading} onClick={() => handleSave()}>Сохранить</StyledButtonGreen>
                 </Space>
 
             </Form>

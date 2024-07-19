@@ -4,7 +4,6 @@ import {StyledFormItem} from "../../style/FormStyles";
 import {useForm} from "antd/es/form/Form";
 import {CaretUpOutlined} from "@ant-design/icons";
 import {useMutation} from "@apollo/client";
-import {UPDATE_PAYMENTS_TO_PROJECT_MUTATION} from "../../../graphql/mutationsProject";
 import {CREATE_FORMULA_MUTATION} from "../../../graphql/mutationsFormula";
 
 const FormulaForm = () => {

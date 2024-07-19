@@ -11,7 +11,7 @@ final readonly class UpdateBik
     public function __invoke(null $_, array $args)
     {
         $typeProjectDocument = Bik::findOrFail($args['id']);
-        $typeProjectDocument->update($args);
+        $typeProjectDocument->update($args["data"]);
         return $typeProjectDocument;
     }
 }

@@ -68,9 +68,11 @@ const RequestForm = ({localObject, initialObject, onCompleted}) => {
         if (data) {
             form.resetFields();
             form.setFieldsValue({
-                name: data.name,
-                organization: {selected: data?.organization?.id, output: data?.organization?.name},
-                contact: {selected: data?.contact?.id, output: data?.contact?.name},
+                data: {
+                    name: data.name,
+                    organization: {selected: data?.organization?.id, output: data?.organization?.name},
+                    contact: {selected: data?.contact?.id, output: data?.contact?.name}
+                }
             });
         }
     };
@@ -142,7 +144,7 @@ const RequestForm = ({localObject, initialObject, onCompleted}) => {
 
                 <Form.Item labelCol={{span: 24}} wrapperCol={{span: 24}}>
                     <div style={{textAlign: 'center'}}>
-                        <StyledButtonGreen style={{marginBottom: 0}} type="primary" htmlType="submit">
+                        <StyledButtonGreen loading={loading} style={{marginBottom: 0}} type="primary" htmlType="submit">
                             {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
                     </div>

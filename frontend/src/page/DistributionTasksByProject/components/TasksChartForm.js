@@ -5,24 +5,24 @@ import loadingSpinnerStyles from "../../components/style/LoadingSpinnerStyles";
 import {StyledButtonGreen} from "../../components/style/ButtonStyles";
 import {GanttOriginal, ViewMode} from "react-gantt-chart";
 import dayjs from "dayjs";
-import {useMutation} from "@apollo/client";
-import {UPDATE_TASK_TO_PROJECT_MUTATION} from "../../../graphql/mutationsTask";
 import {NotificationContext} from "../../../NotificationProvider";
 
 const TasksChartForm = ({actualProject, onChange}) => {
         const [tasks, setTasks] = useState(null);
         const [error, setError] = useState(null);
         const {openNotification} = useContext(NotificationContext);
-
-        const [updateProjectTasks, {loading: loadingMutationSecond}] = useMutation(UPDATE_TASK_TO_PROJECT_MUTATION, {
-            onCompleted: (data) => {
-                onChange && onChange();
-                openNotification('topRight', 'success', `Создание новой записи выполнено успешно`);
-            },
-            onError: (error) => {
-                openNotification('topRight', 'error', `Ошибка при выполнении создания: ${error.message}`);
-            }
-        });
+        const updateProjectTasks = () =>{
+console.log("updateProjectTasks");
+        }
+        // const [updateProjectTasks, {loading: loadingMutationSecond}] = useMutation(UPDATE_TASK_TO_PROJECT_MUTATION, {
+        //     onCompleted: (data) => {
+        //         onChange && onChange();
+        //         openNotification('topRight', 'success', `Создание новой записи выполнено успешно`);
+        //     },
+        //     onError: (error) => {
+        //         openNotification('topRight', 'error', `Ошибка при выполнении создания: ${error.message}`);
+        //     }
+        // });
         useEffect(() => {
             console.log("tasks", tasks);
         }, [tasks]);
@@ -127,7 +127,6 @@ const TasksChartForm = ({actualProject, onChange}) => {
         const handleComplete = () => {
             updateProjectTasks({
                 variables: {
-                    type: "ONLY_DATE",
                     data: tasks.map(row => ({
                         id: row.id,
                         date_start: dayjs(row.start).format("YYYY-MM-DD"),
@@ -184,7 +183,7 @@ const TasksChartForm = ({actualProject, onChange}) => {
                     columnWidth={columnWidth}
                     TaskList={false}
                 />
-                <StyledButtonGreen onClick={() => handleComplete()}>
+                <StyledButtonGreen  onClick={() => handleComplete()}>
                     Сохранить время
                 </StyledButtonGreen>
             </>

@@ -38,48 +38,10 @@ export const DELETE_PERSON_MUTATION = gql`
 
 export const ADD_PERSON_MUTATION = gql`
     mutation AddPerson(
-        $firstname: String!
-        $lastname: String!
-        $patronymic: String
-        $serial: String
-        $number: String
-        $passport_place_issue_id: ID
-        $address_registration: String
-        $address_residential: String
-        
-        $birth_date: String
-        $date: String
-    
-        $SHILS: String
-        $INN: String
-        $payment_account: String
-        $phone_number: String
-        $email: String
-        $email_sibnipi: String
-        $bank_id: ID
-        $bik_id: ID
+        $data: PersonInput
     ) {
         createPerson(
-            firstname: $firstname
-            lastname: $lastname
-            patronymic: $patronymic
-            serial: $serial
-            number: $number
-            passport_place_issue_id: $passport_place_issue_id
-            address_registration: $address_registration
-            address_residential: $address_residential
-            
-            birth_date: $birth_date
-            date: $date
-    
-            SHILS: $SHILS
-            INN: $INN
-            payment_account: $payment_account
-            phone_number: $phone_number
-            email: $email
-            email_sibnipi: $email_sibnipi
-            bank_id: $bank_id
-            bik_id: $bik_id
+            data: $data
         ) {
             passport{
                 firstname
@@ -116,49 +78,11 @@ export const ADD_PERSON_MUTATION = gql`
 export const UPDATE_PERSON_MUTATION = gql`
     mutation UpdatePerson(
         $id: ID!,
-        $firstname: String
-        $lastname: String
-        $patronymic: String
-        $serial: String
-        $number: String
-        $passport_place_issue_id: ID
-        $address_registration: String
-        $address_residential: String
-        
-        $birth_date: String
-        $date: String
-
-        $SHILS: String
-        $INN: String
-        $payment_account: String
-        $phone_number: String
-        $email: String
-        $email_sibnipi: String
-        $bank_id: ID
-        $bik_id: ID
+        $data: PersonInput
     ) {
         updatePerson(
             id: $id
-            firstname: $firstname
-            lastname: $lastname
-            patronymic: $patronymic
-            serial: $serial
-            number: $number
-            passport_place_issue_id: $passport_place_issue_id
-            address_registration: $address_registration
-            address_residential: $address_residential
-
-            birth_date: $birth_date
-            date: $date
-
-            SHILS: $SHILS
-            INN: $INN
-            payment_account: $payment_account
-            phone_number: $phone_number
-            email: $email
-            email_sibnipi: $email_sibnipi
-            bank_id: $bank_id
-            bik_id: $bik_id
+            data: $data
         ) {
             passport{
                 firstname
@@ -195,12 +119,10 @@ export const UPDATE_PERSON_MUTATION = gql`
 
 export const ADD_PPI_MUTATION = gql`
     mutation AddPPI(
-        $name: String!,
-        $code: String!,
+        $data: PassportPlaceIssueInput
     ) {
         createPpi(
-            name: $name
-            code: $code
+            data: $data
         ) {
             id
             name
@@ -210,14 +132,11 @@ export const ADD_PPI_MUTATION = gql`
 `;
 export const UPDATE_PPI_MUTATION = gql`
     mutation UpdatePPI(
-        $id: ID!,
-        $name: String!
-        $code: String!,
+        $data: PassportPlaceIssueInput
     ) {
         updatePpi(
             id: $id
-            name: $name
-            code: $code
+            data: $data
         ) {
             id
             name

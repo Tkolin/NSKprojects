@@ -12,7 +12,7 @@ const ContactModalForm = ({key,object,objectId,onClose, mode, onCompleted}) => {
             onCancel={() => onClose(null)}
             footer={null}
             onClose={() => onClose(null)}
-            width={"300px"}
+            width={"500px"}
              title={"Контакт"}
             styles={{header: {textAlign: "center"} }}
          >

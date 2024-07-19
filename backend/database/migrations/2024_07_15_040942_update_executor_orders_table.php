@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+
         Schema::table('executor_orders', function (Blueprint $table) {
             // Добавление новых столбцов
             $table->unsignedBigInteger('original_file_id')->nullable();

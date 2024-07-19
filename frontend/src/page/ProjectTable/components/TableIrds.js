@@ -3,10 +3,7 @@ import React from "react";
 import IrdsProjectFileDownload from "../../components/script/fileDownloadScripts/IrdsProjectFileDownload";
 import {DownloadOutlined, EditOutlined} from "@ant-design/icons";
 import Link from "antd/es/typography/Link";
-import {
-    rebuildIrdsResultQuery,
-    rebuildProjectResultQuery
-} from "../../components/script/rebuildData/ProjectRebuilderQuery";
+
 
 const {Text} = Typography;
 
@@ -38,7 +35,7 @@ const TableIrds = ({setEditModalStatus, project}) => {
                 align: "left",
                 render: (text, record) => (
                     <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
-                        <Text strong>{record?.IRD?.name}</Text>
+                        <Text strong>{record?.ird?.name}</Text>
                     </Space.Compact>
                 ),
             },
@@ -50,8 +47,8 @@ const TableIrds = ({setEditModalStatus, project}) => {
                 key: 'status_confirm',
                 align: "left",
                 render: (text, record) => (
-                    record.receivedDate ? (
-                            <Text strong>{record?.receivedDate}</Text>
+                    record.received_date ? (
+                            <Text strong>{record?.received_date}</Text>
                         )
                         :
                         <Text strong style={{color: "#ff4d4f"}}>Не получено</Text>

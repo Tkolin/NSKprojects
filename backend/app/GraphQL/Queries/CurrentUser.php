@@ -12,8 +12,7 @@ class CurrentUser
     {
         // Получаем токен из заголовка Authorization
         $accessToken = $context->request()->header('Authorization');
-      //  error_log($accessToken);
-        if ($accessToken) {
+         if ($accessToken) {
             // Проверяем токен и получаем пользователя
             $user = Auth::guard('api')->user();
 

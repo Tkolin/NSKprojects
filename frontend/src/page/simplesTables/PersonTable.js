@@ -135,6 +135,7 @@ const PersonTable = () => {
                         onSearch={onSearch}
                     />
                     <StyledButtonGreen
+                        loading={loading}
                         style={{marginBottom: 0}}
                         onClick={() =>  setPersonModalStatus({person: null, mode: "add"})}
                         data-permission={"create-person"}>

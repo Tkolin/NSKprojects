@@ -137,7 +137,7 @@ const TasksToProjectStageForm = ({project, onSubmit}) => {
         extract(treeData, parentKey);
         return extractedData;
     };
-    const [updateTasksToProject] = useMutation(UPDATE_TASKS_TO_PROJECT_MUTATION, {
+    const [updateTasksToProject, {loading: loading}] = useMutation(UPDATE_TASKS_TO_PROJECT_MUTATION, {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно обновлены!');
         }, onError: (error) => {
@@ -183,7 +183,7 @@ const TasksToProjectStageForm = ({project, onSubmit}) => {
                 onCheck={(checkedKeys) => handleSelectedTasks(checkedKeys)}
                 checkedKeys={selectedTasks}
             />
-            <StyledButtonGreen style={{marginBottom: 0}} type="dashed" onClick={handleSubmit}>
+            <StyledButtonGreen loading={loading} style={{marginBottom: 0}} type="dashed" onClick={handleSubmit}>
                 Сохранить
             </StyledButtonGreen>
         </StyledBlockBig>

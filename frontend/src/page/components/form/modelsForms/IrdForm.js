@@ -56,7 +56,7 @@ const IrdForm = ({localObject,initialObject, onCompleted}) => {
 
     // Завершение
     const handleSubmit = () => {
-        mutate({ variables: { ...(actualObject ? { id: actualObject.id } : {}), ...form.getFieldsValue() } });
+        mutate({ variables: { ...(actualObject ? { id: actualObject.id } : {}),  data: { name: form.getFieldValue("name")}} });
     };
     if (loading || loadingSave) return <LoadingSpinnerStyles/>
 
@@ -68,7 +68,7 @@ const IrdForm = ({localObject,initialObject, onCompleted}) => {
                 </Form.Item>
                 <div style={{textAlign: 'center'}}>
                     <Form.Item>
-                        <StyledButtonGreen style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
+                        <StyledButtonGreen loading={loading} style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
                             {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
                     </Form.Item>

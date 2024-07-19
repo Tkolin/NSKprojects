@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {AutoComplete, Button, Form, Space} from 'antd';
+import {AutoComplete, Button, Form, Skeleton, Space} from 'antd';
 import {EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {StyledButtonGreen} from "./ButtonStyles";
+import SkeletonInput from "antd/es/skeleton/Input";
 
 
 const CustomAutoCompleteComponent = ({
@@ -51,7 +52,6 @@ const CustomAutoCompleteComponent = ({
             mode={mode
                 ?? ''}
             filterOption={false}
-            loading={loading}
             value={value?.output}
             options={value?.options}
             onClear={() => onChange && onChange({...value, selected: null, output: null})}
@@ -96,38 +96,19 @@ const BaseStyledButton = ({onClick, icon, style, disabled}) => (
     />
 );
 const CustomAutoCompleteAndCreate = ({
-                                         onSelect,
-                                         onSearch,
-                                         placeholder,
-                                         loading,
-                                         items,
-                                         firstBtnOnClick,
-                                         formatOptionText,
-                                         mode,
-                                         typeData,
-                                         data,
-                                         value,
-                                         onChange,
-                                         saveSelected,
 
-                                         visibleMode,
-...props
+                                         firstBtnOnClick,
+                                         ...props
                                      }) =>
 
     (<Space.Compact style={{width: "100%", marginBottom: 0}}>
 
             <CustomAutoCompleteComponent
-                {...props}
-                onSelect={onSelect}
-                placeholder={placeholder}
-                loading={loading}
-                items={items}
-                onSearch={onSearch}
-                saveSelected={saveSelected}
-                formatOptionText={formatOptionText}
-                mode={mode}
+
+
                 width={"calc(100% - 32px)"}
-                typeData={typeData} data={data} value={value} onChange={onChange && onChange}/>
+                onChange={props?.onChange && props?.onChange()}
+                {...props}/>
 
             <BaseStyledButtonGreen onClick={firstBtnOnClick}
                                    size={props?.size}
@@ -135,79 +116,44 @@ const CustomAutoCompleteAndCreate = ({
         </Space.Compact>
     );
 const CustomAutoComplete = ({
-                                size,
-                                saveSelected,
-                                style,
-                                onSelect,
-                                placeholder,
-                                loading,
-                                onSearch,
-                                formatOptionText,
-                                mode,
-                                items,
-                                typeData,
-                                data,
-                                value,
                                 onChange,
-                            }) => (
+                                ...props
+                            }) => {
+    if (props?.loading)
+        return <SkeletonInput size={'small'} width={"calc(100%+64px)"} active/>
+    return (
     <CustomAutoCompleteComponent
-        size={size}
-        style={style}
-        saveSelected={saveSelected}
-        onSelect={onSelect}
-        placeholder={placeholder}
-        loading={loading}
-        items={items}
-        onSearch={onSearch}
-        formatOptionText={formatOptionText}
-        mode={mode}
         width={"calc(100%+64px)"}
-        typeData={typeData} data={data} value={value} onChange={onChange && onChange}/>
+        onChange={onChange && onChange}
+        {...props}/>
 
-);
+)};
 const CustomAutoCompleteAndCreateWitchEdit = ({
-                                                  saveSelected,
-                                                  onSelect,
-                                                  placeholder,
-                                                  loading,
-                                                  items,
-                                                  onSearch,
                                                   firstBtnOnClick,
                                                   secondBtnOnClick,
-                                                  formatOptionText,
-                                                  mode,
-                                                  data,
                                                   secondDisable,
-
-                                                  value,
                                                   onChange,
-                                                  typeData
-                                              }) => (
-    <Space.Compact style={{width: "100%", marginBottom: 0}}>
-        <CustomAutoCompleteComponent
-            saveSelected={saveSelected}
-            onSelect={onSelect}
-            onSearch={onSearch}
-            placeholder={placeholder}
-            loading={loading}
-            items={items}
-            formatOptionText={formatOptionText}
-            mode={mode}
-            width={"calc(100% - 64px)"}
-            typeData={typeData}
-            data={data}
-            value={value}
-            onChange={onChange && onChange}/>
+                                                  ...props
+                                              }) => {
+    if (props?.loading)
+        return <SkeletonInput size={'small'} width={"calc(100%+64px)"} active/>
+    return (
+        <Space.Compact style={{width: "100%", marginBottom: 0}}>
+            <CustomAutoCompleteComponent
+                width={"calc(100% - 64px)"}
+                onChange={onChange && onChange}
+                {...props}/>
 
-        <BaseStyledButtonGreen onClick={firstBtnOnClick}
-                               icon={<PlusOutlined/>}
-                               type={'dashed'}/>
-        <BaseStyledButton onClick={secondBtnOnClick}
-                          icon={<EditOutlined/>}
-                          disable={secondDisable}/>
-    </Space.Compact>
+            <BaseStyledButtonGreen onClick={firstBtnOnClick}
+                                   icon={<PlusOutlined/>}
+                                   type={'dashed'}/>
+            <BaseStyledButton onClick={secondBtnOnClick}
+                              icon={<EditOutlined/>}
+                              disable={secondDisable}/>
+        </Space.Compact>
 
-);
+    );
+}
 const CustomAutoCompleteExtension = ({
                                          visibleMode = "IGNORE",
                                          ...props
@@ -227,8 +173,6 @@ const CustomAutoCompleteExtension = ({
 
 export {
     CustomAutoCompleteExtension,
-
-
     CustomAutoCompleteAndCreate,
     CustomAutoCompleteAndCreateWitchEdit,
     CustomAutoComplete

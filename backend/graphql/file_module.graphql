@@ -1,4 +1,20 @@
+#
+#   - QUERY -
+#
+#type Query {
+#
+#}
+#-INPUTS:
+#-TYPES:
+
+
+#
+#   - MUTATIONS -
+#
 extend type Mutation {
+    downloadFile(id: ID!): Url!
+    uploadFileLink(url: String!): UploadFileLinkResponse!
+
     personOrderFileDownload(
         personId: ID
         tasksId: [ID]
@@ -28,16 +44,20 @@ extend type Mutation {
         project_task_ids: [ID]
     ): GenerateFileResult!
 }
+#-INPUTS:
+#-RESULTS:
 type GenerateFileResult {
     url: String
     file: File
-}type File {
-    id: ID
-    name: String
-    path: String
-    size: String
-    mime_type: String
+}
+type UploadFileLinkResponse {
+    success: Boolean!
+    file: File
 }
 type Url {
     url: String
+}
+type Attachment {
+    name: String
+    path: String
 }

@@ -1,0 +1,42 @@
+#
+#   QUERY
+#
+extend type Query {
+    currentUser: AuthPayload!
+
+    permissions(queryOptions: QueryOptions, queryType: String): PermissionResult @checkRole(permission:  ["dev"])
+    users(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): UsersResult @checkRole(permission:  ["dev"])
+    roles(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): RolesResult @checkRole(permission:  ["dev"])
+}
+# INPUTS:
+
+# RESULT:
+type CurrentUser {
+    user: User!
+    access_token: String!
+}
+
+#
+#   MUTATIONS
+#
+extend type Mutation {
+    register(input: RegisterInput!): AuthPayload!
+    login(input:  LoginInput!): AuthPayload!
+}
+# INPUTS:
+input RegisterInput {
+    name: String!
+    email: String!
+    password: String!
+}
+input LoginInput {
+    email: String
+    password: String
+}
+# RESULTS:
+type AuthPayload {
+    user: User
+    roles: [Role]
+    permissions: [Permission]
+    access_token: String
+}

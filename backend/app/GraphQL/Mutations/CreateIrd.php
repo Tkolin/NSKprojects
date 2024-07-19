@@ -9,6 +9,7 @@ final readonly class CreateIrd
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        return InitialAuthorizationDocumentation::create($args);
+        $data = $args['data'];
+        return InitialAuthorizationDocumentation::create($data);
     }
 }

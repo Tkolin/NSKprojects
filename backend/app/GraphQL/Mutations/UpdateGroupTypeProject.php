@@ -9,6 +9,6 @@ final readonly class UpdateGroupTypeProject
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args): GroupTypeProjectDocument
     {
-        return GroupTypeProjectDocument::findOrFail($args['id'])->update($args);
+        return GroupTypeProjectDocument::findOrFail($args['id'])->update($args["data"]);
     }
 }

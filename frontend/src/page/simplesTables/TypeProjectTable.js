@@ -117,6 +117,7 @@ const TypeProjectTable = () => {
                             onSearch={onSearch}
                         />
                         <StyledButtonGreen style={{marginBottom: 0}}
+                                           loading={loading}
                                            onClick={() => setTypeProjectModalStatus({typeProject: null, mode: "add"})}>Создать новую
                             запись</StyledButtonGreen>
                     </Space>

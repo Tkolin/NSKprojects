@@ -1,0 +1,129 @@
+#
+#   - QUERY -
+#
+extend type Query {
+    projectIrds( projectId: ID): [Project] @checkRole(permission:  ["read-project-ird"])
+    projectStages( projectId: ID): [Project] @checkRole(permission:  ["read-project-stage"])
+    projectTasksQuery(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [Project] @checkRole(permission:  ["read-project-task"])
+    projectsStatistic: [ProjectStatistic] @checkRole(permission:  ["read-project"])
+    executorOrders(projectId: ID!, executorId: ID!): [ExecutorOrder!]
+
+    projectTasksExecutors(taskId: ID): ProjectTaskExecutorResult @checkRole(permission:  ["read-project-task-executor"])
+    countProjectByOrganizations(organizationId: ID): CountProjectByOrganizationsResult @checkRole(permission:  ["read-organization"])
+}
+#-INPUTS:
+
+#-TYPES:
+type Reference {
+    id: ID
+    name: String
+    description: String
+    reference_values: String
+}
+
+type ProjectTaskExecutor {
+    id: ID!
+    executor: Person
+    project_task: ProjectTask!
+    price: Float
+    date_start: String
+    date_end: String
+}
+type ProjectStatistic{
+    status: ProjectStatus
+    project_ids: [ID]
+}
+#
+#   - MUTATIONS -
+#
+extend type Mutation {
+    projectIrdsSync(
+        items: [IrdToProjectInput]!
+    ): Project @checkRole(permission:  ["update-project-ird"])
+    projectStagesSync(
+        items: [StageToProjectInput]!
+    ): Project @checkRole(permission:  ["update-project-stage"])
+    projectTasksStructureUpdate(
+        data: [TaskToProjectStructureInput]!
+    ): Project @checkRole(permission:  ["update-project-task", "create-project-task","delete-project-task"])
+    projectTaskDetailUpdate(
+        data: TaskToProjectDetailInput!
+    ): ProjectTask @checkRole(permission:  ["update-project-task-detail", "create-project-task-detail"])
+    updatePaymentsToProject(
+        project: ID
+    ): Project
+
+    changeTemplateTypeProject(
+        typeProject: ID!
+        newTemplate: ID!
+    ): TypeProjectDocument
+    updateEmployeesToTasks(
+        tasksIds: [ID]
+        employeesIds: [ID]
+        stageNumber: Int
+    ): [ProjectTask] @checkRole(permission:  ["update-project-task-executor"])
+}
+#-INPUTS:
+input TaskToProjectStructureInput  {
+    task_id: ID
+    project_id: ID
+    inherited_task_id: ID
+    date_start: String
+    date_end: String
+    duration: Int
+    stage_number: Int
+}
+input TaskToProjectDetailInput  {
+    id: ID
+
+    description: String
+    date_start: String
+    date_end: String
+    duration: Int
+    price: Float
+    executor_id: ID
+}
+input IrdToProjectInput {
+    project_id: ID
+    ird_id: ID
+    stage_number: Int
+    application_project: Int
+    received_date: String
+}
+input StageToProjectInput {
+    project_id: ID
+    stage_id: ID
+    number: Int
+#    price: Float
+    percent: Int
+    date_start: String
+    duration: Int
+    date_end: String
+    progress: Int
+#    price_to_paid: Float
+}
+input RequestInput {
+    name: ID!
+    organization_id: ID!
+    type_project: ID
+    contact_id: ID!
+    message: String
+    number_message: String!
+    date_send: String!
+    file_name: String
+}
+input TaskToProject {
+    project_id: ID!
+    task_id: ID
+
+    project_task_inherited_id: ID
+    price: Float
+    stage_number: Int
+    date_start: String
+    date_end: String
+}
+#-RESULTS:
+type CountProjectByOrganizations{
+    organization_id: ID!
+    count_project: Int!
+}

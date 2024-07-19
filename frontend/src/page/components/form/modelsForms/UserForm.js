@@ -72,7 +72,6 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
             });
         }
     };
-
     // Получение данных для выпадающих списков
     const {loading: loadingPositions, error: errorPositions, data: dataPositions} = useQuery(POSITIONS_QUERY_COMPACT);
     const {
@@ -196,7 +195,7 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
                 </Form.Item>
                 <Form.Item labelCol={{span: 24}} wrapperCol={{span: 24}}>
                     <div style={{textAlign: 'center'}}>
-                        <StyledButtonGreen style={{marginBottom: 0}} type="primary" htmlType="submit">
+                        <StyledButtonGreen loading={loading} style={{marginBottom: 0}} type="primary" htmlType="submit">
                             {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
                     </div>

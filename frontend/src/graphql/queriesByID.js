@@ -36,33 +36,6 @@ export const TASKS_QUERY_BY_ID = gql`
         }
     }
 `;
-export const REFERENCES_QUERY_BY_ID = gql`
-    query ReferencesQueryByID  ( $id: ID) {
-        references   {
-            items {
-                id
-                name
-            }
-        }
-    }
-`;
-export const TECHNICAL_SPECIFICATION_QUERY_BY_ID = gql`
-    query TechnicalSpecificationQueryByID ( $id: ID){
-        typeTechnicalSpecification  {
-            id
-        }
-    }
-`;
-export const SECTION_REFERENCES_QUERY_BY_ID = gql`
-    query SectionReferenceQueryByID ( $id: ID) {
-        sectionReferences  {
-            items{
-                id
-                name
-            }
-        }
-    }
-`;
 export const GROUP_TYPE_PROJECTS_QUERY_BY_ID = gql`
     query GroupTypeProjectsQueryByID {
         groupTypeProjects  {
@@ -96,14 +69,6 @@ export const PROJECT_STATUSES_QUERY_BY_ID = gql`
     query ProjectStatusesQueryByID ( $id: ID){
         projectStatuses   {
             name_key
-            name
-        }
-    }
-`;
-export const TYPES_PAYMENT_QUERY_BY_ID = gql`
-    query TypePaymentsQueryByID ( $id: ID){
-        TypePayments {
-            id
             name
         }
     }
@@ -241,7 +206,8 @@ export const PROJECTS_QUERY_BY_ID = gql`
                     patronymic
                 }
                 project_stages {
-                    id
+                    project_id
+                    stage_id
                     number
                     stage {
                         id
@@ -261,14 +227,15 @@ export const PROJECTS_QUERY_BY_ID = gql`
                     price
                 }
                 project_irds {
-                    id
-                    stageNumber
-                    applicationProject
-                    IRD {
+                    project_id
+                    ird_id
+                    stage_number
+                    application_project
+                    ird {
                         id
                         name
                     }
-                    receivedDate
+                    received_date
                 }
                 price
             }
@@ -389,30 +356,7 @@ export const REQUEST_QUERY_BY_ID = gql`
         }
     }
 `;
-export const FACILITYS_QUERY_BY_ID = gql`
-    query FacilitiesQueryByID ( $id: ID)  {
-        facilities  {
-            id
-            name
-            code
-            subselection_facility {
-                id
-                name
-                code
-                group_facility {
-                    id
-                    name
-                    code
-                    facilities {
-                        id
-                        name
-                        code
-                    }
-                }
-            }
-        }
-    }
-`;
+
 
 
 export const PAYMENTS_QUERY_BY_ID = gql`
@@ -425,14 +369,7 @@ export const PAYMENTS_QUERY_BY_ID = gql`
         }
     }
 `;
-export const LEGAL_FORM_QUERY_BY_ID = gql`
-    query LegalFormsCompact ( $id: ID) {
-        legalForms    {
-            id
-            name
-        }
-    }
-`;
+
 export const BIKS_QUERY_BY_ID = gql`
     query BiksFormsCompact( $id: ID) {
         biks (queryType: "BY_ID", id: $id)  {

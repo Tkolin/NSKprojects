@@ -23,7 +23,7 @@ const IrdItem = ({
             <Space.Compact style={{width: "100%"}}>
                 <Col span={14}>
                     <Tooltip title="Наименование ИРД">
-                        <Form.Item name={[index, 'IRD']}>
+                        <Form.Item name={[index, 'ird']}>
                             <CustomAutoCompleteExtension
                                 style={{marginBottom: 0, width: "100%"}}
                                 placeholder={"Выбор ИРД..."}
@@ -46,7 +46,7 @@ const IrdItem = ({
                 <Col span={3}>
                     <Tooltip title="Номер этапа">
                         <Form.Item
-                            name={[index, 'stageNumber']}
+                            name={[index, 'stage_number']}
                             style={{marginBottom: 0, width: "100%"}}>
                             <InputNumber max={100}
                                          style={{marginBottom: 0, width: "100%"}}
@@ -57,7 +57,7 @@ const IrdItem = ({
                 <Col span={3}>
                     <Tooltip title="Номер в приложении">
                         <Form.Item
-                            name={[index, 'applicationProject']}
+                            name={[index, 'application_project']}
                             style={{marginBottom: 0, width: "100%"}}>
                             <InputNumber max={100} min={0}
                                          style={{marginBottom: 0, width: "100%"}}
@@ -68,7 +68,7 @@ const IrdItem = ({
                 <Col span={3}>
                     <Tooltip title="Дата получения">
                         <Form.Item
-                            name={[index, 'receivedDate']}
+                            name={[index, 'received_date']}
                             style={{marginBottom: 0, width: "100%"}}>
                             <DatePicker
                                 style={{marginBottom: 0, width: "100%"}}

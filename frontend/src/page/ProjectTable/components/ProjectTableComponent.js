@@ -51,7 +51,7 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
                 sortOrder
             }
         },
-        fetchPolicy: "network-only",
+        fetchPolicy: "cache-and-network",
         onCompleted: (data) => {
             console.log("queri IPA", data);
         }
@@ -64,10 +64,10 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
             openNotification('topRight', 'error', `Ошибка при изменении шаблона : ${error.message}`);
         },
     });
-    useEffect(() => {
-        if (!editModalStatus)
-            refetch();
-    }, [editModalStatus]);
+    // useEffect(() => {
+    //     if (!editModalStatus)
+    //         refetch();
+    // }, [editModalStatus]);
 
     const createTemplate = (projectId, typeProjectId) => {
         if (projectId && typeProjectId)
@@ -190,7 +190,7 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
                     mode: null,
                 })}
             >
-                <ProjectTasks onChange={() => refetch()}
+                <ProjectTasks //onChange={() => refetch()}
                               project={data?.projects?.items?.find(row => row.id === projectTasksModalStatus.project_id)}/>
             </Modal>
             <Modal
@@ -202,22 +202,22 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
                 width={editModalStatus?.type === "project" ? 500 : 1300}
                 onClose={() => setEditModalStatus(null)}
             >
-                {renderEditModalContent(editModalStatus, refetch, setEditModalStatus)}
+                {renderEditModalContent({
+                    project: editModalStatus?.project,
+                    model: editModalStatus?.type,
+                    onCompleted: ()=>setEditModalStatus(null)})}
             </Modal>
 
         </div>
     );
 }
-const renderEditModalContent = (editModalStatus, refetch, setEditModalStatus) => {
+const renderEditModalContent = ({project, model, onCompleted}) => {
     const commonProps = {
-        onCompleted: () => {
-            refetch();
-            setEditModalStatus(null);
-        },
-        project: editModalStatus?.project,
+        onCompleted: () => onCompleted(),
+        project: project,
     };
 
-    switch (editModalStatus?.type) {
+    switch (model) {
         case 'project':
             return <ProjectForm style={{width: '500px'}} {...commonProps} />;
         case 'irds':

@@ -34,7 +34,7 @@ final readonly class Projects
             ->with('facilities')
             ->with('status')
             ->with('delegations')
-            ->with('project_irds.IRD')
+            ->with('project_irds.ird')
             ->with('project_tasks.executor_orders')
             ->with('executor_orders')
             ->with('project_stages.stage');

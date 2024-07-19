@@ -11,21 +11,22 @@ final readonly class CreateRequests
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
+        $data = $args['data'];
         $project = Project::create([
-            'name'=>$args['data']['name'],
-            'organization_customer_id'=>$args['data']['organization_id'],
+            'name'=>$data['name'],
+            'organization_customer_id'=>$data['organization_id'],
             'prepayment'=>0,
         ]);
         ProjectDelegations::create([
             'project_id'=>$project->id,
-            'delegation_id'=>$args['data']['contact_id'],
+            'delegation_id'=>$data['contact_id'],
         ]);
         ProjectMessage::create([
             'project_id'=>$project->id,
             'title'=>"Первое письмо",
             'sender'=>true,
-            'number_message'=>$args['data']['number_message'],
-            'date_send'=>$args['data']['date_send']
+            'number_message'=>$data['number_message'],
+            'date_send'=>$data['date_send']
         ]);
         return Project::where('id',$project->id)->first();
 

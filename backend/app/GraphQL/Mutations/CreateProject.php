@@ -91,8 +91,8 @@ final readonly class CreateProject
                     }
                     foreach ($allTemplateIrds as $projectIrd) {
                         ProjectIrds::create([
-                            'stageNumber' => $projectIrd->stageNumber,
-                            'applicationProject' => $projectIrd->applicationProject,
+                            'stage_number' => $projectIrd->stage_number,
+                            'application_project' => $projectIrd->application_project,
                             'project_id' => $project->id,
                             'ird_id' => $projectIrd->ird_id,
                         ]);
@@ -103,37 +103,4 @@ final readonly class CreateProject
             return $project;
         });
     }
-
-            //            $tempTasks = TemplateTasksTypeProject
-            //                ::where('project_type_id', $CreateNewProject->type_project_document_id)
-            //                ->get();
-            //            if (isset($tempTasks) && $tempTasks->isNotEmpty())
-            //                foreach ($tempStage as $key => $value) {
-            //                    ProjectTasks::create(
-            //                        [
-            //                            'task_id' => $tempTasks[$key]->task_id ?? null,
-            //                            'project_id' => $CreateNewProject->id ?? null,
-            //                            'stage_number' => $tempTasks[$key]->stage_number ?? null,
-            //                        ]
-            //                    );
-            //                    if (isset($tempTasks[$key]->inherited_task_id)) {
-            //                        ProjectTasksInherited::create(
-            //                            [
-            //                                'project_task_id' => $tempTasks[$key]->task_id ?? null,
-            //                                'project_inherited_task_id' => $tempTasks[$key]->inherited_task_id ?? null,
-            //                            ]
-            //                        );
-            //                    }
-            //                }
 }
-//
-//
-//            return $CreateNewProject;
-//        });
-//            }
-//
-//
-//            return $CreateNewProject;
-//        });
-    //}
-//}

@@ -42,7 +42,8 @@ const StatusLegend = () => {
 
                 item.status.name_key !== 'ARCHIVE' ? (
                     <Col span={4}>
-                        <LegendItem key={item?.status?.name_key}
+                        <LegendItem
+                            key={item?.status?.name_key}
                                     color={legendItems[item?.status?.name_key]?.color ?? null}
                                     text={item?.status?.name}
                                     value={item?.project_ids?.length ?? 0}

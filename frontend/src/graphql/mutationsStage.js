@@ -10,10 +10,10 @@ export const DELETE_STAGE_MUTATION = gql`
 `;
 export const ADD_STAGE_MUTATION = gql`
     mutation AddStage(
-        $name: String!,
+        $data: StageInput,
     ) {
         createStage(
-            name: $name
+            data: $data
         ) {
             id
             name
@@ -23,11 +23,11 @@ export const ADD_STAGE_MUTATION = gql`
 export const UPDATE_STAGE_MUTATION = gql`
     mutation UpdateStage(
         $id: ID!,
-        $name: String!,
+        $data: StageInput,
     ) {
         updateStage(
             id: $id
-            name: $name
+            data: $data
         ) {
             id
             name

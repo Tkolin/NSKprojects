@@ -15,7 +15,7 @@ import StageModalForm from "../components/modal/StageModalForm";
 import {
     rebuildStagesToQuery
 } from "../components/script/rebuildData/ProjectRebuilderQuery";
-import {UPDATE_STAGES_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
+import {PROJECT_STAGE_SYNC_MUTATION} from "../../graphql/mutationsProject";
 import {NotificationContext} from "../../NotificationProvider";
 
 const StageToProjectForm = ({onCompleted, project}) => {
@@ -31,7 +31,7 @@ const StageToProjectForm = ({onCompleted, project}) => {
     const [isChangeStageNumber, setIsChangeStageNumber] = useState(true);
     const {openNotification} = useContext(NotificationContext);
 
-    const [mutateStage] = useMutation(UPDATE_STAGES_TO_PROJECT_MUTATION, {
+    const [mutateStage] = useMutation(PROJECT_STAGE_SYNC_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
             console.log("upd data data data ", data);
@@ -169,7 +169,7 @@ const StageToProjectForm = ({onCompleted, project}) => {
 
 
                         <Space style={{ justifyContent: "center", width: "100%"}}>
-                            <StyledButtonGreen onClick={() => handleSave()}>Сохранить</StyledButtonGreen>
+                            <StyledButtonGreen loading={loading} onClick={() => handleSave()}>Сохранить</StyledButtonGreen>
                         </Space>
                     </>
                 )}

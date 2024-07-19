@@ -9,8 +9,6 @@ final readonly class UpdateTypeProject
     /** @param array{} $args */
     public function __invoke(null $_, array $args): TypeProjectDocument
     {
-        $typeProjectDocument = TypeProjectDocument::findOrFail($args['id']);
-        $typeProjectDocument->update($args);
-        return $typeProjectDocument;
+        return TypeProjectDocument::findOrFail($args['id'])->update($args["data"]);
     }
 }

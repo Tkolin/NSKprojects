@@ -1,0 +1,14 @@
+#   - QUERY PARAM -
+input QueryOptions {
+    id: Int
+    page: Int
+    limit: Int
+    search: String
+    searchColumns: String
+    find: String
+    findColumns: String
+    sortField: String
+    sortOrder: String
+}
+
+

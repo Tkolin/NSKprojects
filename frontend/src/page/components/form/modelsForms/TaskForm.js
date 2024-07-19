@@ -55,7 +55,7 @@ const TaskForm = ({localObject, initialObject, onCompleted}) => {
 
     // Завершение
     const handleSubmit = () => {
-        mutate({variables: {...(actualObject ? {id: actualObject.id} : {}), ...form.getFieldsValue()}});
+        mutate({variables: {...(actualObject ? {id: actualObject.id} : {}),data:{ ...form.getFieldsValue()}}});
     };
     if (loading || loadingSave) return <LoadingSpinnerStyles/>
 
@@ -68,7 +68,7 @@ const TaskForm = ({localObject, initialObject, onCompleted}) => {
                         <Input/>
                     </Form.Item>
 
-                    <StyledButtonGreen    type="primary" onClick={handleSubmit}>
+                    <StyledButtonGreen   loading={loading} type="primary" onClick={handleSubmit}>
                         {actualObject ? `Обновить` : `Создать`}
                     </StyledButtonGreen>
                         </Space.Compact>

@@ -12,32 +12,32 @@ import {useNavigate} from "react-router-dom";
 import {PROJECTS_QUERY_BY_ID} from "../../graphql/queriesByID";
 
 
-const CreateNewProject = ({projectId }) => {
+const CreateNewProject = ({project }) => {
     const [current, setCurrent] = useState(0);
     const navigate = useNavigate();
     const {openNotification} = useContext(NotificationContext);
 
-    const [editProjectId, setProjectId] = useState(projectId);
+    // const [editProjectId, setProjectId] = useState(projectId);
 
-    const [updateProject, {data: project, loading}] = useLazyQuery(PROJECTS_QUERY_BY_ID, {
-        variables: {id: editProjectId},
-        onCompleted: (data) => {
-            openNotification('topRight', 'success', `Данные подгружены.`);
-            console.log(data);
-            if (current === 0) next()
-        },
-        onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
-        },
-    });
+    // const [updateProject, {data: project, loading}] = useLazyQuery(PROJECTS_QUERY_BY_ID, {
+    //     variables: {id: editProjectId},
+    //     onCompleted: (data) => {
+    //         openNotification('topRight', 'success', `Данные подгружены.`);
+    //         console.log(data);
+    //         if (current === 0) next()
+    //     },
+    //     onError: (error) => {
+    //         openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
+    //     },
+    // });
     useEffect(() => {
         setCurrent(0);
     }, []);
 
-    useEffect(() => {
-        editProjectId && updateProject();
-    }, [editProjectId]);
-    const {token} = theme.useToken();
+    // useEffect(() => {
+    //     editProjectId && updateProject();
+    // }, [editProjectId]);
+    // const {token} = theme.useToken();
 
     const next = () => {
         setCurrent(current + 1);
@@ -52,14 +52,14 @@ const CreateNewProject = ({projectId }) => {
     };
 
 
-    const contentStyle = {
-        lineHeight: '260px',
-        color: token.colorTextTertiary,
-        backgroundColor: token.colorFillAlter,
-        borderRadius: token.borderRadiusLG,
-        border: `1px dashed ${token.colorBorder}`,
-        marginTop: 16,
-    };
+    // const contentStyle = {
+    //     lineHeight: '260px',
+    //     color: token.colorTextTertiary,
+    //     backgroundColor: token.colorFillAlter,
+    //     borderRadius: token.borderRadiusLG,
+    //     border: `1px dashed ${token.colorBorder}`,
+    //     marginTop: 16,
+    // };
 
 
     return (
@@ -132,7 +132,7 @@ const CreateNewProject = ({projectId }) => {
                 )}
                 {current === 4 - 1 && (
                     <Button type="primary" onClick={() => {
-                        setProjectId(null);
+                        // setProjectId(null);
                         setCurrent(0);
                         navigate("/reports/project");
 

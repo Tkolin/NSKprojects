@@ -42,7 +42,7 @@ return [
 //        ],
         'localERPFiles' => [
             'driver' => 'local',
-            'root' => 'G:\Temp', // '/fileserver/ERP_file',
+            'root' => env('APP_ERP_PATH'), // '/fileserver/ERP_file',
             'throw' => false,
         ],
 

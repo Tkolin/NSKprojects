@@ -23,6 +23,7 @@ export const STATUS_PROJECTS_QUERY = gql`
             signed_file_id
             project_tasks {
                 id
+                project_id
             }
         }
     }

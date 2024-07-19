@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\GraphQL\Queries\Irds;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -38,6 +39,35 @@ class Project extends Model
             ->join('executor_order_task', 'executor_order_task.project_task_id', '=', 'project_tasks.id')
             ->distinct();
     }
+    //  stages
+    public function stages(): BelongsToMany
+    {
+        return $this->BelongsToMany(Stage::class, 'project_stages', 'project_id', 'stage_id');
+    }
+    public function project_stages(): HasMany
+    {
+        return $this->hasMany(ProjectStage::class)->orderBy('number');
+    }
+    //  irds
+    public function irds(): BelongsToMany
+    {
+        return $this->BelongsToMany(InitialAuthorizationDocumentation::class, 'project_irds', 'project_id', 'ird_id');
+    }
+    public function project_irds(): HasMany
+    {
+        return $this->hasMany(ProjectIrds::class);
+    }
+    //  tasks
+    public function project_tasks(): HasMany
+    {
+        return $this->hasMany(ProjectTasks::class, 'project_id', 'id');
+
+    }
+    public function tasks(): BelongsToMany
+    {
+        return $this->BelongsToMany(Task::class, 'project_tasks', 'project_id', 'task_is');
+
+    }
     public function delegations(): BelongsToMany
     {
         return $this->belongsToMany(Contact::class, "project_delegations","project_id","delegation_id");
@@ -46,10 +76,7 @@ class Project extends Model
     {
         return $this->belongsToMany(Facility::class,"project_facilities","project_id","facility_id");
     }
-    public function project_tasks(): HasMany
-    {
-        return $this->hasMany(ProjectTasks::class, 'project_id', 'id');
-    }
+
     public function organization_customer(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
@@ -65,10 +92,8 @@ class Project extends Model
     }
 
 
-    public function project_stages(): HasMany
-    {
-        return $this->hasMany(ProjectStage::class)->orderBy('number');
-    }
+
+
     public function project_status(): HasMany
     {
         return $this->hasMany(ProjectStatus::class);
@@ -81,17 +106,7 @@ class Project extends Model
     {
         return $this->hasMany(ProjectFacilities::class);
     }
-    public function project_irds(): HasMany
-    {
-        return $this->hasMany(ProjectIrds::class);
-    }
-    public function project_payment(): HasMany
-    {
-        return $this->hasMany(ProjectPayment::class);
-    }
-    public function project_sections_reference(): HasMany
-    {
-        return $this->hasMany(ProjectSectionsReference::class);
-    }
+
+
 }
 

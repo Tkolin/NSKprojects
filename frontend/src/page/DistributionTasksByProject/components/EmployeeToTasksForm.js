@@ -47,10 +47,8 @@ const EmployeeToTasksForm = ({actualProject, setLoading, onChange}) => {
         const taskMap = {};
         const tree = [];
 
-        if (!tasks || !tasks.length) {
-            console.error('Tasks data is null or empty.');
+        if (!tasks || !tasks.length)
             return;
-        }
 
         // Создаем хэш-таблицу для быстрого доступа к задачам по их ID
         tasks.forEach((task) => {
@@ -62,6 +60,7 @@ const EmployeeToTasksForm = ({actualProject, setLoading, onChange}) => {
             };
             taskMap[task.id] = newTask;
         });
+
         // Строим дерево
         tasks.forEach((task) => {
             if (!task.project_task_inherited_id) {

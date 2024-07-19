@@ -110,6 +110,7 @@ const StageTable = () => {
                             onSearch={onSearch}
                         />
                         <StyledButtonGreen
+                            loading={loading}
                             style={{marginBottom: 0}}
                             onClick={() => setStageModalStatus({stage: null, mode: "add"})}
                             data-permission={"create-stage"}>

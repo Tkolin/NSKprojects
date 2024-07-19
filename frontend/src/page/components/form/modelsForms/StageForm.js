@@ -8,9 +8,9 @@ import {STAGES_QUERY_BY_ID} from "../../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import {ADD_STAGE_MUTATION, UPDATE_STAGE_MUTATION} from "../../../../graphql/mutationsStage";
 
-const IrdForm = ({localObject, initialObject, onCompleted }) => {
+const IrdForm = ({localObject, initialObject, onCompleted}) => {
     // Первичные данные
-    const { openNotification } = useContext(NotificationContext);
+    const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
     const nameModel = 'Этапы';
     const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
@@ -57,24 +57,24 @@ const IrdForm = ({localObject, initialObject, onCompleted }) => {
 
     // Завершение
     const handleSubmit = () => {
-        mutate({ variables: { ...(actualObject ? { id: actualObject.id } : {}), ...form.getFieldsValue() } });
+        mutate({variables: {...(actualObject ? {id: actualObject.id} : {}), data: {...form.getFieldsValue()}}});
     };
     if (loading || loadingSave) return <LoadingSpinnerStyles/>
 
     return (
-             <Form form={form} layout="vertical">
-                <Form.Item name="name" label="Наименование" rules={[{required: true}]}>
-                    <Input/>
+        <Form form={form} layout="vertical">
+            <Form.Item name="name" label="Наименование" rules={[{required: true}]}>
+                <Input/>
+            </Form.Item>
+            <div style={{textAlign: 'center'}}>
+                <Form.Item>
+                    <StyledButtonGreen loading={loading} type="primary" onClick={handleSubmit}>
+                        {actualObject ? `Обновить` : `Создать`}
+                    </StyledButtonGreen>
                 </Form.Item>
-                <div style={{textAlign: 'center'}}>
-                    <Form.Item>
-                        <StyledButtonGreen type="primary" onClick={handleSubmit}>
-                            {actualObject ? `Обновить` : `Создать`}
-                        </StyledButtonGreen>
-                    </Form.Item>
-                </div>
-            </Form>
- );
+            </div>
+        </Form>
+    );
 };
 
 export default IrdForm;

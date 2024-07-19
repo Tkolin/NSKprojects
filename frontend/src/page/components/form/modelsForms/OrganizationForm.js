@@ -103,13 +103,30 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style}) => {
 
     const handleSubmit = () => {
         const formData = form.getFieldsValue();
+        const data = {
+            legal_form_id: formData.legal_form_id,
+            name: formData.name,
+            full_name: formData.full_name,
+            address_legal: formData?.address_legal?.unrestricted_value ?? address?.legal ?? null,
+            office_number_legal: formData.office_number_legal,
+            address_mail: formData?.address_mail?.unrestricted_value ?? address?.mail ?? null,
+            office_number_mail: formData.office_number_mail,
+            phone_number: formData.phone_number,
+            fax_number: formData.fax_number,
+            email: formData.email,
+            INN: formData.INN,
+            OGRN: formData.OGRN,
+            OKPO: formData.OKPO,
+            KPP: formData.KPP,
+            bik_id: formData?.bik?.selected,
+            payment_account: formData.payment_account,
+            director_id: formData?.director?.selected
+        };
+
         mutate({
             variables: {
-                ...(actualObject ? {id: actualObject.id} : {}), ...formData,
-                director_id: formData?.director?.selected,
-                bik_id: formData?.bik?.selected,
-                address_legal: formData?.address_legal?.unrestricted_value ?? address?.legal ?? null,
-                address_mail: formData?.address_mail?.unrestricted_value ?? address?.mail ?? null,
+                ...(actualObject ? { id: actualObject.id } : {}),
+                data: data
             }
         });
     };
@@ -286,7 +303,7 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style}) => {
 
                 <Form.Item>
                     <div style={{textAlign: 'center'}}>
-                        <StyledButtonGreen type="dashed" htmlType={"submit"}>
+                        <StyledButtonGreen loading={loading} type="dashed" htmlType={"submit"}>
                             {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
                     </div>

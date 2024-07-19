@@ -49,9 +49,6 @@ class CheckRoleDirective extends BaseDirective implements FieldMiddleware
                         $userPermissions = $roles->flatMap(function ($role) {
                             return $role['permissions'];
                         })->unique()->values()->toArray();
-                        // Логируем права пользователя и необходимые права
-                        error_log("User permissions: " . print_r($userPermissions, true));
-                        error_log("Required permissions: " . print_r($allowedPermissions, true));
 
                         // Проверяем, есть ли у пользователя хотя бы одно из необходимых разрешений
                         foreach ($allowedPermissions as $permission) {

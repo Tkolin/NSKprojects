@@ -9,6 +9,7 @@ final readonly class CreateFacility
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        return Facility::create($args);
+        $data = $args['data'];
+        return Facility::create($data);
     }
 }

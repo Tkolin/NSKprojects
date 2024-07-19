@@ -9,6 +9,7 @@ final readonly class CreateStage
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        return Stage::create($args);
+        $data = $args['data'];
+        return Stage::create($data);
     }
 }

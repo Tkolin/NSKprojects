@@ -11,33 +11,9 @@ export const TASKS_QUERY_COMPACT = gql`
         }
     }
 `;
-export const REFERENCES_QUERY_COMPACT = gql`
-    query ReferencesQueryCompact   {
-        references   {
-            items {
-                id
-                name
-            }
-        }
-    }
-`;
-export const TECHNICAL_SPECIFICATION_QUERY_COMPACT = gql`
-    query TechnicalSpecificationQueryCompact {
-        typeTechnicalSpecification  {
-            id
-        }
-    }
-`;
-export const SECTION_REFERENCES_QUERY_COMPACT = gql`
-    query SectionReferenceQueryCompact {
-        sectionReferences  {
-            items{
-                id
-                name
-            }
-        }
-    }
-`;
+
+
+
 export const GROUP_TYPE_PROJECTS_QUERY_COMPACT = gql`
     query GroupTypeProjectsQueryCompact {
         groupTypeProjects   {
@@ -76,14 +52,7 @@ export const PROJECT_STATUSES_QUERY_COMPACT = gql`
         }
     }
 `;
-export const TYPES_PAYMENT_QUERY_COMPACT = gql`
-    query TypePaymentsQueryCompact {
-        TypePayments {
-            id
-            name
-        }
-    }
-`;
+
 export const PERMISSIONS_QUERY_COMPACT = gql`
     query PermissionsQuery {
         permissions (queryType: "COMPACT")  {
@@ -115,16 +84,7 @@ export const PROJECT_COUNT_BY_ORGANIZATION = gql`
         }
     }
 `;
-export const ORGANIZATIONS_SHORT_QUERY_COMPACT = gql`
-    query OrganizationsQueryCompact  {
-        organizations (queryType: "COMPACT") {
-            items {
-                id
-                name
-            }
-        }
-    }
-`;
+
 export const IRDS_QUERY_COMPACT = gql`
     query IrdQueryCompact {
         irds (queryType: "COMPACT") {

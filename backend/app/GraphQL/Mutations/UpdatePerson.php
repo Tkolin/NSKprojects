@@ -2,43 +2,41 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Models\Passport;
 use App\Models\Person;
 
 final readonly class UpdatePerson
 {
-    /** @param  array{}  $args */
+    /** @param array{} $args */
     public function __invoke(null $_, array $args): Person
     {
+        $data = $args["data"];
+        $passportData = [
+            'firstname' => $data['firstname'] ?? null,
+            'lastname' => $data['lastname'] ?? null,
+            'patronymic' => $data['patronymic'] ?? null,
+            'serial' => $data['serial'] ?? null,
+            'number' => $data['number'] ?? null,
+            'address_registration' => $data['address_registration'] ?? null,
+            'address_residential' => $data['address_residential'] ?? null,
+            'passport_place_issue_id' => $data['passport_place_issue_id'] ?? null,
+            'birth_date' => isset($data['birth_date']) ? substr((string)$data['birth_date'], 0, 10) : null,
+            'date' => isset($data['date']) ? substr((string)$data['date'], 0, 10) : null,
+        ];
 
-            $passportData = [
-                'firstname' => $args['firstname'] ?? null,
-                'lastname' => $args['lastname'] ?? null,
-                'patronymic' => $args['patronymic'] ?? null,
-                'serial' => $args['serial'] ?? null,
-                'number' => $args['number'] ?? null,
-                'address_registration' => $args['address_registration'] ?? null,
-                'address_residential' => $args['address_residential'] ?? null,
-                'passport_place_issue_id' => $args['passport_place_issue_id'] ?? null,
-                'birth_date' => isset($args['birth_date']) ? substr((string) $args['birth_date'], 0, 10) : null,
-                'date' => isset($args['date']) ? substr((string) $args['date'], 0, 10) : null,
-            ];
+        $personData = [
+            'SHILS' => $data['SHILS'] ?? null,
+            'INN' => $data['INN'] ?? null,
+            'payment_account' => $data['payment_account'] ?? null,
+            'phone_number' => $data['phone_number'] ?? null,
+            'email' => $data['email'] ?? null,
+            'email_sibnipi' => $data['email_sibnipi'] ?? null,
+            'bank_id' => $data['bank_id'] ?? null,
+            'bik_id' => $data['bik_id'] ?? null,
+        ];
+        Passport::findOrFail($args['id'])->update($passportData);
+        Person::findOrFail($args['id'])->update($personData);
 
-            $personData = [
-                'SHILS' => $args['SHILS'] ?? null,
-                'INN' => $args['INN'] ?? null,
-                'payment_account' => $args['payment_account'] ?? null,
-                'phone_number' => $args['phone_number'] ?? null,
-                'email' => $args['email'] ?? null,
-                'email_sibnipi' => $args['email_sibnipi'] ?? null,
-                'bank_id' => $args['bank_id'] ?? null,
-                'bik_id' => $args['bik_id'] ?? null,
-            ];
-
-            $person = Person::findOrFail($args['id']); // Найти человека по ID
-            $person->update($personData); // Обновить информацию о человеке
-
-            $passport = $person->passport; // Получить связанный паспорт
-            $passport->update($passportData); // Обновить информацию о паспорте
-            return $person;
+        return Person::findOrFail($args['id']);
     }
 }

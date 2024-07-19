@@ -73,10 +73,10 @@ const SectionReferenceTemplateForm = ({project, setProject , onSubmit, disable})
         console.log("sectionReferences"+sectionReferences);
         if (sectionReferences) {
             const initialValuesSectionReferences = sectionReferences?.map(data => ({
-                sectionReference_item: data.sectionReference ? data.sectionReference.id  :  data.IRD.id,
-                stage_number_item: data.stage_number ?  data.stage_number : data.stageNumber,
-                application_project_item: data.application_to_project ? data.application_to_project : data.applicationProject,
-                date_complite_item: data.receivedDate,
+                sectionReference_item: data.sectionReference ? data.sectionReference.id  :  data.Ird.id,
+                stage_number_item: data.stage_number ?  data.stage_number : data.stage_number,
+                application_project_item: data.application_to_project ? data.application_to_project : data.application_project,
+                date_complite_item: data.received_date,
             }));
             formSectionReference.setFieldsValue({ sectionReferenceList: initialValuesSectionReferences });
         }
@@ -84,7 +84,7 @@ const SectionReferenceTemplateForm = ({project, setProject , onSubmit, disable})
     useEffect(() => {
         if (project?.id) {
             refetchProject({ queryOptions: { id: Number(project?.id) }});
-            addingSectionReference( project?.project_sectionReferences?.map((psectionReferences) => psectionReferences.IRD));
+            addingSectionReference( project?.project_sectionReferences?.map((psectionReferences) => psectionReferences.Ird));
         }
 
     }, []);
@@ -119,9 +119,9 @@ const SectionReferenceTemplateForm = ({project, setProject , onSubmit, disable})
         const sectionReferenceToProject = formSectionReference.getFieldsValue().sectionReferenceList.map(sectionReference => ({
             projectId: actualityProjectData?.id,
             sectionReferenceId: sectionReference.sectionReference_item,
-            stageNumber: parseInt(sectionReference.stage_number_item),
-            applicationProject: parseInt(sectionReference.application_project_item),
-            receivedDate: sectionReference.date_complite_item,
+            stage_number: parseInt(sectionReference.stage_number_item),
+            application_project: parseInt(sectionReference.application_project_item),
+            received_date: sectionReference.date_complite_item,
         }));
         // Вызов мутаций для обновления данных
         updateSectionReferencesToProject({

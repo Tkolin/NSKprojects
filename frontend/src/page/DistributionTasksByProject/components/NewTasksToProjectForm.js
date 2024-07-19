@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Card, Col, Divider, Form, Row, Space, Typography} from "antd";
+import {Button, Card, Col, Divider, Form, Row, Space, Tooltip, Typography} from "antd";
 import TaskForm from "../../components/form/modelsForms/TaskForm";
 import TasksTreeComponent from "./TasksTreeComponent";
 import {
@@ -10,9 +10,12 @@ import {useMutation, useQuery} from "@apollo/client";
 import {TASKS_QUERY_COMPACT} from "../../../graphql/queriesCompact";
 import LoadingSpinnerStyles from "../../components/style/LoadingSpinnerStyles";
 import {StyledButtonGreen} from "../../components/style/ButtonStyles";
-import {ADD_TASK_MUTATION, CREATE_TASKS_TO_PROJECT, UPDATE_TASK_MUTATION} from "../../../graphql/mutationsTask";
+import {ADD_TASK_MUTATION} from "../../../graphql/mutationsTask";
 import {NotificationContext} from "../../../NotificationProvider";
-import {PlusOutlined, SaveOutlined} from "@ant-design/icons";
+import {DeleteOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons";
+import Link from "antd/es/typography/Link";
+import {PROJECT_TASKS_STRUCTURE_UPDATE, PROJECT_TASKS_SYNC_MUTATION} from "../../../graphql/mutationsProject";
+import dayjs from "dayjs";
 
 
 const {Text} = Typography;
@@ -35,16 +38,23 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
     const extractKeys = (tasksByStage, project) => {
         const result = [];
         const projectStages = project.project_stages;
-
+        // task_id: ID
+        // project_id: ID
+        // inherited_task_id: ID
+        // date_start: String
+        // date_end: String
+        // duration: Int
+        // stage_number: Int
         // Создание задач из этапов проекта
         projectStages.forEach(stage => {
             const task = {
-                project_id: project.id,
                 task_id: stage?.stage?.task_id?.toString(),
-                stage_number: stage.number,
+                project_id: project.id,
+                inherited_task_id: null,
                 date_start: stage.date_start,
                 date_end: stage.date_end,
-                project_task_inherited_id: null,
+                duration: dayjs(stage.date_end).diff(stage.date_start,'day'),
+                stage_number: stage.number,
             };
             result.push(task);
         });
@@ -55,7 +65,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
                     project_id: project.id,
                     task_id: node.key,
                     stage_number: stageNumber,
-                    project_task_inherited_id: parentKey || result.find(t => t.stage_number === stageNumber)?.task_id || null,
+                    inherited_task_id: parentKey || result.find(t => t.stage_number === stageNumber)?.task_id || null,
                     date_start: result.find(t => t.stage_number === stageNumber)?.date_start || null,
                     date_end: result.find(t => t.stage_number === stageNumber)?.date_end || null
                 };
@@ -81,7 +91,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
 
         return result;
     };
-    const [mutateTasksToProject, {loading: loadingMutation}] = useMutation(CREATE_TASKS_TO_PROJECT, {
+    const [mutateTasksToProject, {loading: loadingMutation}] = useMutation(PROJECT_TASKS_STRUCTURE_UPDATE, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Создание новой записи выполнено успешно`);
         },
@@ -103,7 +113,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
 
 
     }
-    const handleSelectTask = (index, value) => {
+    const handleSelectTask = (index, value, handleDelete) => {
         if (value?.id > 0) {
             setSelectedTasksIds([...selectedTasksIds, parseInt(value.id)]);
             const oldTasks = form.getFieldValue([index, "tasks"]);
@@ -111,14 +121,42 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
             form.setFieldValue([index, "tasks"], [
                 ...oldTasks ?? [],
                 {
-                    title: value.name,
+                    title:  <Space.Compact direction={"horizontal"}>
+                        <Text>{handleDelete && (
+                            <Tooltip title={"Удалить задачу"}>
+                                <Link onClick={()=>handleDelete(value.id)} type={"danger"}><DeleteOutlined/></Link>
+                            </Tooltip>)}   {value.name}
+                        </Text>
+
+                    </Space.Compact>,
                     key: value.id
                 }
             ])
         }
     }
 
-    const rebuider = (tasks) => {
+    const handleDeleteTaskToProject = (taskToProjectId) =>
+    {
+        if (taskToProjectId > 0) {
+            const oldTasks = form.getFieldsValue();
+            if(!oldTasks)
+                return;
+            const newTasks = {};
+            console.log(taskToProjectId);
+            Object.keys(oldTasks).forEach(key => {
+                const oldTask = oldTasks[key];
+                newTasks[key] = {...oldTask,
+                    tasks: oldTask.tasks.filter(row =>
+                         row.id !== taskToProjectId
+                )}
+            });
+
+            console.log("1: ",oldTasks);
+            console.log("2: ",newTasks);
+            form.setFieldsValue(newTasks); // Обновляем форму с новыми значениями
+        }
+    }
+    const rebuider = (tasks, handleDelete) => {
         const taskMap = {};
         const tree = [];
 
@@ -133,7 +171,14 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
                 stage_number: task.stage_number,
                 key: task.task.id,
                 id: task.task.id,
-                title: task.id + ":" + task.task.name,
+                title:  <Space.Compact direction={"horizontal"}>
+                    <Text>{handleDelete && (
+                        <Tooltip title={"Удалить задачу"}>
+                            <Link onClick={()=>handleDelete(task.task.id)} type={"danger"}><DeleteOutlined/></Link>
+                        </Tooltip>)}   {task.task.name}
+                    </Text>
+
+                </Space.Compact>,
                 children: []
             };
             taskMap[task.id] = newTask;
@@ -167,17 +212,15 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
             return acc;
         }, {});
     };
+
     useEffect(() => {
         setSelectedTasksIds(actualProject.project_stages.map(row => row.stage.task_id));
-
         if (actualProject.project_tasks.length > 0) {
             setSelectedTasksIds([...selectedTasksIds, ...actualProject.project_tasks.map(row => row.task_id)])
             const taskStagesIdsArray = actualProject.project_tasks.filter(row => row.project_task_inherited_id === null).map(row => row.id);
-
-
-            form.setFieldsValue((groupTasksByStageNumber(rebuider(actualProject.project_tasks.filter(row => row.project_task_inherited_id !== null).map(
+            form.setFieldsValue((groupTasksByStageNumber(
+                rebuider(actualProject.project_tasks.filter(row => row.project_task_inherited_id !== null).map(
                 row => {
-                    console.log(taskStagesIdsArray, " + ", row.project_task_inherited_id, " = ", taskStagesIdsArray.includes(row.project_task_inherited_id));
                     if (
                         (taskStagesIdsArray.includes(row.project_task_inherited_id))) {
                         return ({
@@ -188,7 +231,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
                         return row
                     }
                 }
-            )))));
+            ), handleDeleteTaskToProject))));
         }
     }, [actualProject]);
     const [mutate, {loading: loadingSave}] = useMutation(ADD_TASK_MUTATION, {
@@ -212,7 +255,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
 
                 <Form form={form} onChange={() => console.log("onChange")}>
                     {actualProject?.project_stages?.map((row) => (
-                        <Card style={{marginBottom: 5, paddingTop: 0}} title={row?.number + " " + row?.stage?.name}>
+                        <Card  style={{marginBottom: 5, paddingTop: 0}} title={row?.number + " " + row?.stage?.name}>
                             <Space.Compact style={{width: "100%"}} direction={"vertical"}>
                                 <div style={{width: "100%"}}>
                                     <Form.Item name={[row.number, "tasks"]}>
@@ -233,7 +276,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
                                                 })
                                             }}
                                             saveSelected={false}
-                                            onSelect={(value) => handleSelectTask(row.number, value)}
+                                            onSelect={(value) => handleSelectTask(row.number, value, handleDeleteTaskToProject)}
                                             data={dataTasks?.tasks?.items.filter((task) =>
                                                 !selectedTasksIds.includes(parseInt(task.id))
                                             )}
@@ -246,7 +289,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading}) => {
 
                     ))}
                     <Space style={{justifyContent: "center", width: "100%", marginTop: 10}}>
-                        <StyledButtonGreen onClick={() => handleSubmit()} icon={<SaveOutlined/>}>Сохранить</StyledButtonGreen>
+                        <StyledButtonGreen loading={loadingMutation} onClick={() => handleSubmit()} icon={<SaveOutlined/>}>Сохранить</StyledButtonGreen>
                     </Space>
 
 

@@ -1,13 +1,7 @@
 import {gql} from "@apollo/client";
 
 
-export const DELETE_REQUEST_MUTATION = gql`
-    mutation DeletOrganization($id: ID! ) {
-        deleteOrganization(
-            id: $id
-        )
-    }
-`;
+
 
 export const ADD_REQUEST_MUTATION = gql`
     mutation CreateRequests(

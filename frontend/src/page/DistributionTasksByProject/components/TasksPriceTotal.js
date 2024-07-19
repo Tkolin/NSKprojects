@@ -10,7 +10,7 @@ const {Text} = Typography;
 const TaskItem = ({
                       task_count, total_task_count,
                       stage_price, total_price,
-                      stage_name
+                      stage_name, loading
                   }) => {
 
 
@@ -33,7 +33,7 @@ const TaskItem = ({
             return amount.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'});
         };
         return (
-            <Card size={"small"} color={"red"} title={stage_name} style={{backgroundColor: percent > 99 ? "#faad14" : ""}}>
+            <Card size={"small"} color={"red"} title={stage_name} loading={loading} style={{backgroundColor: percent > 99 ? "#faad14" : ""}}>
                 <Statistic title={"Распределение средств на этапе"}
                            value={formatCurrency(total_price)}
                 />
@@ -59,6 +59,7 @@ const TasksPriceTotal = ({data = {project_tasks: [], project_stages: []}}) => {
 
     useEffect(() => {
         console.log("TasksPriceTotal data", data)
+        setOutputData(null);
         data?.project_stages?.map(row => {
             const actual_tasks = data.project_tasks.filter(second_row => second_row.stage_number === row.number);
             outputData[row.number] = {

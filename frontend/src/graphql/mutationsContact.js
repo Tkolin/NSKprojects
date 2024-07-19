@@ -4,36 +4,16 @@ export const DELETE_CONTACT_MUTATION = gql`
     mutation DeletContact($id: ID! ) {
         deleteContact(
             id: $id
-        ) 
+        )
     }
 `;
 
 export const ADD_CONTACT_MUTATION = gql`
-    mutation AddContact($first_name: String!,
-        $last_name:
-        String,
-        $patronymic: String,
-        $birth_day: String,
-        $work_phone: String,
-        $work_email: String,
-        $mobile_phone: String,
-        $email: String,
-        $position_id: ID,
-        $organization_id: ID,
-
+    mutation AddContact(
+        $data: ContactInput
     ) {
         createContact(
-            first_name: $first_name
-            last_name: $last_name
-            patronymic: $patronymic
-            birth_day: $birth_day
-            work_phone: $work_phone
-            work_email: $work_email
-            mobile_phone: $mobile_phone
-            email: $email
-            position_id: $position_id
-            organization_id: $organization_id
-
+            data: $data
         ) {
             id
             first_name
@@ -57,27 +37,13 @@ export const ADD_CONTACT_MUTATION = gql`
     }
 `;
 export const UPDATE_CONTACT_MUTATION = gql`
-    mutation UpdateContact($id: ID!, $first_name:
-    String!, $last_name: String,$patronymic: String,
-        $birth_day: String,
-        $work_phone: String,
-        $work_email: String,
-        $mobile_phone: String,
-        $email: String,
-        $position_id: ID,
-        $organization_id: ID) {
+    mutation UpdateContact(
+        $id: ID!,
+        $data: ContactInput
+    ) {
         updateContact(
             id: $id
-            first_name: $first_name
-            last_name: $last_name
-            patronymic: $patronymic
-            birth_day: $birth_day
-            work_phone: $work_phone
-            work_email: $work_email
-            mobile_phone: $mobile_phone
-            email: $email
-            position_id: $position_id
-            organization_id: $organization_id
+            data: $data
         ) {
             id
             first_name

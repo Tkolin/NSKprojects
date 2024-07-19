@@ -57,7 +57,13 @@ const BikForm = ({ localObject ,initialObject, onCompleted }) => {
 
     // Завершение
     const handleSubmit = () => {
-        mutate({ variables: { ...(actualObject ? { id: actualObject.id } : {}), ...form.getFieldsValue() } });
+        const formData = form.getFieldsValue();
+        const data = {
+            BIK: formData.BIK,
+            name: formData.name,
+            correspondent_account: formData.correspondent_account,
+        };
+        mutate({ variables: { ...(actualObject ? { id: actualObject.id } : {}),data} });
     };
     if (loading || loadingSave) return <LoadingSpinnerStyles/>
 
@@ -75,7 +81,7 @@ const BikForm = ({ localObject ,initialObject, onCompleted }) => {
                 </Form.Item>
                 <div style={{textAlign: 'center'}}>
                     <Form.Item>
-                        <StyledButtonGreen style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
+                        <StyledButtonGreen loading={loading} style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
                             {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
                     </Form.Item>

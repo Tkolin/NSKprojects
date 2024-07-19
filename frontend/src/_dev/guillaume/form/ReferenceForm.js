@@ -1,8 +1,7 @@
-import {Button, Form, Input, InputNumber, Modal, notification, Select, Space, Tooltip} from "antd";
-import React, {useEffect, useState} from "react";
-import {useMutation, useQuery} from "@apollo/client";
+import {Button, Form, Input, notification, Space} from "antd";
+import React from "react";
+import {useMutation} from "@apollo/client";
 import {StyledFormBig, StyledFormItem} from "../../style/FormStyles";
-import {UPDATE_IRDS_TO_PROJECT_MUTATION} from "../../../graphql/mutationsProject";
 import {PlusOutlined} from "@ant-design/icons";
 import {CREATE_REFERENCE_MUTATION} from "../../../graphql/mutationsFormula";
 import TextArea from "antd/es/input/TextArea";

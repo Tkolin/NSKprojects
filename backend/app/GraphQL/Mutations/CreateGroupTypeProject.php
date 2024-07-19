@@ -9,6 +9,7 @@ final readonly class CreateGroupTypeProject
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        return GroupTypeProjectDocument::create($args);
+        $data = $args['data'];
+        return GroupTypeProjectDocument::create($data);
     }
 }

@@ -58,7 +58,19 @@ const PassportPlaceIssuesForm = ({localObject,initialObject, onCompleted}) => {
 
     // Завершение
     const handleSubmit = () => {
-        mutate({variables: {...(initialObject ? {id: initialObject.id} : {}), ...form.getFieldsValue()}});
+        const formData = form.getFieldsValue();
+        const data = {
+            code: formData.code,
+            name: formData.name,
+
+        };
+
+        mutate({
+            variables: {
+                ...(actualObject ? { id: actualObject.id } : {}),
+                data
+            }
+        });
     };
     if (loading || loadingSave) return <LoadingSpinnerStyles/>
 
@@ -73,7 +85,7 @@ const PassportPlaceIssuesForm = ({localObject,initialObject, onCompleted}) => {
                 </Form.Item>
                 <div style={{textAlign: 'center'}}>
                     <Form.Item>
-                        <StyledButtonGreen style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
+                        <StyledButtonGreen loading={loading} style={{marginBottom: 0}} type="primary" onClick={handleSubmit}>
                             {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
                     </Form.Item>

@@ -10,18 +10,19 @@ final readonly class UpdateContact
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
+        $data = $args["data"];
         $contact = Contact::findOrFail($args['id']);
         $contact->update([
-            'first_name' => $args['first_name'] ?? null,
-            'last_name' => $args['last_name'] ?? null,
-            'patronymic' => $args['patronymic'] ?? null,
-            'mobile_phone' => $args['mobile_phone'] ?? null,
-            'work_phone' => $args['work_phone'] ?? null,
-            'birth_day' => isset($args['birth_day']) ? substr((string)$args['birth_day'], 0, 10) : null,
-            'email' => $args['email'] ?? null,
-            'work_email' => $args['work_email'] ?? null,
-            'position_id' => $args['position_id'] ?? null,
-            'organization_id' => $args['organization_id'] ?? null
+            'first_name' => $data['first_name'] ?? null,
+            'last_name' => $data['last_name'] ?? null,
+            'patronymic' => $data['patronymic'] ?? null,
+            'mobile_phone' => $data['mobile_phone'] ?? null,
+            'work_phone' => $data['work_phone'] ?? null,
+            'birth_day' => isset($data['birth_day']) ? substr((string)$data['birth_day'], 0, 10) : null,
+            'email' => $data['email'] ?? null,
+            'work_email' => $data['work_email'] ?? null,
+            'position_id' => $data['position_id'] ?? null,
+            'organization_id' => $data['organization_id'] ?? null
         ]);
         return $contact;
     }

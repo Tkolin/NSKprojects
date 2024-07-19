@@ -37,19 +37,7 @@ export const TASKS_QUERY = gql`
         }
     }
 `;
-export const REFERENCES_QUERY = gql`
-    query ReferencesQuery  ($oprions: QueryOptions) {
-        references  (queryOptions: $oprions) {
-            items {
-                id
-                name
-                description
-                reference_values
-            }
-            count
-        }
-    }
-`;
+
 export const FORMULA_BY_KEY_QUERY = gql`
     query FormulaByKey  ($keys: [String!]) {
         formulaByKey  (keys: $keys) {
@@ -73,77 +61,7 @@ export const FORMULA_BY_KEY_QUERY = gql`
         }
     }
 `;
-export const TECHNICAL_SPECIFICATION_QUERY = gql`
-    query TechnicalSpecificationQuery {
-        typeTechnicalSpecification  {
-            id
-        }
-    }
-`;
-export const SECTION_REFERENCES_QUERY = gql`
-    query SectionReferenceQuery {
-        sectionReferences  {
-            items{
-                id
-                name
-                description
-                values
-            }
-            count
-        }
-    }
-`;
-export const GROUP_TYPE_PROJECTS_QUERY = gql`
-    query GroupTypeProjectsQuery {
-        groupTypeProjects  {
-            id
-            name
-            technical_specification {
-                id
-                name
-            }
-        }
-    }
-`;
-export const BANKS_QUERY = gql`
-    query BanksQuery ($queryOptions: QueryOptions)  {
-        banks (queryOptions: $queryOptions)
-        {
-            items{
-                id
-                name
-            }
-            count
-        }
-    }
-`;
-export const PASSPORTS_PLACE_ISSUES_QUERY = gql`
-    query PPIQuery ($queryOptions: QueryOptions) {
-        passportPlaceIssues (queryOptions: $queryOptions)  {
-            items{
-                id
-                name
-            }
-            count
-        }
-    }
-`;
-export const PROJECT_STATUSES_QUERY = gql`
-    query ProjectStatuses {
-        projectStatuses  {
-            name_key
-            name
-        }
-    }
-`;
-export const TYPES_PAYMENT_QUERY = gql`
-    query TypePaymentsQuery {
-        TypePayments {
-            id
-            name
-        }
-    }
-`;
+
 export const ORGANIZATIONS_QUERY = gql`
     query OrganizationsQuery ($queryOptions: QueryOptions, $organizationId: ID) {
         organizations (queryOptions: $queryOptions, organizationId: $organizationId){
@@ -199,22 +117,6 @@ export const ORGANIZATIONS_QUERY = gql`
     }
 `;
 
-export const ORGANIZATIONS_SHORT_QUERY = gql`
-    query OrganizationsQuery ($queryOptions: QueryOptions) {
-        organizations (queryOptions: $queryOptions) {
-            items {
-                id
-                name
-                full_name
-                legal_form{
-                    id
-                    name
-                }
-            }
-            count
-        }
-    }
-`;
 export const IRDS_QUERY = gql`
     query IrdQuery($queryOptions: QueryOptions) {
         irds (queryOptions: $queryOptions) {
@@ -309,7 +211,6 @@ export const PROJECTS_QUERY = gql`
                     patronymic
                 }
                 project_stages {
-                    id
                     number
                     stage {
                         id
@@ -324,14 +225,13 @@ export const PROJECTS_QUERY = gql`
 
                 }
                 project_irds {
-                    id
-                    stageNumber
-                    applicationProject
-                    IRD {
+                    stage_number
+                    application_project
+                    ird {
                         id
                         name
                     }
-                    receivedDate
+                    received_date
                 }
                 project_tasks {
                     id
@@ -626,7 +526,6 @@ export const BIKS_QUERY = gql`
 export const STAGES_TO_PROJECT_QUERY = gql`
     query StageToProjectQuery ($projectId: ID){
         projectStages(projectId: $projectId)   {
-            id
             project{
                 id
                 name
@@ -642,51 +541,6 @@ export const STAGES_TO_PROJECT_QUERY = gql`
             duration
             date_end
             progress
-        }
-    }
-`;
-export const IRDS_TO_PROJECT_QUERY = gql`
-    query BiksForms ($queryOptions: QueryOptions){
-        projectIrds(queryOptions: $queryOptions)   {
-            id
-            project{
-                id
-                name
-            }
-            IRD{
-                id
-                name
-            }
-            receivedDate
-            stageNumber
-            applicationProject
-        }
-    }
-`;
-export const TASKS_TO_PROJECT_QUERY = gql`
-    query TasksToProjectQuery ($projectId: ID){
-        projectTasksQuery(projectId: $projectId) {
-            id
-            task {
-                id
-                name
-            }
-            project_task_inherited_id
-            date_start
-            date_end
-            duration
-            executor {
-                id
-                passport {
-                    id
-                    firstname
-                    lastname
-                    patronymic
-                }
-            }
-            price
-            description
-
         }
     }
 `;

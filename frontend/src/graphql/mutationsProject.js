@@ -59,7 +59,8 @@ export const ADD_PROJECT_MUTATION = gql`
                 patronymic
             }
             project_stages {
-                id
+                stage_id
+                project_id
                 number
                 stage {
                     id
@@ -79,14 +80,15 @@ export const ADD_PROJECT_MUTATION = gql`
                 price
             }
             project_irds {
-                id
-                stageNumber
-                applicationProject
-                IRD {
+                ird_id
+                project_id
+                stage_number
+                application_project
+                ird {
                     id
                     name
                 }
-                receivedDate
+                received_date
             }
             price
 
@@ -96,8 +98,8 @@ export const ADD_PROJECT_MUTATION = gql`
 `;
 
 export const UPDATE_PROJECT_MUTATION = gql`
-    mutation UpdateProject($data: ProjectInput) {
-        updateProject(data: $data) {
+    mutation UpdateProject($id: ID, $data: ProjectInput) {
+        updateProject(id: $id, data: $data) {
             id
             number
             name
@@ -153,7 +155,8 @@ export const UPDATE_PROJECT_MUTATION = gql`
                 patronymic
             }
             project_stages {
-                id
+                project_id
+                stage_id
                 number
                 stage {
                     id
@@ -173,14 +176,15 @@ export const UPDATE_PROJECT_MUTATION = gql`
                 price
             }
             project_irds {
-                id
-                stageNumber
-                applicationProject
-                IRD {
+                ird_id
+                project_id
+                stage_number
+                application_project
+                ird {
                     id
                     name
                 }
-                receivedDate
+                received_date
             }
             price
 
@@ -189,38 +193,89 @@ export const UPDATE_PROJECT_MUTATION = gql`
 
 `;
 
-export const UPDATE_IRDS_TO_PROJECT_MUTATION = gql`
-    mutation UpdateIrdsToProject($data: [IrdToProject]) {
-        updateIrdsToProject(items: $data) {
-            id
-            IRD {
+export const PROJECT_TASKS_DETAIL_UPDATE = gql`
+    mutation ProjectTaskDetailUpdate($data: TaskToProjectDetailInput!) {
+        projectTaskDetailUpdate(data: $data) {
                 id
-                name
+                description
+                price
+                date_start
+                duration
+                date_end
+                executor {
+                    id
+                    passport {
+                        id
+                        firstname
+                        lastname
+                        patronymic
+                    }
+                }
             }
-            receivedDate
-            stageNumber
-            applicationProject
+
+        
+    }
+`;
+export const PROJECT_TASKS_STRUCTURE_UPDATE = gql`
+    mutation ProjectTasksStructureUpdate($data: [TaskToProjectStructureInput]!) {
+        projectTasksStructureUpdate(data: $data) {
+            id
+            project_tasks {
+                id
+                project_task_inherited_id
+                task {
+                    id
+                    name
+                }
+                date_start
+                duration
+                date_end
+                stage_number
+             
+            }
+
         }
     }
 `;
 
-export const UPDATE_STAGES_TO_PROJECT_MUTATION = gql`
-    mutation UpdateStagesToProject($data: [StageToProject]) {
-        updateStagesToProject(items: $data) {
+export const PROJECT_IRDS_SYNC_MUTATION = gql`
+    mutation ProjectIrdsSync($data: [IrdToProjectInput]!) {
+        projectIrdsSync(items: $data) {
             id
-            number
-            stage {
-                id
-                name
-                task_id
+            project_irds {
+                ird_id
+                project_id
+                ird {
+                    id
+                    name
+                }
+                received_date
+                stage_number
+                application_project
             }
-            date_start
-            duration
-            date_end
-            percent
-            price
+        }
+    }
+`;
 
-         
+export const PROJECT_STAGE_SYNC_MUTATION = gql`
+    mutation ProjectStagesSync($data: [StageToProjectInput]!) {
+        projectStagesSync(items: $data) {
+            id
+            project_stages {
+                stage_id
+                project_id
+                number
+                stage {
+                    id
+                    name
+                    task_id
+                }
+                date_start
+                duration
+                date_end
+                percent
+                price
+            }
         }
     }
 `;
@@ -233,11 +288,6 @@ export const CHANGE_TEMPLATE_TYPE_PROJECT = gql`
     }
 `;
 
-export const UPDATE_PAYMENTS_TO_PROJECT_MUTATION = gql`
-    mutation UpdatePaymentsToProject($ProjectId: ID!) {
-        updatePaymentsToProject(project: $ProjectId)
-    }
-`;
 
 export const IRDS_PROJECT_DOWNLOAD = gql`
     mutation IrdsProjectFileDownload($id: ID!) {

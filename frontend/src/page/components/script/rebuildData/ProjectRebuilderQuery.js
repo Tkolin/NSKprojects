@@ -61,8 +61,8 @@ export const rebuildStagesResultQuery = (data) => {
 export const rebuildIrdsResultQuery = (data) => {
     return data?.map((row, index) => ({
         ...row,
-        receivedDate: row.receivedDate ? dayjs(row.receivedDate?.[1]).format("YYYY-MM-DD") : null,
-        IRD: {selected: row?.IRD?.id, output: row?.IRD?.name},
+        received_date: row.received_date ? dayjs(row.received_date?.[1]).format("YYYY-MM-DD") : null,
+        ird: {selected: row?.ird?.id, output: row?.ird?.name},
 
     }));
 };
@@ -72,17 +72,16 @@ export const rebuildStagesToQuery = (data, projectId) => {
     const dataArray = Object.values(data);
 
     return dataArray?.map((row, index) => ({
-        id: row?.id ?? null,
         project_id: projectId ?? null,
         date_start: row.date_range?.dateStart ? dayjs(row.date_range?.dateStart).format("YYYY-MM-DD") : null,
         date_end: row.date_range?.dateEnd ? dayjs(row.date_range?.dateEnd).format("YYYY-MM-DD") : null,
         duration: row?.date_range?.duration ?? null,
         stage_id: row?.stage?.selected ?? null,
         number: index + 1,
-        price: row?.price ?? null,
+        // price: row?.price ?? null,
         percent: row?.percent ?? null,
         progress: row?.progress ?? null,
-        price_to_paid: row?.price_to_paid ?? null,
+        // price_to_paid: row?.price_to_paid ?? null,
     }));
 };
 export const rebuildIrdToQuery = (data, project) => {
@@ -92,10 +91,10 @@ export const rebuildIrdToQuery = (data, project) => {
     return dataArray?.map((row, index) => ({
         id: row?.id ?? null,
         project_id: project?.id ?? null,
-        ird_id: row?.IRD?.selected ?? null,
-        stageNumber: row?.stageNumber ? parseInt(row?.stageNumber) : null,
-        applicationProject: row?.applicationProject ? parseInt(row?.applicationProject) : null,
-        receivedDate: row?.receivedDate ? dayjs(row?.receivedDate).format("YYYY-MM-DD") : null,
+        ird_id: row?.ird?.selected ?? null,
+        stage_number: row?.stage_number ? parseInt(row?.stage_number) : null,
+        application_project: row?.application_project ? parseInt(row?.application_project) : null,
+        received_date: row?.received_date ? dayjs(row?.received_date).format("YYYY-MM-DD") : null,
     }));
 };
 export const rebuildProjectToQuery = (data) => {
@@ -104,7 +103,6 @@ export const rebuildProjectToQuery = (data) => {
         return [];
 
     return {
-        id: data?.id ?? null,
         number: data?.number,
         name: data?.name,
         organization_customer_id: data?.organization_customer?.selected,

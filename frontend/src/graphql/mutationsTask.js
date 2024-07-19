@@ -1,141 +1,14 @@
 import {gql} from "@apollo/client";
 
 
-export const UPDATE_EMPLOYEES_TO_TASKS = gql`
-    mutation UpdateEmployeesToTasks(
-        $tasksIds: [ID]!
-        $employeesIds: [ID]!
-        $stageNumber: Int
-    ) {
-        updateEmployeesToTasks(
-            tasksIds: $tasksIds
-            employeesIds: $employeesIds
-            stageNumber: $stageNumber
-        )
-        {
-            id
-            stage_number
-            task {
-                id
-                name
-            }
-        }
-    }
-`;
-export const UPDATE_EXECUTORS_TO_TASKS = gql`
-    mutation UpdateExecutorsToTasks(
-        $data: [ExecutorToTask]!
-    ) {
-        updateExecutorToTasks(
-            data: $data
-        )
-        {
-            id
-            project_tasks {
-                id
-                description
-                project_task_inherited_id
-                price
-                task {
-                    id
-                    name
-                }
-                date_start
-                duration
-                date_end
-                stage_number
-                executor {
-                    id
-                    passport {
-                        id
-                        firstname
-                        lastname
-                        patronymic
-                    }
-                }
-            }
-        }
-    }
-`;
 
-export const DELETE_TASK_TO_PROJECT_MUTATION = gql`
-    mutation DeleteTaskToProject(
-        $id: ID!
-    ) {
-        deleteTaskToProject(
-            id: $id
-        )
-    }
-`;
-export const UPDATE_TASK_TO_PROJECT_MUTATION = gql`
-    mutation UpdateTaskToProject($data: [TasksToProject]!, $type: String) {
-        updateTaskToProject(data: $data, type: $type) {
-            id
-            project_tasks {
-                id
-                description
-                project_task_inherited_id
-                price
-                task {
-                    id
-                    name
-                }
-                executor {
-                    id
-                    passport {
-                        id
-                        firstname
-                        lastname
-                        patronymic
-                    }
-                }
-                date_start
-                duration
-                date_end
-                stage_number
-            }
-
-        }
-    }
-`;
-export const CREATE_TASKS_TO_PROJECT = gql`
-    mutation CreateTaskToProject($data: [TasksToProjectExs]!) {
-        createTasksToProject(data: $data) {
-            id
-            project_tasks {
-                id
-                description
-                project_task_inherited_id
-                price
-                task {
-                    id
-                    name
-                }
-                date_start
-                duration
-                date_end
-                stage_number
-                executor {
-                    id
-                    passport {
-                        id
-                        firstname
-                        lastname
-                        patronymic
-                    }
-                }
-            }
-
-        }
-    }
-`;
 
 export const UPDATE_TASK_MUTATION = gql`
     mutation UpdateTask(
-        $name: String
+        $data: TaskInput
     ) {
         updateTask(
-            name: $name
+            data: $data
         ) {
             id
             name
@@ -144,14 +17,22 @@ export const UPDATE_TASK_MUTATION = gql`
 `;
 export const ADD_TASK_MUTATION = gql`
     mutation AddTask(
-        $name: String
+        $data: TaskInput
     ) {
         createTask(
-            name: $name
+            data: $data
         ) {
             id
             name
             __typename
+        }
+    }
+`;
+export const DDD = gql`
+    query TestMutata {
+        testMutata {
+            id
+            name
         }
     }
 `;

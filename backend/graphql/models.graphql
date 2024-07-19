@@ -1,0 +1,600 @@
+#
+#   - SIMPLE TYPE QUERY -
+#
+type Query {
+    contacts(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): ContactsResult @checkRole(permission:  ["read-contact"])
+    organizations(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): OrganizationsResult @checkRole(permission:  ["read-organization"])
+    positions(id: ID, queryOptions: QueryOptions, queryType: String): PositionsResult
+    irds(id: ID, queryOptions: QueryOptions, queryType: String): IrdsResult @checkRole(permission:  ["read-ird"])
+    stages(id: ID, queryOptions: QueryOptions, queryType: String): StagesResult @checkRole(permission:  ["read-stage"])
+    tasks(id: ID, queryOptions: QueryOptions, queryType: String): TasksResult @checkRole(permission:  ["read-task"])
+    projects(id: ID, queryOptions: QueryOptions, queryType: String, projectId: ID, projectStatuses: String): ProjectsResult
+    persons(id: ID, queryOptions: QueryOptions, queryType: String): PersonsResult @checkRole(permission:  ["read-project"])
+    biks(id: ID, queryOptions: QueryOptions, queryType: String): BikResult
+    passportPlaceIssues(id: ID, queryOptions: QueryOptions, queryType: String): PassportPlaceIssueResult
+    banks(id: ID, queryOptions: QueryOptions, queryType: String): BanksResult
+    groupTypeProjects(id: ID): [GroupTypeProjectDocument]
+    typeProjects(id: ID, queryOptions: QueryOptions, queryType: String): TypeProjectsResult
+    projectStatuses: [ProjectStatus!]!
+
+    legalForms: [LegalForm]!
+    facilities: [SelectionFacility!]!
+}
+#-TYPES:
+#   user
+type User {
+    id: ID
+    name: String
+    email: String
+    roles: [Role]
+    person: Person
+    organization: Organization
+}
+type Role {
+    permissions: [Permission]
+    description: String
+    name: String
+    name_key: String
+}
+type Permission {
+    name_key: String
+    name: String
+    description: String
+}
+#   formula 1
+type Fenrir {
+    id: ID
+    name: String
+    description: String
+    models: String
+}
+type Formula {
+    id: ID
+    latex_formula: String
+    original_formula: String
+    rpn_formula: String
+    name_key: String!
+    name: String!
+    description: String!
+    variable_data: [FormulaVariable]
+}
+#   formula 2 (Указаны в основной модели)
+type FormulaVariable {
+    description: String
+    name_key: String
+    name: String
+    formula_id: ID
+    id: ID
+}
+#   project 1
+type Project{
+    id: ID!
+    number: String
+    name: String
+    prepayment: Int
+    organization_customer: Organization
+    type_project_document: TypeProjectDocument
+    facilities: [Facility]
+    date_signing: String
+    date_create: String
+    duration: Int
+    date_end: String
+    status: ProjectStatus
+    date_completion: String
+    delegations: [Contact]
+    price: Int
+    project_irds: [ProjectIrd]
+    project_stages: [ProjectStage]
+    project_tasks: [ProjectTask]
+    executor_orders: [ExecutorOrder]
+}
+#   project 2 (Указаны в основной модели)
+type ProjectIrd{
+    project_id: ID!
+    ird_id: ID!
+    project: Project!
+    ird: Ird!
+    received_date: String
+    stage_number: String
+    application_project: String
+}
+type ProjectStatus{
+    name: String!
+    name_key: String!
+}
+type ProjectStage{
+    project_id: ID!
+    stage_id: ID!
+    project: Project
+    stage: Stage
+    number: Int
+    price: Float
+    price_to_paid: Float
+    percent: Int
+    date_start: String
+    duration: Int
+    date_end: String
+    progress: Int
+}
+type ProjectTask{
+    id: ID
+    project_id: ID
+    executor_orders: [ExecutorOrder]
+    project_task_inherited_id: ID
+    task: Task
+    stage_number: Int
+    date_start: String
+    date_end: String
+    duration: Int
+    executor: Person
+    price: Float
+    description: String
+}
+
+#   project 3 (Указаны в моделях 2 уровня)
+type   ExecutorOrder {
+    id: ID!
+    number: String
+    created_at: String
+    updated_at: String
+    date_generate: String!
+    date_order: String!
+    date_attachment: String
+    original_file_id: ID
+    signed_file_id: ID
+    original_file: File
+    signed_file: File
+    project_tasks: [ProjectTask]
+}
+#   organization 1
+type Organization{
+    id: ID!
+    legal_form: LegalForm!
+    name: String!
+    full_name: String
+    address_legal: String
+    office_number_legal: String
+    address_mail: String
+    office_number_mail: String
+    phone_number: String
+    fax_number: String
+    email: String
+    INN: String
+    OGRN: String
+    OKPO: String
+    KPP: String
+    bik:  bik
+    payment_account: String
+    director: Contact
+    employees: [Contact]
+}
+#   organization 2 (Указаны в основной модели)
+type LegalForm{
+    id: ID!
+    name: String!
+}
+#   contact
+type Contact {
+    id: ID!
+    first_name: String!
+    last_name: String
+    patronymic: String
+    birth_day: String
+    work_phone: String
+    work_email: String
+    mobile_phone: String
+    email: String
+    position: Position
+    organization: Organization
+}
+type Position {
+    id: ID!
+    name: String!
+}
+
+#   bik
+type  bik{
+    id: ID!
+    BIK: String
+    name: String
+    correspondent_account: String
+}
+#   bank
+type Bank{
+    id: ID!
+    name: String!
+}
+#   person 1
+type Person{
+    id: ID!
+    passport: Passport!
+    SHILS: String
+    INN: String
+    payment_account: String
+    phone_number: String
+    email: String
+    email_sibnipi: String
+    bank: Bank
+    bik:  bik
+}
+#   person 2 (Указаны в основной модели)
+type Passport{
+    id: ID!
+    firstname: String
+    lastname: String
+    patronymic: String
+    serial: String
+    number: String
+    address_residential: String
+    address_registration: String
+    passport_place_issue: PassportPlaceIssue
+    birth_date: String
+    date: String
+}
+#   person 3 (Указаны в моделях 2 уровня)
+type PassportPlaceIssue{
+    id: ID!
+    name: String!
+    code: String!
+}
+#   facility 1
+type Facility{
+    id: ID!
+    name: String!
+    code: Int
+    type_facility: TypeFacility
+    group_facility: GroupFacility
+}
+#   facility 2 (Указаны в основной модели)
+type TypeFacility{
+    id: ID!
+    name: String!
+}
+type GroupFacility{
+    id: ID!
+    name: String!
+    code: Int
+    facilities: [Facility]
+    subselection_facility: SubselectionFacility
+}
+#   facility 3 (Указаны в моделях 2 уровня)
+type SubselectionFacility{
+    id: ID!
+    name: String!
+    code: Int
+    group_facility: [GroupFacility]
+    selection_facility: SelectionFacility
+}
+#   facility 3 (Указаны в моделях 3 уровня)
+type SelectionFacility{
+    id: ID!
+    name: String!
+    code: Int
+    subselection_facility: [SubselectionFacility]
+}
+#   file
+type File {
+    id: ID
+    name: String
+    path: String
+    size: String
+    mime_type: String
+}
+#   ird
+type Ird{
+    id: ID!
+    name: String!
+}
+#   typeProjectDocument
+type TypeProjectDocument{
+    id: ID!
+    name: String!
+    code: String!
+    group: GroupTypeProjectDocument
+    template_project_id: ID
+}
+type GroupTypeProjectDocument{
+    id: ID
+    name: String
+    code: String
+    technical_specification: TypeTechnicalSpecification
+}
+type TypeTechnicalSpecification{
+    id: ID!
+    name: String!
+}
+#   stage
+type Stage{
+    id: ID!
+    name: String
+    task_id: Int
+}
+#   task
+type Task{
+    id: ID!
+    name: String
+}
+#   projectPayment 1
+type projectPayment {
+    id: ID!
+    date_time_payment: String
+    project: Project
+    type_payment: TypePayment
+    price: Int
+}
+#   projectPayment 2
+
+type TypePayment {
+    id: ID!
+    name: String!
+}
+#
+#   - MUTATIONS -
+#
+type Mutation {
+    #   request
+    updateRequests(
+        data: RequestInput
+    ): Project! @checkRole(permission:  ["update-request"])
+    createRequests(
+        data: RequestInput
+    ): Project! @checkRole(permission:  ["create-request"])
+    #   ird
+    createIrd(
+        data: IrdInput
+    ): Ird! @checkRole(permission:  ["create-ird"])
+    updateIrd(
+        id: ID!
+        data: IrdInput
+    ): Ird! @checkRole(permission:  ["update-ird"])
+    deleteIrd (
+        id: ID!
+    ): String @checkRole(permission:  ["delete-ird"])
+    #   groupTypeProject
+    createGroupTypeProject(
+        data: GroupTypeProject
+    ): GroupTypeProjectDocument @checkRole(permission:  ["create-typeProject-group"])
+    updateGroupTypeProject(
+        id: ID
+        data: GroupTypeProject
+    ): GroupTypeProjectDocument @checkRole(permission:  ["update-typeProject-group"])
+    #   typeProject
+    createTypeProject(
+        data: TypeProjectInput
+    ): TypeProjectDocument @checkRole(permission:  ["create-typeProject"])
+    updateTypeProject(
+        id: ID!
+        data: TypeProjectInput
+    ): TypeProjectDocument @checkRole(permission:  ["update-typeProject"])
+    deleteTypeProject (
+        id: ID
+    ): String @checkRole(permission:  ["delete-typeProject"])
+    #   task
+    updateTask(
+        id: ID
+        data: TaskInput
+    ): Task @checkRole(permission:  ["update_task"])
+    createTask(
+        data: TaskInput
+    ): Task @checkRole(permission:  ["create_task"])
+    #   project
+    updateProject(
+        id: ID
+        data: ProjectInput
+    ): Project! @checkRole(permission:  ["update-project"])
+    createProject(
+        data: ProjectInput
+        templates: ProjectTemplatesSetting
+    ): Project! @checkRole(permission:  ["create-project"])
+    #   bik
+    createBik(
+        data: BikInput
+    ):  bik!
+    updateBik(
+        id: ID!
+        data: BikInput
+    ):  bik!
+    #   person
+    createPerson(
+        data: PersonInput
+    ): Person! @checkRole(permission:  ["create-person"])
+    updatePerson(
+        id: ID!
+        data: PersonInput
+    ): Person! @checkRole(permission:  ["update-person"])
+    deletePerson (
+        id: ID!
+    ): Person @checkRole(permission:  ["delete-person"])
+    createPpi(
+        data: PassportPlaceIssueInput
+    ): PassportPlaceIssue!
+    updatePpi(
+        id: ID!
+        data: PassportPlaceIssueInput
+    ): PassportPlaceIssue!
+    #   stage
+    createStage(
+        data: StageInput!
+    ): Stage! @checkRole(permission:  ["create-stage"])
+    updateStage(
+        id: ID!
+        data: StageInput!
+    ): Stage! @checkRole(permission:  ["update-stage"])
+    deleteStage (
+        id: ID!
+    ): String @checkRole(permission:  ["delete-stage"])
+    #   contact
+    createContact(
+        data: ContactInput
+    ): Contact! @checkRole(permission:  ["create-contact"])
+    updateContact(
+        id: ID!
+        data: ContactInput
+    ): Contact! @checkRole(permission:  ["update-contact"])
+    deleteContact (
+        id: ID!
+    ): Boolean @checkRole(permission:  ["delete-contact"])
+    #   organization
+    createOrganization(
+        data: OrganizationInput
+    ): Organization! @checkRole(permission:  ["create-organization"])
+    updateOrganization(
+        id: ID!
+        data: OrganizationInput
+    ): Organization! @checkRole(permission:  ["update-organization"])
+    deleteOrganization (
+        id: ID!
+    ): Boolean @checkRole(permission:  ["delete-organization"])
+}
+#-INPUTS:
+input PersonInput {
+    firstname: String
+    lastname: String
+    patronymic: String
+    serial: String
+    number: String
+    passport_place_issue_id: ID
+    address_registration: String
+    address_residential: String
+    birth_date: String
+    date: String
+    SHILS: String
+    INN: String
+    payment_account: String
+    phone_number: String
+    email: String
+    email_sibnipi: String
+    bank_id: ID
+    bik_id: ID}
+input OrganizationInput{
+    legal_form_id: ID!
+    name: String!
+    full_name: String!
+    address_legal: String
+    office_number_legal: String
+    address_mail: String
+    office_number_mail: String
+    phone_number: String
+    fax_number: String
+    email: String
+    INN: String
+    OGRN: String
+    OKPO: String
+    KPP: String
+    bik_id: ID
+    payment_account: String
+    director_id: ID}
+input ContactInput{
+    first_name: String!
+    last_name: String
+    patronymic: String
+    birth_day: String
+    work_phone: String
+    work_email: String
+    mobile_phone: String
+    email: String
+    position_id: ID
+    organization_id: ID}
+input StageInput{
+    name: String}
+input TaskInput{
+    name: String}
+input PassportPlaceIssueInput{
+    name: String!
+    code: String!}
+input GroupTypeProject{
+    name: String
+    techical_specification: ID}
+input IrdInput{
+    name: String}
+input BikInput{
+    BIK: String!
+    name: String!
+    correspondent_account: String}
+input TypeProjectInput{
+    name: String!
+    group_id: ID!
+    code: String!}
+input ProjectInput {
+    number: String!
+    name: String!
+    organization_customer_id: ID!
+    type_project_document_id: ID!
+    date_signing: String
+    duration: Int
+    date_end: String
+    date_create: String
+    status_id: String
+    date_completion: String
+    price: Int!
+    prepayment: Int!
+    facility_id: [ID]!
+    delegates_id: [ID]}
+input ProjectTemplatesSetting {
+    project_id_to_stages: [ID]
+    project_id_to_irds: [ID]}
+#-RESULTS:
+
+type BikResult {
+    items: [bik]
+    count: Int
+}type FormulaResult {
+    items: [Formula]
+    count: Int
+}type ReferenceResult {
+    items: [Reference]
+    count: Int
+}type PassportPlaceIssueResult {
+    items: [PassportPlaceIssue]
+    count: Int
+}type ContactsResult {
+    items: [Contact]
+    count: Int
+}type UsersResult {
+    items: [User]
+    count: Int
+}type RolesResult {
+    items: [Role]
+    count: Int
+}type BanksResult {
+    items: [Bank]
+    count: Int
+}type PermissionResult {
+    items: [Permission]
+    count: Int
+}type ProjectTaskExecutorResult {
+    items: [ProjectTaskExecutor]
+    count: Int
+}type OrganizationsResult {
+    items: [Organization]
+    count: Int
+}type CountProjectByOrganizationsResult {
+    items: [CountProjectByOrganizations]
+}type PositionsResult {
+    items: [Position]
+    count: Int
+}type ProjectsResult {
+    items: [Project]
+    count: Int
+}type PersonsResult {
+    items: [Person]
+    count: Int
+}type FenrirsResult {
+    items: [Fenrir]
+    count: Int
+}type IrdsResult {
+    items: [Ird]
+    count: Int
+}type StagesResult {
+    items: [Stage]
+    count: Int
+}type TasksResult {
+    items: [Task]
+    count: Int
+}type TypeProjectsResult {
+    items: [TypeProjectDocument]
+    count: Int
+}type groupTypeProjecResult {
+    items: [GroupTypeProjectDocument]
+    count: Int
+}

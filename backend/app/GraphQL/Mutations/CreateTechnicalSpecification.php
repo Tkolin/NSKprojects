@@ -6,9 +6,10 @@ use App\Models\TechnicalSpecification;
 
 final readonly class CreateTechnicalSpecification
 {
-    /** @param  array{}  $args */
+    /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
-            return TechnicalSpecification::create($args);
+        $data = $args["data"];
+        return TechnicalSpecification::create($data);
     }
 }

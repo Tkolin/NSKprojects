@@ -19,7 +19,7 @@ import LoadingSpinnerStyles from "../../style/LoadingSpinnerStyles";
 import OrganizationModalForm from "../../modal/OrganizationModalForm";
 import {CustomDatePicker} from "../../FormattingDateElementComponent";
 
-const ContactForm = ({localObject, initialObject, onCompleted}) => {
+const ContactForm = ({localObject, initialObject, onCompleted, ...props}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
@@ -38,7 +38,7 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
     // Состояния
     const [organizationModalStatus, setOrganizationModalStatus] = useState(null);
     useEffect(() => {
-        console.log("organizationModalStatus",organizationModalStatus);
+        console.log("organizationModalStatus", organizationModalStatus);
     }, [organizationModalStatus]);
     // Мутация
     const [mutate, {loading: loadingSave}] = useMutation(actualObject ? UPDATE_CONTACT_MUTATION : ADD_CONTACT_MUTATION, {
@@ -67,9 +67,11 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
             form.resetFields();
             form.setFieldsValue({
                 ...data,
-                position: {selected: data?.position?.id, output: data?.position?.name},
-                organization: {selected: data?.organization?.id, output: data?.organization?.name} ,
-                birth_day: data?.birth_day ? moment(data.birth_day) : null,
+                data: {
+                    position: {selected: data?.position?.id, output: data?.position?.name},
+                    organization: {selected: data?.organization?.id, output: data?.organization?.name},
+                    birth_day: data?.birth_day ? moment(data.birth_day) : null,
+                }
             });
         }
     };
@@ -84,11 +86,22 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
 
     const handleSubmit = () => {
         const formData = form.getFieldsValue();
+        const data = {
+            last_name: formData.last_name,
+            first_name: formData.first_name,
+            patronymic: formData.patronymic,
+            work_phone: formData.work_phone,
+            mobile_phone: formData.mobile_phone,
+            email: formData.email,
+            work_email: formData.work_email,
+            birth_day: formData.birth_day,
+            organization_id: formData?.organization?.selected ?? null,
+            position_id: formData?.position?.selected ?? null
+        };
         mutate({
             variables: {
-                ...(actualObject ? {id: actualObject.id} : {}), ...formData,
-                organization_id: formData?.organization?.selected ?? null,
-                position_id: formData?.position?.selected ?? null,
+                ...(actualObject ? {id: actualObject.id} : {}),
+                data,
             }
         });
     };
@@ -96,15 +109,16 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
     if (errorOrganizations || errorPositions) return `Ошибка! ${errorOrganizations?.message || errorPositions?.message}`;
 
     return (
-        <div style={{maxWidth: "300px"}}>
+        <div style={{maxWidth: "600px"}}>
             <Form
-                onChange={()=>console.log("change", form.getFieldsValue())}
+                onChange={() => console.log("change", form.getFieldsValue())}
                 form={form}
                 onFinish={handleSubmit}
                 labelCol={{span: 8}}
                 labelAlign="left"
                 wrapperCol={{span: 16}}
             >
+
                 <Divider orientation="left">ФИО:</Divider>
                 <Form.Item
                     name="last_name"
@@ -170,14 +184,14 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
 
                 <Divider orientation="left">Данные организации:</Divider>
                 <Form.Item
-                    loading={loadingPositions}
-                    name={"position"}
+                     name={"position"}
                     label={"Должность"}
                     style={{width: "100%"}}>
                     <CustomAutoComplete
                         data={dataPositions?.positions?.items}
                         placeholder="Выберите должность"
-                     />
+                        loading={true}
+                    />
                 </Form.Item>
                 <Form.Item
                     name={"organization"}
@@ -186,18 +200,24 @@ const ContactForm = ({localObject, initialObject, onCompleted}) => {
                     <CustomAutoCompleteAndCreateWitchEdit
                         loading={loadingOrganizations}
                         data={dataOrganizations?.organizations?.items}
-                        onChange={(value)=>form.setFieldValue("organization",value)}
+                        onChange={(value) => form.setFieldValue("organization", value)}
                         placeholder="Выберите организацию"
                         firstBtnOnClick={() =>
-                            setOrganizationModalStatus({organization_id: form.getFieldValue("organization")?.selected, mode: "add"})}
+                            setOrganizationModalStatus({
+                                organization_id: form.getFieldValue("organization")?.selected,
+                                mode: "add"
+                            })}
                         secondBtnOnClick={() =>
                             form.getFieldValue("organization")?.selected &&
-                            setOrganizationModalStatus({organization_id: form.getFieldValue("organization")?.selected, mode: "edit"})}
+                            setOrganizationModalStatus({
+                                organization_id: form.getFieldValue("organization")?.selected,
+                                mode: "edit"
+                            })}
                     />
                 </Form.Item>
                 <Form.Item labelCol={{span: 24}} wrapperCol={{span: 24}}>
                     <div style={{textAlign: 'center'}}>
-                        <StyledButtonGreen style={{marginBottom: 0}} type="primary" htmlType="submit">
+                        <StyledButtonGreen loading={loading} style={{marginBottom: 0}} type="primary" htmlType="submit">
                             {actualObject ? `Обновить` : `Создать`}
                         </StyledButtonGreen>
                     </div>

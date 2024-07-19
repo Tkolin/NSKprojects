@@ -45,7 +45,7 @@ const GenerateOrderForm = ({executorOrders, projectTasks, onCompleted}) => {
     };
 
     return (
-        <Card layout="vertical" loading={loadingGenerated}>
+        <Card layout="vertical" >
             <Alert message="Выберите задачи которые необходимо указать в договре." type="info" showIcon/>
             <Divider/>
             <Tree showIcon showLine checkable checkedKeys={checkedKeys} onCheck={(data)=>setCheckedKeys(data)}
@@ -53,7 +53,7 @@ const GenerateOrderForm = ({executorOrders, projectTasks, onCompleted}) => {
             <Divider/>
 
                  <div style={{textAlign: 'center'}}>
-                    <StyledButtonGreen style={{marginBottom: 0}} type="primary"
+                    <StyledButtonGreen loading={loadingGenerated} style={{marginBottom: 0}} type="primary"
                         onClick={() => handleSubmit()}>
                         Сгенерировать
                     </StyledButtonGreen>

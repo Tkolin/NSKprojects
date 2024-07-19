@@ -23,7 +23,7 @@ import dayjs from "dayjs";
 import {nanoid} from "nanoid";
 import {CustomDatePicker} from "../../FormattingDateElementComponent";
 
-const PersonForm = ({localObject, initialObject, onCompleted,...props}) => {
+const PersonForm = ({localObject, initialObject, onCompleted, ...props}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
@@ -112,14 +112,32 @@ const PersonForm = ({localObject, initialObject, onCompleted,...props}) => {
     const handleSubmit = () => {
         const formData = form.getFieldsValue();
         const formDataPassport = formPassport.getFieldsValue();
+
+        const data = {
+            firstname: formDataPassport.firstname,
+            lastname: formData.lastname,
+            patronymic: formDataPassport.patronymic,
+            serial: formDataPassport.serial,
+            number: formDataPassport.number,
+            passport_place_issue_id: formDataPassport?.passport_place_issue?.selected ?? null,
+            address_registration: address?.registration?.unrestricted_value ?? address?.registration ?? null,
+            address_residential: address?.residential?.unrestricted_value ?? address?.residential ?? null,
+            birth_date: formDataPassport.birth_date,
+            date: formDataPassport.date,
+            SHILS: formData.SHILS,
+            INN: formData.INN,
+            payment_account: formData.payment_account,
+            phone_number: formData.phone_number,
+            email: formData.email,
+            email_sibnipi: formData.email_sibnipi,
+            bank_id: formData?.bank?.selected ?? null,
+            bik_id: formData?.bik?.selected ?? null
+        };
+
         mutate({
             variables: {
-                ...(actualObject ? {id: actualObject.id} : {}), ...formData, ...formDataPassport,
-                bank_id: formData?.bank?.selected ?? null,
-                bik_id: formData?.bik?.selected ?? null,
-                passport_place_issue_id: formDataPassport?.passport_place_issue?.selected ?? null,
-                address_registration: address?.registration?.unrestricted_value ?? address?.registration ?? null,
-                address_residential: address?.residential?.unrestricted_value ?? address?.residential ?? null
+                ...(actualObject ? { id: actualObject.id } : {}),
+                data: data
             }
         });
     };
@@ -129,7 +147,7 @@ const PersonForm = ({localObject, initialObject, onCompleted,...props}) => {
 
 
     return (
-        <div  >
+        <div>
             <Row gutter={8}>
                 <Col span={12}>
                     <Form form={formPassport}
@@ -158,7 +176,7 @@ const PersonForm = ({localObject, initialObject, onCompleted,...props}) => {
                         <Form.Item name="passport_place_issue" label="Место выдачи">
                             <CustomAutoCompleteAndCreate
                                 firstBtnOnClick={() =>
-                                setPpiModalStatus({ppi_id: null, mode: "add"})}
+                                    setPpiModalStatus({ppi_id: null, mode: "add"})}
                                 data={dataPpi?.passportPlaceIssues?.items}
                             />
                         </Form.Item>
@@ -265,7 +283,7 @@ const PersonForm = ({localObject, initialObject, onCompleted,...props}) => {
             </Row>
             <Form.Item>
                 <div style={{textAlign: 'center'}}>
-                    <StyledButtonGreen style={{marginBottom: 0}} type="dashed" onClick={handleSubmit}>
+                    <StyledButtonGreen loading={loading} style={{marginBottom: 0}} type="dashed" onClick={handleSubmit}>
                         {actualObject ? `Обновить` : `Создать`}
                     </StyledButtonGreen>
                 </div>
@@ -275,7 +293,7 @@ const PersonForm = ({localObject, initialObject, onCompleted,...props}) => {
                 key={ppiModalStatus?.ppi_id ?? nanoid()}
                 onClose={() => setPpiModalStatus(null)}
                 onCompleted={(value) => {
-                    formPassport.setFieldValue("passport_place_issue",{selected: value?.id, output: value?.name});
+                    formPassport.setFieldValue("passport_place_issue", {selected: value?.id, output: value?.name});
                     setPpiModalStatus(null);
                 }}
                 mode={ppiModalStatus?.mode ?? null}
@@ -284,7 +302,7 @@ const PersonForm = ({localObject, initialObject, onCompleted,...props}) => {
                 key={bikModalStatus?.bik_id ?? nanoid()}
                 onClose={() => setBikModalStatus(null)}
                 onCompleted={(value) => {
-                    form.setFieldValue("bik",{selected: value?.id, output: value?.name});
+                    form.setFieldValue("bik", {selected: value?.id, output: value?.name});
                     setBikModalStatus(null);
                 }}
                 mode={bikModalStatus?.mode ?? null}

@@ -2,21 +2,18 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Alert, Button, Col, Divider, Form, InputNumber, Row, Space, Tooltip, Typography} from 'antd';
 
 
-import {CloseOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons";
-import {DatePicker} from "antd/lib";
+import {SaveOutlined} from "@ant-design/icons";
 import FormItem from "antd/es/form/FormItem";
 import {CustomAutoComplete} from "../../components/style/SearchAutoCompleteStyles";
 import DateRangePickerComponent from "../../components/DateRangePickerComponent";
-import {StyledButtonGreen, StyledButtonRed} from "../../components/style/ButtonStyles";
+import {StyledButtonGreen} from "../../components/style/ButtonStyles";
 import {useMutation, useQuery} from "@apollo/client";
 import {PERSONS_QUERY_COMPACT} from "../../../graphql/queriesCompact";
-import LoadingSpinnerStyles from "../../components/style/LoadingSpinnerStyles";
 import dayjs from "dayjs";
-import {
-    UPDATE_TASK_TO_PROJECT_MUTATION
-} from "../../../graphql/mutationsTask";
+
 import {NotificationContext} from "../../../NotificationProvider";
 import Link from "antd/es/typography/Link";
+import {PROJECT_TASKS_DETAIL_UPDATE} from "../../../graphql/mutationsProject";
 
 const {Text} = Typography;
 
@@ -40,7 +37,7 @@ const TaskProjectForm = ({taskToProject, mainTaskToProject, onCompleted, onChang
             loading: loadingDelegates, error: errorDelegates, data: personsList
         } = useQuery(PERSONS_QUERY_COMPACT);
 
-        const [updateProjectTasks, {loading: loadingMutationSecond}] = useMutation(UPDATE_TASK_TO_PROJECT_MUTATION, {
+        const [updateProjectTasks, {loading: loadingMutationSecond}] = useMutation(PROJECT_TASKS_DETAIL_UPDATE, {
             onCompleted: (data) => {
                 if (onChange) {
                     onChange();
@@ -91,16 +88,15 @@ const TaskProjectForm = ({taskToProject, mainTaskToProject, onCompleted, onChang
 
             updateProjectTasks({
                 variables: {
-                    data: [{
+                    data: {
                         id: taskToProject.id,
                         description: taskToProject.description,
-                        project_id: taskToProject.project_id,
                         executor_id: formData?.executor?.selected ?? null,
                         price: formData.price,
                         date_start: formData.date_range?.dateStart ? dayjs(formData.date_range.dateStart).format('YYYY-MM-DD') : null,
                         date_end: formData.date_range?.dateEnd ? dayjs(formData.date_range.dateEnd).format('YYYY-MM-DD') : null,
                         duration: formData.date_range?.duration ?? null,
-                    }]
+                    }
                 }
             })
         };
@@ -161,7 +157,7 @@ const TaskProjectForm = ({taskToProject, mainTaskToProject, onCompleted, onChang
 
 
                     <Space style={{justifyContent: "center", width: "100%", marginTop: 10}}>
-                        <StyledButtonGreen onClick={() => handleComplete()}
+                        <StyledButtonGreen loading={loadingMutationSecond} onClick={() => handleComplete()}
                                            icon={<SaveOutlined/>}>
                             Сохранить
                         </StyledButtonGreen>
