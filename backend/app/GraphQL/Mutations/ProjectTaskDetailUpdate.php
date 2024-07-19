@@ -1,0 +1,48 @@
+<?php declare(strict_types=1);
+
+namespace App\GraphQL\Mutations;
+
+use App\Models\ProjectTasks;
+
+final readonly class ProjectTaskDetailUpdate
+{
+    /**
+     * Обновление подробных параметров задачи.
+     *
+     * @param array{
+     *     data: {
+     *      id: string,
+     *      description?: string,
+     *      date_start?: string,
+     *      date_end?: string,
+     *      duration?: int,
+     *      price?: float,
+     *      executor_id?: string
+     *     }
+     * } $args
+     *
+     * @return ProjectTasks Обновленный параметры задачи.
+     */
+    public function __invoke(null $_, array $args)
+    {
+        $data = $args['data'];
+        $projectTask = ProjectTasks::findOrFail($data['id']);
+
+        // Обновляем модель с использованием fill и затем вызываем save
+        $dateStart = $data['date_start'] ?? $projectTask->date_startl;
+        $dateEnd = $data['date_end'] ?? $projectTask->date_end;
+        $duration = (new \DateTime($dateStart))->diff(new \DateTime($dateEnd))->days;
+
+        $projectTask->fill(array_filter([
+            'description' => $data['description'] ?? $projectTask->description,
+            'date_start' => $dateStart,
+            'date_end' => $dateEnd,
+            'duration' => $duration,
+            'price' => $data['price'] ?? $projectTask->price,
+            'executor_id' => $data['executor_id'] ?? $projectTask->executor_id,
+        ]));
+
+        $projectTask->save();
+        return $projectTask;
+    }
+}
