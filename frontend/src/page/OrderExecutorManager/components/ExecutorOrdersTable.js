@@ -1,7 +1,7 @@
 import {Space, Table, Typography} from "antd";
 import {useEffect} from "react";
 import LinkToDownload from "../../components/script/fileDownloadScripts/LinkToDownload";
-import UploadFile from "./UploadFile";
+import {UploadFileExecutorOrder} from "../../components/UploadFile";
 
 const {Text} = Typography;
 
@@ -27,14 +27,14 @@ export const ExecutorOrdersTable = ({executorOrders, onUpdated}) => {
                 {record?.signed_file_id ?
                     (
                         <Space.Compact direction={"vertical"}>
-                            <LinkToDownload fileId={record.signed_file_id}>Скачать (Подписан)</LinkToDownload>
+                            <LinkToDownload fileId={record.signed_file_id}>Скачать (подписан)</LinkToDownload>
                             <Text type={"secondary"}>{record.date_attachment}</Text>
 
                         </Space.Compact>
                     ) :
                     (<Space.Compact direction={"vertical"}>
-                        <UploadFile onUpdated={()=>onUpdated()} orderId={record.id}>Загрузить подписаный файл</UploadFile>
-                        <LinkToDownload fileId={record.original_file_id} danger>Скачать (Неподписан)</LinkToDownload>
+                        <UploadFileExecutorOrder onUpdated={()=>onUpdated()} orderId={record.id}>Загрузить подписанный файл</UploadFileExecutorOrder>
+                        <LinkToDownload fileId={record.original_file_id} danger>Скачать (не подписан)</LinkToDownload>
                      </Space.Compact>)}
             </Space.Compact>)
     },]

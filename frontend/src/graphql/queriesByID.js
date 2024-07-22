@@ -155,6 +155,7 @@ export const PROJECTS_QUERY_BY_ID = gql`
                 number
                 name
                 prepayment
+                signed_file_id
                 organization_customer {
                     id
                     name

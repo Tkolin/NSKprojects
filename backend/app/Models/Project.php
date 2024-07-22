@@ -25,6 +25,7 @@ class Project extends Model
         'price',
         'date_create',
         'path_project_folder',
+        'signed_file_id'
         ];
     public function executor_orders()
     {
@@ -38,6 +39,20 @@ class Project extends Model
         )
             ->join('executor_order_task', 'executor_order_task.project_task_id', '=', 'project_tasks.id')
             ->distinct();
+    }
+    //  project contract history
+    public function contracts_files(): BelongsToMany
+    {
+        return $this->BelongsToMany(File::class, 'project_contract_history', 'project_id', 'file_id');
+    }
+    public function project_contract_history(): HasMany
+    {
+        return $this->hasMany(ProjectContractHistory::class)->orderBy('number');
+    }
+    //  contract
+    public function signed_file(): BelongsTo
+    {
+        return $this->BelongsTo(File::class, 'signed_file_id', 'id');
     }
     //  stages
     public function stages(): BelongsToMany

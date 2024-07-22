@@ -26,7 +26,7 @@ final readonly class DownloadFile
         }
 
         // Копирование файла в public/storage
-        $temporaryFilePath = 'temporary/' . Str::random(39) . '_' . $file->name;
+        $temporaryFilePath = 'temporary/' . Str::random(10) . '_' . $file->name;
         Storage::disk('public')->put($temporaryFilePath, Storage::disk('localERPFiles')->get($filePath));
 
         // Генерация ссылки для скачивания

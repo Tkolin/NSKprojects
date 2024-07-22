@@ -196,24 +196,24 @@ export const UPDATE_PROJECT_MUTATION = gql`
 export const PROJECT_TASKS_DETAIL_UPDATE = gql`
     mutation ProjectTaskDetailUpdate($data: TaskToProjectDetailInput!) {
         projectTaskDetailUpdate(data: $data) {
+            id
+            description
+            price
+            date_start
+            duration
+            date_end
+            executor {
                 id
-                description
-                price
-                date_start
-                duration
-                date_end
-                executor {
+                passport {
                     id
-                    passport {
-                        id
-                        firstname
-                        lastname
-                        patronymic
-                    }
+                    firstname
+                    lastname
+                    patronymic
                 }
             }
+        }
 
-        
+
     }
 `;
 export const PROJECT_TASKS_STRUCTURE_UPDATE = gql`
@@ -231,7 +231,7 @@ export const PROJECT_TASKS_STRUCTURE_UPDATE = gql`
                 duration
                 date_end
                 stage_number
-             
+
             }
 
         }
@@ -333,6 +333,19 @@ export const CONTRACT_PROJECT_DOWNLOAD = gql`
     mutation ContractProjectFileDownload($id: ID!) {
         projectOrderFileDownload(projectId: $id) {
             url
+        }
+    }
+`;
+export const PROJECT_CONTRACT_GENERATED = gql`
+    mutation ProjectContractGenerated($id: ID!, $dateCreateContract: String!) {
+        projectContractGenerated(projectId: $id, dateCreateContract: $dateCreateContract) {
+            id
+            project_contract_history {
+                file_id
+                number
+                date_create_contract
+                comment
+            }
         }
     }
 `;

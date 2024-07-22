@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ExecutorOrder;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\File;
@@ -23,6 +24,37 @@ class FileUploadController extends Controller
                 'mime_type' => $file->getClientMimeType(),
             ]);
 
+            return response()->json([
+                'success' => true,
+                'file' => $fileRecord,
+            ]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'No file uploaded'], 400);
+    }
+    public function uploadProjectContract(Request $request)
+    {
+        $projectId = $request->query('projectId');
+        $dateSinging = $request->query('date');
+        error_log("projectId ".$projectId);
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+
+            $project = Project::find($projectId);
+
+            $pathProjectFolder = $project->path_project_folder;
+            $storagePath = "/" . $pathProjectFolder . "/Договора_с_заказчиком/" . $file->getClientOriginalName();
+            error_log('$project' .  $project);
+
+            Storage::disk('localERPFiles')->put($storagePath, $file->getClientOriginalName());
+
+            $fileRecord = File::create([
+                'name' => $file->getClientOriginalName(),
+                'path' => $storagePath,
+                'size' => $file->getSize(),
+                'mime_type' => $file->getClientMimeType(),
+            ]);
+            $project->update(['signed_file_id'=>$fileRecord->id, 'date_signing'=>$dateSinging]);
             return response()->json([
                 'success' => true,
                 'file' => $fileRecord,

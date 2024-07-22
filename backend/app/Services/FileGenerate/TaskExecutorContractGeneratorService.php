@@ -7,6 +7,7 @@ use App\Models\File;
 use App\Models\Organization;
 use App\Services\MonthEnum;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 class TaskExecutorContractGeneratorService
@@ -117,34 +118,13 @@ class TaskExecutorContractGeneratorService
             $templateProcessor->setValue($key, $value);
         }
 
-        $fileName = $orderNumber . '_ДОГОВОР_С_ИСПОЛНИТЕЛЕМ' . '.docx'; // 'Договор_с_исполнителем.docx';
+        $fileName = Str::random( 30).'_'.$orderNumber . '_ДОГОВОР_С_ИСПОЛНИТЕЛЕМ' . '.docx'; // 'Договор_с_исполнителем.docx';
 
         // Сохраняем отредактированный документ
         $filePath = storage_path('app/' . $fileName);
         $templateProcessor->saveAs($filePath);
-
-        // Чтение содержимого файла
-        $fileContents = file_get_contents($filePath);
-
-        // Определяем путь к файлу в сетевой папке
         $storagePath = "/" . $projectData->path_project_folder . "/Договора_с_исполнителями/" . $fileName;
-
-        // Помещение файла в сетевую папку
-        Storage::disk('localERPFiles')->put($storagePath, $fileContents);
-
-        // Получение размера файла
-        $fileSize = filesize($filePath);
-
-        // Определение MIME-типа файла
-        $mimeType = mime_content_type($filePath);
-
-        // Создание записи о файле в базе данных
-        $file = File::create([
-            'name' => $fileName,
-            'path' => $storagePath,
-            'size' => $fileSize,
-            'mime_type' => $mimeType,
-        ]);
+        $file = FileCreateService::saveFileToProject($storagePath, $filePath, $fileName);
 
         // Создание записи о заказе в базе данных
         $executorOrder = ExecutorOrder::create([

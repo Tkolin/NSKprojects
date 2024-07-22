@@ -5,6 +5,7 @@ namespace App\Services\FileGenerate;
 use App\Services\FileGenerate\GeneratorService;
 use App\Services\MonthEnum;
 use App\Services\TranslatorNumberToName;
+use Illuminate\Support\Str;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 class StagesProjectTemplateGeneratorService
@@ -95,7 +96,8 @@ class StagesProjectTemplateGeneratorService
 
         $templateProcessor->cloneRowAndSetValues('projectStages.number' , $table);
         // Сохранение отредактированного документа
-        $fileName =  $project['number'].'_ГРАФИК_ВЫПОЛНЕНИЯ_ЭТАПОВ_РАБОТ_И_ПЛАТЕЖЕЙ.docx';
+        // Генерация 10 случайных символов
+         $fileName =  Str::random( 30).'_'.$project['number'].'_ГРАФИК_ВЫПОЛНЕНИЯ_ЭТАПОВ_РАБОТ_И_ПЛАТЕЖЕЙ.docx';
 
 
 

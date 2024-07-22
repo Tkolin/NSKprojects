@@ -86,7 +86,9 @@ type Project{
     project_irds: [ProjectIrd]
     project_stages: [ProjectStage]
     project_tasks: [ProjectTask]
+    project_contract_history: [ProjectContract]
     executor_orders: [ExecutorOrder]
+    signed_file_id: ID
 }
 #   project 2 (Указаны в основной модели)
 type ProjectIrd{
@@ -129,6 +131,13 @@ type ProjectTask{
     executor: Person
     price: Float
     description: String
+}
+type ProjectContract{
+    project_id: ID
+    file_id: ID
+    number: Int
+    comment: String
+    date_create_contract: String
 }
 
 #   project 3 (Указаны в моделях 2 уровня)

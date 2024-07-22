@@ -28,6 +28,10 @@ extend type Mutation {
         projectId: ID
         stageNumber: Int
     ): Url!
+    projectContractGenerated(
+        projectId: ID!
+        dateCreateContract: String!
+    ): Project!
     projectOrderFileDownload(
         projectId: ID
     ): Url!

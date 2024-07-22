@@ -1,12 +1,15 @@
 import 'react-phone-number-input/style.css';
-import { useMutation } from '@apollo/client';
-import { notification, Typography} from 'antd';
-import {CONTRACT_PROJECT_DOWNLOAD} from "../../../../graphql/mutationsProject";
+import {useMutation} from '@apollo/client';
+import {Button, DatePicker, notification, Popconfirm, Typography} from 'antd';
+import {CONTRACT_PROJECT_DOWNLOAD, PROJECT_CONTRACT_GENERATED} from "../../../../graphql/mutationsProject";
+import dayjs from "dayjs";
+import {useState} from "react";
+
 const {Text, Link} = Typography;
 
-const ProjectFileDownload  = ({projectId, style, text}) => {
+const ProjectFileDownload = ({projectId, children,...props}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
-
+    const [selectedDateContract, setSelectedDateContract] = useState();
 
     const openNotification = (placement, type, message) => {
         notification[type]({
@@ -15,10 +18,12 @@ const ProjectFileDownload  = ({projectId, style, text}) => {
         });
     };
 
-    const [downloadProjectContract] = useMutation(CONTRACT_PROJECT_DOWNLOAD, {
+    const [downloadProjectContract, {loading: loading}] = useMutation(PROJECT_CONTRACT_GENERATED, {
         onCompleted: (data) => {
-            handleDownloadClick(data.projectOrderFileDownload.url);
-            openNotification('topRight', 'success', 'Загрузка начата!');
+            //handleDownloadClick(data.projectOrderFileDownload.url);
+            console.log(data.projectContractGenerated)
+            openNotification('topRight', 'success', <Text>Договор сгенерирован! <Link> Нажмите для
+                загрузки...</Link></Text>);
         },
         onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при загрузке: ' + error.message);
@@ -26,28 +31,45 @@ const ProjectFileDownload  = ({projectId, style, text}) => {
     });
 
     const handleDownload = () => {
-        console.log(projectId);
-        downloadProjectContract({ variables: { id: projectId } });
-    };
-
-    const handleDownloadClick = async (downloadedFileUrl) => {
-        try {
-            const link = document.createElement('a');
-            console.log(link);
-
-            link.href = `${LaravelURL}download-project/${downloadedFileUrl}`;
-
-            link.download = 'contract.docx';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (error) {
-            console.error('Ошибка при скачивании файла:', error);
+        if(!selectedDateContract) {
+            openNotification('topRight', 'error', 'Дата не указана');
+            return;
         }
+        console.log(selectedDateContract);
+        downloadProjectContract({variables: {id: projectId, dateCreateContract: selectedDateContract}});
     };
+
+    // const handleDownloadClick = async (downloadedFileUrl) => {
+    //     try {
+    //         const link = document.createElement('a');
+    //         console.log(link);
+    //
+    //         link.href = `${LaravelURL}download-project/${downloadedFileUrl}`;
+    //
+    //         link.download = 'contract.docx';
+    //         document.body.appendChild(link);
+    //         link.click();
+    //         document.body.removeChild(link);
+    //     } catch (error) {
+    //         console.error('Ошибка при скачивании файла:', error);
+    //     }
+    // };
 
     return (
-        <Link type={"success"} onClick={handleDownload}>{text ?? 'скачать'}</Link>
+        <Popconfirm
+            placement="topLeft"
+            title={"Уточните дату договора"}
+            description={<DatePicker
+                placement={"Выберите дату..."}
+                onChange={(value) => setSelectedDateContract(value && dayjs(value).format("YYYY-MM-DD"))}
+            />}
+            okText="Сгенерировать"
+            okButtonProps={{disabled: !selectedDateContract}}
+            onConfirm={handleDownload}
+            cancelText="Отмена"
+        >
+            <Button loading={loading} {...props}>{children ?? 'скачать'}</Button>
+        </Popconfirm>
     );
 };
 

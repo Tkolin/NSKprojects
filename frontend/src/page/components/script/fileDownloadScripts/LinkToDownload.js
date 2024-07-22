@@ -1,4 +1,4 @@
-import {notification, Typography} from "antd";
+import {Button, notification, Typography} from "antd";
 import {useMutation} from "@apollo/client";
  import {DOWNLOAD_FILE} from "../../../../graphql/mutationsFile";
 
@@ -12,8 +12,9 @@ const LinkToDownload = ({children, fileId, ...props}) => {
             placement,
         });
     };
-    const [downloadFile] = useMutation(DOWNLOAD_FILE, {
+    const [downloadFile, {loading: loading}] = useMutation(DOWNLOAD_FILE, {
         onCompleted: (data) => {
+            console.log(data.downloadFile.url);
             handleDownloadClick(data.downloadFile.url);
             openNotification('topRight', 'success', 'Загрузка начата!');
         },
@@ -22,6 +23,7 @@ const LinkToDownload = ({children, fileId, ...props}) => {
         },
     });
     const handleDownload = () => {
+        console.log(fileId);
          downloadFile({ variables: { id: fileId } });
     };
 
@@ -39,6 +41,6 @@ const LinkToDownload = ({children, fileId, ...props}) => {
         }
     };
 
-    return <Link  onClick={()=>handleDownload()} {...props}>{children}</Link>
+    return <Button loading={loading}    onClick={()=>handleDownload()} {...props}>{children}</Button>
 }
 export default LinkToDownload;

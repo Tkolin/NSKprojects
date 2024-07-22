@@ -1,4 +1,4 @@
-import {Modal, notification, Space, Table, Typography} from "antd";
+import {Button, Modal, notification, Space, Table, Typography} from "antd";
 
 import ProjectTasks from "../../DistributionTasksByProject";
 import ProjectForm from "../../ProjectForm";
@@ -27,9 +27,17 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
     const [projectTasksModalStatus, setProjectTasksModalStatus] = useState(false);
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
     const [currentSort, setCurrentSort] = useState({});
-
+    const [column, setColumn] = useState();
     const navigate = useNavigate();
-
+    useEffect(() => {
+       setColumn(GetFullColumns({
+           permissions: "all",
+           setEditModalStatus: (value)=>setEditModalStatus(value),
+           setProjectTasksModalStatus: (value) => setProjectTasksModalStatus(value),
+           createTemplate: (value) => createTemplate(value),
+           onUpdated: () => refetch()
+       }))
+    }, []);
     const openNotification = (placement, type, message) => {
         notification[type]({
             message: message,
@@ -145,7 +153,7 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
                 }}
                 loading={loading}
                 dataSource={data?.projects?.items?.map((org, index) => ({...org, key: index}))}
-                columns={GetFullColumns("all",setEditModalStatus,setProjectTasksModalStatus, createTemplate)}
+                columns={column}
                 onChange={onChange}
                 pagination={{
                     total: data?.projects?.count,

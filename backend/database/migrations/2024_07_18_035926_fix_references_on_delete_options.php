@@ -27,8 +27,8 @@ return new class extends Migration {
         Schema::dropIfExists('sections_reference');//+
         Schema::dropIfExists('references');//+
 
-        Schema::dropIfExists('project_delegations');//+
-        Schema::dropIfExists('project_facilities');//+
+        Schema::dropIfExists('project_delegations');//++
+        Schema::dropIfExists('project_facilities');//++
         Schema::dropIfExists('project_fenrirs');//+
         Schema::dropIfExists('project_irds');//+
         Schema::dropIfExists('project_stages');//+
