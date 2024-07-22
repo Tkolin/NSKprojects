@@ -19,10 +19,7 @@ const TableIrds = ({setEditModalStatus, project}) => {
                 </Tooltip>
                 <Link type={"warning"}>
 
-                    <EditOutlined onClick={() => setEditModalStatus && setEditModalStatus({
-                        type: "irds",
-                        project: project
-                    })}/>
+                    <EditOutlined onClick={() => setEditModalStatus && setEditModalStatus()}/>
                 </Link>
             </Space>,
         children: [

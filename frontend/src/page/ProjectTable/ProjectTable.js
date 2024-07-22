@@ -7,7 +7,7 @@ import Search from "antd/es/input/Search";
 import index from "../CreateNewCommercialOffer";
 
 
-const ProjectTable = ({projectStatuses}) => {
+const ProjectTable = ({projectStatuses, options}) => {
         const [formSearch] = Form.useForm();
         const [search, setSearch] = useState('');
         return (
@@ -26,7 +26,7 @@ const ProjectTable = ({projectStatuses}) => {
                         </Space>
                     </Form.Item>
                 </Form>
-                <ProjectTableComponent projectStatuses={projectStatuses} search={search}/>
+                <ProjectTableComponent projectStatuses={projectStatuses} options={options} search={search}/>
             </div>
 
         )

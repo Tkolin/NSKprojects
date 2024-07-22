@@ -26,6 +26,11 @@ const createApolloClient = () => {
         link: authLink.concat(httpLink),
         cache: new InMemoryCache({
             typePolicies: {
+                Passport: {
+                    merge(existing = [], incoming) {
+                        return incoming;
+                    }
+                },
                 Project: {
                     fields: {
                         project_irds: {
@@ -41,7 +46,7 @@ const createApolloClient = () => {
                         project_tasks: {
                             merge(existing = [], incoming) {
                                 return incoming;
-                            }
+                             }
                         }
                     }
                 }

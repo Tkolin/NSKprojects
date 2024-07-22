@@ -29,9 +29,11 @@ final readonly class ProjectTaskDetailUpdate
         $projectTask = ProjectTasks::findOrFail($data['id']);
 
         // Обновляем модель с использованием fill и затем вызываем save
-        $dateStart = $data['date_start'] ?? $projectTask->date_startl;
-        $dateEnd = $data['date_end'] ?? $projectTask->date_end;
-        $duration = (new \DateTime($dateStart))->diff(new \DateTime($dateEnd))->days;
+        $duration =$item['duration'] ?? 0;
+        $dateStart = $item['date_start'] ?? $task->date_start ?? null;
+        $dateEnd = $item['date_end'] ?? $task->date_end ?? null;
+        $duration = !(isset($dateStart) && isset($dateEnd)) ? $duration : (new \DateTime($dateStart))->diff(new \DateTime($dateEnd))->days;
+
 
         $projectTask->fill(array_filter([
             'description' => $data['description'] ?? $projectTask->description,

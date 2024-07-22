@@ -244,6 +244,7 @@ export const PROJECTS_QUERY = gql`
                 project_tasks {
                     id
                     project_id
+                    task_id
                     task {
                         id
                         name

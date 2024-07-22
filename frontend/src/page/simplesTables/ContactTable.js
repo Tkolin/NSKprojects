@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Divider, Form, notification, Space, Table} from 'antd';
+import {Divider, Form, Modal, notification, Space, Table} from 'antd';
 import {CONTACTS_QUERY} from '../../graphql/queries';
 import {DELETE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
 import Search from "antd/es/input/Search";
@@ -11,6 +11,7 @@ import {DeleteAndEditStyledLinkManagingDataTable} from "../components/style/Tabl
 import ContactModalForm from "../components/modal/ContactModalForm";
 import {nanoid} from "nanoid";
 import {NotificationContext} from "../../NotificationProvider";
+import ContactForm from "../components/form/modelsForms/ContactForm";
 
 const ContactTable = () => {
 
@@ -165,14 +166,29 @@ const ContactTable = () => {
                 pageSizeOptions: ['10', '50', '100'],
             }}
         />
-        <ContactModalForm
-            key={contactModalStatus?.contact?.id ?? nanoid()}
-            onClose={() => {
-                setContactModalStatus(null);
-            }}
-            object={contactModalStatus?.contact ?? null}
-            mode={contactModalStatus?.mode ?? null}
-        />
+        <Modal
+            key={nanoid()}
+            open={contactModalStatus?.mode === "add" || contactModalStatus?.mode === "edit"}
+            onCancel={() => setContactModalStatus(null)}
+            footer={null}
+            width={"500px"}
+            title={"Контакт"}
+            styles={{header: {textAlign: "center"} }}
+        >
+            {contactModalStatus?.mode === "edit" ? (
+                (contactModalStatus?.contact  ) && (
+                    <ContactForm
+                        onCompleted={() =>
+                            setContactModalStatus(null)}
+                        initialObject={contactModalStatus?.contact  }
+                        localObject={contactModalStatus?.contact}
+                    />
+                )
+            ) : (
+                <ContactForm  onCompleted={()=> setContactModalStatus(null)}/>
+            )}
+        </Modal>
+
     </div>);
 };
 export default ContactTable;

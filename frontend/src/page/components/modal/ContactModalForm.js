@@ -4,14 +4,13 @@ import {Modal} from "antd";
 import ContactForm from "../form/modelsForms/ContactForm";
 import {nanoid} from "nanoid";
 
-const ContactModalForm = ({key,object,objectId,onClose, mode, onCompleted}) => {
+const ContactModalForm = ({object,objectId,onClose, mode, onCompleted}) => {
     return (
         <Modal
-            key={key ?? nanoid()}
+            key={nanoid()}
             open={mode === "add" || mode === "edit"}
             onCancel={() => onClose(null)}
             footer={null}
-            onClose={() => onClose(null)}
             width={"500px"}
              title={"Контакт"}
             styles={{header: {textAlign: "center"} }}

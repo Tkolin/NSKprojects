@@ -98,20 +98,18 @@ const BaseStyledButton = ({onClick, icon, style, disabled}) => (
 const CustomAutoCompleteAndCreate = ({
 
                                          firstBtnOnClick,
+                                         onChange,
+                                         size,
                                          ...props
                                      }) =>
 
     (<Space.Compact style={{width: "100%", marginBottom: 0}}>
-
             <CustomAutoCompleteComponent
-
-
                 width={"calc(100% - 32px)"}
-                onChange={props?.onChange && props?.onChange()}
+                onChange={onChange}
                 {...props}/>
-
             <BaseStyledButtonGreen onClick={firstBtnOnClick}
-                                   size={props?.size}
+                                   size={size}
                                    icon={<PlusOutlined/>}/>
         </Space.Compact>
     );
@@ -124,7 +122,7 @@ const CustomAutoComplete = ({
     return (
     <CustomAutoCompleteComponent
         width={"calc(100%+64px)"}
-        onChange={onChange && onChange}
+        onChange={onChange}
         {...props}/>
 
 )};
@@ -141,7 +139,7 @@ const CustomAutoCompleteAndCreateWitchEdit = ({
         <Space.Compact style={{width: "100%", marginBottom: 0}}>
             <CustomAutoCompleteComponent
                 width={"calc(100% - 64px)"}
-                onChange={onChange && onChange}
+                onChange={onChange}
                 {...props}/>
 
             <BaseStyledButtonGreen onClick={firstBtnOnClick}

@@ -74,6 +74,7 @@ export const ADD_PROJECT_MUTATION = gql`
             }
             project_tasks {
                 id
+                task_id
                 date_start
                 duration
                 date_end
@@ -170,6 +171,7 @@ export const UPDATE_PROJECT_MUTATION = gql`
             }
             project_tasks {
                 id
+                task_id
                 date_start
                 duration
                 date_end
@@ -197,8 +199,8 @@ export const PROJECT_TASKS_DETAIL_UPDATE = gql`
     mutation ProjectTaskDetailUpdate($data: TaskToProjectDetailInput!) {
         projectTaskDetailUpdate(data: $data) {
             id
-            description
             price
+            task_id
             date_start
             duration
             date_end
@@ -212,8 +214,6 @@ export const PROJECT_TASKS_DETAIL_UPDATE = gql`
                 }
             }
         }
-
-
     }
 `;
 export const PROJECT_TASKS_STRUCTURE_UPDATE = gql`
@@ -222,6 +222,7 @@ export const PROJECT_TASKS_STRUCTURE_UPDATE = gql`
             id
             project_tasks {
                 id
+                task_id
                 project_task_inherited_id
                 task {
                     id

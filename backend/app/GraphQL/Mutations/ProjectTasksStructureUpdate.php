@@ -44,9 +44,10 @@ final readonly class ProjectTasksStructureUpdate
                     'project_id' => $projectId,
                 ];
             }
+            $duration =$item['duration'] ?? 0;
             $dateStart = $item['date_start'] ?? $task->date_start ?? null;
             $dateEnd = $item['date_end'] ?? $task->date_end ?? null;
-            $duration = !(isset($dateStart) && isset($dateEnd)) ? $item['duration'] : (new \DateTime($dateStart))->diff(new \DateTime($dateEnd))->days;
+            $duration = !(isset($dateStart) && isset($dateEnd)) ? $duration : (new \DateTime($dateStart))->diff(new \DateTime($dateEnd))->days;
             $task = ProjectTasks::updateOrCreate(
                 [
                     'task_id' => $task['task_id'],
@@ -75,7 +76,7 @@ final readonly class ProjectTasksStructureUpdate
         // Удаление задач, которые не присутствуют в новом списке
         $actualIds = array_column($actualTasks, 'id');
         if($actualIds) {
-            ProjectTasks::query()->whereNotIn('id',$actualIds)->delete();
+            ProjectTasks::query()->where('project_id',$projectId)->whereNotIn('id',$actualIds)->delete();
         }
 
         return Project::with('project_tasks')->find($projectId);

@@ -1,7 +1,6 @@
-import {Button, Modal, notification, Space, Table, Typography} from "antd";
+import { Modal, notification, Space, Table, Typography} from "antd";
 
-import ProjectTasks from "../../DistributionTasksByProject";
-import ProjectForm from "../../ProjectForm";
+
 import IrdsProjectForm from "../../IrdToProjectForm";
 import StageToProjectForm from "../../StageToProjectForm";
 import React, {useEffect, useState} from "react";
@@ -9,34 +8,46 @@ import TableStages from "./TableStages";
 import TableIrds from "./TableIrds";
 import TableExecutors from "./TableExecutors";
 import {useNavigate} from "react-router-dom";
-import {useMutation, useQuery} from "@apollo/client";
-import {CHANGE_TEMPLATE_TYPE_PROJECT} from "../../../graphql/mutationsProject";
+import { useQuery} from "@apollo/client";
 import {PROJECTS_QUERY} from "../../../graphql/queries";
 import {nanoid} from "nanoid";
-import {GetFullColumns} from "./TableColumn";
+import {GetColumns} from "./TableColumn";
 
 const {Text} = Typography;
 
-const ProjectTableComponent = ({projectStatuses, search}) => {
+const ProjectTableComponent = ({projectStatuses, mode, search, options}) => {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [sortField, setSortField] = useState('');
     const [sortOrder, setSortOrder] = useState('');
-    const [editModalStatus, setEditModalStatus] = useState({});
 
-    const [projectTasksModalStatus, setProjectTasksModalStatus] = useState(false);
+
+
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
     const [currentSort, setCurrentSort] = useState({});
     const [column, setColumn] = useState();
     const navigate = useNavigate();
     useEffect(() => {
-       setColumn(GetFullColumns({
-           permissions: "all",
-           setEditModalStatus: (value)=>setEditModalStatus(value),
-           setProjectTasksModalStatus: (value) => setProjectTasksModalStatus(value),
-           createTemplate: (value) => createTemplate(value),
-           onUpdated: () => refetch()
-       }))
+        setColumn(
+            GetColumns({
+                options: options,
+                permissions: "all",
+                onUpdated: () => refetch()
+            }))
+        // switch (mode) {
+        //     case "full":
+        //
+        //         break;
+        //     case "request":
+        //         break;
+        //     case "approval_kp":
+        //         break;
+        //     case "approval_agreement":
+        //         break;
+        //     case "working":
+        //         break;
+        // }
+
     }, []);
     const openNotification = (placement, type, message) => {
         notification[type]({
@@ -45,7 +56,39 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
         });
     };
 
+    const ExpandedRowRenderComponent = ({project}) => {
+        const [editModalStatus, setEditModalStatus] = useState();
 
+        return (
+            <>
+                <Space.Compact  direction={"horizontal"}>
+                    <TableStages data-permission={"read-project-stage"} project={project}
+                                 setEditModalStatus={()=>setEditModalStatus("stages")}/>
+                    <TableIrds data-permission={"read-project-ird"} project={project}
+                               setEditModalStatus={()=>setEditModalStatus("irds")}/>
+                    <TableExecutors data-permission={"read-project-task-executor"}
+                                    project={project}
+                                    setEditModalStatus={()=>setEditModalStatus("executor")}/>
+                </Space.Compact>
+
+                <Modal
+                    key={nanoid()}
+                    open={editModalStatus}
+                    onCancel={() => setEditModalStatus(null)}
+                    footer={null}
+                    title={getNameModalView(editModalStatus)}
+                    width={editModalStatus === "project" ? 500 : 1300}
+                    onClose={() => setEditModalStatus(null)}
+                >
+                    {renderEditModalContent({
+                        project: project,
+                        model: editModalStatus,
+                        onCompleted: () => setEditModalStatus(null)
+                    })}
+                </Modal>
+            </>
+        )
+    }
     // Мутация для удаления
 
     const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(PROJECTS_QUERY, {
@@ -59,28 +102,18 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
                 sortOrder
             }
         },
-        fetchPolicy: "cache-and-network",
+        fetchPolicy: "network-а",
         onCompleted: (data) => {
             console.log("queri IPA", data);
         }
     });
-    const [mutateChangeTemplate] = useMutation(CHANGE_TEMPLATE_TYPE_PROJECT, {
-        onCompleted: (data) => {
-            openNotification('topRight', 'success', `Шаблон изменён`);
-        },
-        onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при изменении шаблона : ${error.message}`);
-        },
-    });
+
     // useEffect(() => {
     //     if (!editModalStatus)
     //         refetch();
     // }, [editModalStatus]);
 
-    const createTemplate = (projectId, typeProjectId) => {
-        if (projectId && typeProjectId)
-            mutateChangeTemplate({variables: {typeProject: typeProjectId, newTemplate: projectId}});
-    }
+
     const getNameModalView = (type) => {
         switch (type) {
             case 'project':
@@ -96,25 +129,23 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
         }
     }
 // Таблица
+    const renderEditModalContent = ({project, model, onCompleted}) => {
+        const commonProps = {
+            onCompleted: () => onCompleted(),
+            project: project,
+        };
+
+        switch (model) {
+            case 'irds':
+                return <IrdsProjectForm {...commonProps} />;
+            case 'stages':
+                return <StageToProjectForm {...commonProps} />;
+            default:
+                return null;
+        }
+    };
 
 
-
-
-    const expandedRowRender = (project) => {
-        return (
-            <Space.Compact direction={"horizontal"}>
-                <TableStages data-permission={"read-project-stage"} project={project}
-                             setEditModalStatus={setEditModalStatus}/>
-                <TableIrds data-permission={"read-project-ird"} project={project}
-                           setEditModalStatus={setEditModalStatus}/>
-                <TableExecutors data-permission={"read-project-task-executor"}
-                                //onUpdated={refetch()}
-                                project={project}
-                                setEditModalStatus={setEditModalStatus}/>
-            </Space.Compact>
-
-        )
-    }
 
     const onChange = (pagination, filters, sorter) => {
         if ((sorter.field !== undefined) && currentSort !== sorter) {
@@ -154,6 +185,8 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
                 loading={loading}
                 dataSource={data?.projects?.items?.map((org, index) => ({...org, key: index}))}
                 columns={column}
+                bordered
+
                 onChange={onChange}
                 pagination={{
                     total: data?.projects?.count,
@@ -172,71 +205,21 @@ const ProjectTableComponent = ({projectStatuses, search}) => {
                 }}
                 expandable={{
                     expandedRowKeys,
+                    columnWidth: 32,
                     onExpand: (expanded, record) => {
                         const keys = expanded ? [record.key] : [];
                         setExpandedRowKeys(keys);
                     },
                     expandedRowRender: (record) => (
-                        <div style={{padding: 2}}>
-                            {expandedRowRender(record)}
-                        </div>
+                        <Space block style={{padding: 2, width: "100%"}}>
+                            <ExpandedRowRenderComponent project={record} />
+                        </Space>
                     ),
                 }}
             />
-            <Modal
-                key={projectTasksModalStatus?.project?.id}
-                open={projectTasksModalStatus?.mode}
-                onCancel={() => setProjectTasksModalStatus({
-                    project_id: null,
-                    mode: null,
-                })}
-                footer={null}
-                width={1400}
-                title={"Создание задач"}
-                onClose={() => setProjectTasksModalStatus({
-                    project_id: null,
-                    mode: null,
-                })}
-            >
-                <ProjectTasks //onChange={() => refetch()}
-                              project={data?.projects?.items?.find(row => row.id === projectTasksModalStatus.project_id)}/>
-            </Modal>
-            <Modal
-                key={nanoid()}
-                open={editModalStatus?.type}
-                onCancel={() => setEditModalStatus(null)}
-                footer={null}
-                title={getNameModalView(editModalStatus?.type)}
-                width={editModalStatus?.type === "project" ? 500 : 1300}
-                onClose={() => setEditModalStatus(null)}
-            >
-                {renderEditModalContent({
-                    project: editModalStatus?.project,
-                    model: editModalStatus?.type,
-                    onCompleted: ()=>setEditModalStatus(null)})}
-            </Modal>
-
         </div>
     );
 }
-const renderEditModalContent = ({project, model, onCompleted}) => {
-    const commonProps = {
-        onCompleted: () => onCompleted(),
-        project: project,
-    };
 
-    switch (model) {
-        case 'project':
-            return <ProjectForm style={{width: '500px'}} {...commonProps} />;
-        case 'irds':
-            return <IrdsProjectForm {...commonProps} />;
-        case 'stages':
-            return <StageToProjectForm {...commonProps} />;
-        case 'tasks':
-            return <ProjectTasks {...commonProps} />;
-        default:
-            return null;
-    }
-};
 
 export default ProjectTableComponent;

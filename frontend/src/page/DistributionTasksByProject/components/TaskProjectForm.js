@@ -14,6 +14,7 @@ import dayjs from "dayjs";
 import {NotificationContext} from "../../../NotificationProvider";
 import Link from "antd/es/typography/Link";
 import {PROJECT_TASKS_DETAIL_UPDATE} from "../../../graphql/mutationsProject";
+import {PROJECTS_QUERY} from "../../../graphql/queries";
 
 const {Text} = Typography;
 

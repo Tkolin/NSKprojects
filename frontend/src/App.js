@@ -25,13 +25,23 @@ import {NotificationProvider} from "./NotificationProvider";
 import moment from "moment";
 import RequestPage from "./page/simplesForms/RequestPage";
 import ProjectTableComponent from "./page/ProjectTable/components/ProjectTableComponent";
- import UserTable from "./page/simplesTables/UserTable";
+import UserTable from "./page/simplesTables/UserTable";
 import RoleTable from "./page/simplesTables/RoleTable";
 import RolePage from "./page/simplesForms/RolePage";
 import {PermissionsProvider} from "./permission/PermissionsProvider";
 import usePermissionHider from "./permission/usePermissionHider";
 import OrderExecutorManager from "./page/OrderExecutorManager";
+import ProjectForm from "./page/ProjectForm";
 
+const GlobalStyles = createGlobalStyle`
+    body {
+        margin: 0;
+    }
+
+    //[data-permission] {
+    //    display: none; /* Скрываем элементы по умолчанию */
+    //}
+`;
 
 const App = () => {
     const cookies = new Cookies();
@@ -55,15 +65,7 @@ const App = () => {
 
     moment.locale('ru');
 
-    const GlobalStyles = createGlobalStyle`
-        body {
-            margin: 0;
-        }
 
-        //[data-permission] {
-        //    display: none; /* Скрываем элементы по умолчанию */
-        //}
-    `;
     return (
         <PermissionsProvider permissions={data?.currentUser?.permissions?.map(row => row.name_key) ?? null}>
 
@@ -94,26 +96,32 @@ const App = () => {
                                 {/*Проекты*/}
                                 <Route path="/project" element={<Home/>}/>
 
-                                <Route path="/project/extra" element={<ProjectTable/>}/>
+                                <Route path="/project/extra" element={<ProjectTable 
+                                    options={["progress", "tool", "main", "customer", "status", "price"]}/>}/>
 
                                 <Route path="/project/request" element={<Home/>}/>
                                 <Route path="/project/request/table"
-                                       element={<ProjectTableComponent projectStatuses={"DESIGN_REQUEST"}/>}/>
+                                       element={<ProjectTable projectStatuses={"DESIGN_REQUEST"}
+                                                              options={["main", "customer"]}/>}/>
                                 <Route path="/project/request/form" element={<RequestPage/>}/>
 
                                 <Route path="/project/kp" element={<Home/>}/>
                                 <Route path="/project/kp/table"
-                                       element={<ProjectTableComponent projectStatuses={"APPROVAL_KP"}/>}/>
+                                       element={<ProjectTable projectStatuses={"APPROVAL_KP"}
+                                                              options={["main", "customer"]}/>}/>
                                 <Route path="/project/kp/form" element={<Home/>}/>
 
                                 <Route path="/project/contract" element={<Home/>}/>
                                 <Route path="/project/contract/table"
-                                       element={<ProjectTableComponent projectStatuses={"APPROVAL_AGREEMENT"}/>}/>
+                                       element={<ProjectTable projectStatuses={"APPROVAL_AGREEMENT"}
+                                                              options={["main", "customer"]}/>}/>
                                 <Route path="/project/contract/form" element={<Home/>}/>
 
                                 <Route path="/project/work" element={<Home/>}/>
                                 <Route path="/project/work/table"
-                                       element={<ProjectTableComponent projectStatuses={"WORKING"}/>}/>
+                                       element={<ProjectTable projectStatuses={"WORKING"}
+                                                              options={["main", "customer"]}/>}/>
+
                                 <Route path="/project/work/form" element={<Home/>}/>
                                 {/*Учётки*/}
                                 <Route path="/user/person/table" element={<UserTable/>}/>
@@ -126,7 +134,7 @@ const App = () => {
 
 
                                 {/*Тестирование*/}
-                                <Route path="/test/test1" element={<OrderExecutorManager/>}/>
+                                <Route path="/test/test1" element={<ProjectForm/>}/>
                                 <Route path="/test/test2" element={<LoginPage/>}/>
                             </Routes>
                         </CustomLayout>

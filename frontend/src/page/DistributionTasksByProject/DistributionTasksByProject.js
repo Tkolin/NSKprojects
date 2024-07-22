@@ -10,7 +10,7 @@ import {useLazyQuery} from "@apollo/client";
 import {PROJECTS_QUERY_BY_ID} from "../../graphql/queriesByID";
 import TasksChartForm from "./components/TasksChartForm";
 
-const DistributionTasksByProject = ({project, onCompleted}) => {
+const DistributionTasksByProject = ({project}) => {
     const {openNotification} = useContext(NotificationContext);
     const {token} = theme.useToken();
     // Хранилище
@@ -19,24 +19,6 @@ const DistributionTasksByProject = ({project, onCompleted}) => {
     const [loading, setLoading] = useState(false)
     const [newCurrent, setNewCurrent] = useState(current)
     // Мутация
-    //
-    // // TODO: Для проверки
-    // const [loadContext, {data: data}] = useLazyQuery(PROJECTS_QUERY_BY_ID, {
-    //     variables: {id: project.id},
-    //     onCompleted: (data) => {
-    //         openNotification('topRight', 'success', `Данные подгружены.`);
-    //
-    //     },
-    //     onError: (error) => {
-    //         openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
-    //     },
-    // });
-    // useEffect(() => {
-    //     console.log("./useEffect", project);
-    //     if (project?.id)
-    //         loadContext();
-    // }, [project]);
-
     const handleStage = (steps) => {
         setNewCurrent(steps)
         switch (current) {
@@ -118,7 +100,7 @@ const DistributionTasksByProject = ({project, onCompleted}) => {
                         <Card title={"Первичная настройка задач"}>
 
                             <NewTasksToProjectForm
-                                onCompleted={onCompleted && onCompleted()}
+                                //onCompleted={onCompleted}
                                 actualProject={project}
                                 setLoading={setLoading}/>
                         </Card>
@@ -129,7 +111,7 @@ const DistributionTasksByProject = ({project, onCompleted}) => {
                     current === 1 ? (
                             <Card title={"Распределение задач по сотрудникам"}>
                                 <EmployeeToTasksForm
-                                    onCompleted={() => onCompleted && onCompleted()}
+                                    //onCompleted={onCompleted}
                                     actualProject={project}
                                     setLoading={setLoading}/>
                             </Card>

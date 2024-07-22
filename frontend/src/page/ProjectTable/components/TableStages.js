@@ -22,10 +22,7 @@ const TableStages = ({setEditModalStatus,project}) => {
                 </Tooltip>
                 <Link type={"warning"}>
                     <EditOutlined
-                        onClick={() => setEditModalStatus && setEditModalStatus({
-                            type: "stages",
-                            project:  project
-                        })}/>
+                        onClick={() => setEditModalStatus && setEditModalStatus()}/>
                 </Link>
             </Space>,
         children: [

@@ -9,7 +9,7 @@ import {NotificationContext} from "../../../NotificationProvider";
 const {Text} = Typography;
 
 
-const EmployeeToTasksForm = ({actualProject, setLoading, onChange}) => {
+const EmployeeToTasksForm = ({actualProject, setLoading, onCompleted}) => {
 
     //Вынести за компонент
     const [form] = Form.useForm();
@@ -85,13 +85,13 @@ const EmployeeToTasksForm = ({actualProject, setLoading, onChange}) => {
 
 
     return (
-        <Form form={form} style={{width: "100%"}} onChange={() => console.log("onChange")}>
+        <Form form={form} style={{width: "100%"}}>
             <Divider>Статистика</Divider>
             <Space>
-                <TasksPriceTotal data={{
-                    project_tasks: actualProject?.project_tasks,
-                    project_stages: actualProject?.project_stages
-                }}/>
+                <TasksPriceTotal
+                    projectTasks={actualProject?.project_tasks}
+                    projectStages={actualProject?.project_stages}
+                />
             </Space>
             <Divider>Распределение</Divider>
             <Row gutter={4}>
@@ -110,7 +110,7 @@ const EmployeeToTasksForm = ({actualProject, setLoading, onChange}) => {
                 <Col span={14}>
                     <Card title={"Параметры"}>
                         <TaskProjectForm
-                            onChange={() => onChange && onChange()}
+                            onCompleted={onCompleted}
                             mainTaskToProject={
                                 checkedTasksId &&
                                 !isTaskExclusivity(checkedTasksId, actualProject.project_tasks) &&

@@ -1,4 +1,17 @@
-import {Button, Card, DatePicker, Divider, Popconfirm, Row, Space, Tooltip, Typography, Upload} from "antd";
+import {
+    Button,
+    Card,
+    DatePicker,
+    Divider,
+    Modal,
+    notification,
+    Popconfirm,
+    Row,
+    Space,
+    Tooltip,
+    Typography,
+    Upload
+} from "antd";
 import Link from "antd/es/typography/Link";
 import {
     DeleteOutlined, DownloadOutlined,
@@ -11,29 +24,60 @@ import Title from "antd/es/typography/Title";
 import ProjectFileDownload from "../../components/script/fileDownloadScripts/ProjectFileDownload";
 import {facilitiesToFullCode} from "../../components/script/rebuildData/ProjectRebuilderQuery";
 import dayjs from "dayjs";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {StyledButtonGreen} from "../../components/style/ButtonStyles";
 import {UploadFileExecutorOrder, UploadFileProjectContractSigned} from "../../components/UploadFile";
 import LinkToDownload from "../../components/script/fileDownloadScripts/LinkToDownload";
-import {useLazyQuery} from "@apollo/client";
+import {useLazyQuery, useMutation} from "@apollo/client";
 import {BIKS_QUERY_BY_ID, PROJECTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
+import {CHANGE_TEMPLATE_TYPE_PROJECT} from "../../../graphql/mutationsProject";
+import ProjectTasks from "../../DistributionTasksByProject";
+import {nanoid} from "nanoid";
+import ProjectForm from "../../ProjectForm";
+import IrdsProjectForm from "../../IrdToProjectForm";
+import StageToProjectForm from "../../StageToProjectForm";
+import {ColumnToolRender} from "./columns/ColumnToolRender";
 
 const formatCurrency = (amount) => {
     return amount.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'});
 };
 const {Text} = Typography;
+// progress
+// tool
+// main
+// customer
+// status
+// price
 
+
+export const GetColumns = ({
+                               options,
+                               columnSizes,
+                               permissions,
+                               toolProps,
+
+                               onUpdated
+                           }
+) => {
+    //TODO:
+    const columns = options.map(row=>row.name);
+    const countColumns = options.length;
+    options.includes("tool") && columns.push(columnToolComponent({width:"32px", ...toolProps}));
+    options.includes("main") && columns.push(columnMainDataComponent({width: "50%", onUpdated: () => onUpdated()}));
+    options.includes("customer") && columns.push(columnCustomerComponent({width: "15%"}));
+    options.includes("progress") && columns.push(columnProgressComponent({width: "5%"}));
+    options.includes("status") && columns.push(columnStatusComponent({width: "10%"}));
+    options.includes("price") && columns.push(columnPriceComponent({width: "15%"}));
+    return columns;
+}
 export const GetFullColumns = ({
                                    permissions,
-                                   setEditModalStatus,
-                                   setProjectTasksModalStatus,
-                                   createTemplate,
                                    onUpdated
                                }
 ) => ([
 
     //columnProgressComponent("5%"),
-    columnToolComponent("20px", setEditModalStatus, setProjectTasksModalStatus, createTemplate),
+    //columnToolComponent("20px"),
     columnMainDataComponent({width: "60%", onUpdated: () => onUpdated()}),
     columnCustomerComponent("15%"),
     columnStatusComponent("10%"),
@@ -91,89 +135,16 @@ const columnProgressComponent = (width = "8%") => ({
         }
     }
 })
-const columnToolComponent = (width = "2%", setEditModalStatus, setProjectTasksModalStatus, createTemplate) =>
-    ({
+
+const columnToolComponent = ({width = "2%", toolProps}) => {
+    return {
         key: 'edit',
         width: width,
-        render: (text, record) => (
-            <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
-                <Link>
-                    <Tooltip title={"Изменить данные проекта"}>
-                        <EditOutlined
-                            onClick={() => {
-                                setEditModalStatus({
-                                    type: "project",
-                                    project: record
-                                })
-                                console.log("dsa");
-                            }}/>
-                    </Tooltip>
-
-                </Link>
-                <Link type={"secondary"}>
-                    <Tooltip title={"Удаление недоступно (администратор)"}>
-
-                        <DeleteOutlined/>
-                    </Tooltip>
-                </Link>
-                <div>
-                    {!(record.project_stages.find(row => {
-                        return (row.date_end && row.date_start)
-                    })) ? (
-                        <Link type={"danger"}>
-                            <Tooltip title={"Недостаточно данных об этапах, для создания задач"}>
-                                <ReconciliationOutlined/>
-                            </Tooltip>
-                        </Link>
-                    ) : (
-                        <Link>
-                            <Tooltip title={"Создать задачи"}>
-                                <ReconciliationOutlined onClick={() => {
-                                    setProjectTasksModalStatus({
-                                        project_id: record.id,
-                                        mode: "create",
-                                    })
-                                }}/>
-                            </Tooltip>
-                        </Link>
-                    )}
-                </div>
-                <div>
-                    {record.id === record?.type_project_document?.template_project_id ?
-                        (
-                            <Row style={{margin: 'auto'}}>
-                                <Tooltip title={"Является шаблоном"}>
-                                    <Link type={"secondary"}>
-                                        <PushpinFilled/>
-                                    </Link>
-                                </Tooltip>
-                            </Row>)
-                        :
-                        <Row style={{margin: 'auto'}}>
-                            <Tooltip title={"Установить как шаблон"}>
-                                <Popconfirm
-                                    title={"Создание шаблона на основе этого проекта"}
-                                    description={"Вы уверены? это изменит существующий шаблон!"}
-                                    onConfirm={() => createTemplate(record.id, record?.type_project_document?.id)}
-                                    icon={
-                                        <Text type={"danger"}>
-                                            <PushpinOutlined/>
-                                        </Text>
-                                    }
-                                >
-                                    <Link>
-                                        <PushpinOutlined/>
-                                    </Link>
-                                </Popconfirm>
-                            </Tooltip>
-
-                        </Row>
-
-                    }
-                </div>
-            </Space.Compact>
-        ),
-    })
+        render: (text, record) => <>
+            <ColumnToolRender text={text} record={record} {...toolProps}/>
+        </>,
+    }
+}
 const columnMainDataComponent = ({width = "48%", onUpdated}) =>
     ({
         title: 'Основные данные',
@@ -191,50 +162,50 @@ const columnMainDataComponent = ({width = "48%", onUpdated}) =>
                 const fileId = maxNumberRecord ? maxNumberRecord.file_id : null;
 
                 return (
-                        <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
-                            <Title level={5} style={{marginTop: 0}}>{record.name}</Title>
-                            <Divider style={{margin: "3px"}}/>
-                            <Text>{record.number}</Text>
-                            <Text>({record.type_project_document?.code ?? ""}) {record.type_project_document?.name ?? ""}</Text>
-                            <Divider style={{margin: "3px", marginBottom: 0}}/>
-                            <Space.Compact direction={"horizontal"}>
-                                {record?.signed_file_id ? (
-                                        <>
-                                            <LinkToDownload fileId={record.signed_file_id}>Скачать (подписан)
-                                                от {record.date_signing}</LinkToDownload>
-                                        </>
-                                    ) :
-                                    (
-                                        <>
-                                            <ProjectFileDownload projectId={record.id} icon={<PlusOutlined/>}>Сгенерировать
-                                                договор</ProjectFileDownload>
-                                            {(fileId) ?
-                                                (<>
-                                                        <UploadFileProjectContractSigned
-                                                            type={"primary"}
-                                                            icon={<UploadOutlined/>}
-                                                            onUpdated={() => onUpdated()}
-                                                            projectId={record.id}>Загрузить
-                                                            подписанный файл</UploadFileProjectContractSigned>
+                    <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
+                        <Title level={5} style={{marginTop: 0}}>{record.name}</Title>
+                        <Divider style={{margin: "3px"}}/>
+                        <Text>{record.number}</Text>
+                        <Text>({record.type_project_document?.code ?? ""}) {record.type_project_document?.name ?? ""}</Text>
+                        <Divider style={{margin: "3px", marginBottom: 0}}/>
+                        <Space.Compact direction={"horizontal"}>
+                            {record?.signed_file_id ? (
+                                    <>
+                                        <LinkToDownload fileId={record.signed_file_id}>Скачать (подписан)
+                                            от {record.date_signing}</LinkToDownload>
+                                    </>
+                                ) :
+                                (
+                                    <>
+                                        <ProjectFileDownload projectId={record.id} icon={<PlusOutlined/>}>Сгенерировать
+                                            договор</ProjectFileDownload>
+                                        {(fileId) ?
+                                            (<>
+                                                    <UploadFileProjectContractSigned
+                                                        type={"primary"}
+                                                        icon={<UploadOutlined/>}
+                                                        onUpdated={() => onUpdated()}
+                                                        projectId={record.id}>Загрузить
+                                                        подписанный файл</UploadFileProjectContractSigned>
 
-                                                        <LinkToDownload
-                                                            fileId={fileId}
-                                                            icon={<DownloadOutlined/>}>Скачать
-                                                            последний вариант</LinkToDownload>
-                                                        <Button icon={<MoreOutlined/>}/>
-                                                    </>
-                                                ) :
-                                                (
-                                                    <>
-                                                    </>
-                                                )}
+                                                    <LinkToDownload
+                                                        fileId={fileId}
+                                                        icon={<DownloadOutlined/>}>Скачать
+                                                        последний вариант</LinkToDownload>
+                                                    <Button icon={<MoreOutlined/>}/>
+                                                </>
+                                            ) :
+                                            (
+                                                <>
+                                                </>
+                                            )}
 
-                                        </>
-                                    )}
+                                    </>
+                                )}
 
-                            </Space.Compact>
                         </Space.Compact>
-               )
+                    </Space.Compact>
+                )
             }
 
     })

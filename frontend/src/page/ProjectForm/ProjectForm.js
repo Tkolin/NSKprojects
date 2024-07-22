@@ -4,8 +4,7 @@ import {
 } from 'antd';
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 
-import {DatePicker} from "antd/lib";
-import dayjs from "dayjs";
+ import dayjs from "dayjs";
 import {NotificationContext} from "../../NotificationProvider";
 import {
     CONTACTS_QUERY_COMPACT, GROUP_TYPE_PROJECTS_QUERY_COMPACT,
@@ -18,14 +17,12 @@ import {CustomAutoCompleteAndCreate} from "../components/style/SearchAutoComplet
 import {EmptyFormItem} from "../components/formComponents/EmptyFormItem";
 
 import OrganizationModalForm from "../components/modal/OrganizationModalForm";
-import TypeProjectModalForm from "../components/modal/TypeProjectModalForm";
-import ContactModalForm from "../components/modal/ContactModalForm";
+ import ContactModalForm from "../components/modal/ContactModalForm";
 import FacilitiesTreeComponent from "./components/FacilitiesTreeComponent";
 import DateRangePickerComponent from "../components/DateRangePickerComponent";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {PlusOutlined} from "@ant-design/icons";
-import {nanoid} from "nanoid";
-import {ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION} from "../../graphql/mutationsProject";
+ import {ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION} from "../../graphql/mutationsProject";
 import {rebuildProjectResultQuery, rebuildProjectToQuery} from "../components/script/rebuildData/ProjectRebuilderQuery";
 import {CustomDatePicker} from "../components/FormattingDateElementComponent";
 
@@ -103,6 +100,8 @@ const ProjectForm = ({onCompleted, project}) => {
             project && load();
         }, [project]);
         useEffect(() => {
+            console.log("load")
+
             setFormLoad(true)
         }, []);
         useEffect(() => {
@@ -320,18 +319,18 @@ const ProjectForm = ({onCompleted, project}) => {
                     handleChange();
                 }}
                 mode={organizationsModalStatus}/>
-            <TypeProjectModalForm
-                key={nanoid()}
-                project={typeProjectModalStatus?.object}
-                onClose={() => setTypeProjectModalStatus(null)}
-                onCompleted={(value) => {
-                    refetchTypeProject();
-                    setDataTypes([...dataTypes, value]);
-                    form.setFieldValue("type_project_document_id", value.id);
-                    setTypeProjectModalStatus(null);
-                    handleChange();
-                }}
-                mode={typeProjectModalStatus?.mode}/>
+            {/*<TypeProjectModalForm*/}
+            {/*    key={nanoid()}*/}
+            {/*    project={typeProjectModalStatus?.object}*/}
+            {/*    onClose={() => setTypeProjectModalStatus(null)}*/}
+            {/*    onCompleted={(value) => {*/}
+            {/*        refetchTypeProject();*/}
+            {/*        setDataTypes([...dataTypes, value]);*/}
+            {/*        form.setFieldValue("type_project_document_id", value.id);*/}
+            {/*        setTypeProjectModalStatus(null);*/}
+            {/*        handleChange();*/}
+            {/*    }}*/}
+            {/*    mode={typeProjectModalStatus?.mode}/>*/}
         </div>)
     }
 ;

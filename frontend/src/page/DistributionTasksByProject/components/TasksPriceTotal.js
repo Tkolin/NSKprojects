@@ -1,4 +1,4 @@
-import {Button, Card, Col, Divider, Progress, Row, Statistic, Typography} from "antd";
+import {Button, Card, Col, Divider, Progress, Row, Skeleton, Statistic, Typography} from "antd";
 import {useQuery} from "@apollo/client";
 import {STATUS_PROJECTS_QUERY} from "../../../graphql/queriesSpecial";
 import React, {useEffect, useState} from "react";
@@ -8,92 +8,79 @@ import Title from "antd/es/typography/Title";
 const {Text} = Typography;
 
 const TaskItem = ({
-                      task_count, total_task_count,
-                      stage_price, total_price,
-                      stage_name, loading
+                      projectTasks, stage, loading
                   }) => {
 
 
-        //TODO: Константа
-        const _touchedTheMoney = 10;
-        const percent = ((Math.ceil((total_price / stage_price) * 10000) / 100) ?? 0);
+    const [progressData, setProgressData] = useState();
+    const [data, setData] = useState();
+    const _touchedTheMoney = 10;
+    useEffect(() => {
+        if ((projectTasks?.length > 0) && stage) {
+            const total_price = projectTasks.map(row => row.price).reduce((acc, current) => acc + (typeof current === 'number' ? current : 0), 0);
+            const stage_price = stage.price;
+            const percent = (((Math.ceil(total_price / stage_price) * 10000) / 100) ?? 0);
 
-        const progressData = {
-            percent: percent >= 99.99 ? 99.99 : percent,
-            strokeColor: {
-                '0%': '#1677ff',
-                '29%': '#1677ff',
-                '30%': '#faad14',
-                '49%': '#faad14',
-                '50%': '#ff4d4f',
-                '100%': '#ff4d4f'
-            },
+            setData({
+                task_count: projectTasks.lenght,
+                total_task_count: projectTasks.filter(second_row => second_row.executor != null).length,
+                stage_price: stage_price,
+                total_price: total_price,
+                stage_name: stage.name,
+            })
+            setProgressData({
+                percent: percent >= 99.99 ? 99.99 : percent, strokeColor: {
+                    '0%': '#1677ff',
+                    '29%': '#1677ff',
+                    '30%': '#faad14',
+                    '49%': '#faad14',
+                    '50%': '#ff4d4f',
+                    '100%': '#ff4d4f'
+                },
+            })
         }
-        const formatCurrency = (amount) => {
-            return amount.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'});
-        };
-        return (
-            <Card size={"small"} color={"red"} title={stage_name} loading={loading} style={{backgroundColor: percent > 99 ? "#faad14" : ""}}>
-                <Statistic title={"Распределение средств на этапе"}
-                           value={formatCurrency(total_price)}
-                />
-                <Text type={"secondary"}> из <strong>{formatCurrency(stage_price)}</strong></Text>
-                <Progress size="small" {...progressData} style={{paddingLeft: 5, paddingRight: 15}}/>
-                <Divider style={{margin: 9}}/>
-                <Statistic suffix={<AuditOutlined/>}
-                           title={"Назначенные задачи"}
-                           value={total_task_count}/>
-                <Text type={"secondary"}> из <strong>{task_count}</strong> (доступных)</Text>
-
-            </Card>)
-    }
-;
+    }, [projectTasks, stage]);
 
 
-const TasksPriceTotal = ({data = {project_tasks: [], project_stages: []}}) => {
-    // const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(STATUS_PROJECTS_QUERY);
-    const [outputData, setOutputData] = useState({});
+    const formatCurrency = (amount) => {
+        return amount.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'});
+    };
+    return ((data && progressData) ? (<Card size={"small"} color={"red"} title={data.stage_name} loading={loading}
+                                            style={{backgroundColor: progressData.percent > 99 ? "#faad14" : ""}}>
+        <Statistic title={"Распределение средств на этапе"}
+                   value={data.total_price && formatCurrency(data.total_price)}
+        />
+        <Text type={"secondary"}> из <strong>{formatCurrency(data.stage_price)}</strong></Text>
+        <Progress size="small" {...progressData} style={{paddingLeft: 5, paddingRight: 15}}/>
+        <Divider style={{margin: 9}}/>
+        <Statistic suffix={<AuditOutlined/>}
+                   title={"Назначенные задачи"}
+                   value={data.total_task_count}/>
+        <Text type={"secondary"}> из <strong>{data.task_count}</strong> (доступных)</Text>
+    </Card>) : (<Card><Skeleton active/></Card>))
+}
+
+const TasksPriceTotal = ({projectTasks, projectStages}) => {
+     const [outputData, setOutputData] = useState(null);
     const sumTotalPrice = (tasks) => {
         return tasks.map(row => row.price).reduce((acc, current) => acc + (typeof current === 'number' ? current : 0), 0)
     }
 
-    useEffect(() => {
-        console.log("TasksPriceTotal data", data)
-        setOutputData(null);
-        data?.project_stages?.map(row => {
-            const actual_tasks = data.project_tasks.filter(second_row => second_row.stage_number === row.number);
-            outputData[row.number] = {
-                stage_name: row.stage?.name,
-                task_count: actual_tasks.length,
-                total_task_count: actual_tasks.filter(second_row => second_row.executor != null).length,
-                stage_price: row.price,
-                total_price: sumTotalPrice(actual_tasks)
-            }
-        })
-    }, [data]);
-    useEffect(() => {
-        console.log("outputData", outputData);
 
-    }, [outputData]);
-    // const legendItems = ({
-    //     'ARCHIVE': {color: '#eeeeee', text: 'В Архиве', disable: true},
-    //     'COMPLETED': {color: '#eeeeee', text: 'Завершён'},
-    //     'DESIGN_REQUEST': {color: '#f7f2ff', text: 'Запрос на проектирование'},
-    //     'APPROVAL_KP': {color: '#fff2f2', text: 'Согласование КП'},
-    //     'APPROVAL_AGREEMENT': {color: '#fcfbf0', text: 'Согласование договора'},
-    //     'WAITING_SOURCE': {color: '#f8fff2', text: 'Ожидание исходных материалов'},
-    //     'WORKING': {color: '#f2f9ff', text: 'В работе'}
-    // });
-    return (
-        <Row gutter={1}>
 
-            {Object.values(outputData)?.map(item => {
-                console.log(item);
-                return (<Col span={8}>
-                        <TaskItem {...item}/>
-                </Col>
-                )
-            })}
+    return (<Row gutter={1}>
+            {projectStages.map(row => <Col span={8}>
+                <TaskItem stage={row}
+                          projectTasks={projectTasks && projectTasks.filter(second_row => second_row.stage_number === row.number)}/>
+            </Col>)}
+            {/*{outputData ? (*/}
+            {/*Object.values(outputData)?.map(item => {*/}
+            {/*    console.log(item);*/}
+            {/*    return (<Col span={8}>*/}
+            {/*            <TaskItem {...item}/>*/}
+            {/*    </Col>*/}
+            {/*    )*/}
+            {/*})) : <Skeleton active/>}*/}
 
         </Row>
 
