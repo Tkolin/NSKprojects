@@ -1,8 +1,8 @@
 import {gql} from "@apollo/client";
 
 export const STATUS_PROJECTS_QUERY = gql`
-    query StagesQuery {
-        projectsStatistic  {
+    query StagesQuery ($projectStatuses: [String]!) {
+        projectsStatistic (projectStatuses: $projectStatuses) {
             project_ids
             status {
                 name_key

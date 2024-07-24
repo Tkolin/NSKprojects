@@ -46,12 +46,12 @@ export const UploadFileProjectContractSigned = ({onUpdated, projectId, ...props}
                 accept={'.pdf'}
                 onUpdated={() => {onUpdated && onUpdated();
                 setSelectedDateContract(null)}}
-                children={<Button style={{width: 200}} icon={<UploadOutlined/>}>Прикрепить договор</Button>}
+                children={<Button  style={{width: 200}} icon={<UploadOutlined/>} {...props}>{props.children ?? "Прикрепить договор"}</Button>}
             />) :
-            (<Button type={"dashed"} style={{width: 200}} icon={<UploadOutlined/>}>Прикрепить договор</Button>)}
+            (<Button type={"dashed"} style={{width: 200}} icon={<UploadOutlined/>} {...props}>{props.children ?? "Прикрепить договор"}</Button>)}
     </Popconfirm>)
 }
-const UploadFile = ({onUpdated, action, accept, children, ...props}) => {
+const UploadFile = ({onUpdated, action, accept, children,width, ...props}) => {
     const [uploadFileLink] = useMutation(UPLOAD_FILE_LINK_MUTATION);
     useEffect(() => {
         console.log(action);
@@ -112,8 +112,8 @@ const UploadFile = ({onUpdated, action, accept, children, ...props}) => {
     };
 
     return (
-        <div style={{width: 199}}>
-            <Upload {...propsUpload} {...props} ellipsis={true} style={{width: 199}}>
+        <div style={{width: width-1}}>
+            <Upload {...propsUpload} {...props} ellipsis={true} style={{width: width}}>
                 {children}
             </Upload>
         </div>

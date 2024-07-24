@@ -149,7 +149,7 @@ export const TYPES_PROJECTS_QUERY = gql`
     }
 `;
 export const PROJECTS_QUERY = gql`
-    query ProjectQuery($queryOptions: QueryOptions, $projectId: ID, $projectStatuses: String) {
+    query ProjectQuery($queryOptions: QueryOptions, $projectId: ID, $projectStatuses: [String]) {
         projects (queryOptions: $queryOptions, projectId: $projectId, projectStatuses: $projectStatuses) {
             items{
                 id

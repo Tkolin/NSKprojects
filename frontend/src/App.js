@@ -96,31 +96,32 @@ const App = () => {
                                 {/*Проекты*/}
                                 <Route path="/project" element={<Home/>}/>
 
-                                <Route path="/project/extra" element={<ProjectTable 
-                                    options={["progress", "tool", "main", "customer", "status", "price"]}/>}/>
+                                <Route path="/project/extra" element={<ProjectTable
+                                    projectStatuses={["DESIGN_REQUEST"]}  legendOptions={["DESIGN_REQUEST"]}
+                                    columnOptions={["progress", "tool", "main", "customer", "status", "price"]}/>}/>
 
                                 <Route path="/project/request" element={<Home/>}/>
                                 <Route path="/project/request/table"
-                                       element={<ProjectTable projectStatuses={"DESIGN_REQUEST"}
-                                                              options={["main", "customer"]}/>}/>
+                                       element={<ProjectTable projectStatuses={["DESIGN_REQUEST"]}
+                                                              columnOptions={["main", "customer", "request_tools"]}/>}/>
                                 <Route path="/project/request/form" element={<RequestPage/>}/>
 
                                 <Route path="/project/kp" element={<Home/>}/>
                                 <Route path="/project/kp/table"
-                                       element={<ProjectTable projectStatuses={"APPROVAL_KP"}
-                                                              options={["main", "customer"]}/>}/>
+                                       element={<ProjectTable projectStatuses={["APPROVAL_KP"]}
+                                                              columnOptions={["main", "customer"]}/>}/>
                                 <Route path="/project/kp/form" element={<Home/>}/>
 
                                 <Route path="/project/contract" element={<Home/>}/>
                                 <Route path="/project/contract/table"
-                                       element={<ProjectTable projectStatuses={"APPROVAL_AGREEMENT"}
-                                                              options={["main", "customer"]}/>}/>
+                                       element={<ProjectTable projectStatuses={["APPROVAL_AGREEMENT"]}
+                                                              columnOptions={["main", "customer"]}/>}/>
                                 <Route path="/project/contract/form" element={<Home/>}/>
 
                                 <Route path="/project/work" element={<Home/>}/>
                                 <Route path="/project/work/table"
-                                       element={<ProjectTable projectStatuses={"WORKING"}
-                                                              options={["main", "customer"]}/>}/>
+                                       element={<ProjectTable projectStatuses={["WORKING"]}
+                                                              columnOptions={["main", "customer"]}/>}/>
 
                                 <Route path="/project/work/form" element={<Home/>}/>
                                 {/*Учётки*/}

@@ -100,8 +100,7 @@ const RequestForm = ({localObject, initialObject, onCompleted}) => {
             }
         });
     };
-    if (loading || loadingSave) return <LoadingSpinnerStyles/>
-    if (errorOrganizations || errorOrganizations) return `Ошибка! ${errorOrganizations?.message || errorOrganizations?.message}`;
+    if (errorOrganizations || errorContacts) return `Ошибка! ${errorOrganizations?.message || errorContacts?.message}`;
 
     return (
         <div>
@@ -124,6 +123,7 @@ const RequestForm = ({localObject, initialObject, onCompleted}) => {
                     rules={[{required: true, message: 'Пожалуйста, заполните фамилию'}]}
                 >
                     <CustomAutoCompleteAndCreateWitchEdit
+                        loading={loadingOrganizations}
                         data={dataOrganizations?.organizations?.items}/>
                 </Form.Item>
                 <Form.Item
@@ -132,6 +132,8 @@ const RequestForm = ({localObject, initialObject, onCompleted}) => {
                     rules={[{required: true, message: 'Пожалуйста, заполните имя'}]}
                 >
                     <CustomAutoCompleteAndCreateWitchEdit
+                        loading={loadingContacts}
+
                         typeData={"FIO"}
                         data={dataContacts?.contacts?.items}/>
                 </Form.Item>

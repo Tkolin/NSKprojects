@@ -15,7 +15,8 @@ final readonly class CreateRequests
         $project = Project::create([
             'name'=>$data['name'],
             'organization_customer_id'=>$data['organization_id'],
-            'prepayment'=>0,
+            'status_id'=>'DESIGN_REQUEST',
+            'prepayment'=>30,
         ]);
         ProjectDelegations::create([
             'project_id'=>$project->id,
@@ -28,7 +29,7 @@ final readonly class CreateRequests
             'number_message'=>$data['number_message'],
             'date_send'=>$data['date_send']
         ]);
-        return Project::where('id',$project->id)->first();
+        return Project::find($project->id);
 
     }
 }

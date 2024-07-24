@@ -44,10 +44,11 @@ final readonly class Projects
             'duration', 'date_end', 'status_id', 'date_completion', 'delegate_id'];
         $projectsQuery = $queryService->buildQueryOptions($projectsQuery, $args['queryOptions'], $searchColumns);
 
-        $count = $projectsQuery->count();
         if (isset($args["projectStatuses"])) {
-            $projectsQuery->where('status_id', $args["projectStatuses"]);
+            $projectsQuery->whereIn('status_id', $args["projectStatuses"]);
         }
+        $count = $projectsQuery->count();
+
         $projects = $queryService->paginate($projectsQuery, $args['queryOptions']['limit'], $args['queryOptions']['page']);
 
 

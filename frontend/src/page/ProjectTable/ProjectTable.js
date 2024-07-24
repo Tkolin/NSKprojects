@@ -1,32 +1,32 @@
 import React, {useState} from 'react';
-import './Styles.css'; // Импорт вашего CSS файла
+import './Styles.css';
 import StatusLegend from "./components/StatusLegend";
 import ProjectTableComponent from "./components/ProjectTableComponent";
-import {Divider, Form, Space} from "antd";
-import Search from "antd/es/input/Search";
-import index from "../CreateNewCommercialOffer";
+import ToolBar from "./components/ToolBar";
+import {Divider, Space} from "antd";
 
 
-const ProjectTable = ({projectStatuses, options}) => {
-        const [formSearch] = Form.useForm();
+const ProjectTable = ({projectStatuses, legendOptions, columnOptions, toolBarOptions}) => {
         const [search, setSearch] = useState('');
+        const [refetch, setRefetch] = useState(false);
+        const onRefetch = () =>{
+            setRefetch(!refetch);
+        }
+
         return (
             <div>
-                <StatusLegend data-permission={"read-project-statistic"}/>
+                {legendOptions && (
+                    <>
+                        <StatusLegend projectStatuses={legendOptions} data-permission={"read-project-statistic"}/>
+                        <Divider/>
+                    </>
+                )}
+                <Space.Compact direction={"horizontal"}>
+                    <ToolBar onCompleted={()=>onRefetch()}  options={['search','add_request']} gutter={5} onSearch={setSearch}/>
+                </Space.Compact>
                 <Divider/>
-                <Form form={formSearch} layout="horizontal">
-                    <Form.Item label="Поиск:" name="search">
-                        <Space>
-                            <Search
-                                placeholder="Найти..."
-                                allowClear
-                                enterButton="Найти"
-                                onSearch={value => setSearch(value)}
-                            />
-                        </Space>
-                    </Form.Item>
-                </Form>
-                <ProjectTableComponent projectStatuses={projectStatuses} options={options} search={search}/>
+
+                <ProjectTableComponent projectStatuses={projectStatuses} options={columnOptions} search={search} state={refetch}/>
             </div>
 
         )

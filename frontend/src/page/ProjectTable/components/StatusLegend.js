@@ -19,8 +19,10 @@ const LegendItem = ({color, text, value}) => (
     </Card>
 );
 
-const StatusLegend = () => {
-    const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(STATUS_PROJECTS_QUERY);
+const StatusLegend = ({projectStatuses}) => {
+    const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(STATUS_PROJECTS_QUERY, {variables: {
+            projectStatuses
+        }});
 
     const legendItems = ({
         'ARCHIVE': {color: '#eeeeee', text: 'В Архиве', disable: true},
@@ -39,8 +41,6 @@ const StatusLegend = () => {
         <Row gutter={5}>
 
             {data?.projectsStatistic?.map(item => (
-
-                item.status.name_key !== 'ARCHIVE' ? (
                     <Col span={4}>
                         <LegendItem
                             key={item?.status?.name_key}
@@ -48,8 +48,7 @@ const StatusLegend = () => {
                                     text={item?.status?.name}
                                     value={item?.project_ids?.length ?? 0}
                         />
-                    </Col>) : (<></>)
-
+                    </Col>
             ))}
         </Row>
 

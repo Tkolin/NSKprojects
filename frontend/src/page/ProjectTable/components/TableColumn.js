@@ -1,94 +1,92 @@
 import {
     Button,
-    Card,
-    DatePicker,
     Divider,
-    Modal,
-    notification,
-    Popconfirm,
-    Row,
     Space,
     Tooltip,
     Typography,
-    Upload
 } from "antd";
 import Link from "antd/es/typography/Link";
 import {
-    DeleteOutlined, DownloadOutlined,
-    EditOutlined, MinusOutlined, MoreOutlined, PlusOutlined,
-    PushpinFilled,
-    PushpinOutlined,
-    ReconciliationOutlined, UploadOutlined,
+    DeleteOutlined
 } from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
-import ProjectFileDownload from "../../components/script/fileDownloadScripts/ProjectFileDownload";
 import {facilitiesToFullCode} from "../../components/script/rebuildData/ProjectRebuilderQuery";
 import dayjs from "dayjs";
-import React, {useEffect, useState} from "react";
-import {StyledButtonGreen} from "../../components/style/ButtonStyles";
-import {UploadFileExecutorOrder, UploadFileProjectContractSigned} from "../../components/UploadFile";
-import LinkToDownload from "../../components/script/fileDownloadScripts/LinkToDownload";
-import {useLazyQuery, useMutation} from "@apollo/client";
-import {BIKS_QUERY_BY_ID, PROJECTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
-import {CHANGE_TEMPLATE_TYPE_PROJECT} from "../../../graphql/mutationsProject";
-import ProjectTasks from "../../DistributionTasksByProject";
-import {nanoid} from "nanoid";
-import ProjectForm from "../../ProjectForm";
-import IrdsProjectForm from "../../IrdToProjectForm";
-import StageToProjectForm from "../../StageToProjectForm";
-import {ColumnToolRender} from "./columns/ColumnToolRender";
+import React from "react";
+
+import {ColumnMenuToolRender} from "./columns/ColumnMenuToolRender";
+import {ColumnRequestMenuToolRender} from "./columns/ColumnRequestMenuToolRender";
 
 const formatCurrency = (amount) => {
     return amount.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'});
 };
 const {Text} = Typography;
-// progress
-// tool
-// main
-// customer
-// status
-// price
-
 
 export const GetColumns = ({
                                options,
-                               columnSizes,
-                               permissions,
-                               toolProps,
+                               onUpdated,
+                               expandable,
 
-                               onUpdated
                            }
 ) => {
-    //TODO:
-    const columns = options.map(row=>row.name);
+    // Определяем базовые ширины для столбцов
+    const baseWidths = {
+        tool: 32, // пиксели
+        main: 50, // процентов
+        customer: 15, // процентов
+        progress: 5, // процентов
+        status: 10, // процентов
+        price: 15 // процентов
+    };
+
+    // Считаем, сколько процентов осталось после базового распределения
+    const calculateRemainingWidth = (countColumns) => {
+        const totalBaseWidth = Object.keys(baseWidths).reduce((total, key) => {
+            if (options.includes(key)) {
+                return total + (baseWidths[key] ?? 0);
+            }
+            return total;
+        }, 0);
+
+        return 100 - totalBaseWidth;
+    };
+
+    // Рассчитываем ширину каждого столбца
+    const calculateColumnWidth = (type, countColumns) => {
+        if (type === 'tool') return `${baseWidths.tool}px`;
+        if (baseWidths[type]) return `${baseWidths[type]}%`;
+        return `${calculateRemainingWidth(countColumns) / (countColumns - Object.keys(baseWidths).filter(key => options.includes(key)).length)}%`;
+    };
+
+    // Генерируем столбцы
+    const columns = [];
     const countColumns = options.length;
-    options.includes("tool") && columns.push(columnToolComponent({width:"32px", ...toolProps}));
-    options.includes("main") && columns.push(columnMainDataComponent({width: "50%", onUpdated: () => onUpdated()}));
-    options.includes("customer") && columns.push(columnCustomerComponent({width: "15%"}));
-    options.includes("progress") && columns.push(columnProgressComponent({width: "5%"}));
-    options.includes("status") && columns.push(columnStatusComponent({width: "10%"}));
-    options.includes("price") && columns.push(columnPriceComponent({width: "15%"}));
+
+    options.includes('tool') && columns.push(columnMenuToolComponent({
+        width: "50px", expandable
+    }));
+    options.includes('request_tools') && columns.push(columnRequestMenuToolComponent({
+        width: "50px"
+    }));
+    options.includes('main') && columns.push(columnMainDataComponent({
+        width: calculateColumnWidth('main', countColumns),
+        onUpdated: () => onUpdated()
+    }));
+    options.includes('customer') && columns.push(columnCustomerComponent({width: calculateColumnWidth('customer', countColumns)}));
+    options.includes('progress') && columns.push(columnProgressComponent({width: calculateColumnWidth('progress', countColumns)}));
+    options.includes('status') && columns.push(columnStatusComponent({width: calculateColumnWidth('status', countColumns)}));
+    options.includes('price') && columns.push(columnPriceComponent({width: calculateColumnWidth('price', countColumns)}));
+    options.includes('request_control') && columns.push(columnPriceComponent({width: calculateColumnWidth('price', countColumns)}));
+
     return columns;
 }
-export const GetFullColumns = ({
-                                   permissions,
-                                   onUpdated
-                               }
-) => ([
 
-    //columnProgressComponent("5%"),
-    //columnToolComponent("20px"),
-    columnMainDataComponent({width: "60%", onUpdated: () => onUpdated()}),
-    columnCustomerComponent("15%"),
-    columnStatusComponent("10%"),
-    columnPriceComponent("15%")
-])
 const columnProgressComponent = (width = "8%") => ({
     title: 'Прогресс',
     dataIndex: 'progress',
     key: 'progress',
     width: width,
-    align: "left",
+    align: "topLeft",
     render: (text, record) => {
         switch (record.status) {
             case 'APPROVAL_KP':
@@ -135,16 +133,27 @@ const columnProgressComponent = (width = "8%") => ({
         }
     }
 })
-
-const columnToolComponent = ({width = "2%", toolProps}) => {
+const columnMenuToolComponent = ({width, options, expandable}) => {
     return {
-        key: 'edit',
+        key: 'menu-options',
         width: width,
         render: (text, record) => <>
-            <ColumnToolRender text={text} record={record} {...toolProps}/>
+            <ColumnMenuToolRender  text={text} record={record}
+                                  expandable={expandable} options={options}/>
         </>,
     }
 }
+const columnRequestMenuToolComponent = ({width, options, expandable}) => {
+    return {
+        key: 'menu-request-options',
+        width: width,
+        render: (text, record) => <>
+            <ColumnRequestMenuToolRender  text={text} record={record}
+                                  expandable={expandable} options={options}/>
+        </>,
+    }
+}
+
 const columnMainDataComponent = ({width = "48%", onUpdated}) =>
     ({
         title: 'Основные данные',
@@ -152,14 +161,10 @@ const columnMainDataComponent = ({width = "48%", onUpdated}) =>
         dataIndex: 'main_data',
         key: 'main_data',
         width: width,
-        align: "left",
+        align: "topLeft",
         render:
             (text, record) => {
-                const maxNumberRecord = record?.project_contract_history?.reduce((max, current) => {
-                    return (current.number > (max?.number || 0)) ? current : max;
-                }, null);
 
-                const fileId = maxNumberRecord ? maxNumberRecord.file_id : null;
 
                 return (
                     <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
@@ -168,42 +173,42 @@ const columnMainDataComponent = ({width = "48%", onUpdated}) =>
                         <Text>{record.number}</Text>
                         <Text>({record.type_project_document?.code ?? ""}) {record.type_project_document?.name ?? ""}</Text>
                         <Divider style={{margin: "3px", marginBottom: 0}}/>
-                        <Space.Compact direction={"horizontal"}>
-                            {record?.signed_file_id ? (
-                                    <>
-                                        <LinkToDownload fileId={record.signed_file_id}>Скачать (подписан)
-                                            от {record.date_signing}</LinkToDownload>
-                                    </>
-                                ) :
-                                (
-                                    <>
-                                        <ProjectFileDownload projectId={record.id} icon={<PlusOutlined/>}>Сгенерировать
-                                            договор</ProjectFileDownload>
-                                        {(fileId) ?
-                                            (<>
-                                                    <UploadFileProjectContractSigned
-                                                        type={"primary"}
-                                                        icon={<UploadOutlined/>}
-                                                        onUpdated={() => onUpdated()}
-                                                        projectId={record.id}>Загрузить
-                                                        подписанный файл</UploadFileProjectContractSigned>
+                        {/*<Space.Compact direction={"horizontal"}>*/}
+                        {/*    {record?.signed_file_id ? (*/}
+                        {/*            <>*/}
+                        {/*                <LinkToDownload fileId={record.signed_file_id}>Скачать (подписан)*/}
+                        {/*                    от {record.date_signing}</LinkToDownload>*/}
+                        {/*            </>*/}
+                        {/*        ) :*/}
+                        {/*        (*/}
+                        {/*            <>*/}
+                        {/*                <ProjectFileDownload projectId={record.id} icon={<PlusOutlined/>}>Сгенерировать*/}
+                        {/*                    договор</ProjectFileDownload>*/}
+                        {/*                {(fileId) ?*/}
+                        {/*                    (<>*/}
+                        {/*                            <UploadFileProjectContractSigned*/}
+                        {/*                                type={"primary"}*/}
+                        {/*                                icon={<UploadOutlined/>}*/}
+                        {/*                                onUpdated={() => onUpdated()}*/}
+                        {/*                                projectId={record.id}>Загрузить*/}
+                        {/*                                подписанный файл</UploadFileProjectContractSigned>*/}
 
-                                                    <LinkToDownload
-                                                        fileId={fileId}
-                                                        icon={<DownloadOutlined/>}>Скачать
-                                                        последний вариант</LinkToDownload>
-                                                    <Button icon={<MoreOutlined/>}/>
-                                                </>
-                                            ) :
-                                            (
-                                                <>
-                                                </>
-                                            )}
+                        {/*                            <LinkToDownload*/}
+                        {/*                                fileId={fileId}*/}
+                        {/*                                icon={<DownloadOutlined/>}>Скачать*/}
+                        {/*                                последний вариант</LinkToDownload>*/}
+                        {/*                            <Button icon={<MoreOutlined/>}/>*/}
+                        {/*                        </>*/}
+                        {/*                    ) :*/}
+                        {/*                    (*/}
+                        {/*                        <>*/}
+                        {/*                        </>*/}
+                        {/*                    )}*/}
 
-                                    </>
-                                )}
+                        {/*            </>*/}
+                        {/*        )}*/}
 
-                        </Space.Compact>
+                        {/*</Space.Compact>*/}
                     </Space.Compact>
                 )
             }
@@ -219,8 +224,7 @@ const columnCustomerComponent = (width = "15%") =>
             'customer_data',
         width:
         width,
-        align:
-            "left",
+
         render:
             (text, record) => (
                 <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
@@ -263,7 +267,6 @@ const columnStatusComponent = (width = "15%") =>
         dataIndex: 'status_data',
         key: 'status_data',
         width: width,
-        align: "left",
         render:
             (text, record) => (
                 <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
@@ -297,7 +300,6 @@ const columnPriceComponent = (width = "10%") =>
         dataIndex: 'price_data',
         key: 'price_data',
         width: width,
-        align: "left",
         render:
             (text, record) => (
                 <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
@@ -306,6 +308,23 @@ const columnPriceComponent = (width = "10%") =>
                     <Text strong>Аванс:</Text>
                     <Text>{record.prepayment}%
                         ({record.price && record.prepayment && formatCurrency(record.price / 100 * record.prepayment)} ₽)</Text>
+                </Space.Compact>
+            ),
+
+    })
+const columnRequestControllerComponent = (width = "10%") =>
+    ({
+        permission: 'update-request',
+        dataIndex: 'request_controller',
+        key: 'request_controller',
+        width: width,
+        render:
+            (text, record) => (
+                <Space.Compact direction={"vertical"} style={{alignContent: "top"}}>
+                    <Button icon={<DeleteOutlined/>}/>
+                    <Button icon={<DeleteOutlined/>}/>
+
+
                 </Space.Compact>
             ),
 

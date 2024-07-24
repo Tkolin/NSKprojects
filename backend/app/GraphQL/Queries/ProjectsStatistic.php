@@ -17,7 +17,9 @@ final readonly class ProjectsStatistic
         // DESIGN_REQUEST
         // WAITING_SOURCE
         // WORKING
+        $keys = $args['projectStatuses'];
         $projectsGroupedByStatus =  ProjectStatus::with('projects')
+            ->whereIn('name_key', $keys)
             ->get()
             ->map(function($status) {
                 if ($status->projects->isNotEmpty()) {

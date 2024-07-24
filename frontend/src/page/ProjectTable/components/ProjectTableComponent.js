@@ -1,4 +1,4 @@
-import { Modal, notification, Space, Table, Typography} from "antd";
+import {Modal, notification, Space, Table, Typography} from "antd";
 
 
 import IrdsProjectForm from "../../IrdToProjectForm";
@@ -8,47 +8,43 @@ import TableStages from "./TableStages";
 import TableIrds from "./TableIrds";
 import TableExecutors from "./TableExecutors";
 import {useNavigate} from "react-router-dom";
-import { useQuery} from "@apollo/client";
+import {useQuery} from "@apollo/client";
 import {PROJECTS_QUERY} from "../../../graphql/queries";
 import {nanoid} from "nanoid";
 import {GetColumns} from "./TableColumn";
 
 const {Text} = Typography;
 
-const ProjectTableComponent = ({projectStatuses, mode, search, options}) => {
+const ProjectTableComponent = ({projectStatuses, mode, search, options, state}) => {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [sortField, setSortField] = useState('');
     const [sortOrder, setSortOrder] = useState('');
 
 
-
-    const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+    const [expandedRowKeys, setExpandedRowKeys] = useState();
     const [currentSort, setCurrentSort] = useState({});
     const [column, setColumn] = useState();
-    const navigate = useNavigate();
+     const navigate = useNavigate();
+    const onExpand = (value) => {
+          setExpandedRowKeys((expandedRowKeys === value) ?  null : value);
+    }
     useEffect(() => {
         setColumn(
             GetColumns({
                 options: options,
                 permissions: "all",
+                expandable: {
+                    onExpand: (value) => onExpand(value),
+                    expandedRowKeys: expandedRowKeys,
+                },
                 onUpdated: () => refetch()
             }))
-        // switch (mode) {
-        //     case "full":
-        //
-        //         break;
-        //     case "request":
-        //         break;
-        //     case "approval_kp":
-        //         break;
-        //     case "approval_agreement":
-        //         break;
-        //     case "working":
-        //         break;
-        // }
 
-    }, []);
+    }, [options, expandedRowKeys]);
+    useEffect(() => {
+        refetch();
+    }, [state]);
     const openNotification = (placement, type, message) => {
         notification[type]({
             message: message,
@@ -61,14 +57,14 @@ const ProjectTableComponent = ({projectStatuses, mode, search, options}) => {
 
         return (
             <>
-                <Space.Compact  direction={"horizontal"}>
+                <Space.Compact direction={"horizontal"}>
                     <TableStages data-permission={"read-project-stage"} project={project}
-                                 setEditModalStatus={()=>setEditModalStatus("stages")}/>
+                                 setEditModalStatus={() => setEditModalStatus("stages")}/>
                     <TableIrds data-permission={"read-project-ird"} project={project}
-                               setEditModalStatus={()=>setEditModalStatus("irds")}/>
+                               setEditModalStatus={() => setEditModalStatus("irds")}/>
                     <TableExecutors data-permission={"read-project-task-executor"}
                                     project={project}
-                                    setEditModalStatus={()=>setEditModalStatus("executor")}/>
+                                    setEditModalStatus={() => setEditModalStatus("executor")}/>
                 </Space.Compact>
 
                 <Modal
@@ -89,7 +85,7 @@ const ProjectTableComponent = ({projectStatuses, mode, search, options}) => {
             </>
         )
     }
-    // Мутация для удаления
+// Мутация для удаления
 
     const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(PROJECTS_QUERY, {
         variables: {
@@ -108,10 +104,10 @@ const ProjectTableComponent = ({projectStatuses, mode, search, options}) => {
         }
     });
 
-    // useEffect(() => {
-    //     if (!editModalStatus)
-    //         refetch();
-    // }, [editModalStatus]);
+// useEffect(() => {
+//     if (!editModalStatus)
+//         refetch();
+// }, [editModalStatus]);
 
 
     const getNameModalView = (type) => {
@@ -144,7 +140,6 @@ const ProjectTableComponent = ({projectStatuses, mode, search, options}) => {
                 return null;
         }
     };
-
 
 
     const onChange = (pagination, filters, sorter) => {
@@ -183,7 +178,7 @@ const ProjectTableComponent = ({projectStatuses, mode, search, options}) => {
                     offsetHeader: '64px',
                 }}
                 loading={loading}
-                dataSource={data?.projects?.items?.map((org, index) => ({...org, key: index}))}
+                dataSource={data?.projects?.items?.map((row) => ({...row, key: row.id}))}
                 columns={column}
                 bordered
 
@@ -203,16 +198,13 @@ const ProjectTableComponent = ({projectStatuses, mode, search, options}) => {
                     showSizeChanger: true,
                     pageSizeOptions: ['10', '20', '50', '100'],
                 }}
+
                 expandable={{
-                    expandedRowKeys,
-                    columnWidth: 32,
-                    onExpand: (expanded, record) => {
-                        const keys = expanded ? [record.key] : [];
-                        setExpandedRowKeys(keys);
-                    },
+                    expandedRowKeys: expandedRowKeys ? [expandedRowKeys] : [],
+                    showExpandColumn: false,
                     expandedRowRender: (record) => (
                         <Space block style={{padding: 2, width: "100%"}}>
-                            <ExpandedRowRenderComponent project={record} />
+                            <ExpandedRowRenderComponent project={record}/>
                         </Space>
                     ),
                 }}
