@@ -10,25 +10,29 @@ import {
     DeleteOutlined
 } from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
-import {facilitiesToFullCode} from "../../components/script/rebuildData/ProjectRebuilderQuery";
+import {facilitiesToFullCode} from "../../../components/script/rebuildData/ProjectRebuilderQuery";
 import dayjs from "dayjs";
 import React from "react";
 
-import {ColumnMenuToolRender} from "./columns/ColumnMenuToolRender";
-import {ColumnRequestMenuToolRender} from "./columns/ColumnRequestMenuToolRender";
+import {ColumnMenuToolRender} from "./components/ColumnMenuToolRender";
+import {ColumnRequestMenuToolRender} from "./components/ColumnRequestMenuToolRender";
+import {ColumnKpMenuToolRender} from "./components/ColumnKpMenuToolRender";
 
 const formatCurrency = (amount) => {
     return amount.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'});
 };
 const {Text} = Typography;
 
-export const GetColumns = ({
-                               options,
+const GetColumns = ({
+                                options,
                                onUpdated,
                                expandable,
 
                            }
 ) => {
+    console.log(options, "options");
+    if(!options || options.length < 1)
+        return [];
     // Определяем базовые ширины для столбцов
     const baseWidths = {
         tool: 32, // пиксели
@@ -55,17 +59,22 @@ export const GetColumns = ({
     const calculateColumnWidth = (type, countColumns) => {
         if (type === 'tool') return `${baseWidths.tool}px`;
         if (baseWidths[type]) return `${baseWidths[type]}%`;
-        return `${calculateRemainingWidth(countColumns) / (countColumns - Object.keys(baseWidths).filter(key => options.includes(key)).length)}%`;
+        return `${calculateRemainingWidth(countColumns) / (countColumns - Object.keys(baseWidths).filter(key => options?.includes(key))?.length)}%`;
     };
 
     // Генерируем столбцы
     const columns = [];
-    const countColumns = options.length;
+    const countColumns = options?.length;
 
     options.includes('tool') && columns.push(columnMenuToolComponent({
         width: "50px", expandable
     }));
     options.includes('request_tools') && columns.push(columnRequestMenuToolComponent({
+        onUpdated: () => onUpdated(),
+        width: "50px"
+    }));
+    options.includes('kp_tools') && columns.push(columnKpMenuToolComponent({
+        onUpdated: () => onUpdated(),
         width: "50px"
     }));
     options.includes('main') && columns.push(columnMainDataComponent({
@@ -143,13 +152,25 @@ const columnMenuToolComponent = ({width, options, expandable}) => {
         </>,
     }
 }
-const columnRequestMenuToolComponent = ({width, options, expandable}) => {
+const columnRequestMenuToolComponent = ({width, options,         onUpdated
+}) => {
     return {
         key: 'menu-request-options',
         width: width,
         render: (text, record) => <>
             <ColumnRequestMenuToolRender  text={text} record={record}
-                                  expandable={expandable} options={options}/>
+                                          onUpdated={()=>onUpdated()} options={options}/>
+        </>,
+    }
+}
+const columnKpMenuToolComponent = ({width, options,         onUpdated
+}) => {
+    return {
+        key: 'menu-kp-options',
+        width: width,
+        render: (text, record) => <>
+            <ColumnKpMenuToolRender  text={text} record={record}
+                                          onUpdated={()=>onUpdated()} options={options}/>
         </>,
     }
 }
@@ -329,3 +350,4 @@ const columnRequestControllerComponent = (width = "10%") =>
             ),
 
     })
+export default GetColumns;

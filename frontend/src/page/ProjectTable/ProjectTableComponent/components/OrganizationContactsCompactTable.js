@@ -3,9 +3,9 @@ import {notification, Space, Table, Tooltip, Typography} from 'antd';
 
 import Link from "antd/es/typography/Link";
 import {PlusOutlined} from "@ant-design/icons";
-import {EditStyledLinkManagingDataTable} from "../../components/style/TableStyles";
+import {EditStyledLinkManagingDataTable} from "../../../components/style/TableStyles";
 import {format} from "date-fns";
-import ContactModalForm from "../../components/modal/ContactModalForm";
+import ContactModalForm from "../../../components/modal/ContactModalForm";
 import {nanoid} from "nanoid";
 
 const {Text} = Typography;

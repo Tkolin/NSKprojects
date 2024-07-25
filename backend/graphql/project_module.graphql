@@ -9,7 +9,7 @@ extend type Query {
     executorOrders(projectId: ID!, executorId: ID!): [ExecutorOrder!]
 
     projectTasksExecutors(taskId: ID): ProjectTaskExecutorResult @checkRole(permission:  ["read-project-task-executor"])
-    countProjectByOrganizations(organizationId: ID): CountProjectByOrganizationsResult @checkRole(permission:  ["read-organization"])
+    countProjectByOrganizations(organizationId: ID!): Int @checkRole(permission:  ["read-organization"])
 }
 #-INPUTS:
 
@@ -39,6 +39,9 @@ type ProjectStatistic{
 extend type Mutation {
     projectIrdsSync(
         items: [IrdToProjectInput]!
+    ): Project @checkRole(permission:  ["update-project-ird"])
+    archiveProject(
+        projectId: ID!
     ): Project @checkRole(permission:  ["update-project-ird"])
     projectStagesSync(
         items: [StageToProjectInput]!

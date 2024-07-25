@@ -17,7 +17,8 @@ const CustomAutoCompleteComponent = ({
                                          value,
                                          onChange,
                                          onSelect,
-                                         typeData
+                                         typeData,
+    ...props
                                      }) => {
     const getName = (row, typeData) => {
         if (typeData === "FIO")
@@ -29,7 +30,6 @@ const CustomAutoCompleteComponent = ({
 
 
     const handleSearch = (txt) => {
-        // console.log(txt.toLowerCase());
         if (!data) return;
         const filteredOptions = data
             .filter(row => getName(row, typeData).toLowerCase().includes(txt.toLowerCase()))
@@ -40,20 +40,22 @@ const CustomAutoCompleteComponent = ({
             }));
         onChange && onChange({...value, options: filteredOptions, output: txt, selected: null});
     };
-
+    useEffect(() => {
+        !(value?.selected) && handleSearch("");
+    }, [data]);
     return (
         <AutoComplete
             popupMatchSelectWidth={false}
             style={{...style, width: width, maxWidth: width}}
             allowClear
             showSearch
-            status={value?.selected ? "" : "warning"}
+             status={value?.selected ? "" : "warning"}
             size={size ?? 'regular'}
             mode={mode
                 ?? ''}
             filterOption={false}
             value={value?.output}
-            options={value?.options}
+            options={ value?.options}
             onClear={() => onChange && onChange({...value, selected: null, output: null})}
             onSearch={handleSearch}
             onSelect={(variable, option) => {
@@ -66,11 +68,12 @@ const CustomAutoCompleteComponent = ({
 
             }}
             placeholder={placeholder ?? "Начните ввод..."}
+            {...props}
         />
     )
 };
 
-const BaseStyledButtonGreen = ({onClick, icon, style, disabled, size}) => (
+const BaseStyledButtonGreen = ({onClick, icon, style, disabled, size, ...props}) => (
     <StyledButtonGreen
         style={{
             ...style,
@@ -81,9 +84,10 @@ const BaseStyledButtonGreen = ({onClick, icon, style, disabled, size}) => (
         icon={icon}
         disabled={disabled}
         onClick={() => onClick && onClick(true)}
+        {...props}
     />
 );
-const BaseStyledButton = ({onClick, icon, style, disabled}) => (
+const BaseStyledButton = ({onClick, icon, style, disabled, ...props}) => (
     <Button
         style={{
             ...style,
@@ -93,6 +97,7 @@ const BaseStyledButton = ({onClick, icon, style, disabled}) => (
         icon={icon}
         disabled={disabled}
         onClick={() => onClick && onClick(true)}
+        {...props}
     />
 );
 const CustomAutoCompleteAndCreate = ({
@@ -101,9 +106,10 @@ const CustomAutoCompleteAndCreate = ({
                                          onChange,
                                          size,
                                          ...props
-                                     }) =>
-
-    (<Space.Compact style={{width: "100%", marginBottom: 0}}>
+                                     }) => {
+    if (props?.loading)
+        return <Skeleton.Input block style={{width: "100%"}} size={'small'} active/>
+    return (<Space.Compact style={{width: "100%", marginBottom: 0}}>
             <CustomAutoCompleteComponent
                 width={"calc(100% - 32px)"}
                 onChange={onChange}
@@ -112,20 +118,22 @@ const CustomAutoCompleteAndCreate = ({
                                    size={size}
                                    icon={<PlusOutlined/>}/>
         </Space.Compact>
-    );
+    )
+};
 const CustomAutoComplete = ({
                                 onChange,
                                 ...props
                             }) => {
     if (props?.loading)
-        return <SkeletonInput size={'small'} width={"calc(100%+64px)"} active/>
+        return <Skeleton.Input block style={{width: "100%"}} size={'small'} active/>
     return (
-    <CustomAutoCompleteComponent
-        width={"calc(100%+64px)"}
-        onChange={onChange}
-        {...props}/>
+        <CustomAutoCompleteComponent
+            width={"calc(100%+64px)"}
+            onChange={onChange}
+            {...props}/>
 
-)};
+    )
+};
 const CustomAutoCompleteAndCreateWitchEdit = ({
                                                   firstBtnOnClick,
                                                   secondBtnOnClick,
@@ -134,7 +142,7 @@ const CustomAutoCompleteAndCreateWitchEdit = ({
                                                   ...props
                                               }) => {
     if (props?.loading)
-        return <SkeletonInput size={'small'} width={"calc(100%+64px)"} active/>
+        return <Skeleton.Input block style={{width: "100%"}} size={'small'} active/>
     return (
         <Space.Compact style={{width: "100%", marginBottom: 0}}>
             <CustomAutoCompleteComponent

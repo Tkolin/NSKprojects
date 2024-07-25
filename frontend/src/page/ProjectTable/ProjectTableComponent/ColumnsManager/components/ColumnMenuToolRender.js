@@ -14,7 +14,7 @@ import {
 } from "antd";
 import React, {useState} from "react";
 import {useMutation} from "@apollo/client";
-import {CHANGE_TEMPLATE_TYPE_PROJECT} from "../../../../graphql/mutationsProject";
+import {CHANGE_TEMPLATE_TYPE_PROJECT} from "../../../../../graphql/mutationsProject";
 import Link from "antd/es/typography/Link";
 import {
     DatabaseOutlined,
@@ -25,11 +25,11 @@ import {
     PushpinOutlined,
     ReconciliationOutlined, SettingOutlined, SubnodeOutlined, UploadOutlined, UpOutlined, UpSquareOutlined, UserOutlined
 } from "@ant-design/icons";
-import ProjectTasks from "../../../DistributionTasksByProject";
-import ProjectForm from "../../../ProjectForm";
- import LinkToDownload from "../../../components/script/fileDownloadScripts/LinkToDownload";
-import ProjectFileDownload from "../../../components/script/fileDownloadScripts/ProjectFileDownload";
-import {UploadFileProjectContractSigned} from "../../../components/UploadFile";
+import ProjectTasks from "../../../../DistributionTasksByProject";
+import ProjectForm from "../../../../ProjectForm";
+ import LinkToDownload from "../../../../components/script/fileDownloadScripts/LinkToDownload";
+import ProjectFileDownload from "../../../../components/script/fileDownloadScripts/ProjectFileDownload";
+import {UploadFileProjectContractSigned} from "../../../../components/UploadFile";
 
 
 const buttonProps = {type: "text", style: {width: "100%"}, size: "large"}

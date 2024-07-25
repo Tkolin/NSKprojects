@@ -4,14 +4,14 @@ import {Modal, notification, Space, Table, Typography} from "antd";
 import IrdsProjectForm from "../../IrdToProjectForm";
 import StageToProjectForm from "../../StageToProjectForm";
 import React, {useEffect, useState} from "react";
-import TableStages from "./TableStages";
-import TableIrds from "./TableIrds";
-import TableExecutors from "./TableExecutors";
+import TableStages from "./components/TableStages";
+import TableIrds from "./components/TableIrds";
+import TableExecutors from "./components/TableExecutors";
 import {useNavigate} from "react-router-dom";
 import {useQuery} from "@apollo/client";
 import {PROJECTS_QUERY} from "../../../graphql/queries";
 import {nanoid} from "nanoid";
-import {GetColumns} from "./TableColumn";
+import GetColumns from "./ColumnsManager";
 
 const {Text} = Typography;
 
@@ -25,14 +25,13 @@ const ProjectTableComponent = ({projectStatuses, mode, search, options, state}) 
     const [expandedRowKeys, setExpandedRowKeys] = useState();
     const [currentSort, setCurrentSort] = useState({});
     const [column, setColumn] = useState();
-     const navigate = useNavigate();
-    const onExpand = (value) => {
+     const onExpand = (value) => {
           setExpandedRowKeys((expandedRowKeys === value) ?  null : value);
     }
     useEffect(() => {
         setColumn(
             GetColumns({
-                options: options,
+                options,
                 permissions: "all",
                 expandable: {
                     onExpand: (value) => onExpand(value),
@@ -98,7 +97,7 @@ const ProjectTableComponent = ({projectStatuses, mode, search, options, state}) 
                 sortOrder
             }
         },
-        fetchPolicy: "network-а",
+        fetchPolicy: "cache-and-network",
         onCompleted: (data) => {
             console.log("queri IPA", data);
         }

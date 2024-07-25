@@ -1,12 +1,12 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Button, Col, Divider, Form, InputNumber, Row, Space, Tooltip} from 'antd';
 import { useMutation, useQuery} from "@apollo/client";
-import {NotificationContext} from "../../../NotificationProvider";
-import {UPDATE_EMPLOYEES_TO_TASKS} from "../../../graphql/mutationsTask";
+import {NotificationContext} from "../../../../NotificationProvider";
+import {UPDATE_EMPLOYEES_TO_TASKS} from "../../../../graphql/mutationsTask";
 import {CloseOutlined, PlusOutlined} from "@ant-design/icons";
-import {PERSONS_QUERY_COMPACT} from "../../../graphql/queriesCompact";
-import {StyledButtonGreen, StyledButtonRed} from "../../components/style/ButtonStyles";
-import {CustomAutoComplete} from "../../components/style/SearchAutoCompleteStyles";
+import {PERSONS_QUERY_COMPACT} from "../../../../graphql/queriesCompact";
+import {StyledButtonGreen, StyledButtonRed} from "../../../components/style/ButtonStyles";
+import {CustomAutoComplete} from "../../../components/style/SearchAutoCompleteStyles";
 
 
 const PersonsByStagesCompactForm = ({tasks,projectId,stageNumber, onCompleted}) => {

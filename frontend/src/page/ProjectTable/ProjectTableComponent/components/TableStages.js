@@ -1,14 +1,14 @@
 import {Space, Table, Tooltip, Typography} from "antd";
 import React from "react";
-import StagesProjectFileDownload from "../../components/script/fileDownloadScripts/StagesProjectFileDownload";
+import StagesProjectFileDownload from "../../../components/script/fileDownloadScripts/StagesProjectFileDownload";
 import {DownloadOutlined, EditOutlined} from "@ant-design/icons";
 import Link from "antd/es/typography/Link";
 import {
     rebuildProjectResultQuery,
     rebuildStagesResultQuery
-} from "../../components/script/rebuildData/ProjectRebuilderQuery";
-import PaymentInvoiceProjectDownload from "../../components/script/fileDownloadScripts/PaymentInvoiceProjectDownload";
-import ActRenderingProjectDownload from "../../components/script/fileDownloadScripts/ActRenderingProjectDownload";
+} from "../../../components/script/rebuildData/ProjectRebuilderQuery";
+import PaymentInvoiceProjectDownload from "../../../components/script/fileDownloadScripts/PaymentInvoiceProjectDownload";
+import ActRenderingProjectDownload from "../../../components/script/fileDownloadScripts/ActRenderingProjectDownload";
 const {Text} = Typography;
 
 const TableStages = ({setEditModalStatus,project}) => {

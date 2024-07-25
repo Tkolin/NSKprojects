@@ -9,7 +9,7 @@ import {ORGANIZATIONS_QUERY} from "../../graphql/queries";
 import Title from "antd/es/typography/Title";
 import OrganizationModalForm from "../components/modal/OrganizationModalForm";
 
-import OrganizationContactsCompactTable from "../ProjectTable/components/OrganizationContactsCompactTable";
+import OrganizationContactsCompactTable from "../ProjectTable/ProjectTableComponent/components/OrganizationContactsCompactTable";
 
 const OrganizationTable = () => {
     // Состояния

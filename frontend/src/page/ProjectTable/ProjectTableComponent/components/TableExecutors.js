@@ -1,11 +1,11 @@
 import {Modal, Space, Table, Tooltip, Typography} from "antd";
 import {DownloadOutlined, EditOutlined, EyeOutlined} from "@ant-design/icons";
 import React, {useState} from "react";
-import PersonContractFileDownload from "../../components/script/fileDownloadScripts/PersonContractFileDownload";
-import TaskExecutorContractDownload from "../../components/script/fileDownloadScripts/TaskExecutorContractDownload";
+import PersonContractFileDownload from "../../../components/script/fileDownloadScripts/PersonContractFileDownload";
+import TaskExecutorContractDownload from "../../../components/script/fileDownloadScripts/TaskExecutorContractDownload";
 import Link from "antd/es/typography/Link";
 import {nanoid} from "nanoid";
-import OrderExecutorManager from "../../OrderExecutorManager";
+import OrderExecutorManager from "../../../OrderExecutorManager";
 
 const {Text} = Typography;
 

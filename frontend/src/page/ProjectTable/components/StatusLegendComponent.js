@@ -19,7 +19,7 @@ const LegendItem = ({color, text, value}) => (
     </Card>
 );
 
-const StatusLegend = ({projectStatuses}) => {
+const StatusLegendComponent = ({projectStatuses}) => {
     const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(STATUS_PROJECTS_QUERY, {variables: {
             projectStatuses
         }});
@@ -55,4 +55,4 @@ const StatusLegend = ({projectStatuses}) => {
     );
 };
 
-export default StatusLegend;
+export default StatusLegendComponent;

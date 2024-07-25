@@ -280,6 +280,18 @@ export const PROJECT_STAGE_SYNC_MUTATION = gql`
         }
     }
 `;
+export const PROJECT_ARCHIVE_MUTATION = gql`
+    mutation ProjectStagesSync($projectId: ID!) {
+        archiveProject(projectId: $projectId) {
+            id
+            status {
+                name_key
+                name
+            }
+            status_id
+        }
+    }
+`;
 export const CHANGE_TEMPLATE_TYPE_PROJECT = gql`
     mutation ChangeTemplateTypeProject ( $typeProject: ID! ,$newTemplate: ID!) {
         changeTemplateTypeProject(typeProject: $typeProject ,newTemplate: $newTemplate) {

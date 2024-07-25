@@ -24,13 +24,11 @@ import LoginPage from "./page/simplesForms/loginPage";
 import {NotificationProvider} from "./NotificationProvider";
 import moment from "moment";
 import RequestPage from "./page/simplesForms/RequestPage";
-import ProjectTableComponent from "./page/ProjectTable/components/ProjectTableComponent";
 import UserTable from "./page/simplesTables/UserTable";
 import RoleTable from "./page/simplesTables/RoleTable";
 import RolePage from "./page/simplesForms/RolePage";
 import {PermissionsProvider} from "./permission/PermissionsProvider";
 import usePermissionHider from "./permission/usePermissionHider";
-import OrderExecutorManager from "./page/OrderExecutorManager";
 import ProjectForm from "./page/ProjectForm";
 
 const GlobalStyles = createGlobalStyle`
@@ -97,7 +95,20 @@ const App = () => {
                                 <Route path="/project" element={<Home/>}/>
 
                                 <Route path="/project/extra" element={<ProjectTable
-                                    projectStatuses={["DESIGN_REQUEST"]}  legendOptions={["DESIGN_REQUEST"]}
+                                    projectStatuses={[
+                                        "APPROVAL_AGREEMENT",
+                                        "APPROVAL_KP",
+                                        "COMPLETED",
+                                        "DESIGN_REQUEST",
+                                        "WAITING_SOURCE",
+                                        "WORKING"]}
+                                    legendOptions={[
+                                    "APPROVAL_AGREEMENT",
+                                    "APPROVAL_KP",
+                                    "COMPLETED",
+                                    "DESIGN_REQUEST",
+                                    "WAITING_SOURCE",
+                                    "WORKING"]}
                                     columnOptions={["progress", "tool", "main", "customer", "status", "price"]}/>}/>
 
                                 <Route path="/project/request" element={<Home/>}/>
@@ -109,7 +120,7 @@ const App = () => {
                                 <Route path="/project/kp" element={<Home/>}/>
                                 <Route path="/project/kp/table"
                                        element={<ProjectTable projectStatuses={["APPROVAL_KP"]}
-                                                              columnOptions={["main", "customer"]}/>}/>
+                                                              columnOptions={["main", "customer", "kp_tools"]}/>}/>
                                 <Route path="/project/kp/form" element={<Home/>}/>
 
                                 <Route path="/project/contract" element={<Home/>}/>
