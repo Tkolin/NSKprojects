@@ -26,7 +26,7 @@ export const rebuildProjectResultQuery = (data) => {
         date_create: data?.date_create ? dayjs(data?.date_create) : null,
         date_end: data?.date_end ? dayjs(data?.date_end) : null,
         date_signing: data?.date_signing ? dayjs(data?.date_signing) : null,
-        delegates_id: data?.delegations?.map(k => k?.id),
+        delegates: data?.delegations ? {selected: data?.delegations?.map(k => k?.id), output: data?.delegations} : null,
         facility_id: {
             checkedKeys: data?.facilities?.map(k => facilitiesToFullCode(k)),
             checkedObjects: data?.facilities?.map(k =>
@@ -39,10 +39,16 @@ export const rebuildProjectResultQuery = (data) => {
                 })
             )
         },
-        organization_customer: {selected: data?.organization_customer?.id, output: data?.organization_customer?.name},
-        status_id: data?.status?.name_key,
-        type_project_document_id: data?.type_project_document?.id,
-        group_type_project_document_id: data?.type_project_document?.group?.id,
+        organization_customer: data?.organization_customer ? {selected: data?.organization_customer?.id, output: data?.organization_customer?.name} : null,
+        status_id: data?.status ? {selected: data?.status?.name_key, output: data?.status?.name} : null,
+        type_project_document: data?.type_project_document ? {
+            selected: data?.type_project_document?.id,
+            output: data?.type_project_document?.code + " - " + data?.type_project_document?.name
+        } : null,
+        group_type_project_document: data?.type_project_document?.group ? {
+            selected: data?.type_project_document?.group?.id,
+            output: data?.type_project_document?.group?.code + " - " + data?.type_project_document?.group?.name
+        } : null,
     }
         ;
 };
@@ -109,10 +115,10 @@ export const rebuildProjectToQuery = (data) => {
         type_project_document_id: data?.type_project_document_id,
         date_signing: data?.date_range?.dateStart ? dayjs(data?.date_range?.dateStart).format("YYYY-MM-DD") : null,
         duration: data?.date_range?.duration,
-        date_end: data?.date_range?.dateEnd ?  dayjs(data?.date_range?.dateEnd).format("YYYY-MM-DD") : null,
-        date_create: data?.date_signing ?  dayjs(data?.date_signing).format("YYYY-MM-DD") : null,
+        date_end: data?.date_range?.dateEnd ? dayjs(data?.date_range?.dateEnd).format("YYYY-MM-DD") : null,
+        date_create: data?.date_signing ? dayjs(data?.date_signing).format("YYYY-MM-DD") : null,
         status_id: data?.status_id,
-        date_completion: data?.date_completion ?  dayjs(data?.date_completion).format("YYYY-MM-DD") : null,
+        date_completion: data?.date_completion ? dayjs(data?.date_completion).format("YYYY-MM-DD") : null,
         price: data?.price,
         prepayment: data?.prepayment,
         facility_id: data?.facility_id?.checkedObjects?.map(row => row?.value[0] ?? null) ?? null,

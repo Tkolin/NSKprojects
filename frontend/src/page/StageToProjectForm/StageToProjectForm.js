@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Button, Form, Space} from 'antd';
+import {Button, Card, Form, Modal, Space} from 'antd';
 import {
     STAGES_QUERY_COMPACT
 } from '../../graphql/queriesCompact';
@@ -11,14 +11,15 @@ import dayjs from "dayjs";
 import StagesListHeader from "./components/StagesListHeader";
 import StagesListFooter from "./components/StagesListFooter";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import StageModalForm from "../components/modal/StageModalForm";
 import {
     rebuildStagesToQuery
 } from "../components/script/rebuildData/ProjectRebuilderQuery";
 import {PROJECT_STAGE_SYNC_MUTATION} from "../../graphql/mutationsProject";
 import {NotificationContext} from "../../NotificationProvider";
+import StageForm from "../simplesForms/StageForm";
+import {ModalButton} from "../simplesForms/formComponents/ModalButtonComponent";
 
-const StageToProjectForm = ({onCompleted, project}) => {
+const StageToProjectForm = ({onCompleted, project, cardProps}) => {
 
     // Первичные данные
 
@@ -31,7 +32,7 @@ const StageToProjectForm = ({onCompleted, project}) => {
     const [isChangeStageNumber, setIsChangeStageNumber] = useState(true);
     const {openNotification} = useContext(NotificationContext);
 
-    const [mutateStage,{loading: loading}] = useMutation(PROJECT_STAGE_SYNC_MUTATION, {
+    const [mutateStage, {loading: loading}] = useMutation(PROJECT_STAGE_SYNC_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
             console.log("upd data data data ", data);
@@ -109,82 +110,105 @@ const StageToProjectForm = ({onCompleted, project}) => {
     }
 
     return (
-        <Form layout="vertical" onChange={() => {
-            handleChange();
-        }} form={form}>
-            <Form.List name="stageList">
-                {(fields, {add, remove}) => (
-                    <>
-                        <StagesListHeader/>
+        <Card style={{width: 1400}}
+              {...cardProps}
+              actions={[
+                  <ModalButton
+                      modalType={"green"}
+                      isMany={cardProps?.actions}
+                      loading={loading}
+                      onClick={handleSave}
+                      children={project ? `Обновить` : `Создать`}/>
+                  , ...cardProps?.actions ?? []
+              ]}
+              children={
+                  <>
+                      <Form layout="vertical" onChange={() => {
+                          handleChange();
+                      }} form={form}>
+                          <Form.List name="stageList">
+                              {(fields, {add, remove}) => (
+                                  <>
+                                      <StagesListHeader/>
 
-                        {fields.map(({key, name, ...restField}, index) => (
-                            <>
-                                <StageItem
-                                    {...restField}
-                                    moveItem={moveItem}
-                                    form={form}
-                                    durationSetting={{
-                                        minDate: project?.date_range?.dateStart,
-                                        maxDate: project?.date_range?.dateEnd
-                                    }}
-                                    projectPrice={project?.price ?? 0}
-                                    prepayment={project?.prepayment ?? 0}
-                                    setStageModalStatus={setStageModalStatus}
-                                    key={key}
-                                    index={index}
-                                    value={name}
-                                    stagesData={dataStages?.stages?.items}
-                                    removeItem={(value) => {
-                                        remove(value);
-                                        handleChange();
-                                    }}
-                                    onChange={(value) => {
-                                        console.log("stageList", form.getFieldValue("stageList"));
-                                        handleChange();
-                                    }}
-                                    isFirst={index === 0}
-                                    isLast={index === fields.length - 1}
-                                />
-                            </>
+                                      {fields.map(({key, name, ...restField}, index) => (
+                                          <>
+                                              <StageItem
+                                                  {...restField}
+                                                  moveItem={moveItem}
+                                                  form={form}
+                                                  durationSetting={{
+                                                      minDate: project?.date_range?.dateStart,
+                                                      maxDate: project?.date_range?.dateEnd
+                                                  }}
+                                                  projectPrice={project?.price ?? 0}
+                                                  prepayment={project?.prepayment ?? 0}
+                                                  setStageModalStatus={setStageModalStatus}
+                                                  key={key}
+                                                  index={index}
+                                                  value={name}
+                                                  stagesData={dataStages?.stages?.items}
+                                                  removeItem={(value) => {
+                                                      remove(value);
+                                                      handleChange();
+                                                  }}
+                                                  onChange={(value) => {
+                                                      console.log("stageList", form.getFieldValue("stageList"));
+                                                      handleChange();
+                                                  }}
+                                                  isFirst={index === 0}
+                                                  isLast={index === fields.length - 1}
+                                              />
+                                          </>
 
-                        ))}
+                                      ))}
 
-                        <StagesListFooter
-                            project={project}
-                            totalToDuration={totalToDuration}
-                            totalToPercent={totalToPercent} freeCol={
-                            <Button
-                                type="primary"
-                                size={"small"}
-                                onClick={() => add()}
-                                style={{width: '100%'}}
-                                icon={<PlusOutlined/>}
-                            >
-                                Добавить этап к списку
-                            </Button>
-
-
-                        }/>
+                                      <StagesListFooter
+                                          project={project}
+                                          totalToDuration={totalToDuration}
+                                          totalToPercent={totalToPercent} freeCol={
+                                          <Button
+                                              type="primary"
+                                              size={"small"}
+                                              onClick={() => add()}
+                                              style={{width: '100%'}}
+                                              icon={<PlusOutlined/>}
+                                          >
+                                              Добавить этап к списку
+                                          </Button>
 
 
-
-                        <Space style={{ justifyContent: "center", width: "100%"}}>
-                            <StyledButtonGreen loading={loading} onClick={() => handleSave()}>Сохранить</StyledButtonGreen>
-                        </Space>
-                    </>
-                )}
-            </Form.List>
-            <StageModalForm
-                onClose={() => setStageModalStatus(null)}
-                onCompleted={(value)=> {
-                    const newRow = [...form.getFieldValue("stageList")];
-                    newRow[stageModalStatus?.key] = {stage: {selected: value.id, output: value.name}};
-                    form.setFieldValue("stageList",newRow);
-                    setStageModalStatus(null);
-                    //console.log(value)
-                }}
-                mode={stageModalStatus?.mode}/>
-        </Form>
+                                      }/>
+                                  </>
+                              )}
+                          </Form.List>
+                      </Form>
+                      <Modal
+                          key={stageModalStatus?.mode || stageModalStatus?.stage_id || null}
+                          open={stageModalStatus}
+                          onCancel={() => setStageModalStatus(null)}
+                          footer={null}
+                          width={"max-content"}
+                          children={
+                              <StageForm
+                                  cardProps={{title: "Этап"}}
+                                  onCompleted={(value) => {
+                                      const newRow = [...form.getFieldValue("stageList")];
+                                      newRow[stageModalStatus?.key] = {
+                                          stage: {
+                                              selected: value.id,
+                                              output: value.name
+                                          }
+                                      };
+                                      form.setFieldValue("stageList", newRow);
+                                      setStageModalStatus(null);
+                                      //console.log(value)
+                                  }}
+                                  initialObject={stageModalStatus?.stage_id ? {id: stageModalStatus?.stage_id} : null}
+                              />
+                          }
+                      />
+                  </>}/>
     );
 };
 

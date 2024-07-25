@@ -1,11 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import {
     Col,
     Descriptions,
-    Divider,
-    Form,
-     notification,
+    Form, Modal,
+    notification,
     Row,
     Space,
     Table,
@@ -15,10 +14,9 @@ import {DELETE_PERSON_MUTATION} from '../../graphql/mutationsPerson';
  import Search from "antd/es/input/Search";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import PersonContractFileDownload from "../components/script/fileDownloadScripts/PersonContractFileDownload";
-import Title from "antd/es/typography/Title";
 import {format} from "date-fns";
 import {DeleteAndEditStyledLinkManagingDataTable} from "../components/style/TableStyles";
- import PersonModalForm from "../components/modal/PersonModalForm";
+import PersonForm from "../simplesForms/PersonForm";
 
 const PersonTable = () => {
 
@@ -113,7 +111,7 @@ const PersonTable = () => {
                     title={"Удаление контакта"}
                     description={"Вы уверены, что нужно удалить этого подрядчика?"}
                     handleEdit={() => {
-                        setPersonModalStatus({person: record, mode: "edit"})
+                        setPersonModalStatus({person_id: record.id, mode: "edit"})
                     }}
                     handleDelete={() => handleDelete(record.id)}
                 />
@@ -137,7 +135,7 @@ const PersonTable = () => {
                     <StyledButtonGreen
                         loading={loading}
                         style={{marginBottom: 0}}
-                        onClick={() =>  setPersonModalStatus({person: null, mode: "add"})}
+                        onClick={() =>  setPersonModalStatus({person_id: null, mode: "add"})}
                         data-permission={"create-person"}>
                         Создать новую запись</StyledButtonGreen>
                 </Space>
@@ -203,11 +201,20 @@ const PersonTable = () => {
                 ),
             }}
         />
-        <PersonModalForm
-            key={personModalStatus?.person?.id ?? null}
-            onClose={()=>setPersonModalStatus(null)}
-            object={personModalStatus?.person ?? null}
-            mode={personModalStatus?.mode ?? null}
+        <Modal
+            key={personModalStatus?.mode || personModalStatus?.person_id || null}
+            open={personModalStatus}
+            onCancel={() => setPersonModalStatus(null)}
+            footer={null}
+            width={"max-content"}
+            title={"Исполнитель"}
+            children={
+                <PersonForm
+                    onCompleted={() =>
+                        setPersonModalStatus(null)}
+                    initialObject={personModalStatus?.person_id ? {id: personModalStatus?.person_id} : null}
+                />
+            }
         />
     </div>);
 };

@@ -13,7 +13,6 @@ export const TASKS_QUERY_COMPACT = gql`
 `;
 
 
-
 export const GROUP_TYPE_PROJECTS_QUERY_COMPACT = gql`
     query GroupTypeProjectsQueryCompact {
         groupTypeProjects   {
@@ -75,15 +74,11 @@ export const ORGANIZATIONS_QUERY_COMPACT = gql`
     }
 `;
 export const PROJECT_COUNT_BY_ORGANIZATION = gql`
-    query CountProjectByOrganizations ($organizationId: ID) {
-        countProjectByOrganizations (organizationId: $organizationId ){
-            items {
-                count_project
-                organization_id
-            }
-        }
+    query CountProjectByOrganizations ($organizationId: ID!) {
+        countProjectByOrganizations (organizationId: $organizationId )
     }
 `;
+
 
 export const IRDS_QUERY_COMPACT = gql`
     query IrdQueryCompact {

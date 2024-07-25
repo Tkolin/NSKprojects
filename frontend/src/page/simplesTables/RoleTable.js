@@ -1,15 +1,14 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Form, Space, Table, Typography} from 'antd';
-import {CONTACTS_QUERY, ROLES_TABLE, USERS_QUERY} from '../../graphql/queries';
+import {Form, Modal, Space, Table, Typography} from 'antd';
+import {ROLES_TABLE} from '../../graphql/queries';
 import {DELETE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
 import Search from "antd/es/input/Search";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {format} from "date-fns";
-import {DeleteAndEditStyledLinkManagingDataTable} from "../components/style/TableStyles";
-import ContactModalForm from "../components/modal/ContactModalForm";
 import {nanoid} from "nanoid";
 import {NotificationContext} from "../../NotificationProvider";
+import ContactForm from "../simplesForms/ContactForm";
 const {Text} = Typography;
 const RoleTable = () => {
 
@@ -146,14 +145,22 @@ const RoleTable = () => {
             }}
 
         />
-        <ContactModalForm
-            key={contactModalStatus?.contact?.id ?? nanoid()}
-            onClose={() => {
-                setContactModalStatus(null);
-            }}
-            object={contactModalStatus?.contact ?? null}
-            mode={contactModalStatus?.mode ?? null}
+        <Modal
+            key={contactModalStatus?.mode || contactModalStatus?.contact_id || null}
+            open={contactModalStatus}
+            onCancel={() => setContactModalStatus(null)}
+            footer={null}
+            width={"600px"}
+            title={"Организация"}
+            children={
+                <ContactForm
+                    onCompleted={() =>
+                        setContactModalStatus(null)}
+                    initialObject={contactModalStatus?.contact_id ? {id: contactModalStatus?.contact_id} : null}
+                />
+            }
         />
+
     </div>);
 };
 export default RoleTable;

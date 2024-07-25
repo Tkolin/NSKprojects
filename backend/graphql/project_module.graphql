@@ -9,7 +9,7 @@ extend type Query {
     executorOrders(projectId: ID!, executorId: ID!): [ExecutorOrder!]
 
     projectTasksExecutors(taskId: ID): ProjectTaskExecutorResult @checkRole(permission:  ["read-project-task-executor"])
-    countProjectByOrganizations(organizationId: ID): CountProjectByOrganizationsResult @checkRole(permission:  ["read-organization"])
+    countProjectByOrganizations(organizationId: ID!): Int @checkRole(permission:  ["read-organization"])
 }
 #-INPUTS:
 
@@ -40,6 +40,9 @@ extend type Mutation {
     projectIrdsSync(
         items: [IrdToProjectInput]!
     ): Project @checkRole(permission:  ["update-project-ird"])
+    archiveProject(
+        projectId: ID!
+    ): Project @checkRole(permission:  ["update-project-ird"])
     projectStagesSync(
         items: [StageToProjectInput]!
     ): Project @checkRole(permission:  ["update-project-stage"])
@@ -57,6 +60,10 @@ extend type Mutation {
         typeProject: ID!
         newTemplate: ID!
     ): TypeProjectDocument
+    generateCommercialOfferMessage(
+        projectId: ID!
+        dateMessage: ID!
+    ): File
     updateEmployeesToTasks(
         tasksIds: [ID]
         employeesIds: [ID]

@@ -1,4 +1,4 @@
-import {Button, Divider, Form, Space,} from "antd";
+import {Button, Divider, Form, Modal, Space,} from "antd";
 import {PlusOutlined,} from "@ant-design/icons";
 import React, {useContext, useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
@@ -7,10 +7,11 @@ import {IRDS_QUERY_COMPACT} from "../../graphql/queriesCompact";
 import IrdItem from "./components/IrdItem";
 import dayjs from "dayjs";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import IrdModalForm from "../components/modal/IrdModalForm";
-import {PROJECT_IRDS_SYNC_MUTATION} from "../../graphql/mutationsProject";
+ import {PROJECT_IRDS_SYNC_MUTATION} from "../../graphql/mutationsProject";
 
 import {NotificationContext} from "../../NotificationProvider";
+import OrganizationForm from "../simplesForms/OrganizationForm";
+import IrdForm from "../simplesForms/IrdForm";
 
 const IrdToProjectForm = ({project, onCompleted}) => {
     const {openNotification} = useContext(NotificationContext);
@@ -126,15 +127,26 @@ const IrdToProjectForm = ({project, onCompleted}) => {
             <Space style={{justifyContent: "center", width: "100%"}}>
                 <StyledButtonGreen  loading={loading} onClick={() => handleSave()}>Сохранить</StyledButtonGreen>
             </Space>
-            <IrdModalForm
-                onClose={() => setIrdModalStatus(null)}
-                onCompleted={(value) => {
-                    const newRow = [...form.getFieldValue("irdList")];
-                    newRow[irdModalStatus?.key] = {ird: {selected: value.id, output: value.name}};
-                    form.setFieldValue("irdList",newRow);
-                    setIrdModalStatus(null);
-                }}
-                mode={irdModalStatus?.mode}/>
+            <Modal
+                key={irdModalStatus?.mode || irdModalStatus?.ird_id || null}
+                open={irdModalStatus}
+                onCancel={() => setIrdModalStatus(null)}
+                footer={null}
+                width={"600px"}
+                title={"ИРД"}
+                children={
+                    <IrdForm
+                        onCompleted={(value) =>
+                        {
+                            const newRow = [...form.getFieldValue("irdList")];
+                            newRow[irdModalStatus?.key] = {ird: {selected: value.id, output: value.name}};
+                            form.setFieldValue("irdList",newRow);
+                            setIrdModalStatus(null);
+                        }}
+                        initialObject={irdModalStatus?.ird_id ? {id: irdModalStatus?.ird_id} : null}
+                    />
+                }
+            />
         </Form>
     )
 };

@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import './Styles.css';
-import StatusLegend from "./components/StatusLegend";
-import ProjectTableComponent from "./components/ProjectTableComponent";
-import ToolBar from "./components/ToolBar";
+import StatusLegendComponent from "./components/StatusLegendComponent";
+import ProjectTableComponent from "./ProjectTableComponent/ProjectTableComponent";
+import ToolBarComponent from "./ProjectTableComponent/ToolBarComponent";
 import {Divider, Space} from "antd";
 
 
@@ -17,12 +17,12 @@ const ProjectTable = ({projectStatuses, legendOptions, columnOptions, toolBarOpt
             <div>
                 {legendOptions && (
                     <>
-                        <StatusLegend projectStatuses={legendOptions} data-permission={"read-project-statistic"}/>
+                        <StatusLegendComponent projectStatuses={legendOptions} data-permission={"read-project-statistic"}/>
                         <Divider/>
                     </>
                 )}
                 <Space.Compact direction={"horizontal"}>
-                    <ToolBar onCompleted={()=>onRefetch()}  options={['search','add_request']} gutter={5} onSearch={setSearch}/>
+                    <ToolBarComponent onCompleted={()=>onRefetch()}  options={['search','add_request']} gutter={5} onSearch={setSearch}/>
                 </Space.Compact>
                 <Divider/>
 

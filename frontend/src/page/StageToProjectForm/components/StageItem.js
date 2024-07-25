@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {Row, Col, Form, InputNumber, Tooltip, DatePicker, Space} from 'antd';
 import {CaretUpOutlined, CaretDownOutlined, CloseOutlined} from '@ant-design/icons';
 import {CustomAutoComplete, CustomAutoCompleteExtension} from "../../components/style/SearchAutoCompleteStyles";
-import {EmptyFormItem} from "../../components/formComponents/EmptyFormItem";
+import {EmptyFormItem} from "../../simplesForms/formComponents/EmptyFormItem";
 import {StyledButtonRed} from "../../components/style/ButtonStyles";
 import DateRangePickerComponent from "../../components/DateRangePickerComponent";
 

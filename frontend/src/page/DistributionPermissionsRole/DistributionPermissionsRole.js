@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import './Styles.css'; // Импорт вашего CSS файла
-import StatusLegend from "./components/StatusLegend";
+import StatusLegend from "./components/StatusLegendComponent";
 import ProjectTableComponent from "./components/ProjectTableComponent";
 import {Divider, Form, Space} from "antd";
 import Title from "antd/es/typography/Title";

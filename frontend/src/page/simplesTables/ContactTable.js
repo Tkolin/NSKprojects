@@ -1,17 +1,15 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Divider, Form, Modal, notification, Space, Table} from 'antd';
+import {Form, Modal, Space, Table} from 'antd';
 import {CONTACTS_QUERY} from '../../graphql/queries';
 import {DELETE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
 import Search from "antd/es/input/Search";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import Title from "antd/es/typography/Title";
 import {format} from "date-fns";
 import {DeleteAndEditStyledLinkManagingDataTable} from "../components/style/TableStyles";
-import ContactModalForm from "../components/modal/ContactModalForm";
 import {nanoid} from "nanoid";
 import {NotificationContext} from "../../NotificationProvider";
-import ContactForm from "../components/form/modelsForms/ContactForm";
+import ContactForm from "../simplesForms/ContactForm";
 
 const ContactTable = () => {
 
@@ -130,15 +128,15 @@ const ContactTable = () => {
                         enterButton="Найти"
                         onSearch={onSearch}
                     />
-                         <StyledButtonGreen
+                    <StyledButtonGreen
 
-                             data-permission={"create-contact"}
-                             style={{marginBottom: 0}}
-                            onClick={() => setContactModalStatus({contact: null, mode: "add"})}>
+                        data-permission={"create-contact"}
+                        style={{marginBottom: 0}}
+                        onClick={() => setContactModalStatus({contact: null, mode: "add"})}>
 
-                            Создать новую запись
-                        </StyledButtonGreen>
-                 </Space>
+                        Создать новую запись
+                    </StyledButtonGreen>
+                </Space>
             </Form.Item>
         </Form>
         <Table
@@ -171,21 +169,21 @@ const ContactTable = () => {
             open={contactModalStatus?.mode === "add" || contactModalStatus?.mode === "edit"}
             onCancel={() => setContactModalStatus(null)}
             footer={null}
-            width={"500px"}
+            width={"max-content"}
             title={"Контакт"}
-            styles={{header: {textAlign: "center"} }}
+            styles={{header: {textAlign: "center"}}}
         >
             {contactModalStatus?.mode === "edit" ? (
-                (contactModalStatus?.contact  ) && (
+                (contactModalStatus?.contact) && (
                     <ContactForm
                         onCompleted={() =>
                             setContactModalStatus(null)}
-                        initialObject={contactModalStatus?.contact  }
+                        initialObject={contactModalStatus?.contact}
                         localObject={contactModalStatus?.contact}
                     />
                 )
             ) : (
-                <ContactForm  onCompleted={()=> setContactModalStatus(null)}/>
+                <ContactForm onCompleted={() => setContactModalStatus(null)}/>
             )}
         </Modal>
 
