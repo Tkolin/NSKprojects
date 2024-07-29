@@ -98,16 +98,14 @@ input IrdToProjectInput {
     received_date: String
 }
 input StageToProjectInput {
-    project_id: ID
-    stage_id: ID
-    number: Int
-#    price: Float
-    percent: Int
+    project_id: ID!
+    stage_id: ID!
+    number: Int!
+    percent: Int!
+    duration: Int!
     date_start: String
-    duration: Int
     date_end: String
     progress: Int
-#    price_to_paid: Float
 }
 input RequestInput {
     name: ID!

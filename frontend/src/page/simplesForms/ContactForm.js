@@ -1,9 +1,8 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Card, Divider, Form, Input, Modal, Skeleton, Space} from 'antd';
+import {Button, Card, Divider, Form, Input, Modal, Skeleton, Space} from 'antd';
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import {ADD_CONTACT_MUTATION, UPDATE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
 import moment from 'moment';
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {NotificationContext} from "../../NotificationProvider";
 import {
     ORGANIZATIONS_QUERY_COMPACT,
@@ -14,11 +13,10 @@ import {
     CustomAutoCompleteAndCreateWitchEdit
 } from "../components/style/SearchAutoCompleteStyles";
 import {CONTACTS_QUERY_BY_ID} from "../../graphql/queriesByID";
-import LoadingSpinnerStyles from "../components/style/LoadingSpinnerStyles";
 import {CustomDatePicker} from "../components/FormattingDateElementComponent";
-import {nanoid} from "nanoid";
 import OrganizationForm from "./OrganizationForm";
 import {ModalButton} from "./formComponents/ModalButtonComponent";
+import {AutoCompleteFormItem} from "../components/CustomForm";
 
 const ContactForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     // Первичные данные
@@ -106,24 +104,25 @@ const ContactForm = ({localObject, initialObject, onCompleted, cardProps}) => {
             }
         });
     };
-    if (loading || loadingSave) return <LoadingSpinnerStyles/>
     if (errorOrganizations || errorPositions) return `Ошибка! ${errorOrganizations?.message || errorPositions?.message}`;
 
     return (
         <Card style={{width: 400}}
-            {...cardProps}
+              {...cardProps}
               actions={[
                   <ModalButton
+
                       modalType={"green"}
                       isMany={cardProps?.actions}
                       loading={loadingSave}
-                      onClick={handleSubmit}
+                      onClick={() => form.submit()}
+                      //onClick={handleSubmit}
                       children={actualObject ? `Обновить` : `Создать`}/>
                   , ...cardProps?.actions ?? []
               ]}
               children={
                   <>
-                      {!loading ? (
+
                       <Form
                           onChange={() => console.log("change", form.getFieldsValue())}
                           form={form}
@@ -132,105 +131,116 @@ const ContactForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                           labelAlign="left"
                           wrapperCol={{span: 16}}
                       >
+                          {!loading ? (
+                              <>
+                                  <Divider orientation="left">ФИО:</Divider>
+                                  <Form.Item
+                                      name="last_name"
+                                      label="Фамилия"
+                                      rules={[{required: true, message: 'Пожалуйста, заполните фамилию'}]}
+                                  >
+                                      <Input/>
+                                  </Form.Item>
+                                  <Form.Item
+                                      name="first_name"
+                                      label="Имя"
+                                      rules={[{required: true, message: 'Пожалуйста, заполните имя'}]}
+                                  >
+                                      <Input/>
+                                  </Form.Item>
+                                  <Form.Item name="patronymic" label="Отчество">
+                                      <Input/>
+                                  </Form.Item>
 
-                          <Divider orientation="left">ФИО:</Divider>
-                          <Form.Item
-                              name="last_name"
-                              label="Фамилия"
-                              rules={[{required: true, message: 'Пожалуйста, заполните фамилию'}]}
-                          >
-                              <Input/>
-                          </Form.Item>
-                          <Form.Item
-                              name="first_name"
-                              label="Имя"
-                              rules={[{required: true, message: 'Пожалуйста, заполните имя'}]}
-                          >
-                              <Input/>
-                          </Form.Item>
-                          <Form.Item name="patronymic" label="Отчество">
-                              <Input/>
-                          </Form.Item>
+                                  <Divider orientation="left">Персональные данные:</Divider>
 
-                          <Divider orientation="left">Персональные данные:</Divider>
+                                  <Form.Item
+                                      name="work_phone"
+                                      label="Рабочий тел."
+                                      rules={[
+                                          {
+                                              pattern: /^\+[0-9\s()-]+$/,
+                                              message: 'Пожалуйста, введите в формате +79003001234',
+                                          },
+                                      ]}
+                                  >
+                                      <Input placeholder="+790031001234" maxLength={16} minLength={10}/>
+                                  </Form.Item>
+                                  <Form.Item
+                                      name="mobile_phone"
+                                      label="Личный тел."
+                                      rules={[
+                                          {
+                                              pattern: /^\+[0-9\s()-]+$/,
+                                              message: 'Пожалуйста, введите в формате +79003001234',
+                                          },
+                                      ]}
+                                  >
+                                      <Input placeholder="+790031001234" maxLength={16} minLength={10}/>
+                                  </Form.Item>
+                                  <Form.Item
+                                      name="email"
+                                      label="Личный e-mail"
+                                      rules={[{
+                                          type: 'email',
+                                          message: 'Пожалуйста, введите корректный почтовый адрес',
+                                      }]}
+                                  >
+                                      <Input placeholder="Введите e-mail"/>
+                                  </Form.Item>
+                                  <Form.Item
+                                      name="work_email"
+                                      label="Рабочий e-mail"
+                                      rules={[{
+                                          type: 'email',
+                                          message: 'Пожалуйста, введите корректный почтовый адрес',
+                                      }]}
+                                  >
+                                      <Input placeholder="Введите e-mail"/>
+                                  </Form.Item>
+                                  <Form.Item name="birth_day" label="Дата рождения">
+                                      <CustomDatePicker placeholder="Выберите дату"/>
+                                  </Form.Item>
 
-                          <Form.Item
-                              name="work_phone"
-                              label="Рабочий тел."
-                              rules={[
-                                  {
-                                      pattern: /^\+[0-9\s()-]+$/,
-                                      message: 'Пожалуйста, введите в формате +79003001234',
-                                  },
-                              ]}
-                          >
-                              <Input placeholder="+790031001234" maxLength={16} minLength={10}/>
-                          </Form.Item>
-                          <Form.Item
-                              name="mobile_phone"
-                              label="Личный тел."
-                              rules={[
-                                  {
-                                      pattern: /^\+[0-9\s()-]+$/,
-                                      message: 'Пожалуйста, введите в формате +79003001234',
-                                  },
-                              ]}
-                          >
-                              <Input placeholder="+790031001234" maxLength={16} minLength={10}/>
-                          </Form.Item>
-                          <Form.Item
-                              name="email"
-                              label="Личный e-mail"
-                              rules={[{type: 'email', message: 'Пожалуйста, введите корректный почтовый адрес',}]}
-                          >
-                              <Input placeholder="Введите e-mail"/>
-                          </Form.Item>
-                          <Form.Item
-                              name="work_email"
-                              label="Рабочий e-mail"
-                              rules={[{type: 'email', message: 'Пожалуйста, введите корректный почтовый адрес',}]}
-                          >
-                              <Input placeholder="Введите e-mail"/>
-                          </Form.Item>
-                          <Form.Item name="birth_day" label="Дата рождения">
-                              <CustomDatePicker placeholder="Выберите дату"/>
-                          </Form.Item>
-
-                          <Divider orientation="left">Данные организации:</Divider>
-                          <Form.Item
-                              name={"position"}
-                              label={"Должность"}
-                              style={{width: "100%"}}>
-                              <CustomAutoComplete
-                                  data={dataPositions?.positions?.items}
-                                  placeholder="Выберите должность"
-                                  loading={loadingPositions}
-                              />
-                          </Form.Item>
-                          <Form.Item
-                              name={"organization"}
-                              label={"Организация"}
-                              style={{width: "100%"}}>
-                              <CustomAutoCompleteAndCreateWitchEdit
-                                  loading={loadingOrganizations}
-                                  data={dataOrganizations?.organizations?.items}
-                                  onChange={(value) => form.setFieldValue("organization", value)}
-                                  placeholder="Выберите организацию"
-                                  firstBtnOnClick={() =>
-                                      setOrganizationModalStatus({
-                                          organization_id: form.getFieldValue("organization")?.selected,
-                                          mode: "add"
-                                      })}
-                                  secondBtnOnClick={() =>
-                                      form.getFieldValue("organization")?.selected &&
-                                      setOrganizationModalStatus({
-                                          organization_id: form.getFieldValue("organization")?.selected,
-                                          mode: "edit"
-                                      })}
-                              />
-                          </Form.Item>
-
-                      </Form>) : <Skeleton active/> }
+                                  <Divider orientation="left">Данные организации:</Divider>
+                                  <AutoCompleteFormItem
+                                      name={"position"}
+                                      label={"Должность"}
+                                      style={{width: "100%"}}
+                                      rulesValidationRequired={true}
+                                      rulesValidationMessage={'Пожалуйста, укажите должность в организации'}>
+                                      <CustomAutoComplete
+                                          data={dataPositions?.positions?.items}
+                                          placeholder="Выберите должность"
+                                          loading={loadingPositions}
+                                      />
+                                  </AutoCompleteFormItem>
+                                  <AutoCompleteFormItem
+                                      name={"organization"}
+                                      label={"Организация"}
+                                      style={{width: "100%"}}
+                                      rulesValidationRequired={true}
+                                      rulesValidationMessage={'Пожалуйста, укажите организацию'}>
+                                      <CustomAutoCompleteAndCreateWitchEdit
+                                          loading={loadingOrganizations}
+                                          data={dataOrganizations?.organizations?.items}
+                                          onChange={(value) => form.setFieldValue("organization", value)}
+                                          placeholder="Выберите организацию"
+                                          firstBtnOnClick={() =>
+                                              setOrganizationModalStatus({
+                                                  organization_id: form.getFieldValue("organization")?.selected,
+                                                  mode: "add"
+                                              })}
+                                          secondBtnOnClick={() =>
+                                              form.getFieldValue("organization")?.selected &&
+                                              setOrganizationModalStatus({
+                                                  organization_id: form.getFieldValue("organization")?.selected,
+                                                  mode: "edit"
+                                              })}
+                                      />
+                                  </AutoCompleteFormItem></>
+                          ) : <Skeleton active/>}
+                      </Form>
 
                       <Modal
                           key={organizationModalStatus?.mode || organizationModalStatus?.organization_id || null}

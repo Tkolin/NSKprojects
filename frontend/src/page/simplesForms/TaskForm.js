@@ -67,12 +67,12 @@ const TaskForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                       modalType={"green"}
                       isMany={cardProps?.actions}
                       loading={loadingSave}
-                      onClick={handleSubmit}
+                      onClick={()=>form.submit()}
                       children={actualObject ? `Обновить` : `Создать`}/>
                   , ...cardProps?.actions ?? []
               ]}
               children={
-            <Form form={form} layout="horizontal">
+            <Form form={form} onFinish={handleSubmit} layout="horizontal">
 
                         <Space.Compact style={{width: "100%"}}>
                     <Form.Item style={{width: "100%"}} name="name" label="Наименование" rules={[{required: true}]}>

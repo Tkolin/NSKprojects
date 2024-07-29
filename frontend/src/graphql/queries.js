@@ -13,19 +13,6 @@ export const FENRIR_QUERY = gql`
         }
     }
 `;
-export const FENRIR_TEMPLATE_QUERY = gql`
-    query FenrirTemplateQuery  ($projectId: ID) {
-        templateFenrirsTypeProject  (projectId: $projectId) {
-            items {
-                id
-                name
-                description
-                models
-            }
-            count
-        }
-    }
-`;
 export const TASKS_QUERY = gql`
     query TasksQuery  ($queryOptions: QueryOptions) {
         tasks  (queryOptions: $queryOptions) {

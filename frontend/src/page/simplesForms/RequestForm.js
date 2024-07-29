@@ -18,6 +18,7 @@ import dayjs from "dayjs";
 import OrganizationForm from "./OrganizationForm";
 import {ModalButton} from "./formComponents/ModalButtonComponent";
 import ContactForm from "./UserForm";
+import {AutoCompleteFormItem} from "../components/CustomForm";
 
 const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     // Первичные данные
@@ -86,15 +87,14 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
 
     const handleSubmit = () => {
         const formData = form.getFieldsValue();
-        console.log(formData);
-        mutate({
+         mutate({
             variables: {
                 data: {
-                    name: formData?.name,
-                    number_message: formData?.number_message,
-                    organization_id: formData?.organization?.selected ?? null,
-                    contact_id: formData?.contact?.selected ?? null,
-                    date_send: formData?.date_send ? dayjs(formData?.date_send).format("YYYY-MM-DD") : null,
+                    name: formData.name,
+                    number_message: formData.number_message,
+                    organization_id: formData.organization.selected,
+                    contact_id: formData.contact.selected,
+                    date_send: dayjs(formData?.date_send).format("YYYY-MM-DD"),
                 }
             }
         });
@@ -109,7 +109,7 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                       modalType={"green"}
                       isMany={cardProps?.actions}
                       loading={loadingSave}
-                      onClick={handleSubmit}
+                      onClick={() => form.submit()}
                       children={actualObject ? `Обновить` : `Создать`}/>
                   , ...cardProps?.actions ?? []
               ]}
@@ -125,11 +125,14 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                       >
                           {!loading ? (<>
                               <Form.Item name="name" label="Наименование проекта"
-                                         children={ <Input/>}/>
-                              <Form.Item
+                                         children={<Input/>}
+                                         rules={[{required: true, message: 'Пожалуйста, укажите наименование проекта'}]}
+                              />
+                              <AutoCompleteFormItem
                                   name="organization"
                                   label="Организация"
-                                  rules={[{required: true, message: 'Пожалуйста, заполните фамилию'}]}
+                                  rulesValidationMessage={'Пожалуйста, укажите организацию'}
+                                  rulesValidationRequired={true}
                                   children={
                                       <CustomAutoCompleteAndCreateWitchEdit
                                           loading={loadingOrganizations}
@@ -147,10 +150,11 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                                           data={dataOrganizations?.organizations?.items}/>
                                   }
                               />
-                              <Form.Item
+                              <AutoCompleteFormItem
                                   name="contact"
                                   label="Контакт"
-                                  rules={[{required: true, message: 'Пожалуйста, заполните имя'}]}
+                                  rulesValidationMessage={'Пожалуйста, укажите контакт'}
+                                  rulesValidationRequired={true}
                                   children={
                                       <CustomAutoCompleteAndCreateWitchEdit
                                           loading={loadingContacts}
@@ -170,10 +174,16 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                                   }
                               />
                               <Form.Item name="number_message" label="Номер письма"
-                                         children={<Input/>}/>
+                                         children={<Input/>} rules={[{
+                                  required: true,
+                                  message: 'Пожалуйста, укажите наименование проекта'
+                              }]}/>
 
                               <Form.Item name="date_send" label="Дата обращения"
-                                         children={<CustomDatePicker/>}/>
+                                         children={<CustomDatePicker/>} rules={[{
+                                  required: true,
+                                  message: 'Пожалуйста, укажите наименование проекта'
+                              }]}/>
                           </>) : <Skeleton active/>}
                       </Form>
                       <Modal
@@ -199,6 +209,7 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                           open={contactModalStatus}
                           onCancel={() => setContactModalStatus(null)}
                           footer={null}
+
                           width={"max-content"}
                           children={
                               <Space style={{justifyContent: "center", width: "100%"}}

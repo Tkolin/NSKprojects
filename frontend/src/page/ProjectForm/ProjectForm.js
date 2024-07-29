@@ -25,8 +25,7 @@ import ContactForm from "../simplesForms/ContactForm";
 import OrganizationForm from "../simplesForms/OrganizationForm";
 import {ModalButton} from "../simplesForms/formComponents/ModalButtonComponent";
 
-
-const ProjectForm = ({onCompleted, project, type, options, cardProps}) => {
+ const ProjectForm = ({onCompleted, project, type, requiredOptions = ["group_type_project_document"], options, cardProps}) => {
         // Получение данных для выпадающих списков
         const {loading: loadingStatuses, error: errorStatuses, data: dataStatuses} =
             useQuery(PROJECT_STATUSES_QUERY_COMPACT);
@@ -198,23 +197,26 @@ const ProjectForm = ({onCompleted, project, type, options, cardProps}) => {
                           disabled={errorProjectCountByOrg}
                           isMany={cardProps?.actions}
                           loading={loadProjectCountByOrg || loading}
-                          onClick={handleSave}
+                          onClick={()=>form.submit()}
                           children={project ? `Обновить` : `Создать`}/>
                       , ...cardProps?.actions ?? []
                   ]}
                   children={<>
-                      <Form form={form} layout="vertical">
+                      <Form form={form} onFinish={handleSave} layout="vertical">
 
-                          <Form.Item name="name" label="Наименование проекта" rules={[{required: true}]}>
+                          <Form.Item name="name" label="Наименование проекта"
+                                     rules={[{required: true}]}>
                               <Input/>
                           </Form.Item>
-                          <Form.Item name="group_type_project_document" label="Тип документа">
+                          <Form.Item name="group_type_project_document" label="Тип документа" rules={[{required: requiredOptions?.includes("group_type_project_document")}]}>
                               <CustomAutoComplete
                                   disabled={!isRequest}
                                   loading={loadingGroupProject}
                                   typeData={"CODENAME"}
                                   data={dataGroupProject?.groupTypeProjects}
                                   onSelect={(value) => setSelectedGroupTypeProject(value.id)}
+
+
                               />
                           </Form.Item>
                           <Form.Item name="type_project_document" label="Подтип документа">

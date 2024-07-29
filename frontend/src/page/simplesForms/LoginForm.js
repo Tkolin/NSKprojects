@@ -45,7 +45,7 @@ const LoginForm = ({cardProps}) => {
                   <ModalButton
                       modalType={"primary"}
                       isMany={cardProps?.actions}
-                      onClick={()=>onFinish()}
+                      onClick={()=>form.submit()}
                       children={`Вход`}/>
                   , ...cardProps?.actions ?? []
               ]}
@@ -55,6 +55,7 @@ const LoginForm = ({cardProps}) => {
             <Form
                 form={form}
                 name="loginForm"
+                onFinish={onFinish}
                 initialValues={{remember: true}}
             >
                 <Form.Item

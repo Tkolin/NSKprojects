@@ -101,7 +101,7 @@ const ContactForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                       modalType={"green"}
                       isMany={cardProps?.actions}
                       loading={loadingSave}
-                      onClick={handleSubmit}
+                      onClick={()=>form.submit()}
                       children={actualObject ? `Обновить` : `Создать`}/>
                   , ...cardProps?.actions ?? []
               ]}

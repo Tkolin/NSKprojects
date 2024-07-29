@@ -21,6 +21,7 @@ const StageItem = ({
                        isFirst,
                        isLast,
                        setStageModalStatus,
+                       ...props
                    }) => {
     useEffect(() => {
         handlePriceChange(form.getFieldValue(["stageList", index, "percent"]));
@@ -28,15 +29,7 @@ const StageItem = ({
     useEffect(() => {
         console.log("durationSetting", durationSetting);
     }, [durationSetting]);
-    // Обработчик изменения даты
-    // const handleDateRangeChange = (dates) => {
-    //     if (dates && dates[0] && dates[1]) {
-    //         form.setFieldValue(["stageList", index, "duration"],
-    //             dayjs(dates[1]).diff(dayjs(dates[0]), 'day') + 1); // обновляем поле продолжительности
-    //         onChange(); // вызываем onChange для обновления данных
-    //     }
-    // };
-    // Обработчик цен
+
     const handlePriceChange = (percent) => {
         if (percent) {
             const price = (projectPrice * (percent / 100)).toFixed(2);
@@ -88,7 +81,7 @@ const StageItem = ({
                             <CustomAutoCompleteExtension
                                 visibleMode={"CREATE_WHERE_NON_SELECTED"}
                                 firstBtnOnClick={() =>
-                                    setStageModalStatus({mode: "add",key: index})}
+                                    setStageModalStatus({mode: "add", key: index})}
                                 style={{width: "100%"}}
                                 placeholder={"Выбор этапа..."}
                                 data={stagesData}/>
@@ -100,7 +93,7 @@ const StageItem = ({
                         <Form.Item
                             style={{marginBottom: 0, width: "100%"}}
                             name={[index, 'date_range']}
-                            rules={[{required: true,},]} >
+                            rules={[{required: true,},]}>
                             <DateRangePickerComponent
                                 minDate={durationSetting.minDate}
                                 maxDate={durationSetting.maxDate}
@@ -120,7 +113,7 @@ const StageItem = ({
                             <InputNumber max={100} min={0} value={0}
                                          onChange={handlePriceChange}
                                          defaultValue={1} suffix={"%"}
-                                         style={{width: "100%"}} />
+                                         style={{width: "100%"}}/>
                         </Form.Item>
                     </Tooltip>
                 </Col>
@@ -142,7 +135,7 @@ const StageItem = ({
                         <Form.Item
                             style={{marginBottom: 0, width: "100%"}}
                             name={[index, 'price_to_paid']}
-                            rules={[{required: true,},]}>
+                        >
                             <InputNumber
                                 disabled={true}
                                 formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}

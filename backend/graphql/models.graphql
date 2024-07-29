@@ -108,16 +108,16 @@ type ProjectStatus{
 type ProjectStage{
     project_id: ID!
     stage_id: ID!
-    project: Project
-    stage: Stage
-    number: Int
-    price: Float
-    price_to_paid: Float
-    percent: Int
+    project: Project!
+    stage: Stage!
+    number: Int!
+    price: Float!
+    price_to_paid: Float!
+    percent: Int!
     date_start: String
-    duration: Int
+    duration: Int!
     date_end: String
-    progress: Int
+    progress: Int!
 }
 type ProjectTask{
     id: ID
@@ -459,20 +459,20 @@ type Mutation {
 }
 #-INPUTS:
 input PersonInput {
-    firstname: String
-    lastname: String
+    firstname: String!
+    lastname: String!
     patronymic: String
     serial: String
     number: String
     passport_place_issue_id: ID
     address_registration: String
     address_residential: String
-    birth_date: String
+    birth_date: String!
     date: String
     SHILS: String
     INN: String
     payment_account: String
-    phone_number: String
+    phone_number: String!
     email: String
     email_sibnipi: String
     bank_id: ID
@@ -494,7 +494,8 @@ input OrganizationInput{
     KPP: String
     bik_id: ID
     payment_account: String
-    director_id: ID}
+    director_id: ID!
+}
 input ContactInput{
     first_name: String!
     last_name: String

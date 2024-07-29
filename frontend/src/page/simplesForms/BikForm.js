@@ -1,12 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Card, Form, Input, Skeleton} from 'antd';
 
-import {StyledButtonGreen} from '../components/style/ButtonStyles';
 import {NotificationContext} from '../../NotificationProvider';
 import {useLazyQuery, useMutation} from '@apollo/client';
 import {ADD_BIK_MUTATION, UPDATE_BIK_MUTATION} from '../../graphql/mutationsBik';
 import {BIKS_QUERY_BY_ID} from "../../graphql/queriesByID";
-import LoadingSpinnerStyles from "../components/style/LoadingSpinnerStyles";
 import {ModalButton} from "./formComponents/ModalButtonComponent";
 
 const BikForm = ({localObject, initialObject, onCompleted, cardProps}) => {
@@ -75,14 +73,14 @@ const BikForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                       modalType={"green"}
                       isMany={cardProps?.actions}
                       loading={loadingSave}
-                      onClick={handleSubmit}
+                      onClick={()=>form.submit()}
                       children={actualObject ? `Обновить` : `Создать`}/>
                   , ...cardProps?.actions ?? []
               ]}
               children={
                   <>
                       {!loading ?
-                          <Form form={form}>
+                          <Form form={form} onFinish={handleSubmit}>
                               <Form.Item name="BIK" label="Бик" rules={[{required: true}]}>
                                   <Input/>
                               </Form.Item>

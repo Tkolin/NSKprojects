@@ -47,8 +47,7 @@ export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) =>
         }
 
     });
-    const onCompleted  = (projectId) => {
-        openNotification('top', 'warring', `TODO: Просит загрузить подписанный договор, и првоеряет данные у проекта`);
+    const handleUpProject  = (projectId) => {
     }
     return (
         <>
@@ -61,10 +60,8 @@ export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) =>
 
             <Space.Compact align="start" direction={"vertical"}>
 
-                <Upload ellipsis={true}>
-                    <StyledButtonGreen icon={<CheckSquareOutlined/>}/>
-                </Upload>
-                <Popconfirm
+                     <StyledButtonGreen onClick={()=>handleUpProject()} icon={<CheckSquareOutlined/>}/>
+                 <Popconfirm
                     title={"Архивация заявки"}
                     description={"Вы уверены? это перенесёт заявку в архив!"}
                     onConfirm={() => archiveProjectMutate({variables: {projectId: record.id}})}

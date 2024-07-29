@@ -6,7 +6,7 @@ import {
 } from '../../graphql/mutationsOrganization';
 
 import 'react-dadata/dist/react-dadata.css';
-import {StyledButtonGreen, StyledButtonGreenGhost} from "../components/style/ButtonStyles";
+import './style.css';
 import {NotificationContext} from "../../NotificationProvider";
 import {
     BIKS_QUERY_COMPACT,
@@ -20,14 +20,13 @@ import {
 } from "../components/style/SearchAutoCompleteStyles";
 
 
-import LoadingSpinnerStyles from "../components/style/LoadingSpinnerStyles";
 import {AddressSuggestions} from "react-dadata";
 import {StyledAddressSuggestionsInput} from "../components/style/InputStyles";
 
-import {nanoid} from "nanoid";
 import ContactForm from "./ContactForm";
 import {ModalButton} from "./formComponents/ModalButtonComponent";
 import BikForm from "./BikForm";
+import {AutoCompleteFormItem} from "../components/CustomForm";
 
 const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardProps}) => {
     // Первичные данные
@@ -143,18 +142,18 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
                       modalType={"green"}
                       isMany={cardProps?.actions}
                       loading={loadingSave}
-                      onClick={handleSubmit}
+                      onClick={() => form.submit()}
                       children={actualObject ? `Обновить` : `Создать`}/>
                   , ...cardProps?.actions ?? []
               ]}
               children={
-            <>
+                  <>
                       <Form
                           form={form}
                           onFinish={handleSubmit}
                       >
                           {!loading ? (<>
-                                  <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
+                                  <Space.Compact style={{width: "100%", alignItems: 'start'}}>
                                       <Form.Item name="name"
                                                  label={"Наименование компании"}
                                                  rules={[{required: true, message: "Укажите наименование компании"}]}
@@ -180,7 +179,9 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
                                              rules={[{required: true, message: "Укажите полное наименование компании"}]}>
                                       <Input/>
                                   </Form.Item>
-                                  <Form.Item name="director" label="Руководитель">
+                                  <AutoCompleteFormItem name="director" label="Руководитель"
+                                                        rulesValidationRequired={true}
+                                                        rulesValidationMessage={'Укажите руководителя организации'}>
                                       <CustomAutoCompleteAndCreateWitchEdit
                                           data={dataContacts?.contacts?.items}
                                           typeData={"FIO"}
@@ -194,12 +195,12 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
                                                   form.getFieldValue("director")?.selected, mode: "edit"
                                               })}
                                       />
-                                  </Form.Item>
-
-                                  <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
+                                  </AutoCompleteFormItem>
+        
+                                  <Space.Compact style={{width: "100%", alignItems: 'flex-start'}}>
                                       <Form.Item name="address_legal" label="Юридический адрес" minchars={3}
                                                  delay={50}
-                                                 style={{width: '80%'}}>
+                                                 style={{width: '100%'}}>
                                           <AddressSuggestions token={TokenDADATA}
                                                               defaultQuery={address?.legal ?? ""}
                                                               inputProps={{
@@ -216,12 +217,12 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
                                           <Input placeholder="Офис" style={{width: '100%'}}/>
                                       </Form.Item>
                                   </Space.Compact>
-                                  <Space.Compact style={{width: "100%", alignItems: 'flex-end'}}>
+                                  <Space.Compact style={{width: "100%", alignItems: 'flex-start'}}>
                                       <Form.Item name="address_mail" label="Почтовый адрес" minchars={3}
                                                  delay={50}
-                                                 style={{width: '90%'}}>
+                                                 style={{width: '100%'}}>
                                           <AddressSuggestions token={TokenDADATA}
-                                                              defaultQuery={address?.mail ?? ""}
+                                                               defaultQuery={address?.mail ?? ""}
                                                               inputProps={{
                                                                   placeholder: 'Введите адрес',
                                                                   style: StyledAddressSuggestionsInput,
@@ -229,8 +230,7 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
                                                               onChange={(suggestion) => setAddress({
                                                                   ...address,
                                                                   mail: suggestion?.unrestricted_value
-                                                              })}
-                                                              style={{width: '100%'}}/>
+                                                              })}/>
                                       </Form.Item>
                                       <Form.Item
                                           name="office_number_mail"
@@ -261,7 +261,9 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
                                           <Form.Item name="payment_account" label="Расчётынй счёт">
                                               <Input placeholder="Введите номер расчётного счёта"/>
                                           </Form.Item>
-                                          <Form.Item name="bik" label="Бик" style={{width: "100%"}}>
+                                          <AutoCompleteFormItem rulesValidationRequired={false}
+                                                                rulesValidationMessage={'Пожалуйста, укажите бик'}
+                                                                name="bik" label="Бик" style={{width: "100%"}}>
                                               <CustomAutoCompleteAndCreate
                                                   typeData={"CODENAME"}
                                                   data={dataBik?.biks?.items}
@@ -269,7 +271,7 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
                                                   firstBtnOnClick={() =>
                                                       setBikModalStatus({bik_id: null, mode: "add"})}
                                               />
-                                          </Form.Item>
+                                          </AutoCompleteFormItem>
                                       </Col>
                                       <Col span={12}>
                                           <Form.Item name="INN" label="ИНН" rules={[{

@@ -73,7 +73,6 @@ const PassportPlaceIssuesForm = ({localObject,initialObject, onCompleted, cardPr
             }
         });
     };
-    if (loading || loadingSave) return <LoadingSpinnerStyles/>
 
     return (
         <Card style={{width: 400}}
@@ -83,12 +82,12 @@ const PassportPlaceIssuesForm = ({localObject,initialObject, onCompleted, cardPr
                       modalType={"green"}
                       isMany={cardProps?.actions}
                       loading={loadingSave}
-                      onClick={handleSubmit}
+                      onClick={()=>form.submit()}
                       children={actualObject ? `Обновить` : `Создать`}/>
                   , ...cardProps?.actions ?? []
               ]}
               children={<>
-            <Form form={form} layout="vertical">
+            <Form form={form} onFinish={handleSubmit} layout="vertical">
                 <Form.Item name="name" label="Наименование" rules={[{required: true}]}>
                     <Input/>
                 </Form.Item>

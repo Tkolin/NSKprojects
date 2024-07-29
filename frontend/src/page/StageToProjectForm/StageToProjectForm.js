@@ -35,7 +35,6 @@ const StageToProjectForm = ({onCompleted, project, cardProps}) => {
     const [mutateStage, {loading: loading}] = useMutation(PROJECT_STAGE_SYNC_MUTATION, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
-            console.log("upd data data data ", data);
             onCompleted && onCompleted();
         },
         onError: (error) => {

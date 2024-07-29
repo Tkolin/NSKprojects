@@ -79,7 +79,6 @@ const GroupTypeProjectForm = ({initialObject, onCompleted, cardProps}) => {
     };
 
     if (errorGroupTypeProject) return `Ошибка! ${errorGroupTypeProject?.message}`;
-    if (loading || loadingSave) return <LoadingSpinnerStyles/>
 
     return (
         <Card style={{width: 400}}
@@ -89,13 +88,13 @@ const GroupTypeProjectForm = ({initialObject, onCompleted, cardProps}) => {
                       modalType={"green"}
                       isMany={cardProps?.actions}
                       loading={loadingSave}
-                      onClick={handleSubmit}
+                      onClick={()=>form.submit()}
                       children={actualObject ? `Обновить` : `Создать`}/>
                   , ...cardProps?.actions ?? []
               ]}
               children={
                   !loading ?
-                      <Form form={form} layout="vertical">
+                      <Form form={form} onFinish={handleSubmit} layout="vertical">
                           <Form.Item name="name" label="Наименование" rules={[{required: true}]}>
                               <Input/>
                           </Form.Item>
