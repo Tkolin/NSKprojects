@@ -17,6 +17,7 @@ import {CustomDatePicker} from "../components/FormattingDateElementComponent";
 import OrganizationForm from "./OrganizationForm";
 import {ModalButton} from "./formComponents/ModalButtonComponent";
 import {AutoCompleteFormItem} from "../components/CustomForm";
+import dayjs from "dayjs";
 
 const ContactForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     // Первичные данные
@@ -58,19 +59,19 @@ const ContactForm = ({localObject, initialObject, onCompleted, cardProps}) => {
             loadContext();
     }, [initialObject]);
     useEffect(() => {
-        if (actualObject?.id)
-            updateForm(actualObject);
-    }, [actualObject]);
+        if (localObject?.id)
+            updateForm(localObject);
+    }, [localObject]);
+
     const updateForm = (data) => {
         if (data) {
+            console.log(actualObject);
             form.resetFields();
             form.setFieldsValue({
                 ...data,
-                data: {
-                    position: {selected: data?.position?.id, output: data?.position?.name},
-                    organization: {selected: data?.organization?.id, output: data?.organization?.name},
-                    birth_day: data?.birth_day ? moment(data.birth_day) : null,
-                }
+                position: {selected: data?.position?.id, output: data?.position?.name},
+                organization: {selected: data?.organization?.id, output: data?.organization?.name},
+                birth_day: data?.birth_day ? dayjs(data.birth_day) : null,
             });
         }
     };
@@ -93,7 +94,7 @@ const ContactForm = ({localObject, initialObject, onCompleted, cardProps}) => {
             mobile_phone: formData.mobile_phone,
             email: formData.email,
             work_email: formData.work_email,
-            birth_day: formData.birth_day,
+            birth_day: formData.birth_day ? dayjs(formData.birth_day).format("YYYY-MM-DD") : null,
             organization_id: formData?.organization?.selected ?? null,
             position_id: formData?.position?.selected ?? null
         };
@@ -116,7 +117,6 @@ const ContactForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                       isMany={cardProps?.actions}
                       loading={loadingSave}
                       onClick={() => form.submit()}
-                      //onClick={handleSubmit}
                       children={actualObject ? `Обновить` : `Создать`}/>
                   , ...cardProps?.actions ?? []
               ]}

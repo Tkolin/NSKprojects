@@ -116,13 +116,15 @@ const StageToProjectForm = ({onCompleted, project, cardProps}) => {
                       modalType={"green"}
                       isMany={cardProps?.actions}
                       loading={loading}
-                      onClick={handleSave}
+                      onClick={()=>form.submit()}
                       children={project ? `Обновить` : `Создать`}/>
                   , ...cardProps?.actions ?? []
               ]}
               children={
                   <>
-                      <Form layout="vertical" onChange={() => {
+                      <Form layout="vertical"
+                            onFinish={handleSave}
+                            onChange={() => {
                           handleChange();
                       }} form={form}>
                           <Form.List name="stageList">

@@ -5,6 +5,7 @@ import {CustomAutoComplete, CustomAutoCompleteExtension} from "../../components/
 import {EmptyFormItem} from "../../simplesForms/formComponents/EmptyFormItem";
 import {StyledButtonRed} from "../../components/style/ButtonStyles";
 import DateRangePickerComponent from "../../components/DateRangePickerComponent";
+import {AutoCompleteFormItem} from "../../components/CustomForm";
 
 const {RangePicker} = DatePicker;
 
@@ -77,7 +78,7 @@ const StageItem = ({
                 </Col>
                 <Col span={10} style={{width: "100%"}}>
                     <Tooltip title="Наименование этапа">
-                        <Form.Item name={[index, 'stage']}>
+                        <AutoCompleteFormItem rulesValidationRequired={true} rulesValidationMessage={"Выбор этапа обязателен"} name={[index, 'stage']}>
                             <CustomAutoCompleteExtension
                                 visibleMode={"CREATE_WHERE_NON_SELECTED"}
                                 firstBtnOnClick={() =>
@@ -85,7 +86,7 @@ const StageItem = ({
                                 style={{width: "100%"}}
                                 placeholder={"Выбор этапа..."}
                                 data={stagesData}/>
-                        </Form.Item>
+                        </AutoCompleteFormItem>
                     </Tooltip>
                 </Col>
                 <Col span={6}>
@@ -93,7 +94,8 @@ const StageItem = ({
                         <Form.Item
                             style={{marginBottom: 0, width: "100%"}}
                             name={[index, 'date_range']}
-                            rules={[{required: true,},]}>
+
+                            rules={[{required: true, type: "duration-only", message: "Укажите продолжительность"}]}>
                             <DateRangePickerComponent
                                 minDate={durationSetting.minDate}
                                 maxDate={durationSetting.maxDate}
@@ -101,15 +103,13 @@ const StageItem = ({
                         </Form.Item>
                     </Tooltip>
                 </Col>
-                <Col span={0}>
-                    <EmptyFormItem name={"duration"}/>
-                </Col>
+
                 <Col span={1}>
                     <Tooltip title="Процент от общей стоимости">
                         <Form.Item
                             style={{marginBottom: 0, width: "100%"}}
                             name={[index, 'percent']}
-                            rules={[{required: true,},]}>
+                            rules={[{required: true, message: "Процент от стоимости обязателен"}]}>
                             <InputNumber max={100} min={0} value={0}
                                          onChange={handlePriceChange}
                                          defaultValue={1} suffix={"%"}
@@ -121,8 +121,7 @@ const StageItem = ({
                     <Tooltip title="Стоимость этапа">
                         <Form.Item
                             style={{marginBottom: 0, width: "100%"}}
-                            name={[index, 'price']}
-                            rules={[{required: true,},]}>
+                            name={[index, 'price']}>
                             <InputNumber
                                 disabled={true}
                                 formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}

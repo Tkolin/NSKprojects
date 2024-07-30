@@ -14,6 +14,7 @@ import {TYPES_PROJECTS_QUERY_BY_ID} from "../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../components/style/LoadingSpinnerStyles";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {ModalButton} from "./formComponents/ModalButtonComponent";
+import {AutoCompleteFormItem} from "../components/CustomForm";
 
 const TypeProjectForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     // Получение данных для выпадающих списков
@@ -92,17 +93,17 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted, cardProps}) =
 
     // Завершение
     const handleSubmit = () => {
+        const data = form.getFieldsValue();
         mutate({
             variables: {
                 ...(actualObject ? {id: actualObject.id} : {}), data: {
-                    ...form.getFieldsValue(), group_id: form.getFieldValue("group")?.selected
+                    name: data?.name,
+                    group_id: data?.group.selected,
+                    code: data?.code,
                 }
             }
         });
     };
-    if (loading || loadingSave) return <LoadingSpinnerStyles/>
-
-
     return (
         <Card style={{width: 400}}
               {...cardProps}
@@ -112,7 +113,7 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted, cardProps}) =
                       isMany={cardProps?.actions}
                       loading={loadingSave}
                       onClick={()=>form.submit()}
-                      children={actualObject ? `Обновить` : `Создать`}/>
+                      children={actualObject.id ? `Обновить` : `Создать`}/>
                   , ...cardProps?.actions ?? []
               ]}
               children={
@@ -124,13 +125,13 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted, cardProps}) =
                       <Form.Item name="code" label="код" rules={[{required: true}]}>
                           <Input/>
                       </Form.Item>
-                      <Form.Item name="group" label="Группа" rules={[{required: true}]}>
+                      <AutoCompleteFormItem rulesValidationMessage={"Укажите группу"}  rulesValidationRequired={true} name="group" label="Группа">
                           <CustomAutoComplete
                               typeData={"CODENAME"}
                               onSelect={(value) => setGroupIdSelected(value.id)}
                               data={dataGroup?.groupTypeProjects}
                           />
-                      </Form.Item>
+                      </AutoCompleteFormItem>
                   </Form>}/>
 
     );

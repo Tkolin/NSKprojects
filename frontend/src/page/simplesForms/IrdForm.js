@@ -62,13 +62,14 @@ const IrdForm = ({localObject, initialObject, onCompleted, cardProps}) => {
 
     return (
         <Card style={{width: 400}}
+
               {...cardProps}
               actions={[
                   <ModalButton
                       modalType={"green"}
                       isMany={cardProps?.actions}
                       loading={loadingSave}
-                      onClick={()=>form.submit()}
+                      onClick={() => form.submit()}
                       children={actualObject ? `Обновить` : `Создать`}/>
                   , ...cardProps?.actions ?? []
               ]}
@@ -78,7 +79,8 @@ const IrdForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                           <Form.Item name="name" label="Наименование" rules={[{required: true}]}>
                               <Input/>
                           </Form.Item>
-                      </Form> : <Skeleton active/>
+                      </Form> :
+                      <Skeleton active/>
               }
         />
     );

@@ -98,7 +98,7 @@ type ProjectIrd{
     project: Project!
     ird: Ird!
     received_date: String
-    stage_number: String
+    stage_number: String!
     application_project: String
 }
 type ProjectStatus{
@@ -539,7 +539,7 @@ input ProjectInput {
     status_id: String
     date_completion: String
     price: Int
-    prepayment: Int
+    prepayment: Int!
     facility_id: [ID]
     delegates_id: [ID]}
 input ProjectTemplatesSetting {

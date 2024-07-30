@@ -17,6 +17,7 @@ import React from "react";
 import {ColumnMenuToolRender} from "./components/ColumnMenuToolRender";
 import {ColumnRequestMenuToolRender} from "./components/ColumnRequestMenuToolRender";
 import {ColumnKpMenuToolRender} from "./components/ColumnKpMenuToolRender";
+import {ColumnContractMenuToolRender} from "./components/ColumnContractMenuToolRender";
 
 const formatCurrency = (amount) => {
     return amount.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'});
@@ -24,14 +25,14 @@ const formatCurrency = (amount) => {
 const {Text} = Typography;
 
 const GetColumns = ({
-                                options,
-                               onUpdated,
-                               expandable,
+                        options,
+                        onUpdated,
+                        expandable,
 
-                           }
+                    }
 ) => {
     console.log(options, "options");
-    if(!options || options.length < 1)
+    if (!options || options.length < 1)
         return [];
     // Определяем базовые ширины для столбцов
     const baseWidths = {
@@ -68,6 +69,11 @@ const GetColumns = ({
 
     options.includes('tool') && columns.push(columnMenuToolComponent({
         width: "50px", expandable
+    }));
+    options.includes('contract_tools') && columns.push(columnContractMenuToolComponent({
+        onUpdated: () => onUpdated(),
+        expandable: expandable,
+        width: "50px"
     }));
     options.includes('request_tools') && columns.push(columnRequestMenuToolComponent({
         onUpdated: () => onUpdated(),
@@ -147,30 +153,47 @@ const columnMenuToolComponent = ({width, options, expandable}) => {
         key: 'menu-options',
         width: width,
         render: (text, record) => <>
-            <ColumnMenuToolRender  text={text} record={record}
+            <ColumnMenuToolRender text={text} record={record}
                                   expandable={expandable} options={options}/>
         </>,
     }
 }
-const columnRequestMenuToolComponent = ({width, options,         onUpdated
-}) => {
+const columnRequestMenuToolComponent = ({
+                                            width, options, onUpdated
+                                        }) => {
     return {
         key: 'menu-request-options',
         width: width,
         render: (text, record) => <>
-            <ColumnRequestMenuToolRender  text={text} record={record}
-                                          onUpdated={()=>onUpdated()} options={options}/>
+            <ColumnRequestMenuToolRender text={text} record={record}
+                                         onUpdated={() => onUpdated()} options={options}/>
         </>,
     }
 }
-const columnKpMenuToolComponent = ({width, options,         onUpdated
-}) => {
+const columnContractMenuToolComponent = ({
+                                             width, options, expandable, onUpdated,
+                                             setEditProjectModalStatus, createTemplate
+                                         }) => {
+    return {
+        key: 'menu-contract-options',
+        width: width,
+        render: (text, record) => <>
+            <ColumnContractMenuToolRender text={text} record={record} expandable={expandable}
+                                          setEditProjectModalStatus={setEditProjectModalStatus}
+                                          createTemplate={createTemplate}
+                                          onUpdated={() => onUpdated()} options={options}/>
+        </>,
+    }
+}
+const columnKpMenuToolComponent = ({
+                                       width, options, onUpdated
+                                   }) => {
     return {
         key: 'menu-kp-options',
         width: width,
         render: (text, record) => <>
-            <ColumnKpMenuToolRender  text={text} record={record}
-                                          onUpdated={()=>onUpdated()} options={options}/>
+            <ColumnKpMenuToolRender text={text} record={record}
+                                    onUpdated={() => onUpdated()} options={options}/>
         </>,
     }
 }

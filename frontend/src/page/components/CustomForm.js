@@ -9,7 +9,7 @@ export const AutoCompleteFormItem = ({rulesValidationRequired, rulesValidationMe
                     required: rulesValidationRequired,
                     validator(rule, value) {
                         return new Promise((resolve, reject) => {
-                            if (value.selected || !rulesValidationRequired){
+                            if (value?.selected || !rulesValidationRequired){
                                 resolve();
                             }
                             else

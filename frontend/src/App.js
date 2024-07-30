@@ -131,7 +131,7 @@ const App = () => {
                                                "APPROVAL_AGREEMENT"]}
                                            legendOptions={[
                                                "APPROVAL_AGREEMENT"]}
-                                           columnOptions={["progress", "tool", "main", "customer", "status", "price"]}/>}
+                                           columnOptions={["progress", "contract_tools", "main", "customer", "status", "price"]}/>}
                             />
                                 <Route path="/project/contract/form" element={<Home/>}/>
 

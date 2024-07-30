@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import {CustomDatePicker} from "./FormattingDateElementComponent";
 const { RangePicker } = DatePicker;
 
-const DateRangePickerComponent = ({ value = { dateStart: null, dateEnd: null, duration: null }, onChange , maxDate , minDate}) => {
+const DateRangePickerComponent = ({ value = { dateStart: null, dateEnd: null, duration: null }, onChange , maxDate , minDate, ...props}) => {
 
     const handleDateStartChange = (date) => {
         const newDuration = date && value.dateEnd ? dayjs(value.dateEnd).diff(date, 'day') : value.duration;
@@ -32,7 +32,7 @@ const DateRangePickerComponent = ({ value = { dateStart: null, dateEnd: null, du
     };
 
     return (
-        <div>
+
             <Space.Compact style={{ alignItems: 'flex-end' }}>
                 <RangePicker
                     placeholder={"Продолжительность"}
@@ -40,9 +40,8 @@ const DateRangePickerComponent = ({ value = { dateStart: null, dateEnd: null, du
                     onChange={handleDateChange}
                     minDate={minDate}
                     maxDate={maxDate}
-                 >
-
-                </RangePicker>
+                    {...props}
+                 />
                 {/*<CustomDatePicker*/}
                 {/*    placeholder="Дата начала"*/}
                 {/*    onChange={handleDateStartChange}*/}
@@ -64,9 +63,10 @@ const DateRangePickerComponent = ({ value = { dateStart: null, dateEnd: null, du
                     parser={(value) => `${value}`.replace(/[^0-9]/g, '')}
                     value={value.duration}
                     onChange={handleDurationChange}
+                    {...props}
                 />
             </Space.Compact>
-        </div>
+
     );
 };
 

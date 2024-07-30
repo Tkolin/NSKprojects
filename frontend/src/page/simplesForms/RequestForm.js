@@ -138,7 +138,7 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                                           loading={loadingOrganizations}
                                           firstBtnOnClick={() =>
                                               setOrganizationModalStatus({
-                                                  organization_id: form.getFieldValue("organization")?.selected,
+                                                  organization_id: null,
                                                   mode: "add"
                                               })}
                                           secondBtnOnClick={() =>
@@ -160,7 +160,7 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                                           loading={loadingContacts}
                                           firstBtnOnClick={() =>
                                               setContactModalStatus({
-                                                  contact_id: form.getFieldValue("contact")?.selected,
+                                                  contact_id: null,
                                                   mode: "add"
                                               })}
                                           secondBtnOnClick={() =>

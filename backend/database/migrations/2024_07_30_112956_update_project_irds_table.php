@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('project_delays', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('project_irds', function (Blueprint $table) {
+            $table->integer("stage_number")->change();
         });
     }
 
@@ -22,6 +21,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('project_delays');
+        //
     }
 };

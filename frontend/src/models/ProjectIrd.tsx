@@ -1,4 +1,4 @@
-export interface Stage {
+export interface ProjectIrd {
     id?: number;
     name?: string;
 }

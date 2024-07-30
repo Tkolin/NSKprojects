@@ -280,9 +280,9 @@ export const PROJECT_STAGE_SYNC_MUTATION = gql`
         }
     }
 `;
-export const PROJECT_ARCHIVE_MUTATION = gql`
-    mutation ProjectStagesSync($projectId: ID!) {
-        archiveProject(projectId: $projectId) {
+ export const CHANGE_STATUS_PROJECT = gql`
+    mutation ProjectStagesSync($projectId: ID!, $statusKey: String!, $dateStart: String) {
+        changeProjectStatus(projectId: $projectId, statusKey: $statusKey, dateStart: $dateStart ) {
             id
             status {
                 name_key
