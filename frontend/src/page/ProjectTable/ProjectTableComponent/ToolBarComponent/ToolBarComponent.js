@@ -1,9 +1,11 @@
 import Search from "antd/es/input/Search";
 import {Button, Card, Divider, Modal, Space} from "antd";
 import {StyledButtonGreen} from "../../../components/style/ButtonStyles";
-import RequestPage from "../../../simplesForms/RequestPage";
+ 
+import RequestPage from "../../../simplesForms/RequestForm";
 import React, {useState} from "react";
-import RequestForm from "../../../components/form/modelsForms/RequestForm";
+import RequestForm from "../../../simplesForms/RequestForm";
+ 
 
 const SearchToolBarItem = ({onSearch, ...props}) => {
     return <Search
@@ -34,11 +36,12 @@ const AddRequestBarItem = ({onCompleted, ...props}) => {
             <Modal
                 open={addRequestModalStatus}
                 onCancel={() => setAddRequestModalStatus(false)}
-                width={900}
+ 
+                width={"max-content"}
                 footer={null}
-                title={"Создание заявки на проектирование"}
             >
-                <RequestForm onCompleted={() => onCompletedLocal()}/>
+                <RequestForm cardProps={{title: "Создание заявки на проектирование"}} onCompleted={() => onCompletedLocal()}/>
+ 
             </Modal>
         </>
     )

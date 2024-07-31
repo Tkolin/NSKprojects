@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 
 import {useLocation, useNavigate} from 'react-router-dom';
-import {Layout, Menu, Image, Dropdown, Avatar, Badge, Alert, Card, Breadcrumb} from 'antd';
+import {Layout, Menu, Image, Dropdown, Avatar, Badge, Alert, Card, Breadcrumb, Space} from 'antd';
 import {
 
     UserOutlined,
@@ -34,7 +34,9 @@ const styles = {
 
         float: 'left',
     },
-
+    card: {
+        minHeight:  "calc(100vh - 170px)"
+    },
     user: {
         display: 'flex',
         alignItems: 'center',
@@ -45,6 +47,8 @@ const styles = {
     content: {
         margin: '24px 16px 0',
         overflow: 'initial',
+        minHeight: "1vh",
+
     },
     footer: {
         textAlign: 'center',
@@ -68,15 +72,15 @@ const AppLayout = ({children, currentUser, error}) => {
     const [items, setItems] = useState();
     const [title, setTitle] = useState();
     useEffect(() => {
-             setItems(MenuItemsByPermission(currentUser?.currentUser ?? null));
-             }, [currentUser]);
+        setItems(MenuItemsByPermission(currentUser?.currentUser ?? null));
+    }, [currentUser]);
     useEffect(() => {
         setCurrent(location.pathname); // Обновить current при изменении пути
 
     }, [location.pathname]);
     useEffect(() => {
         const item = findMenuItemByKey(current, MenuItems);
-        const label = <>{item?.icon}  {item?.label}</>;
+        const label = <>{item?.icon} {item?.label}</>;
         if (label)
             setTitle(label); // Обновить current при изменении пути
 
@@ -111,23 +115,32 @@ const AppLayout = ({children, currentUser, error}) => {
         <Layout style={{minHeight: '100vh'}}>
             <Header style={styles.header}>
                 {/*{!error ? (<>*/}
-                    <Image src={Logo} style={styles.logo}/>
+                <Image src={Logo} style={styles.logo}/>
 
-                    <Menu onClick={onClick} mode="horizontal" style={{width: '100%'}} items={items}
-                          selectedKeys={[current]} className={"biba"}/>
-                  <UserMenuHeaderDropdown currentUser={currentUser?.currentUser}/>
+                <Menu onClick={onClick} mode="horizontal" style={{width: '100%'}} items={items}
+                      selectedKeys={[current]} className={"biba"}/>
+                <UserMenuHeaderDropdown currentUser={currentUser?.currentUser}/>
             </Header>
 
             <Layout style={{marginTop: 64, paddingRight: 20, paddingLeft: 20}}>
                 <Content style={styles.content}>
 
-                        <Card title={title}   style={styles.card} styles={{ title: {
-                                textAlign: 'center',
-                                fontSize: "23px",
-                                color: "#1677ff"
-                            }}}>
+                    <Card title={title} style={styles.card} styles={{
+                        title: {
+                            textAlign: 'center',
+                            fontSize: "23px",
+                            color: "#1677ff"
+                        }
+                    }}>
+                        <Space block style={{
+                            margin: 0, padding: 0,
+                            justifyContent: "center",
+                            width: "100%",
+                        }}>
                             {children}
-                        </Card>
+                        </Space>
+
+                    </Card>
                 </Content>
 
                 <Footer style={styles.footer}>

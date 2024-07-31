@@ -1,15 +1,16 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {Col, Descriptions, Divider, Form, notification, Row, Space, Table} from 'antd';
+import {Col, Descriptions, Form, Modal, notification, Row, Space, Table} from 'antd';
 import {DELETE_ORGANIZATION_MUTATION} from '../../graphql/mutationsOrganization';
 import Search from "antd/es/input/Search";
 import {DeleteAndEditStyledLinkManagingDataTable} from "../components/style/TableStyles";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {ORGANIZATIONS_QUERY} from "../../graphql/queries";
-import Title from "antd/es/typography/Title";
-import OrganizationModalForm from "../components/modal/OrganizationModalForm";
 
 import OrganizationContactsCompactTable from "../ProjectTable/ProjectTableComponent/components/OrganizationContactsCompactTable";
+ 
+import OrganizationForm from "../simplesForms/OrganizationForm";
+ 
 
 const OrganizationTable = () => {
     // Состояния
@@ -98,7 +99,7 @@ const OrganizationTable = () => {
                     title={"Удаление организации"}
                     description={"Вы уверены, что нужно удалить эту организацию?"}
                     handleEdit={() =>
-                        setOrganizationModalStatus({organization: record, mode: "edit"})
+                        setOrganizationModalStatus({organization_id: record.id, mode: "edit"})
                     }
                     handleDelete={() => handleDelete(record.id)}
                 />
@@ -126,7 +127,7 @@ const OrganizationTable = () => {
                         loading={loading}
                         data-permission={"create-organization"}
                         style={{marginBottom: 0}}
-                        onClick={() => setOrganizationModalStatus({organization: null, mode: "add"})}>
+                        onClick={() => setOrganizationModalStatus({organization_id: null, mode: "add"})}>
                         Создать новую запись</StyledButtonGreen>
                 </Space>
             </Form.Item>
@@ -191,13 +192,22 @@ const OrganizationTable = () => {
                 ),
             }}
         />
-
-        <OrganizationModalForm
-            key={organizationModalStatus?.organization?.id ?? null}
-            onClose={() => setOrganizationModalStatus(null)}
-            object={organizationModalStatus?.organization ?? null}
-            mode={organizationModalStatus?.mode ?? null}
+        <Modal
+            key={organizationModalStatus?.mode || organizationModalStatus?.organization_id || null}
+            open={organizationModalStatus}
+            onCancel={() => setOrganizationModalStatus(null)}
+            footer={null}
+            width={"max-content"}
+            children={
+                <OrganizationForm
+                    cardProps={{title: "Организация"}}
+                    onCompleted={() =>
+                        setOrganizationModalStatus(null)}
+                    initialObject={organizationModalStatus?.organization_id ? {id: organizationModalStatus?.organization_id} : null}
+                />
+            }
         />
+
     </>;
 };
 

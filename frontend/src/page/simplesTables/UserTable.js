@@ -1,13 +1,11 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import {Form, Space, Table, Typography} from 'antd';
-import {CONTACTS_QUERY, USERS_QUERY} from '../../graphql/queries';
+import {USERS_QUERY} from '../../graphql/queries';
 import {DELETE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
 import Search from "antd/es/input/Search";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {format} from "date-fns";
-import {DeleteAndEditStyledLinkManagingDataTable} from "../components/style/TableStyles";
-import ContactModalForm from "../components/modal/ContactModalForm";
 import {nanoid} from "nanoid";
 import {NotificationContext} from "../../NotificationProvider";
 const {Text} = Typography;
@@ -82,14 +80,6 @@ const UserTable = () => {
         {
             title: 'Управление', key: 'edit', ellipsis: true,width: "10%", render: (text, record) => (
                 <>В разработке</>
-                // <DeleteAndEditStyledLinkManagingDataTable
-                //     title={"Удаление контакта"}
-                //     description={"Вы уверены, что нужно удалить этот контакт?"}
-                //     handleEdit={() => {
-                //         setContactModalStatus({contact: record, mode: "edit"})
-                //     }}
-                //     handleDelete={() => handleDelete(record.id)}
-                // />
             ),
         },
         ]
@@ -146,14 +136,7 @@ const UserTable = () => {
                 pageSizeOptions: ['10', '50', '100'],
             }}
         />
-        <ContactModalForm
-            key={contactModalStatus?.contact?.id ?? nanoid()}
-            onClose={() => {
-                setContactModalStatus(null);
-            }}
-            object={contactModalStatus?.contact ?? null}
-            mode={contactModalStatus?.mode ?? null}
-        />
+
     </div>);
 };
 export default UserTable;

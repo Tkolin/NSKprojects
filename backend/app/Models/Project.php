@@ -23,9 +23,10 @@ class Project extends Model
         'prepayment',
         'date_completion',
         'price',
-        'date_create',
+        'date_start',
         'path_project_folder',
-        'signed_file_id'
+        'contract_file_id',
+        'kp_file_id'
         ];
     public function executor_orders()
     {
@@ -43,11 +44,20 @@ class Project extends Model
     //  project contract history
     public function contracts_files(): BelongsToMany
     {
-        return $this->BelongsToMany(File::class, 'project_contract_history', 'project_id', 'file_id');
+        return $this->BelongsToMany(File::class, 'project_file', 'project_id', 'file_id')->where("type_id", "CONTRACT");
     }
     public function project_contract_history(): HasMany
     {
-        return $this->hasMany(ProjectContractHistory::class)->orderBy('number');
+        return $this->hasMany(ProjectFile::class)->where("type_id", "CONTRACT")->orderBy('number');
+    }
+    //  project kp history
+    public function kp_files(): BelongsToMany
+    {
+        return $this->BelongsToMany(File::class, 'project_file', 'project_id', 'file_id')->where("type_id", "KP");
+    }
+    public function project_kp_history(): HasMany
+    {
+        return $this->hasMany(ProjectFile::class)->where("type_id", "KP")->orderBy('number');
     }
     //  contract
     public function signed_file(): BelongsTo

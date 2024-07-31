@@ -1,12 +1,18 @@
 import React, {useState} from 'react';
-import {notification, Space, Table, Tooltip, Typography} from 'antd';
+ 
+import {Modal, notification, Space, Table, Tooltip, Typography} from 'antd';
+ 
 
 import Link from "antd/es/typography/Link";
 import {PlusOutlined} from "@ant-design/icons";
 import {EditStyledLinkManagingDataTable} from "../../../components/style/TableStyles";
 import {format} from "date-fns";
+ 
+ import {nanoid} from "nanoid";
+import ContactForm from "../../../simplesForms/ContactForm";
+ 
 import ContactModalForm from "../../../components/modal/ContactModalForm";
-import {nanoid} from "nanoid";
+ 
 
 const {Text} = Typography;
 
@@ -135,14 +141,24 @@ const OrganizationContactsCompactTable = ({data, refetch}) => {
                 columns={columns}
                 pagination={false}
             />
-            <ContactModalForm
-                key={contactModalStatus?.contact_id ?? nanoid()}
-                onClose={() => {
-                    setContactModalStatus(null);
-                    refetch && refetch();
-                }}
-                objectId={contactModalStatus?.contact_id ?? null}
-                mode={contactModalStatus?.mode ?? null}
+ 
+            <Modal
+                key={contactModalStatus?.mode || contactModalStatus?.contact_id || null}
+                open={contactModalStatus}
+                onCancel={() => setContactModalStatus(null)}
+                footer={null}
+                width={"600px"}
+                title={"Организация"}
+                children={
+                    <ContactForm
+                        onCompleted={() => {
+                            setContactModalStatus(null);
+                            refetch && refetch();
+                        }}
+                        initialObject={contactModalStatus?.contact_id ? {id: contactModalStatus?.contact_id} : null}
+                    />
+                }
+ 
             />
         </div>
     );

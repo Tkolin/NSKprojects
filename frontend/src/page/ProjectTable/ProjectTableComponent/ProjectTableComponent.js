@@ -72,7 +72,9 @@ const ProjectTableComponent = ({projectStatuses, mode, search, options, state}) 
                     onCancel={() => setEditModalStatus(null)}
                     footer={null}
                     title={getNameModalView(editModalStatus)}
-                    width={editModalStatus === "project" ? 500 : 1300}
+ 
+                    width={"max-content"}
+ 
                     onClose={() => setEditModalStatus(null)}
                 >
                     {renderEditModalContent({
@@ -103,10 +105,7 @@ const ProjectTableComponent = ({projectStatuses, mode, search, options, state}) 
         }
     });
 
-// useEffect(() => {
-//     if (!editModalStatus)
-//         refetch();
-// }, [editModalStatus]);
+ 
 
 
     const getNameModalView = (type) => {

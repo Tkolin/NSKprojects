@@ -44,7 +44,7 @@ extend type Mutation {
     taskExecutorContractFileDownload(
         projectTasksIds: [ID]
     ): Url!
-    executorOrderGenerated(
+    generatedExecutorOrder(
         project_task_ids: [ID]
     ): GenerateFileResult!
 }

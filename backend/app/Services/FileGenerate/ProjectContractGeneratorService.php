@@ -4,6 +4,7 @@ namespace App\Services\FileGenerate;
 
 use App\Models\Project;
 use App\Models\ProjectContractHistory;
+use App\Models\ProjectFile;
 use App\Services\FileGenerate\GeneratorService;
 use App\Services\MonthEnum;
 use App\Services\NameCaseLib\NCL\NCL;
@@ -36,7 +37,7 @@ class ProjectContractGeneratorService
         $NCLNameCaseRu = new NCLNameCaseRu();
 
         $formattedPhone = preg_replace('/\+(\d{1,2})?(\d{3})(\d{3})(\d{2})(\d{2})/', '+$1 ($2) $3-$4-$5', $myOrg["phone_number"]);
-        $contractNumber = ProjectContractHistory::where('project_id', $projectData->id)->max('number') + 1;
+        $contractNumber = ProjectFile::where('type_id', "CONTRACT")->where('project_id', $projectData->id)->max('number') + 1;
 
 
         $replacements = [
@@ -98,12 +99,12 @@ class ProjectContractGeneratorService
 
         $storagePath = "/" . $projectData->path_project_folder . "/Договора_с_заказчиком/" . $fileName;
         $file = FileCreateService::saveFileToProject($storagePath, $filePath, $fileName);
-        $projectData->update(['date_create'=>$dateCreateContract]);
-        ProjectContractHistory::create([
+        ProjectFile::create([
             'project_id' => $projectData->id,
             'file_id'=> $file->id,
+            'type_id'=>"CONTRACT",
             'number'=> $contractNumber,
-            'date_create_contract'=> $dateCreateContract,
+            'date_document'=> $dateCreateContract,
         ]);
 
         unlink($tempFilePath);

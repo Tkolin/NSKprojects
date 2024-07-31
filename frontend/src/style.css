@@ -17,7 +17,10 @@
         transform: rotateY(360deg); /* Заключительное положение вращения по оси Y (горизонтальная ось) */
     }
 }
-
+.ant-card-actions li {
+    margin: 0 !important;
+    padding: 0 !important;
+}
 .rotate-image {
     max-width: 100%;
     height: auto;

@@ -13,19 +13,6 @@ export const FENRIR_QUERY = gql`
         }
     }
 `;
-export const FENRIR_TEMPLATE_QUERY = gql`
-    query FenrirTemplateQuery  ($projectId: ID) {
-        templateFenrirsTypeProject  (projectId: $projectId) {
-            items {
-                id
-                name
-                description
-                models
-            }
-            count
-        }
-    }
-`;
 export const TASKS_QUERY = gql`
     query TasksQuery  ($queryOptions: QueryOptions) {
         tasks  (queryOptions: $queryOptions) {
@@ -156,12 +143,13 @@ export const PROJECTS_QUERY = gql`
                 number
                 name
                 duration
-                signed_file_id
+                contract_file_id
+                kp_file_id
                 project_contract_history
                 {
                     file_id
-                    comment
-                    date_create_contract
+
+                    date_document
                     number
                 }
                 organization_customer
@@ -203,7 +191,7 @@ export const PROJECTS_QUERY = gql`
                     }
                 }
                 date_signing
-                date_create
+                date_start
                 date_end
                 prepayment
                 status
@@ -462,6 +450,7 @@ export const CONTACTS_SHORT_QUERY = gql`
         }
     }
 `;
+
 export const FACILITYS_QUERY = gql`
     query FacilitiesQuery   {
         facilities {
@@ -535,21 +524,21 @@ export const BIKS_QUERY = gql`
 export const STAGES_TO_PROJECT_QUERY = gql`
     query StageToProjectQuery ($projectId: ID){
         projectStages(projectId: $projectId)   {
-            project{
-                id
-                name
+            id
+            name
+            project_stages {
+                stage{
+                    id
+                    name
+                }
+                number
+                price
+                percent
+                date_start
+                duration
+                date_end
+                progress
             }
-            stage{
-                id
-                name
-            }
-            number
-            price
-            percent
-            date_start
-            duration
-            date_end
-            progress
         }
     }
 `;

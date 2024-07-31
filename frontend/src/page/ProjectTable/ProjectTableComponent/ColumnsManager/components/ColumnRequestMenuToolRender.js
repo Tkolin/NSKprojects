@@ -9,7 +9,8 @@ import {
 } from "antd";
 import React, {useContext, useState} from "react";
 import {useMutation} from "@apollo/client";
-import {PROJECT_ARCHIVE_MUTATION} from "../../../../../graphql/mutationsProject";
+ import {CHANGE_STATUS_PROJECT} from "../../../../../graphql/mutationsProject";
+ 
 import {
     CheckSquareOutlined,
 
@@ -25,7 +26,8 @@ export const ColumnRequestMenuToolRender = ({record, text, onUpdated, expandable
     const {openNotification} = useContext(NotificationContext);
 
     const [upRequestModalStatus, setUpRequestModalStatus] = useState(null)
-    const [archiveProjectMutate, {loading: archiveProjectLoading}] = useMutation(PROJECT_ARCHIVE_MUTATION, {
+     const [archiveProjectMutate, {loading: archiveProjectLoading}] = useMutation(CHANGE_STATUS_PROJECT, {
+ 
         onCompleted: () => {
             openNotification('topRight', 'success', `Заявка перенесена в архив`);
             onUpdated();
@@ -41,7 +43,8 @@ export const ColumnRequestMenuToolRender = ({record, text, onUpdated, expandable
             <Tooltip title={"Внести уточнения"}>
 
                 <Button style={{height: 32}} type={"text"} icon={<EditOutlined/>}
-                        onClick={() => setUpRequestModalStatus("edit")}/>
+                         onClick={() => setUpRequestModalStatus("request")}/>
+ 
             </Tooltip>
             <Divider style={{margin: 5, marginLeft: 0, marginRight: 0}}/>
 
@@ -52,7 +55,8 @@ export const ColumnRequestMenuToolRender = ({record, text, onUpdated, expandable
                 <Popconfirm
                     title={"Архивация заявки"}
                     description={"Вы уверены? это перенесёт заявку в архив!"}
-                    onConfirm={() => archiveProjectMutate({variables: {projectId: record.id}})}
+                     onConfirm={() => archiveProjectMutate({variables: {projectId: record.id, statusKey: "ARCHIVE" }})}
+ 
                     icon={
                         <DeleteOutlined/>
                     }
@@ -73,16 +77,33 @@ export const ColumnRequestMenuToolRender = ({record, text, onUpdated, expandable
                 key={record.id}
                 open={upRequestModalStatus}
                 onCancel={() => setUpRequestModalStatus(false)}
+                 width={"max-content"}
                 footer={null}
-                title={(upRequestModalStatus === "kp") ? "Принятие заявки на согласование КП" : "Уточнение заявки"}
             >
-                <ProjectForm type={upRequestModalStatus ? "requestUp" : "request"}
-                             onCompleted={()=>onUpdated()}
+                <ProjectForm type={upRequestModalStatus}
+                             onCompleted={() => onUpdated()}
+                             disabledOptions={["status_id",  "date_create"]}
+                             requiredOptions={
+                                 upRequestModalStatus && upRequestModalStatus === "kp" ? ["name",
+                                     "type_project_document",
+                                     "organization_customer",
+                                     "date_range",
+                                     "price",
+                                     "prepayment"
+                                 ] : upRequestModalStatus === "request" ?
+                                     ["name",
+                                          "organization_customer",
+                                     ] : null
+                             }
                              project={{
-                    ...record,
-                    status_id: (upRequestModalStatus === "kp") ? "APPROVAL_KP" : "DESIGN_REQUEST",
-                                 status: (upRequestModalStatus === "kp") ? {name: "APPROVAL_KP",name_key:"APPROVAL_KP"}  : {name: "DESIGN_REQUEST",name_key:"DESIGN_REQUEST"}
-                }}/>
+                                 ...record,
+                                 status_id: (upRequestModalStatus === "kp") ? "APPROVAL_KP" : "DESIGN_REQUEST",
+                                 status: (upRequestModalStatus === "kp") ? {
+                                     name: "APPROVAL_KP",
+                                     name_key: "APPROVAL_KP"
+                                 } : {name: "DESIGN_REQUEST", name_key: "DESIGN_REQUEST"}
+                             }}/>
+ 
             </Modal>
         </>
     );

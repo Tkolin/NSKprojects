@@ -77,9 +77,9 @@ type Project{
     type_project_document: TypeProjectDocument
     facilities: [Facility]
     date_signing: String
-    date_create: String
     duration: Int
     date_end: String
+    date_start: String
     status: ProjectStatus
     date_completion: String
     delegations: [Contact]
@@ -87,9 +87,11 @@ type Project{
     project_irds: [ProjectIrd]
     project_stages: [ProjectStage]
     project_tasks: [ProjectTask]
-    project_contract_history: [ProjectContract]
+    project_contract_history: [ProjectFile]
+    project_kp_history: [ProjectFile]
     executor_orders: [ExecutorOrder]
-    signed_file_id: ID
+    contract_file_id: ID
+    kp_file_id: ID
 }
 #   project 2 (Указаны в основной модели)
 type ProjectIrd{
@@ -98,7 +100,7 @@ type ProjectIrd{
     project: Project!
     ird: Ird!
     received_date: String
-    stage_number: String
+    stage_number: String!
     application_project: String
 }
 type ProjectStatus{
@@ -108,16 +110,16 @@ type ProjectStatus{
 type ProjectStage{
     project_id: ID!
     stage_id: ID!
-    project: Project
-    stage: Stage
-    number: Int
-    price: Float
-    price_to_paid: Float
-    percent: Int
+    project: Project!
+    stage: Stage!
+    number: Int!
+    price: Float!
+    price_to_paid: Float!
+    percent: Int!
     date_start: String
-    duration: Int
+    duration: Int!
     date_end: String
-    progress: Int
+    progress: Int!
 }
 type ProjectTask{
     id: ID
@@ -134,12 +136,15 @@ type ProjectTask{
     price: Float
     description: String
 }
-type ProjectContract{
+type ProjectFile{
+
+
     project_id: ID
     file_id: ID
+    type_id: ID
     number: Int
-    comment: String
-    date_create_contract: String
+    date_document: String
+    data: String
 }
 
 #   project 3 (Указаны в моделях 2 уровня)
@@ -459,20 +464,20 @@ type Mutation {
 }
 #-INPUTS:
 input PersonInput {
-    firstname: String
-    lastname: String
+    firstname: String!
+    lastname: String!
     patronymic: String
     serial: String
     number: String
     passport_place_issue_id: ID
     address_registration: String
     address_residential: String
-    birth_date: String
+    birth_date: String!
     date: String
     SHILS: String
     INN: String
     payment_account: String
-    phone_number: String
+    phone_number: String!
     email: String
     email_sibnipi: String
     bank_id: ID
@@ -494,7 +499,8 @@ input OrganizationInput{
     KPP: String
     bik_id: ID
     payment_account: String
-    director_id: ID}
+    director_id: ID!
+}
 input ContactInput{
     first_name: String!
     last_name: String
@@ -538,7 +544,9 @@ input ProjectInput {
     status_id: String
     date_completion: String
     price: Int
-    prepayment: Int
+ 
+    prepayment: Int!
+ 
     facility_id: [ID]
     delegates_id: [ID]}
 input ProjectTemplatesSetting {

@@ -9,6 +9,7 @@ import {
     CustomAutoCompleteExtension
 } from "../../components/style/SearchAutoCompleteStyles";
 import {StyledButtonRed} from "../../components/style/ButtonStyles";
+import {AutoCompleteFormItem} from "../../components/CustomForm";
 
 const IrdItem = ({
                      onChange,
@@ -23,13 +24,15 @@ const IrdItem = ({
             <Space.Compact style={{width: "100%"}}>
                 <Col span={14}>
                     <Tooltip title="Наименование ИРД">
-                        <Form.Item name={[index, 'ird']}>
+                        <AutoCompleteFormItem name={[index, 'ird']}
+                                              rulesValidationRequired={true}
+                                              rulesValidationMessage={"Укажите ИРД"}>
                             <CustomAutoCompleteExtension
                                 style={{marginBottom: 0, width: "100%"}}
                                 placeholder={"Выбор ИРД..."}
                                 visibleMode={"CREATE_WHERE_NON_SELECTED"}
                                 firstBtnOnClick={() =>
-                                    setIrdModalStatus({mode: "add",key: index})}
+                                    setIrdModalStatus({mode: "add", key: index})}
                                 data={irdData}
                                 onSelect={() => {
                                     onChange && onChange();
@@ -38,15 +41,14 @@ const IrdItem = ({
                                     onChange && onChange()
                                 }}
                             />
-
-
-                        </Form.Item>
+                        </AutoCompleteFormItem>
                     </Tooltip>
                 </Col>
                 <Col span={3}>
                     <Tooltip title="Номер этапа">
                         <Form.Item
                             name={[index, 'stage_number']}
+                            rules={[{required: true, message: "Укажите этап"}]}
                             style={{marginBottom: 0, width: "100%"}}>
                             <InputNumber max={100}
                                          style={{marginBottom: 0, width: "100%"}}

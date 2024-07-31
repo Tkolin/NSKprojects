@@ -1,7 +1,7 @@
 import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../style/BlockStyles";
 import React, {useState} from "react";
 import {Col, Divider, Form, Modal, Row, Select} from "antd";
-import TypeProjectForm from "../../form/modelsForms/TypeProjectForm";
+import TypeProjectForm from "../../../simplesForms/TypeProjectForm";
 import IrdsTemplateForm from "../../form/composedForm/template/templateForm/IrdsTemplateForm";
 import StagesTemplateForm from "../../form/composedForm/template/templateForm/StagesTemplateForm";
 import {TYPES_PROJECTS_QUERY} from "../../../graphql/queries";

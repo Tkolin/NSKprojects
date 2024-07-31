@@ -6,7 +6,8 @@ import {useNavigate} from "react-router-dom";
 import {Cookies} from "react-cookie";
 import catImage from '../resursed/cat.jpg';
 import {useApolloClient, useQuery} from "@apollo/client";
-import {GET_CURRENT_USER} from "../graphql/queries"; // Убедитесь, что путь правильный
+import {GET_CURRENT_USER} from "../graphql/queries";
+import {nanoid} from "nanoid"; // Убедитесь, что путь правильный
 
 
 const {Text, Link} = Typography;
@@ -165,6 +166,7 @@ export  const UserMenuHeaderDropdown = ({currentUser}) => {
             (
                 <UserCard user={currentUser ?? null}/>
             )}
+        trigger={["click"]}
         children={
             <Badge count={currentUser ? 0 : '!'}>
                 <Link>

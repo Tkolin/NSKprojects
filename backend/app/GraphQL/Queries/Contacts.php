@@ -11,8 +11,8 @@ final readonly class Contacts
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
-        if(!isset($args['queryOptions']))
-            switch ($args['queryType']){
+        if (!isset($args['queryOptions']))
+            switch ($args['queryType']) {
                 case "COMPACT":
                     return ['items' => Contact::all()];
                 case "BY_ID":
@@ -22,6 +22,16 @@ final readonly class Contacts
                     $data = Contact::find($args['id']);
                     if ($data) {
                         return ['items' => [$data]];
+                    } else {
+                        return ['items' => 'Ошибка, контакт не найден'];
+                    }
+                case "BY_ORGANIZATIONS":
+                    if (!isset($args['organizationId'])) {
+                        return ['items' => 'Ошибка, отсутствует id'];
+                    }
+                    $data = Contact::where('organization_id', $args['organizationId'])->get();
+                    if ($data) {
+                        return ['items' => $data];
                     } else {
                         return ['items' => 'Ошибка, контакт не найден'];
                     }
@@ -41,11 +51,7 @@ final readonly class Contacts
         return ['items' => $irds, 'count' => $count];
         //TODO: Поиск по огоранизщациям
         // Поиск по организации
-//        if (isset($args['organizationId'])) {
-//            $searchTerm = $args['organizationId'];
-//            $contactsQuery = $contactsQuery
-//                ->where('organization_id', 'like', "%$searchTerm%");
-//        }
+//
 
     }
 }

@@ -1,4 +1,4 @@
-import {Button, Divider, Form, Space,} from "antd";
+import {Button, Card, Divider, Form, Modal, Space,} from "antd";
 import {PlusOutlined,} from "@ant-design/icons";
 import React, {useContext, useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
@@ -7,12 +7,14 @@ import {IRDS_QUERY_COMPACT} from "../../graphql/queriesCompact";
 import IrdItem from "./components/IrdItem";
 import dayjs from "dayjs";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import IrdModalForm from "../components/modal/IrdModalForm";
 import {PROJECT_IRDS_SYNC_MUTATION} from "../../graphql/mutationsProject";
 
 import {NotificationContext} from "../../NotificationProvider";
+import OrganizationForm from "../simplesForms/OrganizationForm";
+import IrdForm from "../simplesForms/IrdForm";
+import {ModalButton} from "../simplesForms/formComponents/ModalButtonComponent";
 
-const IrdToProjectForm = ({project, onCompleted}) => {
+const IrdToProjectForm = ({project, onCompleted, ...cardProps}) => {
     const {openNotification} = useContext(NotificationContext);
 
     // Первичные данные
@@ -49,9 +51,9 @@ const IrdToProjectForm = ({project, onCompleted}) => {
         console.log("form DATA", form.getFieldValue("irdList").map(row => ({
                 project_id: project?.id ?? null,
                 ird_id: row?.ird?.selected ?? null,
-            stage_number: row?.stageNumber ? parseInt(row?.stage_number) : null,
-            application_project: row?.application_project ? parseInt(row?.application_project) : null,
-            received_date: row?.received_date ? dayjs(row?.received_date).format("YYYY-MM-DD") : null,
+                stage_number: row?.stageNumber ? parseInt(row?.stage_number) : null,
+                application_project: row?.application_project ? parseInt(row?.application_project) : null,
+                received_date: row?.received_date ? dayjs(row?.received_date).format("YYYY-MM-DD") : null,
             }))
         );
         mutateIrd({
@@ -75,67 +77,81 @@ const IrdToProjectForm = ({project, onCompleted}) => {
 
 
     return (
-        <Form layout="vertical"
-            //  onChange={() => {handleChange();}}
-              form={form}>
+        <Card style={{width: 1200}}
+              {...cardProps}
+              actions={[
+                  <ModalButton
+                      modalType={"green"}
+                      isMany={cardProps?.actions}
+                      loading={loading}
+                      onClick={() => form.submit()}
+                      children={project ? `Обновить` : `Создать`}/>
+                  , ...cardProps?.actions ?? []
+              ]}
+              children={
+                  <Form layout="vertical"
+                        onFinish={handleSave}
+                        form={form}>
 
-            <Form.List name="irdList">
-                {(fields, {add, remove}) => (
-                    <>
-                        {fields.map(({key, name, ...restField}, index) => (
-                            <IrdItem
-                                {...restField}
-                                setIrdModalStatus={setIrdModalStatus}
-                                key={key}
-                                index={index}
-                                irdData={dataIrds?.irds?.items}
-                                removeItem={(value) => {
-                                    remove(value);
-                                }}
-                                // handleChange();}}
-                                //   onChange={handleChange}
-                            />
-                        ))}
+                      <Form.List name="irdList">
+                          {(fields, {add, remove}) => (
+                              <>
+                                  {fields.map(({key, name, ...restField}, index) => (
+                                      <IrdItem
+                                          {...restField}
+                                          setIrdModalStatus={setIrdModalStatus}
+                                          key={key}
+                                          index={index}
+                                          irdData={dataIrds?.irds?.items}
+                                          removeItem={(value) => {
+                                              remove(value);
+                                          }}
 
-                        <Space.Compact style={{width: '100%', marginBottom: 10, marginTop: 0}}>
+                                      />
+                                  ))}
 
-                            <Button
-                                type={"primary"}
-                                size={"small"}
-                                onClick={() => add()}
-                                style={{width: '100%'}}
-                                icon={<PlusOutlined/>}
-                            >
-                                Добавить ИРД к списку
-                            </Button>
-                            {/*<StyledButtonGreen*/}
-                            {/*    type="dashed"*/}
-                            {/*    style={{width: '100%'}}*/}
+                                  <Space.Compact style={{width: '100%', marginBottom: 10, marginTop: 0}}>
 
-                            {/*    // size={"small"}*/}
-                            {/*    onClick={() => setIrdModalStatus("add")}*/}
-                            {/*    icon={<PlusOutlined/>}*/}
-                            {/*>*/}
-                            {/*    Создать ИРД*/}
-                            {/*</StyledButtonGreen>*/}
-                        </Space.Compact>
+                                      <Button
+                                          type={"primary"}
+                                          size={"small"}
+                                          onClick={() => add()}
+                                          style={{width: '100%'}}
+                                          icon={<PlusOutlined/>}
+                                      >
+                                          Добавить ИРД к списку
+                                      </Button>
 
-                    </>
-                )}
-            </Form.List>
-            <Space style={{justifyContent: "center", width: "100%"}}>
-                <StyledButtonGreen  loading={loading} onClick={() => handleSave()}>Сохранить</StyledButtonGreen>
-            </Space>
-            <IrdModalForm
-                onClose={() => setIrdModalStatus(null)}
-                onCompleted={(value) => {
-                    const newRow = [...form.getFieldValue("irdList")];
-                    newRow[irdModalStatus?.key] = {ird: {selected: value.id, output: value.name}};
-                    form.setFieldValue("irdList",newRow);
-                    setIrdModalStatus(null);
-                }}
-                mode={irdModalStatus?.mode}/>
-        </Form>
+                                  </Space.Compact>
+
+                              </>
+                          )}
+                      </Form.List>
+
+                      <Modal
+                          key={irdModalStatus?.mode || irdModalStatus?.ird_id || null}
+                          open={irdModalStatus}
+                          onCancel={() => setIrdModalStatus(null)}
+                          footer={null}
+                          width={"max-content"}
+                          title={"ИРД"}
+                          children={
+                              <IrdForm
+                                  onCompleted={(value) => {
+                                      const newRow = [...form.getFieldValue("irdList")];
+                                      newRow[irdModalStatus?.key] = {ird: {selected: value.id, output: value.name}};
+                                      form.setFieldValue("irdList", newRow);
+                                      setIrdModalStatus(null);
+                                  }}
+                                  initialObject={irdModalStatus?.ird_id ? {id: irdModalStatus?.ird_id} : null}
+                              />
+                          }
+                      />
+                  </Form>
+              }
+        />
+
+
     )
 };
 

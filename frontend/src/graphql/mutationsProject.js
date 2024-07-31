@@ -46,7 +46,7 @@ export const ADD_PROJECT_MUTATION = gql`
             date_signing
             duration
             date_end
-            date_create
+            date_start
             status {
                 name_key
                 name
@@ -143,7 +143,7 @@ export const UPDATE_PROJECT_MUTATION = gql`
             date_signing
             duration
             date_end
-            date_create
+            date_start
             status {
                 name_key
                 name
@@ -280,9 +280,11 @@ export const PROJECT_STAGE_SYNC_MUTATION = gql`
         }
     }
 `;
-export const PROJECT_ARCHIVE_MUTATION = gql`
-    mutation ProjectStagesSync($projectId: ID!) {
-        archiveProject(projectId: $projectId) {
+ 
+ export const CHANGE_STATUS_PROJECT = gql`
+    mutation ProjectStagesSync($projectId: ID!, $statusKey: String!, $dateStart: String) {
+        changeProjectStatus(projectId: $projectId, statusKey: $statusKey, dateStart: $dateStart ) {
+ 
             id
             status {
                 name_key
@@ -324,6 +326,14 @@ export const ACT_RENDERING_PROJECT_DOWNLOAD = gql`
             url
         }
     }
+`;     
+
+export const GENERATED_COMMERCIAL_OFFER_MESSAGE = gql`
+    mutation GeneratedCommercialOfferMessage($projectId: ID!, $dateOffer: String!, $delegationId: ID!) {
+        generatedCommercialOfferMessage(projectId: $projectId, dateOffer: $dateOffer, delegationId: $delegationId) {
+            url
+        }
+    }
 `;
 
 export const TASK_EXECUTOR_CONTRACT_DOWNLOAD = gql`
@@ -353,11 +363,11 @@ export const PROJECT_CONTRACT_GENERATED = gql`
     mutation ProjectContractGenerated($id: ID!, $dateCreateContract: String!) {
         projectContractGenerated(projectId: $id, dateCreateContract: $dateCreateContract) {
             id
+            contract_file_id
             project_contract_history {
                 file_id
                 number
-                date_create_contract
-                comment
+                date_document
             }
         }
     }

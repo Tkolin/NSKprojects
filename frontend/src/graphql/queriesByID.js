@@ -194,8 +194,7 @@ export const PROJECTS_QUERY_BY_ID = gql`
                 date_signing
                 duration
                 date_end
-                date_create
-                status {
+                 status {
                     name_key
                     name
                 }

@@ -54,7 +54,7 @@ class FileUploadController extends Controller
                 'size' => $file->getSize(),
                 'mime_type' => $file->getClientMimeType(),
             ]);
-            $project->update(['signed_file_id'=>$fileRecord->id, 'date_signing'=>$dateSinging]);
+            $project->update(['contract_file_id'=>$fileRecord->id, 'date_signing'=>$dateSinging]);
             return response()->json([
                 'success' => true,
                 'file' => $fileRecord,

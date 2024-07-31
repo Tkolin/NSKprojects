@@ -164,6 +164,19 @@ export const CONTACTS_QUERY_COMPACT = gql`
         }
     }
 `;
+export const CONTACTS_QUERY_COMPACT_AND_ORGID = gql`
+    query ContactsQueryCompact ($organizationId: ID) {
+        contacts(queryType: "COMPACT", organizationId: $organizationId) {
+            items {
+                id
+                first_name
+                last_name
+                patronymic
+                birth_day
+            }
+        }
+    }
+`;
 export const FACILITYS_QUERY_COMPACT = gql`
     query FacilitiesQueryCompact   {
         facilities  {

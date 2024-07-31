@@ -1,6 +1,8 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {
-    Form, Input, InputNumber, Space, Collapse, Divider, Button,
+ 
+    Form, Input, InputNumber, Space, Collapse, Divider, Button, Modal, Card, DatePicker,
+ 
 } from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
 
@@ -15,18 +17,49 @@ import {
 
 import {CustomAutoComplete, CustomAutoCompleteAndCreate} from "../components/style/SearchAutoCompleteStyles";
 
-import OrganizationModalForm from "../components/modal/OrganizationModalForm";
-import ContactModalForm from "../components/modal/ContactModalForm";
 import FacilitiesTreeComponent from "./components/FacilitiesTreeComponent";
 import DateRangePickerComponent from "../components/DateRangePickerComponent";
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
+ 
 import {ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION} from "../../graphql/mutationsProject";
-import {rebuildProjectResultQuery, rebuildProjectToQuery} from "../components/script/rebuildData/ProjectRebuilderQuery";
+import {rebuildProjectResultQuery} from "../components/script/rebuildData/ProjectRebuilderQuery";
 import {CustomDatePicker} from "../components/FormattingDateElementComponent";
-import {DownOutlined} from "@ant-design/icons";
+ 
+import ContactForm from "../simplesForms/ContactForm";
+import OrganizationForm from "../simplesForms/OrganizationForm";
+import {ModalButton} from "../simplesForms/formComponents/ModalButtonComponent";
+import {AutoCompleteFormItem} from "../components/CustomForm";
+import {nanoid} from "nanoid";
+import TypeProjectForm from "../simplesForms/TypeProjectForm";
+
+//TODO: Перевести в TS
+// _sKey1
+// name
+// type_project_document
+// organization_customer
+// facility_id
+// date_range
+// status_id
+// price
+// prepayment
+//
+//
+//
+//
 
 
-const ProjectForm = ({onCompleted, project, type, options}) => {
+const ProjectForm = ({
+                         onCompleted, project, type, requiredOptions = ["name",
+            "type_project_document",
+            "organization_customer",
+            "facility_id",
+            "date_range",
+            "status_id",
+            "price",
+            "prepayment"
+        ],
+                         disabledOptions = [], options, cardProps
+                     }) => {
+ 
         // Получение данных для выпадающих списков
         const {loading: loadingStatuses, error: errorStatuses, data: dataStatuses} =
             useQuery(PROJECT_STATUSES_QUERY_COMPACT);
@@ -54,6 +87,7 @@ const ProjectForm = ({onCompleted, project, type, options}) => {
         const {openNotification} = useContext(NotificationContext);
 
         const [form] = Form.useForm();
+ 
 
         const [dataTypesOutput, setDataTypesOutput] = useState([]);
 
@@ -69,25 +103,15 @@ const ProjectForm = ({onCompleted, project, type, options}) => {
 
         const [selectedGroupTypeProject, setSelectedGroupTypeProject] = useState(false);
         useEffect(() => {
+            console.log("selectedGroupTypeProject", selectedGroupTypeProject);
             !(project.id) && form.setFieldValue("type_project_document", null);
             if (dataTypeProject?.typeProjects?.items && selectedGroupTypeProject && !loadingTypeProject) {
-                console.log("dataTypeProject", dataTypeProject);
                 setDataTypesOutput(dataTypeProject?.typeProjects?.items?.filter(row => row?.group?.id === selectedGroupTypeProject));
             }
         }, [dataTypeProject, selectedGroupTypeProject]);
 
-        const [isRequest, setIsRequest] = useState(false);
-        const [isKp, setIsKp] = useState(false);
-        useEffect(() => {
-            if (project?.id) {
 
-                (type === "request") && setIsRequest(true);
-                (type === "requestUp") && setIsRequest(true) && setIsKp(true);
-            }
-        }, [type, project]);
-        // Подгрузка при обновлении
-
-
+ 
         const load = () => {
             form.setFieldsValue({
                 ...project,
@@ -95,7 +119,6 @@ const ProjectForm = ({onCompleted, project, type, options}) => {
                 id: project?.id ?? null,
                 date_signing: project?.date_signing ? dayjs(project?.date_signing) : null,
                 date_end: project?.date_end ? dayjs(project?.date_end) : null,
-                date_create: project?.date_create ? dayjs(project?.date_create) : null,
                 date_completion: project?.date_completion ? dayjs(project?.date_completion) : null,
 
             });
@@ -120,43 +143,30 @@ const ProjectForm = ({onCompleted, project, type, options}) => {
 
         const handleSave = () => {
             const number = createNumber();
-            if (!isRequest && number)
+ 
+            if (!type && number)
                 return;
-
-            const facility_id = form.getFieldValue("facility_id")?.checkedObjects?.map(row => row?.value[0] ?? null) ??
+            const formData = form.getFieldsValue();
+            const facility_id = formData.facility_id?.checkedObjects?.map(row => row?.value[0] ?? null) ??
                 project.facility_id;
-            const date_range = form.getFieldValue("date_range");
-            const date_signing = form.getFieldValue("date_signing");
-            const date_completion = form.getFieldValue("date_completion");
+
             const data = {
                 number,
-                name: form.getFieldValue("name"),
-                organization_customer_id: form.getFieldValue("organization_customer")?.selected,
-                type_project_document_id: form.getFieldValue("type_project_document")?.selected,
-                date_signing: date_range?.dateStart ? dayjs(date_range?.dateStart).format("YYYY-MM-DD") : null,
-                duration: date_range?.duration,
-                date_end: date_range?.dateEnd ? dayjs(date_range?.dateEnd).format("YYYY-MM-DD") : null,
-                date_create: date_signing ? dayjs(date_signing).format("YYYY-MM-DD") : null,
-                status_id: form.getFieldValue("status_id")?.selected,
-                date_completion: date_completion ? dayjs(date_completion).format("YYYY-MM-DD") : null,
-                price: form.getFieldValue("price"),
-                prepayment: form.getFieldValue("prepayment"),
+                name: formData.name,
+                organization_customer_id: formData.organization_customer?.selected,
+                type_project_document_id: formData.type_project_document?.selected,
+                date_signing: formData?.dateStart ? dayjs(formData?.dateStart).format("YYYY-MM-DD") : null,
+                duration: formData?.duration,
+                date_end: formData.dateEnd ? dayjs(formData?.dateEnd).format("YYYY-MM-DD") : null,
+                status_id: formData.status_id.selected,
+                price: formData.price,
+                prepayment: formData.prepayment,
                 delegates_id: null,
                 facility_id
             }
-            //TODO: Продумать
-            if (isRequest) {
-                if (!(data.name && data.status_id && data.organization_customer_id)) {
-                    openNotification('topRight', 'error', `Ошибка при выполнении создания`);
-                    return;
-                }
-            }
-            if (isKp) {
-                if (!(data.type_project_document_id)) {
-                    openNotification('topRight', 'error', `Ошибка при выполнении создания`);
-                    return;
-                }
-            }
+
+
+ 
             mutateProject({
                 variables: {
                     ...(project.id ? {id: project.id} : {}),
@@ -165,9 +175,11 @@ const ProjectForm = ({onCompleted, project, type, options}) => {
             });
         }
         const createNumber = () => {
-            if (isRequest && (project?.id && project?.id > -1)) {
+ 
+            if (type && (project?.id && project?.id > -1))
                 return project.number;
-            }
+
+ 
             const facilitiCode = (
                 form.getFieldValue("facility_id")?.checkedObjects &&
                 form.getFieldValue("facility_id")?.checkedObjects[0] &&
@@ -189,111 +201,234 @@ const ProjectForm = ({onCompleted, project, type, options}) => {
         }
         if (errorStatuses || errorTypeProject || errorDelegates || errorOrganizations) return `Ошибка! ${errorStatuses?.message || errorTypeProject?.message || errorDelegates?.message || errorOrganizations?.message}`;
 
-        return (<>
-            <Form form={form} layout="vertical">
-                <>
-                    <Form.Item name="name" label="Наименование проекта" rules={[{required: true}]}>
-                        <Input/>
-                    </Form.Item>
-                    <Form.Item name="group_type_project_document" label="Тип документа">
-                        <CustomAutoComplete
-                            disabled={!isRequest}
-                            loading={loadingGroupProject}
-                            typeData={"CODENAME"}
-                            data={dataGroupProject?.groupTypeProjects}
-                            onSelect={(value) => setSelectedGroupTypeProject(value.id)}
-                        />
-                    </Form.Item>
-                    <Form.Item name="type_project_document" label="Подтип документа">
-                        <CustomAutoCompleteAndCreate
-                            loading={loadingTypeProject}
-                            disabled={!isRequest}
-                            placeholder={"Сначала выберите тип документа"}
-                            typeData={"CODENAME"}
-                            data={dataTypesOutput}
-                            firstBtnOnClick={() => {
-                                const group = dataGroupProject?.groupTypeProjects?.find(
-                                    row => row.id === selectedGroupTypeProject);
-                                setTypeProjectModalStatus({
-                                    object:
-                                        {
-                                            code: group?.code + "-",
-                                            name: group?.name + " - ",
-                                            group: group
-                                        }, mode: "edit"
-                                })
-                            }}
-                        />
-                    </Form.Item>
-                    <Form.Item name="organization_customer" label="Заказчик"
-                               rules={[{required: true, message: 'Please confirm your username!'}]}>
-                        <CustomAutoCompleteAndCreate
-                            onChange={(value) => handleChangeCustomer(value)}
-                            loading={loadingOrganizations}
-                            firstBtnOnClick={() => {
-                                setOrganizationsModalStatus("add");
-                            }}
-                            data={dataOrganizations?.organizations?.items}
-                        />
-                    </Form.Item>
-                    <Form.Item label={"Обьекты"} rules={[{required: true}]}>
-                        <Collapse size={"small"}>
-                            <Collapse.Panel header={"Обьекты"}>
-                                <Form.Item name="facility_id" style={{width: "100%"}}>
-                                    <FacilitiesTreeComponent/>
-                                </Form.Item>
-                            </Collapse.Panel>
-                        </Collapse>
-                    </Form.Item>
-                    <Form.Item name="date_range" label="Продолжительность">
-                        <DateRangePickerComponent/>
-                    </Form.Item>
-                    <Form.Item name="date_create" label="Дата создания договора" style={{width: '50%'}}>
-                        <CustomDatePicker
-                            placeholder="Выберите дату" style={{width: '100%'}}/>
-                    </Form.Item>
-                    <Form.Item name="status_id" label="Статус проекта" rules={[{required: true}]}>
-                        <CustomAutoComplete
-                            loading={loadingStatuses}
-                            disabled={isRequest}
-                            data={dataStatuses?.projectStatuses}
-                            placeholder={"Выберите статус проекта..."}
-                        />
-                    </Form.Item>
-                    <Space.Compact style={{width: '100%'}}>
-                        <Form.Item name="price" style={{width: '100%'}} label="Стоимость">
-                            <InputNumber suffix={"₽"} style={{width: '100%'}}
-                                         formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                         parser={value => `${value}`.replace(/[^0-9]/g, '')}/>
-                        </Form.Item>
-                        <Form.Item name="prepayment" style={{width: '150px'}} label="Аванс" rules={[{required: true}]}>
-                            <InputNumber suffix={"%"} style={{width: '100%'}}
-                                         min={0} max={100}/>
-                        </Form.Item>
-                    </Space.Compact>
+ 
+        return (
+            <Card style={{width: 400}}
+                  {...cardProps}
+                  actions={[
+                      <ModalButton
+                          modalType={"green"}
+                          isMany={cardProps?.actions}
+                          loading={loadProjectCountByOrg || loading}
+                          onClick={() => form.submit()}
+                          children={project ? `Обновить` : `Создать`}/>
+                      , ...cardProps?.actions ?? []
+                  ]}
+                  children={<>
+                      <Form form={form} onFinish={handleSave} layout="vertical">
 
-                    <Space style={{justifyContent: "center", width: "100%"}}>
-                        <StyledButtonGreen onClick={() => handleSave()} disabled={errorProjectCountByOrg}
-                                           loading={loadProjectCountByOrg || loading}
-                        >Сохранить</StyledButtonGreen>
-                    </Space>
-                </>
-            </Form>
+                          <Form.Item name="name" label="Наименование проекта"
+                                     style={disabledOptions?.includes("name") ? {display: "none"} : {}}
+                                     rules={[{required: true, message: "Укажите имя"}]}>
+                              <Input disabled={disabledOptions?.includes("name")}/>
+                          </Form.Item>
+                          <AutoCompleteFormItem
+                              style={disabledOptions?.includes("type_project_document") ? {display: "none"} : {}}
+                              rulesValidationRequired={requiredOptions?.includes("type_project_document")}
+                              rulesValidationMessage={"Укажите тип документации"}
+                              name="group_type_project_document" label="Тип документа">
+                              <CustomAutoComplete
+                                  disabled={disabledOptions?.includes("type_project_document")}
+                                  loading={loadingGroupProject}
+                                  typeData={"CODENAME"}
+                                  data={dataGroupProject?.groupTypeProjects}
+                                  onClear={() => {
+                                      setSelectedGroupTypeProject(null);
+                                      form.setFieldValue("type_project_document", null)
+                                  }}
+                                  onSelect={(value) => {
+                                      setSelectedGroupTypeProject(value.id);
+                                      form.setFieldValue("type_project_document", null)
+                                  }}
+                              />
+                          </AutoCompleteFormItem>
+                          <AutoCompleteFormItem
+                              style={disabledOptions?.includes("type_project_document") ? {display: "none"} : {}}
+                              rulesValidationRequired={requiredOptions?.includes("type_project_document")}
+                              rulesValidationMessage={"Укажите подтип документации"}
+                              name="type_project_document" label="Подтип документа">
+                              <CustomAutoCompleteAndCreate
+                                  loading={loadingTypeProject}
+                                  disabled={!selectedGroupTypeProject}
+                                  placeholder={"Сначала выберите тип документа"}
+                                  typeData={"CODENAME"}
+                                  data={dataTypesOutput}
+                                  firstBtnOnClick={() => {
+                                      const group = dataGroupProject?.groupTypeProjects?.find(
+                                          row => row.id === selectedGroupTypeProject);
+                                      setTypeProjectModalStatus({
+                                          object:
+                                              {
+                                                  code: group?.code + "-",
+                                                  name: group?.name + " - ",
+                                                  group: group
+                                              },
+                                          mode: "add"
+                                      })
+                                  }}
+                              />
+                          </AutoCompleteFormItem>
+                          <AutoCompleteFormItem name="organization_customer" label="Заказчик"
+                                                style={disabledOptions?.includes("organization_customer") ? {display: "none"} : {}}
+                                                rulesValidationRequired={requiredOptions?.includes("organization_customer")}
+                                                rulesValidationMessage={"Укажите организацию заказчика"}>
+                              <CustomAutoCompleteAndCreate
+                                  onChange={(value) => handleChangeCustomer(value)}
+                                  loading={loadingOrganizations}
+                                  disabled={disabledOptions?.includes("organization_customer")}
+                                  firstBtnOnClick={() => {
+                                      setOrganizationsModalStatus("add");
+                                  }}
+                                  data={dataOrganizations?.organizations?.items}
+                              />
+                          </AutoCompleteFormItem>
+                            Обьекты
+                          <Collapse size={"small"}>
+                              <Collapse.Panel header={"Выберите объекты"}>
+                                  <Form.Item name="facility_id"  style={{width: "100%"}}>
+                                      <FacilitiesTreeComponent/>
+                                  </Form.Item>
+                              </Collapse.Panel>
+                          </Collapse>
 
-            <ContactModalForm
-                onClose={() => setDelegatesModalStatus(null)}
-                mode={delegatesModalStatus}/>
-            <OrganizationModalForm
-                object={{id: form.getFieldValue("organization_customer")?.selected}}
-                onClose={() => setOrganizationsModalStatus(null)}
-                onCompleted={(value) => {
-                    refetchOrganizations();
-                    form.setFieldValue("organization_customer", {selected: value.id, output: value.name});
-                    setOrganizationsModalStatus(null);
-                    setSelectedOrganizationId(value.id);
-                }}
-                mode={organizationsModalStatus}/>
-        </>)
+                          {/*<Space.Compact direction={"horizontal"}  style={{width: "100%",...(disabledOptions?.includes("date_range") ? {display: "none"} : {})}} >*/}
+                          {/*    <Form.Item name="dateStart"*/}
+                          {/*               rules={[{*/}
+                          {/*                   required: requiredOptions?.includes("date_start"),*/}
+                          {/*                   message: "Укажите дату начала работы над проектом "*/}
+                          {/*               }]}*/}
+                          {/*               label="Дата начала ">*/}
+                          {/*        <DatePicker*/}
+                          {/*            disabled={disabledOptions?.includes("date_start")}/>*/}
+                          {/*    </Form.Item>*/}
+                          {/*    <Form.Item name="dateEnd"*/}
+                          {/*               rules={[{*/}
+                          {/*                   required: requiredOptions?.includes("date_end"),*/}
+                          {/*                   message: "Укажите дату окончания проекта"*/}
+                          {/*               }]}*/}
+                          {/*               label="Дата окончания">*/}
+                          {/*        <DatePicker*/}
+                          {/*            disabled={disabledOptions?.includes("date_end")}/>*/}
+                          {/*    </Form.Item>*/}
+                          {/*</Space.Compact>*/}
+
+                          <Form.Item name="duration"
+                                     style={disabledOptions?.includes("duration") ? {display: "none"} : {}}
+                                     rules={[{
+                                         required: requiredOptions?.includes("duration"),
+                                         message: "Укажите продолжительность"
+                                     }]}
+                                     label="Продолжительность проекта">
+                              <InputNumber style={{width: '100%'}}
+                                           disabled={disabledOptions?.includes("duration")}/>
+                          </Form.Item>
+
+                          <Form.Item name="status_id" label="Статус проекта"
+                                     style={disabledOptions?.includes("status_id") ? {display: "none"} : {}}
+                                     rules={[{
+                                         required: requiredOptions?.includes("status_id"),
+                                         message: "Укажите статус"
+                                     }]}>
+                              <CustomAutoComplete
+                                  loading={loadingStatuses}
+                                  disabled={disabledOptions?.includes("status_id")}
+                                  data={dataStatuses?.projectStatuses}
+                                  placeholder={"Выберите статус проекта..."}
+                              />
+                          </Form.Item>
+                          <Space.Compact style={{width: '100%'}}>
+                              <Form.Item name="price"
+                                         style={{
+                                             ...((disabledOptions?.includes("price") && disabledOptions?.includes("prepayment")) ? {display: "none"} : {}),
+                                             width: '100%'
+                                         }}
+                                         label="Стоимость"
+
+                                         rules={[{
+                                             required: requiredOptions?.includes("price"),
+                                             message: "Укажите стоимость"
+                                         }]}>
+                                  <InputNumber suffix={"₽"} style={{width: '100%'}}
+                                               disabled={disabledOptions?.includes("price")}
+                                               formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                               parser={value => `${value}`.replace(/[^0-9]/g, '')}/>
+                              </Form.Item>
+                              <Form.Item name="prepayment"
+                                         style={{
+                                             ...((disabledOptions?.includes("price") && disabledOptions?.includes("prepayment")) ? {display: "none"} : {}),
+                                             width: "75px"
+                                         }}
+                                         label="Аванс"
+                                         rules={[{
+                                             required: requiredOptions?.includes("prepayment"),
+                                             message: "Укажите аванс"
+                                         }]}>
+                                  <InputNumber suffix={"%"} style={{width: '100%'}}
+                                               disabled={disabledOptions?.includes("prepayment")}
+                                               min={0} max={100}/>
+                              </Form.Item>
+                          </Space.Compact>
+                      </Form>
+
+                      <Modal
+                          key={delegatesModalStatus?.mode || delegatesModalStatus?.organization_id || null}
+                          open={delegatesModalStatus}
+                          onCancel={() => setDelegatesModalStatus(null)}
+                          footer={null}
+                          width={"max-content"}
+                          children={
+                              <ContactForm
+                                  cardProps={"Контакт"}
+                                  onCompleted={() =>
+                                      setDelegatesModalStatus(null)}
+                                  initialObject={delegatesModalStatus?.organization_id ? {id: delegatesModalStatus?.organization_id} : null}
+                              />
+                          }
+                      />
+                      <Modal
+                          key={organizationsModalStatus?.mode || organizationsModalStatus?.organization_id || null}
+                          open={organizationsModalStatus}
+                          onCancel={() => setOrganizationsModalStatus(null)}
+                          footer={null}
+                          width={"max-content"}
+                          children={
+                              <OrganizationForm
+                                  cardProps={{title: "Организация"}}
+                                  onCompleted={(value) => {
+                                      refetchOrganizations();
+                                      form.setFieldValue("organization_customer", {selected: value.id, output: value.name});
+                                      setOrganizationsModalStatus(null);
+                                      setSelectedOrganizationId(value.id);
+                                  }}
+                                  initialObject={organizationsModalStatus?.organization_id ? {id: organizationsModalStatus?.organization_id} : null}
+                              />
+                          }
+                      />
+                      <Modal
+                          key={nanoid()}
+                          open={typeProjectModalStatus?.mode}
+                          onCancel={() => setTypeProjectModalStatus(null)}
+                          footer={null}
+                          width={"max-content"}
+                          children={
+                              typeProjectModalStatus &&
+                              <TypeProjectForm
+                                  cardProps={{title: "Организация"}}
+                                  onCompleted={(value) => {
+                                      form.setFieldValue("type_project_document", {
+                                          output: value.code + " - " + value.name,
+                                          selected: value.id
+                                      })
+                                      setTypeProjectModalStatus(null)
+                                  }}
+                                  localObject={typeProjectModalStatus?.object}
+                              />
+                          }
+                      />
+
+                  </>
+                  }/>)
+ 
     }
 ;
 

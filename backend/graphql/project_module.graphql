@@ -40,8 +40,12 @@ extend type Mutation {
     projectIrdsSync(
         items: [IrdToProjectInput]!
     ): Project @checkRole(permission:  ["update-project-ird"])
-    archiveProject(
+ 
+    changeProjectStatus(
         projectId: ID!
+        statusKey: String!
+        dateStart: String
+ 
     ): Project @checkRole(permission:  ["update-project-ird"])
     projectStagesSync(
         items: [StageToProjectInput]!
@@ -60,6 +64,12 @@ extend type Mutation {
         typeProject: ID!
         newTemplate: ID!
     ): TypeProjectDocument
+    generatedCommercialOfferMessage(
+        projectId: ID!
+        dateOffer: String!
+        delegationId: ID!
+    ): Url
+
     updateEmployeesToTasks(
         tasksIds: [ID]
         employeesIds: [ID]
@@ -87,23 +97,21 @@ input TaskToProjectDetailInput  {
     executor_id: ID
 }
 input IrdToProjectInput {
-    project_id: ID
-    ird_id: ID
-    stage_number: Int
+    project_id: ID!
+    ird_id: ID!
+    stage_number: Int!
     application_project: Int
     received_date: String
 }
 input StageToProjectInput {
-    project_id: ID
-    stage_id: ID
-    number: Int
-#    price: Float
-    percent: Int
+    project_id: ID!
+    stage_id: ID!
+    number: Int!
+    percent: Int!
+    duration: Int!
     date_start: String
-    duration: Int
     date_end: String
     progress: Int
-#    price_to_paid: Float
 }
 input RequestInput {
     name: ID!

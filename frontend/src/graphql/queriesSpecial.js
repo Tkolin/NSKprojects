@@ -10,7 +10,21 @@ export const STATUS_PROJECTS_QUERY = gql`
             }
         }
     }
-`;export const EXECUTOR_ORDERS_QUERY = gql`
+`;
+export const CONTACTS_BY_ORGANIZATION = gql`
+    query ContactsQuery ( $organizationId: ID) {
+        contacts( organizationId : $organizationId, queryType: "BY_ORGANIZATIONS") {
+            items {
+                id
+                first_name
+                last_name
+                patronymic
+            }
+            count
+        }
+    }
+`;
+export const EXECUTOR_ORDERS_QUERY = gql`
     query ExecutorOrders ($projectId: ID!,  $executorId: ID!) {
         executorOrders(projectId: $projectId,  executorId: $executorId
         ) {

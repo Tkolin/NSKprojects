@@ -1,0 +1,39 @@
+.react-dadata__input {
+    font-size: 14px;
+    line-height: 22px;
+     padding-block-end: 4px;
+    padding-block-start: 4px;
+
+    padding-inline-end: 11px;
+    padding-inline-start: 11px;
+
+    text-align: left;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 4px 11px;
+    color: rgba(0, 0, 0, 0.88);
+    list-style: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    position: relative;
+    display: inline-block;
+    min-width: 0;
+    border-radius: 6px;
+    transition: all 0.2s;
+    background: #ffffff;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #d9d9d9;
+
+    text-shadow: none;
+    text-rendering: auto;
+    --ant-display: flex;
+    height: 32px;
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+}
+.react-dadata__container{
+    height: 32px;
+}
