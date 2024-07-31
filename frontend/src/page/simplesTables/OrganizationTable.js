@@ -8,7 +8,9 @@ import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {ORGANIZATIONS_QUERY} from "../../graphql/queries";
 
 import OrganizationContactsCompactTable from "../ProjectTable/ProjectTableComponent/components/OrganizationContactsCompactTable";
+ 
 import OrganizationForm from "../simplesForms/OrganizationForm";
+ 
 
 const OrganizationTable = () => {
     // Состояния

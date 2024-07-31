@@ -1,6 +1,7 @@
 import {
     Alert,
 
+ 
     Button, DatePicker,
     Divider, Form,
     Modal,
@@ -11,22 +12,26 @@ import {
 import React, {useContext, useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
 import {CHANGE_STATUS_PROJECT, GENERATED_COMMERCIAL_OFFER_MESSAGE} from "../../../../../graphql/mutationsProject";
+ 
 import {
     CheckSquareOutlined,
 
     DeleteOutlined,
     DownloadOutlined,
+ 
     EditOutlined,
     EyeOutlined,
     MailOutlined,
     MoreOutlined, PlusOutlined, SaveOutlined,
     UploadOutlined,
+ 
 } from "@ant-design/icons";
 import ProjectForm from "../../../../ProjectForm";
 
 import {StyledButtonGreen, StyledButtonRed} from "../../../../components/style/ButtonStyles";
 import {NotificationContext} from "../../../../../NotificationProvider";
 import StageToProjectForm from "../../../../StageToProjectForm";
+ 
 import dayjs from "dayjs";
 
 import ContactForm from "../../../../simplesForms/ContactForm";
@@ -57,6 +62,7 @@ export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) =>
         changeProjectStatusMutate({variables: {projectId: projectId, statusKey: "ARCHIVE"}})
     }
 
+ 
     return (
         <>
             <Tooltip title={"Внести уточнения"}>
@@ -68,6 +74,7 @@ export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) =>
 
             <Space.Compact align="start" direction={"vertical"}>
 
+ 
                 <Tooltip
                     title={record?.project_stages?.length <= 0 ? "Этапы не указанны" : "Принять проект на согласование договора"}>
                     <StyledButtonGreen loading={changeProjectStatusLoading}
@@ -79,11 +86,14 @@ export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) =>
                     title={"Архивация заявки"}
                     description={"Вы уверены? это перенесёт заявку в архив!"}
                     onConfirm={() => handleArchiveProject(record.id)}
+ 
                     icon={
                         <DeleteOutlined/>
                     }
                 >
+ 
                     <StyledButtonRed loading={changeProjectStatusLoading} style={{height: 32}} type={"text"}
+ 
                                      icon={<DeleteOutlined/>}/>
                 </Popconfirm>
 
@@ -99,6 +109,7 @@ export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) =>
                 key={record.id}
                 open={upRequestModalStatus}
                 onCancel={() => setUpRequestModalStatus(false)}
+ 
                 width={"max-content"}
                 footer={null}
             >
@@ -147,17 +158,19 @@ export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) =>
                     </Space.Compact>
 
                     <Space.Compact block>
+ 
                         {/*TODO: Надо спрашивать об сохранении изменений*/}
                         <Button style={{width: "50%"}}
                                 disabled={left}
                                 children={"Проект"}
                                 onClick={() => setLeft(true)} icon={left ? "" : <EyeOutlined/>}/>
-
+ 
                         <Button style={{width: "50%"}}
                                 disabled={!left}
                                 children={"Этапы"}
                                 onClick={() => setLeft(false)} icon={!left ? "" : <EyeOutlined/>}/>
                     </Space.Compact>
+ 
 
 
                     {

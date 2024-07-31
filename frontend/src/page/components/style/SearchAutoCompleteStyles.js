@@ -49,8 +49,10 @@ const CustomAutoCompleteComponent = ({
             style={{...style, width: width, maxWidth: width}}
             allowClear
             showSearch
+ 
 
             status={ (value?.output?.length < 1) ? "1" : (value?.selected) ? "2" : "warning"}
+ 
             size={size ?? 'regular'}
             mode={mode
                 ?? ''}

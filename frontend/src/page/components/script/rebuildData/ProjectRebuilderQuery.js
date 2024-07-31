@@ -116,7 +116,9 @@ export const rebuildProjectToQuery = (data) => {
         date_signing: data?.date_range?.dateStart ? dayjs(data?.date_range?.dateStart).format("YYYY-MM-DD") : null,
         duration: data?.date_range?.duration,
         date_end: data?.date_range?.dateEnd ? dayjs(data?.date_range?.dateEnd).format("YYYY-MM-DD") : null,
+ 
         date_start: data?.date_start ? dayjs(data?.date_start).format("YYYY-MM-DD") : null,
+ 
         status_id: data?.status_id,
         date_completion: data?.date_completion ? dayjs(data?.date_completion).format("YYYY-MM-DD") : null,
         price: data?.price,

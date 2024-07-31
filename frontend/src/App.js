@@ -23,6 +23,7 @@ import RegisterForm from "./page/simplesForms/RegisterForm";
 import LoginForm from "./page/simplesForms/LoginForm";
 import {NotificationProvider} from "./NotificationProvider";
 import moment from "moment";
+ 
 import UserTable from "./page/simplesTables/UserTable";
 import RoleTable from "./page/simplesTables/RoleTable";
 //import RoleForm from "./page/simplesForms/RoleForm";
@@ -104,12 +105,14 @@ const App = () => {
                                         "WAITING_SOURCE",
                                         "WORKING"]}
                                     legendOptions={[
+ 
                                         "APPROVAL_AGREEMENT",
                                         "APPROVAL_KP",
                                         "COMPLETED",
                                         "DESIGN_REQUEST",
                                         "WAITING_SOURCE",
                                         "WORKING"]}
+ 
                                     columnOptions={["progress", "tool", "main", "customer", "status", "price"]}/>}/>
 
                                 <Route path="/project/request" element={<Home/>}/>

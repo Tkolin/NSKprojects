@@ -1,12 +1,18 @@
 import React, {useState} from 'react';
+ 
 import {Modal, notification, Space, Table, Tooltip, Typography} from 'antd';
+ 
 
 import Link from "antd/es/typography/Link";
 import {PlusOutlined} from "@ant-design/icons";
 import {EditStyledLinkManagingDataTable} from "../../../components/style/TableStyles";
 import {format} from "date-fns";
+ 
  import {nanoid} from "nanoid";
 import ContactForm from "../../../simplesForms/ContactForm";
+ 
+import ContactModalForm from "../../../components/modal/ContactModalForm";
+ 
 
 const {Text} = Typography;
 
@@ -135,6 +141,7 @@ const OrganizationContactsCompactTable = ({data, refetch}) => {
                 columns={columns}
                 pagination={false}
             />
+ 
             <Modal
                 key={contactModalStatus?.mode || contactModalStatus?.contact_id || null}
                 open={contactModalStatus}
@@ -151,6 +158,7 @@ const OrganizationContactsCompactTable = ({data, refetch}) => {
                         initialObject={contactModalStatus?.contact_id ? {id: contactModalStatus?.contact_id} : null}
                     />
                 }
+ 
             />
         </div>
     );

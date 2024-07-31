@@ -9,7 +9,8 @@ import {
 } from "antd";
 import React, {useContext, useState} from "react";
 import {useMutation} from "@apollo/client";
-import {CHANGE_STATUS_PROJECT} from "../../../../../graphql/mutationsProject";
+ import {CHANGE_STATUS_PROJECT} from "../../../../../graphql/mutationsProject";
+ 
 import {
     CheckSquareOutlined,
 
@@ -25,7 +26,8 @@ export const ColumnRequestMenuToolRender = ({record, text, onUpdated, expandable
     const {openNotification} = useContext(NotificationContext);
 
     const [upRequestModalStatus, setUpRequestModalStatus] = useState(null)
-    const [archiveProjectMutate, {loading: archiveProjectLoading}] = useMutation(CHANGE_STATUS_PROJECT, {
+     const [archiveProjectMutate, {loading: archiveProjectLoading}] = useMutation(CHANGE_STATUS_PROJECT, {
+ 
         onCompleted: () => {
             openNotification('topRight', 'success', `Заявка перенесена в архив`);
             onUpdated();
@@ -41,7 +43,8 @@ export const ColumnRequestMenuToolRender = ({record, text, onUpdated, expandable
             <Tooltip title={"Внести уточнения"}>
 
                 <Button style={{height: 32}} type={"text"} icon={<EditOutlined/>}
-                        onClick={() => setUpRequestModalStatus("request")}/>
+                         onClick={() => setUpRequestModalStatus("request")}/>
+ 
             </Tooltip>
             <Divider style={{margin: 5, marginLeft: 0, marginRight: 0}}/>
 
@@ -52,7 +55,8 @@ export const ColumnRequestMenuToolRender = ({record, text, onUpdated, expandable
                 <Popconfirm
                     title={"Архивация заявки"}
                     description={"Вы уверены? это перенесёт заявку в архив!"}
-                    onConfirm={() => archiveProjectMutate({variables: {projectId: record.id, statusKey: "ARCHIVE" }})}
+                     onConfirm={() => archiveProjectMutate({variables: {projectId: record.id, statusKey: "ARCHIVE" }})}
+ 
                     icon={
                         <DeleteOutlined/>
                     }
@@ -73,7 +77,7 @@ export const ColumnRequestMenuToolRender = ({record, text, onUpdated, expandable
                 key={record.id}
                 open={upRequestModalStatus}
                 onCancel={() => setUpRequestModalStatus(false)}
-                width={"max-content"}
+                 width={"max-content"}
                 footer={null}
             >
                 <ProjectForm type={upRequestModalStatus}
@@ -99,6 +103,7 @@ export const ColumnRequestMenuToolRender = ({record, text, onUpdated, expandable
                                      name_key: "APPROVAL_KP"
                                  } : {name: "DESIGN_REQUEST", name_key: "DESIGN_REQUEST"}
                              }}/>
+ 
             </Modal>
         </>
     );

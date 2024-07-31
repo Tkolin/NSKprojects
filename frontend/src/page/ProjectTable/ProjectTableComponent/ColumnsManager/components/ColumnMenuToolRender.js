@@ -27,7 +27,8 @@ import {
 } from "@ant-design/icons";
 import ProjectTasks from "../../../../DistributionTasksByProject";
 import ProjectForm from "../../../../ProjectForm";
-import LinkToDownload from "../../../../components/script/fileDownloadScripts/LinkToDownload";
+ import LinkToDownload from "../../../../components/script/fileDownloadScripts/LinkToDownload";
+ 
 import ProjectFileDownload from "../../../../components/script/fileDownloadScripts/ProjectFileDownload";
 import {UploadFileProjectContractSigned} from "../../../../components/UploadFile";
 
@@ -56,6 +57,7 @@ const DeleteMenuItem = ({onClick, ...props}) => {
 const TaskMenuItem = ({isFullStages, onClick, ...props}) => {
     return (
         isFullStages ? (
+ 
                 <Tooltip title={"Недостаточно данных об этапах, для создания задач"}> <Button {...buttonProps}
                                                                                               {...props} disabled icon={
                     <ReconciliationOutlined/>} danger>Создать задачи</Button>
@@ -63,6 +65,7 @@ const TaskMenuItem = ({isFullStages, onClick, ...props}) => {
             : <Button {...buttonProps}
                       {...props} icon={<ReconciliationOutlined/>} onClick={() => onClick}>Распределение задач</Button>)
 }
+ 
 const TemplateMenuItem = ({isTemplate, onClick, ...props}) => {
     return (
         isTemplate ?
@@ -96,9 +99,11 @@ const ProjectContractMenuItem = ({record, onUpdated}) => {
     }, null);
 
     const fileId = maxNumberRecord ? maxNumberRecord.file_id : null;
+ 
     return (record?.contract_file_id ? (
                 <>
                     <LinkToDownload fileId={record.contract_file_id} {...buttonProps}>Скачать (подписан)
+ 
                         от {record.date_signing}</LinkToDownload>
                 </>
             ) :
@@ -121,7 +126,9 @@ const ProjectContractMenuItem = ({record, onUpdated}) => {
                                     icon={<DownloadOutlined/>}
                                     {...buttonProps}>Скачать
                                     последний вариант</LinkToDownload>
+ 
                             </>
+ 
                         ) :
                         (
                             <>
@@ -155,7 +162,9 @@ export const ColumnMenuToolRender = ({record, text, options, expandable}) => {
         },
     });
     const createTemplate = () => {
+ 
         mutateChangeTemplate({variables: {typeProject: record.type_project_document.id, newTemplate: record.id}});
+ 
     }
     const onExpand = (value) => {
         expandable?.onExpand(value);
@@ -163,7 +172,9 @@ export const ColumnMenuToolRender = ({record, text, options, expandable}) => {
 
     return (
         <>
+ 
             <Space.Compact align="start" direction={"vertical"}>
+ 
                 <Dropdown
                     placement={"bottomLeft"}
                     trigger={['click']}
@@ -193,7 +204,9 @@ export const ColumnMenuToolRender = ({record, text, options, expandable}) => {
                                                           isTemplate={record.id === record?.type_project_document?.template_project_id}/>
                                     </Col>
                                 </Row>
+ 
                                 <Divider style={{margin: 5, marginTop: 0, fontSize: 14}}/>
+ 
                                 <Space direction="vertical" style={{width: "100%"}}>
                                     <TaskMenuItem onClick={() => console.log()}
                                                   isFullStages={record?.project_stages
@@ -206,10 +219,12 @@ export const ColumnMenuToolRender = ({record, text, options, expandable}) => {
                             </Card>
 
                         )}
+ 
                     children={<Button type={"text"} style={{height: 56}} icon={<MoreOutlined/>}/>}
                 />
                 <Button style={{height: 56}} type={"text"}
                         icon={(expandable.expandedRowKeys === record.key) ? <UpSquareOutlined/> : <DownSquareOutlined/>}
+ 
                         onClick={() => onExpand(record.key)}/>
             </Space.Compact>
             <Modal

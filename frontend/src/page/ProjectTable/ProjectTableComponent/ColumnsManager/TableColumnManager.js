@@ -17,7 +17,9 @@ import React from "react";
 import {ColumnMenuToolRender} from "./components/ColumnMenuToolRender";
 import {ColumnRequestMenuToolRender} from "./components/ColumnRequestMenuToolRender";
 import {ColumnKpMenuToolRender} from "./components/ColumnKpMenuToolRender";
+ 
 import {ColumnContractMenuToolRender} from "./components/ColumnContractMenuToolRender";
+ 
 
 const formatCurrency = (amount) => {
     return amount.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'});
@@ -25,6 +27,7 @@ const formatCurrency = (amount) => {
 const {Text} = Typography;
 
 const GetColumns = ({
+ 
                         options,
                         onUpdated,
                         expandable,
@@ -33,6 +36,7 @@ const GetColumns = ({
 ) => {
     console.log(options, "options");
     if (!options || options.length < 1)
+ 
         return [];
     // Определяем базовые ширины для столбцов
     const baseWidths = {
@@ -70,11 +74,13 @@ const GetColumns = ({
     options.includes('tool') && columns.push(columnMenuToolComponent({
         width: "50px", expandable
     }));
+ 
     options.includes('contract_tools') && columns.push(columnContractMenuToolComponent({
         onUpdated: () => onUpdated(),
         expandable: expandable,
         width: "50px"
     }));
+ 
     options.includes('request_tools') && columns.push(columnRequestMenuToolComponent({
         onUpdated: () => onUpdated(),
         width: "50px"
@@ -153,18 +159,23 @@ const columnMenuToolComponent = ({width, options, expandable}) => {
         key: 'menu-options',
         width: width,
         render: (text, record) => <>
+ 
             <ColumnMenuToolRender text={text} record={record}
+ 
                                   expandable={expandable} options={options}/>
         </>,
     }
 }
+ 
 const columnRequestMenuToolComponent = ({
                                             width, options, onUpdated
                                         }) => {
+ 
     return {
         key: 'menu-request-options',
         width: width,
         render: (text, record) => <>
+ 
             <ColumnRequestMenuToolRender text={text} record={record}
                                          onUpdated={() => onUpdated()} options={options}/>
         </>,
@@ -188,12 +199,15 @@ const columnContractMenuToolComponent = ({
 const columnKpMenuToolComponent = ({
                                        width, options, onUpdated
                                    }) => {
+ 
     return {
         key: 'menu-kp-options',
         width: width,
         render: (text, record) => <>
+ 
             <ColumnKpMenuToolRender text={text} record={record}
                                     onUpdated={() => onUpdated()} options={options}/>
+ 
         </>,
     }
 }
@@ -319,6 +333,7 @@ const columnStatusComponent = (width = "15%") =>
                     <Text strong>Сроки:</Text>
                     {
                         record.date_signing ?
+ 
                             <Text>Дата подписания договора: {dayjs(record?.date_signing).format("DD.MM.YYYY")}</Text>
                             :
                             <Text type="danger">Не подписан</Text>
@@ -328,6 +343,7 @@ const columnStatusComponent = (width = "15%") =>
                         <Text>Дата начала: {dayjs(record?.date_start).format("DD.MM.YYYY")}</Text>
                         : <Text>Проект не в работе</Text>}
 
+ 
                 </Space.Compact>
             ),
     })

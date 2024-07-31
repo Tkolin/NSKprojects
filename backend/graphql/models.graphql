@@ -544,7 +544,9 @@ input ProjectInput {
     status_id: String
     date_completion: String
     price: Int
+ 
     prepayment: Int!
+ 
     facility_id: [ID]
     delegates_id: [ID]}
 input ProjectTemplatesSetting {

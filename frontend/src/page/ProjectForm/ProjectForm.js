@@ -1,6 +1,8 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {
+ 
     Form, Input, InputNumber, Space, Collapse, Divider, Button, Modal, Card, DatePicker,
+ 
 } from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
 
@@ -17,9 +19,11 @@ import {CustomAutoComplete, CustomAutoCompleteAndCreate} from "../components/sty
 
 import FacilitiesTreeComponent from "./components/FacilitiesTreeComponent";
 import DateRangePickerComponent from "../components/DateRangePickerComponent";
+ 
 import {ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION} from "../../graphql/mutationsProject";
 import {rebuildProjectResultQuery} from "../components/script/rebuildData/ProjectRebuilderQuery";
 import {CustomDatePicker} from "../components/FormattingDateElementComponent";
+ 
 import ContactForm from "../simplesForms/ContactForm";
 import OrganizationForm from "../simplesForms/OrganizationForm";
 import {ModalButton} from "../simplesForms/formComponents/ModalButtonComponent";
@@ -55,6 +59,7 @@ const ProjectForm = ({
         ],
                          disabledOptions = [], options, cardProps
                      }) => {
+ 
         // Получение данных для выпадающих списков
         const {loading: loadingStatuses, error: errorStatuses, data: dataStatuses} =
             useQuery(PROJECT_STATUSES_QUERY_COMPACT);
@@ -82,6 +87,7 @@ const ProjectForm = ({
         const {openNotification} = useContext(NotificationContext);
 
         const [form] = Form.useForm();
+ 
 
         const [dataTypesOutput, setDataTypesOutput] = useState([]);
 
@@ -105,6 +111,7 @@ const ProjectForm = ({
         }, [dataTypeProject, selectedGroupTypeProject]);
 
 
+ 
         const load = () => {
             form.setFieldsValue({
                 ...project,
@@ -136,6 +143,7 @@ const ProjectForm = ({
 
         const handleSave = () => {
             const number = createNumber();
+ 
             if (!type && number)
                 return;
             const formData = form.getFieldsValue();
@@ -158,6 +166,7 @@ const ProjectForm = ({
             }
 
 
+ 
             mutateProject({
                 variables: {
                     ...(project.id ? {id: project.id} : {}),
@@ -166,9 +175,11 @@ const ProjectForm = ({
             });
         }
         const createNumber = () => {
+ 
             if (type && (project?.id && project?.id > -1))
                 return project.number;
 
+ 
             const facilitiCode = (
                 form.getFieldValue("facility_id")?.checkedObjects &&
                 form.getFieldValue("facility_id")?.checkedObjects[0] &&
@@ -190,6 +201,7 @@ const ProjectForm = ({
         }
         if (errorStatuses || errorTypeProject || errorDelegates || errorOrganizations) return `Ошибка! ${errorStatuses?.message || errorTypeProject?.message || errorDelegates?.message || errorOrganizations?.message}`;
 
+ 
         return (
             <Card style={{width: 400}}
                   {...cardProps}
@@ -416,6 +428,7 @@ const ProjectForm = ({
 
                   </>
                   }/>)
+ 
     }
 ;
 

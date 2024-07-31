@@ -72,7 +72,9 @@ const ProjectTableComponent = ({projectStatuses, mode, search, options, state}) 
                     onCancel={() => setEditModalStatus(null)}
                     footer={null}
                     title={getNameModalView(editModalStatus)}
+ 
                     width={"max-content"}
+ 
                     onClose={() => setEditModalStatus(null)}
                 >
                     {renderEditModalContent({
@@ -103,7 +105,7 @@ const ProjectTableComponent = ({projectStatuses, mode, search, options, state}) 
         }
     });
 
-
+ 
 
 
     const getNameModalView = (type) => {
