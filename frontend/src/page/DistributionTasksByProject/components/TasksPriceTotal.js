@@ -68,7 +68,7 @@ const TasksPriceTotal = ({projectTasks, projectStages}) => {
 
 
 
-    return (<Row gutter={1}>
+    return (<Row gutter={1} style={{width: "100%"}}>
             {projectStages.map(row => <Col span={8}>
                 <TaskItem stage={row}
                           projectTasks={projectTasks && projectTasks.filter(second_row => second_row.stage_number === row.number)}/>

@@ -247,6 +247,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading, onCompleted}) => {
 
 
     return (
+
         <Row gutter={1}>
             <Col span={24}>
 

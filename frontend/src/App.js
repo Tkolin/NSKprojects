@@ -138,7 +138,7 @@ const App = () => {
                                 <Route path="/project/work" element={<Home/>}/>
                                 <Route path="/project/work/table"
                                        element={<ProjectTable projectStatuses={["WORKING"]}
-                                                              columnOptions={["main", "customer"]}/>}/>
+                                                              columnOptions={["progress", "contract_tools", "main", "customer", "status", "price"]}/>}/>
 
                                 <Route path="/project/work/form" element={<Home/>}/>
                                 {/*Учётки*/}

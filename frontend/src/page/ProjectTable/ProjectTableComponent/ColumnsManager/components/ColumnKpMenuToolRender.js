@@ -1,36 +1,41 @@
 import {
     Alert,
 
-    Button,
-    Divider,
+    Button, DatePicker,
+    Divider, Form,
     Modal,
-    Popconfirm,
+    Popconfirm, Select,
     Space,
     Tooltip
 } from "antd";
-import React, {useContext, useState} from "react";
-import {useMutation} from "@apollo/client";
-import {CHANGE_STATUS_PROJECT} from "../../../../../graphql/mutationsProject";
+import React, {useContext, useEffect, useState} from "react";
+import {useMutation, useQuery} from "@apollo/client";
+import {CHANGE_STATUS_PROJECT, GENERATED_COMMERCIAL_OFFER_MESSAGE} from "../../../../../graphql/mutationsProject";
 import {
     CheckSquareOutlined,
 
     DeleteOutlined,
     DownloadOutlined,
-     EditOutlined,
+    EditOutlined,
     EyeOutlined,
     MailOutlined,
-    MoreOutlined, SaveOutlined,
+    MoreOutlined, PlusOutlined, SaveOutlined,
     UploadOutlined,
- } from "@ant-design/icons";
+} from "@ant-design/icons";
 import ProjectForm from "../../../../ProjectForm";
 
 import {StyledButtonGreen, StyledButtonRed} from "../../../../components/style/ButtonStyles";
 import {NotificationContext} from "../../../../../NotificationProvider";
 import StageToProjectForm from "../../../../StageToProjectForm";
+import dayjs from "dayjs";
+
+import ContactForm from "../../../../simplesForms/ContactForm";
+import {CONTACTS_BY_ORGANIZATION} from "../../../../../graphql/queriesSpecial";
 
 
 export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) => {
     const {openNotification} = useContext(NotificationContext);
+
     const [left, setLeft] = useState(true)
     const [upRequestModalStatus, setUpRequestModalStatus] = useState(null)
 
@@ -44,12 +49,14 @@ export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) =>
         }
 
     });
+
     const handleUpProject = (projectId) => {
         changeProjectStatusMutate({variables: {projectId: projectId, statusKey: "APPROVAL_AGREEMENT"}});
     }
     const handleArchiveProject = (projectId) => {
         changeProjectStatusMutate({variables: {projectId: projectId, statusKey: "ARCHIVE"}})
-     }
+    }
+
     return (
         <>
             <Tooltip title={"Внести уточнения"}>
@@ -61,15 +68,17 @@ export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) =>
 
             <Space.Compact align="start" direction={"vertical"}>
 
-                <Tooltip title={record?.project_stages?.length <= 0 ? "Этапы не указанны" : "Принять проект на согласование договора"}>
+                <Tooltip
+                    title={record?.project_stages?.length <= 0 ? "Этапы не указанны" : "Принять проект на согласование договора"}>
                     <StyledButtonGreen loading={changeProjectStatusLoading}
-                                       disabled={record?.project_stages?.length <= 0} onClick={() => handleUpProject(record.id)}
+                                       disabled={record?.project_stages?.length <= 0}
+                                       onClick={() => handleUpProject(record.id)}
                                        icon={<CheckSquareOutlined/>}/>
                 </Tooltip>
                 <Popconfirm
                     title={"Архивация заявки"}
                     description={"Вы уверены? это перенесёт заявку в архив!"}
-                    onConfirm={() =>handleArchiveProject(record.id) }
+                    onConfirm={() => handleArchiveProject(record.id)}
                     icon={
                         <DeleteOutlined/>
                     }
@@ -106,13 +115,15 @@ export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) =>
                                 showIcon
                             />
                             : ""}
-                        <Button
+                        <GenerateKpButton
+                            project={record}
+                            onUpdated={onUpdated}
                             disabled={record?.project_stages?.length <= 0}
                             block
-                            icon={<DownloadOutlined/>}
-                            onClick={() => openNotification('top', 'warring', `TODO: Кп скачивается если все данные хватает`)}>
+                            icon={<DownloadOutlined/>}>
                             Сформировать КП
-                        </Button>
+                        </GenerateKpButton>
+
                         <Button block
                                 disabled={record?.project_stages?.length <= 0}
                                 icon={<UploadOutlined/>}
@@ -155,7 +166,7 @@ export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) =>
                                     cardProps={{title: "Согласование КП"}}
                                     type={"kp"}
                                     onCompleted={() => onUpdated()}
-                                    disabledOptions={["status_id", "organization_customer", "date_create"]}
+                                    disabledOptions={["status_id",  "date_create"]}
                                     requiredOptions={["name",
                                         "type_project_document",
                                         "organization_customer",
@@ -183,4 +194,77 @@ export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) =>
         </>
     )
         ;
+}
+const GenerateKpButton = ({project, delegationId, onUpdated, dateOffer, ...props}) => {
+    const {openNotification} = useContext(NotificationContext);
+
+    const [generateKpMutate, {loading: generateKpLoading}] = useMutation(GENERATED_COMMERCIAL_OFFER_MESSAGE, {
+        onCompleted: () => {
+            openNotification('topRight', 'success', `Коммерческое предложение сгенерировано`);
+            onUpdated();
+        },
+        onError: (error) => openNotification('topRight', 'error', `Ошибка при генерации коммерческое предложения: ${error.message}`)
+    });
+    const {
+        loading: loadingContacts,
+        error: errorContacts,
+        data: dataContacts
+    } = useQuery(CONTACTS_BY_ORGANIZATION, {variables: {organizationId: project?.organization_customer?.id}});
+
+    const [selectedDelegations, setSelectedDelegations] = useState();
+    const [selectedDateContract, setSelectedDateContract] = useState();
+    const [contactModalStatus, setContactModalStatus] = useState();
+    const handleGeneratedKp = (projectId, delegationId, dateOffer) => {
+        generateKpMutate({variables: {projectId: projectId, delegationId: delegationId, dateOffer: dateOffer}})
+    }
+    return (<Popconfirm
+            placement="topLeft"
+            title={"Уточните дату подписания" + selectedDateContract}
+            description={
+                <Space direction={"vertical"}>
+                    <DatePicker
+                        placement={"Выберите дату..."}
+                        onChange={(value) => setSelectedDateContract(value && dayjs(value).format("YYYY-MM-DD"))}
+                    />
+                    <Space.Compact style={{width: "100%"}}>
+
+                        <Select placeholder={"Форма"} style={{width: "100%"}}
+                                onChange={(value, option) => setSelectedDelegations(value)}
+                                value={selectedDelegations}
+                                loading={loadingContacts}>
+                            {dataContacts?.contacts?.items?.map(row => (
+                                <Select.Option key={row.id}
+                                               value={row.id}>{row.last_name} {row.first_name} {row.patronymic}</Select.Option>))}
+                        </Select>
+                        <StyledButtonGreen icon={<PlusOutlined/>} onClick={() => setContactModalStatus("add")}/>
+                    </Space.Compact>
+                </Space>
+            }
+            okText="Продолжить"
+            okButtonProps={{
+                disabled: (props.disabled && selectedDateContract),
+                onClick: () => handleGeneratedKp(project.id, selectedDelegations, selectedDateContract)
+            }}
+            cancelText="Отмена"
+        >
+            <Button icon={<UploadOutlined/>} {...props}/>
+            <Modal
+                key={contactModalStatus}
+                open={contactModalStatus}
+                onCancel={() => setContactModalStatus(null)}
+                footer={null}
+                width={"max-content"}
+                children={
+                    <ContactForm
+                        cardProps={{title: "Контакт"}}
+                        onCompleted={(value) => {
+                            setContactModalStatus(null);
+                        }}
+                        initialObject={contactModalStatus === "edit" ? selectedDelegations : null}
+                    />
+                }
+
+            />
+        </Popconfirm>
+    )
 }

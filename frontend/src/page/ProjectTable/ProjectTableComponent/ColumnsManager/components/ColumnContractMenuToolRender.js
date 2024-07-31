@@ -31,6 +31,7 @@ import IrdToProjectForm from "../../../../IrdToProjectForm";
 import LinkToDownload from "../../../../components/script/fileDownloadScripts/LinkToDownload";
 import ProjectFileDownload from "../../../../components/script/fileDownloadScripts/ProjectFileDownload";
 import {UploadFileProjectContractSigned} from "../../../../components/UploadFile";
+import DistributionTasksByProject from "../../../../DistributionTasksByProject";
 
 const buttonProps = {type: "text", style: {width: "100%"}, size: "large"}
 const EditMenuItem = ({onClick, ...props}) => {
@@ -66,7 +67,7 @@ const TaskMenuItem = ({isFullStages, onClick, ...props}) => {
 const getStatusApprovalTitle = (isIrdFull, signed) => {
     if (isIrdFull && signed)
         return "Договор полностью согласован, замечаний нет, приступить к работе?"
-    return ((isIrdFull ? "Ирд полученно" : "Не всё ирд было полученно; ") + (signed ? "Договор подписан" : "Договор не подписан"));
+    return ((isIrdFull ? "Ирд полученно" : "Не всё ирд было полученно; ") + (signed ? "\n Договор подписан" : "\n Договор не подписан"));
 
 }
 const ProjectContractMenuItem = ({record, onUpdated}) => {
@@ -75,9 +76,9 @@ const ProjectContractMenuItem = ({record, onUpdated}) => {
     }, null);
 
     const fileId = maxNumberRecord ? maxNumberRecord.file_id : null;
-    return (record?.signed_file_id ? (
+    return (record?.contract_file_id ? (
                 <>
-                    <LinkToDownload fileId={record.signed_file_id} {...buttonProps}>Скачать (подписан)
+                    <LinkToDownload fileId={record.contract_file_id} {...buttonProps}>Скачать (подписан)
                         от {record.date_signing}</LinkToDownload>
                 </>
             ) :
@@ -141,6 +142,7 @@ export const ColumnContractMenuToolRender = ({record, text, onUpdated, expandabl
     const {openNotification} = useContext(NotificationContext);
     const [left, setLeft] = useState(true);
     const [editProjectModalStatus, setEditProjectModalStatus] = useState(null);
+    const [taskProjectModalStatus, setTaskProjectModalStatus] = useState(false);
     const [page, setPage] = useState("project");
     const [isIrdFull, setIsIrdFull] = useState(false);
     useEffect(() => {
@@ -214,9 +216,13 @@ export const ColumnContractMenuToolRender = ({record, text, onUpdated, expandabl
                                 </Row>
                                 <Divider style={{margin: 5, marginTop: 0, fontSize: 14}}/>
                                 <Space direction="vertical" style={{width: "100%"}}>
-                                    <TaskMenuItem onClick={() => console.log()}
-                                                  isFullStages={record?.project_stages
-                                                      .find(row => row.date_end && row.date_start)}/>
+                                    <Button onClick={() => setTaskProjectModalStatus(true)}
+                                            {...buttonProps}
+                                            icon={<ReconciliationOutlined/>}
+                                            disabled={record?.project_stages
+                                                .find(row => row.date_end && row.date_start)}
+                                    >Распределение задач</Button>
+
                                 </Space>
                                 <Divider style={{margin: 5, marginTop: 0, fontSize: 14}}/>
                                 <Space direction="vertical" style={{width: "100%"}}>
@@ -234,10 +240,10 @@ export const ColumnContractMenuToolRender = ({record, text, onUpdated, expandabl
             <Space.Compact align="start" direction={"vertical"}>
 
                 <Tooltip
-                    title={getStatusApprovalTitle(isIrdFull, record.signed_file_id)}>
+                    title={getStatusApprovalTitle(isIrdFull, record.contract_file_id)}>
                     <StyledButtonGreen loading={changeProjectStatusLoading}
 
-                                       disabled={!(isIrdFull && record.signed_file_id)}
+                                       disabled={!(isIrdFull && record.contract_file_id)}
                                        onClick={() => handleUpProject(record.id)}
                                        icon={<CheckSquareOutlined/>}/>
                 </Tooltip>
@@ -259,6 +265,16 @@ export const ColumnContractMenuToolRender = ({record, text, onUpdated, expandabl
             <Button type={"text"}
                     icon={(expandable?.expandedRowKeys === record.key) ? <UpSquareOutlined/> : <DownSquareOutlined/>}
                     onClick={() => onExpand(record.key)}/>
+            <Modal
+                key={record.id}
+                open={taskProjectModalStatus}
+                onCancel={() => setTaskProjectModalStatus(false)}
+                width={"max-content"}
+                footer={null}
+            >
+                <DistributionTasksByProject project={record}/>
+
+            </Modal>
             <Modal
                 key={record.id}
                 open={editProjectModalStatus}

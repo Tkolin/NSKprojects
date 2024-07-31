@@ -96,9 +96,9 @@ const ProjectContractMenuItem = ({record, onUpdated}) => {
     }, null);
 
     const fileId = maxNumberRecord ? maxNumberRecord.file_id : null;
-    return (record?.signed_file_id ? (
+    return (record?.contract_file_id ? (
                 <>
-                    <LinkToDownload fileId={record.signed_file_id} {...buttonProps}>Скачать (подписан)
+                    <LinkToDownload fileId={record.contract_file_id} {...buttonProps}>Скачать (подписан)
                         от {record.date_signing}</LinkToDownload>
                 </>
             ) :

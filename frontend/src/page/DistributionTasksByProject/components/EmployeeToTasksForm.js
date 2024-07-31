@@ -87,12 +87,12 @@ const EmployeeToTasksForm = ({actualProject, setLoading, onCompleted}) => {
     return (
         <Form form={form} style={{width: "100%"}}>
             <Divider>Статистика</Divider>
-            <Space>
+
                 <TasksPriceTotal
                     projectTasks={actualProject?.project_tasks}
                     projectStages={actualProject?.project_stages}
                 />
-            </Space>
+
             <Divider>Распределение</Divider>
             <Row gutter={4}>
                 <Col span={10}>

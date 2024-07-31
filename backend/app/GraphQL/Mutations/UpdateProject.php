@@ -19,7 +19,7 @@ final readonly class UpdateProject
             'type_project_document_id' => $args['data']['type_project_document_id'] ?? null,
             'date_signing' => isset($args['data']['date_signing']) ? substr((string)$args['data']['date_signing'], 0, 10) : null,
             'duration' => $args['data']['duration'] ?? null,
-            'date_create' => isset($args['data']['date_create']) ? substr((string)$args['data']['date_create'], 0, 10) : null,
+            'date_start' => isset($args['data']['date_start']) ? substr((string)$args['data']['date_start'], 0, 10) : null,
             'prepayment' => $args['data']['prepayment'] ?? null,
 
             'date_end' => isset($args['data']['date_end']) ? substr((string)$args['data']['date_end'], 0, 10) : null,

@@ -13,9 +13,6 @@ const FacilitiesTreeComponent = ({ value = { checkedKeys: [] }, onChange }) => {
         onCompleted: (data) => setFacility(sortFacilitiesForCascader(data.facilities))
     });
 
-    if (loadingFacility) {
-        return <LoadingSpinnerStyles />;
-    }
 
     // Функция для форматирования чисел с заданной длиной
     const formatNumber = (number, length) => {
@@ -94,6 +91,9 @@ const FacilitiesTreeComponent = ({ value = { checkedKeys: [] }, onChange }) => {
         onChange({ ...value, checkedKeys: checkedKeysValue, checkedObjects });
     };
 
+    if (loadingFacility) {
+        return <LoadingSpinnerStyles />;
+    }
 
     return (
         <Tree

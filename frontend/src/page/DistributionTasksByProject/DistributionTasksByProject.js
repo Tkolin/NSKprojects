@@ -97,7 +97,7 @@ const DistributionTasksByProject = ({project}) => {
                     //             </StyledBlockLarge>
                     //         ) : (
                     (
-                        <Card title={"Первичная настройка задач"}>
+                        <Card title={"Первичная настройка задач"}  style={{width: "800px"}}>
 
                             <NewTasksToProjectForm
                                 //onCompleted={onCompleted}
@@ -109,7 +109,7 @@ const DistributionTasksByProject = ({project}) => {
 
                     :
                     current === 1 ? (
-                            <Card title={"Распределение задач по сотрудникам"}>
+                            <Card title={"Распределение задач по сотрудникам"} style={{width: "1200px"}}>
                                 <EmployeeToTasksForm
                                     //onCompleted={onCompleted}
                                     actualProject={project}
@@ -118,8 +118,9 @@ const DistributionTasksByProject = ({project}) => {
 
                         ) :
                         current === 2 ? (
-                                <StyledBlockLarge label={"График ганта"}>
-                                    <TasksChartForm actualProject={project}/>
+                                <StyledBlockLarge label={"График ганта"}  style={{width: "1200px"}}>
+                                    Отключён
+                                    {/*<TasksChartForm actualProject={project}/>*/}
                                 </StyledBlockLarge>) :
                             <></>
                 }

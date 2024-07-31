@@ -77,9 +77,9 @@ type Project{
     type_project_document: TypeProjectDocument
     facilities: [Facility]
     date_signing: String
-    date_create: String
     duration: Int
     date_end: String
+    date_start: String
     status: ProjectStatus
     date_completion: String
     delegations: [Contact]
@@ -87,9 +87,11 @@ type Project{
     project_irds: [ProjectIrd]
     project_stages: [ProjectStage]
     project_tasks: [ProjectTask]
-    project_contract_history: [ProjectContract]
+    project_contract_history: [ProjectFile]
+    project_kp_history: [ProjectFile]
     executor_orders: [ExecutorOrder]
-    signed_file_id: ID
+    contract_file_id: ID
+    kp_file_id: ID
 }
 #   project 2 (Указаны в основной модели)
 type ProjectIrd{
@@ -134,12 +136,15 @@ type ProjectTask{
     price: Float
     description: String
 }
-type ProjectContract{
+type ProjectFile{
+
+
     project_id: ID
     file_id: ID
+    type_id: ID
     number: Int
-    comment: String
-    date_create_contract: String
+    date_document: String
+    data: String
 }
 
 #   project 3 (Указаны в моделях 2 уровня)

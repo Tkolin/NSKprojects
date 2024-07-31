@@ -18,12 +18,12 @@ export const facilitiesToFullCode = (faclility) => {
 export const rebuildProjectResultQuery = (data) => {
     return {
         ...data,
-        date_range: {
+
             dateEnd: data?.date_end ? dayjs(data?.date_end) : null,
             dateStart: data?.date_signing ? dayjs(data?.date_signing) : null,
-            duration: data?.duration ?? null
-        },
-        date_create: data?.date_create ? dayjs(data?.date_create) : null,
+            duration: data?.duration ?? null,
+
+        date_start: data?.date_start ? dayjs(data?.date_start) : null,
         date_end: data?.date_end ? dayjs(data?.date_end) : null,
         date_signing: data?.date_signing ? dayjs(data?.date_signing) : null,
         delegates: data?.delegations ? {selected: data?.delegations?.map(k => k?.id), output: data?.delegations} : null,
@@ -116,7 +116,7 @@ export const rebuildProjectToQuery = (data) => {
         date_signing: data?.date_range?.dateStart ? dayjs(data?.date_range?.dateStart).format("YYYY-MM-DD") : null,
         duration: data?.date_range?.duration,
         date_end: data?.date_range?.dateEnd ? dayjs(data?.date_range?.dateEnd).format("YYYY-MM-DD") : null,
-        date_create: data?.date_signing ? dayjs(data?.date_signing).format("YYYY-MM-DD") : null,
+        date_start: data?.date_start ? dayjs(data?.date_start).format("YYYY-MM-DD") : null,
         status_id: data?.status_id,
         date_completion: data?.date_completion ? dayjs(data?.date_completion).format("YYYY-MM-DD") : null,
         price: data?.price,

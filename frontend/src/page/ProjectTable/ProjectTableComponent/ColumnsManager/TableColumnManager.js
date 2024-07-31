@@ -319,21 +319,15 @@ const columnStatusComponent = (width = "15%") =>
                     <Text strong>Сроки:</Text>
                     {
                         record.date_signing ?
-                            <Text>с {dayjs(record?.date_signing).format("DD.MM.YYYY")}</Text>
+                            <Text>Дата подписания договора: {dayjs(record?.date_signing).format("DD.MM.YYYY")}</Text>
                             :
                             <Text type="danger">Не подписан</Text>
                     }
-                    {
-                        record.date_end ?
-                            <Text>по {dayjs(record?.date_end).format("DD.MM.YYYY")}</Text>
-                            :
-                            <Text type="danger">Не задана дата окончания</Text>
-                    }
-                    {
-                        record.date_end && record.date_signing ?
-                            (
-                                <Text>{dayjs(record.date_end).diff(dayjs(record.date_signing), 'day')} (дней)</Text>) : null
-                    }
+                    {record.status_id === "WORK" ?
+
+                        <Text>Дата начала: {dayjs(record?.date_start).format("DD.MM.YYYY")}</Text>
+                        : <Text>Проект не в работе</Text>}
+
                 </Space.Compact>
             ),
     })

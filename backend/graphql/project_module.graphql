@@ -40,6 +40,7 @@ extend type Mutation {
     projectIrdsSync(
         items: [IrdToProjectInput]!
     ): Project @checkRole(permission:  ["update-project-ird"])
+
     changeProjectStatus(
         projectId: ID!
         statusKey: String!
@@ -62,10 +63,12 @@ extend type Mutation {
         typeProject: ID!
         newTemplate: ID!
     ): TypeProjectDocument
-    generateCommercialOfferMessage(
+    generatedCommercialOfferMessage(
         projectId: ID!
-        dateMessage: ID!
-    ): File
+        dateOffer: String!
+        delegationId: ID!
+    ): Url
+
     updateEmployeesToTasks(
         tasksIds: [ID]
         employeesIds: [ID]

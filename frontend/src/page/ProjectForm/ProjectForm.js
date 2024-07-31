@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {
-    Form, Input, InputNumber, Space, Collapse, Divider, Button, Modal, Card,
+    Form, Input, InputNumber, Space, Collapse, Divider, Button, Modal, Card, DatePicker,
 } from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
 
@@ -34,7 +34,6 @@ import TypeProjectForm from "../simplesForms/TypeProjectForm";
 // organization_customer
 // facility_id
 // date_range
-// date_create
 // status_id
 // price
 // prepayment
@@ -50,7 +49,6 @@ const ProjectForm = ({
             "organization_customer",
             "facility_id",
             "date_range",
-            "date_create",
             "status_id",
             "price",
             "prepayment"
@@ -114,7 +112,6 @@ const ProjectForm = ({
                 id: project?.id ?? null,
                 date_signing: project?.date_signing ? dayjs(project?.date_signing) : null,
                 date_end: project?.date_end ? dayjs(project?.date_end) : null,
-                date_create: project?.date_create ? dayjs(project?.date_create) : null,
                 date_completion: project?.date_completion ? dayjs(project?.date_completion) : null,
 
             });
@@ -141,25 +138,21 @@ const ProjectForm = ({
             const number = createNumber();
             if (!type && number)
                 return;
-
-            const facility_id = form.getFieldValue("facility_id")?.checkedObjects?.map(row => row?.value[0] ?? null) ??
+            const formData = form.getFieldsValue();
+            const facility_id = formData.facility_id?.checkedObjects?.map(row => row?.value[0] ?? null) ??
                 project.facility_id;
-            const date_range = form.getFieldValue("date_range");
-            const date_signing = form.getFieldValue("date_signing");
-            const date_completion = form.getFieldValue("date_completion");
+
             const data = {
                 number,
-                name: form.getFieldValue("name"),
-                organization_customer_id: form.getFieldValue("organization_customer")?.selected,
-                type_project_document_id: form.getFieldValue("type_project_document")?.selected,
-                date_signing: date_range?.dateStart ? dayjs(date_range?.dateStart).format("YYYY-MM-DD") : null,
-                duration: date_range?.duration,
-                date_end: date_range?.dateEnd ? dayjs(date_range?.dateEnd).format("YYYY-MM-DD") : null,
-                date_create: date_signing ? dayjs(date_signing).format("YYYY-MM-DD") : null,
-                status_id: form.getFieldValue("status_id")?.selected,
-                date_completion: date_completion ? dayjs(date_completion).format("YYYY-MM-DD") : null,
-                price: form.getFieldValue("price"),
-                prepayment: form.getFieldValue("prepayment"),
+                name: formData.name,
+                organization_customer_id: formData.organization_customer?.selected,
+                type_project_document_id: formData.type_project_document?.selected,
+                date_signing: formData?.dateStart ? dayjs(formData?.dateStart).format("YYYY-MM-DD") : null,
+                duration: formData?.duration,
+                date_end: formData.dateEnd ? dayjs(formData?.dateEnd).format("YYYY-MM-DD") : null,
+                status_id: formData.status_id.selected,
+                price: formData.price,
+                prepayment: formData.prepayment,
                 delegates_id: null,
                 facility_id
             }
@@ -277,42 +270,47 @@ const ProjectForm = ({
                                   data={dataOrganizations?.organizations?.items}
                               />
                           </AutoCompleteFormItem>
-                          <Form.Item label={"Обьекты"}
-                                     style={disabledOptions?.includes("facility_id") ? {display: "none"} : {}}>
-                              <Collapse size={"small"}>
-                                  <Collapse.Panel header={"Обьекты"}>
-                                      <Form.Item name="facility_id" style={{width: "100%"}}
-                                                 rules={[{
-                                                     required: requiredOptions?.includes("facility_id"),
-                                                     message: "Укажите обьект проектирования"
-                                                 }]}
-                                      >
-                                          <FacilitiesTreeComponent
-                                              disabled={disabledOptions?.includes("facility_id")}/>
-                                      </Form.Item>
-                                  </Collapse.Panel>
-                              </Collapse>
-                          </Form.Item>
-                          <Form.Item name="date_range"
-                                     style={disabledOptions?.includes("date_range") ? {display: "none"} : {}}
+                            Обьекты
+                          <Collapse size={"small"}>
+                              <Collapse.Panel header={"Выберите объекты"}>
+                                  <Form.Item name="facility_id"  style={{width: "100%"}}>
+                                      <FacilitiesTreeComponent/>
+                                  </Form.Item>
+                              </Collapse.Panel>
+                          </Collapse>
+
+                          {/*<Space.Compact direction={"horizontal"}  style={{width: "100%",...(disabledOptions?.includes("date_range") ? {display: "none"} : {})}} >*/}
+                          {/*    <Form.Item name="dateStart"*/}
+                          {/*               rules={[{*/}
+                          {/*                   required: requiredOptions?.includes("date_start"),*/}
+                          {/*                   message: "Укажите дату начала работы над проектом "*/}
+                          {/*               }]}*/}
+                          {/*               label="Дата начала ">*/}
+                          {/*        <DatePicker*/}
+                          {/*            disabled={disabledOptions?.includes("date_start")}/>*/}
+                          {/*    </Form.Item>*/}
+                          {/*    <Form.Item name="dateEnd"*/}
+                          {/*               rules={[{*/}
+                          {/*                   required: requiredOptions?.includes("date_end"),*/}
+                          {/*                   message: "Укажите дату окончания проекта"*/}
+                          {/*               }]}*/}
+                          {/*               label="Дата окончания">*/}
+                          {/*        <DatePicker*/}
+                          {/*            disabled={disabledOptions?.includes("date_end")}/>*/}
+                          {/*    </Form.Item>*/}
+                          {/*</Space.Compact>*/}
+
+                          <Form.Item name="duration"
+                                     style={disabledOptions?.includes("duration") ? {display: "none"} : {}}
                                      rules={[{
-                                         required: requiredOptions?.includes("date_range"),
+                                         required: requiredOptions?.includes("duration"),
                                          message: "Укажите продолжительность"
                                      }]}
-                                     label="Продолжительность">
-                              <DateRangePickerComponent
-                                  disabled={disabledOptions?.includes("date_range")}/>
+                                     label="Продолжительность проекта">
+                              <InputNumber style={{width: '100%'}}
+                                           disabled={disabledOptions?.includes("duration")}/>
                           </Form.Item>
-                          <Form.Item name="date_create" label="Дата создания договора"
-                                     style={disabledOptions?.includes("date_create") ? {display: "none"} : {}}
-                                     rules={[{
-                                         required: requiredOptions?.includes("date_create"),
-                                         message: "Укажите дату создания"
-                                     }]}>
-                              <CustomDatePicker
-                                  placeholder="Выберите дату" style={{width: '100%'}}
-                                  disabled={disabledOptions?.includes("date_create")}/>
-                          </Form.Item>
+
                           <Form.Item name="status_id" label="Статус проекта"
                                      style={disabledOptions?.includes("status_id") ? {display: "none"} : {}}
                                      rules={[{
