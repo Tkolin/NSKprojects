@@ -8,11 +8,9 @@ import {PlusOutlined} from "@ant-design/icons";
 import {EditStyledLinkManagingDataTable} from "../../../components/style/TableStyles";
 import {format} from "date-fns";
  
- import {nanoid} from "nanoid";
-import ContactForm from "../../../simplesForms/ContactForm";
+ import ContactForm from "../../../simplesForms/ContactForm";
  
-import ContactModalForm from "../../../components/modal/ContactModalForm";
- 
+
 
 const {Text} = Typography;
 

@@ -105,6 +105,7 @@ export const UPDATE_PROJECT_MUTATION = gql`
             number
             name
             prepayment
+            date_start
             organization_customer {
                 id
                 name
@@ -286,6 +287,7 @@ export const PROJECT_STAGE_SYNC_MUTATION = gql`
         changeProjectStatus(projectId: $projectId, statusKey: $statusKey, dateStart: $dateStart ) {
  
             id
+            date_start
             status {
                 name_key
                 name

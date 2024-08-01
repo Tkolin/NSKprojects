@@ -3,8 +3,7 @@
 // import {StyledContextBlock} from "../../components/style/BlockStyles";
 // import loadingSpinnerStyles from "../../components/style/LoadingSpinnerStyles";
 // import {StyledButtonGreen} from "../../components/style/ButtonStyles";
-// import {GanttOriginal, ViewMode} from "react-gantt-chart";
-// import dayjs from "dayjs";
+ // import dayjs from "dayjs";
 // import {NotificationContext} from "../../../NotificationProvider";
 //
 // const TasksChartForm = ({actualProject, onChange}) => {

@@ -330,6 +330,7 @@ const columnStatusComponent = (width = "15%") =>
                 <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
                     <Text strong>Статус:</Text>
                     <Text>{record.status?.name}</Text>
+                    <Text>Продолжительность: {record.duration} дней</Text>
                     <Text strong>Сроки:</Text>
                     {
                         record.date_signing ?
@@ -338,7 +339,7 @@ const columnStatusComponent = (width = "15%") =>
                             :
                             <Text type="danger">Не подписан</Text>
                     }
-                    {record.status_id === "WORK" ?
+                    {record.date_start ?
 
                         <Text>Дата начала: {dayjs(record?.date_start).format("DD.MM.YYYY")}</Text>
                         : <Text>Проект не в работе</Text>}

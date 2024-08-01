@@ -6,13 +6,22 @@ use App\Models\Project;
 
 final readonly class ChangeProjectStatus
 {
-    /** @param  array{}  $args */
+    /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
         $id = $args['projectId'];
         $statusKey = $args['statusKey'];
         $project = Project::find($id);
         $project->status_id = $statusKey;
+
+        switch ($statusKey) {
+            case 'WORKING':
+            {
+                $project->date_start = $args['dateStart'];
+
+            }
+
+        }
         $project->save();
         return $project;
     }

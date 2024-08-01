@@ -1,7 +1,7 @@
 import {
     Alert,
 
-    Button, Card, Col,
+    Button, Card, Col, DatePicker,
     Divider, Dropdown,
     Modal,
     Popconfirm, Row,
@@ -24,7 +24,7 @@ import {
 } from "@ant-design/icons";
 import ProjectForm from "../../../../ProjectForm";
 
-import {StyledButtonGreen, StyledButtonRed} from "../../../../components/style/ButtonStyles";
+import {StyledButtonGreen, StyledButtonGreenGhost, StyledButtonRed} from "../../../../components/style/ButtonStyles";
 import {NotificationContext} from "../../../../../NotificationProvider";
 import StageToProjectForm from "../../../../StageToProjectForm";
 import IrdToProjectForm from "../../../../IrdToProjectForm";
@@ -32,6 +32,7 @@ import LinkToDownload from "../../../../components/script/fileDownloadScripts/Li
 import ProjectFileDownload from "../../../../components/script/fileDownloadScripts/ProjectFileDownload";
 import {UploadFileProjectContractSigned} from "../../../../components/UploadFile";
 import DistributionTasksByProject from "../../../../DistributionTasksByProject";
+import dayjs from "dayjs";
 
 const buttonProps = {type: "text", style: {width: "100%"}, size: "large"}
 const EditMenuItem = ({onClick, ...props}) => {
@@ -145,6 +146,7 @@ export const ColumnContractMenuToolRender = ({record, text, onUpdated, expandabl
     const [taskProjectModalStatus, setTaskProjectModalStatus] = useState(false);
     const [page, setPage] = useState("project");
     const [isIrdFull, setIsIrdFull] = useState(false);
+    const [selectedDateStartWork, setSelectedDateStartWork] = useState(null);
     useEffect(() => {
         setPage("project");
     }, []);
@@ -162,7 +164,14 @@ export const ColumnContractMenuToolRender = ({record, text, onUpdated, expandabl
 
     });
     const handleUpProject = (projectId) => {
-        changeProjectStatusMutate({variables: {projectId: projectId, statusKey: "WORKING"}});
+        if (selectedDateStartWork)
+            changeProjectStatusMutate({
+                variables: {
+                    projectId: projectId,
+                    statusKey: "WORKING",
+                    dateStart: dayjs(selectedDateStartWork).format("YYYY-MM-DD")
+                }
+            });
     }
     const handleArchiveProject = (projectId) => {
         changeProjectStatusMutate({variables: {projectId: projectId, statusKey: "ARCHIVE"}})
@@ -239,14 +248,23 @@ export const ColumnContractMenuToolRender = ({record, text, onUpdated, expandabl
 
             <Space.Compact align="start" direction={"vertical"}>
 
-                <Tooltip
-                    title={getStatusApprovalTitle(isIrdFull, record.contract_file_id)}>
-                    <StyledButtonGreen loading={changeProjectStatusLoading}
+                <Popconfirm
+                    title={"Принятие проекта в работу"}
 
-                                       disabled={!(isIrdFull && record.contract_file_id)}
-                                       onClick={() => handleUpProject(record.id)}
-                                       icon={<CheckSquareOutlined/>}/>
-                </Tooltip>
+                    description={<Space direction={"vertical"}>
+                        {getStatusApprovalTitle(isIrdFull, record.contract_file_id)}
+                        {(isIrdFull && record.contract_file_id) && <DatePicker value={selectedDateStartWork} onChange={(date) => setSelectedDateStartWork(date)}/>}</Space>}
+                    onConfirm={() => handleUpProject(record.id)}
+                    okButtonProps={{disabled: !selectedDateStartWork && (isIrdFull && record.contract_file_id)}}
+
+                >
+                    {!(isIrdFull && record.contract_file_id) ?
+                    <Button type={"dashed"} icon={<CheckSquareOutlined/>}/>
+                        :
+                    <StyledButtonGreen loading={changeProjectStatusLoading}
+                                       icon={<CheckSquareOutlined/>}/>}
+                </Popconfirm>
+
                 <Popconfirm
                     title={"Архивация заявки"}
                     description={"Вы уверены? это перенесёт заявку в архив!"}

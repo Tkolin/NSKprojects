@@ -143,6 +143,8 @@ export const PROJECTS_QUERY = gql`
                 number
                 name
                 duration
+                date_start
+                
                 contract_file_id
                 kp_file_id
                 project_contract_history
