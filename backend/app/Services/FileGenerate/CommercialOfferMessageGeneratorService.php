@@ -51,12 +51,12 @@ class CommercialOfferMessageGeneratorService
 
         $replacements = [
 
-            'myOrg.full_adress' => $myOrg['name'],
-            'message.full_date' => $myOrg['name'],
-            'message.number' => $myOrg['name'],
+            'myOrg.full_adress' => $myOrg['address_legal'] . ', тел. '.$myOrg["phone_number"].
+                ', E-mail: '.  $myOrg["email"],
+            'message.full_date' => $day.' '.$month.' '. $year,
+            'message.number' => " №______",
 
-            'delegate_org.director.positions' => $myOrg['name'],
-            'delegate_org.type_org' => $myOrg['name'],
+            'delegate_org.director.positions' => $delegation['position']['name'],
             'delegate_org.name' => $myOrg['name'],
 
             'project.main_delegation_short_name' =>

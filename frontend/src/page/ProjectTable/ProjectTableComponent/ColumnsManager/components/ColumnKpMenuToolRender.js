@@ -1,7 +1,7 @@
 import {
     Alert,
 
- 
+
     Button, DatePicker,
     Divider, Form,
     Modal,
@@ -12,30 +12,31 @@ import {
 import React, {useContext, useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
 import {CHANGE_STATUS_PROJECT, GENERATED_COMMERCIAL_OFFER_MESSAGE} from "../../../../../graphql/mutationsProject";
- 
+
 import {
     CheckSquareOutlined,
 
     DeleteOutlined,
     DownloadOutlined,
- 
+
     EditOutlined,
     EyeOutlined,
     MailOutlined,
     MoreOutlined, PlusOutlined, SaveOutlined,
     UploadOutlined,
- 
+
 } from "@ant-design/icons";
 import ProjectForm from "../../../../ProjectForm";
 
 import {StyledButtonGreen, StyledButtonRed} from "../../../../components/style/ButtonStyles";
 import {NotificationContext} from "../../../../../NotificationProvider";
 import StageToProjectForm from "../../../../StageToProjectForm";
- 
+
 import dayjs from "dayjs";
 
 import ContactForm from "../../../../simplesForms/ContactForm";
 import {CONTACTS_BY_ORGANIZATION} from "../../../../../graphql/queriesSpecial";
+import LinkToDownload from "../../../../components/script/fileDownloadScripts/LinkToDownload";
 
 
 export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) => {
@@ -62,7 +63,7 @@ export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) =>
         changeProjectStatusMutate({variables: {projectId: projectId, statusKey: "ARCHIVE"}})
     }
 
- 
+
     return (
         <>
             <Tooltip title={"Внести уточнения"}>
@@ -74,7 +75,7 @@ export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) =>
 
             <Space.Compact align="start" direction={"vertical"}>
 
- 
+
                 <Tooltip
                     title={record?.project_stages?.length <= 0 ? "Этапы не указанны" : "Принять проект на согласование договора"}>
                     <StyledButtonGreen loading={changeProjectStatusLoading}
@@ -86,14 +87,14 @@ export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) =>
                     title={"Архивация заявки"}
                     description={"Вы уверены? это перенесёт заявку в архив!"}
                     onConfirm={() => handleArchiveProject(record.id)}
- 
+
                     icon={
                         <DeleteOutlined/>
                     }
                 >
- 
+
                     <StyledButtonRed loading={changeProjectStatusLoading} style={{height: 32}} type={"text"}
- 
+
                                      icon={<DeleteOutlined/>}/>
                 </Popconfirm>
 
@@ -109,7 +110,7 @@ export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) =>
                 key={record.id}
                 open={upRequestModalStatus}
                 onCancel={() => setUpRequestModalStatus(false)}
- 
+
                 width={"max-content"}
                 footer={null}
             >
@@ -134,43 +135,40 @@ export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) =>
                             icon={<DownloadOutlined/>}>
                             Сформировать КП
                         </GenerateKpButton>
+                        <LinkToDownload   icon={<UploadOutlined/>} disabled={record?.project_kp_history?.length <= 0}
+                                          fileId={record?.project_kp_history?.length > 0 && record?.project_kp_history[record?.project_kp_history?.length-1].file_id}>
 
-                        <Button block
-                                disabled={record?.project_stages?.length <= 0}
-                                icon={<UploadOutlined/>}
-                                onClick={() => openNotification('top', 'warring', `TODO: Мы согласовали кп и сказали финальный вариант`)}>
-                            Скачать последнее КП
-                        </Button>
+                                Скачать последнее КП
 
-                        <Button
-                            block
-                            disabled={record?.project_stages?.length <= 0}
-                            icon={<UploadOutlined/>}
-                            onClick={() => openNotification('top', 'warring', `TODO: Мы согласовали кп и сказали финальный вариант`)}>
-                            Утвердить КП
-                        </Button>
-                        <Button
-                            block
-                            disabled={record?.project_stages?.length <= 0}
-                            icon={<MoreOutlined/>}
-                            onClick={() => openNotification('top', 'warring', `TODO: Тут смотрим изменения по КП (все варианты)`)}/>
+                        </LinkToDownload>
+                        {/*<Button*/}
+                        {/*    block*/}
+                        {/*    disabled={record?.project_stages?.length <= 0}*/}
+                        {/*    icon={<UploadOutlined/>}*/}
+                        {/*    onClick={() => openNotification('top', 'warring', `TODO: Мы согласовали кп и сказали финальный вариант`)}>*/}
+                        {/*    Утвердить КП*/}
+                        {/*</Button>*/}
+                        {/*<Button*/}
+                        {/*    block*/}
+                        {/*    disabled={record?.project_stages?.length <= 0}*/}
+                        {/*    icon={<MoreOutlined/>}*/}
+                        {/*    onClick={() => openNotification('top', 'warring', `TODO: Тут смотрим изменения по КП (все варианты)`)}/>*/}
                         <Divider/>
                     </Space.Compact>
 
                     <Space.Compact block>
- 
+
                         {/*TODO: Надо спрашивать об сохранении изменений*/}
                         <Button style={{width: "50%"}}
                                 disabled={left}
                                 children={"Проект"}
                                 onClick={() => setLeft(true)} icon={left ? "" : <EyeOutlined/>}/>
- 
+
                         <Button style={{width: "50%"}}
                                 disabled={!left}
                                 children={"Этапы"}
                                 onClick={() => setLeft(false)} icon={!left ? "" : <EyeOutlined/>}/>
                     </Space.Compact>
- 
 
 
                     {
@@ -179,7 +177,7 @@ export const ColumnKpMenuToolRender = ({record, text, onUpdated, expandable}) =>
                                     cardProps={{title: "Согласование КП"}}
                                     type={"kp"}
                                     onCompleted={() => onUpdated()}
-                                    disabledOptions={["status_id",  "date_create"]}
+                                    disabledOptions={["status_id", "date_create"]}
                                     requiredOptions={["name",
                                         "type_project_document",
                                         "organization_customer",

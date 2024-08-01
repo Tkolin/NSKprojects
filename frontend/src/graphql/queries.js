@@ -153,6 +153,12 @@ export const PROJECTS_QUERY = gql`
 
                     date_document
                     number
+                }  
+                project_kp_history
+                {
+                    file_id
+                    date_document
+                    number
                 }
                 organization_customer
                 {

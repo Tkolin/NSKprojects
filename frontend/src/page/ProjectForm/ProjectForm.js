@@ -225,7 +225,7 @@ const ProjectForm = ({
                           <AutoCompleteFormItem
                               style={disabledOptions?.includes("type_project_document") ? {display: "none"} : {}}
                               rulesValidationRequired={requiredOptions?.includes("type_project_document")}
-                              rulesValidationMessage={"Укажите тип документации"}
+                              rulesValidationMessage={"Укажите тип проекта"}
                               name="group_type_project_document" label="Тип документа">
                               <CustomAutoComplete
                                   disabled={disabledOptions?.includes("type_project_document")}
@@ -245,7 +245,7 @@ const ProjectForm = ({
                           <AutoCompleteFormItem
                               style={disabledOptions?.includes("type_project_document") ? {display: "none"} : {}}
                               rulesValidationRequired={requiredOptions?.includes("type_project_document")}
-                              rulesValidationMessage={"Укажите подтип документации"}
+                              rulesValidationMessage={"Укажите подтип проекта"}
                               name="type_project_document" label="Подтип документа">
                               <CustomAutoCompleteAndCreate
                                   loading={loadingTypeProject}
