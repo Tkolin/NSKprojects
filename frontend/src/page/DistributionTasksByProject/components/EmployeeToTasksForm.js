@@ -47,28 +47,57 @@ const EmployeeToTasksForm = ({actualProject, setLoading, onCompleted}) => {
         const taskMap = {};
         const tree = [];
 
-        if (!tasks || !tasks.length)
-            return;
+        if (!tasks || !tasks.length) return;
 
         // Создаем хэш-таблицу для быстрого доступа к задачам по их ID
         tasks.forEach((task) => {
             const newTask = {
                 key: task.id,
                 id: task.id,
-                title: task.id + ":" + task.task.name,
+                executor: task.executor,
+                name: task.task.name,
+                title: task.executor ?
+                    <Space.Compact style={{color: "green"}}>{task.task.name}</Space.Compact> :
+                    <Space.Compact style={{color: "red"}}>{task.task.name}</Space.Compact>,
                 children: []
             };
             taskMap[task.id] = newTask;
         });
 
-        // Строим дерево
+        // Функция поиска исполнителя среди родителей
+        const hasExecutor = (taskId) => {
+            let currentId = taskId;
+            while (currentId) {
+                const task = taskMap[currentId];
+                console.log(task);
+                // Проверяем, есть ли у текущей задачи исполнитель
+                if (task && task.executor) return true;
+                // Переходим к родительской задаче
+                currentId = task?.project_task_inherited_id;
+            }
+            // Если достигли корня и не нашли исполнителя
+            return false;
+        };
+
+        // Формируем дерево и устанавливаем стили заголовков
         tasks.forEach((task) => {
+
             if (!task.project_task_inherited_id) {
                 tree.push(taskMap[task.id]);
             } else {
+                console.log(hasExecutor(task.id))
+
+                if (!hasExecutor(task.id)) {
+                    taskMap[task.id].title = (
+                        <Space.Compact style={{color: "#faad14"}}>
+                            {task.task.name}
+                        </Space.Compact>
+                    );
+                }
                 const parentId = task.project_task_inherited_id;
                 if (taskMap[parentId]) {
                     taskMap[parentId].children.push(taskMap[task.id]);
+
                 }
             }
         });
@@ -88,10 +117,10 @@ const EmployeeToTasksForm = ({actualProject, setLoading, onCompleted}) => {
         <Form form={form} style={{width: "100%"}}>
             <Divider>Статистика</Divider>
 
-                <TasksPriceTotal
-                    projectTasks={actualProject?.project_tasks}
-                    projectStages={actualProject?.project_stages}
-                />
+            <TasksPriceTotal
+                projectTasks={actualProject?.project_tasks}
+                projectStages={actualProject?.project_stages}
+            />
 
             <Divider>Распределение</Divider>
             <Row gutter={4}>

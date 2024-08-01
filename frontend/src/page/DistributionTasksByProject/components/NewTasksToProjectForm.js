@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Card, Col, Form, Row, Skeleton, Space, Tooltip, Typography} from "antd";
+import {Button, Card, Col, Form, Input, InputNumber, Row, Skeleton, Space, Tooltip, Typography} from "antd";
 import TasksTreeComponent from "./TasksTreeComponent";
 import {
     CustomAutoCompleteAndCreate,
@@ -25,6 +25,28 @@ const NewTasksToProjectForm = ({actualProject, setLoading, onCompleted}) => {
     const {openNotification} = useContext(NotificationContext);
     const [selectedTasksIds, setSelectedTasksIds] = useState([]);
     const [stageTaskArray, setStageTaskArray] = useState([]);
+    const [projectTasksTimings, setProjectTasksTimings] = useState({});
+
+    // Функция для обновления состояния с новыми значениями
+    const handleOffsetChange = (taskId, value) => {
+        setProjectTasksTimings(prevTimings => ({
+            ...prevTimings,
+            [taskId]: {
+                ...prevTimings[taskId],
+                offset: value
+            }
+        }));
+    };
+
+    const handleDurationChange = (taskId, value) => {
+        setProjectTasksTimings(prevTimings => ({
+            ...prevTimings,
+            [taskId]: {
+                ...prevTimings[taskId],
+                duration: value
+            }
+        }));
+    };
     // const [addMarker, setAddMarker] = useState();
     // Список задач
     const {
@@ -33,29 +55,23 @@ const NewTasksToProjectForm = ({actualProject, setLoading, onCompleted}) => {
     } = useQuery(TASKS_QUERY_COMPACT);
 
 
-    const extractKeys = (tasksByStage, project) => {
+    const extractKeys = (tasksByStage, project , projectTimers ) => {
         const result = [];
         const projectStages = project.project_stages;
-        // task_id: ID
-        // project_id: ID
-        // inherited_task_id: ID
-        // date_start: String
-        // date_end: String
-        // duration: Int
-        // stage_number: Int
-        // Создание задач из этапов проекта
+
         projectStages.forEach(stage => {
-            const task = {
+             const task = {
                 task_id: stage?.stage?.task_id?.toString(),
                 project_id: project.id,
                 inherited_task_id: null,
-                date_start: stage.date_start,
-                date_end: stage.date_end,
+                // date_start: stage.date_start,
+                // date_end: stage.date_end,
                 duration: dayjs(stage.date_end).diff(stage.date_start, 'day'),
                 stage_number: stage.number,
             };
             result.push(task);
         });
+        console.log(projectTimers);
 
         const traverse = (nodes, stageNumber, parentKey = null) => {
             nodes.forEach(node => {
@@ -63,19 +79,21 @@ const NewTasksToProjectForm = ({actualProject, setLoading, onCompleted}) => {
                     project_id: project.id,
                     task_id: node.key,
                     stage_number: stageNumber,
+                    duration: projectTimers[node.key]?.duration,
+                    offset: projectTimers[node.key]?.offset,
                     inherited_task_id: parentKey || result.find(t => t.stage_number === stageNumber)?.task_id || null,
-                    date_start: result.find(t => t.stage_number === stageNumber)?.date_start || null,
-                    date_end: result.find(t => t.stage_number === stageNumber)?.date_end || null
+                    // date_start: result.find(t => t.stage_number === stageNumber)?.date_start || null,
+                    // date_end: result.find(t => t.stage_number === stageNumber)?.date_end || null
                 };
-                if (project.project_tasks.length > 0) {
-                    const oldData = project.project_tasks.find(row => {
-                            console.log(row.task.id, " === ", node.key, " : ", (row.task.id === node.key));
-                            return ((row.task.id === node.key))
-                        }
-                    );
-                    console.log("oldData", oldData)
-                    task = {...task, date_start: oldData?.date_start, date_end: oldData?.date_end}
-                }
+                // if (project.project_tasks.length > 0) {
+                //     const oldData = project.project_tasks.find(row => {
+                //             console.log(row.task.id, " === ", node.key, " : ", (row.task.id === node.key));
+                //             return ((row.task.id === node.key))
+                //         }
+                //     );
+                //     console.log("oldData", oldData)
+                //     task = {...task, date_start: oldData?.date_start, date_end: oldData?.date_end}
+                // }
                 result.push(task);
                 if (node.children) {
                     traverse(node.children, stageNumber, node.key);
@@ -105,7 +123,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading, onCompleted}) => {
                     extractKeys(Object.entries(form.getFieldsValue()).reduce((acc, [stageNumber, stageData]) => {
                         acc[stageNumber] = stageData.tasks || [];
                         return acc;
-                    }, {}), actualProject)
+                    }, {}), actualProject, projectTasksTimings)
             }
         })
 
@@ -114,20 +132,37 @@ const NewTasksToProjectForm = ({actualProject, setLoading, onCompleted}) => {
     const handleSelectTask = (index, value, handleDelete) => {
         if (value?.id > 0) {
 
-            setSelectedTasksIds([...selectedTasksIds,  value.id]);
+            setSelectedTasksIds([...selectedTasksIds, value.id]);
             const oldTasks = form.getFieldValue([index, "tasks"]);
 
             form.setFieldValue([index, "tasks"], [
                 ...oldTasks ?? [],
                 {
-                    title: <Space.Compact direction={"horizontal"}>
-                        <Text>{handleDelete && (
-                            <Tooltip title={"Удалить задачу"}>
-                                <Link onClick={() => handleDelete(value.id)} type={"danger"}><DeleteOutlined/></Link>
-                            </Tooltip>)} {value.name}
-                        </Text>
-
-                    </Space.Compact>,
+                    title:
+                        <Space.Compact direction={"horizontal"}>
+                            <Tooltip title={"Отступ задачи"}>
+                                <InputNumber
+                                    value={projectTasksTimings[value.id]?.offset}
+                                    onChange={(value_) => handleOffsetChange(value.id, value_)}
+                                    style={{width: "75px"}}
+                                    size={"small"}
+                                />
+                            </Tooltip>
+                            <Tooltip title={"Продолжительность"}>
+                                <InputNumber
+                                    value={projectTasksTimings[value.id]?.duration}
+                                    onChange={(value_) => handleDurationChange(value.id, value_)}
+                                    style={{width: "75px"}}
+                                    size={"small"}
+                                />
+                            </Tooltip>
+                            <Text>{handleDelete && (
+                                <Tooltip title={"Удалить задачу"}>
+                                    <Link onClick={() => handleDelete(value.id)}
+                                          type={"danger"}><DeleteOutlined/></Link>
+                                </Tooltip>)} {value.name}
+                            </Text>
+                        </Space.Compact>,
                     key: value.id
                 }
             ])
@@ -166,14 +201,36 @@ const NewTasksToProjectForm = ({actualProject, setLoading, onCompleted}) => {
                 stage_number: task.stage_number,
                 key: task.task.id,
                 id: task.task.id,
-                title: <Space.Compact direction={"horizontal"}>
-                    <Text>{handleDelete && (
-                        <Tooltip title={"Удалить задачу"}>
-                            <Link onClick={() => handleDelete(task.task.id)} type={"danger"}><DeleteOutlined/></Link>
-                        </Tooltip>)} {task.task.name}
-                    </Text>
+                title:
+                    <Space.Compact direction={"horizontal"}>
+                        <Text>
+                            <Space.Compact>
+                                <Tooltip title={"Отступ задачи"}>
+                                    <InputNumber
+                                        value={projectTasksTimings[task.task.id]?.offset}
+                                        onChange={(value) => handleOffsetChange(task.task.id, value)}
+                                        style={{width: "50px"}}
+                                        size={"small"}
+                                    />
+                                </Tooltip>
+                                <Tooltip title={"Продолжительность"}>
+                                    <InputNumber
+                                        value={projectTasksTimings[task.task.id]?.duration}
+                                        onChange={(value) => handleDurationChange(task.task.id, value)}
+                                        style={{width: "50px"}}
+                                        size={"small"}
+                                    />
+                                </Tooltip>
+                            </Space.Compact>
 
-                </Space.Compact>,
+                            {handleDelete && (
+                                <Tooltip title={"Удалить задачу"}>
+                                    <Link onClick={() => handleDelete(task.task.id)}
+                                          type={"danger"}><DeleteOutlined/></Link>
+                                </Tooltip>)}
+                            {task.task.name}
+                        </Text>
+                    </Space.Compact>,
                 children: []
             };
             taskMap[task.id] = newTask;
@@ -209,9 +266,9 @@ const NewTasksToProjectForm = ({actualProject, setLoading, onCompleted}) => {
     };
 
     useEffect(() => {
-         if (actualProject.project_tasks.length > 0) {
+        if (actualProject.project_tasks.length > 0) {
             setSelectedTasksIds([...actualProject.project_stages.map(row => row.stage.task_id), ...actualProject.project_tasks.map(row => row.task.id ?? row.task_id)]);
-             console.log("kgfj ", [...actualProject.project_stages.map(row => row.stage.task_id), ...actualProject.project_tasks.map(row => parseInt(row.task.id ?? row.task_id))]);
+            console.log("kgfj ", [...actualProject.project_stages.map(row => row.stage.task_id), ...actualProject.project_tasks.map(row => parseInt(row.task.id ?? row.task_id))]);
             const taskStagesIdsArray = actualProject.project_tasks.filter(row => row.project_task_inherited_id === null).map(row => row.id);
             form.setFieldsValue((groupTasksByStageNumber(
                 rebuider(actualProject.project_tasks.filter(row => row.project_task_inherited_id !== null).map(
@@ -229,10 +286,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading, onCompleted}) => {
                 ), handleDeleteTaskToProject))));
         }
     }, [actualProject]);
-    useEffect(() => {
-        console.log(dataTasks?.tasks?.items?.filter((task) =>
-            !selectedTasksIds.includes(parseInt(task.id))))
-    }, [selectedTasksIds]);
+
     const [mutate, {loading: loadingSave}] = useMutation(ADD_TASK_MUTATION, {
         onCompleted: (data) => {
             refetchTasks();
@@ -249,6 +303,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading, onCompleted}) => {
     return (
 
         <Row gutter={1}>
+            <Button onClick={() => console.log(projectTasksTimings)}/>
             <Col span={24}>
 
                 <Form form={form} onChange={() => console.log("onChange")}>
@@ -257,6 +312,7 @@ const NewTasksToProjectForm = ({actualProject, setLoading, onCompleted}) => {
                             <Card style={{marginBottom: 5, paddingTop: 0}} title={row?.number + " " + row?.stage?.name}>
                                 <Space.Compact style={{width: "100%"}} direction={"vertical"}>
                                     <div style={{width: "100%"}}>
+
                                         <Form.Item name={[row.number, "tasks"]}>
                                             <TasksTreeComponent draggable/>
                                         </Form.Item>

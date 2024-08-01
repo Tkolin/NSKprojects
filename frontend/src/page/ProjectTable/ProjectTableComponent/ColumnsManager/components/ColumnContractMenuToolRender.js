@@ -228,7 +228,7 @@ export const ColumnContractMenuToolRender = ({record, text, onUpdated, expandabl
                                     <Button onClick={() => setTaskProjectModalStatus(true)}
                                             {...buttonProps}
                                             icon={<ReconciliationOutlined/>}
-                                            disabled={record?.project_stages
+                                            disabled={!record?.project_stages
                                                 .find(row => row.date_end && row.date_start)}
                                     >Распределение задач</Button>
 
