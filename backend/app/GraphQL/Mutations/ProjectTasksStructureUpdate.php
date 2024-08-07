@@ -44,20 +44,21 @@ final readonly class ProjectTasksStructureUpdate
                     'project_id' => $projectId,
                 ];
             }
-            $duration =$item['duration'] ?? 0;
-            $dateStart = $item['date_start'] ?? $task->date_start ?? null;
-            $dateEnd = $item['date_end'] ?? $task->date_end ?? null;
-            $duration = !(isset($dateStart) && isset($dateEnd)) ? $duration : (new \DateTime($dateStart))->diff(new \DateTime($dateEnd))->days;
-            $task = ProjectTasks::updateOrCreate(
+//            $duration =$item['duration'] ?? 0;
+//            $dateStart = $item['date_start'] ?? $task->date_start ?? null;
+//            $dateEnd = $item['date_end'] ?? $task->date_end ?? null;
+//            $duration = !(isset($dateStart) && isset($dateEnd)) ? $duration : (new \DateTime($dateStart))->diff(new \DateTime($dateEnd))->days;
+             $task = ProjectTasks::updateOrCreate(
                 [
                     'task_id' => $task['task_id'],
                     'project_id' => $projectId,
                 ],
                 [
                 'project_task_inherited_id' => null,
-                'date_start' => $dateStart,
-                'date_end' => $dateEnd,
-                'duration' => $duration,
+              //  'date_start' => $dateStart,
+               // 'date_end' => $dateEnd,
+                'duration' => $item["duration"] ?? null,
+                'offset' => $item["offset"] ?? null,
                 'stage_number' => $item['stage_number'] ?? $task->stage_number  ?? null,
             ]);
 

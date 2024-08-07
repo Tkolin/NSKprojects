@@ -36,10 +36,10 @@ final readonly class Projects
             ->with('delegations')
             ->with('project_irds.ird')
             ->with('project_tasks.executor_orders')
-            ->with('executor_orders')
+            ->with('executor_orders.payments')
             ->with('project_stages.stage');
 
-         $queryService = new QueryService();
+        $queryService = new QueryService();
         $searchColumns = ['id', 'name', 'organization_customer_id', 'type_project_document_id', 'facility_id', 'date_signing',
             'duration', 'date_end', 'status_id', 'date_completion', 'delegate_id'];
         $projectsQuery = $queryService->buildQueryOptions($projectsQuery, $args['queryOptions'], $searchColumns);

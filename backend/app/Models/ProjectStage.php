@@ -16,6 +16,7 @@ class ProjectStage extends Pivot
         'project_id',
         'stage_id',
         'number',
+        'offset',
         'progress',
         'date_start',
         'duration',

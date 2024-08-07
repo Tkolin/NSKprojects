@@ -155,7 +155,6 @@ export const PROJECTS_QUERY_BY_ID = gql`
                 number
                 name
                 prepayment
-                signed_file_id
                 organization_customer {
                     id
                     name
@@ -216,6 +215,7 @@ export const PROJECTS_QUERY_BY_ID = gql`
                     date_start
                     duration
                     date_end
+                    offset
                     percent
                     price
                 }

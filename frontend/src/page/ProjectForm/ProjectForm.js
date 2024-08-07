@@ -92,9 +92,7 @@ const ProjectForm = ({
         const [dataTypesOutput, setDataTypesOutput] = useState([]);
 
         const [selectedOrganizationId, setSelectedOrganizationId] = useState();
-        useEffect(() => {
-            console.log("selectedOrganizationId", selectedOrganizationId);
-        }, [selectedOrganizationId]);
+
         const {
             data: projectCountByOrg,
             loading: loadProjectCountByOrg,
@@ -103,8 +101,7 @@ const ProjectForm = ({
 
         const [selectedGroupTypeProject, setSelectedGroupTypeProject] = useState(false);
         useEffect(() => {
-            console.log("selectedGroupTypeProject", selectedGroupTypeProject);
-            !(project.id) && form.setFieldValue("type_project_document", null);
+             !(project.id) && form.setFieldValue("type_project_document", null);
             if (dataTypeProject?.typeProjects?.items && selectedGroupTypeProject && !loadingTypeProject) {
                 setDataTypesOutput(dataTypeProject?.typeProjects?.items?.filter(row => row?.group?.id === selectedGroupTypeProject));
             }

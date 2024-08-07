@@ -168,9 +168,7 @@ const CustomAutoCompleteExtension = ({
                                          visibleMode = "IGNORE",
                                          ...props
                                      }) => {
-    useEffect(() => {
-        console.log(props?.value?.selected);
-    }, [props.value]);
+
     switch (visibleMode) {
         case "IGNORE":
             return <CustomAutoCompleteAndCreate {...props} />

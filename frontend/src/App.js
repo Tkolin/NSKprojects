@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {BrowserRouter as Router, Route, Routes, useNavigate} from 'react-router-dom';
 import {Cookies} from "react-cookie";
-import {ConfigProvider} from "antd";
+import {ConfigProvider, Space} from "antd";
 import ruRU from "antd/locale/ru_RU";
 import {useQuery} from "@apollo/client";
 import {GET_CURRENT_USER} from "./graphql/queries";
@@ -23,20 +23,21 @@ import RegisterForm from "./page/simplesForms/RegisterForm";
 import LoginForm from "./page/simplesForms/LoginForm";
 import {NotificationProvider} from "./NotificationProvider";
 import moment from "moment";
- 
+
 import UserTable from "./page/simplesTables/UserTable";
 import RoleTable from "./page/simplesTables/RoleTable";
-//import RoleForm from "./page/simplesForms/RoleForm";
 import {PermissionsProvider} from "./permission/PermissionsProvider";
 import usePermissionHider from "./permission/usePermissionHider";
 import ProjectForm from "./page/ProjectForm";
 import RequestForm from "./page/simplesForms/RequestForm";
+import DemoBar from "./page/TestPage";
+import ProjectPaymentExecutorOrderTable from "./page/ProjectPaymentExecutorOrderTable";
 
 const GlobalStyles = createGlobalStyle`
     body {
         margin: 0;
     }
-    
+
 
     //[data-permission] {
     //    display: none; /* Скрываем элементы по умолчанию */
@@ -44,6 +45,7 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 const App = () => {
+
     const cookies = new Cookies();
     usePermissionHider();
     const [data, setData] = useState()
@@ -78,20 +80,33 @@ const App = () => {
                                       error={error?.message ? (error?.message != "Not token found" ? error?.message : null) : null}>
                             <Routes>
                                 <Route path="/" element={<Home/>}/>
+                                <Route path="/test" element={<DemoBar/>}/>
                                 {/*Справочники*/}
                                 <Route path="/references" element={<Home/>}/>
 
                                 <Route path="/references/contact" element={<Home/>}/>
                                 <Route path="/references/contact/table" element={<ContactTable/>}/>
-                                <Route path="/references/contact/form" element={<ContactForm/>}/>
+                                <Route path="/references/contact/form" element={
+                                    <Space style={{width: "100%", justifyContent: "center" }} children={
+                                        <ContactForm/>
+                                    }/>
+                                }/>
 
                                 <Route path="/references/person" element={<Home/>}/>
                                 <Route path="/references/person/table" element={<PersonTable/>}/>
-                                <Route path="/references/person/form" element={<PersonForm/>}/>
+                                <Route path="/references/person/form" element={
+                                    <Space style={{width: "100%", justifyContent: "center" }} children={
+                                        <PersonForm/>
+                                    }/>
+                                }/>
 
                                 <Route path="/references/organization" element={<Home/>}/>
                                 <Route path="/references/organization/table" element={<OrganizationTable/>}/>
-                                <Route path="/references/organization/form" element={<OrganizationForm/>}/>
+                                <Route path="/references/organization/form" element={
+                                    <Space style={{width: "100%", justifyContent: "center" }} children={
+                                        <OrganizationForm/>
+                                    }/>
+                                }/>
 
                                 {/*Проекты*/}
                                 <Route path="/project" element={<Home/>}/>
@@ -105,21 +120,25 @@ const App = () => {
                                         "WAITING_SOURCE",
                                         "WORKING"]}
                                     legendOptions={[
- 
+
                                         "APPROVAL_AGREEMENT",
                                         "APPROVAL_KP",
                                         "COMPLETED",
                                         "DESIGN_REQUEST",
                                         "WAITING_SOURCE",
                                         "WORKING"]}
- 
+
                                     columnOptions={["progress", "tool", "main", "customer", "status", "price"]}/>}/>
 
                                 <Route path="/project/request" element={<Home/>}/>
                                 <Route path="/project/request/table"
                                        element={<ProjectTable projectStatuses={["DESIGN_REQUEST"]}
                                                               columnOptions={["main", "customer", "request_tools"]}/>}/>
-                                <Route path="/project/request/form" element={<RequestForm/>}/>
+                                <Route path="/project/request/form" element={
+                                    <Space style={{width: "100%", justifyContent: "center" }} children={
+                                        <RequestForm/>
+                                    }/>
+                                }/>
 
                                 <Route path="/project/kp" element={<Home/>}/>
                                 <Route path="/project/kp/table"
@@ -135,23 +154,26 @@ const App = () => {
                                            legendOptions={[
                                                "APPROVAL_AGREEMENT"]}
                                            columnOptions={["progress", "contract_tools", "main", "customer", "status", "price"]}/>}
-                            />
+                                />
                                 <Route path="/project/contract/form" element={<Home/>}/>
 
                                 <Route path="/project/work" element={<Home/>}/>
                                 <Route path="/project/work/table"
                                        element={<ProjectTable projectStatuses={["WORKING"]}
-                                                              columnOptions={["progress", "contract_tools", "main", "customer", "status", "price"]}/>}/>
+                                                              columnOptions={["progress", "working_tools", "main", "customer", "status", "price"]}/>}/>
 
                                 <Route path="/project/work/form" element={<Home/>}/>
                                 {/*Учётки*/}
                                 <Route path="/user/person/table" element={<UserTable/>}/>
                                 <Route path="/user/role/table" element={<RoleTable/>}/>
 
-                                {/*<Route path="/user/role/form" element={<RoleForm/>}/>*/}
+                                <Route path="/bookeep/executor_order_table" element={<ProjectPaymentExecutorOrderTable/>}/>
 
                                 <Route path="/auth/register" element={<RegisterForm/>}/>
-                                <Route path="/auth/login" element={<LoginForm/>}/>
+                                <Route path="/auth/login" element={
+                                    <Space style={{width: "100%", justifyContent: "center" }} children={
+                                        <LoginForm/>
+                                    }/>}/>
 
 
                                 {/*Тестирование*/}

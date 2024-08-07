@@ -1,2 +1,0 @@
-import DistributionTasksByProject from "./DistributionTasksByProject"
-export default DistributionTasksByProject;

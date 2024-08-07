@@ -1,6 +1,6 @@
 import {Space, Table, Typography} from "antd";
 import {useEffect} from "react";
-import LinkToDownload from "../../components/script/fileDownloadScripts/LinkToDownload";
+import LinkToDownload from "../../components/script/LinkToDownload";
 import {UploadFileExecutorOrder} from "../../components/UploadFile";
 
 const {Text} = Typography;

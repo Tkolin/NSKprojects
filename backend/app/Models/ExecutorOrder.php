@@ -24,6 +24,10 @@ class ExecutorOrder extends Model
     {
         return $this->belongsTo(File::class, 'original_file_id','id');
     }
+ public function payments(): BelongsTo
+    {
+        return $this->belongsTo(ExecutorOrderPayment::class, 'executor_order_id','id');
+    }
 
 
     public function project_tasks(): BelongsToMany

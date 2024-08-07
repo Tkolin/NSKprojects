@@ -121,14 +121,14 @@ const MenuItems =
                     permission: ['read-request', 'create-request'],
                     children: [
                         {
-                            label: 'Список заявок',
+                            label: 'Список заявок: Согласовании договора',
                             key: '/project/request/table',
                             icon: <EyeOutlined/>,
                             children: null,
                             permission: ['read-request']
                         },
                         {
-                            label: 'Создать новую заявку',
+                            label: 'Создать новую заявку: Согласовании договора',
                             key: '/project/request/form',
                             icon: <FormOutlined/>,
                             children: null,
@@ -143,14 +143,14 @@ const MenuItems =
                     permission: ['read-kp', 'create-kp'],
                     children: [
                         {
-                            label: 'Список проектов',
+                            label: 'Список проектов: Согласовании КП ',
                             key: '/project/kp/table',
                             icon: <EyeOutlined/>,
                             children: null,
                             permission: ['read-kp']
                         },
                         {
-                            label: 'Создать проект на согласовании',
+                            label: 'Создать проект: Согласовании КП',
                             key: '/project/kp/form',
                             icon: <FormOutlined/>,
                             children: null,
@@ -165,14 +165,14 @@ const MenuItems =
                     permission: ['read-contract', 'create-contract'],
                     children: [
                         {
-                            label: 'Список проектов',
+                            label: 'Список проектов: Согласовании договора',
                             key: '/project/contract/table',
                             icon: <EyeOutlined/>,
                             children: null,
                             permission: ['read-contract']
                         },
                         {
-                            label: 'Создать нового подрядчика',
+                            label: 'Создать нового подрядчика: Согласовании договора',
                             key: '/project/contract/form',
                             icon: <FormOutlined/>,
                             children: null,
@@ -204,20 +204,20 @@ const MenuItems =
                 }
             ]
         },
-        // {
-        //     label: 'Отчёты',
-        //     key: '/report/',
-        //     icon: <SolutionOutlined/>,
-        //     children: [
-        //         {
-        //             label: 'Проекты',
-        //             key: '/report/project',
-        //             icon: null,
-        //             children: null,
-        //             permission: ['read-project'
-        //         }
-        //     ]
-        // },
+        {
+            label: 'Бухгалтерия>',
+            key: '/bookeep/',
+            icon: <SolutionOutlined/>,
+            children: [
+                {
+                    label: 'Запросы на оплату Исполнителям',
+                    key: '/bookeep/executor_order_table',
+                    icon: null,
+                    children: null,
+                    permission: ['read-project']
+                }
+            ]
+        },
         {
             label: 'Пользователи',
             key: '/user/',

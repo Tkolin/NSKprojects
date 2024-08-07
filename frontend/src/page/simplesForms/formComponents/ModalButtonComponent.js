@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import {Button} from "antd";
+import {SaveOutlined} from "@ant-design/icons";
+import React from "react";
 
 const ModalButtonStyled = styled(Button)`
     
@@ -21,7 +23,7 @@ const ModalButtonStyled = styled(Button)`
 export const ModalButton = ({modalType, isMany,...props}) =>{
     switch (modalType){
         case "green":
-            return <ModalButtonStyled style={{
+            return <ModalButtonStyled icon={<SaveOutlined/>} style={{
                 width: isMany ? "100%" : "150px",
                 ...(isMany ? {
                     borderBottomRightRadius: 0, borderTopRightRadius: 0,
@@ -29,7 +31,7 @@ export const ModalButton = ({modalType, isMany,...props}) =>{
                 } : {})
             }} {...props}/>
         default:
-            return <ModalButtonStyled style={{
+            return <ModalButtonStyled icon={<SaveOutlined/>} style={{
                 width: isMany ? "100%" : "150px",
                 ...(isMany ? {
                     borderBottomRightRadius: 0, borderTopRightRadius: 0,

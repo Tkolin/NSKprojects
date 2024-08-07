@@ -6,8 +6,7 @@ import {DELETE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
 import Search from "antd/es/input/Search";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {format} from "date-fns";
-import {nanoid} from "nanoid";
-import {NotificationContext} from "../../NotificationProvider";
+ import {NotificationContext} from "../../NotificationProvider";
 const {Text} = Typography;
 const UserTable = () => {
 
@@ -21,7 +20,6 @@ const UserTable = () => {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
 
-    const [currentSort, setCurrentSort] = useState({});
 
     const [sortField, setSortField] = useState('');
     const [sortOrder, setSortOrder] = useState('');

@@ -4,7 +4,7 @@ import {useMutation} from "@apollo/client";
 import {CHANGE_TEMPLATE_TYPE_PROJECT} from "../../../../graphql/mutationsProject";
 import Link from "antd/es/typography/Link";
 import {DeleteOutlined, EditOutlined, PushpinFilled, PushpinOutlined, ReconciliationOutlined} from "@ant-design/icons";
-import ProjectTasks from "../../../DistributionTasksByProject";
+import ProjectTasks from "../../../ProjectTasksStructureForm";
 import ProjectForm from "../../../ProjectForm";
 
 export const ColumnToolRender = ({record, text}) => {

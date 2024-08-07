@@ -1,8 +1,7 @@
 import {Form} from "antd";
 
 export const AutoCompleteFormItem = ({rulesValidationRequired, rulesValidationMessage, ...props}) => {
-    console.log(rulesValidationRequired);
-    return (<Form.Item
+     return (<Form.Item
             style={{width: "100%"}}
             rules={[
                 {

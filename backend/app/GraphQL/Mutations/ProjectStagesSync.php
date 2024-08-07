@@ -23,10 +23,11 @@ final readonly class ProjectStagesSync
 
             $syncData[(int)$stage["stage_id"]] = [
                 'number' => $stage["number"] ?? null,
-                'date_start' => isset($stage["date_start"]) ? substr((string)$stage["date_start"], 0, 10) : null,
+//                'date_start' => isset($stage["date_start"]) ? substr((string)$stage["date_start"], 0, 10) : null,
                 'duration' => $stage["duration"] ?? null,
-                'date_end' => isset($stage["date_end"]) ? substr((string)$stage["date_end"], 0, 10) : null,
+//                'date_end' => isset($stage["date_end"]) ? substr((string)$stage["date_end"], 0, 10) : null,
                 'percent' => $percent,
+                'offset' => $stage["offset"] ?? null,
                 'price' => $price,
                 'price_to_paid' => $priceToPaid,
             ];

@@ -1,5 +1,4 @@
-import 'react-phone-number-input/style.css';
-import dayjs from "dayjs";
+ import dayjs from "dayjs";
 
 export const facilitiesToFullCode = (faclility) => {
     if (!(faclility && faclility?.group_facility && faclility?.group_facility?.subselection_facility
@@ -75,20 +74,16 @@ export const rebuildIrdsResultQuery = (data) => {
 export const rebuildStagesToQuery = (data, projectId) => {
     if (!data)
         return [];
-    const dataArray = Object.values(data);
+    const dataArray = [Object.values(data)];
 
     return dataArray?.map((row, index) => ({
         project_id: projectId ?? null,
-        date_start: row.date_range?.dateStart ? dayjs(row.date_range?.dateStart).format("YYYY-MM-DD") : null,
-        date_end: row.date_range?.dateEnd ? dayjs(row.date_range?.dateEnd).format("YYYY-MM-DD") : null,
         duration: row?.date_range?.duration ?? null,
         stage_id: row?.stage?.selected ?? null,
         number: index + 1,
-        // price: row?.price ?? null,
+        offset: row.offset ?? null,
         percent: row?.percent ?? null,
-        progress: row?.progress ?? null,
-        // price_to_paid: row?.price_to_paid ?? null,
-    }));
+      }));
 };
 export const rebuildIrdToQuery = (data, project) => {
     if (!data)

@@ -1,4 +1,3 @@
-import 'react-phone-number-input/style.css';
 import { useMutation } from '@apollo/client';
 import { notification, Typography} from 'antd';
 import { PAYMENT_INVOICE_PROJECT_DOWNLOAD} from "../../../../graphql/mutationsProject";

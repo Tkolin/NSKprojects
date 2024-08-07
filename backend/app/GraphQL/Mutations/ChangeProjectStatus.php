@@ -3,6 +3,7 @@
 namespace App\GraphQL\Mutations;
 
 use App\Models\Project;
+use function PHPUnit\Framework\throwException;
 
 final readonly class ChangeProjectStatus
 {
@@ -13,10 +14,11 @@ final readonly class ChangeProjectStatus
         $statusKey = $args['statusKey'];
         $project = Project::find($id);
         $project->status_id = $statusKey;
-
-        switch ($statusKey) {
+         switch ($statusKey) {
             case 'WORKING':
             {
+                if(!isset($args['dateStart']))
+                    return throwException("TODO: need dateStart");
                 $project->date_start = $args['dateStart'];
 
             }

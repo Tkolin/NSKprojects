@@ -7,6 +7,8 @@ extend type Query {
     projectTasksQuery(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [Project] @checkRole(permission:  ["read-project-task"])
     projectsStatistic(projectStatuses: [String]!): [ProjectStatistic] @checkRole(permission:  ["read-project"])
     executorOrders(projectId: ID!, executorId: ID!): [ExecutorOrder!]
+    projectOrdersPayments(projectId: ID!, executorId: ID!): [Project!]
+
 
     projectTasksExecutors(taskId: ID): ProjectTaskExecutorResult @checkRole(permission:  ["read-project-task-executor"])
     countProjectByOrganizations(organizationId: ID!): Int @checkRole(permission:  ["read-organization"])
@@ -40,12 +42,12 @@ extend type Mutation {
     projectIrdsSync(
         items: [IrdToProjectInput]!
     ): Project @checkRole(permission:  ["update-project-ird"])
- 
+
     changeProjectStatus(
         projectId: ID!
         statusKey: String!
         dateStart: String
- 
+
     ): Project @checkRole(permission:  ["update-project-ird"])
     projectStagesSync(
         items: [StageToProjectInput]!
@@ -84,15 +86,15 @@ input TaskToProjectStructureInput  {
     date_start: String
     date_end: String
     duration: Int
+    offset: Int
     stage_number: Int
 }
 input TaskToProjectDetailInput  {
     id: ID
 
     description: String
-    date_start: String
-    date_end: String
     duration: Int
+    offset: Int
     price: Float
     executor_id: ID
 }
@@ -109,10 +111,8 @@ input StageToProjectInput {
     number: Int!
     percent: Int!
     duration: Int!
-    date_start: String
-    date_end: String
-    progress: Int
-}
+    offset: Int
+ }
 input RequestInput {
     name: ID!
     organization_id: ID!

@@ -223,6 +223,7 @@ export const PROJECTS_QUERY = gql`
                     }
                     date_start
                     duration
+                    offset
                     date_end
                     percent
                     price
@@ -248,6 +249,7 @@ export const PROJECTS_QUERY = gql`
                     project_task_inherited_id
                     date_start
                     date_end
+                    offset
                     duration
                     executor_orders {
                         id

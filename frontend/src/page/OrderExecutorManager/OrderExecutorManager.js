@@ -39,7 +39,7 @@ export const OrderExecutorManager = ({executor, projectId, projectTasks, onUpdat
             setExecutorOrders(data?.executorOrders?.map(row => ({
                 ...row,
                 project_tasks: [...row?.project_tasks?.map(second_row => second_row.id)]
-            })))
+            }))) 
         },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка: ` + error.message);

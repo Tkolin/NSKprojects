@@ -117,6 +117,7 @@ type ProjectStage{
     price_to_paid: Float!
     percent: Int!
     date_start: String
+    offset: Int
     duration: Int!
     date_end: String
     progress: Int!
@@ -132,6 +133,7 @@ type ProjectTask{
     date_start: String
     date_end: String
     duration: Int
+    offset: Int
     executor: Person
     price: Float
     description: String
@@ -161,6 +163,11 @@ type   ExecutorOrder {
     original_file: File
     signed_file: File
     project_tasks: [ProjectTask]
+    payments: [ExecutorOrderPayment]
+}
+type   ExecutorOrderPayment {
+     file_id: ID
+    status: String
 }
 #   organization 1
 type Organization{
@@ -544,9 +551,9 @@ input ProjectInput {
     status_id: String
     date_completion: String
     price: Int
- 
+
     prepayment: Int!
- 
+
     facility_id: [ID]
     delegates_id: [ID]}
 input ProjectTemplatesSetting {

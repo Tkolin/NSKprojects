@@ -1,10 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Button, Steps, theme} from 'antd';
 import {StyledBlockLarge, StyledBlockRegular} from "../components/style/BlockStyles";
-import StageToProjectForm from "../StageToProjectForm/Index";
+import StageToProjectForm from "../ProjectStagesForm";
 
 import ProjectForm from "../ProjectForm/Index";
-import IrdsProjectForm from "../IrdToProjectForm/Index";
+import IrdsProjectForm from "../ProjectIrdsForm";
 import {useLazyQuery} from "@apollo/client";
 import {NotificationContext} from "../../NotificationProvider";
 import ProjectDetails from "./components/ProjectDetails";

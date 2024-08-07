@@ -1,4 +1,3 @@
-import 'react-phone-number-input/style.css';
 import { useMutation } from '@apollo/client';
 import { notification, Typography} from 'antd';
 import {TASK_EXECUTOR_CONTRACT_DOWNLOAD

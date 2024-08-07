@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 import './Styles.css';
 import StatusLegendComponent from "./components/StatusLegendComponent";
-import ProjectTableComponent from "./ProjectTableComponent/ProjectTableComponent";
-import ToolBarComponent from "./ProjectTableComponent/ToolBarComponent";
-import {Divider, Space} from "antd";
+import ProjectTableComponent from "./components/ProjectTableComponent";
+ import {Divider, Space} from "antd";
+import ProjectTasksManagerForm from "../ProjectTasksManagerForm";
+import ToolBarComponent from "./components/ToolBarComponent";
 
 
 const ProjectTable = ({projectStatuses, legendOptions, columnOptions, toolBarOptions}) => {
@@ -15,12 +16,12 @@ const ProjectTable = ({projectStatuses, legendOptions, columnOptions, toolBarOpt
 
         return (
             <div>
-                {legendOptions && (
-                    <>
-                        <StatusLegendComponent projectStatuses={legendOptions} data-permission={"read-project-statistic"}/>
-                        <Divider/>
-                    </>
-                )}
+                {/*{legendOptions && (*/}
+                {/*    <>*/}
+                {/*        <StatusLegendComponent projectStatuses={legendOptions} data-permission={"read-project-statistic"}/>*/}
+                {/*        <Divider/>*/}
+                {/*    </>*/}
+                {/*)}*/}
                 <Space.Compact direction={"horizontal"}>
                     <ToolBarComponent onCompleted={()=>onRefetch()}  options={['search','add_request']} gutter={5} onSearch={setSearch}/>
                 </Space.Compact>

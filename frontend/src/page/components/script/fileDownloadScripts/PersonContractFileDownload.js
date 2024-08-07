@@ -1,4 +1,3 @@
-import 'react-phone-number-input/style.css';
 import { useMutation } from '@apollo/client';
 import { CONTRACT_PERSON_MUTATION } from '../../../../graphql/mutationsPerson';
 import {Button, notification} from 'antd';

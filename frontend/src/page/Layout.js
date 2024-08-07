@@ -35,7 +35,7 @@ const styles = {
         float: 'left',
     },
     card: {
-        minHeight:  "calc(100vh - 170px)"
+        minHeight: "calc(100vh - 170px)"
     },
     user: {
         display: 'flex',
@@ -129,16 +129,15 @@ const AppLayout = ({children, currentUser, error}) => {
                         title: {
                             textAlign: 'center',
                             fontSize: "23px",
-                            color: "#1677ff"
+                            color: "#1677ff",
+                        },
+                        body: {
+                            alignContent: "center",
                         }
                     }}>
-                        <Space block style={{
-                            margin: 0, padding: 0,
-                            justifyContent: "center",
-                            width: "100%",
-                        }}>
-                            {children}
-                        </Space>
+
+                        {children}
+
 
                     </Card>
                 </Content>

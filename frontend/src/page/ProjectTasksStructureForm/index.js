@@ -1,0 +1,2 @@
+import ProjectTasksStructureForm from "./ProjectTasksStructureForm"
+export default ProjectTasksStructureForm;

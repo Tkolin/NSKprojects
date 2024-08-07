@@ -76,6 +76,7 @@ export const ADD_PROJECT_MUTATION = gql`
                 id
                 task_id
                 date_start
+                offset
                 duration
                 date_end
                 price
@@ -173,8 +174,10 @@ export const UPDATE_PROJECT_MUTATION = gql`
             project_tasks {
                 id
                 task_id
-                date_start
+                offset
                 duration
+                date_start
+                 
                 date_end
                 price
             }
@@ -202,9 +205,9 @@ export const PROJECT_TASKS_DETAIL_UPDATE = gql`
             id
             price
             task_id
-            date_start
+            offset
             duration
-            date_end
+             
             executor {
                 id
                 passport {
@@ -229,8 +232,17 @@ export const PROJECT_TASKS_STRUCTURE_UPDATE = gql`
                     id
                     name
                 }
+                executor {
+                    id
+                    passport {
+                        firstname
+                        lastname
+                        patronymic
+                    }
+                }
                 date_start
                 duration
+                offset
                 date_end
                 stage_number
 

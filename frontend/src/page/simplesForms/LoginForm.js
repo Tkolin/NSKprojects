@@ -44,6 +44,7 @@ const LoginForm = ({cardProps}) => {
               actions={[
                   <ModalButton
                       modalType={"primary"}
+                      lodaing={loadingUser}
                       isMany={cardProps?.actions}
                       onClick={()=>form.submit()}
                       children={`Вход`}/>
