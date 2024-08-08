@@ -238,7 +238,7 @@ const ColumnContractMenuToolRender = ({record, text, onUpdated, expandable}) => 
 
                                 <Divider style={{margin: 5, marginTop: 0, fontSize: 14}}/>
                                 <Space direction="vertical" style={{width: "100%"}}>
-                                    <ProjectContractMenuItem record={record}/>
+                                    <ProjectContractMenuItem record={record} onUpdated={onUpdated}/>
                                 </Space>
                             </Card>
 

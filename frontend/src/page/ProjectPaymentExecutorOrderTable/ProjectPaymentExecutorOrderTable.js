@@ -2,13 +2,24 @@ import React, {useState} from 'react';
 
 import {useMutation, useQuery} from '@apollo/client';
 import {Button, notification, Table} from 'antd';
-import {CONTACTS_QUERY} from '../../graphql/queries';
+import {CONTACTS_QUERY, PROJECTS_QUERY} from '../../graphql/queries';
 import {DELETE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
+import {EXECUTOR_ORDERS_QUERY, PROJECTS_EXECUTOR_ORDERS_PAYMENTS_QUERY} from "../../graphql/queriesSpecial";
 
 const ProjectPaymentExecutorOrderTable = () => {
+    // Данные
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
 
+    const [currentSort, setCurrentSort] = useState({});
+
+    const [sortField, setSortField] = useState('');
+    const [sortOrder, setSortOrder] = useState('');
+
+    const [search, setSearch] = useState('');
     // Состояния
-    const { loading, error, data } = useQuery(CONTACTS_QUERY);
+    const {loading: loading, error: error, data: data, refetch: refetch}
+        = useQuery(EXECUTOR_ORDERS_QUERY);
     const [selectedContact, setSelectedContact] = useState(null);
     const [editModalVisible, setEditModalVisible] = useState(false);
 
@@ -24,16 +35,18 @@ const ProjectPaymentExecutorOrderTable = () => {
     const [deleteContact] = useMutation(DELETE_CONTACT_MUTATION, {
         onCompleted: () => {
             openNotification('topRight', 'success', 'Данные успешно удалены!');
-            refetch();
+            // refetch();
         },
         onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
-            refetch();
+            // refetch();
         },
     });
 
     // Обработчик событий
-    const handleClose = () => {       refetch(); setEditModalVisible(false);};
+    const handleClose = () => {
+        // refetch();
+        setEditModalVisible(false);};
     const handleEdit = (contactId) => {
         const contact = data.contacts.find(contact => contact.id === contactId);
         setSelectedContact(contact);
@@ -49,14 +62,17 @@ const ProjectPaymentExecutorOrderTable = () => {
     // Формат таблицы
     const columns = [
         {
-            title: 'Наименование проекта',
-            dataIndex: 'name',
-            key: 'name',
+            title: 'Номер договора',
+            dataIndex: 'number',
+            key: 'number',
         },
         {
-            title: 'Номер проекта',
-            dataIndex: 'name',
-            key: 'name',
+            title: 'экзер',
+            key: 'executor_orders',
+            render: (record, text) => {
+                if(record.executor_orders)
+                    console.log(record?.executor_orders?.length);
+            }
         },
     ];
 
@@ -68,11 +84,11 @@ const ProjectPaymentExecutorOrderTable = () => {
                     offsetHeader: 0,
                 }}
                 loading={loading}
-                dataSource={data?.irds?.items}
+                dataSource={data?.executorOrders}
                 columns={columns}
-                onChange={onChange}
+                // onChange={onChange}
                 pagination={{
-                    total: data?.irds?.count,
+                    total: data?.executorOrders,
                     current: page,
                     limit: limit,
                     onChange: (page, limit) => {

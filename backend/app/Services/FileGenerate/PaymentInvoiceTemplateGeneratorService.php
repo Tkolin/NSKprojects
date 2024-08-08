@@ -31,8 +31,8 @@ class PaymentInvoiceTemplateGeneratorService
         error_log("Этапы " . $isPrepayment . $stageNumber);
         $templateProcessor = new TemplateProcessor($tempFilePath);
 
-        $date = date('Y-m-d');
-        error_log("Сегодняшняя дата: " . $date);
+        $date =  $project["date_signing"];
+     //   error_log("Сегодняшняя дата: " . $date);
 //        $date = $project["date_create"];
         $dateComponents = explode('-', $date);
 

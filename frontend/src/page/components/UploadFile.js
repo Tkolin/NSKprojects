@@ -44,8 +44,9 @@ export const UploadFileProjectContractSigned = ({onUpdated, projectId, ...props}
         {selectedDateContract ? (<UploadFile
                 action={'project/upload/project_contract/page?projectId=' + projectId + '&date=' + selectedDateContract}
                 accept={'.pdf'}
+
                 onUpdated={() => {onUpdated && onUpdated();
-                setSelectedDateContract(null)}}
+                                        setSelectedDateContract(null)}}
                 children={<Button  style={{width: 200}} icon={<UploadOutlined/>} {...props}>{props.children ?? "Прикрепить договор"}</Button>}
             />) :
             (<Button type={"dashed"} style={{width: 200}} icon={<UploadOutlined/>} {...props}>{props.children ?? "Прикрепить договор"}</Button>)}

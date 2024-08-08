@@ -9,6 +9,8 @@ type Query {
     stages(id: ID, queryOptions: QueryOptions, queryType: String): StagesResult @checkRole(permission:  ["read-stage"])
     tasks(id: ID, queryOptions: QueryOptions, queryType: String): TasksResult @checkRole(permission:  ["read-task"])
     projects(id: ID, queryOptions: QueryOptions, queryType: String, projectId: ID, projectStatuses: [String]): ProjectsResult
+
+
     persons(id: ID, queryOptions: QueryOptions, queryType: String): PersonsResult @checkRole(permission:  ["read-project"])
     biks(id: ID, queryOptions: QueryOptions, queryType: String): BikResult
     passportPlaceIssues(id: ID, queryOptions: QueryOptions, queryType: String): PassportPlaceIssueResult
@@ -166,6 +168,7 @@ type   ExecutorOrder {
     payments: [ExecutorOrderPayment]
 }
 type   ExecutorOrderPayment {
+    id: ID
      file_id: ID
     status: String
 }

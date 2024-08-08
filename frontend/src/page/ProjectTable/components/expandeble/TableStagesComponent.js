@@ -7,18 +7,21 @@ import {
     rebuildProjectResultQuery,
     rebuildStagesResultQuery
 } from "../../../components/script/rebuildData/ProjectRebuilderQuery";
-import PaymentInvoiceProjectDownload from "../../../components/script/fileDownloadScripts/PaymentInvoiceProjectDownload";
+import PaymentInvoiceProjectDownload
+    from "../../../components/script/fileDownloadScripts/PaymentInvoiceProjectDownload";
 import ActRenderingProjectDownload from "../../../components/script/fileDownloadScripts/ActRenderingProjectDownload";
+
 const {Text} = Typography;
 
-const TableStagesComponent = ({setEditModalStatus,project}) => {
+const TableStagesComponent = ({setEditModalStatus, project}) => {
     const columnsStages = [{
         title:
             <Space>
                 <Tooltip title={"График выполнения работ"}>
                     <Text style={{marginRight: 10}}>Список Этапов</Text>
-                    <StagesProjectFileDownload style={{color: "green"}} text={<DownloadOutlined/>}
-                                               projectId={project.id}/>
+                    {project.date_signing && (
+                        <StagesProjectFileDownload style={{color: "green"}} text={<DownloadOutlined/>}
+                                                   projectId={project.id}/>)}
                 </Tooltip>
                 <Link type={"warning"}>
                     <EditOutlined
@@ -43,7 +46,8 @@ const TableStagesComponent = ({setEditModalStatus,project}) => {
                     </Space.Compact>
                 ),
             },
-            {
+            ...(project.date_signing ?
+            [{
                 title: 'Счёт на оплату',
                 dataIndex: 'payment',
                 key: 'payment',
@@ -75,7 +79,7 @@ const TableStagesComponent = ({setEditModalStatus,project}) => {
                         }
                     </Space.Compact>
                 ),
-            },
+            }] : [])
             // {
             //     dataIndex: 'act',
             //     key: 'act',

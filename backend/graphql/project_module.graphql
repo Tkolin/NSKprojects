@@ -6,7 +6,7 @@ extend type Query {
     projectStages( projectId: ID): [Project] @checkRole(permission:  ["read-project-stage"])
     projectTasksQuery(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [Project] @checkRole(permission:  ["read-project-task"])
     projectsStatistic(projectStatuses: [String]!): [ProjectStatistic] @checkRole(permission:  ["read-project"])
-    executorOrders(projectId: ID!, executorId: ID!): [ExecutorOrder!]
+    executorOrders(projectId: ID, executorId: ID): [ExecutorOrder!]
     projectOrdersPayments(projectId: ID!, executorId: ID!): [Project!]
 
 

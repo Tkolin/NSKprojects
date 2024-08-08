@@ -36,7 +36,7 @@ final readonly class Projects
             ->with('delegations')
             ->with('project_irds.ird')
             ->with('project_tasks.executor_orders')
-            ->with('executor_orders.payments')
+            ->with('executor_orders')
             ->with('project_stages.stage');
 
         $queryService = new QueryService();

@@ -26,7 +26,10 @@ class ProjectTasks extends Model
 
     public function executor_orders(): BelongsToMany
     {
-        return $this->belongsToMany(ExecutorOrder::class, 'executor_order_task', 'project_task_id', 'executor_order_id');
+        return $this->belongsToMany(ExecutorOrder::class,
+            'executor_order_task',
+            'project_task_id',
+            'executor_order_id');
     }
     public function executor(): BelongsTo
     {
