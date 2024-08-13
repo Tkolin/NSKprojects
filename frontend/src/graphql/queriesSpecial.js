@@ -26,7 +26,7 @@ export const CONTACTS_BY_ORGANIZATION = gql`
     }
 `;
 export const EXECUTOR_ORDERS_QUERY = gql`
-    query ExecutorOrders ($projectId: ID,  $executorId: ID) {
+    query ExecutorOrders ($projectId: ID!,  $executorId: ID!) {
         executorOrders(projectId: $projectId,  executorId: $executorId
         ) {
             id
@@ -39,6 +39,44 @@ export const EXECUTOR_ORDERS_QUERY = gql`
             project_tasks {
                 id
                 project_id
+            }
+            payments {
+                id
+                file_id
+                status
+            }
+        }
+    }
+`;
+export const EXECUTOR_ORDERS_PROJECT_QUERY = gql`
+    query ExecutorOrders ($projectId: ID!) {
+        executorOrders(projectId: $projectId
+        ) {
+            id
+            date_generate
+            date_order
+            date_attachment
+            number
+            original_file_id
+            signed_file_id
+            project_tasks {
+                id
+                project_id
+                date_start
+                date_end
+                status
+                task {
+                    name
+                }
+                executor {
+                    id
+                    passport {
+                        id
+                        firstname
+                        lastname
+                        patronymic
+                    }
+                }
             }
             payments {
                 id

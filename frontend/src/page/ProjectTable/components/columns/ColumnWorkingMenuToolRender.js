@@ -187,43 +187,44 @@ const ColumnWorkingMenuToolRender = ({record, text, onUpdated, expandable}) => {
                     }}
                     dropdownRender={() =>
                         (
-                            // <Card size={"small"}
-                            //       style={{width: 300, justifyContent: 'center', alignItems: 'center'}}>
-                            //
-                            //     <Divider style={{
-                            //         margin: 5,
-                            //         marginTop: 0,
-                            //         fontSize: 14
-                            //     }}/>
-                            //
-                            //     <Row style={{width: "100%"}}>
-                            //         <Col span={8}>
-                            //             <EditMenuItem onClick={() => setEditProjectModalStatus(true)}/>
-                            //         </Col>
-                            //         <Col span={8}>
-                            //             <DeleteMenuItem onClick={() => console.log("НОУ")}/>
-                            //         </Col>
-                            //         <Col span={8}>
-                            //             <TemplateMenuItem onClick={() => createTemplate(record.id)}
-                            //                               isTemplate={record.id === record?.type_project_document?.template_project_id}/>
-                            //         </Col>
-                            //     </Row>
-                            //     <Divider style={{margin: 5, marginTop: 0, fontSize: 14}}/>
-                            //     <Space direction="vertical" style={{width: "100%"}}>
-                            //         <Button onClick={() => setTaskProjectModalStatus(true)}
-                            //                 {...buttonProps}
-                            //                 icon={<ReconciliationOutlined/>}
-                            //                 // disabled={!record?.project_stages
-                            //                 //     .find(row => row.date_end && row.date_start)}
-                            //         >Распределение задач</Button>
-                            //
-                            //     </Space>
-                            //     <Divider style={{margin: 5, marginTop: 0, fontSize: 14}}/>
-                            //     <Space direction="vertical" style={{width: "100%"}}>
-                            //         <ProjectContractMenuItem record={record}/>
-                            //     </Space>
-                            // </Card>
-"?"
+                            <>
+                                <Card size={"small"}
+                                      style={{width: 300, justifyContent: 'center', alignItems: 'center'}}>
+
+                                    <Divider style={{
+                                        margin: 5,
+                                        marginTop: 0,
+                                        fontSize: 14
+                                    }}/>
+
+                                    <Row style={{width: "100%"}}>
+                                        <Col span={8}>
+                                            <EditMenuItem onClick={() => setEditProjectModalStatus(true)}/>
+                                        </Col>
+                                        <Col span={8}>
+                                            <DeleteMenuItem onClick={() => console.log("НОУ")}/>
+                                        </Col>
+                                        <Col span={8}>
+                                            <TemplateMenuItem onClick={() => createTemplate(record.id)}
+                                                              isTemplate={record.id === record?.type_project_document?.template_project_id}/>
+                                        </Col>
+                                    </Row>
+                                    <Divider style={{margin: 5, marginTop: 0, fontSize: 14}}/>
+                                    <Space direction="vertical" style={{width: "100%"}}>
+                                        <Button onClick={() => setTaskProjectModalStatus(true)}
+                                                {...buttonProps}
+                                                icon={<ReconciliationOutlined/>}
+                                                disabled={!record?.project_stages
+                                                    .find(row => row.date_end && row.date_start)}
+                                        >Распределение задач</Button>
+
+                                    </Space>
+                                    <Divider style={{margin: 5, marginTop: 0, fontSize: 14}}/>
+                                    <Space direction="vertical" style={{width: "100%"}}>
+                                        <ProjectContractMenuItem record={record}/>
+                                    </Space>
+                                </Card>
+                            </>
                         )}
                     children={<Button type={"text"} icon={<MoreOutlined/>}/>}
                 />
@@ -238,16 +239,17 @@ const ColumnWorkingMenuToolRender = ({record, text, onUpdated, expandable}) => {
 
                     description={<Space direction={"vertical"}>
                         {getStatusApprovalTitle(isIrdFull, record.contract_file_id)}
-                        {(isIrdFull && record.contract_file_id) && <DatePicker value={selectedDateStartWork} onChange={(date) => setSelectedDateStartWork(date)}/>}</Space>}
+                        {(isIrdFull && record.contract_file_id) && <DatePicker value={selectedDateStartWork}
+                                                                               onChange={(date) => setSelectedDateStartWork(date)}/>}</Space>}
                     onConfirm={() => handleUpProject(record.id)}
                     okButtonProps={{disabled: !selectedDateStartWork && (isIrdFull && record.contract_file_id)}}
 
                 >
                     {!(isIrdFull && record.contract_file_id) ?
-                    <Button type={"dashed"} icon={<CheckSquareOutlined/>}/>
+                        <Button type={"dashed"} icon={<CheckSquareOutlined/>}/>
                         :
-                    <StyledButtonGreen loading={changeProjectStatusLoading}
-                                       icon={<CheckSquareOutlined/>}/>}
+                        <StyledButtonGreen loading={changeProjectStatusLoading}
+                                           icon={<CheckSquareOutlined/>}/>}
                 </Popconfirm>
 
                 <Popconfirm

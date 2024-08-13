@@ -1,10 +1,8 @@
 import React from 'react';
-import {Row, DatePicker, Descriptions, Collapse, Typography, Space} from 'antd';
+import {Row, Descriptions, Collapse, Typography, Space} from 'antd';
 
 import PaymentInvoiceProjectDownload from "../../components/script/fileDownloadScripts/PaymentInvoiceProjectDownload";
 import ActRenderingProjectDownload from "../../components/script/fileDownloadScripts/ActRenderingProjectDownload";
-import IrdsProjectFileDownload from "../../components/script/fileDownloadScripts/IrdsProjectFileDownload";
-import StagesProjectFileDownload from "../../components/script/fileDownloadScripts/StagesProjectFileDownload";
 import ProjectFileDownload from "../../components/script/fileDownloadScripts/ProjectFileDownload";
 const {Text} = Typography;
 
@@ -13,11 +11,6 @@ const ProjectDetails = ({project, totalToPercent, totalToDuration}) => {
 
     return (
         <Row>
-            <Space.Compact style={{margin: 15}} direction={"vertical"}>
-                <ProjectFileDownload text={"Загрузить Договор"} projectId={project?.id}/>
-                <IrdsProjectFileDownload text={"Загрузить Список ирд"} projectId={project?.id}/>
-                <StagesProjectFileDownload text={"Загрузить График работ"} projectId={project?.id}/>
-            </Space.Compact>
             <Descriptions layout={"vertical"} bordered size={"small"} style={{width: "600px"}}>
                 <Descriptions column={1}>
                     <Text>Этапы</Text>

@@ -22,7 +22,9 @@ return new class extends Migration
              $table->foreign('file_id')->references('id')->on('file')->onDelete('cascade');
             $table->foreign('executor_order_id')->references('id')->on('executor_orders')->onDelete('cascade');
 
+
             $table->enum('status', ['NOT_REQUESTED', 'AWAITING', 'COMPLETED'])->default('NOT_REQUESTED');
+            $table->enum('type_payment', ['PREPAYMENT', 'PAYMENT', 'POSTPAYMENT'])->nullable();
             $table->timestamps();
         });
     }

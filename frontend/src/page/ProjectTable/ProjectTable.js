@@ -7,7 +7,7 @@ import ProjectTasksManagerForm from "../ProjectTasksManagerForm";
 import ToolBarComponent from "./components/ToolBarComponent";
 
 
-const ProjectTable = ({projectStatuses, legendOptions, columnOptions, toolBarOptions}) => {
+const ProjectTable = ({projectStatuses, legendOptions, expandableOptions, columnOptions, toolBarOptions}) => {
         const [search, setSearch] = useState('');
         const [refetch, setRefetch] = useState(false);
         const onRefetch = () =>{
@@ -27,7 +27,7 @@ const ProjectTable = ({projectStatuses, legendOptions, columnOptions, toolBarOpt
                 </Space.Compact>
                 <Divider/>
 
-                <ProjectTableComponent projectStatuses={projectStatuses} options={columnOptions} search={search} state={refetch}/>
+                <ProjectTableComponent expandable={expandableOptions} projectStatuses={projectStatuses} options={columnOptions} search={search} state={refetch}/>
             </div>
 
         )

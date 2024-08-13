@@ -9,17 +9,21 @@ use App\Services\FileGenerate\GeneratorService;
 use App\Services\MonthEnum;
 use App\Services\NameCaseLib\NCL\NCL;
 use App\Services\NameCaseLib\NCLNameCaseRu;
+use App\Services\TranslatorNumberToName;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Illuminate\Support\Str;
+use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 class ProjectContractGeneratorService
 {
 
-    public static function generate($projectData, $dateCreateContract)
+    public static function generate($projectData, $dateCreateContract, $isStamp = false)
     {
         $myOrg = GeneratorService::getOrganizationData();
 
-        $templateFilePath = storage_path('app/templates/ProjectTemplate.docx');
+        $templateFilePath = $isStamp ? storage_path('app/templates/ProjectTemplateStamp.docx') : storage_path('app/templates/ProjectTemplate.docx') ;
 
         $tempFilePath = tempnam(sys_get_temp_dir(), 'projectContract');
         copy($templateFilePath, $tempFilePath);
@@ -28,10 +32,6 @@ class ProjectContractGeneratorService
 
         $dateComponents = explode('-', $dateCreateContract);
 
-        $year = $dateComponents[0] ?? "__";
-        $month = $dateComponents[1] ? MonthEnum::getMonthName($dateComponents[1]) : "__";
-        $day = $dateComponents[2] ?? "__";
-        error_log("Договор");
 
         // Склонение имени
         $NCLNameCaseRu = new NCLNameCaseRu();
@@ -39,8 +39,53 @@ class ProjectContractGeneratorService
         $formattedPhone = preg_replace('/\+(\d{1,2})?(\d{3})(\d{3})(\d{2})(\d{2})/', '+$1 ($2) $3-$4-$5', $myOrg["phone_number"]);
         $contractNumber = ProjectFile::where('type_id', "CONTRACT")->where('project_id', $projectData->id)->max('number') + 1;
 
+        //  П 2
+        // Формируем массив для отображения в таблице
+
+        $table = [];
+        $irdNumber = 1;
+        foreach ($projectData->project_irds as $projectIrd) {
+            $table[] = [
+                'project_irds.number' => $irdNumber++,
+                'project_irds.ird.name' => $projectIrd->ird->name,
+            ];
+        }
+        $templateProcessor->cloneRowAndSetValues('project_irds.number' , $table);
+        //  П 3
+        // Формируем массив для отображения в таблице
+        $tableStage[] =  [
+            'projectStages.number' => '',
+            "projectStages.stage.name" => 'Аванс ' . $projectData["prepayment"] . "%",
+            "projectStages.stage.duration" => '',
+            "projectStages.stage.price" => "",
+            "projectStages.stage.endPrice" => number_format(($projectData["price"] * $projectData["prepayment"] / 100), 0, ',', ' ')." р.",
+            "projectStages.payDay" =>  "В течение 5 банковских дней с даты подписания договора",
+        ];
+        $irdNumber = 1;
+        # Указываем кодировку.
+        header('Content-type: text/html; charset=utf-8');
+        foreach ($projectData->project_stages as $projectStage) {
+            $tableStage[] = [
+                'projectStages.number' => $projectStage["number"],
+                "projectStages.stage.name" => $projectStage["stage"]["name"],
+                "projectStages.stage.duration" => $projectStage["duration"],
+                "projectStages.stage.price" => number_format($projectStage["price"], 0, ',', ' ')." р.",
+                "projectStages.stage.endPrice" => number_format($projectStage["price_to_paid"], 0, ',', ' ')." р.",
+                "projectStages.payDay" =>  "В течение 5 банковских дней с даты подписания акта",
+            ];
+        }
+        $templateProcessor->cloneRowAndSetValues('projectStages.number' , $tableStage);
+        $TranslatorNumberToName = new TranslatorNumberToName();
 
         $replacements = [
+            'date_create_full' => "«" . $dateComponents[0] . "»" . MonthEnum::getMonthName($dateComponents[1]) . " " . $dateComponents[2] . " г.",
+            'date_create_short' => $dateComponents[0] . "." . $dateComponents[1] . "." . $dateComponents[2],
+
+            'projectStages.stage.priceTotal' => number_format($projectData['price'], 0, ',', ' ')." р." ?? '(данные отсутвуют)',
+            'projectStages.stage.endPriceTotal' => number_format($projectData['price'], 0, ',', ' ')." р." ?? '(данные отсутвуют)',
+            'projectStages.stage.priceTotalToName' => $TranslatorNumberToName->num2str($projectData['price']),
+            'projectStages.stage.endPriceTotalToName' => $TranslatorNumberToName->num2str($projectData['price']),
+
             'myOrg.full_name' => $myOrg['full_name'] ?? '(данные отсутвуют)',
             'myOrg.nameOrType' => $myOrg["legal_form"]['name'] . " " . $myOrg['name'],
             'myOrg.director.full_name' => $NCLNameCaseRu->q($myOrg['director']['last_name'] . ' ' . $myOrg['director']['first_name'] . ' ' . $myOrg['director']['patronymic'], NCL::$VINITELN) ?? '',
@@ -62,9 +107,7 @@ class ProjectContractGeneratorService
 
             'project.price' => $projectData['price'] ?? '(данные отсутвуют)',
             'project.number' => $projectData['number'] ?? '(данные отсутвуют)',
-            'dayCreate' => $day,
-            'mountCreate' => $month,
-            'yearCreate' => $year,
+
             "project.typeProject.Specification" => $projectData["type_project_document"]["group"]["technical_specification"]['name'] ?? '(данные отсутвуют)',
             'projectOrganization.director.full_name' => isset($projectData["organization_customer"]['director']) ?
                 $NCLNameCaseRu->q($projectData["organization_customer"]['director']['last_name'] . ' ' .
@@ -82,29 +125,36 @@ class ProjectContractGeneratorService
             'projectOrganization.BIK.name' => $projectData["organization_customer"]['bik']['name'] ?? '(данные отсутвуют)',
             'projectOrganization.BIK.correspondent_account' => $projectData["organization_customer"]['BIK']['correspondent_account'] ?? '(данные отсутвуют)',
             'projectOrganization.director.ShortFullName' => isset($projectData["organization_customer"]['director']) ?
-                $projectData["organization_customer"]['director']['last_name'] . ' ' . substr((string)$projectData["organization_customer"]['director']['first_name'], 0, 2) . '.' . substr((string)$projectData["organization_customer"]['director']['patronymic'], 0, 2) . '.' : '',
-            'myOrg.director.ShortFullName' => $myOrg['director']['last_name'] . ' ' . substr((string)$myOrg['director']['first_name'], 0, 2) . '.' . substr((string)$myOrg['director']['patronymic'], 0, 2) . '.',
+                $projectData["organization_customer"]['director']['last_name'] . ' ' .
+                substr((string)$projectData["organization_customer"]['director']['first_name'], 0, 2) . '.' .
+                substr((string)$projectData["organization_customer"]['director']['patronymic'], 0, 2) . '.'
+                : '',
+            'myOrg.director.ShortFullName' => $myOrg['director']['last_name'] . ' ' .
+                substr((string)$myOrg['director']['first_name'], 0, 2) . '.' .
+                substr((string)$myOrg['director']['patronymic'], 0, 2) . '.',
 
         ];
-
 
         foreach ($replacements as $key => $value) {
             $templateProcessor->setValue($key, $value);
         }
 
-        $fileName = Str::random( 30)."_". $projectData['number'] . '_ДОГОВОР_ПОДРЯДА.docx';
+        $fileName = Str::random(30) . "_" . $projectData['number'] . '_ДОГОВОР_ПОДРЯДА';
 
-        $filePath = storage_path('app/' . $fileName);
+        $filePath = storage_path('app/' . $fileName . '.docx');
         $templateProcessor->saveAs($filePath);
 
-        $storagePath = "/" . $projectData->path_project_folder . "/Договора_с_заказчиком/" . $fileName;
-        $file = FileCreateService::saveFileToProject($storagePath, $filePath, $fileName);
+        //$command = 'soffice --headless --convert-to pdf ' . escapeshellarg($filePath);
+        //exec($command, $output, $returnVar);
+
+        $storagePath = "/" . $projectData->path_project_folder . "/Договора_с_заказчиком/" . $fileName. '.docx';
+        $file = FileCreateService::saveFileToProject($storagePath, $filePath, $fileName. '.docx');
         ProjectFile::create([
             'project_id' => $projectData->id,
-            'file_id'=> $file->id,
-            'type_id'=>"CONTRACT",
-            'number'=> $contractNumber,
-            'date_document'=> $dateCreateContract,
+            'file_id' => $file->id,
+            'type_id' => "CONTRACT",
+            'number' => $contractNumber,
+            'date_document' => $dateCreateContract,
         ]);
 
         unlink($tempFilePath);

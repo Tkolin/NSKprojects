@@ -37,10 +37,8 @@ class Project extends Model
             'project_id', // Foreign key on ProjectTask table...
             'id', // Foreign key on ExecutorOrder table...
             'id', // Local key on Project table...
-            'task_id' // Local key on ProjectTask table...
-        )
-            ->join('executor_order_task', 'executor_order_task.project_task_id', '=', 'project_tasks.id')
-            ->distinct();
+            'task_id', // Local key on ProjectTask table...
+        );
     }
     //  project contract history
     public function contracts_files(): BelongsToMany
@@ -86,7 +84,7 @@ class Project extends Model
     //  tasks
     public function project_tasks(): HasMany
     {
-        return $this->hasMany(ProjectTasks::class, 'project_id', 'id');
+        return $this->hasMany(ProjectTasks::class, 'project_id', 'id')->orderBy('offset');
 
     }
     public function tasks(): BelongsToMany

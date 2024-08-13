@@ -270,6 +270,14 @@ export const PROJECT_IRDS_SYNC_MUTATION = gql`
         }
     }
 `;
+export const PROJECT_TASK_UP_MUTATION = gql`
+    mutation ProjectTaskUp($taskId: ID!) {
+        projectTaskUp(taskId: $taskId) {
+            id
+            status
+        }
+    }
+`;
 
 export const PROJECT_STAGE_SYNC_MUTATION = gql`
     mutation ProjectStagesSync($data: [StageToProjectInput]!) {
@@ -318,13 +326,13 @@ export const CHANGE_TEMPLATE_TYPE_PROJECT = gql`
 `;
 
 
-export const IRDS_PROJECT_DOWNLOAD = gql`
-    mutation IrdsProjectFileDownload($id: ID!) {
-        projectIrdsFileDownload(projectId: $id) {
-            url
-        }
-    }
-`;
+// export const IRDS_PROJECT_DOWNLOAD = gql`
+//     mutation IrdsProjectFileDownload($id: ID!) {
+//         projectIrdsFileDownload(projectId: $id) {
+//             url
+//         }
+//     }
+// `;
 
 export const PAYMENT_INVOICE_PROJECT_DOWNLOAD = gql`
     mutation PaymentInvoiceProjectFileDownload($id: ID!, $stageNumber: ID, $isPrepayment: Boolean) {
@@ -358,13 +366,13 @@ export const TASK_EXECUTOR_CONTRACT_DOWNLOAD = gql`
     }
 `;
 
-export const STAGE_PROJECT_DOWNLOAD = gql`
-    mutation StageProjectFileDownload($id: ID!) {
-        projectStagesFileDownload(projectId: $id) {
-            url
-        }
-    }
-`;
+// export const STAGE_PROJECT_DOWNLOAD = gql`
+//     mutation StageProjectFileDownload($id: ID!) {
+//         projectStagesFileDownload(projectId: $id) {
+//             url
+//         }
+//     }
+// `;
 
 export const CONTRACT_PROJECT_DOWNLOAD = gql`
     mutation ContractProjectFileDownload($id: ID!) {

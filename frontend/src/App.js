@@ -87,7 +87,7 @@ const App = () => {
                                 <Route path="/references/contact" element={<Home/>}/>
                                 <Route path="/references/contact/table" element={<ContactTable/>}/>
                                 <Route path="/references/contact/form" element={
-                                    <Space style={{width: "100%", justifyContent: "center" }} children={
+                                    <Space style={{width: "100%", justifyContent: "center"}} children={
                                         <ContactForm/>
                                     }/>
                                 }/>
@@ -95,7 +95,7 @@ const App = () => {
                                 <Route path="/references/person" element={<Home/>}/>
                                 <Route path="/references/person/table" element={<PersonTable/>}/>
                                 <Route path="/references/person/form" element={
-                                    <Space style={{width: "100%", justifyContent: "center" }} children={
+                                    <Space style={{width: "100%", justifyContent: "center"}} children={
                                         <PersonForm/>
                                     }/>
                                 }/>
@@ -103,7 +103,7 @@ const App = () => {
                                 <Route path="/references/organization" element={<Home/>}/>
                                 <Route path="/references/organization/table" element={<OrganizationTable/>}/>
                                 <Route path="/references/organization/form" element={
-                                    <Space style={{width: "100%", justifyContent: "center" }} children={
+                                    <Space style={{width: "100%", justifyContent: "center"}} children={
                                         <OrganizationForm/>
                                     }/>
                                 }/>
@@ -135,7 +135,7 @@ const App = () => {
                                        element={<ProjectTable projectStatuses={["DESIGN_REQUEST"]}
                                                               columnOptions={["main", "customer", "request_tools"]}/>}/>
                                 <Route path="/project/request/form" element={
-                                    <Space style={{width: "100%", justifyContent: "center" }} children={
+                                    <Space style={{width: "100%", justifyContent: "center"}} children={
                                         <RequestForm/>
                                     }/>
                                 }/>
@@ -160,6 +160,7 @@ const App = () => {
                                 <Route path="/project/work" element={<Home/>}/>
                                 <Route path="/project/work/table"
                                        element={<ProjectTable projectStatuses={["WORKING"]}
+                                                              expandableOptions={["tasks"]}
                                                               columnOptions={["progress", "working_tools", "main", "customer", "status", "price"]}/>}/>
 
                                 <Route path="/project/work/form" element={<Home/>}/>
@@ -167,11 +168,14 @@ const App = () => {
                                 <Route path="/user/person/table" element={<UserTable/>}/>
                                 <Route path="/user/role/table" element={<RoleTable/>}/>
 
-                                <Route path="/bookeep/executor_order_table" element={<ProjectPaymentExecutorOrderTable/>}/>
+                                <Route path="/bookeep/executor_order_table"
+                                       element={<ProjectTable projectStatuses={["WORKING"]}
+                                                              expandableOptions={["executor_orders"]}
+                                                              columnOptions={["progress", "working_tools", "main", "customer", "status", "price"]}/>}/>
 
                                 <Route path="/auth/register" element={<RegisterForm/>}/>
                                 <Route path="/auth/login" element={
-                                    <Space style={{width: "100%", justifyContent: "center" }} children={
+                                    <Space style={{width: "100%", justifyContent: "center"}} children={
                                         <LoginForm/>
                                     }/>}/>
 

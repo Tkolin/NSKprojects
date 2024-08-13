@@ -27,11 +27,8 @@ import IrdToProjectForm from "../../../ProjectIrdsForm";
 import LinkToDownload from "../../../components/script/LinkToDownload";
 import ProjectFileDownload from "../../../components/script/fileDownloadScripts/ProjectFileDownload";
 import {UploadFileProjectContractSigned} from "../../../components/UploadFile";
-// import DistributionTasksByProject from "../../../ProjectTasksStructureForm";
 import dayjs from "dayjs";
-import StagesProjectFileDownload from "../../../components/script/fileDownloadScripts/StagesProjectFileDownload";
-import IrdsProjectFileDownload from "../../../components/script/fileDownloadScripts/IrdsProjectFileDownload";
-// import CombinedProjectTasksForms from "../../../CombinedProjectTasksForms";
+
 
 const buttonProps = {type: "text", style: {width: "100%"}, size: "large"}
 const EditMenuItem = ({onClick, ...props}) => {
@@ -71,12 +68,6 @@ const ProjectContractMenuItem = ({record, onUpdated}) => {
                 <>
                     <LinkToDownload fileId={record.contract_file_id} {...buttonProps}>Скачать (подписан)
                         от {record.date_signing}</LinkToDownload>
-                    <StagesProjectFileDownload style={{color: "green"}} text={
-                        <Button {...buttonProps} icon={<DownloadOutlined/>}>Скачать график работ</Button>}
-                                               projectId={record.id}/>
-                    <IrdsProjectFileDownload style={{color: "green"}} text={
-                        <Button {...buttonProps} icon={<DownloadOutlined/>}>Скачать перечень ИРД</Button>}
-                                             projectId={record.id}/>
                 </>
             ) :
             (
@@ -98,12 +89,6 @@ const ProjectContractMenuItem = ({record, onUpdated}) => {
                                     icon={<DownloadOutlined/>}
                                     {...buttonProps}>Скачать
                                     последний вариант</LinkToDownload>
-                                <StagesProjectFileDownload style={{color: "green"}} text={
-                                    <Button {...buttonProps} icon={<DownloadOutlined/>}>Скачать график работ</Button>}
-                                                           projectId={record.id}/>
-                                <IrdsProjectFileDownload style={{color: "green"}} text={
-                                    <Button {...buttonProps} icon={<DownloadOutlined/>}>Скачать перечень ИРД</Button>}
-                                                         projectId={record.id}/>
                             </>
                         ) :
                         (

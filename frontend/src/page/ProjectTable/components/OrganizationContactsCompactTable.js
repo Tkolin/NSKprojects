@@ -54,7 +54,6 @@ const OrganizationContactsCompactTable = ({data, refetch}) => {
                 <Tooltip title={"Список контактов"}>
 
                     <Text style={{marginRight: 10}}>Список Сотрудников</Text>
-                    {/*<IrdsProjectFileDownload style={{color: "green"}} text={<DownloadOutlined/>} projectId={CreateNewProject.id}/>*/}
                 </Tooltip>
                 <Link  type={"warning"}>
                     <PlusOutlined onClick={() => setContactModalStatus({

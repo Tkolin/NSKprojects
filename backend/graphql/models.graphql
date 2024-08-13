@@ -133,6 +133,7 @@ type ProjectTask{
     task: Task
     stage_number: Int
     date_start: String
+    status: String
     date_end: String
     duration: Int
     offset: Int

@@ -45,7 +45,10 @@ class ProjectTasks extends Model
     {
         return $this->belongsTo(Task::class, 'task_id');
     }
-
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(Task::class, 'task_id');
+    }
 
     public function project(): BelongsTo
     {

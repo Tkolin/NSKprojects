@@ -1,6 +1,5 @@
 import {Space, Table, Tooltip, Typography} from "antd";
 import React from "react";
-import IrdsProjectFileDownload from "../../../components/script/fileDownloadScripts/IrdsProjectFileDownload";
 import {DownloadOutlined, EditOutlined} from "@ant-design/icons";
 import Link from "antd/es/typography/Link";
 
@@ -12,10 +11,7 @@ const TableIrdsComponent = ({setEditModalStatus, project}) => {
         title:
             <Space>
                 <Tooltip title={"Список ИРД"}>
-
                     <Text style={{marginRight: 10}}>Список ИРД</Text>
-                    <IrdsProjectFileDownload style={{color: "green"}} text={<DownloadOutlined/>}
-                                             projectId={project?.id}/>
                 </Tooltip>
                 <Link type={"warning"}>
 

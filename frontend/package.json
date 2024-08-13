@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@ant-design/charts": "^2.1.2",
+    "@ant-design/colors": "^7.1.0",
     "@ant-design/icons": "^5.4.0",
     "@apollo/client": "^3.11.3",
     "antd": "^5.20.0",

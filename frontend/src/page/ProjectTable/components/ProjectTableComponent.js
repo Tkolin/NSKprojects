@@ -7,14 +7,16 @@ import React, {useEffect, useState} from "react";
 import TableStagesComponent from "./expandeble/TableStagesComponent";
 import TableIrdsComponent from "./expandeble/TableIrdsComponent";
 import TableExecutorsComponent from "./expandeble/TableExecutorsComponent";
- import {useQuery} from "@apollo/client";
+import {useQuery} from "@apollo/client";
 import {PROJECTS_QUERY} from "../../../graphql/queries";
 import {nanoid} from "nanoid";
 import GetColumns from "./columns/ManagerColumn";
+import TableProjectTasksManagment from "./expandeble/TableProjectTasksManagment";
+import TablePaymentExecutorOrdersComponent from "./expandeble/TablePaymentExecutorOrdersComponent";
 
 const {Text} = Typography;
 
-const ProjectTableComponent = ({projectStatuses, mode, search, options, state}) => {
+const ProjectTableComponent = ({projectStatuses, mode, search, options, expandable = ["v1"], state}) => {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [sortField, setSortField] = useState('');
@@ -24,8 +26,8 @@ const ProjectTableComponent = ({projectStatuses, mode, search, options, state}) 
     const [expandedRowKeys, setExpandedRowKeys] = useState();
     const [currentSort, setCurrentSort] = useState({});
     const [column, setColumn] = useState();
-     const onExpand = (value) => {
-          setExpandedRowKeys((expandedRowKeys === value) ?  null : value);
+    const onExpand = (value) => {
+        setExpandedRowKeys((expandedRowKeys === value) ? null : value);
     }
     useEffect(() => {
         setColumn(
@@ -52,28 +54,44 @@ const ProjectTableComponent = ({projectStatuses, mode, search, options, state}) 
 
     const ExpandedRowRenderComponent = ({project}) => {
         const [editModalStatus, setEditModalStatus] = useState();
-
         return (
             <>
                 <Space.Compact direction={"horizontal"}>
-                    <TableStagesComponent data-permission={"read-project-stage"} project={project}
-                                          setEditModalStatus={() => setEditModalStatus("stages")}/>
-                    <TableIrdsComponent data-permission={"read-project-ird"} project={project}
-                                        setEditModalStatus={() => setEditModalStatus("irds")}/>
-                    <TableExecutorsComponent data-permission={"read-project-task-executor"}
-                                             project={project}
-                                             setEditModalStatus={() => setEditModalStatus("executor")}/>
-                </Space.Compact>
+                    {expandable.includes("v1") && (
+                        <>
+                            <TableStagesComponent data-permission={"read-project-stage"} project={project}
+                                                  setEditModalStatus={() => setEditModalStatus("stages")}/>
+                            <TableIrdsComponent data-permission={"read-project-ird"} project={project}
+                                                setEditModalStatus={() => setEditModalStatus("irds")}/>
+                            <TableExecutorsComponent data-permission={"read-project-task-executor"}
+                                                     project={project}
+                                                     setEditModalStatus={() => setEditModalStatus("executor")}/>
+                        </>
+                    )}
+                    {expandable.includes("tasks") && (
 
+                        <TableProjectTasksManagment
+                            data-permission={"read-project-task-executor"}
+                            project={project}
+                            setEditModalStatus={() => setEditModalStatus("tasks")}/>
+                    )}
+                    {expandable.includes("executor_orders") && (
+
+                        <TablePaymentExecutorOrdersComponent
+                            data-permission={"read-project-task-executor"}
+                            project={project}
+                            setEditModalStatus={() => setEditModalStatus("executor_orders")}/>
+                    )}
+                </Space.Compact>
                 <Modal
                     key={nanoid()}
                     open={editModalStatus}
                     onCancel={() => setEditModalStatus(null)}
                     footer={null}
                     title={getNameModalView(editModalStatus)}
- 
+
                     width={"max-content"}
- 
+
                     onClose={() => setEditModalStatus(null)}
                 >
                     {renderEditModalContent({
@@ -103,8 +121,6 @@ const ProjectTableComponent = ({projectStatuses, mode, search, options, state}) 
             console.log("queri IPA", data);
         }
     });
-
- 
 
 
     const getNameModalView = (type) => {

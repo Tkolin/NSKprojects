@@ -47,7 +47,6 @@ extend type Mutation {
         projectId: ID!
         statusKey: String!
         dateStart: String
-
     ): Project @checkRole(permission:  ["update-project-ird"])
     projectStagesSync(
         items: [StageToProjectInput]!
@@ -77,6 +76,10 @@ extend type Mutation {
         employeesIds: [ID]
         stageNumber: Int
     ): [ProjectTask] @checkRole(permission:  ["update-project-task-executor"])
+
+    projectTaskUp(
+        taskId: ID!
+    ): ProjectTask @checkRole(permission:  ["update-project-ird"])
 }
 #-INPUTS:
 input TaskToProjectStructureInput  {

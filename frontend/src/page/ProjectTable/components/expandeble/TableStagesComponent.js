@@ -1,12 +1,8 @@
 import {Space, Table, Tooltip, Typography} from "antd";
 import React from "react";
-import StagesProjectFileDownload from "../../../components/script/fileDownloadScripts/StagesProjectFileDownload";
 import {DownloadOutlined, EditOutlined} from "@ant-design/icons";
 import Link from "antd/es/typography/Link";
-import {
-    rebuildProjectResultQuery,
-    rebuildStagesResultQuery
-} from "../../../components/script/rebuildData/ProjectRebuilderQuery";
+
 import PaymentInvoiceProjectDownload
     from "../../../components/script/fileDownloadScripts/PaymentInvoiceProjectDownload";
 import ActRenderingProjectDownload from "../../../components/script/fileDownloadScripts/ActRenderingProjectDownload";
@@ -17,11 +13,8 @@ const TableStagesComponent = ({setEditModalStatus, project}) => {
     const columnsStages = [{
         title:
             <Space>
-                <Tooltip title={"График выполнения работ"}>
-                    <Text style={{marginRight: 10}}>Список Этапов</Text>
-                    {project.date_signing && (
-                        <StagesProjectFileDownload style={{color: "green"}} text={<DownloadOutlined/>}
-                                                   projectId={project.id}/>)}
+                <Tooltip title={"Список ИРД"}>
+                    <Text style={{marginRight: 10}}>Список этапы</Text>
                 </Tooltip>
                 <Link type={"warning"}>
                     <EditOutlined
