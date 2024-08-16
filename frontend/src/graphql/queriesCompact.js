@@ -131,8 +131,8 @@ export const PERSONS_QUERY_COMPACT = gql`
             items {
                 id
                 passport{
-                    firstname
-                    lastname
+                    first_name
+                    last_name
                     patronymic
                     birth_date
                 }

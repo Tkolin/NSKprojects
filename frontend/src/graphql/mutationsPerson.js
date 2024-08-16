@@ -6,8 +6,8 @@ export const DELETE_PERSON_MUTATION = gql`
             id: $id
         ) {
             passport{
-                firstname
-                lastname
+                first_name
+                last_name
                 patronymic
                 serial
                 number
@@ -44,8 +44,8 @@ export const ADD_PERSON_MUTATION = gql`
             data: $data
         ) {
             passport{
-                firstname
-                lastname
+                first_name
+                last_name
                 patronymic
                 serial
                 number
@@ -85,8 +85,8 @@ export const UPDATE_PERSON_MUTATION = gql`
             data: $data
         ) {
             passport{
-                firstname
-                lastname
+                first_name
+                last_name
                 patronymic
                 serial
                 number

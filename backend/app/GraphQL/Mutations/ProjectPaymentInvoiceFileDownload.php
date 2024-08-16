@@ -15,31 +15,43 @@ final readonly class ProjectPaymentInvoiceFileDownload
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
 
-            $projectData = Project::with('organization_customer')
-                ->with('type_project_document')
-                ->with('type_project_document.group')
-                ->with('type_project_document.group.technical_specification')
-                ->with('project_facilitys')
-                ->with('status')
-                ->with('project_delegations')
-                ->with('project_irds.ird')
-                ->with('project_stages.stage')
-                ->find($args["projectId"]);
+        $projectData = Project::with('organization_customer')
+            ->with('type_project_document')
+            ->with('type_project_document.group')
+            ->with('type_project_document.group.technical_specification')
+            ->with('project_facilitys')
+            ->with('status')
+            ->with('project_delegations')
+            ->with('project_irds.ird')
+            ->with('project_stages.stage')
+            ->find($args["projectId"]);
 
 
-            if (!$projectData) {
-                throw new Exception('Проект не найден');
-            }
+        if (!$projectData) {
+            throw new Exception('Проект не найден');
+        }
+        if (!isset($args["stageNumber"])) {
+            throw new Exception('Этап не указан');
+        }
+
+        $projectGenerator = new PaymentInvoiceTemplateGeneratorService();
+
+        if (isset($args['isPrepayment']) && $args['isPrepayment']) {
+            error_log("Аванс") && $contractFilePath = $projectGenerator->generate([
+                'project' => $projectData,
+                'stageNumber' => null,
+                'isPrepayment' => false,
+            ]);
+        } else {
+            error_log("Не Аванс") && $contractFilePath = $projectGenerator->generate([
+                'project' => $projectData,
+                'stageNumber' => $args["stageNumber"],
+                'isPrepayment' => false,
+            ]);
+        }
 
 
-            $projectGenerator = new PaymentInvoiceTemplateGeneratorService();
-            if (isset($args['isPrepayment']) && $args['isPrepayment'])
-                error_log("Аванс") && $contractFilePath = $projectGenerator->generate($projectData, null, true);
-            else
-                error_log("Не Аванс") && $contractFilePath = $projectGenerator->generate($projectData, $args["stage_number"], false);
-
-            return ['url' => $contractFilePath];
-
+        return ['url' => $contractFilePath];
 
 
     }

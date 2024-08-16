@@ -24,12 +24,11 @@ export const ExecutorOrdersTable = ({executorOrders, onUpdated}) => {
         key: "orderNumber",
         render: (record, text) => (
             <Space.Compact>
-                {record?.contract_file_id ?
+                {record?.signed_file_id ?
                     (
                         <Space.Compact direction={"vertical"}>
-                            <LinkToDownload fileId={record.contract_file_id}>Скачать (подписан)</LinkToDownload>
+                            <LinkToDownload fileId={record.signed_file_id}>Скачать (подписан)</LinkToDownload>
                             <Text type={"secondary"}>{record.date_attachment}</Text>
-
                         </Space.Compact>
                     ) :
                     (<Space.Compact direction={"vertical"}>

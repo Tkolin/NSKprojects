@@ -27,15 +27,18 @@ const PersonForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
-
+    useEffect(() => {
+        console.log("initialObject", initialObject)
+    }, [initialObject]);
     const nameModel = 'Подрядчики';
     const TokenDADATA = process.env.REACT_APP_TOKEN_DADATAADDRESS;
     const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
     const [loadContact, {loading, data}] = useLazyQuery(PERSONS_QUERY_BY_ID, {
         variables: {id: initialObject?.id},
         onCompleted: (data) => {
-            setActualObject(data?.contacts?.items[0]);
-            updateForm(data?.contacts?.items[0]);
+
+            setActualObject(data?.persons?.items[0]);
+            updateForm(data?.persons?.items[0]);
         },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
@@ -110,8 +113,8 @@ const PersonForm = ({localObject, initialObject, onCompleted, cardProps}) => {
         const formData = form.getFieldsValue();
 
         const data = {
-            firstname: formData.firstname,
-            lastname: formData.lastname,
+            first_name: formData.first_name,
+            last_name: formData.last_name,
             patronymic: formData.patronymic,
             serial: formData.serial,
             number: formData.number,
@@ -168,10 +171,12 @@ const PersonForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                               <Row gutter={50}>
                                   <Col span={12}>
                                       <Divider orientation={"left"}>ФИО:</Divider>
-                                      <Form.Item name="lastname" label="Фамилия" rules={[{required: true, message: "Укажите фамилию"}]}>
+                                      <Form.Item name="last_name" label="Фамилия"
+                                                 rules={[{required: true, message: "Укажите фамилию"}]}>
                                           <Input/>
                                       </Form.Item>
-                                      <Form.Item name="firstname" label="Имя" rules={[{required: true, message: "Укажите имя"}]}>
+                                      <Form.Item name="first_name" label="Имя"
+                                                 rules={[{required: true, message: "Укажите имя"}]}>
                                           <Input/>
                                       </Form.Item>
                                       <Form.Item name="patronymic" label="Отчество">

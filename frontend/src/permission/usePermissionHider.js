@@ -5,7 +5,6 @@ const usePermissionHider = () => {
     const permissions = usePermissions();
 
     useEffect(() => {
-        console.log("Fdafdafadfda");
         const elements = document.querySelectorAll('[data-permission]');
         elements.forEach((element) => {
             const requiredPermissions = element.getAttribute('data-permission').split(',').map(p => p.trim());

@@ -10,6 +10,7 @@ import {
 } from "../../components/style/SearchAutoCompleteStyles";
 import {StyledButtonRed} from "../../components/style/ButtonStyles";
 import {AutoCompleteFormItem} from "../../components/CustomForm";
+import {CustomDatePicker} from "../../components/FormattingDateElementComponent";
 
 const IrdItem = ({
                      onChange,
@@ -72,7 +73,7 @@ const IrdItem = ({
                         <Form.Item
                             name={[index, 'received_date']}
                             style={{marginBottom: 0, width: "100%"}}>
-                            <DatePicker
+                            <CustomDatePicker
                                 style={{marginBottom: 0, width: "100%"}}
                                 onChange={() => onChange && onChange()}
                                 status={"warning"}

@@ -31,6 +31,19 @@
     color: #61dafb;
 }
 
+.fix_ant-table-wrapper {
+    margin-left: 0px !important;
+}
+
+.fix_ant-table-wrapper
+.ant-table {
+    margin-left: 0px !important;
+}
+
+.ant-table {
+    margin-left: 0px !important;
+}
+
 @keyframes App-logo-spin {
     from {
         transform: rotate(0deg);

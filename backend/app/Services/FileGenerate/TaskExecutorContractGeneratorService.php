@@ -10,43 +10,39 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use PhpOffice\PhpWord\TemplateProcessor;
 
-class TaskExecutorContractGeneratorService
+class TaskExecutorContractGeneratorService extends DocumentGeneratorService
 {
-    private static function getOrganizationData()
+
+
+    public function __construct($isStamp = false)
     {
-        return Organization
-            ::with('legal_form')
-            ->with('employees')
-            ->with('bik')
-            ->find(0);
+        $templatePath = storage_path('app/templates/PersonContractToProject.docx');
+        parent::__construct($templatePath);
     }
 
-    public static function formatWithLeadingZeros(int $number, int $length): string
+
+    public function generate(array $data)
     {
-        return str_pad((string)$number, $length, '0', STR_PAD_LEFT);
-    }
+        // Проверка, что все ключи существуют
+        if (!isset($data['projectData'], $data['personData'], $data['projectTasksData'], $data['numberOrders'])) {
+            throw new \Exception('Не все необходимые данные предоставлены.');
+        }
+        // Извлечение данных
 
-    public static function generate($projectData, $personData, $projectTasksData, $numberOrders)
-    {
-        // Получение данных об организации
-        $myOrg = self::getOrganizationData();
+        $projectData = $data['projectData'];
+        $personData = $data['personData'];
+        $projectTasksData = $data['projectTasksData'];
+        $numberOrders = $data['numberOrders'];
 
-
-        // Получение пути к шаблону документа
-        $templateFilePath = storage_path('app/templates/PersonContractToProject.docx');
-        $date = date('Y-m-d');
-         // Создание временного файла копии шаблона
-        $tempFilePath = tempnam(sys_get_temp_dir(), 'contractToProject');
-        copy($templateFilePath, $tempFilePath);
+        // Добор данных
+        $myOrg = FormatterService::getMyOrg();
 
         $contractPrice = 0;
-
         foreach ($projectTasksData as $projectTask) {
-                $contractPrice += $projectTask->price;
+            $contractPrice += $projectTask->price;
         }
 
         // Загрузка шаблона в PhpWord
-        $templateProcessor = new TemplateProcessor($tempFilePath);
         $date = date('Y-m-d');
 
         $dateComponents = explode('-', $date);
@@ -61,17 +57,20 @@ class TaskExecutorContractGeneratorService
         $sumPrice = 0.0;
 
         foreach ($projectTasksData as $key => $value) {
-            $projectTasksNames .= " ".$value['task']['name'] . ",";
-            $projectTasksToDateEnd .=  " ".$value['task']['name'] . " (начало работ: ".( (new \DateTime($value['date_start']))->format('d.m.Y') ?? "___")." - окончание работ: ". ( (new \DateTime($value['date_end']))->format('d.m.Y') ?? "___"). "),";
-            $projectTasksToPrice .= " ".$value['task']['name'] . " (".($value['price'] ?? "-")."),";
+            $projectTasksNames .= " " . $value['task']['name'] . ",";
+            $projectTasksToDateEnd .= " " . $value['task']['name'] . " (начало работ: " . ((new \DateTime($value['date_start']))->format('d.m.Y') ?? "___") . " - окончание работ: " . ((new \DateTime($value['date_end']))->format('d.m.Y') ?? "___") . "),";
+            $projectTasksToPrice .= " " . $value['task']['name'] . " (" . ($value['price'] ?? "-") . "),";
             $sumPrice += $value['price'];
         }
-        $projectTasksNames = substr($projectTasksNames,0,-1);
-        $projectTasksToDateEnd = substr($projectTasksToDateEnd,0,-1);
-        $projectTasksToPrice = substr($projectTasksToPrice,0,-1);
+        $projectTasksNames = substr($projectTasksNames, 0, -1);
+        $projectTasksToDateEnd = substr($projectTasksToDateEnd, 0, -1);
+        $projectTasksToPrice = substr($projectTasksToPrice, 0, -1);
 
-        $orderNumber = self::formatWithLeadingZeros($projectData->id, 3) . "-" . self::formatWithLeadingZeros($personData->id, 3) . "-" . "240" . self::formatWithLeadingZeros($numberOrders, 3);
-        $replacements = [
+        $orderNumber = FormatterService::formatWithLeadingZeros($projectData->id, 3) . "-" .
+            FormatterService::formatWithLeadingZeros($personData->id, 3) . "-" . "240" .
+            FormatterService::formatWithLeadingZeros($numberOrders, 3);
+
+        $this->replacements = [
             'day' => $day,
             'month' => $month,
             'year' => $year,
@@ -79,7 +78,7 @@ class TaskExecutorContractGeneratorService
 
             'myOrg.name' => $myOrg['name'],
             'myOrg.full_name' => $myOrg['full_name'],
-            'myOrg.director.FullName' => $myOrg['director']['last_name'] . ' ' . $myOrg['director']['first_name'] . ' ' . $myOrg['director']['patronymic'],
+            'myOrg.director.FullName' => FormatterService::getFullNameInArray($myOrg['director']),
             'myOrg.INN' => $myOrg['INN'],
             'myOrg.payment_account' => $myOrg['payment_account'],
             'myOrg.BIK.name' => $myOrg['BIK']['name'],
@@ -89,22 +88,21 @@ class TaskExecutorContractGeneratorService
             'myOrg.address_mail' => $myOrg['address_mail'],
             'myOrg.office_number_legal' => $myOrg['office_number_legal'],
             'myOrg.office_number_mail' => $myOrg['office_number_mail'],
-            'person.passport.serial' => $personData['passport']['serial'] ?? ' ',
-            'person.passport.number' => $personData['passport']['number'] ?? ' ',
-            'person.passport.date' => $personData['passport']['date'] ?? ' ',
-            'person.passport.birth_date' => $personData['passport']['birth_date'] ?? ' ',
-            'person.passport.passport_place_issue.name' => $personData['passport']['passport_place_issue']['name'] ?? ' ',
-            'person.passport.address_registration' => $personData['passport']['address_registration'] ?? ' ',
+            'person.passport.serial' => $personData['passport']['serial'],
+            'person.passport.number' => $personData['passport']['number'],
+            'person.passport.date' => $personData['passport']['date'],
+            'person.passport.birth_date' => $personData['passport']['birth_date'] ?? null,
+            'person.passport.passport_place_issue.name' => $personData['passport']['passport_place_issue']['name'],
+            'person.passport.address_registration' => $personData['passport']['address_registration'] ?? null,
             'person.INN' => $personData['INN'],
             'person.SNILS' => $personData['SHILS'],
-            'person.BIK.name' => isset($personData['BIK']) ? $personData['BIK']['name'] : ' ',
-            'person.BIK.bik' => isset($personData['BIK']) ? $personData['BIK']['BIK'] : ' ',
+            'person.BIK.name' => isset($personData['BIK']) ? $personData['BIK']['name'] : null,
+            'person.BIK.bik' => isset($personData['BIK']) ? $personData['BIK']['BIK'] : null,
             'person.BIK.correspondent_account' => isset($personData['BIK']) ? $personData['BIK']['correspondent_account'] : ' ',
             'person.payment_account' => $personData['payment_account'],
-            'myOrg.director.ShortFullName' => $myOrg['director']['last_name'] . ' ' . substr((string)$myOrg['director']['first_name'], 0, 2) . '.' . substr((string)$myOrg['director']['patronymic'], 0, 2) . '.',
-            'person.FullName' => $personData['passport']['lastname'] . ' ' . $personData['passport']['firstname'] . ' ' . $personData['passport']['patronymic'],
-            'person.ShortFullName' => $personData['passport']['lastname'] . ' ' . substr((string)$personData['passport']['firstname'], 0, 2) . '.' . substr((string)$personData['passport']['patronymic'], 0, 2) . '.',
-
+            'myOrg.director.ShortFullName' => FormatterService::getFullNameInArray($myOrg['director'], true),
+            'person.FullName' => FormatterService::getFullNameInArray($personData['passport']),
+            'person.ShortFullName' => FormatterService::getFullNameInArray($myOrg['director'], true),
             'project_tasks.names' => $projectTasksNames,
             'project_tasks.names_to_date_end' => $projectTasksToDateEnd,
             'project_tasks.names_to_price' => $projectTasksToPrice,
@@ -113,18 +111,15 @@ class TaskExecutorContractGeneratorService
 
             'total_price' => $sumPrice . ".00 руб.",
         ];
+        $this->checkReplacements();
+        $this->replaceValues();
 
-        foreach ($replacements as $key => $value) {
-            $templateProcessor->setValue($key, $value);
-        }
 
-        $fileName = Str::random( 30).'_'.$orderNumber . '_ДОГОВОР_С_ИСПОЛНИТЕЛЕМ' . '.docx'; // 'Договор_с_исполнителем.docx';
+        //  Сохранение файла
+        $this->saveDocument($orderNumber . '_ДОГОВОР_С_ИСПОЛНИТЕЛЕМ.docx');
+        $storagePath = "/" . $projectData->path_project_folder . "/Договора_с_исполнителями/" . $this->fileName;
 
-        // Сохраняем отредактированный документ
-        $filePath = storage_path('app/' . $fileName);
-        $templateProcessor->saveAs($filePath);
-        $storagePath = "/" . $projectData->path_project_folder . "/Договора_с_исполнителями/" . $fileName;
-        $file = FileCreateService::saveFileToProject($storagePath, $filePath, $fileName);
+        $file = $this->saveFileToExecutorOrder($storagePath, $this->filePath, $this->fileName);
 
         // Создание записи о заказе в базе данных
         $executorOrder = ExecutorOrder::create([
@@ -135,12 +130,11 @@ class TaskExecutorContractGeneratorService
             'original_file_id' => $file->id,
         ]);
         $taskIds = $projectTasksData->pluck('id')->toArray();
-
         $executorOrder->project_tasks()->attach($taskIds);
         // Удаление временного файла
-        unlink($filePath);
+        //unlink($filePath);
 
-        return $fileName;
+        return $this->fileName;
     }
 
 

@@ -112,28 +112,12 @@ const App = () => {
                                 <Route path="/project" element={<Home/>}/>
 
                                 <Route path="/project/extra" element={<ProjectTable
-                                    projectStatuses={[
-                                        "APPROVAL_AGREEMENT",
-                                        "APPROVAL_KP",
-                                        "COMPLETED",
-                                        "DESIGN_REQUEST",
-                                        "WAITING_SOURCE",
-                                        "WORKING"]}
-                                    legendOptions={[
-
-                                        "APPROVAL_AGREEMENT",
-                                        "APPROVAL_KP",
-                                        "COMPLETED",
-                                        "DESIGN_REQUEST",
-                                        "WAITING_SOURCE",
-                                        "WORKING"]}
-
-                                    columnOptions={["progress", "tool", "main", "customer", "status", "price"]}/>}/>
+                                    mode={"all"}/>}
+                                />
 
                                 <Route path="/project/request" element={<Home/>}/>
                                 <Route path="/project/request/table"
-                                       element={<ProjectTable projectStatuses={["DESIGN_REQUEST"]}
-                                                              columnOptions={["main", "customer", "request_tools"]}/>}/>
+                                       element={<ProjectTable mode={"request"}/>}/>
                                 <Route path="/project/request/form" element={
                                     <Space style={{width: "100%", justifyContent: "center"}} children={
                                         <RequestForm/>
@@ -142,26 +126,18 @@ const App = () => {
 
                                 <Route path="/project/kp" element={<Home/>}/>
                                 <Route path="/project/kp/table"
-                                       element={<ProjectTable projectStatuses={["APPROVAL_KP"]}
-                                                              columnOptions={["main", "customer", "kp_tools"]}/>}/>
+                                       element={<ProjectTable modes={"kp"}/>}/>
                                 <Route path="/project/kp/form" element={<Home/>}/>
 
                                 <Route path="/project/contract" element={<Home/>}/>
                                 <Route path="/project/contract/table"
-                                       element={<ProjectTable
-                                           projectStatuses={[
-                                               "APPROVAL_AGREEMENT"]}
-                                           legendOptions={[
-                                               "APPROVAL_AGREEMENT"]}
-                                           columnOptions={["progress", "contract_tools", "main", "customer", "status", "price"]}/>}
+                                       element={<ProjectTable mode={"contract"}/>}
                                 />
                                 <Route path="/project/contract/form" element={<Home/>}/>
 
                                 <Route path="/project/work" element={<Home/>}/>
                                 <Route path="/project/work/table"
-                                       element={<ProjectTable projectStatuses={["WORKING"]}
-                                                              expandableOptions={["tasks"]}
-                                                              columnOptions={["progress", "working_tools", "main", "customer", "status", "price"]}/>}/>
+                                       element={<ProjectTable mode={'work'}/>}/>
 
                                 <Route path="/project/work/form" element={<Home/>}/>
                                 {/*Учётки*/}
@@ -169,9 +145,7 @@ const App = () => {
                                 <Route path="/user/role/table" element={<RoleTable/>}/>
 
                                 <Route path="/bookeep/executor_order_table"
-                                       element={<ProjectTable projectStatuses={["WORKING"]}
-                                                              expandableOptions={["executor_orders"]}
-                                                              columnOptions={["progress", "working_tools", "main", "customer", "status", "price"]}/>}/>
+                                       element={<ProjectTable mode={"executor_order"}/>}/>
 
                                 <Route path="/auth/register" element={<RegisterForm/>}/>
                                 <Route path="/auth/login" element={

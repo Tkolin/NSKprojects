@@ -1,10 +1,11 @@
 import {Button, notification, Typography} from "antd";
 import {useMutation} from "@apollo/client";
- import {DOWNLOAD_FILE} from "../../../graphql/mutationsFile";
+import {DOWNLOAD_FILE} from "../../../graphql/mutationsFile";
+import {cloneElement} from "react";
 
 const {Link} = Typography;
 
-const LinkToDownload = ({children, fileId, ...props}) => {
+const LinkToDownload = ({children, fileId, disabled, ...props}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
     const openNotification = (placement, type, message) => {
         notification[type]({
@@ -23,8 +24,10 @@ const LinkToDownload = ({children, fileId, ...props}) => {
         },
     });
     const handleDownload = () => {
+        if (disabled)
+            return false;
         console.log(fileId);
-         downloadFile({ variables: { id: fileId } });
+        downloadFile({variables: {id: fileId}});
     };
 
 
@@ -41,6 +44,8 @@ const LinkToDownload = ({children, fileId, ...props}) => {
         }
     };
 
-    return <Button loading={loading}    onClick={()=>handleDownload()} {...props}>{children}</Button>
+    return (<div onClick={() => handleDownload()} {...props}>
+        {children}
+    </div>)
 }
 export default LinkToDownload;

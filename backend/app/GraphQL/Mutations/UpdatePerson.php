@@ -12,8 +12,8 @@ final readonly class UpdatePerson
     {
         $data = $args["data"];
         $passportData = [
-            'firstname' => $data['firstname'] ?? null,
-            'lastname' => $data['lastname'] ?? null,
+            'first_name' => $data['firstName'] ?? null,
+            'last_name' => $data['lastName'] ?? null,
             'patronymic' => $data['patronymic'] ?? null,
             'serial' => $data['serial'] ?? null,
             'number' => $data['number'] ?? null,

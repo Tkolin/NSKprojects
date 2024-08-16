@@ -212,8 +212,8 @@ export const PROJECT_TASKS_DETAIL_UPDATE = gql`
                 id
                 passport {
                     id
-                    firstname
-                    lastname
+                    first_name
+                    last_name
                     patronymic
                 }
             }
@@ -235,8 +235,8 @@ export const PROJECT_TASKS_STRUCTURE_UPDATE = gql`
                 executor {
                     id
                     passport {
-                        firstname
-                        lastname
+                        first_name
+                        last_name
                         patronymic
                     }
                 }

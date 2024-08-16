@@ -19,7 +19,7 @@ const GenerateOrderForm = ({executorOrders, projectTasks, onCompleted}) => {
             openNotification('topRight', 'success', `Данные обновлены`);
             },
         onError: (error) => {
-            openNotification('topRight', 'success', `Ошибка: ` + error.message);
+            openNotification('topRight', 'error', 'Ошибка при загрузке: ' + error.graphQLErrors?.flatMap(row => row?.extensions?.debugMessage));
         }
     });
     const handleSubmit = () => {

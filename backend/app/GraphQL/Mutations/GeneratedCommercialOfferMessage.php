@@ -15,7 +15,6 @@ final readonly class GeneratedCommercialOfferMessage
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
-
         $projectId = $args["projectId"];
         $dateOffer = $args["dateOffer"];
         $delegationId = $args["delegationId"];
@@ -24,14 +23,15 @@ final readonly class GeneratedCommercialOfferMessage
         $projectData = Project::with('organization_customer')
             ->where('id', $projectId)
             ->first();
-
         $delegationData = Contact::find($delegationId);
 
-        error_log('======================================');
-
         // Генерация файла
-        $projectGenerator = new CommercialOfferMessageGeneratorService();
-        $contractFilePath = $projectGenerator->generate($projectData, $delegationData, $dateOffer);
+        $contractFilePath = (new CommercialOfferMessageGeneratorService)->generate([
+            'projectData' => $projectData,
+            'delegationData' => $delegationData,
+            'dateOffer' => $dateOffer,
+        ]);
+
         return ['url' => $contractFilePath];
     }
 }

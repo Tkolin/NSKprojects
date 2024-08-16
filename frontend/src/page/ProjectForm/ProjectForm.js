@@ -15,7 +15,11 @@ import {
     TYPES_PROJECTS_QUERY_COMPACT
 } from "../../graphql/queriesCompact";
 
-import {CustomAutoComplete, CustomAutoCompleteAndCreate} from "../components/style/SearchAutoCompleteStyles";
+import {
+    CustomAutoComplete,
+    CustomAutoCompleteAndCreate,
+    CustomAutoCompleteAndCreateWitchEdit
+} from "../components/style/SearchAutoCompleteStyles";
 
 import FacilitiesTreeComponent from "./components/FacilitiesTreeComponent";
 import DateRangePickerComponent from "../components/DateRangePickerComponent";
@@ -31,20 +35,6 @@ import {AutoCompleteFormItem} from "../components/CustomForm";
 import {nanoid} from "nanoid";
 import TypeProjectForm from "../simplesForms/TypeProjectForm";
 
-//TODO: Перевести в TS
-// _sKey1
-// name
-// type_project_document
-// organization_customer
-// facility_id
-// date_range
-// status_id
-// price
-// prepayment
-//
-//
-//
-//
 
 
 const ProjectForm = ({
@@ -269,12 +259,15 @@ const ProjectForm = ({
                                                 style={disabledOptions?.includes("organization_customer") ? {display: "none"} : {}}
                                                 rulesValidationRequired={requiredOptions?.includes("organization_customer")}
                                                 rulesValidationMessage={"Укажите организацию заказчика"}>
-                              <CustomAutoCompleteAndCreate
+                              <CustomAutoCompleteAndCreateWitchEdit
                                   onChange={(value) => handleChangeCustomer(value)}
                                   loading={loadingOrganizations}
                                   disabled={disabledOptions?.includes("organization_customer")}
                                   firstBtnOnClick={() => {
                                       setOrganizationsModalStatus("add");
+                                  }}
+                                  secondBtnOnClick={() => {
+                                      setOrganizationsModalStatus("edit");
                                   }}
                                   data={dataOrganizations?.organizations?.items}
                               />
@@ -397,7 +390,7 @@ const ProjectForm = ({
                                       setOrganizationsModalStatus(null);
                                       setSelectedOrganizationId(value.id);
                                   }}
-                                  initialObject={organizationsModalStatus?.organization_id ? {id: organizationsModalStatus?.organization_id} : null}
+                                  initialObject={organizationsModalStatus === "edit" ? {id: selectedOrganizationId} : null}
                               />
                           }
                       />

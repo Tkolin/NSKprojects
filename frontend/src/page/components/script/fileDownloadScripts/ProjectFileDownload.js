@@ -3,10 +3,11 @@ import {Button, DatePicker, notification, Popconfirm, Typography} from 'antd';
 import {CONTRACT_PROJECT_DOWNLOAD, PROJECT_CONTRACT_GENERATED} from "../../../../graphql/mutationsProject";
 import dayjs from "dayjs";
 import {useState} from "react";
+import {CustomDatePicker} from "../../FormattingDateElementComponent";
 
 const {Text, Link} = Typography;
 
-const ProjectFileDownload = ({projectId, children,...props}) => {
+const ProjectFileDownload = ({projectId, children, ...props}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
     const [selectedDateContract, setSelectedDateContract] = useState();
 
@@ -25,12 +26,13 @@ const ProjectFileDownload = ({projectId, children,...props}) => {
                 загрузки...</Link></Text>);
         },
         onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при загрузке: ' + error.message);
+
+            openNotification('topRight', 'error', 'Ошибка при загрузке: ' + error.graphQLErrors?.flatMap(row => row?.extensions?.debugMessage));
         },
     });
 
     const handleDownload = () => {
-        if(!selectedDateContract) {
+        if (!selectedDateContract) {
             openNotification('topRight', 'error', 'Дата не указана');
             return;
         }
@@ -38,27 +40,12 @@ const ProjectFileDownload = ({projectId, children,...props}) => {
         downloadProjectContract({variables: {id: projectId, dateCreateContract: selectedDateContract}});
     };
 
-    // const handleDownloadClick = async (downloadedFileUrl) => {
-    //     try {
-    //         const link = document.createElement('a');
-    //         console.log(link);
-    //
-    //         link.href = `${LaravelURL}download-project/${downloadedFileUrl}`;
-    //
-    //         link.download = 'contract.docx';
-    //         document.body.appendChild(link);
-    //         link.click();
-    //         document.body.removeChild(link);
-    //     } catch (error) {
-    //         console.error('Ошибка при скачивании файла:', error);
-    //     }
-    // };
 
     return (
         <Popconfirm
             placement="topLeft"
             title={"Уточните дату договора"}
-            description={<DatePicker
+            description={<CustomDatePicker
                 placement={"Выберите дату..."}
                 onChange={(value) => setSelectedDateContract(value && dayjs(value).format("YYYY-MM-DD"))}
             />}

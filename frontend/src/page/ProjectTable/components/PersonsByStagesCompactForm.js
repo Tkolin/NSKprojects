@@ -27,13 +27,15 @@ const PersonsByStagesCompactForm = ({tasks,projectId,stageNumber, onCompleted}) 
             form.setFieldsValue({
                 executorsList: uniqueExecutors.map((row) =>  ({executor: {
                     selected: row.id,
-                    output: row.passport.lastname + " " + row.passport.firstname + " " + row.passport.patronymic}
+                        output: row.passport.last_name + " " + row.passport.first_name + " " + row.passport.patronymic
+                    }
                 }))
             });
 
             console.log('Unique Executors List:', uniqueExecutors.map((row) => ({executor: {
                 selected: row.id,
-                output: row.passport.lastname + " " + row.passport.firstname + " " + row.passport.patronymic}
+                    output: row.passport.last_name + " " + row.passport.first_name + " " + row.passport.patronymic
+                }
             })));
         }
     }, [tasks]);

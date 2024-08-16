@@ -263,15 +263,15 @@ class NCLNameCaseCore extends NCL
 
     /**
      * В массив <var>$this->words</var> добавляется новый об’єкт класса NCLNameCaseWord
-     * со словом <var>$firstname</var> и пометкой, что это имя
-     * @param string $firstname имя
+     * со словом <var>$first_name</var> и пометкой, что это имя
+     * @param string $first_name имя
      * @return NCLNameCaseCore
      */
-    public function setFirstName($firstname = "")
+    public function setFirstName($first_name = "")
     {
-        if ($firstname) {
+        if ($first_name) {
             $index = count($this->words);
-            $this->words[$index] = new NCLNameCaseWord($firstname);
+            $this->words[$index] = new NCLNameCaseWord($first_name);
             $this->words[$index]->setNamePart('N');
             $this->notReady();
         }

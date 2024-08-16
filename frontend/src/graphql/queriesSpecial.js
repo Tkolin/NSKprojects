@@ -33,6 +33,9 @@ export const EXECUTOR_ORDERS_QUERY = gql`
             date_generate
             date_order
             date_attachment
+            is_tasks_completed
+            is_project_completed
+            payment_file_completed
             number
             original_file_id
             signed_file_id
@@ -40,7 +43,7 @@ export const EXECUTOR_ORDERS_QUERY = gql`
                 id
                 project_id
             }
-            payments {
+            executor_order_payments {
                 id
                 file_id
                 status
@@ -53,6 +56,9 @@ export const EXECUTOR_ORDERS_PROJECT_QUERY = gql`
         executorOrders(projectId: $projectId
         ) {
             id
+            is_tasks_completed
+            payment_file_completed
+            is_project_completed
             date_generate
             date_order
             date_attachment
@@ -72,13 +78,13 @@ export const EXECUTOR_ORDERS_PROJECT_QUERY = gql`
                     id
                     passport {
                         id
-                        firstname
-                        lastname
+                        first_name
+                        last_name
                         patronymic
                     }
                 }
             }
-            payments {
+            executor_order_payments {
                 id
                 file_id
                 status

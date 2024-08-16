@@ -63,7 +63,8 @@ final readonly class GeneratedExecutorOrder
 
         // Генерация файла
         $projectGenerator = new TaskExecutorContractGeneratorService();
-        $contractFilePath = $projectGenerator->generate($projectData, $personData, $projectTasksData,  $numberOrders);
+        $contractFilePath = $projectGenerator->generate([
+            'projectData' => $projectData, 'personData' => $personData, 'projectTasksData' => $projectTasksData, 'numberOrders' => $numberOrders]); // $projectData, $personData, $projectTasksData,  $numberOrders);
         return ['url' => $contractFilePath];
     }
 }

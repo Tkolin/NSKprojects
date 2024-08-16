@@ -57,8 +57,8 @@ const TaskProjectForm = ({
     useEffect(() => {
         console.log("personsList", personsList?.persons?.items.map(row => ({
             id: row.id,
-            firstname: row.passport.firstname,
-            lastname: row.passport.lastname,
+            first_name: row.passport.first_name,
+            last_name: row.passport.last_name,
             patronymic: row.passport.patronymic,
         })));
     }, [personsList]);
@@ -73,7 +73,8 @@ const TaskProjectForm = ({
                 price: taskToProject.price,
                 executor: taskToProject?.executor ? {
                     selected: taskToProject?.executor?.id,
-                    output: taskToProject?.executor?.passport?.lastname ?? null + " " + taskToProject?.executor?.passport?.firstname ?? null + " " + taskToProject?.executor?.passport?.patronymic ?? null,
+                    output: taskToProject?.executor?.passport?.lastname ?? null + " " +
+                        taskToProject?.executor?.passport?.first_name ?? null + " " + taskToProject?.executor?.passport?.patronymic ?? null,
                 } : null,
                 description: taskToProject.description
             })
@@ -147,8 +148,8 @@ const TaskProjectForm = ({
                                   style={{width: "100%", maxWidth: "100%"}}
                                   data={personsList?.persons?.items.map(row => ({
                                       id: row.id,
-                                      firstname: row.passport.firstname,
-                                      lastname: row.passport.lastname,
+                                      first_name: row.passport.first_name,
+                                      last_name: row.passport.last_name,
                                       patronymic: row.passport.patronymic,
                                   }))}
                                   onChange={() => console.log("1 CustomAutoComplete")}

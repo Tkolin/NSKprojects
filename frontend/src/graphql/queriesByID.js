@@ -16,8 +16,8 @@ export const EMPLOYEES_TO_TASK_BY_PROJECT_TASK_ID = gql`
                     id
                     passport {
                         id
-                        firstname
-                        lastname
+                        first_name
+                        last_name
                         patronymic
                         birth_date
                     }
@@ -260,8 +260,8 @@ export const PERSONS_QUERY_BY_ID = gql`
                 id
                 passport{
                     id
-                    firstname
-                    lastname
+                    first_name
+                    last_name
                     patronymic
                     serial
                     number

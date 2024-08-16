@@ -12,7 +12,16 @@ final readonly class ExecutorOrders
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
-        if (isset($args['projectId']) && isset($args['executorId'])) {
+        //TODOЖ: dev
+        $result = ExecutorOrder::with("executor_order_payments")->with("project_tasks")->get()->map(function ($order) {
+            return [
+                ...$order->toArray(),
+                'is_project_completed' => $order->isProjectCompleted(),
+                'is_tasks_completed' => $order->isTaskCompleted(), // добавляем статус выполнения задач
+                'payment_file_completed' => $order->getFilesPaymentsTypes() // добавляем статус выполнения задач
+            ];
+        });
+        if (isset($args['projectId'])) {
             // Найти проект
             $project = Project::find($args['projectId']);
             if (!$project) {
@@ -30,7 +39,8 @@ final readonly class ExecutorOrders
                 })->with("project_tasks")->get();
             }
             return $result;
+
         }
-        return ExecutorOrder::all();
+        return ExecutorOrder::with("executor_order_payments")->get();
     }
 }

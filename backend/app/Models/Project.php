@@ -47,7 +47,7 @@ class Project extends Model
     }
     public function project_contract_history(): HasMany
     {
-        return $this->hasMany(ProjectFile::class)->where("type_id", "CONTRACT")->orderBy('number');
+        return $this->hasMany(ProjectFile::class)->whereIn("type", ["CONTRACT", "CONTRACT_STAMP"],)->orderBy('number', 'DESC');
     }
     //  project kp history
     public function kp_files(): BelongsToMany
@@ -56,7 +56,7 @@ class Project extends Model
     }
     public function project_kp_history(): HasMany
     {
-        return $this->hasMany(ProjectFile::class)->where("type_id", "KP")->orderBy('number');
+        return $this->hasMany(ProjectFile::class)->where("type", "KP")->orderBy('number');
     }
     //  contract
     public function signed_file(): BelongsTo

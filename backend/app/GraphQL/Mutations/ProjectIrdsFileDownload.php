@@ -12,24 +12,24 @@ final readonly class ProjectIrdsFileDownload
 {
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
-
-            $projectData = Project::with('organization_customer')
-                ->with('type_project_document')
-                ->with('project_facilitys')
-                ->with('status')
-                ->with('project_delegations')
-                ->with('project_irds.ird')
-                ->with('project_stages.stage')
-                ->find($args["projectId"]);
-
-            if (!$projectData) {
-                throw new Exception('Проект не найден');
-            }
-
-            $irdGenerator = new IrdsProjectTemplateGeneratorService();
-            $contractFilePath = $irdGenerator->generate($projectData);
-
-            return ['url' => $contractFilePath];
+        throw new Exception('Метод устарел');
+//            $projectData = Project::with('organization_customer')
+//                ->with('type_project_document')
+//                ->with('project_facilitys')
+//                ->with('status')
+//                ->with('project_delegations')
+//                ->with('project_irds.ird')
+//                ->with('project_stages.stage')
+//                ->find($args["projectId"]);
+//
+//            if (!$projectData) {
+//                throw new Exception('Проект не найден');
+//            }
+//
+//            $irdGenerator = new IrdsProjectTemplateGeneratorService($projectData);
+//            $contractFilePath = $irdGenerator->generate(['projectData'->$projectData]);
+//
+//            return ['url' => $contractFilePath];
 
 
 

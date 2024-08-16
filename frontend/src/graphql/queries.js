@@ -150,11 +150,13 @@ export const PROJECTS_QUERY = gql`
                 {
                     file_id
                     date_document
+                    type
                     number
                 }  
                 project_kp_history
                 {
                     file_id
+                    type
                     date_document
                     number
                 }
@@ -259,8 +261,8 @@ export const PROJECTS_QUERY = gql`
                         id
                         passport {
                             id
-                            firstname
-                            lastname
+                            first_name
+                            last_name
                             patronymic
                         }
                     }
@@ -291,8 +293,8 @@ export const PERSONS_QUERY = gql`
                 id
                 passport{
                     id
-                    firstname
-                    lastname
+                    first_name
+                    last_name
                     patronymic
                     serial
                     number
@@ -333,8 +335,8 @@ export const PERSONS_SHORT_QUERY = gql`
                 id
                 passport{
                     id
-                    firstname
-                    lastname
+                    first_name
+                    last_name
                     patronymic
                 }
             }

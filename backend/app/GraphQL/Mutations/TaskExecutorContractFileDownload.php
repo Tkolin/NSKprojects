@@ -62,7 +62,8 @@ final readonly class TaskExecutorContractFileDownload
 
         // Генерация файла
         $projectGenerator = new TaskExecutorContractGeneratorService();
-        $contractFilePath = $projectGenerator->generate($projectData, $personData, $projectTasksData, $numberOrders);
+        $contractFilePath = $projectGenerator->generate([
+            'projectData' => $projectData, 'personData' => $personData, 'projectTasksData' => $projectTasksData, 'numberOrders' => $numberOrders], $projectData, $projectData, $personData, $projectTasksData, $numberOrders);
         return ['url' => $contractFilePath];
 
 

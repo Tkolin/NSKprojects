@@ -11,9 +11,10 @@ class ProjectFile extends Model
     protected $fillable = [
         'project_id',
         'file_id',
-        'type_id',
+        'type',
         'number',
         'date_document'
     ];
+
 
 }

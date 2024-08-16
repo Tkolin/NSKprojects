@@ -81,8 +81,8 @@ const PersonTable = () => {
             title: 'ФИО',
             dataIndex: 'passport',
             key: 'fio_name',
-            render: (passport) => passport ? `${passport?.lastname ?? ""}
-              ${passport?.firstname ?? ""} ${passport?.patronymic ?? ""}  ` : "",
+        render: (passport) => passport ? `${passport?.last_name ?? ""}
+              ${passport?.first_name ?? ""} ${passport?.patronymic ?? ""}  ` : "",
         }, {
             title: 'Личный тел.', dataIndex: 'phone_number', key: 'phone_number',
             sorter: true, ellipsis: true,

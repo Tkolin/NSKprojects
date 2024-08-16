@@ -46,8 +46,8 @@ final readonly class Persons
                         ->orWhere('email', 'like', "%$searchTerm%")
                         ->orWhere('email_sibnipi', 'like', "%$searchTerm%")
                         ->orWhereHas('passport', function ($query) use ($searchTerm) {
-                            $query->where('firstname', 'like', "%$searchTerm%")
-                                ->orWhere('lastname', 'like', "%$searchTerm%")
+                            $query->where('first_name', 'like', "%$searchTerm%")
+                                ->orWhere('last_name', 'like', "%$searchTerm%")
                                 ->orWhere('patronymic', 'like', "%$searchTerm%")
                                 ->orWhere('address_residential', 'like', "%$searchTerm%")
                                 ->orWhere('address_registration', 'like', "%$searchTerm%")
