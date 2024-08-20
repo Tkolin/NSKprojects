@@ -1,77 +1,173 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './Styles.css';
-import StatusLegendComponent from "./components/StatusLegendComponent";
 import ProjectTableComponent from "./components/ProjectTableComponent";
-import {Divider, Space} from "antd";
-import ProjectTasksManagerForm from "../ProjectTasksManagerForm";
+import {Alert, Divider, Space} from "antd";
 import ToolBarComponent from "./components/ToolBarComponent";
 
-const settings = {
-    contract: {
-        projectStatuses: [""],
+const template = {
+    request: {
+        projectStatuses: ["DESIGN_REQUEST"],
+        //  Параметры таблицы
         column: {
-            toolMenu: [""],
-            columns: [""],
-            upButon: ""
+            //  Первая колонка кнопок управления таблицей
+            tool: {
+                //  Компоненты скрытые в ...
+                menu: ["crud", "request"],
+                //  Кнопки быстрых действий
+                hotKey: ["archive", "up"],
+            },
+            //  Ключи колонок таблицы
+            columns: ["main"],
         },
-        expandable: [""]
+        //  Все компоненты в выпадающем меню
+
     },
     kp: {
-        projectStatuses: [""],
+        projectStatuses: ["APPROVAL_KP"],
+        //  Параметры таблицы
         column: {
-            toolMenu: [""],
-            columns: [""],
-            upButon: ""
+            //  Первая колонка кнопок управления таблицей
+            tool: {
+                //  Компоненты скрытые в ...
+                menu: ["crud", "kp", "stages"],
+                //  Кнопки быстрых действий
+                hotKey: ["archive", "up"],
+            },
+            //  Ключи колонок таблицы
+            columns: ["main"],
         },
-        expandable: [""]
+        //  Все компоненты в выпадающем меню
+        expandable: ["stages"]
     },
-    archive: {
-        projectStatuses: [""],
+    contract: {
+        projectStatuses: ["APPROVAL_AGREEMENT"],
+        //  Параметры таблицы
         column: {
-            toolMenu: [""],
-            columns: [""],
-            upButon: ""
+            //  Первая колонка кнопок управления таблицей
+            tool: {
+                //  Компоненты скрытые в ...
+                menu: ["crud", "contract", "stages",
+                    "irds"],
+                //  Кнопки быстрых действий
+                hotKey: ["archive", "up"],
+            },
+            //  Ключи колонок таблицы
+            columns: ["main"],
         },
-        expandable: [""]
-    },
-    request: {
-        projectStatuses: [""],
-        column: {
-            toolMenu: [""],
-            columns: [""],
-            upButon: ""
-        },
-        expandable: [""]
+        //  Все компоненты в выпадающем меню
+        expandable: ["stages",
+            "irds",
+        ]
     },
     work: {
-        projectStatuses: [""],
+        projectStatuses: ["WORKING"],
+        //  Параметры таблицы
         column: {
-            toolMenu: [""],
-            columns: [""],
-            upButon: ""
-        },
-        expandable: [""]
-    },
-    extra: {
-        projectStatuses: [""],
-        column: {
+            //  Первая колонка кнопок управления таблицей
             tool: {
-                menu: [""],
-                hotKey: [""],
+                //  Компоненты скрытые в ...
+                menu: ["crud", "contract", "irds", "irds",
+                    "executors",
+                    "stages-extra",
+                    "tasks",
+                    "executor_orders"],
+                //  Кнопки быстрых действий
+                hotKey: ["archive", "up"],
             },
-            columns: [""],
+            //  Ключи колонок таблицы
+            columns: ["main"],
         },
-        expandable: [""]
+        //  Все компоненты в выпадающем меню
+        expandable: ["stages",
+            "irds",
+            "executors",
+            "stages-extra",
+            "tasks",
+            "executor_orders",
+        ]
+    },
+    executorPayment: {
+        projectStatuses: ["WORKING", "COMPLETED"],
+        //  Параметры таблицы
+        column: {
+            //  Первая колонка кнопок управления таблицей
+            tool: {
+                //  Компоненты скрытые в ...
+
+                //  Кнопки быстрых действий
+                //  hotKey: ["archive", "up"],
+            },
+            //  Ключи колонок таблицы
+            columns: ["main"],
+        },
+        //  Все компоненты в выпадающем меню
+        expandable: [
+            "executor_orders",
+        ]
+    },
+
+    archive: {
+        projectStatuses: ["ARCHIVE", "COMPLETED"],
+        //  Параметры таблицы
+        column: {
+            //  Первая колонка кнопок управления таблицей
+            tool: {
+                //  Компоненты скрытые в ...
+                menu: ["crud", "contract", "kp", "request"],
+                //  Кнопки быстрых действий
+                hotKey: ["archive", "up"],
+            },
+            //  Ключи колонок таблицы
+            columns: ["main"],
+        },
+        //  Все компоненты в выпадающем меню
+        expandable: ["stages",
+            "irds",
+            "executors",
+            "stages-extra",
+            "tasks",
+            "executor_orders",
+        ]
+    },
+
+
+    extra: {
+        //  Параметры фильтрации таблицы (статус)
+        projectStatuses: ["WORKING", "APPROVAL_AGREEMENT", "APPROVAL_KP", "ARCHIVE", "COMPLETED",
+            "DESIGN_REQUEST", "WAITING_SOURCE"],
+        //  Параметры таблицы
+        column: {
+            //  Первая колонка кнопок управления таблицей
+            tool: {
+                //  Компоненты скрытые в ...
+                menu: ["crud", "contract", "kp", "request"],
+                //  Кнопки быстрых действий
+                hotKey: ["archive", "up"],
+            },
+            //  Ключи колонок таблицы
+            columns: ["main"],
+        },
+        //  Все компоненты в выпадающем меню
+        expandable: ["stages",
+            "irds",
+            "executors",
+            "stages-extra",
+            "tasks",
+            "executor_orders",
+        ]
     }
 }
 const ProjectTable = ({mode}) => {
         const [search, setSearch] = useState('');
         const [refetch, setRefetch] = useState(false);
-
     const onRefetch = () => {
             setRefetch(!refetch);
         }
-
+    useEffect(() => {
+        onRefetch();
+    }, [mode,]);
+    if (!mode)
+        return <Alert type={"error"} message={"Ошибка конфигурации"} showIcon/>
         return (
             <div>
                 {/*{legendOptions && (*/}
@@ -86,7 +182,7 @@ const ProjectTable = ({mode}) => {
                 </Space.Compact>
                 <Divider/>
 
-                <ProjectTableComponent settings={settings} search={search} state={refetch}/>
+                <ProjectTableComponent settings={template[mode]} search={search} state={refetch}/>
             </div>
 
         )

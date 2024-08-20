@@ -1,8 +1,10 @@
-import {Button, Modal, Space, Typography} from "antd";
+import {Modal, Space} from "antd";
 import Link from "antd/es/typography/Link";
 import {EditOutlined} from "@ant-design/icons";
 import React, {useState} from "react";
 import PersonForm from "../../simplesForms/PersonForm";
+import CustomMenuButton
+    from "../../ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/MenuManager/components/CustomMenuButton";
 
 
 export const HeaderExecutorInfoComponent = ({executor, onClick, isLink = true}) => {
@@ -16,7 +18,9 @@ export const HeaderExecutorInfoComponent = ({executor, onClick, isLink = true}) 
                     <EditOutlined/>
                 </Link>
             </Space.Compact>
-            {isLink ? <Link onClick={()=>onClick()}>Сгенерировать договор</Link> : ""}
+            {isLink ? <Link onClick={() => onClick()} children={
+                <CustomMenuButton children={"Сгенерировать договор"}/>}
+            /> : ""}
             <Modal
                 key={executor.id + "exe12"}
                 open={openEditExecutor}

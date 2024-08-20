@@ -1,15 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {BrowserRouter as Router, Route, Routes, useNavigate} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import {Cookies} from "react-cookie";
 import {ConfigProvider, Space} from "antd";
 import ruRU from "antd/locale/ru_RU";
-import {useQuery} from "@apollo/client";
+import {useLazyQuery} from "@apollo/client";
 import {GET_CURRENT_USER} from "./graphql/queries";
 import {createGlobalStyle} from "styled-components";
 import CustomLayout from './page/Layout';
 
 import Home from './page/Home';
-import LoadingSpinnerStyles from "./page/components/style/LoadingSpinnerStyles";
 import ContactForm from "./page/simplesForms/ContactForm";
 import PersonForm from "./page/simplesForms/PersonForm";
 import OrganizationForm from "./page/simplesForms/OrganizationForm";
@@ -31,45 +30,70 @@ import usePermissionHider from "./permission/usePermissionHider";
 import ProjectForm from "./page/ProjectForm";
 import RequestForm from "./page/simplesForms/RequestForm";
 import DemoBar from "./page/TestPage";
-import ProjectPaymentExecutorOrderTable from "./page/ProjectPaymentExecutorOrderTable";
 
 const GlobalStyles = createGlobalStyle`
     body {
         margin: 0;
     }
-
-
-    //[data-permission] {
-    //    display: none; /* Скрываем элементы по умолчанию */
-    //}
 `;
 
 const App = () => {
 
     const cookies = new Cookies();
+
+
     usePermissionHider();
     const [data, setData] = useState()
-    const {loading, error, refetch: refetchCurr} = useQuery(GET_CURRENT_USER, {
-        //pollInterval: 60000, // Интервал опроса в миллисекундах (например, 60000 мс = 1 минута)
+    const [findActualUsers, {loading, error, refetch: refetchCurr}] = useLazyQuery(GET_CURRENT_USER, {
         fetchPolicy: 'cache-and-network', // Всегда берет данные с сервера, а не из кэша
         onCompleted: (data) => {
-            console.log(data);
-            setData(data);
+            setData(data.currentUser);
+            const oldUser = localStorage.getItem("userData");
+            const oldPermissions = localStorage.getItem("userPermissions");
+            const newUser = JSON.stringify(data.currentUser.user);
+            const newPermissions = JSON.stringify(data.currentUser.permissions);
+
+            if (!(oldUser === newUser && oldPermissions === newPermissions)) {
+
+                localStorage.setItem("userData", JSON.stringify(data.currentUser.user));
+                localStorage.setItem("userPermissions", JSON.stringify(data.currentUser.permissions));
+                window.location.reload();
+            }
         },
         onError: (error) => {
-            console.log(error.message);
-            if (!cookies.get('accessToken'))
-                setData(null);
+            console.log("Ошибка аутентификации: " + error.message);
+            Out();
         }
     });
+    useEffect(() => {
+        //  Запрос на актуальные данные в сервере если токен есть
+        if (cookies.get("accessToken")) {
+            if (localStorage.getItem("userData") && localStorage.getItem("userPermissions")) {
+                setData({
+                    permissions: JSON.parse(localStorage.getItem("userPermissions")),
+                    user: JSON.parse(localStorage.getItem("userPermissions")),
+                })
+            }
+            findActualUsers();
 
-    if (loading) return <LoadingSpinnerStyles/>;
+        } else {
+            console.log("Ошибка аутентификации: " + "Токен отсутствует");
+            Out();
+        }
+    }, []);
+    const Out = () => {
+        console.log("Данные кэша сброшены");
+        setData(null);
+        cookies.set("accessToken", null);
+        localStorage.clear();
+    }
+    // if (loading) return <LoadingSpinnerStyles/>;
 
     moment.locale('ru');
 
 
     return (
-        <PermissionsProvider permissions={data?.currentUser?.permissions?.map(row => row.name_key) ?? null}>
+        <PermissionsProvider permissions={data?.permissions?.map(row => row.name_key) ?? null}>
 
             <ConfigProvider locale={ruRU}>
                 <NotificationProvider>
@@ -89,6 +113,13 @@ const App = () => {
                                 <Route path="/references/contact/form" element={
                                     <Space style={{width: "100%", justifyContent: "center"}} children={
                                         <ContactForm/>
+                                    }/>
+                                }/>
+
+
+                                <Route path="/user/person/form" element={
+                                    <Space style={{width: "100%", justifyContent: "center"}} children={
+                                        <RegisterForm/>
                                     }/>
                                 }/>
 
@@ -126,7 +157,7 @@ const App = () => {
 
                                 <Route path="/project/kp" element={<Home/>}/>
                                 <Route path="/project/kp/table"
-                                       element={<ProjectTable modes={"kp"}/>}/>
+                                       element={<ProjectTable mode={"kp"}/>}/>
                                 <Route path="/project/kp/form" element={<Home/>}/>
 
                                 <Route path="/project/contract" element={<Home/>}/>
@@ -139,13 +170,20 @@ const App = () => {
                                 <Route path="/project/work/table"
                                        element={<ProjectTable mode={'work'}/>}/>
 
+                                <Route path="/project/tasks_distribution" element={<Home/>}/>
+                                <Route path="/project/tasks_distribution/table"
+                                       element={<ProjectTable mode={'executorPayment'}/>}/>
+
+
+                                <Route path="/bookeep/executor_order_table"
+                                       element={<ProjectTable mode={"executorPayment"}/>}/>
+
+
                                 <Route path="/project/work/form" element={<Home/>}/>
                                 {/*Учётки*/}
                                 <Route path="/user/person/table" element={<UserTable/>}/>
                                 <Route path="/user/role/table" element={<RoleTable/>}/>
 
-                                <Route path="/bookeep/executor_order_table"
-                                       element={<ProjectTable mode={"executor_order"}/>}/>
 
                                 <Route path="/auth/register" element={<RegisterForm/>}/>
                                 <Route path="/auth/login" element={

@@ -9,7 +9,7 @@ const getCsrfToken = async () => {
         const csrfToken = response.data.csrfToken;
         //TODO: Выбрать где хранить
         localStorage.setItem('csrf_token', csrfToken);
-        cookies.set('csrf_token', csrfToken);
+        //   cookies.set('csrf_token', csrfToken);
         return csrfToken;
     } catch (error) {
         console.error('Error fetching CSRF token:', error);

@@ -1,15 +1,10 @@
 import React, {useEffect, useState} from 'react';
 
 import {useLocation, useNavigate} from 'react-router-dom';
-import {Layout, Menu, Image, Dropdown, Avatar, Badge, Alert, Card, Breadcrumb, Space} from 'antd';
-import {
-
-    UserOutlined,
-} from '@ant-design/icons';
+import {Card, Image, Layout, Menu} from 'antd';
 import Logo from '../resursed/logo512.png';
 import {UserMenuHeaderDropdown} from "./UserCard";
-import Link from "antd/es/typography/Link";
-import {MenuItemsByPermission, MenuItems} from "./MenuItems";
+import {MenuItems, MenuItemsByPermission} from "./MenuItems";
 
 const {Header, Content, Footer} = Layout;
 
@@ -72,7 +67,7 @@ const AppLayout = ({children, currentUser, error}) => {
     const [items, setItems] = useState();
     const [title, setTitle] = useState();
     useEffect(() => {
-        setItems(MenuItemsByPermission(currentUser?.currentUser ?? null));
+        setItems(MenuItemsByPermission(currentUser ?? null));
     }, [currentUser]);
     useEffect(() => {
         setCurrent(location.pathname); // Обновить current при изменении пути
@@ -119,7 +114,7 @@ const AppLayout = ({children, currentUser, error}) => {
 
                 <Menu onClick={onClick} mode="horizontal" style={{width: '100%'}} items={items}
                       selectedKeys={[current]} className={"biba"}/>
-                <UserMenuHeaderDropdown currentUser={currentUser?.currentUser}/>
+                <UserMenuHeaderDropdown currentUser={currentUser}/>
             </Header>
 
             <Layout style={{marginTop: 64, paddingRight: 20, paddingLeft: 20}}>

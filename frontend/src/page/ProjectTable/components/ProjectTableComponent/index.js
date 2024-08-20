@@ -1,8 +1,8 @@
-import {notification, Table, Typography} from "antd";
+import {Table, Typography} from "antd";
 import React, {useEffect, useState} from "react";
 import {useQuery} from "@apollo/client";
 import {PROJECTS_QUERY} from "../../../../graphql/queries";
-import GetColumns from "./components/ColumnRenderManager";
+import getColumn from "./components/ColumnRenderManager";
 import ExpandedRowRenderManager from "./components/ExpandedRowRenderManager";
 
 const {Text} = Typography;
@@ -21,17 +21,23 @@ const Index = ({settings, projectStatuses, mode, search, columnSettings, options
     }
     useEffect(() => {
         setColumn(
-            GetColumns({
-                options: settings.column ?? columnSettings,
+            getColumn({
+                options: settings.column ? {
+                    ...settings.column,
+                    tool: {
+                        ...settings.column.tool,
+                        expandable: settings.expandable && true
+                    }
+                } : columnSettings,
                 permissions: "all",
-                expandable: {
+                expandableTableProps: {
                     onExpand: (value) => onExpand(value),
                     expandedRowKeys: expandedRowKeys,
                 },
                 onUpdated: () => refetch()
             }))
 
-    }, [options, expandedRowKeys]);
+    }, [options, expandedRowKeys, settings]);
     useEffect(() => {
         refetch();
     }, [state]);
@@ -44,7 +50,7 @@ const Index = ({settings, projectStatuses, mode, search, columnSettings, options
     }
     const {loading: loading, error: error, data: data, refetch: refetchProject} = useQuery(PROJECTS_QUERY, {
         variables: {
-            projectStatuses: settings.projectStatuses ?? projectStatuses,
+            projectStatuses: settings?.projectStatuses ?? projectStatuses ?? null,
             queryOptions: {
                 page,
                 limit,
@@ -88,9 +94,9 @@ const Index = ({settings, projectStatuses, mode, search, columnSettings, options
         <div>
             <Table
                 style={{border: "black"}}
-                rowClassName={(record) => 'my-ant-table-row-' + record?.status?.name_key?.toLowerCase()
-                    //+ ((record.id % 2 === 0) ? ' my-ant-table-row-danger' : ' my-ant-table-row-warning')
-                }
+                // rowClassName={(record) => 'my-ant-table-row-' + record?.status?.name_key?.toLowerCase()
+                //     //+ ((record.id % 2 === 0) ? ' my-ant-table-row-danger' : ' my-ant-table-row-warning')
+                // }
                 size={'small'}
                 sticky={{
                     offsetHeader: '64px',

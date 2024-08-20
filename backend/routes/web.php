@@ -2,11 +2,10 @@
 
 
 use App\Http\Controllers\ExecutorContractController;
-use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\FileController;
-
+use App\Http\Controllers\FileUploadController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
-use Nuwave\Lighthouse\GraphQL;
 
 Route::get('/he', function () {
     return view('welcome');
@@ -23,9 +22,11 @@ Route::get('/download-projectActRender/{filename}', [ProjectController::class, '
 Route::get('/download-projectPaymentInvoice/{filename}', [ProjectController::class, 'downloadPaymentInvoiceProject']);
 
 Route::get('/temporary/{filename}', [FileController::class, 'downloadFile']);
-Route::post('/upload', [\App\Http\Controllers\FileUploadController::class, 'upload']);
-Route::post('/project/upload/executor_order/{orderId}', [\App\Http\Controllers\FileUploadController::class, 'uploadExecutorOrder']);
-Route::post('/project/upload/project_contract/page', [\App\Http\Controllers\FileUploadController::class, 'uploadProjectContract']);
+Route::post('/upload', [FileUploadController::class, 'upload']);
+Route::post('/project/upload/executor_order/{orderId}', [FileUploadController::class, 'uploadExecutorOrder']);
+Route::post('/project/upload/executor_order_payment/page', [FileUploadController::class, 'uploadOrderPayment']);
+Route::post('/project/upload/project_contract/page', [FileUploadController::class, 'uploadProjectContract']);
+Route::post('/project/upload/project_kp/page', [FileUploadController::class, 'uploadProjectKp']);
 Route::get('/csrf-token', function () {
     return response()->json(['csrfToken' => csrf_token()]);
 });

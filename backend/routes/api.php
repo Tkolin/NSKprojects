@@ -1,12 +1,10 @@
 <?php
 
 use App\Http\Controllers\ExecutorContractController;
-use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\FileUploadController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
-use Nuwave\Lighthouse\GraphQL;
 
 
 Route::get('/download-contract/{filename}', [ExecutorContractController::class, 'downloadExecutorContract']);
@@ -22,3 +20,4 @@ Route::get('/temporary/{filename}', [FileController::class, 'downloadFile']);
 Route::get('/download-projectActRender/{filename}', [ProjectController::class, 'downloadActRenderingServicesProject']);
 Route::get('/download-projectPaymentInvoice/{filename}', [ProjectController::class, 'downloadPaymentInvoiceProject']);
 
+Route::post('/project/upload/project_kp/page', [FileUploadController::class, 'uploadProjectKp']);

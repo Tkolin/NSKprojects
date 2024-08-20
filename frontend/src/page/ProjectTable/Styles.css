@@ -55,15 +55,3 @@
     background-color: #f7f2ff !important;
 }
 
-.danger_text_btn {
-    border-color: #fffbe6 !important;
-    color: #faad14 !important;
-}
-
-.danger_text_btn:hover {
-    background-color: #fffbe6 !important;
-}
-
-.danger_text_btn:active {
-    background-color: #fff1b8 !important;
-}

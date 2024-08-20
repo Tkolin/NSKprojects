@@ -4,6 +4,7 @@ namespace App\Services\FileGenerate;
 
 
 use App\Models\ProjectFile;
+use Exception;
 
 class CommercialOfferMessageGeneratorService extends DocumentGeneratorService
 {
@@ -18,13 +19,23 @@ class CommercialOfferMessageGeneratorService extends DocumentGeneratorService
     public function generate(array $data)
     {
         // Проверка, что все ключи существуют
-        if (!isset($data['projectData'], $data['delegation'], $data['dateOffer'])) {
-            throw new \Exception('Не все необходимые данные предоставлены.');
+        if (!isset($data['projectData'])) {
+            throw new Exception('Отсутствуют данные проекта.');
+        }
+        if (!isset($data['delegationData'])) {
+            throw new Exception('Отсутствует контактное лицо организации.');
+        }
+        if (!isset($data['dateOffer'])) {
+            throw new Exception('Отсутствует дата документа для генерации.');
+        }
+        if (!isset($data['contractNumber'])) {
+            throw new Exception('Номер генерируемого документа.');
         }
 
         // Извлечение данных
+        $contractNumber = $data['contractNumber'];
         $projectData = $data['projectData'];
-        $delegation = $data['delegation'];
+        $delegation = $data['delegationData'];
         $dateOffer = $data['dateOffer'];
 
         //  Добор данных
@@ -66,11 +77,11 @@ class CommercialOfferMessageGeneratorService extends DocumentGeneratorService
             'project_id' => $projectData->id,
             'file_id' => $file->id,
             'type' => "KP",
-            'number' => 0,
+            'number' => $contractNumber,
             'date_document' => $dateOffer,
         ]);
 
-        $this->cleanUp($this->te);
+        //  $this->cleanUp($this->te);
 
         return $file->id;
     }

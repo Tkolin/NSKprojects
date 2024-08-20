@@ -315,6 +315,32 @@ export const PROJECT_STAGE_SYNC_MUTATION = gql`
             status_id
         }
     }
+ `;
+export const ARCHIVE_PROJECT = gql`
+    mutation ProjectStagesSync($projectId: ID! $date: String) {
+        archivingProjectStatus(projectId: $projectId, date: $date ) {
+            id
+            date_start
+            status {
+                name_key
+                name
+            }
+            status_id
+        }
+    }
+`;
+export const UP_STATUS_PROJECT = gql`
+    mutation ProjectStagesSync($projectId: ID!, $date: String!) {
+        upProjectStatus(projectId: $projectId, date: $date ) {
+            id
+            date_start
+            status {
+                name_key
+                name
+            }
+            status_id
+        }
+    }
 `;
 export const CHANGE_TEMPLATE_TYPE_PROJECT = gql`
     mutation ChangeTemplateTypeProject ( $typeProject: ID! ,$newTemplate: ID!) {

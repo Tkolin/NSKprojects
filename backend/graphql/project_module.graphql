@@ -43,11 +43,20 @@ extend type Mutation {
         items: [IrdToProjectInput]!
     ): Project @checkRole(permission:  ["update-project-ird"])
 
+    upProjectStatus(
+        projectId: ID!
+        date: String!
+    ): Project @checkRole(permission:  ["update-project-ird"])
+    archivingProjectStatus(
+        projectId: ID!
+        date: String
+    ): Project @checkRole(permission:  ["update-project-ird"])
     changeProjectStatus(
         projectId: ID!
         statusKey: String!
         dateStart: String
     ): Project @checkRole(permission:  ["update-project-ird"])
+
     projectStagesSync(
         items: [StageToProjectInput]!
     ): Project @checkRole(permission:  ["update-project-stage"])

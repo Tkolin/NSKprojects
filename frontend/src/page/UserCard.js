@@ -1,34 +1,34 @@
 import {Avatar, Badge, Button, Card, Divider, Dropdown, Space, Typography} from "antd";
 import {LoginOutlined, LogoutOutlined, MailOutlined, UserOutlined} from "@ant-design/icons";
-import React, {useEffect} from "react";
-import {StyledButtonGreen, StyledButtonGreenGhost} from "./components/style/ButtonStyles";
+import React, {useEffect, useState} from "react";
+import {StyledButtonGreenGhost} from "./components/style/ButtonStyles";
 import {useNavigate} from "react-router-dom";
 import {Cookies} from "react-cookie";
 import catImage from '../resursed/cat.jpg';
-import {useApolloClient, useQuery} from "@apollo/client";
-import {GET_CURRENT_USER} from "../graphql/queries";
-import {nanoid} from "nanoid"; // Убедитесь, что путь правильный
 
 
 const {Text, Link} = Typography;
 
-export const UserCard = ({
-                             user
-                         }) => {
+export const UserCard = ({}) => {
 
     const navigate = useNavigate();
     const cookies = new Cookies();
-    const { refetch: refetchCurrentUser} = useQuery(GET_CURRENT_USER, {onCompleted: () => {
-            navigate('/auth/login');
-            window.location.reload();
-        }});
+    const [user, setUser] = useState()
+    useEffect(() => {
+        setUser({
+            permissions: JSON.parse(localStorage.getItem("userPermissions")),
+            user: JSON.parse(localStorage.getItem("userPermissions")),
+        })
+    }, []);
+    const Out = () => {
+        console.log("Данные кэша сброшены");
+        setUser(null);
+        cookies.set("accessToken", null);
+        localStorage.clear();
+        navigate("auth/login")
+        window.location.reload();
+    }
 
-    const handleLogout = () => {
-
-        cookies.set('accessToken', null);
-        refetchCurrentUser && refetchCurrentUser();
-
-     };
     const handleLogin = () => {
         navigate('auth/login');
     }
@@ -121,7 +121,7 @@ export const UserCard = ({
                     danger: true,
                     icon: <LogoutOutlined/>,
                     onClick: () => {
-                        handleLogout();
+                        Out();
                     }
                 }
             ]
@@ -164,7 +164,7 @@ export  const UserMenuHeaderDropdown = ({currentUser}) => {
         placement={"bottomRight"}
         dropdownRender={() =>
             (
-                <UserCard user={currentUser ?? null}/>
+                <UserCard/>
             )}
         trigger={["click"]}
         children={

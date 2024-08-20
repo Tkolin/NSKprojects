@@ -1,21 +1,21 @@
 // MenuItems.js
 import React from 'react';
 import {
-    HomeOutlined,
-    ProfileOutlined,
-    FormOutlined,
-    SolutionOutlined,
-    CalculatorOutlined,
-    BarChartOutlined,
+    AuditOutlined,
     BugOutlined,
-    IdcardOutlined,
     ContactsOutlined,
     EyeOutlined,
-    TeamOutlined,
     FileAddOutlined,
-    AuditOutlined,
     FileProtectOutlined,
-    SyncOutlined, FileZipOutlined, LoginOutlined,
+    FileZipOutlined,
+    FormOutlined,
+    HomeOutlined,
+    IdcardOutlined,
+    LoginOutlined,
+    ProfileOutlined,
+    SolutionOutlined,
+    SyncOutlined,
+    TeamOutlined,
 } from '@ant-design/icons';
 
 
@@ -324,16 +324,13 @@ const MenuItems =
     ];
 
 const MenuItemsByPermission = (currentUser) => {
+    console.log(currentUser);
     if(!currentUser)
         return [];
-     // Получаем список прав пользователя
+
+    // Получаем список прав пользователя
     const userPermissions =  currentUser?.permissions?.map(p => p.name_key) ?? [];
     const hasPermission = (userPermissions, requiredPermissions) => {
-        // console.log(userPermissions, requiredPermissions);
-        // console.log("fffffffffffffffffffffffffffff",userPermissions.some(row=>requiredPermissions.includes(row)));
-        // console.log("fffffffffffffffffffffffffffff",userPermissions.some(row=>requiredPermissions.includes(row)));
-         //requiredPermissions.map(row=>userPermissions.includes(row));
-        //return userPermissions.includes(requiredPermissions);
         return requiredPermissions.some(row=>userPermissions.includes(row));
     };
     // Функция для фильтрации элементов меню

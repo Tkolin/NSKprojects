@@ -1,8 +1,8 @@
 import {useMutation} from '@apollo/client';
-import {Button, DatePicker, notification, Popconfirm, Typography} from 'antd';
-import {CONTRACT_PROJECT_DOWNLOAD, PROJECT_CONTRACT_GENERATED} from "../../../../graphql/mutationsProject";
+import {notification, Popconfirm, Typography} from 'antd';
+import {PROJECT_CONTRACT_GENERATED} from "../../../../graphql/mutationsProject";
 import dayjs from "dayjs";
-import {useState} from "react";
+import {cloneElement, useState} from "react";
 import {CustomDatePicker} from "../../FormattingDateElementComponent";
 
 const {Text, Link} = Typography;
@@ -54,7 +54,9 @@ const ProjectFileDownload = ({projectId, children, ...props}) => {
             onConfirm={handleDownload}
             cancelText="Отмена"
         >
-            <Button loading={loading} {...props}>{children ?? 'скачать'}</Button>
+            <div>
+                {cloneElement(children, {...props, loading})}
+            </div>
         </Popconfirm>
     );
 };

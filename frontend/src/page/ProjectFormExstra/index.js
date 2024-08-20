@@ -1,57 +1,75 @@
 import {Alert, Button, Divider, Space} from "antd";
 import {EyeOutlined, SaveOutlined} from "@ant-design/icons";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import IrdToProjectForm from "../ProjectIrdsForm";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import StageToProjectForm from "../ProjectStagesForm";
 import ProjectForm from "../ProjectForm";
 
-const Index = ({project, options = []}) => {
-    const [page, setPage] = useState()
+const template = {
+    APPROVAL_AGREEMENT: ["project", "stage", "ird"],
+    APPROVAL_KP: ["project", "stage"],
+    DESIGN_REQUEST: ["project"],
+    WAITING_SOURCE: ["project", "stage", "ird"],
+    WORKING: ["project", "stage", "ird"],
+
+}
+const Index = ({project, status, onCompleted}) => {
+    const [page, setPage] = useState("project")
+    useEffect(() => {
+        setPage("project")
+    }, [project, status,]);
+
     const ErrorAlert = () => {
         return <Alert message={"Ошибка конструктора"} type={"error"}/>
     }
-    return (<Space direction={"vertical"}>
+    return (
+        <Space direction={"vertical"}>
+            {template[status].length > 1 && (
+                <Space.Compact block>
+                    {/*TODO: Надо спрашивать об сохранении изменений*/}
+                    {template[status]?.includes("project") && <Button style={{width: "50%"}}
+                                                                      disabled={page === "project"}
+                                                                      children={"Проект"}
+                                                                      onClick={() => setPage("project")}
+                                                                      icon={page === "project" ? "" : <EyeOutlined/>}/>}
+                    {template[status]?.includes("stage") && <Button style={{width: "50%"}}
+                                                                    disabled={page === "stage"}
+                                                                    children={"Этапы"}
+                                                                    onClick={() => setPage("stage")}
+                                                                    icon={page === "stage" ? "" : <EyeOutlined/>}/>}
+                    {template[status]?.includes("ird") && <Button style={{width: "50%"}}
+                                                                  disabled={page === "ird"}
+                                                                  children={"Ирд"}
+                                                                  onClick={() => setPage("ird")}
+                                                                  icon={page === "ird" ? "" : <EyeOutlined/>}/>}
 
-        <Space.Compact block>
-            {/*TODO: Надо спрашивать об сохранении изменений*/}
-            {options.includes("project") && <Button style={{width: "50%"}}
-                                                    disabled={page === "project"}
-                                                    children={"Проект"}
-                                                    onClick={() => setPage("project")}
-                                                    icon={page === "project" ? "" : <EyeOutlined/>}/>}
-            {options.includes("stage") && <Button style={{width: "50%"}}
-                                                  disabled={page === "stage"}
-                                                  children={"Этапы"}
-                                                  onClick={() => setPage("stage")}
-                                                  icon={page === "stage" ? "" : <EyeOutlined/>}/>}
-            {options.includes("ird") && <Button style={{width: "50%"}}
-                                                disabled={page === "ird"}
-                                                children={"Ирд"}
-                                                onClick={() => setPage("ird")}
-                                                icon={page === "ird" ? "" : <EyeOutlined/>}/>}
-        </Space.Compact>
+                </Space.Compact>)
+            }
 
 
-        {page === "project" ? options.includes("project") ? (<ProjectForm
-            cardProps={{title: "Согласование КП"}}
-            type={"kp"}
-            onCompleted={() => onUpdated()}
-            // disabledOptions={["status_id", "organization_customer", "date_create"]}
-            requiredOptions={["name", "type_project_document", "organization_customer", "date_range", "price", "prepayment"]}
-            project={project}
-        />) : <ErrorAlert/> : page === "stage" ? options.includes("stage") ? (
-            <Space.Compact direction={"vertical"}>
-                <StyledButtonGreen size={"small"} type={"text"} icon={<SaveOutlined/>}
-                                   children={"Загрузить шаблонные этапы"}/>
-                <StageToProjectForm cardProps={{title: "Уточнение заявки"}} project={project}/>
-            </Space.Compact>) : <ErrorAlert/> : page === "ird" ? options.includes("ird") ? (
-            <Space.Compact direction={"vertical"}>
-                <StyledButtonGreen size={"small"} type={"text"} icon={<SaveOutlined/>}
-                                   children={"Загрузить шаблонные этапы"}/>
-                <IrdToProjectForm cardProps={{title: "Уточнение заявки"}} project={project}/>
-            </Space.Compact>) : <ErrorAlert/> : <ErrorAlert/>}
-        <Divider style={{margin: 2}}/>
-    </Space>)
+            {page === "project" ? template[status].includes("project") ? (
+                <ProjectForm
+                    cardProps={{title: "Изменение проекта"}}
+                    type={"kp"}
+                    onCompleted={() => onCompleted && onCompleted()}
+                    // disabledOptions={["status_id", "organization_customer", "date_create"]}
+                    requiredOptions={["name", "type_project_document", "organization_customer", "date_range", "price", "prepayment"]}
+                    project={project}
+                />) : <ErrorAlert/> : page === "stage" ? template[status].includes("stage") ? (
+                <Space.Compact direction={"vertical"}>
+                    <StyledButtonGreen size={"small"} type={"text"} icon={<SaveOutlined/>}
+                                       children={"Загрузить шаблонные этапы"}/>
+                    <StageToProjectForm onCompleted={() => onCompleted()} cardProps={{title: "Уточнение заявки"}}
+                                        project={project}/>
+                </Space.Compact>) : <ErrorAlert/> : page === "ird" ? template[status].includes("ird") ? (
+                <Space.Compact direction={"vertical"}>
+                    <StyledButtonGreen size={"small"} type={"text"} icon={<SaveOutlined/>}
+                                       children={"Загрузить шаблонные этапы"}/>
+                    <IrdToProjectForm onCompleted={() => onCompleted()} cardProps={{title: "Уточнение заявки"}}
+                                      project={project}/>
+                </Space.Compact>) : <ErrorAlert/> : <ErrorAlert/>}
+            <Divider style={{margin: 2}}/>
+        </Space>)
 }
 export default Index;

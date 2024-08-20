@@ -6,7 +6,8 @@ import {DELETE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
 import Search from "antd/es/input/Search";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {format} from "date-fns";
- import {NotificationContext} from "../../NotificationProvider";
+import {NotificationContext} from "../../NotificationProvider";
+
 const {Text} = Typography;
 const UserTable = () => {
 
@@ -72,7 +73,8 @@ const UserTable = () => {
          }, {
             title: 'roles',   key: 'permissions',   width: "40%",
             render: (row)=> (
-                (row.roles?.length > 0) ? row.roles?.map(second_row => second_row.name) : <Text type={"danger"}>Роль не установлена</Text>
+                (row.roles?.length > 0) ? row.roles?.map(second_row => <>{second_row.name}<br/></>) :
+                    <Text type={"danger"}>Роль не установлена</Text>
             )
          },
         {

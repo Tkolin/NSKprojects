@@ -1,8 +1,7 @@
 import React, {cloneElement, useEffect, useRef, useState} from 'react';
-import {Upload, Button, message, DatePicker, Popconfirm, Space, Alert} from 'antd';
+import {Alert, Button, message, Popconfirm, Space, Upload} from 'antd';
 import {UploadOutlined} from '@ant-design/icons';
-import {useMutation} from '@apollo/client';
-import {gql} from '@apollo/client';
+import {gql, useMutation} from '@apollo/client';
 import dayjs from "dayjs";
 import {useClickAway} from 'react-use';
 import {CustomDatePicker} from "./FormattingDateElementComponent";
@@ -36,8 +35,8 @@ export const UploadFilePopconfirm = ({onUpdated, action, options, children, ...p
     const [open, setOpen] = useState(false);
     const [openDp, setOpenDp] = useState(false);
     useEffect(() => {
-        console.log("openDp", openDp)
-    }, [openDp]);
+        console.log("selectedDateContract", selectedDateContract)
+    }, [selectedDateContract]);
     const popconfirmRef = useRef(null); // Ссылка на Popconfirm
 
     // Закрытие Popconfirm при клике вне его
@@ -164,6 +163,7 @@ const UploadFile = ({
                     onConfirm && onConfirm();
                 } else if (info.file.status === 'error') {
                     message.error(`${info.file.name} file upload failed.`);
+                    console.log(info);
                 }
             },
         };

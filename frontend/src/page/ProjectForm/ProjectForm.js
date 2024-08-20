@@ -1,16 +1,14 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {
- 
-    Form, Input, InputNumber, Space, Collapse, Divider, Button, Modal, Card, DatePicker,
- 
-} from 'antd';
+import {Card, Collapse, Form, Input, InputNumber, Modal, Space,} from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
 
 import dayjs from "dayjs";
 import {NotificationContext} from "../../NotificationProvider";
 import {
-    CONTACTS_QUERY_COMPACT, GROUP_TYPE_PROJECTS_QUERY_COMPACT,
-    ORGANIZATIONS_QUERY_COMPACT, PROJECT_COUNT_BY_ORGANIZATION,
+    CONTACTS_QUERY_COMPACT,
+    GROUP_TYPE_PROJECTS_QUERY_COMPACT,
+    ORGANIZATIONS_QUERY_COMPACT,
+    PROJECT_COUNT_BY_ORGANIZATION,
     PROJECT_STATUSES_QUERY_COMPACT,
     TYPES_PROJECTS_QUERY_COMPACT
 } from "../../graphql/queriesCompact";
@@ -22,12 +20,10 @@ import {
 } from "../components/style/SearchAutoCompleteStyles";
 
 import FacilitiesTreeComponent from "./components/FacilitiesTreeComponent";
-import DateRangePickerComponent from "../components/DateRangePickerComponent";
- 
+
 import {ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION} from "../../graphql/mutationsProject";
 import {rebuildProjectResultQuery} from "../components/script/rebuildData/ProjectRebuilderQuery";
-import {CustomDatePicker} from "../components/FormattingDateElementComponent";
- 
+
 import ContactForm from "../simplesForms/ContactForm";
 import OrganizationForm from "../simplesForms/OrganizationForm";
 import {ModalButton} from "../simplesForms/formComponents/ModalButtonComponent";
@@ -35,21 +31,31 @@ import {AutoCompleteFormItem} from "../components/CustomForm";
 import {nanoid} from "nanoid";
 import TypeProjectForm from "../simplesForms/TypeProjectForm";
 
-
-
+const defaultRequired = [
+    "name",
+    "type_project_document",
+    "organization_customer",
+    "facility_id",
+    "date_range",
+    "status_id",
+    "price",
+    "prepayment"
+];
+const defaultViews = [
+    "name",
+    "type_project_document",
+    "organization_customer",
+    "facility_id",
+    "date_range",
+    "status_id",
+    "price",
+    "prepayment"
+];
 const ProjectForm = ({
-                         onCompleted, project, type, requiredOptions = ["name",
-            "type_project_document",
-            "organization_customer",
-            "facility_id",
-            "date_range",
-            "status_id",
-            "price",
-            "prepayment"
-        ],
-                         disabledOptions = [], options, cardProps
+                         onCompleted, project, type, options, cardProps
                      }) => {
- 
+        const [requiredOptions, setRequiredOptions] = useState(defaultRequired)
+        const [disabledOptions, setDisabledOptions] = useState("status_id")
         // Получение данных для выпадающих списков
         const {loading: loadingStatuses, error: errorStatuses, data: dataStatuses} =
             useQuery(PROJECT_STATUSES_QUERY_COMPACT);
@@ -77,7 +83,7 @@ const ProjectForm = ({
         const {openNotification} = useContext(NotificationContext);
 
         const [form] = Form.useForm();
- 
+
 
         const [dataTypesOutput, setDataTypesOutput] = useState([]);
 
@@ -91,15 +97,17 @@ const ProjectForm = ({
 
         const [selectedGroupTypeProject, setSelectedGroupTypeProject] = useState(false);
         useEffect(() => {
-             !(project.id) && form.setFieldValue("type_project_document", null);
+            !(project.id) && form.setFieldValue("type_project_document", null);
             if (dataTypeProject?.typeProjects?.items && selectedGroupTypeProject && !loadingTypeProject) {
                 setDataTypesOutput(dataTypeProject?.typeProjects?.items?.filter(row => row?.group?.id === selectedGroupTypeProject));
             }
         }, [dataTypeProject, selectedGroupTypeProject]);
 
 
- 
         const load = () => {
+            if (project?.status_id) {
+
+            }
             form.setFieldsValue({
                 ...project,
                 ...rebuildProjectResultQuery(project),
@@ -130,7 +138,7 @@ const ProjectForm = ({
 
         const handleSave = () => {
             const number = createNumber();
- 
+
             if (!type && number)
                 return;
             const formData = form.getFieldsValue();
@@ -153,7 +161,6 @@ const ProjectForm = ({
             }
 
 
- 
             mutateProject({
                 variables: {
                     ...(project.id ? {id: project.id} : {}),
@@ -162,11 +169,11 @@ const ProjectForm = ({
             });
         }
         const createNumber = () => {
- 
+
             if (type && (project?.id && project?.id > -1))
                 return project.number;
 
- 
+
             const facilitiCode = (
                 form.getFieldValue("facility_id")?.checkedObjects &&
                 form.getFieldValue("facility_id")?.checkedObjects[0] &&
@@ -188,7 +195,7 @@ const ProjectForm = ({
         }
         if (errorStatuses || errorTypeProject || errorDelegates || errorOrganizations) return `Ошибка! ${errorStatuses?.message || errorTypeProject?.message || errorDelegates?.message || errorOrganizations?.message}`;
 
- 
+
         return (
             <Card style={{width: 400}}
                   {...cardProps}
@@ -272,10 +279,10 @@ const ProjectForm = ({
                                   data={dataOrganizations?.organizations?.items}
                               />
                           </AutoCompleteFormItem>
-                            Обьекты
+                          Обьекты
                           <Collapse size={"small"}>
                               <Collapse.Panel header={"Выберите объекты"}>
-                                  <Form.Item name="facility_id"  style={{width: "100%"}}>
+                                  <Form.Item name="facility_id" style={{width: "100%"}}>
                                       <FacilitiesTreeComponent/>
                                   </Form.Item>
                               </Collapse.Panel>
@@ -418,7 +425,7 @@ const ProjectForm = ({
 
                   </>
                   }/>)
- 
+
     }
 ;
 

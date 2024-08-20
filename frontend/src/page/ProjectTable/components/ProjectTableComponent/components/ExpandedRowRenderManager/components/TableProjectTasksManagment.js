@@ -1,9 +1,8 @@
-import {Alert, Button, Col, notification, Progress, Row, Space, Table, Tooltip, Typography} from "antd";
+import {Alert, Col, notification, Progress, Row, Space, Table, Tooltip, Typography} from "antd";
 import React, {useEffect} from "react";
-import {DownloadOutlined, EditOutlined} from "@ant-design/icons";
+import {EditOutlined} from "@ant-design/icons";
 import Link from "antd/es/typography/Link";
 import dayjs from "dayjs";
-import {green, red} from "@ant-design/colors";
 import {useMutation} from "@apollo/client";
 import {PROJECT_TASK_UP_MUTATION} from "../../../../../../../graphql/mutationsProject";
 
@@ -167,7 +166,7 @@ const StatusRender = ({projectTask}) => {
             openNotification('topRight', 'success', `Статус задачи повышен`);
         },
         onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка`);
+            openNotification('topRight', 'error', `Ошибка` + error.message);
         },
     });
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Card, Col, Divider, Popover, Row, Space, Typography} from "antd";
+import {Button, Card, Col, Divider, Popover, Row, Space} from "antd";
 
 import '../style.css';
 import {useQuery} from "@apollo/client";
@@ -24,7 +24,7 @@ const Home = () => {
 
     return (
         <>
-            {MenuItemsByPermission(currentUser?.currentUser ?? null)?.map((main_row) => {
+            {MenuItemsByPermission(currentUser ?? null)?.map((main_row) => {
                 if (!main_row || !main_row.children)
                     return null;
                 return (

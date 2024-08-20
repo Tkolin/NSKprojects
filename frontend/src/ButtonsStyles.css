@@ -1,0 +1,45 @@
+.danger_text_btn {
+    border-color: #fffbe6 !important;
+    color: #faad14 !important;
+}
+
+.danger_text_btn:hover {
+    background-color: #fffbe6 !important;
+}
+
+.danger_text_btn:active {
+    background-color: #fff1b8 !important;
+}
+
+.green-ghost-btn {
+    background-color: rgba(255, 251, 230, 0) !important;
+    border-color: #52c41a !important;
+    color: #52c41a !important;
+}
+
+.green-ghost-btn:hover {
+    background-color: #fffbe6 !important;
+}
+
+.green-ghost-btn:active {
+    background-color: #fff1b8 !important;
+}
+
+.green-btn {
+    background-color: #52c41a !important;
+    border-color: #52c41a !important;
+    color: #FFFFFFD9 !important;
+}
+
+.green-btn:hover {
+    background-color: #FFFFFFD9 !important;
+    border-color: #52c41a !important;
+    color: #000000E0 !important;
+
+}
+
+.green-btn:active {
+    background-color: #FFFFFFD9 !important;
+    border-color: #000000E0 !important;
+    color: #000000E0 !important;
+}

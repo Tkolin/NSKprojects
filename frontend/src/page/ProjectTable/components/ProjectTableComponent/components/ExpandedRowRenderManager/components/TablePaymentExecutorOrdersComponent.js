@@ -17,7 +17,12 @@ const {Text} = Typography;
 const TablePaymentExecutorOrdersComponent = ({setEditModalStatus, project}) => {
 
 
-    const {data: executorOrders, loading: loading, error: error} = useQuery(EXECUTOR_ORDERS_PROJECT_QUERY,
+    const {
+        data: executorOrders,
+        loading: loading,
+        error: error,
+        refetch: refetch
+    } = useQuery(EXECUTOR_ORDERS_PROJECT_QUERY,
         {
             variables:
                 {
@@ -33,7 +38,7 @@ const TablePaymentExecutorOrdersComponent = ({setEditModalStatus, project}) => {
             title:
                 <Space>
                     <Tooltip title={"Список задач"}>
-                        <Text style={{marginRight: 10}}>Список Задач на проекте</Text>
+                        <Text style={{marginRight: 10}}>Список счетов на оплату</Text>
                     </Tooltip>
                     <Link type={"warning"}>
                         <EditOutlined onClick={() => setEditModalStatus && setEditModalStatus()}/>
@@ -65,7 +70,8 @@ const TablePaymentExecutorOrdersComponent = ({setEditModalStatus, project}) => {
                             {!record?.payment_file_completed?.includes("PREPAYMENT") ?
                                 <UploadFilePopconfirm
                                     options={{datePicker: true}}
-                                    action={'project/upload/project_order_payment/page?executorOrderId=' + record.id + '&status=PREPAYMENT'}>
+                                    onUpdated={() => refetch()}
+                                    action={'project/upload/executor_order_payment/page?executorOrderId=' + record.id + '&status=PREPAYMENT'}>
                                     <Button
                                         type={"text"}>
                                         Подтвердить оплату аванса
@@ -73,7 +79,8 @@ const TablePaymentExecutorOrdersComponent = ({setEditModalStatus, project}) => {
                                 !record?.payment_file_completed?.includes("MAINPAYMENT") ? record.is_tasks_completed ?
                                         <UploadFilePopconfirm
                                             options={{datePicker: true}}
-                                            action={'project/upload/project_order_payment/page?executorOrderId=' + record.id + '&status=MAINPAYMENT'}
+                                            onUpdated={() => refetch()}
+                                            action={'project/upload/executor_order_payment/page?executorOrderId=' + record.id + '&status=MAINPAYMENT'}
                                         ><Button warring type={"text"}>Подтвердить оплату
                                             основной
                                             суммы</Button></UploadFilePopconfirm> :
@@ -82,7 +89,8 @@ const TablePaymentExecutorOrdersComponent = ({setEditModalStatus, project}) => {
                                     !record?.payment_file_completed?.includes("POSTPAYMENT") && record.project_completed ?
                                         <UploadFilePopconfirm
                                             options={{datePicker: true}}
-                                            action={'project/upload/project_order_payment/page?executorOrderId=' + record.id + '&status=POSTPAYMENT'}
+                                            onUpdated={() => refetch()}
+                                            action={'project/upload/executor_order_payment/page?executorOrderId=' + record.id + '&status=POSTPAYMENT'}
                                         ><Button warring type={"text"}>Подтвердить
                                             постоплату</Button></UploadFilePopconfirm> :
                                         <Button type={"text"} disabled>Ожидание завершения проекта</Button>
@@ -118,10 +126,10 @@ const TablePaymentExecutorOrdersComponent = ({setEditModalStatus, project}) => {
         }
         ]
     ;
-    const getStatusOrder = (executorOrder) => {
-        console.log(executorOrder);
-    }
 
+    const getNameOrder = (executorOrders) => {
+        return "";
+    }
     const filterAndSortOrders = (orders) => {
         if (!orders)
             return;

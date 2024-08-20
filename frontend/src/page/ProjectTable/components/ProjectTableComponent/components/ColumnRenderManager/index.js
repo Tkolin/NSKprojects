@@ -5,79 +5,83 @@ import ColumnMainDataRender from "./components/ColumnMainDataRender";
 import ColumnCustomerRender from "./components/ColumnCustomerRender";
 import ColumnStatusRender from "./components/ColumnStatusRender";
 import ColumnProgressRender from "./components/ColumnProgressRender";
-import ColumnWorkingMenuToolRender from "./components/ColumnToolRender/components/ColumnWorkingMenuToolRender";
-import {getToolRender} from "./components/ColumnToolRender";
+import ColumnToolRenderManager from "./components/ColumnToolRenderManager";
 
 const formatCurrency = (amount) => {
     return amount.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'});
 };
 const {Text} = Typography;
 
-const GetColumn = ({
+const getColumn = ({
                        options = {},
                        onUpdated,
-                       expandable,
+                       expandableTableProps,
                    }) => {
+
+    console.log("expandableTableProps", expandableTableProps)
+
     if (!options)
         return null;
-
     const columns = [];
-    if (options.tool) {
-        console.log("getToolRender", getToolRender());
-    }
+    //  Добавление элементов в колонку инструментов
+    if (options.tool)
+        columns.push(columnMenuComponent({
+            options: options.tool,
+            onUpdated,
+            expandableTableProps: expandableTableProps
+        }));
+
+    //  Добавление остальных колонок согласно параметрам
     if (options.columns) {
-
+        options.columns.includes("name") &&
+        columns.push(columnProgressComponent());
+        columns.push(columnMainDataComponent());
     }
-
-
     return columns;
 }
-
-const columnProgressComponent = ({width}) =>
+export default getColumn;
+const columnProgressComponent = () =>
     ({
         key: 'progress',
-        width: width,
+        width: "30%",
         render: (text, record) => <ColumnProgressRender record={record} text={text}/>
     });
-
-const columnWorkingMenuToolComponent = ({
-                                            width, options, expandable, onUpdated,
-                                            setEditProjectModalStatus, createTemplate
-                                        }) =>
+const columnMenuComponent = ({
+                                 options,
+                                 onUpdated,
+                                 expandableTableProps
+                             }) =>
     ({
-        key: 'menu-working-options',
-        width: width,
-        render: (text, record) =>
-            <ColumnWorkingMenuToolRender text={text} record={record} expandable={expandable}
-                                         setEditProjectModalStatus={setEditProjectModalStatus}
-                                         createTemplate={createTemplate}
-                                         onUpdated={() => onUpdated()} options={options}/>
+        key: 'options',
+        width: "48px",
+        render: (text, record) => <ColumnToolRenderManager record={record}
+                                                           options={options}
+                                                           onUpdated={onUpdated}
+                                                           expandableTableProps={expandableTableProps}/>
     });
-const columnMainDataComponent = ({width, onUpdated}) =>
+
+
+const columnMainDataComponent = () =>
     ({
         key: 'main_data',
-        width: width,
         render: (text, record) => <ColumnMainDataRender text={text} record={record}/>,
     });
-const columnCustomerComponent = ({width}) =>
+const columnCustomerComponent = () =>
     ({
         key: 'customer_data',
-        width: width,
         render:
             (text, record) =>
                 <ColumnCustomerRender text={text} record={record}/>
     });
-const columnStatusComponent = ({width, status}) =>
+const columnStatusComponent = (status) =>
     ({
         key: 'status_data',
-        width: width,
         render:
             (text, record) => <ColumnStatusRender render={record} status={status} text={text}/>
     });
-const columnPriceComponent = ({width}) =>
+const columnPriceComponent = () =>
     ({
         key: 'price_data',
-        width: width,
         render:
             (text, record) => (
                 <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
@@ -90,4 +94,3 @@ const columnPriceComponent = ({width}) =>
             ),
     });
 
-export default GetColumn;

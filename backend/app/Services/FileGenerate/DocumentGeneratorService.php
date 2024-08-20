@@ -2,11 +2,11 @@
 
 namespace App\Services\FileGenerate;
 
-use App\Models\ExecutorOrder;
 use App\Models\File;
+use Exception;
 use Illuminate\Support\Facades\Storage;
-use PhpOffice\PhpWord\TemplateProcessor;
 use Illuminate\Support\Str;
+use PhpOffice\PhpWord\TemplateProcessor;
 
 abstract class DocumentGeneratorService
 {
@@ -28,13 +28,13 @@ abstract class DocumentGeneratorService
     {
         // Проверка существования шаблона
         if (!file_exists($this->templatePath)) {
-            throw new \Exception("Шаблон документа не найден по пути: {$this->templatePath}");
+            throw new Exception("Шаблон документа не найден по пути: {$this->templatePath}");
         }
 
         // Создание временного файла копии шаблона
         $tempFilePath = tempnam(sys_get_temp_dir(), 'doc');
         if (!copy($this->templatePath, $tempFilePath)) {
-            throw new \Exception("Не удалось создать временный файл по пути: {$tempFilePath}");
+            throw new Exception("Не удалось создать временный файл по пути: {$tempFilePath}");
         }
 
         $this->templateProcessor = new TemplateProcessor($tempFilePath);
@@ -61,7 +61,7 @@ abstract class DocumentGeneratorService
      * Проверить обязательные поля в замене и выбросить исключение, если какие-либо отсутствуют.
      *
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
     public function checkReplacements(): bool
     {
@@ -71,10 +71,10 @@ abstract class DocumentGeneratorService
         }
 
         $message = "Не заполнены обязательные поля: " . implode(", ", $nullKeys);
-        throw new \Exception($message);
+        throw new Exception($message);
     }
 
-    public function saveFileToProject($storagePath, $filePath, $fileName): File
+    public function saveFileToProject($storagePath, $filePath, $fileName)
     {
         $fileContents = file_get_contents($filePath);
         Storage::disk('localERPFiles')->put($storagePath, $fileContents);
@@ -86,10 +86,12 @@ abstract class DocumentGeneratorService
             'size' => $fileSize,
             'mime_type' => $mimeType,
         ]);
+        error_log("result", $file->id);
+
         return $file;
     }
 
-    public function saveFileToExecutorOrder($storagePath, $filePath, $fileName): File
+    public function saveFileToExecutorOrder($storagePath, $filePath, $fileName)
     {
         $fileContents = file_get_contents($filePath);
         Storage::disk('localERPFiles')->put($storagePath, $fileContents);

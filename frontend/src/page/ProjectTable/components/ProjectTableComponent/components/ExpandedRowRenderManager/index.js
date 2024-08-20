@@ -9,7 +9,7 @@ import {nanoid} from "nanoid";
 import IrdsProjectForm from "../../../../../ProjectIrdsForm";
 import StageToProjectForm from "../../../../../ProjectStagesForm";
 
-const Index = ({project, expandable}) => {
+const Index = ({project, expandable, options}) => {
     const [editModalStatus, setEditModalStatus] = useState();
     const getNameModalView = (type) => {
         switch (type) {
@@ -44,7 +44,7 @@ const Index = ({project, expandable}) => {
             <Space style={{maxWidth: "1200px"}} direction={"vertical"} align={"start"}>
                 <Collapse size={"small"} accordion items={
                     [
-                        ...(expandable.includes("stages") ? [{
+                        ...(options.includes("stages") ? [{
                             key: '1',
                             label: "Этапы",
                             children:
@@ -52,7 +52,7 @@ const Index = ({project, expandable}) => {
                                                       setEditModalStatus={() => setEditModalStatus("stages")}/>
                         }] : []),
 
-                        ...(expandable.includes("irds") ? [
+                        ...(options.includes("irds") ? [
                             {
                                 key: '2',
                                 label: "ИРД",
@@ -62,7 +62,7 @@ const Index = ({project, expandable}) => {
 
                             }] : []),
 
-                        ...(expandable.includes("executors") ? [
+                        ...(options.includes("executors") ? [
                             {
                                 key: '3',
                                 label: "Исполнители",
@@ -71,7 +71,7 @@ const Index = ({project, expandable}) => {
                                                              project={project}
                                                              setEditModalStatus={() => setEditModalStatus("executor")}/>
                             }] : []),
-                        ...(expandable.includes("stages-extra") ? [
+                        ...(options.includes("stages-extra") ? [
                             {
                                 key: '4',
                                 label: "Этапы",
@@ -80,7 +80,7 @@ const Index = ({project, expandable}) => {
                                                           options={['acts', 'payments']}
                                                           setEditModalStatus={() => setEditModalStatus("stages")}/>
                             }] : []),
-                        ...(expandable.includes("tasks") ? [
+                        ...(options.includes("tasks") ? [
                             {
                                 key: '5',
                                 label: "Задачи",
@@ -91,7 +91,7 @@ const Index = ({project, expandable}) => {
                                         setEditModalStatus={() => setEditModalStatus("tasks")}/>
                             }] : []),
 
-                        ...(expandable.includes("executor_orders") ? [
+                        ...(options.includes("executor_orders") ? [
                             {
                                 key: '6',
                                 label: "Исполнители",

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Form, Input, Button, message } from 'antd';
-import { useMutation } from '@apollo/client';
-import { REGISTER_MUTATION } from '../../graphql/mutationsAuth';
-import { Cookies } from 'react-cookie';
+import {Button, Form, Input, message} from 'antd';
+import {useMutation} from '@apollo/client';
+import {REGISTER_MUTATION} from '../../graphql/mutationsAuth';
+import {Cookies} from 'react-cookie';
 
 const RegisterForm = () => {
     const [form] = Form.useForm();
@@ -14,7 +14,7 @@ const RegisterForm = () => {
         register({ variables: { input: inputValues } })
             .then((response) => {
                 const { user, access_token } = response.data.register;
-                cookies.set('accessToken', access_token, { path: '/' });
+                //     cookies.set('accessToken', access_token, { path: '/' });
                 console.log(cookies.get('accessToken'));
                 message.success(`Registration successful. Welcome, ${user.name}!`);
                 form.resetFields();
