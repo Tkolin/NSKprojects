@@ -1,42 +1,54 @@
-import {Button, Card, Divider, Dropdown, Tooltip} from "antd";
+import {Button, Card, Divider, Drawer, Dropdown, Tooltip} from "antd";
 import CRUDBlock from "./components/CRUDBlock";
 import ContractDocumentBlock from "./components/ContractDocumentBlock";
 import {MoreOutlined} from "@ant-design/icons";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {nanoid} from "nanoid";
 import KPDocumentBlock from "./components/KPDocumentBlock";
+import TasksManagementBlock from "./components/TasksManagementBlock";
 
 const Index = ({record, onUpdated, itemOptions = []}) => {
+    const [open, setOpen] = useState(false)
+    useEffect(() => {
+        console.log(open);
+    }, [open]);
     return (
-        <Tooltip title={"Внести уточнения"}>
-            <Dropdown
-                placement={"bottomLeft"}
-                trigger={['click']}
-                arrow={{
-                    pointAtCenter: true,
-                }}
-                dropdownRender={() =>
-                    (
-                        <Card size={"small"}
-                              style={{width: 280, justifyContent: 'center', alignItems: 'center'}}>
+        <>
+            <Tooltip title={"Внести уточнения"}>
 
-                            {itemOptions.includes("crud") && <>
-                                <CRUDBlock key={nanoid()} record={record} onUpdated={onUpdated}/>
-                                <Divider style={{margin: 0}}/>
-                            </>}
-                            {itemOptions.includes("contract") && <>
-                                <ContractDocumentBlock record={record} onUpdated={onUpdated}/>
-                                <Divider style={{margin: 0}}/>
-                            </>}
-                            {itemOptions.includes("kp") && <>
-                                <KPDocumentBlock project={record} onUpdated={onUpdated}/>
-                                <Divider style={{margin: 0}}/>
-                            </>}
 
-                        </Card>
-                    )}
-                children={<Button type={"text"} icon={<MoreOutlined/>}/>}
-            />
-        </Tooltip>)
+                <Button type={"text"} onClick={() => setOpen(!open)} icon={<MoreOutlined/>}/>
+
+
+            </Tooltip>
+            <Drawer
+
+                title="Меню инструментов"
+                placement="left"
+                open={open}
+                onClose={() => setOpen(false)}
+            >
+                {/*<Card size={"small"}*/}
+                {/*      style={{width: 280, justifyContent: 'center', alignItems: 'center'}}>*/}
+
+                {itemOptions.includes("crud") && <>
+                    <CRUDBlock key={nanoid()} record={record} onUpdated={onUpdated}/>
+                </>}
+                {itemOptions.includes("contract") && <>
+                    <ContractDocumentBlock record={record} onUpdated={onUpdated}/>
+                </>}
+                {itemOptions.includes("tasks_management") && <>
+                    <TasksManagementBlock record={record} onUpdated={onUpdated}/>
+                </>}
+                {itemOptions.includes("kp") && <>
+                    <KPDocumentBlock project={record} onUpdated={onUpdated}/>
+                </>}
+
+                {/*</Card>*/}
+
+            </Drawer>
+
+        </>
+    )
 }
 export default Index;

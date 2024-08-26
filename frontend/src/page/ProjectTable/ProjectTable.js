@@ -66,11 +66,7 @@ const template = {
             //  Первая колонка кнопок управления таблицей
             tool: {
                 //  Компоненты скрытые в ...
-                menu: ["crud", "contract", "irds", "irds",
-                    "executors",
-                    "stages-extra",
-                    "tasks",
-                    "executor_orders"],
+                menu: ["crud", "contract", "tasks_management"],
                 //  Кнопки быстрых действий
                 hotKey: ["archive", "up"],
             },

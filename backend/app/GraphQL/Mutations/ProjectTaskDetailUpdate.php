@@ -27,7 +27,6 @@ final readonly class ProjectTaskDetailUpdate
     {
         $data = $args['data'];
         $projectTask = ProjectTasks::findOrFail($data['id']);
-
         // Обновляем модель с использованием fill и затем вызываем save
  //        $dateStart = $item['date_start'] ?? $task->date_start ?? null;
 //        $dateEnd = $item['date_end'] ?? $task->date_end ?? null;

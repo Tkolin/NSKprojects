@@ -17,7 +17,7 @@ export const UserCard = ({}) => {
     useEffect(() => {
         setUser({
             permissions: JSON.parse(localStorage.getItem("userPermissions")),
-            user: JSON.parse(localStorage.getItem("userPermissions")),
+            user: JSON.parse(localStorage.getItem("user")),
         })
     }, []);
     const Out = () => {
@@ -57,7 +57,8 @@ export const UserCard = ({}) => {
             ]
         },
     ]
-    if (!user) {
+    console.log("user", user);
+    if (!user?.user) {
         return (
             <Card size={"small"} title={"СибНИПИ ID"}
                   style={{minWidth: "300px", justifyContent: 'center', alignItems: 'center'}}>
@@ -159,8 +160,8 @@ export const UserCard = ({}) => {
         </Card>
     )
 }
-export  const UserMenuHeaderDropdown = ({currentUser}) => {
-    return (  <Dropdown
+export const UserMenuHeaderDropdown = ({currentUser}) => {
+    return (<Dropdown
         placement={"bottomRight"}
         dropdownRender={() =>
             (
@@ -174,8 +175,8 @@ export  const UserMenuHeaderDropdown = ({currentUser}) => {
                     <Avatar
                         src={currentUser ? catImage : null}
                         icon={<UserOutlined/>}
-                        children={ currentUser ? currentUser.user?.name?.slice(0, 2) :
-                          <UserOutlined/>}
+                        children={currentUser ? currentUser.user?.name?.slice(0, 2) :
+                            <UserOutlined/>}
                     />
                 </Link>
             </Badge>

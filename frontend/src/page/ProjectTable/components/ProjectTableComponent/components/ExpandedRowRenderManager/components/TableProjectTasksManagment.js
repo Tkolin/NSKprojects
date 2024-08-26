@@ -21,9 +21,6 @@ const TableProjectTasksManagment = ({setEditModalStatus, project}) => {
                     <Tooltip title={"Список задач"}>
                         <Text style={{marginRight: 10}}>Список Задач на проекте</Text>
                     </Tooltip>
-                    <Link type={"warning"}>
-                        <EditOutlined onClick={() => setEditModalStatus && setEditModalStatus()}/>
-                    </Link>
                 </Space>,
             children: [
                 {
@@ -125,7 +122,7 @@ const CustomProgressBar = ({projectTask, ...props}) => {
                     ) :
                     (
                         <>
-                            Задача была начана заранее: {Math.abs(progress)} д.
+                            Задача была начало заранее: {Math.abs(progress)} д.
                             <Progress steps={5} percent={0}
                                       size={[28, 14]}/>
                         </>

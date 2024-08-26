@@ -20,7 +20,6 @@ final readonly class ChangeProjectStatus
                 if(!isset($args['dateStart']))
                     return throwException("TODO: need dateStart");
                 $project->date_start = $args['dateStart'];
-
             }
 
         }

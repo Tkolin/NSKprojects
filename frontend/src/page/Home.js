@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Card, Col, Divider, Popover, Row, Space} from "antd";
 
 import '../style.css';
@@ -9,13 +9,15 @@ import {useNavigate} from "react-router-dom"; // Подключаем файл �
 
 const Home = () => {
     const navigate = useNavigate();
-    const {error, data, refetch} = useQuery(GET_CURRENT_USER, {
-        pollInterval: 50000, // Интервал опроса в миллисекундах (например, 60000 мс = 1 минута)
-        fetchPolicy: 'cache-only'
-    });
+    const [user, setUser] = useState()
+    useEffect(() => {
+        setUser({
+            permissions: JSON.parse(localStorage.getItem("userPermissions")),
+            user: JSON.parse(localStorage.getItem("user")),
+        })
+    }, []);
 
 
-    const currentUser = data;
     const handleChange = (key) => {
         if(!key)
             return;
@@ -24,7 +26,8 @@ const Home = () => {
 
     return (
         <>
-            {MenuItemsByPermission(currentUser ?? null)?.map((main_row) => {
+
+            {user?.permissions && MenuItemsByPermission(user ?? null)?.map((main_row) => {
                 if (!main_row || !main_row.children)
                     return null;
                 return (

@@ -3,6 +3,7 @@
 namespace App\GraphQL\Queries;
 
 use App\Models\Bik;
+use App\Models\Contact;
 use App\Services\GrpahQL\AuthorizationService;
 use App\Services\GrpahQL\QueryService;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
@@ -13,10 +14,20 @@ final readonly class Biks
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
-        if(!isset($args['queryOptions']))
-            switch ($args['queryType']){
+        if (!isset($args['queryOptions']))
+            switch ($args['queryType']) {
                 case "COMPACT":
                     return ['items' => Bik::all()];
+                case "BY_ID":
+                    if (!isset($args['id'])) {
+                        return ['items' => 'Ошибка, отсутствует id'];
+                    }
+                    $data = Bik::find($args['id']);
+                    if ($data) {
+                        return ['items' => [$data]];
+                    } else {
+                        return ['items' => 'Ошибка, контакт не найден'];
+                    }
                 default:
                     return ['items' => "Ошибка, не верный тип запрооса"];
             }

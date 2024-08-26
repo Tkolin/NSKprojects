@@ -1,9 +1,10 @@
-import {Button, Popconfirm, Tooltip} from "antd";
+import {Badge, Button, Popconfirm, Tooltip} from "antd";
 import {DeleteOutlined, DeliveredProcedureOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
 import {useMutation} from "@apollo/client";
 import {UP_STATUS_PROJECT} from "../../../../../../../../../graphql/mutationsProject";
 import dayjs from "dayjs";
+
 
 const ArchivedButton = ({project, onCompleted}) => {
 
@@ -26,48 +27,91 @@ const ArchivedButton = ({project, onCompleted}) => {
         reloadDisabled();
     }, [project,]);
     const reloadDisabled = () => {
-        setDisabledMessage([]);
+        const result = [];
         switch (project.status.name_key) {
-            // Если ирд получено и договор подписан
             case "DESIGN_REQUEST":
                 if (!project.name)
-                    addDisableMessage("Отсутствует имя проекта;  ");
-                if (!project.price)
-                    addDisableMessage("Отсутствует стоимость;  ")
+                    result.push("Отсутствует имя проекта;  ");
+                if (!project.organization_customer?.id)
+                    result.push("Отсутствует организация заказчик;  ");
+                if (project.facilities.length <= 0)
+                    result.push("Отсутствуют объекты проектирования;  ");
                 if (!project.duration)
-                    addDisableMessage("Отсутствует продолжительность;  ")
-                if (!project.organization_customer)
-                    addDisableMessage("Отсутствует организация заказчик;  ")
+                    result.push("Отсутствует продолжительность;  ")
+                if (!project.type_project_document?.id)
+                    result.push("Отсутствует тип документации;  ");
+                if (!project.price)
+                    result.push("Отсутствует стоимость;  ");
+                if (!project.prepayment)
+                    result.push("Отсутствует аванс;  ");
                 break;
 
             case "APPROVAL_KP":
+                if (!project.name)
+                    result.push("Отсутствует имя проекта;  ");
+                if (!project.organization_customer?.id)
+                    result.push("Отсутствует организация заказчик;  ");
+                if (project.facilities.length <= 0)
+                    result.push("Отсутствуют объекты проектирования;  ");
+                if (!project.duration)
+                    result.push("Отсутствует продолжительность;  ")
+                if (!project.type_project_document?.id)
+                    result.push("Отсутствует тип документации;  ");
+                if (!project.price)
+                    result.push("Отсутствует стоимость;  ");
+                if (!project.prepayment)
+                    result.push("Отсутствует аванс;  ");
+
                 if (project.project_stages?.length <= 0)
-                    addDisableMessage("Отсутствуют этапы;  ")
+                    result.push("Отсутствуют этапы;  ")
                 if (!project.kp_file_id)
-                    addDisableMessage("Отсутствует подписанный файл;  ")
+                    result.push("Отсутствует подписанный файл;  ")
                 break;
 
             case "APPROVAL_AGREEMENT":
-                if (!project.project_irds?.filter(row => (row.stage_number === 1) && (row.received_date)))
-                    addDisableMessage("Отсутствует ирд;  ");
+                if (!project.name)
+                    result.push("Отсутствует имя проекта;  ");
+                if (!project.organization_customer?.id)
+                    result.push("Отсутствует организация заказчик;  ");
+                if (project.facilities.length <= 0)
+                    result.push("Отсутствуют объекты проектирования;  ");
+                if (!project.duration)
+                    result.push("Отсутствует продолжительность;  ")
+                if (!project.type_project_document?.id)
+                    result.push("Отсутствует тип документации;  ");
+                if (!project.price)
+                    result.push("Отсутствует стоимость;  ");
+                if (!project.prepayment)
+                    result.push("Отсутствует аванс;  ");
+
+                if (project.project_stages?.length <= 0)
+                    result.push("Отсутствуют этапы;  ")
+                if (!project.kp_file_id)
+                    result.push("Отсутствует подписанный файл кп;  ")
+
+                if (project.project_irds?.length <= 1)
+                    result.push("Ирд не сформировано;  ");
+                if (project.project_irds?.filter(row => (row.stage_number === 1) && (row.received_date)) > 0)
+                    result.push("Ирд не получено;  ", project.project_irds?.filter(row => (row.stage_number === 1) && (row.received_date)).length);
                 if (!project.date_signing)
-                    addDisableMessage("Отсутствует дата подписания;  ")
+                    result.push("Отсутствует дата подписания;  ")
                 if (!project.contract_file_id)
-                    addDisableMessage("Отсутствует подписанный файл;  ")
+                    result.push("Отсутствует подписанный файл договора;  ")
                 break;
             case "ARCHIVE":
-                addDisableMessage("Не реализованно;  ")
+                result.push("Не реализованно;  ")
                 break;
             case "COMPLETED":
-                addDisableMessage("Не реализованно;  ");
+                result.push("Не реализованно;  ");
                 break;
             case "WAITING_SOURCE":
-                addDisableMessage("Не реализованно;  ")
+                result.push("Не реализованно;  ")
                 break;
             case "WORKING":
-                addDisableMessage("Не реализованно;  ");
+                result.push("Не реализованно;  ");
                 break;
         }
+        setDisabledMessage(result);
     }
     return (
         <Popconfirm
@@ -91,12 +135,15 @@ const ArchivedButton = ({project, onCompleted}) => {
                 disabledMessage.map(row => {
                     return <>{row}<br/></>
                 })}>
-                <Button className={!(disabledMessage.length > 0) && "green-btn"}
-                        disabled={(disabledMessage.length > 0)}
-                        onClick={() => reloadDisabled()}
-                        icon={<DeliveredProcedureOutlined/>} loading={changeProjectStatusLoading}
-                        style={{height: 32}}
-                />
+                <Badge count={disabledMessage.length} offset={[-5, 0]}>
+                    <Button className={!(disabledMessage.length > 0) && "green-btn"}
+                            disabled={(disabledMessage.length > 0)}
+                            onClick={() => reloadDisabled()}
+                            icon={<DeliveredProcedureOutlined/>} loading={changeProjectStatusLoading}
+                            style={{height: 32}}
+                    />
+                </Badge>
+
             </Tooltip>
 
         </Popconfirm>

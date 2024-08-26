@@ -11,6 +11,7 @@ type Query {
     projects(id: ID, queryOptions: QueryOptions, queryType: String, projectId: ID, projectStatuses: [String]): ProjectsResult
 
 
+
     persons(id: ID, queryOptions: QueryOptions, queryType: String): PersonsResult @checkRole(permission:  ["read-project"])
     biks(id: ID, queryOptions: QueryOptions, queryType: String): BikResult
     passportPlaceIssues(id: ID, queryOptions: QueryOptions, queryType: String): PassportPlaceIssueResult

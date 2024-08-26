@@ -18,8 +18,8 @@ const ColumnToolRenderManager = ({
                                      record,
                                  }) => {
     useEffect(() => {
-        console.log("ColumnToolRenderManager", expandableTableProps)
-    }, [record,]);
+        console.log("1 ColumnToolRenderManager record", record.project_tasks);
+    }, [record]);
     return (
         <Space direction={"vertical"}>
             <MenuManager record={record} onUpdated={onUpdated} itemOptions={options?.menu}/>

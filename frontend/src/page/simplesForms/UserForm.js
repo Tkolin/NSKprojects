@@ -19,7 +19,7 @@ import LoadingSpinnerStyles from "../components/style/LoadingSpinnerStyles";
 import {CustomDatePicker} from "../components/FormattingDateElementComponent";
 import {ModalButton} from "./formComponents/ModalButtonComponent";
 
-const ContactForm = ({localObject, initialObject, onCompleted, cardProps}) => {
+const UserForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
@@ -218,4 +218,4 @@ const ContactForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     );
 };
 
-export default ContactForm;
+export default UserForm;

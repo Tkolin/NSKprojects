@@ -177,7 +177,7 @@ export const UPDATE_PROJECT_MUTATION = gql`
                 offset
                 duration
                 date_start
-                 
+
                 date_end
                 price
             }
@@ -198,7 +198,54 @@ export const UPDATE_PROJECT_MUTATION = gql`
     }
 
 `;
-
+export const SET_IRD_TEMPLATE_TO_PROJECT_MUTATION = gql`
+    mutation SetIrdTempProject
+    (   $projectId: ID!
+        $templateProjectId: ID!)
+    {
+        setTemplateProjectIrds(projectId: $projectId,templateProjectId: $templateProjectId ) {
+            id
+            project_stages {
+                project_id
+                stage_id
+                number
+                stage {
+                    id
+                    name
+                }
+                date_start
+                duration
+                date_end
+                percent
+                price
+            }
+        }
+    }
+`;
+export const SET_STAGE_TEMPLATE_TO_PROJECT_MUTATION = gql`
+    mutation SetStageTempProject
+    (   $projectId: ID!
+        $templateProjectId: ID!)
+    {
+        setTemplateProjectStages(projectId: $projectId,templateProjectId: $templateProjectId ) {
+            id
+            project_stages {
+                project_id
+                stage_id
+                number
+                stage {
+                    id
+                    name
+                }
+                date_start
+                duration
+                date_end
+                percent
+                price
+            }
+        }
+    }
+`;
 export const PROJECT_TASKS_DETAIL_UPDATE = gql`
     mutation ProjectTaskDetailUpdate($data: TaskToProjectDetailInput!) {
         projectTaskDetailUpdate(data: $data) {
@@ -207,7 +254,7 @@ export const PROJECT_TASKS_DETAIL_UPDATE = gql`
             task_id
             offset
             duration
-             
+
             executor {
                 id
                 passport {
@@ -301,11 +348,11 @@ export const PROJECT_STAGE_SYNC_MUTATION = gql`
         }
     }
 `;
- 
- export const CHANGE_STATUS_PROJECT = gql`
+
+export const CHANGE_STATUS_PROJECT = gql`
     mutation ProjectStagesSync($projectId: ID!, $statusKey: String!, $dateStart: String) {
         changeProjectStatus(projectId: $projectId, statusKey: $statusKey, dateStart: $dateStart ) {
- 
+
             id
             date_start
             status {
@@ -315,7 +362,7 @@ export const PROJECT_STAGE_SYNC_MUTATION = gql`
             status_id
         }
     }
- `;
+`;
 export const ARCHIVE_PROJECT = gql`
     mutation ProjectStagesSync($projectId: ID! $date: String) {
         archivingProjectStatus(projectId: $projectId, date: $date ) {
@@ -374,7 +421,7 @@ export const ACT_RENDERING_PROJECT_DOWNLOAD = gql`
             url
         }
     }
-`;     
+`;
 
 export const GENERATED_COMMERCIAL_OFFER_MESSAGE = gql`
     mutation GeneratedCommercialOfferMessage($projectId: ID!, $dateOffer: String!, $delegationId: ID!) {

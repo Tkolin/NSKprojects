@@ -1,4 +1,4 @@
-import {Button, Card, Divider, Form, Modal, Space,} from "antd";
+import {Alert, Button, Card, Col, Divider, Form, Modal, Popconfirm, Row, Space,} from "antd";
 import {PlusOutlined,} from "@ant-design/icons";
 import React, {useContext, useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
@@ -7,12 +7,14 @@ import {IRDS_QUERY_COMPACT} from "../../graphql/queriesCompact";
 import IrdItem from "./components/IrdItem";
 import dayjs from "dayjs";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import {PROJECT_IRDS_SYNC_MUTATION} from "../../graphql/mutationsProject";
+import {PROJECT_IRDS_SYNC_MUTATION, SET_IRD_TEMPLATE_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
 
 import {NotificationContext} from "../../NotificationProvider";
 import OrganizationForm from "../simplesForms/OrganizationForm";
 import IrdForm from "../simplesForms/IrdForm";
 import {ModalButton} from "../simplesForms/formComponents/ModalButtonComponent";
+import TemplatesStageForm from "../simplesForms/TemplatesStageForm";
+import TemplatesIrdsForm from "../simplesForms/TemplatesIrdsForm";
 
 const IrdToProjectForm = ({project, onCompleted, ...cardProps}) => {
     const {openNotification} = useContext(NotificationContext);
@@ -20,6 +22,7 @@ const IrdToProjectForm = ({project, onCompleted, ...cardProps}) => {
     // Первичные данные
     const [form] = Form.useForm();
     const [irdModalStatus, setIrdModalStatus] = useState(null);
+    const [templateModalStatus, setTemplateModalStatus] = useState(null);
 
     const [mutateIrd, {loading: loading}] = useMutation(PROJECT_IRDS_SYNC_MUTATION, {
         onCompleted: (data) => {
@@ -74,82 +77,163 @@ const IrdToProjectForm = ({project, onCompleted, ...cardProps}) => {
 
     const {loading: loadingIrds, error: errorIrds, data: dataIrds} =
         useQuery(IRDS_QUERY_COMPACT);
+    const [mutateTemplate, {loading: loadingResult}] = useMutation(SET_IRD_TEMPLATE_TO_PROJECT_MUTATION, {
+        onCompleted: (data) => {
+            console.log(`Ответ: `, data);
+            onCompleted && onCompleted()
+        },
+        onError: (error) => {
+            console.log(`Ошибка: `, error.message);
+        },
+    });
 
 
     return (
-        <Card style={{width: 1200}}
-              {...cardProps}
-              actions={[
-                  <ModalButton
-                      modalType={"green"}
-                      isMany={cardProps?.actions}
-                      loading={loading}
-                      onClick={() => form.submit()}
-                      children={project ? `Обновить` : `Создать`}/>
-                  , ...cardProps?.actions ?? []
-              ]}
-              children={
-                  <Form layout="vertical"
-                        onFinish={handleSave}
-                        form={form}>
+        <>
+            <Card style={{width: 1200}}
+                  {...cardProps}
+                  actions={[
+                      <ModalButton
+                          modalType={"green"}
+                          isMany={cardProps?.actions}
+                          loading={loading}
+                          onClick={() => form.submit()}
+                          children={project ? `Обновить` : `Создать`}/>
+                      , ...cardProps?.actions ?? []
+                  ]}
+                  children={
+                      <>
+                          <Row>
+                              <Col span={6}>
+                                  <Space direction={"vertical"} style={{width: "100%"}}>
 
-                      <Form.List name="irdList">
-                          {(fields, {add, remove}) => (
-                              <>
-                                  {fields.map(({key, name, ...restField}, index) => (
-                                      <IrdItem
-                                          {...restField}
-                                          setIrdModalStatus={setIrdModalStatus}
-                                          key={key}
-                                          index={index}
-                                          irdData={dataIrds?.irds?.items}
-                                          removeItem={(value) => {
-                                              remove(value);
+                                      <Popconfirm
+                                          disabled={!project.type_project_document.template_project_id}
+                                          okButtonProps={{
+                                              disabled: !project.type_project_document.template_project_id,
+                                              onClick: () => mutateTemplate({
+                                                  variables: {
+                                                      projectId: project.id,
+                                                      templateProjectId: project.type_project_document.template_project_id
+                                                  }
+                                              })
+                                          }}>
+                                          <Button disabled={!project.type_project_document.template_project_id}
+                                                  style={{width: "100%"}}>Загрузить
+                                              заданный
+                                              шаблон</Button>
+                                      </Popconfirm>
+
+                                      <Button style={{width: "100%"}} onClick={() => setTemplateModalStatus(true)}>Выбрать
+                                          ИРД
+                                          из проекта</Button>
+                                  </Space>
+                              </Col>
+                              <Col span={6}>
+                                  <Alert message={
+                                      <>
+                                          Функции загрузки шаблонов ИРД:
+                                          <ul>
+                                              <li>Загрузить заданный шаблон - загружает список ИРД, из указанного как
+                                                  шаблон проекта
+                                              </li>
+                                              <li>Выбрать ИРД из проекта - необходимо выбрать проект, который будет
+                                                  взят
+                                                  за шаблон
+                                              </li>
+                                          </ul>
+                                      </>
+                                  }/>
+                              </Col>
+
+                          </Row>
+
+                          <Form layout="vertical"
+                                onFinish={handleSave}
+                                form={form}>
+
+                              <Form.List name="irdList">
+                                  {(fields, {add, remove}) => (
+                                      <>
+                                          {fields.map(({key, name, ...restField}, index) => (
+                                              <IrdItem
+                                                  {...restField}
+                                                  setIrdModalStatus={setIrdModalStatus}
+                                                  key={key}
+                                                  index={index}
+                                                  irdData={dataIrds?.irds?.items}
+                                                  removeItem={(value) => {
+                                                      remove(value);
+                                                  }}
+
+                                              />
+                                          ))}
+
+                                          <Space.Compact style={{width: '100%', marginBottom: 10, marginTop: 0}}>
+
+                                              <Button
+                                                  type={"primary"}
+                                                  size={"small"}
+                                                  onClick={() => add()}
+                                                  style={{width: '100%'}}
+                                                  icon={<PlusOutlined/>}
+                                              >
+                                                  Добавить ИРД к списку
+                                              </Button>
+
+                                          </Space.Compact>
+
+                                      </>
+                                  )}
+                              </Form.List>
+
+                              <Modal
+                                  key={irdModalStatus?.mode || irdModalStatus?.ird_id || null}
+                                  open={irdModalStatus}
+                                  onCancel={() => setIrdModalStatus(null)}
+                                  footer={null}
+                                  width={"max-content"}
+                                  title={"ИРД"}
+                                  children={
+                                      <IrdForm
+                                          onCompleted={(value) => {
+                                              const newRow = [...form.getFieldValue("irdList")];
+                                              newRow[irdModalStatus?.key] = {
+                                                  ird: {
+                                                      selected: value.id,
+                                                      output: value.name
+                                                  }
+                                              };
+                                              form.setFieldValue("irdList", newRow);
+                                              setIrdModalStatus(null);
                                           }}
-
+                                          initialObject={irdModalStatus?.ird_id ? {id: irdModalStatus?.ird_id} : null}
                                       />
-                                  ))}
-
-                                  <Space.Compact style={{width: '100%', marginBottom: 10, marginTop: 0}}>
-
-                                      <Button
-                                          type={"primary"}
-                                          size={"small"}
-                                          onClick={() => add()}
-                                          style={{width: '100%'}}
-                                          icon={<PlusOutlined/>}
-                                      >
-                                          Добавить ИРД к списку
-                                      </Button>
-
-                                  </Space.Compact>
-
-                              </>
-                          )}
-                      </Form.List>
-
-                      <Modal
-                          key={irdModalStatus?.mode || irdModalStatus?.ird_id || null}
-                          open={irdModalStatus}
-                          onCancel={() => setIrdModalStatus(null)}
-                          footer={null}
-                          width={"max-content"}
-                          title={"ИРД"}
-                          children={
-                              <IrdForm
-                                  onCompleted={(value) => {
-                                      const newRow = [...form.getFieldValue("irdList")];
-                                      newRow[irdModalStatus?.key] = {ird: {selected: value.id, output: value.name}};
-                                      form.setFieldValue("irdList", newRow);
-                                      setIrdModalStatus(null);
-                                  }}
-                                  initialObject={irdModalStatus?.ird_id ? {id: irdModalStatus?.ird_id} : null}
+                                  }
                               />
-                          }
-                      />
-                  </Form>
-              }
-        />
+                          </Form>
+                      </>
+                  }
+            />
+            <Modal
+                key={project.id + "temp_stage"}
+                open={templateModalStatus}
+                onCancel={() => setTemplateModalStatus(null)}
+                footer={null}
+                width={"max-content"}
+                children={
+                    <Space style={{justifyContent: "center", width: "100%"}}
+                           children={
+                               <TemplatesIrdsForm project={project}
+                                                  onCompleted={() => {
+                                                      onCompleted();
+                                                      setTemplateModalStatus(null)
+                                                  }}/>
+                           }
+                    />
+                }
+            />
+        </>
 
 
     )

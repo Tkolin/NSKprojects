@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {Card, Form, Input, message} from 'antd';
 import {useMutation} from '@apollo/client';
 import {LOGIN_MUTATION} from '../../graphql/mutationsAuth';
@@ -10,7 +10,7 @@ import {ModalButton} from "./formComponents/ModalButtonComponent";
 const LoginForm = ({cardProps}) => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
-
+    const [loadingSecond, setLoadingSecond] = useState(false);
     const {openNotification} = useContext(NotificationContext);
     const [login, {loading, error}] = useMutation(LOGIN_MUTATION, {
         onCompleted: () => {
@@ -30,6 +30,7 @@ const LoginForm = ({cardProps}) => {
         if(!email && !password)
             return;
         try {
+            setLoadingSecond(true);
             //  Получение ответа
             const response = await login({variables: {input: {email, password}}});
             //  Распоковка ответа
@@ -41,6 +42,7 @@ const LoginForm = ({cardProps}) => {
             localStorage.setItem('userPermissions', JSON.stringify(permissions));
             //  Переход на главную страницу с перезагрузкой (для подключения localStorage)
             navigate("/");
+            setLoadingSecond(false);
             window.location.reload();
         } catch (error) {
             message.error(error.message);
@@ -53,7 +55,7 @@ const LoginForm = ({cardProps}) => {
               actions={[
                   <ModalButton
                       modalType={"primary"}
-                      lodaing={loading}
+                      lodaing={loading || loadingSecond}
                       isMany={cardProps?.actions}
                       onClick={()=>form.submit()}
                       children={`Вход`}/>

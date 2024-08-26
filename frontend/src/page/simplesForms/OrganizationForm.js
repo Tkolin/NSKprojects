@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Form, Input, Select, Space, Row, Col, Modal, Card, Button, Skeleton} from 'antd';
+import {Form, Input, Select, Space, Row, Col, Modal, Card, Button, Skeleton, Alert} from 'antd';
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import {
     UPDATE_ORGANIZATION_MUTATION, ADD_ORGANIZATION_MUTATION,
@@ -148,6 +148,7 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
               ]}
               children={
                   <>
+                      {cardProps?.alert && <Alert {...cardProps.alert}/>}
                       <Form
                           form={form}
                           onFinish={handleSubmit}
@@ -196,7 +197,7 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
                                               })}
                                       />
                                   </AutoCompleteFormItem>
-        
+
                                   <Space.Compact style={{width: "100%", alignItems: 'flex-start'}}>
                                       <Form.Item name="address_legal" label="Юридический адрес" minchars={3}
                                                  delay={50}
@@ -222,7 +223,7 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
                                                  delay={50}
                                                  style={{width: '100%'}}>
                                           <AddressSuggestions token={TokenDADATA}
-                                                               defaultQuery={address?.mail ?? ""}
+                                                              defaultQuery={address?.mail ?? ""}
                                                               inputProps={{
                                                                   placeholder: 'Введите адрес',
                                                                   style: StyledAddressSuggestionsInput,
@@ -264,12 +265,15 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
                                           <AutoCompleteFormItem rulesValidationRequired={false}
                                                                 rulesValidationMessage={'Пожалуйста, укажите бик'}
                                                                 name="bik" label="Бик" style={{width: "100%"}}>
-                                              <CustomAutoCompleteAndCreate
+                                              <CustomAutoCompleteAndCreateWitchEdit
                                                   typeData={"CODENAME"}
                                                   data={dataBik?.biks?.items}
                                                   loading={loadingBik}
                                                   firstBtnOnClick={() =>
                                                       setBikModalStatus({bik_id: null, mode: "add"})}
+                                                  secondBtnOnClick={() =>
+                                                      form.getFieldValue("bik").selected && setBikModalStatus(
+                                                          {bik_id: form.getFieldValue("bik").selected, mode: "edit"})}
                                               />
                                           </AutoCompleteFormItem>
                                       </Col>
@@ -332,7 +336,7 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
                                       form.setFieldValue("bik", {selected: value?.id, output: value?.name});
                                       setBikModalStatus(null);
                                   }}
-                                  initialObject={bikModalStatus?.organization_id ? {id: bikModalStatus?.organization_id} : null}
+                                  initialObject={bikModalStatus?.bik_id ? {id: bikModalStatus?.bik_id} : null}
                               />
                           }
                       />
@@ -344,9 +348,15 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
                           width={"max-content"}
                           children={
                               <ContactForm
+
                                   cardProps={{title: "Контакт"}}
+                                  options={{disabled: ["organization"]}}
                                   onCompleted={(value) => {
-                                      form.setFieldValue("director", {selected: value?.id, output: value?.name});
+                                      console.log("onCompleted", value);
+                                      form.setFieldValue("director", {
+                                          selected: value?.id,
+                                          output: value.last_name + " " + value.first_name + " " + value?.patronymic ?? ""
+                                      });
                                       setContactModalStatus(null);
                                   }}
                                   initialObject={contactModalStatus?.contact_id ? {id: contactModalStatus?.contact_id} : null}

@@ -4,9 +4,7 @@ import React, {useEffect} from "react";
 
 
 const ExpandableButton = ({expandable, expandableKey}) => {
-    useEffect(() => {
-        console.log(expandable, "expandable", expandableKey, "key")
-    }, [expandable]);
+
     return (
         <Tooltip title={"Раскрыть подробности данной записи"}>
             <Button type={"text"}

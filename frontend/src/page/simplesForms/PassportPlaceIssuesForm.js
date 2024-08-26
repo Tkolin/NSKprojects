@@ -31,7 +31,7 @@ const PassportPlaceIssuesForm = ({localObject,initialObject, onCompleted, cardPr
     // Мутация
     const [mutate, {loading: loadingSave}] = useMutation(initialObject ? UPDATE_PPI_MUTATION : ADD_PPI_MUTATION, {
         onCompleted: (data) => {
-            openNotification('topRight', 'success', `Мутация ${nameModel} выполнена успешно`);
+            openNotification('topRight', 'success', `Создание ${nameModel} выполнена успешно`);
             console.log(data?.createPpi || data?.updatePpi);
             form.resetFields();
             onCompleted && onCompleted(data?.createPpi || data?.updatePpi);

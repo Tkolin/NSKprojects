@@ -225,6 +225,14 @@ export const PROJECTS_QUERY_BY_ID = gql`
                     duration
                     date_end
                     price
+                    project_id
+                    offset
+                    task {
+                        id
+                        name
+                    }
+                    date_end
+
                 }
                 project_irds {
                     project_id

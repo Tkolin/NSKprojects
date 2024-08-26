@@ -20,13 +20,13 @@ const ContractDocumentBlock = ({record, onUpdated}) => {
     const contractFileId = getFileId(record?.project_contract_history, false);
     const stampContractFileId = getFileId(record?.project_contract_history, true);
     return (record?.contract_file_id ? (<>
-        <Divider style={{margin: 0, fontSize: 16}} orientation="left" plain></Divider>
+        <Divider style={{margin: "5px"}} orientation={"left"}>Договор проекта</Divider>
         <LinkToDownload fileId={record.contract_file_id}><CustomMenuButton icon={<DownloadOutlined/>}>
             Скачать (подписан) от {record.date_signing}
         </CustomMenuButton>
         </LinkToDownload>
     </>) : (<>
-        <Divider style={{margin: 0, fontSize: 16}} orientation="left" plain></Divider>
+        <Divider style={{margin: "5px"}} orientation={"left"}>Формирование договора</Divider>
         <ProjectFileDownload projectId={record.id} icon={<PlusOutlined/>}
                              children={<CustomMenuButton children={"Сгенерировать договор"}/>}/>
 

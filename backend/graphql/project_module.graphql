@@ -39,6 +39,15 @@ type ProjectStatistic{
 #   - MUTATIONS -
 #
 extend type Mutation {
+    setTemplateProjectStages(
+        projectId: ID!
+        templateProjectId: ID!
+    ): Project @checkRole(permission:  ["update-project-ird"])
+    setTemplateProjectIrds(
+        projectId: ID!
+        templateProjectId: ID!
+    ): Project @checkRole(permission:  ["update-project-ird"])
+
     projectIrdsSync(
         items: [IrdToProjectInput]!
     ): Project @checkRole(permission:  ["update-project-ird"])

@@ -108,8 +108,8 @@ const MenuItems =
             permission: ['read-work', 'create-work', 'read-contract', 'create-contract', 'read-kp', 'create-kp', 'read-request', 'create-request'],
             children: [
                 {
-                    label: 'Все проекты',
-                    key: '/project/extra',
+                    label: 'Статистика по проектам',
+                    key: '/project/statistic',
                     icon: <FileZipOutlined/>,
                     children: null,
                     permission: ['read-work', 'create-work', 'read-contract', 'create-contract', 'read-kp', 'create-kp', 'read-request', 'create-request']

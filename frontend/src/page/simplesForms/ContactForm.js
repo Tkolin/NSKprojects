@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Card, Divider, Form, Input, Modal, Skeleton, Space} from 'antd';
+import {Alert, Button, Card, Divider, Form, Input, Modal, Skeleton, Space} from 'antd';
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import {ADD_CONTACT_MUTATION, UPDATE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
 import moment from 'moment';
@@ -19,7 +19,7 @@ import {ModalButton} from "./formComponents/ModalButtonComponent";
 import {AutoCompleteFormItem} from "../components/CustomForm";
 import dayjs from "dayjs";
 
-const ContactForm = ({localObject, initialObject, onCompleted, cardProps}) => {
+const ContactForm = ({localObject, initialObject, options, onCompleted, cardProps}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
@@ -59,11 +59,12 @@ const ContactForm = ({localObject, initialObject, onCompleted, cardProps}) => {
             loadContext();
     }, [initialObject]);
     useEffect(() => {
-        if (localObject?.id)
+        if (localObject)
             updateForm(localObject);
     }, [localObject]);
 
     const updateForm = (data) => {
+        console.log("updateForm Contact", data);
         if (data) {
             console.log(actualObject);
             form.resetFields();
@@ -122,7 +123,7 @@ const ContactForm = ({localObject, initialObject, onCompleted, cardProps}) => {
               ]}
               children={
                   <>
-
+                      {cardProps?.alert && <Alert {...cardProps.alert}/>}
                       <Form
                           onChange={() => console.log("change", form.getFieldsValue())}
                           form={form}
@@ -201,44 +202,46 @@ const ContactForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                                   <Form.Item name="birth_day" label="Дата рождения">
                                       <CustomDatePicker placeholder="Выберите дату"/>
                                   </Form.Item>
-
-                                  <Divider orientation="left">Данные организации:</Divider>
-                                  <AutoCompleteFormItem
-                                      name={"position"}
-                                      label={"Должность"}
-                                      style={{width: "100%"}}
-                                      rulesValidationRequired={true}
-                                      rulesValidationMessage={'Пожалуйста, укажите должность в организации'}>
-                                      <CustomAutoComplete
-                                          data={dataPositions?.positions?.items}
-                                          placeholder="Выберите должность"
-                                          loading={loadingPositions}
-                                      />
-                                  </AutoCompleteFormItem>
-                                  <AutoCompleteFormItem
-                                      name={"organization"}
-                                      label={"Организация"}
-                                      style={{width: "100%"}}
-                                      rulesValidationRequired={true}
-                                      rulesValidationMessage={'Пожалуйста, укажите организацию'}>
-                                      <CustomAutoCompleteAndCreateWitchEdit
-                                          loading={loadingOrganizations}
-                                          data={dataOrganizations?.organizations?.items}
-                                          onChange={(value) => form.setFieldValue("organization", value)}
-                                          placeholder="Выберите организацию"
-                                          firstBtnOnClick={() =>
-                                              setOrganizationModalStatus({
-                                                  organization_id: form.getFieldValue("organization")?.selected,
-                                                  mode: "add"
-                                              })}
-                                          secondBtnOnClick={() =>
-                                              form.getFieldValue("organization")?.selected &&
-                                              setOrganizationModalStatus({
-                                                  organization_id: form.getFieldValue("organization")?.selected,
-                                                  mode: "edit"
-                                              })}
-                                      />
-                                  </AutoCompleteFormItem></>
+                                  {!options?.disabled?.includes("organization") && (<>
+                                      <Divider orientation="left">Данные организации:</Divider>
+                                      <AutoCompleteFormItem
+                                          name={"position"}
+                                          label={"Должность"}
+                                          style={{width: "100%"}}
+                                          rulesValidationRequired={true}
+                                          rulesValidationMessage={'Пожалуйста, укажите должность в организации'}>
+                                          <CustomAutoComplete
+                                              data={dataPositions?.positions?.items}
+                                              placeholder="Выберите должность"
+                                              loading={loadingPositions}
+                                          />
+                                      </AutoCompleteFormItem>
+                                      <AutoCompleteFormItem
+                                          name={"organization"}
+                                          label={"Организация"}
+                                          style={{width: "100%"}}
+                                          // rulesValidationRequired={true}
+                                          // rulesValidationMessage={'Пожалуйста, укажите организацию'}
+                                      >
+                                          <CustomAutoCompleteAndCreateWitchEdit
+                                              loading={loadingOrganizations}
+                                              data={dataOrganizations?.organizations?.items}
+                                              onChange={(value) => form.setFieldValue("organization", value)}
+                                              placeholder="Выберите организацию"
+                                              firstBtnOnClick={() =>
+                                                  setOrganizationModalStatus({
+                                                      organization_id: form.getFieldValue("organization")?.selected,
+                                                      mode: "add"
+                                                  })}
+                                              secondBtnOnClick={() =>
+                                                  form.getFieldValue("organization")?.selected &&
+                                                  setOrganizationModalStatus({
+                                                      organization_id: form.getFieldValue("organization")?.selected,
+                                                      mode: "edit"
+                                                  })}
+                                          />
+                                      </AutoCompleteFormItem> </>)}
+                              </>
                           ) : <Skeleton active/>}
                       </Form>
 

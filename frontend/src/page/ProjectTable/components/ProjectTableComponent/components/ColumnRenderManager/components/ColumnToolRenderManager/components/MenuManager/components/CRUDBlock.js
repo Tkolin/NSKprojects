@@ -1,55 +1,34 @@
-import {Col, Modal, notification, Popconfirm, Row, Tooltip} from "antd";
+import {Col, Divider, Modal, notification, Popconfirm, Row, Space, Tooltip} from "antd";
 import {DeleteOutlined, EditOutlined, PushpinFilled, PushpinOutlined} from "@ant-design/icons";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import CustomMenuButton from "./CustomMenuButton";
 import {useMutation} from "@apollo/client";
 import {CHANGE_TEMPLATE_TYPE_PROJECT} from "../../../../../../../../../../../graphql/mutationsProject";
 import ProjectFormExstra from "../../../../../../../../../../ProjectFormExstra";
 
-const EditMenuItem = ({onClick, ...props}) => {
-    return (
-        <Tooltip title={"Изменить данные проекта"}>
-            <CustomMenuButton icon={<EditOutlined/>}
-                              onClick={onClick}
-                              {...props}/>
-        </Tooltip>
-    )
-}
-const DeleteMenuItem = ({onClick, ...props}) => {
-    return (
-        <Tooltip title={"Удаление недоступно (администратор)"}>
-            <CustomMenuButton disabled icon={<DeleteOutlined/>}
-                              onClick={onClick}
-                              {...props}/>
-        </Tooltip>
-    )
-}
+
 const TemplateMenuItem = ({isTemplate, onClick, ...props}) => {
     return (
         isTemplate ?
             (
-                <Tooltip title={"Является шаблоном"}>
-                    <CustomMenuButton disabled icon={<PushpinFilled/>}
-                                      {...props}/>
-                </Tooltip>
+                <CustomMenuButton disabled icon={<PushpinFilled/>}
+                                  {...props}>Является шаблоном</CustomMenuButton>
             )
             :
-            <Tooltip title={"Установить как шаблон"}>
-                <Popconfirm
-                    title={"Создание шаблона на основе этого проекта"}
-                    description={"Вы уверены? это изменит существующий шаблон!"}
-                    onConfirm={() => console.log("ss")}
-                    icon={
-                        <PushpinOutlined/>
-                    }
-                >
-                    <CustomMenuButton icon={<PushpinOutlined/>}
-                                      {...props}/>
-                </Popconfirm>
-            </Tooltip>
+            <Popconfirm
+                title={"Создание шаблона на основе этого проекта"}
+                description={"Вы уверены? это изменит существующий шаблон!"}
+                onConfirm={() => console.log("ss")}
+                icon={
+                    <PushpinOutlined/>
+                }
+            >
+                <CustomMenuButton icon={<PushpinOutlined/>}
+                                  {...props}>Установить как шаблон</CustomMenuButton>
+            </Popconfirm>
     )
 }
-const CRUDBlock = ({record}) => {
+const CRUDBlock = ({record, onUpdated}) => {
     const openNotification = (placement, type, message) => {
         notification[type]({
             message: message,
@@ -57,7 +36,13 @@ const CRUDBlock = ({record}) => {
         });
     };
 
-    const [editProjectModalStatus, setEditProjectModalStatus] = useState(null);
+    const [editProjectModalStatus, setEditProjectModalStatus] = useState(false);
+    useEffect(() => {
+        console.log("CRUD MODAL", editProjectModalStatus);
+    }, [editProjectModalStatus]);
+    useEffect(() => {
+        console.log("CRUD UPDATE NULL");
+    }, []);
     const [mutateChangeTemplate] = useMutation(CHANGE_TEMPLATE_TYPE_PROJECT, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Шаблон изменён`);
@@ -72,18 +57,19 @@ const CRUDBlock = ({record}) => {
 
     return (
         <>
-            <Row style={{width: "100%"}}>
-                <Col span={8}>
-                    <EditMenuItem onClick={() => setEditProjectModalStatus(true)}/>
-                </Col>
-                <Col span={8}>
-                    <DeleteMenuItem onClick={() => console.log("НОУ")}/>
-                </Col>
-                <Col span={8}>
-                    <TemplateMenuItem onClick={() => createTemplate(record.id)}
-                                      isTemplate={record.id === record?.type_project_document?.template_project_id}/>
-                </Col>
-            </Row>
+            <Divider style={{margin: "5px"}} orientation={"left"}>Основная информация</Divider>
+            <CustomMenuButton icon={<EditOutlined/>}
+                              onClick={() => setEditProjectModalStatus(true)}
+            >
+                Изменить данные проекта
+            </CustomMenuButton>
+            <Tooltip title={"Удаление недоступно (администратор)"}>
+                <CustomMenuButton disabled icon={<DeleteOutlined/>}
+                >Удалить проект</CustomMenuButton>
+            </Tooltip>
+            <TemplateMenuItem onClick={() => createTemplate(record.id)}
+                              isTemplate={record.id === record?.type_project_document?.template_project_id}/>
+
             <Modal
                 key={record.id}
                 open={editProjectModalStatus}
@@ -92,6 +78,10 @@ const CRUDBlock = ({record}) => {
                 footer={null}
             >
                 <ProjectFormExstra project={record}
+                                   onCompleted={() => {
+                                       onUpdated();
+                                       setEditProjectModalStatus(false)
+                                   }}
                                    status={record.status.name_key}/>
             </Modal>
         </>

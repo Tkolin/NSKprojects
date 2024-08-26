@@ -11,8 +11,49 @@ export const TASKS_QUERY_COMPACT = gql`
         }
     }
 `;
-
-
+export const PROJECTS_STAGES_TEMPLATES = gql`
+    query ProjectsStagesTemplates {
+        projects (queryType: "COMPACT")  {
+            items {
+                id
+                number
+                name
+                date_start
+                date_end
+                project_stages {
+                    project_id
+                    stage_id
+                    stage {
+                        name
+                    }
+                    duration
+                    offset
+                    percent
+                }
+            }
+        }
+    }
+`;
+export const PROJECTS_IRDS_TEMPLATES = gql`
+    query ProjectsIrdsTemplates {
+        projects  (queryType: "COMPACT") {
+            items {
+                id
+                number
+                name
+                date_start
+                date_end
+                project_irds {
+                    project_id
+                    ird_id
+                    ird {
+                        name
+                    }
+                }
+            }
+        }
+    }
+`;
 export const GROUP_TYPE_PROJECTS_QUERY_COMPACT = gql`
     query GroupTypeProjectsQueryCompact {
         groupTypeProjects   {

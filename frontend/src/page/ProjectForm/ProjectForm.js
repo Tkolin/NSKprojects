@@ -30,32 +30,73 @@ import {ModalButton} from "../simplesForms/formComponents/ModalButtonComponent";
 import {AutoCompleteFormItem} from "../components/CustomForm";
 import {nanoid} from "nanoid";
 import TypeProjectForm from "../simplesForms/TypeProjectForm";
+//   APPROVAL_AGREEMENT: ["project", "stage", "ird"],
+//     APPROVAL_KP: ["project", "stage"],
+//     DESIGN_REQUEST: ["project"],
+//     WAITING_SOURCE: ["project", "stage", "ird"],
+//     WORKING: ["project", "stage", "ird"],
+const defaultRequired = {
+    DESIGN_REQUEST: [
+        //  REQUEST
+        "name",
+        "organization_customer",
+        "facility_id",
+    ],
+    APPROVAL_KP: [
+        "name",
+        "organization_customer",
+        "facility_id",
+        //  KP
+        "duration",
+        "type_project_document",
+        "group_type_project_document",
+        "price",
+        "prepayment",
+    ],
+    APPROVAL_AGREEMENT: [
+        "name",
+        "organization_customer",
+        "facility_id",
+        "duration",
+        "type_project_document",
+        "group_type_project_document",
+        "price",
+        "prepayment",
+        //  CONTRACT
 
-const defaultRequired = [
-    "name",
-    "type_project_document",
-    "organization_customer",
-    "facility_id",
-    "date_range",
-    "status_id",
-    "price",
-    "prepayment"
-];
-const defaultViews = [
-    "name",
-    "type_project_document",
-    "organization_customer",
-    "facility_id",
-    "date_range",
-    "status_id",
-    "price",
-    "prepayment"
-];
+    ],
+    base: [
+        "name",
+        "type_project_document",
+        "organization_customer",
+        "facility_id",
+        "date_range",
+        "status_id",
+        "price",
+        "prepayment"
+    ]
+};
+const defaultViews = {
+    DESIGN_REQUEST: [
+        "status_id",
+    ],
+    APPROVAL_KP: [
+        "status_id",
+    ],
+    APPROVAL_AGREEMENT: [
+        "status_id",
+    ],
+    base: [
+        "status_id",
+    ]
+};
+
+
 const ProjectForm = ({
                          onCompleted, project, type, options, cardProps
                      }) => {
-        const [requiredOptions, setRequiredOptions] = useState(defaultRequired)
-        const [disabledOptions, setDisabledOptions] = useState("status_id")
+    const [requiredOptions, setRequiredOptions] = useState(defaultRequired.base)
+    const [disabledOptions, setDisabledOptions] = useState(defaultRequired.base)
         // Получение данных для выпадающих списков
         const {loading: loadingStatuses, error: errorStatuses, data: dataStatuses} =
             useQuery(PROJECT_STATUSES_QUERY_COMPACT);
@@ -122,7 +163,11 @@ const ProjectForm = ({
         }
 
         useEffect(() => {
+            console.log("status.name_key", project.status?.name_key);
+            setRequiredOptions(defaultRequired[project.status?.name_key])
+            setDisabledOptions(defaultViews[project.status?.name_key])
             project && load();
+
         }, [project]);
 
         // Логика формы
@@ -137,16 +182,13 @@ const ProjectForm = ({
         });
 
         const handleSave = () => {
-            const number = createNumber();
 
-            if (!type && number)
-                return;
+
             const formData = form.getFieldsValue();
             const facility_id = formData.facility_id?.checkedObjects?.map(row => row?.value[0] ?? null) ??
                 project.facility_id;
 
             const data = {
-                number,
                 name: formData.name,
                 organization_customer_id: formData.organization_customer?.selected,
                 type_project_document_id: formData.type_project_document?.selected,
@@ -340,7 +382,6 @@ const ProjectForm = ({
                                              width: '100%'
                                          }}
                                          label="Стоимость"
-
                                          rules={[{
                                              required: requiredOptions?.includes("price"),
                                              message: "Укажите стоимость"
@@ -410,7 +451,7 @@ const ProjectForm = ({
                           children={
                               typeProjectModalStatus &&
                               <TypeProjectForm
-                                  cardProps={{title: "Организация"}}
+                                  cardProps={{title: "Тип документации"}}
                                   onCompleted={(value) => {
                                       form.setFieldValue("type_project_document", {
                                           output: value.code + " - " + value.name,

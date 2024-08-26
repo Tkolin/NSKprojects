@@ -20,4 +20,5 @@ Route::get('/temporary/{filename}', [FileController::class, 'downloadFile']);
 Route::get('/download-projectActRender/{filename}', [ProjectController::class, 'downloadActRenderingServicesProject']);
 Route::get('/download-projectPaymentInvoice/{filename}', [ProjectController::class, 'downloadPaymentInvoiceProject']);
 
-Route::post('/project/upload/project_kp/page', [FileUploadController::class, 'uploadProjectKp']);
+Route::get('/project/upload/project_kp/page', [FileUploadController::class, 'uploadProjectKp']);
+

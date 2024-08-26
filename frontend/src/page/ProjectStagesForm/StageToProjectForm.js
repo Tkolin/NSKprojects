@@ -1,23 +1,16 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {useMutation, useQuery} from '@apollo/client';
-import {Button, Card, Form, Modal, Space} from 'antd';
-import {
-    STAGES_QUERY_COMPACT
-} from '../../graphql/queriesCompact';
+import {useMutation} from '@apollo/client';
+import {Alert, Button, Card, Col, Form, Modal, Popconfirm, Row, Space} from 'antd';
 
 import StageItem from "./components/StageItem";
 import {PlusOutlined} from "@ant-design/icons";
-import dayjs from "dayjs";
 import StagesListHeader from "./components/StagesListHeader";
 import StagesListFooter from "./components/StagesListFooter";
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import {
-    rebuildStagesToQuery
-} from "../components/script/rebuildData/ProjectRebuilderQuery";
-import {PROJECT_STAGE_SYNC_MUTATION} from "../../graphql/mutationsProject";
+import {PROJECT_STAGE_SYNC_MUTATION, SET_STAGE_TEMPLATE_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
 import {NotificationContext} from "../../NotificationProvider";
 import StageForm from "../simplesForms/StageForm";
 import {ModalButton} from "../simplesForms/formComponents/ModalButtonComponent";
+import TemplatesStageForm from "../simplesForms/TemplatesStageForm";
 
 const StageToProjectForm = ({onCompleted, project, cardProps}) => {
 
@@ -27,6 +20,7 @@ const StageToProjectForm = ({onCompleted, project, cardProps}) => {
 
     // Внешняя логика
     const [totalToPercent, setTotalToPercent] = useState(0);
+    const [templateModalStatus, setTemplateModalStatus] = useState(false);
     const [totalToDuration, setTotalToDuration] = useState(0);
     const [stageModalStatus, setStageModalStatus] = useState(null);
     const {openNotification} = useContext(NotificationContext);
@@ -96,93 +90,172 @@ const StageToProjectForm = ({onCompleted, project, cardProps}) => {
                 offset: row.offset
             }))
 
-        mutateStage({variables: {data:  data}});
+        mutateStage({variables: {data: data}});
     }
+    const [mutateTemplate, {loading: loadingResult}] = useMutation(SET_STAGE_TEMPLATE_TO_PROJECT_MUTATION, {
+        onCompleted: (data) => {
+            console.log(`Ответ: `, data);
+            onCompleted && onCompleted()
+        },
+        onError: (error) => {
+            console.log(`Ошибка: `, error.message);
+        },
+    });
+
 
     return (
-        <Card style={{width: 1400}}
-              {...cardProps}
-              actions={[
-                  <ModalButton
-                      modalType={"green"}
-                      isMany={cardProps?.actions}
-                      loading={loading}
-                      onClick={() => form.submit()}
-                      children={project ? `Обновить` : `Создать`}/>
-                  , ...cardProps?.actions ?? []
-              ]}
-              children={
-                  <>
-                      <Form layout="vertical"
-                            onFinish={handleSave}
-                            onChange={() => {
-                                handleChange();
-                            }}
-                            form={form}>
-                          <Form.List name="stageList">
-                              {(fields, {add, remove}) => (
-                                  <>
-                                      <StagesListHeader/>
-                                      {fields.map(({key, name, ...restField}, index) => (
-                                          <StageItem
-                                              index={index}
-                                              moveItem={moveItem}
-                                              setStageModalStatus={setStageModalStatus}
-                                              removeItem={(value) => {
-                                                  remove(value);
-                                                  handleChange();
-                                              }}
-                                              onChange={() => {
-                                                  handleChange();
-                                              }}
-                                              project={{price: project?.price, prepayment: project?.prepayment,duration: project.duration}}
-                                              restField={restField}
-                                          />
-                                      ))}
-                                      <StagesListFooter
-                                          project={project}
-                                          totalToDuration={totalToDuration}
-                                          totalToPercent={totalToPercent}
-                                          freeCol={
-                                              <Button
-                                                  type="primary"
-                                                  size={"small"}
-                                                  onClick={() => add()}
-                                                  style={{width: '100%'}}
-                                                  icon={<PlusOutlined/>}
-                                              >
-                                                  Добавить этап к списку
-                                              </Button>
-                                          }/>
-                                  </>
-                              )}
-                          </Form.List>
-                      </Form>
-                      <Modal
-                          key={stageModalStatus?.mode || stageModalStatus?.stage_id || null}
-                          open={stageModalStatus}
-                          onCancel={() => setStageModalStatus(null)}
-                          footer={null}
-                          width={"max-content"}
-                          children={
-                              <StageForm
-                                  cardProps={{title: "Этап"}}
-                                  onCompleted={(value) => {
-                                      const newRow = [...form.getFieldValue("stageList")];
-                                      newRow[stageModalStatus?.key] = {
-                                          stage: {
-                                              selected: value.id,
-                                              output: value.name
-                                          }
-                                      };
-                                      form.setFieldValue("stageList", newRow);
-                                      setStageModalStatus(null);
-                                  }}
-                                  initialObject={stageModalStatus?.stage_id ? {id: stageModalStatus?.stage_id} : null}
-                              />
-                          }
-                      />
-                  </>}/>
+        <>
+            <Card style={{width: 1400}}
+                  {...cardProps}
+                  actions={[
+                      <ModalButton
+                          modalType={"green"}
+                          isMany={cardProps?.actions}
+                          loading={loading}
+                          onClick={() => form.submit()}
+                          children={project ? `Обновить` : `Создать`}/>
+                      , ...cardProps?.actions ?? []
+                  ]}
+                  children={
+                      <>
+                          <Row>
+                              <Col span={6}>
+                                  <Space direction={"vertical"} style={{width: "100%"}}>
+
+                                      <Popconfirm
+                                          disabled={!project.type_project_document.template_project_id}
+                                          okButtonProps={{
+                                              disabled: !project.type_project_document.template_project_id,
+                                              onClick: () => mutateTemplate({
+                                                  variables: {
+                                                      projectId: project.id,
+                                                      templateProjectId: project.type_project_document.template_project_id
+                                                  }
+                                              })
+                                          }}>
+                                          <Button disabled={!project.type_project_document.template_project_id}
+                                                  style={{width: "100%"}}>Загрузить
+                                              заданный
+                                              шаблон</Button>
+                                      </Popconfirm>
+
+                                      <Button style={{width: "100%"}} onClick={() => setTemplateModalStatus(true)}>Выбрать
+                                          этапы
+                                          из проекта</Button>
+                                  </Space>
+                              </Col>
+                              <Col span={6}>
+                                  <Alert message={
+                                      <>
+                                          Функции загрузки шаблонов этапов:
+                                          <ul>
+                                              <li>Загрузить заданный шаблон - загружает список этапов, из указанного как
+                                                  шаблон проекта
+                                              </li>
+                                              <li>Выбрать этапы из проекта - необходимо выбрать проект, который будет
+                                                  взят
+                                                  за шаблон
+                                              </li>
+                                          </ul>
+                                      </>
+                                  }/>
+                              </Col>
+
+                          </Row>
+
+                          <Form layout="vertical"
+                                onFinish={handleSave}
+                                onChange={() => {
+                                    handleChange();
+                                }}
+                                form={form}>
+                              <Form.List name="stageList">
+                                  {(fields, {add, remove}) => (
+                                      <>
+                                          <StagesListHeader/>
+                                          {fields.map(({key, name, ...restField}, index) => (
+                                              <StageItem
+                                                  index={index}
+                                                  moveItem={moveItem}
+                                                  setStageModalStatus={setStageModalStatus}
+                                                  removeItem={(value) => {
+                                                      remove(value);
+                                                      handleChange();
+                                                  }}
+                                                  onChange={() => {
+                                                      handleChange();
+                                                  }}
+                                                  project={{
+                                                      price: project?.price,
+                                                      prepayment: project?.prepayment,
+                                                      duration: project.duration
+                                                  }}
+                                                  restField={restField}
+                                              />
+                                          ))}
+                                          <StagesListFooter
+                                              project={project}
+                                              totalToDuration={totalToDuration}
+                                              totalToPercent={totalToPercent}
+                                              freeCol={
+                                                  <Button
+                                                      type="primary"
+                                                      size={"small"}
+                                                      onClick={() => add()}
+                                                      style={{width: '100%'}}
+                                                      icon={<PlusOutlined/>}
+                                                  >
+                                                      Добавить этап к списку
+                                                  </Button>
+                                              }/>
+                                      </>
+                                  )}
+                              </Form.List>
+                          </Form>
+                          <Modal
+                              key={stageModalStatus?.mode || stageModalStatus?.stage_id || null}
+                              open={stageModalStatus}
+                              onCancel={() => setStageModalStatus(null)}
+                              footer={null}
+                              width={"max-content"}
+                              children={
+                                  <StageForm
+                                      cardProps={{title: "Этап"}}
+                                      onCompleted={(value) => {
+                                          const newRow = [...form.getFieldValue("stageList")];
+                                          newRow[stageModalStatus?.key] = {
+                                              stage: {
+                                                  selected: value.id,
+                                                  output: value.name
+                                              }
+                                          };
+                                          form.setFieldValue("stageList", newRow);
+                                          setStageModalStatus(null);
+                                      }}
+                                      initialObject={stageModalStatus?.stage_id ? {id: stageModalStatus?.stage_id} : null}
+                                  />
+                              }
+                          />
+                      </>}/>
+            <Modal
+                key={project.id + "temp_stage"}
+                open={templateModalStatus}
+                onCancel={() => setTemplateModalStatus(null)}
+                footer={null}
+                width={"max-content"}
+                children={
+                    <Space style={{justifyContent: "center", width: "100%"}}
+                           children={
+                               <TemplatesStageForm project={project}
+                                                   onCompleted={() => {
+                                                       onCompleted();
+                                                       setTemplateModalStatus(null)
+                                                   }}/>
+                           }
+                    />
+                }
+            />
+        </>
     );
 };
 

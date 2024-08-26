@@ -19,6 +19,19 @@ const Index = ({settings, projectStatuses, mode, search, columnSettings, options
     const onExpand = (value) => {
         setExpandedRowKeys((expandedRowKeys === value) ? null : value);
     }
+    const {loading: loading, error: error, data: data, refetch: refetchProject} = useQuery(PROJECTS_QUERY, {
+        variables: {
+            projectStatuses: settings?.projectStatuses ?? projectStatuses ?? null,
+            queryOptions: {
+                page,
+                limit,
+                search,
+                sortField,
+                sortOrder
+            }
+        },
+        fetchPolicy: "cache-and-network",
+    });
     useEffect(() => {
         setColumn(
             getColumn({
@@ -37,30 +50,19 @@ const Index = ({settings, projectStatuses, mode, search, columnSettings, options
                 onUpdated: () => refetch()
             }))
 
-    }, [options, expandedRowKeys, settings]);
+    }, [options, expandedRowKeys, settings, data,]);
+    useEffect(() => {
+        console.log("0 cashe changed", data?.projects?.items[0]?.project_tasks)
+    }, [data]);
+
     useEffect(() => {
         refetch();
     }, [state]);
-
-
 // Мутация для удаления
     const refetch = () => {
         console.log("PROJECTS_QUERY refetchg");
         refetchProject();
     }
-    const {loading: loading, error: error, data: data, refetch: refetchProject} = useQuery(PROJECTS_QUERY, {
-        variables: {
-            projectStatuses: settings?.projectStatuses ?? projectStatuses ?? null,
-            queryOptions: {
-                page,
-                limit,
-                search,
-                sortField,
-                sortOrder
-            }
-        },
-        fetchPolicy: "cache-and-network",
-    });
 
 
 // Таблица

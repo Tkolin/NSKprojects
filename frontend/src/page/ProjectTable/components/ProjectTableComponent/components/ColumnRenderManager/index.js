@@ -18,7 +18,6 @@ const getColumn = ({
                        expandableTableProps,
                    }) => {
 
-    console.log("expandableTableProps", expandableTableProps)
 
     if (!options)
         return null;

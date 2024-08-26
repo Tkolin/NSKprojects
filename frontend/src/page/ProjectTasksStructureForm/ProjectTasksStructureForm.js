@@ -218,6 +218,7 @@ const ProjectTasksStructureForm = ({actualProject, setLoading, onCompleted, card
     };
 
     useEffect(() => {
+        console.log("ptsf actualProject effect", actualProject);
         if (actualProject?.project_tasks.length > 0) {
             setSelectedTasksIds([...actualProject.project_stages.map(row => row.stage.task_id), ...actualProject.project_tasks.map(row => row.task.id ?? row.task_id)]);
             const taskStagesIdsArray = actualProject.project_tasks.filter(row => row.project_task_inherited_id === null).map(row => row.id);

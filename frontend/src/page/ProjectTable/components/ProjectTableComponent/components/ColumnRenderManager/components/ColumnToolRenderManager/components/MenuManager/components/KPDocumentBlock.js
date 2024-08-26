@@ -50,7 +50,7 @@ const KPDocumentBlock = ({project, onUpdated}) => {
         <>
             {project?.kp_file_id ?
                 (<>
-                    <Divider style={{margin: 0, fontSize: 16}} orientation="left" plain></Divider>
+                    <Divider style={{margin: "5px"}} orientation={"left"}>КП проекта</Divider>
                     <LinkToDownload fileId={project.kp_file_id}><CustomMenuButton icon={<DownloadOutlined/>}>
                         Скачать (согласован)
                     </CustomMenuButton>
@@ -59,6 +59,8 @@ const KPDocumentBlock = ({project, onUpdated}) => {
                 :
 
                 <>
+                    <Divider style={{margin: "5px"}} orientation={"left"}>Формирование КП</Divider>
+
                     <Popconfirm
                         style={
                             {
@@ -113,7 +115,8 @@ const KPDocumentBlock = ({project, onUpdated}) => {
                     />
                     <LinkToDownload disabled={project?.project_kp_history?.length <= 0}
                                     fileId={project?.project_kp_history?.length > 0 && project?.project_kp_history[project?.project_kp_history?.length - 1].file_id}>
-                        <CustomMenuButton icon={<UploadOutlined/>} disabled={project?.project_kp_history?.length <= 0}>
+                        <CustomMenuButton icon={<DownloadOutlined/>}
+                                          disabled={project?.project_kp_history?.length <= 0}>
                             Скачать последнее КП
                         </CustomMenuButton>
                     </LinkToDownload>

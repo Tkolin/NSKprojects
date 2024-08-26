@@ -28,6 +28,7 @@ class Organization extends Model
         'bik_id',
         'payment_account',
         'director_id',
+        'position_id',
     ];
     protected $rules = [
         'full_name' => 'required', // добавляем правило, что поле full_name обязательное

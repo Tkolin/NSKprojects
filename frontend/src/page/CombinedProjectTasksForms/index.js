@@ -1,9 +1,12 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button,  Divider, Space} from 'antd';
 
 import ProjectTasksStructureForm from "../ProjectTasksStructureForm";
 import ProjectTasksManagerForm from "../ProjectTasksManagerForm";
 import {EyeOutlined} from "@ant-design/icons";
+import {useQuery} from "@apollo/client";
+import {PERSONS_QUERY} from "../../graphql/queries";
+import {PROJECTS_STAGES_TEMPLATES} from "../../graphql/queriesCompact";
 
 
 const CombinedProjectTasksForms = ({project}) => {
@@ -12,8 +15,9 @@ const CombinedProjectTasksForms = ({project}) => {
 
     const [page, setPage] = useState("structure");
     const [loading, setLoading] = useState();
-
-
+    useEffect(() => {
+        console.log("4 CombinedProjectTasksForms project", project.project_tasks);
+    }, [project]);
 
 
 

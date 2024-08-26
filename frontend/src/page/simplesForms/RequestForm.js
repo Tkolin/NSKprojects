@@ -6,7 +6,6 @@ import {NotificationContext} from "../../NotificationProvider";
 import {
     CONTACTS_QUERY_COMPACT,
     ORGANIZATIONS_QUERY_COMPACT,
-    POSITIONS_QUERY_COMPACT
 } from "../../graphql/queriesCompact";
 import {
     CustomAutoCompleteAndCreateWitchEdit
@@ -17,7 +16,7 @@ import {ADD_REQUEST_MUTATION, UPDATE_REQUEST_MUTATION} from "../../graphql/mutat
 import dayjs from "dayjs";
 import OrganizationForm from "./OrganizationForm";
 import {ModalButton} from "./formComponents/ModalButtonComponent";
-import ContactForm from "./UserForm";
+import ContactForm from "./ContactForm";
 import {AutoCompleteFormItem} from "../components/CustomForm";
 
 const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
@@ -87,7 +86,7 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
 
     const handleSubmit = () => {
         const formData = form.getFieldsValue();
-         mutate({
+        mutate({
             variables: {
                 data: {
                     name: formData.name,
@@ -173,7 +172,7 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                                           data={dataContacts?.contacts?.items}/>
                                   }
                               />
-                              <Form.Item name="number_message" label="Номер письма"
+                              <Form.Item name="number_message" label="Номер письма (ссылка)"
                                          children={<Input/>} rules={[{
                                   required: true,
                                   message: 'Пожалуйста, укажите наименование проекта'
@@ -197,8 +196,13 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                                      children={
                                          <OrganizationForm
                                              cardProps={{title: "Организация"}}
-                                             onCompleted={() =>
-                                                 setOrganizationModalStatus(null)}
+                                             onCompleted={(value) => {
+                                                 setOrganizationModalStatus(null)
+                                                 form.setFieldValue("organization", {
+                                                     selected: value?.id,
+                                                     output: value.name
+                                                 });
+                                             }}
                                              initialObject={organizationModalStatus?.organization_id ? {id: organizationModalStatus?.organization_id} : null}
                                          />
                                      }
@@ -216,9 +220,27 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                                      children={
                                          <ContactForm
                                              cardProps={{title: "Контакт"}}
-                                             onCompleted={() =>
-                                                 setOrganizationModalStatus(null)}
-                                             initialObject={contactModalStatus?.contact_id ? {id: contactModalStatus?.contact_id} : null}
+                                             onCompleted={(value) => {
+                                                 setContactModalStatus(null)
+                                                 form.setFieldValue("contact", {
+                                                     selected: value?.id,
+                                                     output: value.name
+                                                 });
+                                             }}
+                                             initialObject={contactModalStatus?.contact_id ?
+                                                 {id: contactModalStatus?.contact_id} : null}
+                                             localObject={contactModalStatus?.contact_id ?
+                                                 null : form.getFieldValue("organization")?.selected &&
+                                                 {
+                                                     organization: {
+                                                         id: form.getFieldValue("organization").selected,
+                                                         name: form.getFieldValue("organization").output
+                                                     },
+
+
+                                                 }
+                                             }
+
                                          />
                                      }
                               />}

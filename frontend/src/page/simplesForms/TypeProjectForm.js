@@ -125,8 +125,12 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted, cardProps}) =
                       <Form.Item name="code" label="код" rules={[{required: true}]}>
                           <Input/>
                       </Form.Item>
-                      <AutoCompleteFormItem rulesValidationMessage={"Укажите группу"}  rulesValidationRequired={true} name="group" label="Группа">
+                      <AutoCompleteFormItem
+
+                          rulesValidationMessage={"Укажите группу"} rulesValidationRequired={true} name="group"
+                          label="Группа">
                           <CustomAutoComplete
+                              disabled={true}
                               typeData={"CODENAME"}
                               onSelect={(value) => setGroupIdSelected(value.id)}
                               data={dataGroup?.groupTypeProjects}

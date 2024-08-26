@@ -12,14 +12,15 @@ const template = {
     DESIGN_REQUEST: ["project"],
     WAITING_SOURCE: ["project", "stage", "ird"],
     WORKING: ["project", "stage", "ird"],
-
 }
-const Index = ({project, status, onCompleted}) => {
+const Index = ({project, status}) => {
     const [page, setPage] = useState("project")
     useEffect(() => {
         setPage("project")
     }, [project, status,]);
-
+    const onCompleted = () => {
+        console.log("TODO onCompleted in ProjectFormExtra");
+    }
     const ErrorAlert = () => {
         return <Alert message={"Ошибка конструктора"} type={"error"}/>
     }
@@ -58,15 +59,13 @@ const Index = ({project, status, onCompleted}) => {
                     project={project}
                 />) : <ErrorAlert/> : page === "stage" ? template[status].includes("stage") ? (
                 <Space.Compact direction={"vertical"}>
-                    <StyledButtonGreen size={"small"} type={"text"} icon={<SaveOutlined/>}
-                                       children={"Загрузить шаблонные этапы"}/>
-                    <StageToProjectForm onCompleted={() => onCompleted()} cardProps={{title: "Уточнение заявки"}}
+
+                <StageToProjectForm onCompleted={() => onCompleted()} cardProps={{title: "Уточнение заявки"}}
                                         project={project}/>
                 </Space.Compact>) : <ErrorAlert/> : page === "ird" ? template[status].includes("ird") ? (
                 <Space.Compact direction={"vertical"}>
-                    <StyledButtonGreen size={"small"} type={"text"} icon={<SaveOutlined/>}
-                                       children={"Загрузить шаблонные этапы"}/>
-                    <IrdToProjectForm onCompleted={() => onCompleted()} cardProps={{title: "Уточнение заявки"}}
+
+                <IrdToProjectForm onCompleted={() => onCompleted()} cardProps={{title: "Уточнение заявки"}}
                                       project={project}/>
                 </Space.Compact>) : <ErrorAlert/> : <ErrorAlert/>}
             <Divider style={{margin: 2}}/>

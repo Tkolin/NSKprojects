@@ -49,15 +49,15 @@ class PaymentInvoiceTemplateGeneratorService extends DocumentGeneratorService
         $formattedPhone = preg_replace('/\+(\d{1,2})?(\d{3})(\d{3})(\d{2})(\d{2})/', '+$1 ($2) $3-$4-$5', $myOrgPhone);
 
         $this->replacements = [
-            'project.number' => $project['number'] ?? '(данные отсутствуют)',
-            'project.name' => $project['name'] ?? '(данные отсутствуют)',
+            'project.number' => $project['number'] ?? null,
+            'project.name' => $project['name'] ?? null,
             'dayCreate' => $day,
             'mountCreate' => $month,
             'mountName' => $monthName,
             'yearCreate' => $year,
-            'projectStages.stage.priceTotal' => $project['price'] ?? '(данные отсутствуют)',
-            'projectStages.stage.endPriceTotal' => $project['price'] ?? '(данные отсутствуют)',
-            'myOrg.director.position' => $myOrg['director']['position']['name'] ?? '(данные отсутствуют)',
+            'projectStages.stage.priceTotal' => $project['price'] ?? null,
+            'projectStages.stage.endPriceTotal' => $project['price'] ?? null,
+            'myOrg.director.position' => $myOrg['director']['position']['name'] ?? null,
             'myOrg.nameOrType' => $myOrg["legal_form"]['name'] . " " . $myOrg['name'],
             'myOrg.director.ShortFullName' => $myOrg['director']['last_name'] . ' ' .
                 substr((string)$myOrg['director']['first_name'], 0, 2) . '.' .
@@ -69,29 +69,29 @@ class PaymentInvoiceTemplateGeneratorService extends DocumentGeneratorService
             'projectOrganization.nameOrType' => isset($project["organization_customer"]) ?
                 $project["organization_customer"]["legal_form"]['name'] . " " . $project["organization_customer"]['name'] :
                 "(данные отсутствуют)",
-            'projectOrganization.director.position' => $project["organization_customer"]['director']['position']['name'] ?? '(данные отсутствуют)',
-            'projectStages.stage.finalPrice' => number_format($projectStage['price_to_paid'], 2, ',', ' ') ?? '(данные отсутствуют)',
+            'projectOrganization.director.position' => $project["organization_customer"]['director']['position']['name'] ?? null,
+            'projectStages.stage.finalPrice' => number_format($projectStage['price_to_paid'], 2, ',', ' ') ?? null,
             'projectStages.stage.name' => isset($projectStage['stage']) ? ($projectStage['stage']['id'] == 0 ? $projectStage['stage']['name'] : 'Выполнение работ ') : "(данные отсутствуют)",
             'projectStages.stage.percent' => isset($projectStage['stage']) ? ($projectStage['stage']['id'] == 0 ? $projectStage['percent'] . '% ' : '') : "",
-            'projectStages.stage.price' => number_format($projectStage['price_to_paid'], 2, ',', ' ') ?? '(данные отсутствуют)',
-            'projectStages.stage.endPrice' => number_format($projectStage['price_to_paid'], 2, ',', ' ') ?? '(данные отсутствуют)',
-            'projectStages.stage.sumEndPrice' => number_format($projectStage['price_to_paid'], 2, ',', ' ') ?? '(данные отсутствуют)',
+            'projectStages.stage.price' => number_format($projectStage['price_to_paid'], 2, ',', ' ') ?? null,
+            'projectStages.stage.endPrice' => number_format($projectStage['price_to_paid'], 2, ',', ' ') ?? null,
+            'projectStages.stage.sumEndPrice' => number_format($projectStage['price_to_paid'], 2, ',', ' ') ?? null,
             'projectStages.stage.finalPriceToString' => isset($projectStage['price_to_paid']) ? $translator->num2str($projectStage['price_to_paid']) : "___",
-            'projectOrganization.INN' => $project["organization_customer"]['INN'] ?? '(данные отсутствуют)',
-            'projectOrganization.KPP' => $project["organization_customer"]['KPP'] ?? '(данные отсутствуют)',
-            'projectOrganization.address_legal' => $project["organization_customer"]['address_legal'] ?? '(данные отсутствуют)',
-            'myOrg.INN' => $myOrg['INN'] ?? '(данные отсутствуют)',
-            'myOrg.KPP' => $myOrg['KPP'] ?? '(данные отсутствуют)',
-            'myOrg.address_legal' => $myOrg['address_legal'] ?? '(данные отсутствуют)',
-            'myOrg.styled_phone' => $formattedPhone ?? '(данные отсутствуют)',
-            'myOrg.BIK.bik' => $myOrg['bik']['BIK'] ?? '(данные отсутствуют)',
-            'myOrg.BIK.name' => $myOrg['bik']['name'] ?? '(данные отсутствуют)',
-            'myOrg.BIK.correspondent_account' => $myOrg['bik']['correspondent_account'] ?? '(данные отсутствуют)',
-            'myOrg.payment_account' => $myOrg['payment_account'] ?? '(данные отсутствуют)',
+            'projectOrganization.INN' => $project["organization_customer"]['INN'] ?? null,
+            'projectOrganization.KPP' => $project["organization_customer"]['KPP'] ?? null,
+            'projectOrganization.address_legal' => $project["organization_customer"]['address_legal'] ?? null,
+            'myOrg.INN' => $myOrg['INN'] ?? null,
+            'myOrg.KPP' => $myOrg['KPP'] ?? null,
+            'myOrg.address_legal' => $myOrg['address_legal'] ?? null,
+            'myOrg.styled_phone' => $formattedPhone ?? null,
+            'myOrg.BIK.bik' => $myOrg['bik']['BIK'] ?? null,
+            'myOrg.BIK.name' => $myOrg['bik']['name'] ?? null,
+            'myOrg.BIK.correspondent_account' => $myOrg['bik']['correspondent_account'] ?? null,
+            'myOrg.payment_account' => $myOrg['payment_account'] ?? null,
             'pay.numb' => "Д" . padZeros($project["organization_customer"]['id'], 4) . "-" . padZeros($projectStage['id'] ?? $project['id'], 4),
             'date.new' => date('d.m.Y'),
         ];
-
+        $this->checkReplacements();
         $this->replaceValues();
 
         $fileName = $project['number'] . '_СЧЕТ_НА_ОПЛАТУ' . ($stageNumber ? ("_НОМЕР_" . $stageNumber) : "_АВАНС") . '.docx';

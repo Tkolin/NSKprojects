@@ -1,9 +1,8 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Card, Col, Divider, Form, Input, Row, Space, Tooltip, Typography} from "antd";
+import {Card, Col, Divider, Form, Input, Row, Space, Tooltip, Typography} from "antd";
 import TasksTreeComponent from "./components/TasksTreeComponent";
 import TaskProjectForm from "../ProjectTaskForm/TaskProjectForm";
 import TasksPriceTotal from "./components/TasksPriceTotal";
-import {nanoid} from "nanoid";
 import {NotificationContext} from "../../NotificationProvider";
 
 const {Text} = Typography;

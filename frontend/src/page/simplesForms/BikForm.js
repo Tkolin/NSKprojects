@@ -87,7 +87,8 @@ const BikForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                               <Form.Item name="name" label="Наименование" rules={[{required: true}]}>
                                   <Input/>
                               </Form.Item>
-                              <Form.Item name="correspondent_account" label="Корреспондентский счёт">
+                              <Form.Item name="correspondent_account" label="Корреспондентский счёт"
+                                         rules={[{required: true}]}>
                                   <Input/>
                               </Form.Item>
                           </Form>

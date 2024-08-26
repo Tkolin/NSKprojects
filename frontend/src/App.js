@@ -30,7 +30,8 @@ import usePermissionHider from "./permission/usePermissionHider";
 import ProjectForm from "./page/ProjectForm";
 import RequestForm from "./page/simplesForms/RequestForm";
 import DemoBar from "./page/TestPage";
-
+import ButtonsStyles from "./ButtonsStyles.css";
+import StatusLegendComponent from "./page/ProjectTable/components/StatusLegendComponent";
 const GlobalStyles = createGlobalStyle`
     body {
         margin: 0;
@@ -142,8 +143,7 @@ const App = () => {
                                 {/*Проекты*/}
                                 <Route path="/project" element={<Home/>}/>
 
-                                <Route path="/project/extra" element={<ProjectTable
-                                    mode={"all"}/>}
+                                <Route path="/project/statistic" element={<StatusLegendComponent/>}
                                 />
 
                                 <Route path="/project/request" element={<Home/>}/>

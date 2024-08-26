@@ -19,7 +19,17 @@ const LegendItem = ({color, text, value}) => (
     </Card>
 );
 
-const StatusLegendComponent = ({projectStatuses}) => {
+
+const StatusLegendComponent = ({}) => {
+    const projectStatuses = [
+        'ARCHIVE',
+        'COMPLETED',
+        'DESIGN_REQUEST',
+        'APPROVAL_KP',
+        'APPROVAL_AGREEMENT',
+        'WAITING_SOURCE',
+        'WORKING'
+    ]
     const {loading: loading, error: error, data: data, refetch: refetch} = useQuery(STATUS_PROJECTS_QUERY, {variables: {
             projectStatuses
         }});

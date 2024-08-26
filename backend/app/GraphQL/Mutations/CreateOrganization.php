@@ -2,6 +2,7 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Models\Contact;
 use App\Models\Organization;
 
 final readonly class CreateOrganization
@@ -10,6 +11,15 @@ final readonly class CreateOrganization
     public function __invoke(null $_, array $args)
     {
         $data = $args['data'];
-        return Organization::create($data);
+        $orgData = Organization::create($data);
+        if (isset($args['data']['director_id'])) {
+            $directorId = $args['data']['director_id'];
+            $directorData = Contact::find($directorId);
+            $directorData->organization_id = $orgData->id;
+            $directorData->position_id = "12";
+            $directorData->save();
+        }
+
+        return $orgData;
     }
 }
