@@ -4,6 +4,7 @@ namespace App\GraphQL\Mutations;
 
 use App\Models\Project;
 use App\Services\FileGenerate\FormatterService;
+use Exception;
 
 final class UpProjectStatus
 {
@@ -23,7 +24,7 @@ final class UpProjectStatus
         $project = Project::find($id);
 
         if (!$project) {
-            throw new \Exception("Project not found.");
+            throw new Exception("Project not found.");
         }
 
         $statusKey = $project->status_id;
@@ -63,11 +64,12 @@ final class UpProjectStatus
                 $projectNumber = $groupTypeCode . '–24–' . str_pad((string)$projectCount, 2, '0', STR_PAD_LEFT) . '–' . $organizationCustomer . '–' . $facilityCode;
 
                 $project->number = $projectNumber;
+                $project->path_project_folder = $projectNumber;
             }
             $project->save();
             return $project;
         } else {
-            throw new \Exception("Status not found in the list.");
+            throw new Exception("Status not found in the list.");
         }
     }
 

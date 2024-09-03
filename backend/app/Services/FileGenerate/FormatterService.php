@@ -29,11 +29,11 @@ class FormatterService
 
     public static function convertToMany($value, $index = true): string
     {
-        $result = number_format($value, 0, ',', ' ') . $index ? " р." : "";
+        $result = number_format($value, 0, ',', ' ') . ($index ? " р." : "");
         return $result;
     }
 
-    public static function convertNumbToStringr($value)
+    public static function convertNumbToStringr($value, $centEnable = true)
     {
         $translator = new TranslatorNumberToName();
         $result = $translator->num2str($value);
@@ -74,16 +74,22 @@ class FormatterService
 
     }
 
-    public static function getFullName($lastName, $firstName, $patronymic, $short = false): ?string
+    public static function getFullName($lastName, $firstName, $patronymic, $short = false, $reverse = false): ?string
     {
         if (!isset($lastName) || !isset($firstName)) {
             error_log("getFullName getter nullable string");
             return null;
         }
         if ($short) {
-            return $lastName . ' ' . FormatterService::getAbbreviation($firstName) . '.' . FormatterService::getAbbreviation($patronymic) . '.';
+            if (!$reverse)
+                return $lastName . ' ' . FormatterService::getAbbreviation($firstName) . '.' . FormatterService::getAbbreviation($patronymic) . '.';
+            else
+                return FormatterService::getAbbreviation($firstName) . '.' . FormatterService::getAbbreviation($patronymic) . '.' . " " . $lastName;
         } else {
-            return $lastName . ' ' . $firstName . ' ' . $patronymic;
+            if (!$reverse)
+                return $lastName . ' ' . $firstName . ' ' . $patronymic;
+            else
+                return $firstName . ' ' . $lastName . ' ' . $patronymic;
         }
     }
 

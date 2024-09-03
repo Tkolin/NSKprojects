@@ -45,12 +45,12 @@ class CommercialOfferMessageGeneratorService extends DocumentGeneratorService
         $myOrg = FormatterService::getMyOrg();
         $full_date = FormatterService::getFullDate($dateOffer, true);
         $stagesNames = [
-            ['blockContent' => $projectData->prepayment . '% Аванс (' . FormatterService::convertToMany($projectData->price / 100 * $projectData->prepayment, false) . ' руб.) ;']
+            ['blockContent' => $projectData->prepayment . '% Аванс ( ' . FormatterService::convertToMany($projectData->price / 100 * $projectData->prepayment, false) . ' руб.) ;']
         ];
 
 // Добавление остальных этапов в массив
         foreach ($projectData->project_stages as $stage) {
-            $stagesNames[] = ['blockContent' => $stage->percent . "% " . $stage->stage->name . ' (' . FormatterService::convertToMany($stage->price, false) . ' руб.)'];
+            $stagesNames[] = ['blockContent' => $stage->percent . "% " . $stage->stage->name . ' ( ' . FormatterService::convertToMany($stage->price, false) . ' руб.)'];
         }
         $this->templateProcessor->cloneBlock("stagesBlock", 0, true, false, $stagesNames);
 
@@ -62,7 +62,7 @@ class CommercialOfferMessageGeneratorService extends DocumentGeneratorService
             'delegate_org.director.positions' => $delegation['position']['name'],
             'delegate_org.name' => $delegationOrgData['name'],
             'delegate_org.type_org' => $delegationOrgData['legal_form']->name,
-            'project.main_delegation_short_name' => FormatterService::getFullName($delegation['last_name'], $delegation['first_name'], $delegation['patronymic'], true),
+            'project.main_delegation_short_name' => FormatterService::getFullName($delegation['last_name'], $delegation['first_name'], $delegation['patronymic'], true, true),
             'project.main_delegation_full_name' => $delegation['first_name'] . " " . $delegation['patronymic'],
             'project.name' => $projectData['name'],
             'project.price' => FormatterService::convertToMany($projectData['price'], false),
