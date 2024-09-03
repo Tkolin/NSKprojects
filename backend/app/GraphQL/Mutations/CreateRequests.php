@@ -4,7 +4,7 @@ namespace App\GraphQL\Mutations;
 
 use App\Models\Project;
 use App\Models\ProjectDelegations;
- use App\Models\ProjectMessage;
+use App\Models\ProjectMessage;
 
 final readonly class CreateRequests
 {
@@ -26,7 +26,7 @@ final readonly class CreateRequests
             'project_id'=>$project->id,
             'title'=>"Первое письмо",
             'sender'=>true,
-            'number_message'=>$data['number_message'],
+            'number_message' => 1,
             'date_send'=>$data['date_send']
         ]);
         return Project::find($project->id);

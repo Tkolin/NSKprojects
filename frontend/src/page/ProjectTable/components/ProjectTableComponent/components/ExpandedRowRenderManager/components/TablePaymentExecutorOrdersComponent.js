@@ -67,33 +67,36 @@ const TablePaymentExecutorOrdersComponent = ({setEditModalStatus, project}) => {
                         <Space
                             direction={"vertical"}
                             style={{alignContent: "start", width: "100%"}}>
-                            {!record?.payment_file_completed?.includes("PREPAYMENT") ?
-                                <UploadFilePopconfirm
-                                    options={{datePicker: true}}
-                                    onUpdated={() => refetch()}
-                                    action={'project/upload/executor_order_payment/page?executorOrderId=' + record.id + '&status=PREPAYMENT'}>
-                                    <Button
-                                        type={"text"}>
-                                        Подтвердить оплату аванса
-                                    </Button></UploadFilePopconfirm> :
-                                !record?.payment_file_completed?.includes("MAINPAYMENT") ? record.is_tasks_completed ?
-                                        <UploadFilePopconfirm
-                                            options={{datePicker: true}}
-                                            onUpdated={() => refetch()}
-                                            action={'project/upload/executor_order_payment/page?executorOrderId=' + record.id + '&status=MAINPAYMENT'}
-                                        ><Button warring type={"text"}>Подтвердить оплату
-                                            основной
-                                            суммы</Button></UploadFilePopconfirm> :
-                                        <Button type={"text"} disabled>В работе</Button>
-                                    :
-                                    !record?.payment_file_completed?.includes("POSTPAYMENT") && record.project_completed ?
-                                        <UploadFilePopconfirm
-                                            options={{datePicker: true}}
-                                            onUpdated={() => refetch()}
-                                            action={'project/upload/executor_order_payment/page?executorOrderId=' + record.id + '&status=POSTPAYMENT'}
-                                        ><Button warring type={"text"}>Подтвердить
-                                            постоплату</Button></UploadFilePopconfirm> :
-                                        <Button type={"text"} disabled>Ожидание завершения проекта</Button>
+                            {!record?.signed_file_id ?
+                                <Text type={"danger"}>Договор не подписан</Text>
+                                :
+                                !record?.payment_file_completed?.includes("PREPAYMENT") ?
+                                    <UploadFilePopconfirm
+                                        options={{datePicker: true}}
+                                        onUpdated={() => refetch()}
+                                        action={'project/upload/executor_order_payment/page?executorOrderId=' + record.id + '&status=PREPAYMENT'}>
+                                        <Button
+                                            type={"text"}>
+                                            Подтвердить оплату аванса
+                                        </Button></UploadFilePopconfirm> :
+                                    !record?.payment_file_completed?.includes("MAINPAYMENT") ? record.is_tasks_completed ?
+                                            <UploadFilePopconfirm
+                                                options={{datePicker: true}}
+                                                onUpdated={() => refetch()}
+                                                action={'project/upload/executor_order_payment/page?executorOrderId=' + record.id + '&status=MAINPAYMENT'}
+                                            ><Button warring type={"text"}>Подтвердить оплату
+                                                основной
+                                                суммы</Button></UploadFilePopconfirm> :
+                                            <Button type={"text"} disabled>В работе</Button>
+                                        :
+                                        !record?.payment_file_completed?.includes("POSTPAYMENT") && record.project_completed ?
+                                            <UploadFilePopconfirm
+                                                options={{datePicker: true}}
+                                                onUpdated={() => refetch()}
+                                                action={'project/upload/executor_order_payment/page?executorOrderId=' + record.id + '&status=POSTPAYMENT'}
+                                            ><Button warring type={"text"}>Подтвердить
+                                                постоплату</Button></UploadFilePopconfirm> :
+                                            <Button type={"text"} disabled>Ожидание завершения проекта</Button>
                             }
                             {/*<Text strong>{record?.project_tasks}</Text>*/
                             }

@@ -1,15 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Card, Divider, Form, Input, Modal, Skeleton, Space} from 'antd';
+import {Card, Form, Input, Modal, Skeleton, Space} from 'antd';
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 
 import {NotificationContext} from "../../NotificationProvider";
-import {
-    CONTACTS_QUERY_COMPACT,
-    ORGANIZATIONS_QUERY_COMPACT,
-} from "../../graphql/queriesCompact";
-import {
-    CustomAutoCompleteAndCreateWitchEdit
-} from "../components/style/SearchAutoCompleteStyles";
+import {CONTACTS_QUERY_COMPACT, ORGANIZATIONS_QUERY_COMPACT,} from "../../graphql/queriesCompact";
+import {CustomAutoCompleteAndCreateWitchEdit} from "../components/style/SearchAutoCompleteStyles";
 import {REQUEST_QUERY_BY_ID} from "../../graphql/queriesByID";
 import {CustomDatePicker} from "../components/FormattingDateElementComponent";
 import {ADD_REQUEST_MUTATION, UPDATE_REQUEST_MUTATION} from "../../graphql/mutationsRequest";
@@ -90,7 +85,7 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
             variables: {
                 data: {
                     name: formData.name,
-                    number_message: formData.number_message,
+                    number_message: null,
                     organization_id: formData.organization.selected,
                     contact_id: formData.contact.selected,
                     date_send: dayjs(formData?.date_send).format("YYYY-MM-DD"),
@@ -172,11 +167,11 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                                           data={dataContacts?.contacts?.items}/>
                                   }
                               />
-                              <Form.Item name="number_message" label="Номер письма (ссылка)"
-                                         children={<Input/>} rules={[{
-                                  required: true,
-                                  message: 'Пожалуйста, укажите наименование проекта'
-                              }]}/>
+                              {/*<Form.Item name="number_message" label="Номер письма (ссылка)"*/}
+                              {/*           children={<Input/>} rules={[{*/}
+                              {/*    required: true,*/}
+                              {/*    message: 'Пожалуйста, укажите наименование проекта'*/}
+                              {/*}]}/>*/}
 
                               <Form.Item name="date_send" label="Дата обращения"
                                          children={<CustomDatePicker/>} rules={[{

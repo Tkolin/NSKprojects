@@ -3,10 +3,9 @@
 namespace App\Services\FileGenerate;
 
 use App\Models\Organization;
-use App\Models\Project;
 use App\Services\MonthEnum;
 use App\Services\TranslatorNumberToName;
-use PHPUnit\Logging\Exception;
+use Exception;
 
 class FormatterService
 {
@@ -23,14 +22,14 @@ class FormatterService
             ->with('bik')
             ->find(0);
         if (!isset($myOrg)) {
-            throw new \Exception("Не удалось найти данные об СИБНиПи");
+            throw new Exception("Не удалось найти данные об СИБНиПи");
         }
         return $myOrg;
     }
 
-    public static function convertToMany($value)
+    public static function convertToMany($value, $index = true): string
     {
-        $result = number_format($value, 0, ',', ' ') . " р.";
+        $result = number_format($value, 0, ',', ' ') . $index ? " р." : "";
         return $result;
     }
 
@@ -44,7 +43,7 @@ class FormatterService
     public static function getFullDate($date, $enableHerringboneQuotes = false): string
     {
         if (!isset($date)) {
-            throw new \Exception("Дата не указана");
+            throw new Exception("Дата не указана");
         }
         $dateComponents = explode('-', $date);
         $year = $dateComponents[0] ?? "__";
@@ -56,7 +55,7 @@ class FormatterService
     public static function getShortDate($date): string
     {
         if (!isset($date)) {
-            throw new \Exception("Дата не указана");
+            throw new Exception("Дата не указана");
         }
         $dateComponents = explode('-', $date);
         $year = $dateComponents[0] ?? "__";

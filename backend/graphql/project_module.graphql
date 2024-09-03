@@ -140,7 +140,7 @@ input RequestInput {
     type_project: ID
     contact_id: ID!
     message: String
-    number_message: String!
+    number_message: String
     date_send: String!
     file_name: String
 }

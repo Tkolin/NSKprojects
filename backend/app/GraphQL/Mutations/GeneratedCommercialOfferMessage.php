@@ -3,8 +3,8 @@
 namespace App\GraphQL\Mutations;
 
 use App\Models\Contact;
+use App\Models\Organization;
 use App\Models\Project;
-use App\Models\ProjectFile;
 use App\Services\FileGenerate\CommercialOfferMessageGeneratorService;
 
 final readonly class GeneratedCommercialOfferMessage
@@ -17,17 +17,15 @@ final readonly class GeneratedCommercialOfferMessage
         $delegationId = $args["delegationId"];
 
         // Добор данных
-        $projectData = Project::find($projectId);
+        $projectData = Project::with("project_kp_history")->find($projectId);
         $delegationData = Contact::find($delegationId);
-        $contractNumber = ProjectFile::where('type', "KP")
-                ->where('project_id', $projectData->id)
-                ->max('number') + 1;
+        $delegationOrgData = Organization::with("legal_form")->find($projectData->organization_customer_id);
         // Генерация файла
         $contractFilePath = (new CommercialOfferMessageGeneratorService)->generate([
             'projectData' => $projectData,
             'delegationData' => $delegationData,
             'dateOffer' => $dateOffer,
-            'contractNumber' => $contractNumber
+            'delegationOrgData' => $delegationOrgData,
         ]);
 
         return ['url' => $contractFilePath];

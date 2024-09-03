@@ -1,4 +1,4 @@
-import {Button, Divider, Modal, Popconfirm, Select, Space} from "antd";
+import {Button, Divider, Modal, notification, Popconfirm, Select, Space} from "antd";
 import React, {useEffect, useState} from "react";
 import {useMutation, useQuery} from "@apollo/client";
 import {GENERATED_COMMERCIAL_OFFER_MESSAGE} from "../../../../../../../../../../../graphql/mutationsProject";
@@ -25,11 +25,19 @@ const KPDocumentBlock = ({project, onUpdated}) => {
     useEffect(() => {
         console.log("KPDocumentBlock", project);
     }, [project,]);
+    const openNotification = (placement, type, message) => {
+        notification[type]({
+            message: message, placement,
+        });
+    };
     const [generateKpMutate, {loading: generateKpLoading}] = useMutation(GENERATED_COMMERCIAL_OFFER_MESSAGE, {
         onCompleted: () => {
-            //openNotification('topRight', 'success', `Коммерческое предложение сгенерировано`);
+            openNotification('topRight', 'success', `Коммерческое предложение сгенерировано`);
             onUpdated();
-        }, onError: (error) => console.log(error.message)
+        }, onError: (error) => {
+            openNotification('topRight', 'error', `Ошибка при генерации: ` + error.message);
+
+        }
 
     });
 
@@ -75,13 +83,13 @@ const KPDocumentBlock = ({project, onUpdated}) => {
                                     placement={"Выберите дату..."}
                                     style={{width: "200px", marginTop: 15}}
                                     onChange={(value) => {
-                                        setSelectedDateContract(value && dayjs(value).format("YYYY-MM-DD"))
+                                        value ? setSelectedDateContract(value && dayjs(value).format("YYYY-MM-DD")) : setSelectedDateContract(null)
                                     }}
                                 />
                                 <Space.Compact style={{width: "100%"}}>
 
                                     <Select placeholder={"Кому обращение"} style={{width: "100%"}}
-                                            onChange={(value, option) => setSelectedDelegations(value)}
+                                            onChange={(value, option) => value ? setSelectedDelegations(value) : setSelectedDelegations(null)}
                                             value={selectedDelegations}
                                             loading={loadingContacts}>
                                         {dataContacts?.contacts?.items?.map(row => (<Select.Option key={row.id}
@@ -93,7 +101,8 @@ const KPDocumentBlock = ({project, onUpdated}) => {
 
                                 <Button
                                     block
-                                    disabled={!selectedDateContract}
+                                    disabled={!selectedDateContract && !selectedDelegations}
+                                    loading={generateKpLoading}
                                     onClick={() => handleGeneratedKp()}
                                     style={{width: "200px", marginTop: 15}}
                                 >

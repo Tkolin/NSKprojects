@@ -1,4 +1,4 @@
-import {Space, Table, Typography} from "antd";
+import {Button, Space, Table, Typography} from "antd";
 import {useEffect} from "react";
 import LinkToDownload from "../../components/script/LinkToDownload";
 import {UploadFileExecutorOrder} from "../../components/UploadFile";
@@ -27,13 +27,16 @@ export const ExecutorOrdersTable = ({executorOrders, onUpdated}) => {
                 {record?.signed_file_id ?
                     (
                         <Space.Compact direction={"vertical"}>
-                            <LinkToDownload fileId={record.signed_file_id}>Скачать (подписан)</LinkToDownload>
+                            <LinkToDownload fileId={record.signed_file_id}><Button>Скачать
+                                (подписан)</Button></LinkToDownload>
                             <Text type={"secondary"}>{record.date_attachment}</Text>
                         </Space.Compact>
                     ) :
                     (<Space.Compact direction={"vertical"}>
-                        <UploadFileExecutorOrder onUpdated={()=>onUpdated()} orderId={record.id}>Загрузить подписанный файл</UploadFileExecutorOrder>
-                        <LinkToDownload fileId={record.original_file_id} danger>Скачать (не подписан)</LinkToDownload>
+                        <UploadFileExecutorOrder onUpdated={() => onUpdated()} orderId={record.id} size={"small"}>Загрузить
+                            подписанный файл</UploadFileExecutorOrder>
+                        <LinkToDownload fileId={record.original_file_id}><Button size={"small"} danger>Скачать (не
+                            подписан)</Button></LinkToDownload>
                      </Space.Compact>)}
             </Space.Compact>)
     },]

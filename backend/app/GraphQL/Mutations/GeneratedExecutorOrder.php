@@ -7,6 +7,7 @@ use App\Models\Person;
 use App\Models\Project;
 use App\Models\ProjectTasks;
 use App\Services\FileGenerate\TaskExecutorContractGeneratorService;
+use Exception;
 
 final readonly class GeneratedExecutorOrder
 {
@@ -15,7 +16,7 @@ final readonly class GeneratedExecutorOrder
     {
         // Проверка на верность
         if (!isset($args['project_task_ids']))
-            throw new \Exception('Неверно переданы данные');
+            throw new Exception('Неверно переданы данные');
 
         $projectTasksIds = $args['project_task_ids'];
 
@@ -25,7 +26,7 @@ final readonly class GeneratedExecutorOrder
             ->get();
 
         if (!isset($projectTasksData))
-            throw new \Exception('Неверно переданы данные');
+            throw new Exception('Неверно переданы данные');
         // Проверка все ли данные об одном
         $executorId = $projectTasksData[0]->executor_id;
         $projectId = $projectTasksData[0]->project_id;
@@ -35,26 +36,20 @@ final readonly class GeneratedExecutorOrder
             ->where('id', $projectId)
             ->first();
 
-        error_log('======================================');
 
-        error_log($projectData . ' $projectData->id');
-        error_log($projectId . ' $projectId');
-
-        $personData = Person::with(['passport', 'passport.passport_place_issue'])
+        $personData = Person::with('passport')
+            ->with(['passport', 'passport.passport_place_issue'])
             ->with('bank')
             ->with('BIK')
             ->where('id',$executorId,'id')
             ->first();
 
-        error_log($personData . ' $personData->id');
-        error_log($executorId . ' $executorId');
-        error_log('======================================');
+
 
         $numberOrders = ExecutorOrder::whereHas('project_tasks', function ($query) use ($projectId) {
             $query->where('project_id', $projectId);
         })->count();
 
-        error_log($numberOrders . ' $numberOrders');
         // Проверка данных
         if (!isset($projectData))
             throw new Exception('Проект не найден');
@@ -64,7 +59,10 @@ final readonly class GeneratedExecutorOrder
         // Генерация файла
         $projectGenerator = new TaskExecutorContractGeneratorService();
         $contractFilePath = $projectGenerator->generate([
-            'projectData' => $projectData, 'personData' => $personData, 'projectTasksData' => $projectTasksData, 'numberOrders' => $numberOrders]); // $projectData, $personData, $projectTasksData,  $numberOrders);
+            'projectData' => $projectData,
+            'personData' => $personData,
+            'projectTasksData' => $projectTasksData,
+            'numberOrders' => $numberOrders]);
         return ['url' => $contractFilePath];
     }
 }

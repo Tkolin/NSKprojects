@@ -30,8 +30,8 @@ import usePermissionHider from "./permission/usePermissionHider";
 import ProjectForm from "./page/ProjectForm";
 import RequestForm from "./page/simplesForms/RequestForm";
 import DemoBar from "./page/TestPage";
-import ButtonsStyles from "./ButtonsStyles.css";
 import StatusLegendComponent from "./page/ProjectTable/components/StatusLegendComponent";
+
 const GlobalStyles = createGlobalStyle`
     body {
         margin: 0;
@@ -63,7 +63,6 @@ const App = () => {
         },
         onError: (error) => {
             console.log("Ошибка аутентификации: " + error.message);
-            Out();
         }
     });
     useEffect(() => {
@@ -79,15 +78,9 @@ const App = () => {
 
         } else {
             console.log("Ошибка аутентификации: " + "Токен отсутствует");
-            Out();
         }
     }, []);
-    const Out = () => {
-        console.log("Данные кэша сброшены");
-        setData(null);
-        cookies.set("accessToken", null);
-        localStorage.clear();
-    }
+
     // if (loading) return <LoadingSpinnerStyles/>;
 
     moment.locale('ru');
