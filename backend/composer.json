@@ -20,6 +20,7 @@
         "paragonie/sodium_compat": "^1.20.0",
         "phpoffice/phpword": "^1.2",
         "symfony/process": "^6.4",
+        "wapmorgan/morphos": "^3.2",
         "webklex/laravel-imap": "^5.3"
     },
     "require-dev": {
