@@ -16,6 +16,7 @@ import CustomMenuButton from "./CustomMenuButton";
 import {CustomDatePicker} from "../../../../../../../../../../components/FormattingDateElementComponent";
 import {nanoid} from "nanoid";
 import {UploadFilePopconfirm} from "../../../../../../../../../../components/UploadFile";
+import {DOWNLOAD_FILE} from "../../../../../../../../../../../graphql/mutationsFile";
 
 
 const KPDocumentBlock = ({project, onUpdated}) => {
@@ -30,10 +31,33 @@ const KPDocumentBlock = ({project, onUpdated}) => {
             message: message, placement,
         });
     };
+    const LaravelURL = process.env.REACT_APP_API_URL;
+
+    const [downloadFile, {loading: loading}] = useMutation(DOWNLOAD_FILE, {
+        onCompleted: (data) => {
+            handleDownloadClick(data.downloadFile.url);
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', 'Ошибка при загрузке: ' + error.message);
+        },
+    });
+    const handleDownloadClick = async (downloadedFileUrl) => {
+        try {
+            const link = document.createElement('a');
+            console.log(link);
+            link.href = `${LaravelURL}${downloadedFileUrl}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error('Ошибка при скачивании файла:', error);
+        }
+    };
     const [generateKpMutate, {loading: generateKpLoading}] = useMutation(GENERATED_COMMERCIAL_OFFER_MESSAGE, {
-        onCompleted: () => {
+        onCompleted: (data) => {
+            downloadFile({variables: {id: data.generatedCommercialOfferMessage.url}})
             openNotification('topRight', 'success', `Коммерческое предложение сгенерировано`);
-            onUpdated();
+            onUpdated && onUpdated();
         }, onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при генерации: ` + error.message);
 

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { Popconfirm, Row, Table, Typography} from 'antd';
+import {Popconfirm, Row, Table, Typography} from 'antd';
 import React from "react";
-import { QuestionCircleOutlined} from "@ant-design/icons";
+import {QuestionCircleOutlined} from "@ant-design/icons";
 
 export const StyledTable = styled(Table)`
 
@@ -10,14 +10,16 @@ export  const DeleteAndEditStyledLinkManagingDataTable = ({
                                          title,
                                          description,
                                          handleEdit,
-                                         handleDelete}) => (
+                                                              handleDelete,
+                                                              deletePermission, updatePermission
+                                                          }) => (
     <div>
-        <Row style={{margin: 'auto'}}>
+        <Row style={{margin: 'auto'}} data-permission={updatePermission}>
             <Typography.Link onClick={handleEdit}>
                 Изменить
             </Typography.Link>
         </Row>
-        <Row style={{margin: 'auto'}}>
+        <Row style={{margin: 'auto'}} data-permission={deletePermission}>
             <Popconfirm
                 title={title}
                 description={description}

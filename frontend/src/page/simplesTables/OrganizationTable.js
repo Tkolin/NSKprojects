@@ -8,9 +8,9 @@ import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {ORGANIZATIONS_QUERY} from "../../graphql/queries";
 
 import OrganizationContactsCompactTable from "../ProjectTable/components/OrganizationContactsCompactTable";
- 
+
 import OrganizationForm from "../simplesForms/OrganizationForm";
- 
+
 
 const OrganizationTable = () => {
     // Состояния
@@ -96,6 +96,8 @@ const OrganizationTable = () => {
         {
             title: 'Управление', key: 'edit', width: 100, render: (text, record) => (
                 <DeleteAndEditStyledLinkManagingDataTable
+                    deletePermission={"delete-organization"}
+                    updatePermission={"update-organization"}
                     title={"Удаление организации"}
                     description={"Вы уверены, что нужно удалить эту организацию?"}
                     handleEdit={() =>
@@ -133,6 +135,7 @@ const OrganizationTable = () => {
             </Form.Item>
         </Form>
         <Table
+            data-permission={"read-organization"}
             size={'small'}
             sticky={{
                 offsetHeader: '64px',

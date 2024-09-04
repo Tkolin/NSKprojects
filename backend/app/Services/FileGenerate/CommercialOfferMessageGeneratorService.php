@@ -53,7 +53,6 @@ class CommercialOfferMessageGeneratorService extends DocumentGeneratorService
             $stagesNames[] = ['blockContent' => $stage->percent . "% " . $stage->stage->name . ' ( ' . FormatterService::convertToMany($stage->price, false) . ' руб.)'];
         }
         $this->templateProcessor->cloneBlock("stagesBlock", 0, true, false, $stagesNames);
-
         //  Обработка шаблона
         $this->replacements = [
             'myOrg.full_adress' => $myOrg['address_legal'] . ', тел. ' . $myOrg["phone_number"] . ', E-mail: ' . $myOrg["email"],
@@ -67,8 +66,7 @@ class CommercialOfferMessageGeneratorService extends DocumentGeneratorService
             'project.name' => $projectData['name'],
             'project.price' => FormatterService::convertToMany($projectData['price'], false),
             'project.price_name' => FormatterService::convertNumbToStringr($projectData['price']),
-            'project.duration' => $projectData['duration'],
-            'pepa' => "pepa",
+            'project.durationMark' => FormatterService::formatDuration($projectData['duration']) . " ",
             'project.prepayment' => $projectData['prepayment'] . "; </w:r><w:r>",
             // 'stages.persent_price_name' => $stagesNames,
             'myOrg.director.position_name' => "Техническй директор",

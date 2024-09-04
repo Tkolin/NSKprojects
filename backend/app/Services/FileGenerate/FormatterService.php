@@ -14,6 +14,47 @@ class FormatterService
         return str_pad((string)$number, $length, '0', STR_PAD_LEFT);
     }
 
+    public static function formatDuration($days): string
+    {
+        $months = floor($days / 30); // Рассчитываем количество месяцев
+        $remainingDays = $days % 30; // Оставшиеся дни
+
+        // Формируем строку для месяцев
+        if ($months > 0) {
+            if ($months == 1) {
+                $monthString = "$months месяц";
+            } elseif ($months >= 2 && $months <= 4) {
+                $monthString = "$months месяца";
+            } else {
+                $monthString = "$months месяцев";
+            }
+        } else {
+            $monthString = '';
+        }
+
+        // Формируем строку для дней
+        if ($remainingDays > 0) {
+            if ($remainingDays == 1) {
+                $dayString = "$remainingDays день";
+            } elseif ($remainingDays >= 2 && $remainingDays <= 4) {
+                $dayString = "$remainingDays дня";
+            } else {
+                $dayString = "$remainingDays дней";
+            }
+        } else {
+            $dayString = '';
+        }
+
+        // Объединяем результаты
+        if ($monthString && $dayString) {
+            return "$monthString и $dayString";
+        } elseif ($monthString) {
+            return $monthString;
+        } else {
+            return $dayString;
+        }
+    }
+
     public static function getMyOrg()
     {
         $myOrg = Organization

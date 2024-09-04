@@ -6,6 +6,7 @@ import ColumnCustomerRender from "./components/ColumnCustomerRender";
 import ColumnStatusRender from "./components/ColumnStatusRender";
 import ColumnProgressRender from "./components/ColumnProgressRender";
 import ColumnToolRenderManager from "./components/ColumnToolRenderManager";
+import ColumnMoneyRender from "./components/ColumnMoneyRender";
 
 const formatCurrency = (amount) => {
     return amount.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'});
@@ -34,11 +35,19 @@ const getColumn = ({
     if (options.columns) {
         options.columns.includes("name") &&
         columns.push(columnProgressComponent());
+        options.columns.includes("money") &&
+        columns.push(columnMoneyComponent());
         columns.push(columnMainDataComponent());
     }
     return columns;
 }
 export default getColumn;
+const columnMoneyComponent = () =>
+    ({
+        key: 'money',
+        width: "30%",
+        render: (text, record) => <ColumnMoneyRender record={record} text={text}/>
+    });
 const columnProgressComponent = () =>
     ({
         key: 'progress',

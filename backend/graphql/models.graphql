@@ -12,8 +12,8 @@ type Query {
 
 
 
-    persons(id: ID, queryOptions: QueryOptions, queryType: String): PersonsResult @checkRole(permission:  ["read-project"])
-    biks(id: ID, queryOptions: QueryOptions, queryType: String): BikResult
+    persons(id: ID, queryOptions: QueryOptions, queryType: String): PersonsResult @checkRole(permission:  ["read-person"])
+    biks(id: ID, queryOptions: QueryOptions, queryType: String): BikResult @checkRole(permission:  ["read-person"])
     passportPlaceIssues(id: ID, queryOptions: QueryOptions, queryType: String): PassportPlaceIssueResult
     banks(id: ID, queryOptions: QueryOptions, queryType: String): BanksResult
     groupTypeProjects(id: ID): [GroupTypeProjectDocument]
@@ -384,30 +384,30 @@ type Mutation {
     #   groupTypeProject
     createGroupTypeProject(
         data: GroupTypeProject
-    ): GroupTypeProjectDocument @checkRole(permission:  ["create-typeProject-group"])
+    ): GroupTypeProjectDocument @checkRole(permission:  ["create-project-typeProject-group"])
     updateGroupTypeProject(
         id: ID
         data: GroupTypeProject
-    ): GroupTypeProjectDocument @checkRole(permission:  ["update-typeProject-group"])
+    ): GroupTypeProjectDocument @checkRole(permission:  ["update-project-typeProject-group"])
     #   typeProject
     createTypeProject(
         data: TypeProjectInput
-    ): TypeProjectDocument @checkRole(permission:  ["create-typeProject"])
+    ): TypeProjectDocument @checkRole(permission:  ["create-project-typeProject"])
     updateTypeProject(
         id: ID!
         data: TypeProjectInput
-    ): TypeProjectDocument @checkRole(permission:  ["update-typeProject"])
+    ): TypeProjectDocument @checkRole(permission:  ["update-project-typeProject"])
     deleteTypeProject (
         id: ID
-    ): String @checkRole(permission:  ["delete-typeProject"])
+    ): String @checkRole(permission:  ["delete-project-typeProject"])
     #   task
     updateTask(
         id: ID
         data: TaskInput
-    ): Task @checkRole(permission:  ["update_task"])
+    ): Task @checkRole(permission:  ["update-project-task"])
     createTask(
         data: TaskInput
-    ): Task @checkRole(permission:  ["create_task"])
+    ): Task @checkRole(permission:  ["create-project-task"])
     #   project
     updateProject(
         id: ID

@@ -1,17 +1,9 @@
 import React, {useState} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
-import {
-    Col,
-    Descriptions,
-    Form, Modal,
-    notification,
-    Row,
-    Space,
-    Table,
-} from 'antd';
+import {Col, Descriptions, Form, Modal, notification, Row, Space, Table,} from 'antd';
 import {PERSONS_QUERY} from '../../graphql/queries';
 import {DELETE_PERSON_MUTATION} from '../../graphql/mutationsPerson';
- import Search from "antd/es/input/Search";
+import Search from "antd/es/input/Search";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import PersonContractFileDownload from "../components/script/fileDownloadScripts/PersonContractFileDownload";
 import {format} from "date-fns";
@@ -108,6 +100,8 @@ const PersonTable = () => {
         }, {
             title: 'Управление', key: 'edit', width: 100, render: (text, record) => (
                 <DeleteAndEditStyledLinkManagingDataTable
+                    deletePermission={"delete-person"}
+                    updatePermission={"update-person"}
                     title={"Удаление контакта"}
                     description={"Вы уверены, что нужно удалить этого подрядчика?"}
                     handleEdit={() => {
@@ -142,6 +136,7 @@ const PersonTable = () => {
             </Form.Item>
         </Form>
         <Table
+            data-permission={"read-person"}
             size={'small'}
             sticky={{
                 offsetHeader: '64px',

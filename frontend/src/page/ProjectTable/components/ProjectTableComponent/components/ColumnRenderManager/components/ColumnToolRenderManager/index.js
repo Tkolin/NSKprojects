@@ -4,7 +4,6 @@ import ExpandableButton from "./components/ExpandableButton";
 import ArchivedButton from "./components/ArchivedButton";
 
 import UpButton from "./components/UpButton";
-import {useEffect} from "react";
 // options: {
 //     //  Компоненты скрытые в ...
 //     menu: ["crud", "contract", "kp"],
@@ -17,9 +16,7 @@ const ColumnToolRenderManager = ({
                                      expandableTableProps,
                                      record,
                                  }) => {
-    useEffect(() => {
-        console.log("1 ColumnToolRenderManager record", record.project_tasks);
-    }, [record]);
+
     return (
         <Space direction={"vertical"}>
             <MenuManager record={record} onUpdated={onUpdated} itemOptions={options?.menu}/>

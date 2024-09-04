@@ -12,41 +12,41 @@
 #   - MUTATIONS -
 #
 extend type Mutation {
-    downloadFile(id: ID!): Url!
-    uploadFileLink(url: String!): UploadFileLinkResponse!
+    downloadFile(id: ID!): Url! @checkRole(permission:  ["download-file"])
+    uploadFileLink(url: String!): UploadFileLinkResponse! @checkRole(permission:  ["upload-file"])
 
     personOrderFileDownload(
         personId: ID
         tasksId: [ID]
-    ): Url!
+    ): Url! @checkRole(permission:  ["download-file-projectPersonOrder"])
     projectPaymentInvoiceFileDownload(
         projectId: ID!
         stageNumber: ID
         isPrepayment: Boolean
-    ): Url!
+    ): Url! @checkRole(permission:  ["download-file-paymentInvoice"])
     projectActRenderingFileDownload(
         projectId: ID
         stageNumber: Int
-    ): Url!
+    ): Url! @checkRole(permission:  ["download-file-actRendering"])
     projectContractGenerated(
         projectId: ID!
         dateCreateContract: String!
-    ): Project!
+    ): Project! @checkRole(permission:  ["download-file-projectContract"])
     projectOrderFileDownload(
         projectId: ID
-    ): Url!
+    ): Url! @checkRole(permission:  ["download-file-projectOrder"])
     projectIrdsFileDownload(
         projectId: ID
-    ): Url!
+    ): Url! @checkRole(permission:  ["download-file-projectIrds"])
     projectStagesFileDownload(
         projectId: ID
-    ): Url!
+    ): Url! @checkRole(permission:  ["download-file-projectStages"])
     taskExecutorContractFileDownload(
         projectTasksIds: [ID]
-    ): Url!
+    ): Url! @checkRole(permission:  ["download-file-taskExecutorContract"])
     generatedExecutorOrder(
         project_task_ids: [ID]
-    ): GenerateFileResult!
+    ): GenerateFileResult! @checkRole(permission:  ["generated-file-executorOrder"])
 }
 #-INPUTS:
 #-RESULTS:

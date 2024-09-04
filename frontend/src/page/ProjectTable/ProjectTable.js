@@ -94,7 +94,7 @@ const template = {
                 //  hotKey: ["archive", "up"],
             },
             //  Ключи колонок таблицы
-            columns: ["main"],
+            columns: ["main", "money"],
         },
         //  Все компоненты в выпадающем меню
         expandable: [

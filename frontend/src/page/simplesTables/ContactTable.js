@@ -101,6 +101,8 @@ const ContactTable = () => {
         {
             title: 'Управление', key: 'edit', ellipsis: true, width: 100, render: (text, record) => (
                 <DeleteAndEditStyledLinkManagingDataTable
+                    updatePermission={"update-contact"}
+                    deletePermission={"delete-contact"}
                     title={"Удаление контакта"}
                     description={"Вы уверены, что нужно удалить этот контакт?"}
                     handleEdit={() => {
@@ -140,6 +142,7 @@ const ContactTable = () => {
             </Form.Item>
         </Form>
         <Table
+            data-permission={"read-contact"}
             size={'small'}
             sticky={{
                 offsetHeader: '64px',
@@ -176,6 +179,7 @@ const ContactTable = () => {
             {contactModalStatus?.mode === "edit" ? (
                 (contactModalStatus?.contact) && (
                     <ContactForm
+                        data-permission={"update-contact"}
                         onCompleted={() =>
                             setContactModalStatus(null)}
                         initialObject={contactModalStatus?.contact}
@@ -183,7 +187,7 @@ const ContactTable = () => {
                     />
                 )
             ) : (
-                <ContactForm onCompleted={() => setContactModalStatus(null)}/>
+                <ContactForm data-permission={"create-contact"} onCompleted={() => setContactModalStatus(null)}/>
             )}
         </Modal>
 

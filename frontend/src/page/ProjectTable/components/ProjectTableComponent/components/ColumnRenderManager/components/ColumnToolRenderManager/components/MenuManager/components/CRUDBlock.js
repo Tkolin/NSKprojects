@@ -1,6 +1,6 @@
-import {Col, Divider, Modal, notification, Popconfirm, Row, Space, Tooltip} from "antd";
+import {Divider, Modal, notification, Popconfirm, Tooltip} from "antd";
 import {DeleteOutlined, EditOutlined, PushpinFilled, PushpinOutlined} from "@ant-design/icons";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import CustomMenuButton from "./CustomMenuButton";
 import {useMutation} from "@apollo/client";
 import {CHANGE_TEMPLATE_TYPE_PROJECT} from "../../../../../../../../../../../graphql/mutationsProject";
@@ -37,12 +37,7 @@ const CRUDBlock = ({record, onUpdated}) => {
     };
 
     const [editProjectModalStatus, setEditProjectModalStatus] = useState(false);
-    useEffect(() => {
-        console.log("CRUD MODAL", editProjectModalStatus);
-    }, [editProjectModalStatus]);
-    useEffect(() => {
-        console.log("CRUD UPDATE NULL");
-    }, []);
+
     const [mutateChangeTemplate] = useMutation(CHANGE_TEMPLATE_TYPE_PROJECT, {
         onCompleted: (data) => {
             openNotification('topRight', 'success', `Шаблон изменён`);
