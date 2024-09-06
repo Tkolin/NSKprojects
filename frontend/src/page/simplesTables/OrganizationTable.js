@@ -187,7 +187,7 @@ const OrganizationTable = () => {
                             </Descriptions>
                         </Col>
                         <Col span={12}>
-                          <OrganizationContactsCompactTable data={record?.employees} />
+                            <OrganizationContactsCompactTable data={record?.employees}/>
                         </Col>
 
                     </Row>
@@ -204,8 +204,11 @@ const OrganizationTable = () => {
             children={
                 <OrganizationForm
                     cardProps={{title: "Организация"}}
-                    onCompleted={() =>
-                        setOrganizationModalStatus(null)}
+                    onCompleted={() => {
+                        refetch();
+                        setOrganizationModalStatus(null);
+                    }
+                    }
                     initialObject={organizationModalStatus?.organization_id ? {id: organizationModalStatus?.organization_id} : null}
                 />
             }

@@ -1,23 +1,15 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Form, Input, Select, Space, Row, Col, Modal, Card, Button, Skeleton, Alert} from 'antd';
+import {Alert, Card, Col, Form, Input, Modal, Row, Select, Skeleton, Space} from 'antd';
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
-import {
-    UPDATE_ORGANIZATION_MUTATION, ADD_ORGANIZATION_MUTATION,
-} from '../../graphql/mutationsOrganization';
+import {ADD_ORGANIZATION_MUTATION, UPDATE_ORGANIZATION_MUTATION,} from '../../graphql/mutationsOrganization';
 
 import 'react-dadata/dist/react-dadata.css';
 import './style.css';
 import {NotificationContext} from "../../NotificationProvider";
-import {
-    BIKS_QUERY_COMPACT,
-    CONTACTS_QUERY_COMPACT, LEGAL_FORM_QUERY_COMPACT,
-} from "../../graphql/queriesCompact";
+import {BIKS_QUERY_COMPACT, CONTACTS_QUERY_COMPACT, LEGAL_FORM_QUERY_COMPACT,} from "../../graphql/queriesCompact";
 import {ORGANIZATIONS_QUERY_BY_ID} from "../../graphql/queriesByID";
 
-import {
-    CustomAutoCompleteAndCreate,
-    CustomAutoCompleteAndCreateWitchEdit
-} from "../components/style/SearchAutoCompleteStyles";
+import {CustomAutoCompleteAndCreateWitchEdit} from "../components/style/SearchAutoCompleteStyles";
 
 
 import {AddressSuggestions} from "react-dadata";
@@ -33,7 +25,7 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
     const TokenDADATA = process.env.REACT_APP_TOKEN_DADATAADDRESS;
-    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
+    const [actualObject, setActualObject] = useState(localObject?.id ?? (initialObject ?? null));
     const [loadContext, {loading, data}] = useLazyQuery(ORGANIZATIONS_QUERY_BY_ID, {
         variables: {id: initialObject?.id ?? null},
         onCompleted: (data) => {
@@ -65,17 +57,12 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
 
     // Подгрузка при обновлении
     useEffect(() => {
-        if (initialObject?.id) {
+        if (initialObject?.id)
             loadContext();
-        }
     }, [initialObject]);
     useEffect(() => {
-        console.log("contactModalStatus", contactModalStatus);
-    }, [contactModalStatus]);
-    useEffect(() => {
-        if (localObject?.id) {
+        if (localObject)
             updateForm(localObject);
-        }
     }, [localObject]);
     const updateForm = (data) => {
         if (data) {
@@ -86,9 +73,10 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
                 bik: {selected: data?.bik?.id, output: (data?.bik?.BIK ?? "") + " " + (data?.bik?.name ?? "")},
                 legal_form_id: data?.legal_form?.id ?? null,
                 director: {
-                    selected: data?.director?.id, output: (data?.director?.last_name ?? "") + " " +
+                    selected: data?.director?.id,
+                    output: (data?.director?.last_name ?? "") + " " +
                         (data?.director?.first_name ?? "") + " " +
-                        (data?.director?.patronymic ?? "")
+                        (data?.director?.patronymic !== null ? data?.director?.patronymic : "")
                 }
             });
             setAddress({legal: data.address_legal, mail: data.address_mail});
@@ -355,7 +343,7 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
                                       console.log("onCompleted", value);
                                       form.setFieldValue("director", {
                                           selected: value?.id,
-                                          output: value.last_name + " " + value.first_name + " " + value?.patronymic ?? ""
+                                          output: value.last_name + " " + value.first_name + " " + value?.patronymic !== null ? value?.patronymic : ""
                                       });
                                       setContactModalStatus(null);
                                   }}

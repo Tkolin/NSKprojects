@@ -14,6 +14,10 @@ class FormatterService
         return str_pad((string)$number, $length, '0', STR_PAD_LEFT);
     }
 
+    public static function mb_ucfirst($text)
+    {
+        return mb_strtoupper(mb_substr($text, 0, 1)) . mb_substr($text, 1);
+    }
     public static function formatDuration($days): string
     {
         $months = floor($days / 30); // Рассчитываем количество месяцев

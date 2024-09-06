@@ -1,17 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Alert, Button, Card, Divider, Form, Input, Modal, Skeleton, Space} from 'antd';
+import {Alert, Card, Divider, Form, Input, Modal, Skeleton, Space} from 'antd';
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import {ADD_CONTACT_MUTATION, UPDATE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
-import moment from 'moment';
 import {NotificationContext} from "../../NotificationProvider";
-import {
-    ORGANIZATIONS_QUERY_COMPACT,
-    POSITIONS_QUERY_COMPACT
-} from "../../graphql/queriesCompact";
-import {
-    CustomAutoComplete,
-    CustomAutoCompleteAndCreateWitchEdit
-} from "../components/style/SearchAutoCompleteStyles";
+import {ORGANIZATIONS_QUERY_COMPACT, POSITIONS_QUERY_COMPACT} from "../../graphql/queriesCompact";
+import {CustomAutoComplete, CustomAutoCompleteAndCreateWitchEdit} from "../components/style/SearchAutoCompleteStyles";
 import {CONTACTS_QUERY_BY_ID} from "../../graphql/queriesByID";
 import {CustomDatePicker} from "../components/FormattingDateElementComponent";
 import OrganizationForm from "./OrganizationForm";
@@ -23,7 +16,7 @@ const ContactForm = ({localObject, initialObject, options, onCompleted, cardProp
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
-    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
+    const [actualObject, setActualObject] = useState(localObject?.id ?? (initialObject ?? null));
     const [loadContext, {loading, data}] = useLazyQuery(CONTACTS_QUERY_BY_ID, {
         variables: {id: initialObject?.id},
         onCompleted: (data) => {
@@ -214,12 +207,14 @@ const ContactForm = ({localObject, initialObject, options, onCompleted, cardProp
                                               data={dataPositions?.positions?.items}
                                               placeholder="Выберите должность"
                                               loading={loadingPositions}
+                                              popupMatchSelectWidth={true}
                                           />
                                       </AutoCompleteFormItem>
                                       <AutoCompleteFormItem
                                           name={"organization"}
                                           label={"Организация"}
                                           style={{width: "100%"}}
+
                                           // rulesValidationRequired={true}
                                           // rulesValidationMessage={'Пожалуйста, укажите организацию'}
                                       >

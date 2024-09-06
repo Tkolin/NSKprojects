@@ -1,4 +1,4 @@
-import {Button, Card, Divider, Drawer, Dropdown, Tooltip} from "antd";
+import {Button, Drawer, Tooltip} from "antd";
 import CRUDBlock from "./components/CRUDBlock";
 import ContractDocumentBlock from "./components/ContractDocumentBlock";
 import {MoreOutlined} from "@ant-design/icons";
@@ -6,6 +6,7 @@ import React, {useEffect, useState} from "react";
 import {nanoid} from "nanoid";
 import KPDocumentBlock from "./components/KPDocumentBlock";
 import TasksManagementBlock from "./components/TasksManagementBlock";
+import TemplateBlock from "./components/TemplateBlock";
 
 const Index = ({record, onUpdated, itemOptions = []}) => {
     const [open, setOpen] = useState(false)
@@ -33,6 +34,9 @@ const Index = ({record, onUpdated, itemOptions = []}) => {
 
                 {itemOptions.includes("crud") && <>
                     <CRUDBlock key={nanoid()} record={record} onUpdated={onUpdated}/>
+                </>}
+                {itemOptions.includes("template") && <>
+                    <TemplateBlock key={nanoid()} record={record} onUpdated={onUpdated}/>
                 </>}
                 {itemOptions.includes("contract") && <>
                     <ContractDocumentBlock record={record} onUpdated={onUpdated}/>

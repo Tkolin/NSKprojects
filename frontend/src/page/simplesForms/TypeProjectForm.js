@@ -1,18 +1,11 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Card, Form, Input} from 'antd';
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
-import {
-    ADD_TYPE_PROJECTS_MUTATION,
-    UPDATE_TYPE_PROJECTS_MUTATION
-} from "../../graphql/mutationsTypeProject";
+import {ADD_TYPE_PROJECTS_MUTATION, UPDATE_TYPE_PROJECTS_MUTATION} from "../../graphql/mutationsTypeProject";
 import {NotificationContext} from "../../NotificationProvider";
-import {
-    GROUP_TYPE_PROJECTS_QUERY_COMPACT
-} from "../../graphql/queriesCompact";
-import {CustomAutoComplete, CustomAutoCompleteAndCreate} from "../components/style/SearchAutoCompleteStyles";
+import {GROUP_TYPE_PROJECTS_QUERY_COMPACT} from "../../graphql/queriesCompact";
+import {CustomAutoComplete} from "../components/style/SearchAutoCompleteStyles";
 import {TYPES_PROJECTS_QUERY_BY_ID} from "../../graphql/queriesByID";
-import LoadingSpinnerStyles from "../components/style/LoadingSpinnerStyles";
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {ModalButton} from "./formComponents/ModalButtonComponent";
 import {AutoCompleteFormItem} from "../components/CustomForm";
 
@@ -29,7 +22,7 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted, cardProps}) =
             openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
         },
     });
-    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
+    const [actualObject, setActualObject] = useState(localObject?.id ?? (initialObject ?? null));
 
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
@@ -96,7 +89,7 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted, cardProps}) =
         const data = form.getFieldsValue();
         mutate({
             variables: {
-                ...(actualObject ? {id: actualObject.id} : {}), data: {
+                ...(actualObject ? {id: actualObject?.id} : {}), data: {
                     name: data?.name,
                     group_id: data?.group.selected,
                     code: data?.code,
@@ -113,7 +106,7 @@ const TypeProjectForm = ({localObject, initialObject, onCompleted, cardProps}) =
                       isMany={cardProps?.actions}
                       loading={loadingSave}
                       onClick={()=>form.submit()}
-                      children={actualObject.id ? `Обновить` : `Создать`}/>
+                      children={actualObject?.id ? `Обновить` : `Создать`}/>
                   , ...cardProps?.actions ?? []
               ]}
               children={

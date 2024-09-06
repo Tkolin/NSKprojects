@@ -1,17 +1,15 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Form, Input, Button, Select, Card, Skeleton} from 'antd';
+import {Card, Form, Input, Select, Skeleton} from 'antd';
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import {
-    ADD_GROUP_TYPE_PROJECTS_MUTATION, UPDATE_GROUP_TYPE_PROJECTS_MUTATION
+    ADD_GROUP_TYPE_PROJECTS_MUTATION,
+    UPDATE_GROUP_TYPE_PROJECTS_MUTATION
 } from "../../graphql/mutationsTypeProject";
 
 import {NotificationContext} from "../../NotificationProvider";
-import {
-    GROUP_TYPE_PROJECTS_QUERY_COMPACT,
-} from "../../graphql/queriesCompact";
-import {CONTACTS_QUERY_BY_ID, GROUP_TYPE_PROJECTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
+import {GROUP_TYPE_PROJECTS_QUERY_COMPACT,} from "../../graphql/queriesCompact";
+import {GROUP_TYPE_PROJECTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
 import {CustomAutoCompleteAndCreate} from "../components/style/SearchAutoCompleteStyles";
-import LoadingSpinnerStyles from "../components/style/LoadingSpinnerStyles";
 import {ModalButton} from "./formComponents/ModalButtonComponent";
 
 const {Option} = Select;
@@ -22,7 +20,7 @@ const GroupTypeProjectForm = ({initialObject, onCompleted, cardProps}) => {
     const [form] = Form.useForm();
     const nameModel = 'Группа типа документации';
 
-    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
+    const [actualObject, setActualObject] = useState(localObject?.id ?? (initialObject ?? null));
 
     // Состояния
     const [loadContact, {loading, data}] = useLazyQuery(GROUP_TYPE_PROJECTS_QUERY_BY_ID, {

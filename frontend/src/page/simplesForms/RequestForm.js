@@ -13,12 +13,13 @@ import OrganizationForm from "./OrganizationForm";
 import {ModalButton} from "./formComponents/ModalButtonComponent";
 import ContactForm from "./ContactForm";
 import {AutoCompleteFormItem} from "../components/CustomForm";
+import {nanoid} from "nanoid";
 
 const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
-    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
+    const [actualObject, setActualObject] = useState(localObject?.id ?? (initialObject ?? null));
     const [loadContext, {loading, data}] = useLazyQuery(REQUEST_QUERY_BY_ID, {
         variables: {id: initialObject?.id},
         onCompleted: (data) => {
@@ -44,7 +45,7 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
             onCompleted && onCompleted(data?.createRequests || data?.updateRequests);
         },
         onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении сооздания контакта: ${error.message}`);
+            openNotification('topRight', 'error', `Ошибка при выполнении создания заявки: ${error.message}`);
         },
     });
 
@@ -72,11 +73,17 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     };
 
     // Получение данных для выпадающих списков
-    const {loading: loadingContacts, error: errorContacts, data: dataContacts} = useQuery(CONTACTS_QUERY_COMPACT);
+    const {
+        loading: loadingContacts,
+        error: errorContacts,
+        data: dataContacts,
+        refetch: refetchContacts
+    } = useQuery(CONTACTS_QUERY_COMPACT);
     const {
         loading: loadingOrganizations,
         error: errorOrganizations,
-        data: dataOrganizations
+        data: dataOrganizations,
+        refetch: refetchOrganizations
     } = useQuery(ORGANIZATIONS_QUERY_COMPACT);
 
     const handleSubmit = () => {
@@ -193,6 +200,7 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                                              cardProps={{title: "Организация"}}
                                              onCompleted={(value) => {
                                                  setOrganizationModalStatus(null)
+                                                 refetchOrganizations();
                                                  form.setFieldValue("organization", {
                                                      selected: value?.id,
                                                      output: value.name
@@ -204,7 +212,7 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                               />}
                       />
                       <Modal
-                          key={contactModalStatus?.mode || contactModalStatus?.contact_id || null}
+                          key={nanoid()}
                           open={contactModalStatus}
                           onCancel={() => setContactModalStatus(null)}
                           footer={null}
@@ -217,22 +225,21 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                                              cardProps={{title: "Контакт"}}
                                              onCompleted={(value) => {
                                                  setContactModalStatus(null)
+                                                 refetchContacts();
                                                  form.setFieldValue("contact", {
                                                      selected: value?.id,
-                                                     output: value.name
+                                                     output: value.last_name + " " + value.first_name + " " + value.patronymic
                                                  });
                                              }}
                                              initialObject={contactModalStatus?.contact_id ?
                                                  {id: contactModalStatus?.contact_id} : null}
-                                             localObject={contactModalStatus?.contact_id ?
-                                                 null : form.getFieldValue("organization")?.selected &&
+                                             localObject={contactModalStatus?.contact_id ? null :
+                                                 form.getFieldValue("organization")?.selected &&
                                                  {
                                                      organization: {
                                                          id: form.getFieldValue("organization").selected,
                                                          name: form.getFieldValue("organization").output
                                                      },
-
-
                                                  }
                                              }
 

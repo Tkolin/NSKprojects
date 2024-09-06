@@ -48,20 +48,21 @@ class CommercialOfferMessageGeneratorService extends DocumentGeneratorService
         $myOrg = FormatterService::getMyOrg();
         $full_date = FormatterService::getFullDate($dateOffer, true);
         $stagesNames = [
-            ['blockContent' => $projectData->prepayment . '% Аванс ( ' . FormatterService::convertToMany($projectData->price / 100 * $projectData->prepayment, false) . ' руб.) ;']
+            ['blockContent' => $projectData->prepayment . '% Аванс ( ' . FormatterService::convertToMany($projectData->price / 100 * $projectData->prepayment, false) . ' руб.);']
         ];
 
         // Добавление остальных этапов в массив
         foreach ($projectData->project_stages as $stage) {
-            $stagesNames[] = ['blockContent' => $stage->percent . "% " . $stage->stage->name . ' ( ' . FormatterService::convertToMany($stage->price, false) . ' руб.)'];
+            $stagesNames[] = ['blockContent' => $stage->percent . "% " . $stage->stage->name . ' ( ' . FormatterService::convertToMany($stage->price, false) . ' руб.);'];
         }
         $this->templateProcessor->cloneBlock("stagesBlock", 0, true, false, $stagesNames);
         //  Обработка шаблона
         $this->replacements = [
             'myOrg.full_adress' => $myOrg['address_legal'] . ', тел. ' . $myOrg["phone_number"] . ', E-mail: ' . $myOrg["email"],
-            'message.full_date' => $full_date,
+            'message.full_date' => mb_strtolower($full_date),
             'message.number' => "№" . $contractNumber,
-            'delegate_org.director.positions' => inflectName($delegation['position']['name'], 'дательный'),
+            "myOrg.director.position_name" => $myOrg['director']['position']['name'],
+            'delegate_org.director.positions' => FormatterService::mb_ucfirst(ucfirst(mb_strtolower(inflectName($delegation['position']['name'], 'дательный')))),
             'delegate_org.name' => $delegationOrgData['name'],
             'delegate_org.type_org' => $delegationOrgData['legal_form']->name,
             'project.main_delegation_short_name' => FormatterService::getFullName($delegation['last_name'], $delegation['first_name'], $delegation['patronymic'], true, true),
@@ -75,6 +76,7 @@ class CommercialOfferMessageGeneratorService extends DocumentGeneratorService
         ];
         $this->replaceValues();
         //  Сохранение файла
+        error_log("НОМЕР " . $projectData['number']);
         $this->saveDocument($projectData['number'] . '_КОМЕРЧЕСКОЕ_ПРЕДЛОЖЕНИЕ.docx');
         $storagePath = "/" . $projectData->path_project_folder . "/КП/" . $this->fileName;
 

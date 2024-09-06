@@ -1,21 +1,13 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Card, Divider, Form, Input} from 'antd';
+import {Card, Divider, Form, Input} from 'antd';
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import {ADD_CONTACT_MUTATION, UPDATE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
-import {DatePicker} from "antd/lib";
 import moment from 'moment';
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {NotificationContext} from "../../NotificationProvider";
-import {
-    ORGANIZATIONS_QUERY_COMPACT,
-    POSITIONS_QUERY_COMPACT
-} from "../../graphql/queriesCompact";
-import {
-    CustomAutoComplete,
-    CustomAutoCompleteAndCreateWitchEdit
-} from "../components/style/SearchAutoCompleteStyles";
+import {ORGANIZATIONS_QUERY_COMPACT, POSITIONS_QUERY_COMPACT} from "../../graphql/queriesCompact";
+import {CustomAutoComplete, CustomAutoCompleteAndCreateWitchEdit} from "../components/style/SearchAutoCompleteStyles";
 import {CONTACTS_QUERY_BY_ID} from "../../graphql/queriesByID";
-import LoadingSpinnerStyles from "../components/style/LoadingSpinnerStyles";
 import {CustomDatePicker} from "../components/FormattingDateElementComponent";
 import {ModalButton} from "./formComponents/ModalButtonComponent";
 
@@ -23,7 +15,7 @@ const UserForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
-    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
+    const [actualObject, setActualObject] = useState(localObject?.id ?? (initialObject ?? null));
     const [loadContext, {loading, data}] = useLazyQuery(CONTACTS_QUERY_BY_ID, {
         variables: {id: initialObject?.id},
         onCompleted: (data) => {

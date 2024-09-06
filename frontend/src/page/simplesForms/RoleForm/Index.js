@@ -4,9 +4,7 @@ import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import {ADD_CONTACT_MUTATION, UPDATE_CONTACT_MUTATION} from '../../../graphql/mutationsContact';
 import moment from 'moment';
 import {NotificationContext} from "../../../NotificationProvider";
-import {
-    PERMISSIONS_QUERY_COMPACT
-} from "../../../graphql/queriesCompact";
+import {PERMISSIONS_QUERY_COMPACT} from "../../../graphql/queriesCompact";
 
 import {CONTACTS_QUERY_BY_ID} from "../../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../../components/style/LoadingSpinnerStyles";
@@ -17,7 +15,7 @@ const Index = ({localObject, initialObject, onCompleted}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
-    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
+    const [actualObject, setActualObject] = useState(localObject?.id ?? (initialObject ?? null));
     const [loadContext, {loading, data}] = useLazyQuery(CONTACTS_QUERY_BY_ID, {
         variables: {id: initialObject?.id},
         onCompleted: (data) => {

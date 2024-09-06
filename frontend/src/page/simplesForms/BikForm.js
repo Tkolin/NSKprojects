@@ -12,7 +12,7 @@ const BikForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
     const nameModel = 'БИК';
-    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
+    const [actualObject, setActualObject] = useState(localObject?.id ?? (initialObject ?? null));
     const [loadContext, {loading, data}] = useLazyQuery(BIKS_QUERY_BY_ID, {
         variables: {id: initialObject?.id},
         onCompleted: (data) => {

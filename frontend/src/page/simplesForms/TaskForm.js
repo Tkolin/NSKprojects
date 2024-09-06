@@ -1,10 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Card, Col, Form, Input, Row, Space} from 'antd';
+import {Card, Form, Input, Space} from 'antd';
 import {useLazyQuery, useMutation} from '@apollo/client';
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {NotificationContext} from "../../NotificationProvider";
 import {TASKS_QUERY_BY_ID} from "../../graphql/queriesByID";
-import LoadingSpinnerStyles from "../components/style/LoadingSpinnerStyles";
 import {ADD_TASK_MUTATION, UPDATE_TASK_MUTATION} from "../../graphql/mutationsTask";
 import {ModalButton} from "./formComponents/ModalButtonComponent";
 
@@ -12,7 +11,7 @@ const TaskForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
-    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
+    const [actualObject, setActualObject] = useState(localObject?.id ?? (initialObject ?? null));
     const [loadContext, {loading, data}] = useLazyQuery(TASKS_QUERY_BY_ID, {
         variables: {id: initialObject?.id},
         onCompleted: (data) => {

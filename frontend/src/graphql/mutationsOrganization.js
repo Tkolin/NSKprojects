@@ -1,7 +1,6 @@
 import {gql} from "@apollo/client";
 
 
-
 export const ADD_ORGANIZATION_MUTATION = gql`
     mutation AddOrganization(
         $data: OrganizationInput
@@ -30,6 +29,7 @@ export const ADD_ORGANIZATION_MUTATION = gql`
              bik{
                 id
                 name
+                 BIK
             }
             payment_account
             director{
@@ -71,6 +71,7 @@ export const UPDATE_ORGANIZATION_MUTATION = gql`
              bik{
                 id
                 name
+                 BIK
             }
             payment_account
             director{

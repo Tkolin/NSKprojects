@@ -1,19 +1,22 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Alert, Card, Select, Space} from 'antd';
 import {useMutation, useQuery} from '@apollo/client';
 import {PROJECTS_STAGES_TEMPLATES} from "../../graphql/queriesCompact";
 import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {SET_STAGE_TEMPLATE_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
+import {NotificationContext} from "../../NotificationProvider";
 
 const TemplatesStageForm = ({project, onCompleted}) => {
     const {loading, data} = useQuery(PROJECTS_STAGES_TEMPLATES);
+    const {openNotification} = useContext(NotificationContext);
+
     const [mutate, {loading: loadingResult}] = useMutation(SET_STAGE_TEMPLATE_TO_PROJECT_MUTATION, {
         onCompleted: (data) => {
-            console.log(`Ответ: `, data);
+            openNotification('topRight', 'error', `Шаблон установлен!`);
             onCompleted && onCompleted()
         },
         onError: (error) => {
-            console.log(`Ошибка: `, error.message);
+            openNotification('topRight', 'error', `Ошибка при загрузке шаблона: ${error.message}`);
         },
     });
     useEffect(() => {

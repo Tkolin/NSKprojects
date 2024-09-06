@@ -2,15 +2,10 @@
 
 namespace App\Services\FileGenerate;
 
-use App\Models\Project;
-use App\Models\ProjectContractHistory;
 use App\Models\ProjectFile;
-use App\Services\MonthEnum;
 use App\Services\NameCaseLib\NCL\NCL;
 use App\Services\NameCaseLib\NCLNameCaseRu;
-use App\Services\TranslatorNumberToName;
-use Illuminate\Support\Str;
-use PhpOffice\PhpWord\TemplateProcessor;
+use Exception;
 
 class ProjectContractGeneratorService extends DocumentGeneratorService
 {
@@ -26,7 +21,7 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
     {
         // Проверка, что все ключи существуют
         if (!isset($data['projectData'], $data['dateCreateContract'])) {
-            throw new \Exception('Не все необходимые данные предоставлены.');
+            throw new Exception('Не все необходимые данные предоставлены.');
         }
 
 
@@ -84,13 +79,13 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
         }
         $this->templateProcessor->cloneRowAndSetValues('projectStages.number', $tableStage);
         if (!isset($projectData["organization_customer"]['director'])) {
-            throw new \Exception("Ошибка данных заказчика");
+            throw new Exception("Ошибка данных заказчика");
 
         }
 
         $this->replacements = [
-            'date_create_full' => $date_create_full ?? null,
-            'date_create_short' => $date_create_short ?? null,
+            'date_create_full' => $date_create_full ? mb_strtolower($date_create_full) : null,
+            'date_create_short' => $date_create_short ? mb_strtolower($date_create_short) : null,
             'projectStages.stage.priceTotal' => isset($projectData['price']) ? FormatterService::convertToMany($projectData['price']) : null,
             'projectStages.stage.endPriceTotal' => isset($projectData['price']) ? FormatterService::convertToMany($projectData['price']) : null,
             'projectStages.stage.priceTotalToName' => FormatterService::convertNumbToStringr($projectData['price']) ?? null,
@@ -118,6 +113,7 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
             'projectOrganization.director.full_name' => $nclNameCaseRu->q($projectData["organization_customer"]['director']['last_name'] . ' ' .
             $projectData["organization_customer"]['director']['first_name'] . ' ' .
             $projectData["organization_customer"]['director']['patronymic'] ?? null, NCL::$VINITELN),
+            'projectOrganization.director.positionRG' => strtolower($nclNameCaseRu->q($projectData["organization_customer"]['director']['position']['name'] ?? null, NCL::$RODITLN)),
             'projectOrganization.director.position' => $projectData["organization_customer"]['director']['position']['name'] ?? null,
             'projectOrganization.INN' => $projectData["organization_customer"]['INN'] ?? null,
             'projectOrganization.full_name' => $projectData["organization_customer"]['full_name'] ?? null,
@@ -130,7 +126,7 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
             'projectOrganization.BIK.name' => $projectData["organization_customer"]['bik']['name'] ?? null,
             'projectOrganization.BIK.correspondent_account' => $projectData["organization_customer"]['bik']['correspondent_account'] ?? null,
             'projectOrganization.director.ShortFullName' =>
-                FormatterService::getFullName($myOrg['director']['last_name'] ?? null, $myOrg['director']['first_name'], $myOrg['director']['patronymic'], true),
+                FormatterService::getFullName($projectData["organization_customer"]['director']['last_name'] ?? null, $myOrg['director']['first_name'], $myOrg['director']['patronymic'], true),
             'myOrg.director.ShortFullName' =>
                 FormatterService::getFullName($myOrg['director']['last_name'], $myOrg['director']['first_name'], $myOrg['director']['patronymic'], true),
         ];

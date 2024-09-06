@@ -88,7 +88,7 @@ class FileUploadController extends Controller
             $storagePath = "/" . $pathProjectFolder . "/Коммерческое_предложение/" . $file->getClientOriginalName();
             error_log('$project' . $project);
 
-            Storage::disk('localERPFiles')->put($storagePath, $file->getClientOriginalName());
+            Storage::disk('localERPFiles')->put($storagePath, file_get_contents($file->getRealPath()));
 
             $fileRecord = File::create([
                 'name' => $file->getClientOriginalName(),

@@ -1,8 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Card, Form, Input} from 'antd';
 import {useLazyQuery, useMutation} from '@apollo/client';
-import {StyledBlockRegular} from "../components/style/BlockStyles";
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {NotificationContext} from "../../NotificationProvider";
 import {STAGES_QUERY_BY_ID} from "../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../components/style/LoadingSpinnerStyles";
@@ -14,7 +12,7 @@ const IrdForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
     const nameModel = 'Этапы';
-    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
+    const [actualObject, setActualObject] = useState(localObject?.id ?? (initialObject ?? null));
     const [loadContext, {loading, data}] = useLazyQuery(STAGES_QUERY_BY_ID, {
         variables: {id: initialObject?.id},
         onCompleted: (data) => {

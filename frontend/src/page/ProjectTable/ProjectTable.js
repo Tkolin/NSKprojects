@@ -29,7 +29,7 @@ const template = {
             //  Первая колонка кнопок управления таблицей
             tool: {
                 //  Компоненты скрытые в ...
-                menu: ["crud", "kp", "stages"],
+                menu: ["crud", "kp", "stages", "template"],
                 //  Кнопки быстрых действий
                 hotKey: ["archive", "up"],
             },
@@ -47,7 +47,7 @@ const template = {
             tool: {
                 //  Компоненты скрытые в ...
                 menu: ["crud", "contract", "stages",
-                    "irds"],
+                    "irds", "template"],
                 //  Кнопки быстрых действий
                 hotKey: ["archive", "up"],
             },
@@ -66,7 +66,7 @@ const template = {
             //  Первая колонка кнопок управления таблицей
             tool: {
                 //  Компоненты скрытые в ...
-                menu: ["crud", "contract", "tasks_management"],
+                menu: ["crud", "contract", "tasks_management", "template"],
                 //  Кнопки быстрых действий
                 hotKey: ["archive", "up"],
             },

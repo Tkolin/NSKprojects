@@ -1,20 +1,16 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Form, Input, Col, Row, Modal, Divider, Card, Button, Skeleton} from 'antd';
+import {Card, Col, Divider, Form, Input, Modal, Row, Skeleton} from 'antd';
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
-import {
-    ADD_PERSON_MUTATION, UPDATE_PERSON_MUTATION
-} from '../../graphql/mutationsPerson';
-
-import {StyledButtonGreen, StyledButtonGreenGhost} from "../components/style/ButtonStyles";
+import {ADD_PERSON_MUTATION, UPDATE_PERSON_MUTATION} from '../../graphql/mutationsPerson';
 import {AddressSuggestions} from "react-dadata";
 import {StyledAddressSuggestionsInput} from "../components/style/InputStyles";
 import {NotificationContext} from "../../NotificationProvider";
 import {
-    BANKS_QUERY_COMPACT, BIKS_QUERY_COMPACT,
+    BANKS_QUERY_COMPACT,
+    BIKS_QUERY_COMPACT,
     PASSPORTS_PLACE_ISSUES_QUERY_COMPACT,
 } from "../../graphql/queriesCompact";
 import {PERSONS_QUERY_BY_ID} from "../../graphql/queriesByID";
-import LoadingSpinnerStyles from "../components/style/LoadingSpinnerStyles";
 import {CustomAutoComplete, CustomAutoCompleteAndCreate} from "../components/style/SearchAutoCompleteStyles";
 
 import dayjs from "dayjs";
@@ -32,7 +28,7 @@ const PersonForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     }, [initialObject]);
     const nameModel = 'Подрядчики';
     const TokenDADATA = process.env.REACT_APP_TOKEN_DADATAADDRESS;
-    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
+    const [actualObject, setActualObject] = useState(localObject?.id ?? (initialObject ?? null));
     const [loadContact, {loading, data}] = useLazyQuery(PERSONS_QUERY_BY_ID, {
         variables: {id: initialObject?.id},
         onCompleted: (data) => {

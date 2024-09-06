@@ -1,14 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {Row, Col, Form, InputNumber, Tooltip, DatePicker, Space, Switch, Button} from 'antd';
-import {CaretUpOutlined, CaretDownOutlined, CloseOutlined} from '@ant-design/icons';
-import {CustomAutoComplete, CustomAutoCompleteExtension} from "../../components/style/SearchAutoCompleteStyles";
-import {EmptyFormItem} from "../../simplesForms/formComponents/EmptyFormItem";
+import React, {useState} from 'react';
+import {Button, Col, DatePicker, Form, InputNumber, Row, Space, Tooltip} from 'antd';
+import {CaretDownOutlined, CaretUpOutlined, CloseOutlined} from '@ant-design/icons';
+import {CustomAutoCompleteExtension} from "../../components/style/SearchAutoCompleteStyles";
 import {StyledButtonRed} from "../../components/style/ButtonStyles";
-import DateRangePickerComponent from "../../components/DateRangePickerComponent";
 import {AutoCompleteFormItem} from "../../components/CustomForm";
 import {useQuery} from "@apollo/client";
 import {STAGES_QUERY_COMPACT} from "../../../graphql/queriesCompact";
-import Link from "antd/es/typography/Link";
 
 const {RangePicker} = DatePicker;
 
@@ -126,6 +123,7 @@ const StageItem = ({
                             rules={[{required: true, message: "Процент от стоимости обязателен"}]}>
                             <InputNumber max={100} min={0}
                                          onChange={(value) => handlePriceChange(value)}
+
                                          suffix={"%"}
                                          style={{width: "100%"}}/>
                         </Form.Item>

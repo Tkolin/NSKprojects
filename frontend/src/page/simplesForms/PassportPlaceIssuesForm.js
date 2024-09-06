@@ -1,14 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Card, Form, Input} from 'antd';
 import {useLazyQuery, useMutation} from '@apollo/client';
-import {
-    ADD_PPI_MUTATION,
-    UPDATE_PPI_MUTATION
-} from '../../graphql/mutationsPerson';
+import {ADD_PPI_MUTATION, UPDATE_PPI_MUTATION} from '../../graphql/mutationsPerson';
 import {NotificationContext} from "../../NotificationProvider";
 import {PASSPORTS_PLACE_ISSUES_QUERY_BY_ID} from "../../graphql/queriesByID";
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import LoadingSpinnerStyles from "../components/style/LoadingSpinnerStyles";
 import {ModalButton} from "./formComponents/ModalButtonComponent";
 
 
@@ -17,7 +12,7 @@ const PassportPlaceIssuesForm = ({localObject,initialObject, onCompleted, cardPr
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
     const nameModel = 'Адрес регистрации';
-    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
+    const [actualObject, setActualObject] = useState(localObject?.id ?? (initialObject ?? null));
     const [loadContext, {loading, data}] = useLazyQuery(PASSPORTS_PLACE_ISSUES_QUERY_BY_ID, {
         variables: {id: 0},
         onCompleted: (data) => {

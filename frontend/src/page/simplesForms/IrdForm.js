@@ -2,10 +2,8 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Card, Form, Input, Skeleton} from 'antd';
 import {useLazyQuery, useMutation} from '@apollo/client';
 import {ADD_IRD_MUTATION, UPDATE_IRD_MUTATION} from "../../graphql/mutationsIrd";
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {NotificationContext} from "../../NotificationProvider";
 import {IRDS_QUERY_BY_ID} from "../../graphql/queriesByID";
-import LoadingSpinnerStyles from "../components/style/LoadingSpinnerStyles";
 import {ModalButton} from "./formComponents/ModalButtonComponent";
 
 const IrdForm = ({localObject, initialObject, onCompleted, cardProps}) => {
@@ -13,7 +11,7 @@ const IrdForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
     const nameModel = 'ИРД';
-    const [actualObject, setActualObject] = useState(localObject ?? (initialObject ?? null));
+    const [actualObject, setActualObject] = useState(localObject?.id ?? (initialObject ?? null));
     const [loadContext, {loading, data}] = useLazyQuery(IRDS_QUERY_BY_ID, {
         variables: {id: initialObject?.id},
         onCompleted: (data) => {
