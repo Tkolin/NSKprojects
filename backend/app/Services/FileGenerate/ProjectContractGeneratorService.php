@@ -127,7 +127,9 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
             'projectOrganization.BIK.name' => $projectData["organization_customer"]['bik']['name'] ?? null,
             'projectOrganization.BIK.correspondent_account' => $projectData["organization_customer"]['bik']['correspondent_account'] ?? null,
             'projectOrganization.director.ShortFullName' =>
-                FormatterService::getFullName($projectData["organization_customer"]['director']['last_name'] ?? null, $myOrg['director']['first_name'], $myOrg['director']['patronymic'], true),
+                FormatterService::getFullName($projectData["organization_customer"]['director']['last_name'] ?? null,
+                    $projectData["organization_customer"]['director']['first_name'],
+                    $projectData["organization_customer"]['director']['patronymic'], true),
             'myOrg.director.ShortFullName' =>
                 FormatterService::getFullName($myOrg['director']['last_name'], $myOrg['director']['first_name'], $myOrg['director']['patronymic'], true),
         ];
