@@ -108,6 +108,7 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
             'myOrg.payment_account' => $myOrg['payment_account'] ?? null,
             'project.avansPecent' => $projectData['prepayment'] ?? null,
             'project.price' => $projectData['price'] ?? null,
+            'project.duration' => $projectData['duration'] ?? null,
             'project.number' => $projectData['number'] ?? null,
             "project.typeProject.Specification" => $projectData["type_project_document"]["group"]["technical_specification"]['name'] ?? null,
             'projectOrganization.director.full_name' => $nclNameCaseRu->q($projectData["organization_customer"]['director']['last_name'] . ' ' .

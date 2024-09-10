@@ -172,6 +172,7 @@ const ProjectTable = ({mode}) => {
                 {/*        <Divider/>*/}
                 {/*    </>*/}
                 {/*)}*/}
+
                 <Space.Compact direction={"horizontal"}>
                     <ToolBarComponent onCompleted={() => onRefetch()} options={['search', 'add_request']} gutter={5}
                                       onSearch={setSearch}/>
