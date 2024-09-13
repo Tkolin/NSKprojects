@@ -408,16 +408,16 @@ export const CHANGE_TEMPLATE_TYPE_PROJECT = gql`
 // `;
 
 export const PAYMENT_INVOICE_PROJECT_DOWNLOAD = gql`
-    mutation PaymentInvoiceProjectFileDownload($id: ID!, $stageNumber: ID, $isPrepayment: Boolean) {
-        projectPaymentInvoiceFileDownload(projectId: $id, stageNumber: $stageNumber, isPrepayment: $isPrepayment) {
+    mutation PaymentInvoiceProjectFileDownload($id: ID!, $stageNumber: ID, $dateGenerated: String!) {
+        projectPaymentInvoiceFileDownload(projectId: $id, stageNumber: $stageNumber, dateGenerated: $dateGenerated) {
             url
         }
     }
 `;
 
 export const ACT_RENDERING_PROJECT_DOWNLOAD = gql`
-    mutation ActRenderingProjectFileDownload($id: ID!, $stageNumber: Int) {
-        projectActRenderingFileDownload(projectId: $id, stageNumber: $stageNumber) {
+    mutation ActRenderingProjectFileDownload($id: ID!, $stageNumber: Int!, $dateGenerated: String!) {
+        projectActRenderingFileDownload(projectId: $id, stageNumber: $stageNumber, dateGenerated: $dateGenerated) {
             url
         }
     }

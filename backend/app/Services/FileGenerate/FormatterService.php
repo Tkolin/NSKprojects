@@ -18,6 +18,11 @@ class FormatterService
     {
         return mb_strtoupper(mb_substr($text, 0, 1)) . mb_substr($text, 1);
     }
+
+    public static function formattedPhone($number)
+    {
+        return preg_replace('/\+(\d{1,2})?(\d{3})(\d{3})(\d{2})(\d{2})/', '+$1 ($2) $3-$4-$5', $number);
+    }
     public static function formatDuration($days): string
     {
         $months = floor($days / 30); // Рассчитываем количество месяцев

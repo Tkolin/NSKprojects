@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
-import {Input, Space, notification, Row, Col, Popover, Spin} from 'antd';
+import {Col, Input, notification, Popover, Row, Space, Spin} from 'antd';
 import {useMutation} from "@apollo/client";
-import {COMPUTE_FORMULA_MUTATION} from "../../../../graphql/mutationsFormula";
+import {COMPUTE_FORMULA_MUTATION} from "../../../graphql/mutationsFormula";
 import {MathComponent} from "mathjax-react";
-import {StyledBlockBig, StyledBlock} from "../../../../components/style/BlockStyles";
+import {StyledBlock, StyledBlockBig} from "../../../../components/style/BlockStyles";
 import {StyledButtonGreen} from "../../../../components/style/ButtonStyles";
 import {LoadingOutlined} from "@ant-design/icons";
 import {useDrag} from "react-dnd";

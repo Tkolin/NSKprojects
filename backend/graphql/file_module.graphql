@@ -22,11 +22,12 @@ extend type Mutation {
     projectPaymentInvoiceFileDownload(
         projectId: ID!
         stageNumber: ID
-        isPrepayment: Boolean
+        dateGenerated: String!
     ): Url! @checkRole(permission:  ["download-file-paymentInvoice"])
     projectActRenderingFileDownload(
-        projectId: ID
-        stageNumber: Int
+        projectId: ID!
+        stageNumber: Int!
+        dateGenerated: String!
     ): Url! @checkRole(permission:  ["download-file-actRendering"])
     projectContractGenerated(
         projectId: ID!

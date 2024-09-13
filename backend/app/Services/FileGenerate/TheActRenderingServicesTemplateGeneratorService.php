@@ -2,98 +2,121 @@
 
 namespace App\Services\FileGenerate;
 
-use App\Services\FileGenerate\GeneratorService;
-use App\Services\MonthEnum;
-use App\Services\TranslatorNumberToName;
-use PhpOffice\PhpWord\TemplateProcessor;
+use App\Models\ProjectFile;
 
-class TheActRenderingServicesTemplateGeneratorService
+class TheActRenderingServicesTemplateGeneratorService extends DocumentGeneratorService
 {
-
-    public static function generate($project, $stageNumber)
+    public function __construct()
     {
-        $myOrg = GeneratorService::getOrganizationData();
-
-        $templateFilePath = storage_path('app/templates/TheActRenderingServicesTemplate.docx');
-        $tempFilePath = tempnam(sys_get_temp_dir(), 'lolp');
-        copy($templateFilePath, $tempFilePath);
-        $templateProcessor = new TemplateProcessor($tempFilePath);
-        $date = date('Y-m-d');
-        error_log("Сегодняшняя дата: " . $date);
-//        $date = $project["date_create"];
-        $dateComponents = explode('-', $date);
-
-        $year = $dateComponents[0] ?? "__";
-        $month = $dateComponents[1];
-        $monthName = $dateComponents[1] ? MonthEnum::getMonthName($dateComponents[1]) : "__";
-        $day = $dateComponents[2] ?? "__";
-        $projectStage =   $project->project_stages->where('number', $stageNumber)->first();
-
-        $TranslatorNumberToName = new TranslatorNumberToName();
-        $myOrgPhone = $myOrg["phone_number"];
-        $formattedPhone = preg_replace('/\+(\d{1,2})?(\d{3})(\d{3})(\d{2})(\d{2})/', '+$1 ($2) $3-$4-$5', $myOrgPhone);
-
-        $replacements = [
-            'project.number' => $project['number'] ?? '(данные отсутвуют)',
-            'project.name' => $project['name'] ?? '(данные отсутвуют)',
-
-
-            'dayCreate' => $day,
-            'mountCreate' => $month,
-            'mountCreateName' => $monthName,
-            'yearCreate' => $year,
-            'projectStages.stage.priceTotal' => $project['price'] ?? '(данные отсутвуют)',
-            'projectStages.stage.endPriceTotal' => $project['price'] ?? '(данные отсутвуют)',
-
-            'myOrg.director.position' => $myOrg['director']['position']['name'] ?? '(данные отсутвуют)',
-            'myOrg.nameOrType' => $myOrg["legal_form"]['name'] . " " . $myOrg['name'],
-            'myOrg.director.ShortFullName' => $myOrg['director']['last_name'] . ' ' . substr((string)$myOrg['director']['first_name'], 0, 2) . '.' . substr((string)$myOrg['director']['patronymic'], 0, 2) . '.',
-            'projectOrganization.director.ShortFullName' => isset($project["organization_customer"]['director']) ?
-                $project["organization_customer"]['director']['last_name'] . ' ' . substr((string)$project["organization_customer"]['director']['first_name'], 0, 2) . '.' . substr((string)$project["organization_customer"]['director']['patronymic'], 0, 2) . '.' : '',
-            'projectOrganization.nameOrType' => isset($project["organization_customer"]) ? $project["organization_customer"]["legal_form"]['name'] . " " . $project["organization_customer"]['name'] : "(данные отсутвуют)",
-            'projectOrganization.director.position' => $project["organization_customer"]['director']['position']['name'] ?? '(данные отсутвуют)',
-
-            'projectStages.stage.finalPrice' =>   number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? '(данные отсутвуют)',
-            'projectStages.stage.name' =>   $projectStage['stage']['name'],
-            'projectStages.stage.percent' =>    $projectStage['percent'],
-
-            'projectStages.stage.price' =>   number_format($projectStage['price'] ?? 0, 2, ',', ' ')  ,
-            'projectStages.number' =>   $projectStage['number']  ?? '(данные отсутвуют)',
-            'projectStages.stage.endPrice' =>   number_format($projectStage['price'] ?? 0, 2, ',', ' ')  ,
-            'projectStages.stage.sumEndPrice' =>    number_format($projectStage['price'] ?? 0, 2, ',', ' ')  ,
-
-                 'projectOrganization.payment_account' => $project["organization_customer"]['payment_account'] ?? '(данные отсутвуют)',
-                'projectOrganization.BIK.name' => $project["organization_customer"]['bik']['name'] ?? '(данные отсутвуют)',
-                'projectOrganization.BIK.bik' => $project["organization_customer"]['bik']['BIK'] ?? '(данные отсутвуют)',
-                'projectOrganization.BIK.correspondent_account' => $project["organization_customer"]['BIK']['correspondent_account'] ?? '(данные отсутвуют)',
-
-            'projectOrganization.INN' => $project["organization_customer"]['INN'] ?? '(данные отсутвуют)',
-            'projectOrganization.KPP' => $project["organization_customer"]['KPP'] ?? '(данные отсутвуют)',
-            'projectOrganization.address_legal' => $project["organization_customer"]['address_legal'] ?? '(данные отсутвуют)',
-            'projectStages.stage.finalPriceToString' => isset($projectStage['price']) ? $TranslatorNumberToName->num2str($projectStage['price']) : "",
-            'myOrg.INN' => $myOrg['INN'] ?? '(данные отсутвуют)',
-            'myOrg.KPP' => $myOrg['KPP'] ?? '(данные отсутвуют)',
-            'myOrg.address_legal' => $myOrg['address_legal'] ?? '(данные отсутвуют)',
-            'myOrg.styled_phone' => $formattedPhone ?? '(данные отсутвуют)',
-            'myOrg.BIK.bik' => $myOrg['bik']['BIK'] ?? '(данные отсутвуют)',
-            'myOrg.BIK.name' => $myOrg['bik']['name'] ?? '(данные отсутвуют)',
-            'myOrg.BIK.correspondent_account' => $myOrg['BIK']['correspondent_account'] ?? '(данные отсутвуют)',
-            'myOrg.payment_account' => $myOrg['payment_account'] ?? '(данные отсутвуют)']
-
-        ;
-
-
-        foreach ($replacements as $key => $value) {
-            $templateProcessor->setValue($key, $value);
-        }
-        $fileName =  $project['number'].'_АКТ_ВЫПОЛНЕНЫХ_РАБОТ' .("_НОМЕР_".$stageNumber).'.docx';
-
-
-        $filePath = storage_path('app/' . $fileName);
-        $templateProcessor->saveAs($filePath);
-
-        unlink($tempFilePath);
-
-        return $fileName;
+        $templatePath = storage_path('app/templates/TheActRenderingServicesTemplate.docx');
+        parent::__construct($templatePath);
     }
+
+    public function generate(array $data)
+    {
+        // Проверка, что все ключи существуют
+        if (!isset($data['projectData'], $data['stageNumber'], $data['dateCreated'])) {
+            throw new Exception('Не все необходимые данные предоставлены.');
+        }
+
+        // Извлечение данных
+        $projectData = $data['projectData'];
+        $stageNumber = $data['stageNumber'];
+        $dateCreated = $data['dateCreated'];
+
+        // Добор данных
+        $myOrg = FormatterService::getMyOrg();
+        $date_generated_full = FormatterService::getFullDate($dateCreated, true);
+        $date_generated_short = FormatterService::getShortDate($dateCreated);
+
+        $date_create_full = FormatterService::getFullDate($projectData["date_signing"], true);
+        $date_create_short = FormatterService::getShortDate($projectData["date_signing"]);
+        $orderNumber = "А" . FormatterService::formatWithLeadingZeros($projectData["organization_customer"]['id'], 4) . "-" .
+            FormatterService::formatWithLeadingZeros($projectStage['id'] ?? $projectData['id'], 4)
+            . rand(100, 999);
+
+        // Загрузка шаблона в PhpWord
+
+        $projectStage = $projectData->project_stages->where('number', $stageNumber)->first();
+
+        $formattedPhone = preg_replace('/\+(\d{1,2})?(\d{3})(\d{3})(\d{2})(\d{2})/', '+$1 ($2) $3-$4-$5', $myOrg["phone_number"]);
+
+        $this->replacements = [
+            'date_create_full' => $date_create_full ? mb_strtolower($date_create_full) : null,
+            'date_create_short' => $date_create_short ? mb_strtolower($date_create_short) : null,
+
+            'date_generated_full' => $date_generated_full ? mb_strtolower($date_generated_full) : null,
+            'date_generated_short' => $date_generated_short ? mb_strtolower($date_generated_short) : null,
+
+            'project.number' => $projectData['number'] ?? null,
+            'project.name' => $projectData['name'] ?? null,
+            'projectStages.name' => $projectStage['stage']['name'] ?? null,
+            'projectStages.stage.priceTotal' => $projectData['price'] ?? null,
+            'projectStages.stage.endPriceTotal' => $projectData['price'] ?? null,
+            'por.director.position' => $projectData["organization_customer"]['director']['position']['name'] ?? null,
+            'myOrg.director.position' => $myOrg['director']['position']['name'] ?? null,
+            'myOrg.nameOrType' => $myOrg["legal_form"]['name'] . " " . $myOrg['name'],
+            'myOrg.director.ShortFullName' => FormatterService::getFullName($myOrg['director']['last_name'],
+                $myOrg['director']['first_name'],
+                $myOrg['director']['patronymic'], true),
+
+            'projectOrganization.director.ShortFullName' => FormatterService::getFullName($projectData["organization_customer"]['director']['last_name'],
+                $projectData["organization_customer"]['director']['first_name'],
+                $projectData["organization_customer"]['director']['patronymic'], true),
+
+            'projectOrganization.nameOrType' => isset($projectData["organization_customer"]) ? $projectData["organization_customer"]["legal_form"]['name'] . " " . $projectData["organization_customer"]['name'] : "(данные отсутвуют)",
+            'projectOrganization.director.position' => $projectData["organization_customer"]['director']['position']['name'] ?? null,
+
+            'projectStages.stage.finalPrice' => number_format($projectStage['price'] ?? 0, 2, ',', ' ') ?? null,
+            'projectStages.stage.name' => $projectStage['stage']['name'],
+            'projectStages.stage.percent' => $projectStage['percent'],
+
+            'projectStages.stage.price' => number_format($projectStage['price'] ?? 0, 2, ',', ' '),
+            'projectStages.number' => $projectStage['number'] ?? null,
+            'projectStages.stage.endPrice' => number_format($projectStage['price'] ?? 0, 2, ',', ' '),
+            'projectStages.stage.sumEndPrice' => number_format($projectStage['price'] ?? 0, 2, ',', ' '),
+
+            'projectOrganization.payment_account' => $projectData["organization_customer"]['payment_account'] ?? null,
+            'projectOrganization.BIK.name' => $projectData["organization_customer"]['bik']['name'] ?? null,
+            'projectOrganization.BIK.bik' => $projectData["organization_customer"]['bik']['BIK'] ?? null,
+            'projectOrganization.BIK.correspondent_account' => $projectData["organization_customer"]['BIK']['correspondent_account'] ?? null,
+
+            'projectOrganization.INN' => $projectData["organization_customer"]['INN'] ?? null,
+            'projectOrganization.KPP' => $projectData["organization_customer"]['KPP'] ?? null,
+            'projectOrganization.address_legal' => $projectData["organization_customer"]['address_legal'] ?? null,
+            'projectStages.stage.finalPriceToString' => isset($projectStage['price']) ? FormatterService::convertNumbToStringr($projectStage['price']) : "",
+            'myOrg.INN' => $myOrg['INN'] ?? null,
+            'myOrg.KPP' => $myOrg['KPP'] ?? null,
+            'myOrg.address_legal' => $myOrg['address_legal'] ?? null,
+            'myOrg.styled_phone' => $formattedPhone ?? null,
+            'myOrg.BIK.bik' => $myOrg['bik']['BIK'] ?? null,
+            'myOrg.BIK.name' => $myOrg['bik']['name'] ?? null,
+            'myOrg.BIK.correspondent_account' => $myOrg['BIK']['correspondent_account'] ?? null,
+            'myOrg.payment_account' => $myOrg['payment_account'] ?? null,
+            'act.numb' => $orderNumber
+
+        ];
+
+
+        $this->checkReplacements();
+        $this->replaceValues();
+        //  Сохранение файла
+        $this->saveDocument($projectData['number'] . '_АКТ_ВЫПОЛНЕНЫХ_РАБОТ' . ("_НОМЕР_" . $stageNumber) . '.docx');
+        $storagePath = "/" . $projectData->path_project_folder . "/ЭТАПЫ/АКТЫ" . $this->fileName;
+        //  Фиксация в базе
+        $file = $this->saveFileToProject($storagePath, $this->filePath, $this->fileName);
+
+
+        ProjectFile::create([
+            'project_id' => $projectData->id,
+            'file_id' => $file->id,
+            'type' => "ACT_RENDERING",
+            'number' => 0,
+            'date_document' => $dateCreated,
+        ]);
+
+
+        return $file->id;
+    }
+
 }

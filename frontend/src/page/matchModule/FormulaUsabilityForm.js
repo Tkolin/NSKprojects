@@ -1,14 +1,12 @@
-import React, { useState } from "react";
-import { useQuery } from "@apollo/client";
-import {CONTACTS_QUERY, FORMULA_BY_KEY_QUERY} from "../../../graphql/queries";
-import { Col, Divider, Drawer, Form, Layout, Row, Select, Button, FloatButton } from "antd";
+import React, {useState} from "react";
+import {useQuery} from "@apollo/client";
+import {FORMULA_BY_KEY_QUERY} from "../../graphql/queries";
+import {Col, Divider, Drawer, FloatButton, Form, Row, Select} from "antd";
 import FormulaDetails from "./script/FormulaOutputScript";
 import LoadingSpinnerStyles from "../../../components/style/LoadingSpinnerStyles";
-import { StyledBlock } from "../../../components/style/BlockStyles";
-import { SettingOutlined } from "@ant-design/icons";
-import InformationOutputScript from "./script/InformationOutputScript";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import {SettingOutlined} from "@ant-design/icons";
+import {DndProvider} from "react-dnd";
+import {HTML5Backend} from "react-dnd-html5-backend";
 import Draggable from "react-draggable";
 
 const FormulaUsabilityForm = () => {

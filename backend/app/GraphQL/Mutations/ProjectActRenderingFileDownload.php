@@ -4,13 +4,11 @@ namespace App\GraphQL\Mutations;
 
 use App\Models\Project;
 use App\Services\FileGenerate\TheActRenderingServicesTemplateGeneratorService;
-use App\Services\GrpahQL\AuthorizationService;
-use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final readonly class ProjectActRenderingFileDownload
 {
-    /** @param  array{}  $args */
+    /** @param array{} $args */
     public function __invoke(null $_, array $args, GraphQLContext $context)
     {
 
@@ -32,8 +30,11 @@ final readonly class ProjectActRenderingFileDownload
 
 
         $projectGenerator = new TheActRenderingServicesTemplateGeneratorService();
-        $contractFilePath = $projectGenerator->generate($projectData, $args["stageNumber"]);
-
+        $contractFilePath = $projectGenerator->generate([
+            'projectData' => $projectData,
+            'stageNumber' => $args["stageNumber"],
+            'dateCreated' => $args["dateGenerated"],
+        ]);
         return ['url' => $contractFilePath];
 
 

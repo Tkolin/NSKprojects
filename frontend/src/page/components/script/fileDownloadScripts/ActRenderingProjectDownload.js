@@ -1,9 +1,16 @@
-import { useMutation } from '@apollo/client';
-import {notification, Typography} from 'antd';
+import {useMutation} from '@apollo/client';
+import {Button, notification, Popconfirm, Space, Typography} from 'antd';
 import {ACT_RENDERING_PROJECT_DOWNLOAD} from "../../../../graphql/mutationsProject";
+import {CustomDatePicker} from "../../FormattingDateElementComponent";
+import dayjs from "dayjs";
+import React, {useState} from "react";
+import CustomMenuButton
+    from "../../../ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/MenuManager/components/CustomMenuButton";
+import {DOWNLOAD_FILE} from "../../../../graphql/mutationsFile";
+
 const {Text, Link} = Typography;
 
-const ActRenderingProjectDownload = ({projectId, stageNumber, text}) => {
+const ActRenderingProjectDownload = ({projectId, stageNumber, text, onUpdated}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
 
 
@@ -13,31 +20,34 @@ const ActRenderingProjectDownload = ({projectId, stageNumber, text}) => {
             placement,
         });
     };
-
-    const [downloadProjectActRendering] = useMutation(ACT_RENDERING_PROJECT_DOWNLOAD, {
+    const [downloadProjectActRendering, {loading}] = useMutation(ACT_RENDERING_PROJECT_DOWNLOAD, {
         onCompleted: (data) => {
-            console.log("data" + data);
-            handleDownloadClick(data.projectActRenderingFileDownload.url);
+            downloadFile({variables: {id: data.projectActRenderingFileDownload.url}})
+            openNotification('topRight', 'success', `Акт сгенерирован.`);
+            onUpdated && onUpdated();
+        },
+        onError: (error) => {
+            openNotification('topRight', 'error', 'Ошибка при загрузке: ' + error.message);
+        },
+    });
+    const [downloadFile, {loading: loadingToDownload}] = useMutation(DOWNLOAD_FILE, {
+        onCompleted: (data) => {
+            console.log(data.downloadFile.url);
+            handleDownload(data.downloadFile.url);
             openNotification('topRight', 'success', 'Загрузка начата!');
         },
         onError: (error) => {
             openNotification('topRight', 'error', 'Ошибка при загрузке: ' + error.message);
         },
     });
+    const [selectedDateAct, setSelectedDateAct] = useState()
 
-    const handleDownload = () => {
-        console.log(projectId);
-        downloadProjectActRendering({ variables: { id: projectId, stageNumber: stageNumber } });
-    };
 
-    const handleDownloadClick = async (downloadedFileUrl) => {
+    const handleDownload = async (downloadedFileUrl) => {
         try {
             const link = document.createElement('a');
             console.log(link);
-
-            link.href = `${LaravelURL}download-projectActRender/${downloadedFileUrl}`;
-            link.download = '${downloadedFileUrl}';
-
+            link.href = `${LaravelURL}${downloadedFileUrl}`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -45,9 +55,54 @@ const ActRenderingProjectDownload = ({projectId, stageNumber, text}) => {
             console.error('Ошибка при скачивании файла:', error);
         }
     };
-
     return (
-        <Link  strong style={{color: "green"}} onClick={handleDownload}>{text ?? 'скачать'}</Link>
+        <Popconfirm
+            style={
+                {
+                    width: "200px"
+                }
+            }
+            placement="topLeft"
+            description={
+                <Space direction={"vertical"} style={{width: "200px"}}>
+                    <CustomDatePicker
+                        size={"small"}
+                        placement={"Выберите дату..."}
+                        style={{width: "200px", marginTop: 15}}
+                        onChange={(value) => {
+                            value ? setSelectedDateAct(value && dayjs(value).format("YYYY-MM-DD")) : setSelectedDateAct(null)
+                        }}
+                    />
+
+                    <Button
+                        block
+                        disabled={!setSelectedDateAct}
+                        loading={loading}
+                        onClick={() => downloadProjectActRendering({
+                            variables: {
+                                id: projectId,
+                                stageNumber: stageNumber,
+                                dateGenerated: selectedDateAct
+                            }
+                        })}
+                        style={{width: "200px", marginTop: 15}}
+                    >
+                        Сгенерировать файл
+                    </Button>
+                </Space>
+            }
+            okButtonProps={
+                {
+                    style: {
+                        display: "none"
+                    }
+                }
+            }
+            showCancel={false}
+            children={
+                <CustomMenuButton>Сгенерировать Акт</CustomMenuButton>
+            }
+        />
     );
 };
 

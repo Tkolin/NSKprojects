@@ -17,6 +17,19 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
         parent::__construct(storage_path('app/templates/ProjectTemplate' . ($isStamp ? 'Stamp' : '') . '.docx'));
     }
 
+    public function getTypeName($key)
+    {
+        error_log("log" . $key);
+        switch ($key) {
+            case "DESIGN_ASSIGNMENT":
+                return "техническое задание";
+            case "GEOLOGICAL_ASSIGNEMNT":
+                return "геологическое задание";
+            case "TERMS_REFERENCE":
+                return "задание на проектирование";
+        }
+        return null;
+    }
     public function generate(array $data)
     {
         // Проверка, что все ключи существуют
@@ -80,8 +93,8 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
         $this->templateProcessor->cloneRowAndSetValues('projectStages.number', $tableStage);
         if (!isset($projectData["organization_customer"]['director'])) {
             throw new Exception("Ошибка данных заказчика");
-
         }
+
 
         $this->replacements = [
             'date_create_full' => $date_create_full ? mb_strtolower($date_create_full) : null,
@@ -110,7 +123,7 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
             'project.price' => $projectData['price'] ?? null,
             'project.duration' => $projectData['duration'] ?? null,
             'project.number' => $projectData['number'] ?? null,
-            "project.typeProject.Specification" => $projectData["type_project_document"]["group"]["technical_specification"]['name'] ?? null,
+            "project.typeProject.Specification" => $this->getTypeName($projectData["type_project_document"]["group"]["technical_specification"]) ?? null,
             'projectOrganization.director.full_name' => $nclNameCaseRu->q($projectData["organization_customer"]['director']['last_name'] . ' ' .
             $projectData["organization_customer"]['director']['first_name'] . ' ' .
             $projectData["organization_customer"]['director']['patronymic'] ?? null, NCL::$VINITELN),
@@ -127,9 +140,12 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
             'projectOrganization.BIK.name' => $projectData["organization_customer"]['bik']['name'] ?? null,
             'projectOrganization.BIK.correspondent_account' => $projectData["organization_customer"]['bik']['correspondent_account'] ?? null,
             'projectOrganization.director.ShortFullName' =>
-                FormatterService::getFullName($projectData["organization_customer"]['director']['last_name'] ?? null,
+                FormatterService::getFullName(
+                    $projectData["organization_customer"]['director']['last_name'] ?? null,
                     $projectData["organization_customer"]['director']['first_name'],
-                    $projectData["organization_customer"]['director']['patronymic'], true),
+                    $projectData["organization_customer"]['director']['patronymic'],
+                    true
+                ),
             'myOrg.director.ShortFullName' =>
                 FormatterService::getFullName($myOrg['director']['last_name'], $myOrg['director']['first_name'], $myOrg['director']['patronymic'], true),
         ];
@@ -156,5 +172,4 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
 
         return $file->id;
     }
-
 }

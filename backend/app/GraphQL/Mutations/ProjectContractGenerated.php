@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\GraphQL\Mutations;
 
 use App\Models\Project;
 use App\Models\ProjectFile;
-use App\Services\FileGenerate\FileDownloadService;
 use App\Services\FileGenerate\ProjectContractGeneratorService;
 use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 
@@ -18,7 +19,6 @@ final readonly class ProjectContractGenerated
             Project::with('organization_customer')
                 ->with('type_project_document')
                 ->with('type_project_document.group')
-                ->with('type_project_document.group.technical_specification')
                 ->with('project_facilitys')
                 ->with('status')
                 ->with('project_delegations')

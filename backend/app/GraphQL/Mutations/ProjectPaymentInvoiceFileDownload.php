@@ -4,10 +4,8 @@ namespace App\GraphQL\Mutations;
 
 use App\Models\Project;
 use App\Services\FileGenerate\PaymentInvoiceTemplateGeneratorService;
-use App\Services\GrpahQL\AuthorizationService;
-use Nuwave\Lighthouse\Exceptions\AuthenticationException;
-use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use Exception;
+use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final readonly class ProjectPaymentInvoiceFileDownload
 {
@@ -30,25 +28,18 @@ final readonly class ProjectPaymentInvoiceFileDownload
         if (!$projectData) {
             throw new Exception('Проект не найден');
         }
-        if (!isset($args["stageNumber"])) {
-            throw new Exception('Этап не указан');
+        if (!isset($args["dateGenerated"])) {
+            throw new Exception('Дата создания не указана');
         }
+
 
         $projectGenerator = new PaymentInvoiceTemplateGeneratorService();
 
-        if (isset($args['isPrepayment']) && $args['isPrepayment']) {
-            error_log("Аванс") && $contractFilePath = $projectGenerator->generate([
-                'project' => $projectData,
-                'stageNumber' => null,
-                'isPrepayment' => false,
-            ]);
-        } else {
-            error_log("Не Аванс") && $contractFilePath = $projectGenerator->generate([
-                'project' => $projectData,
-                'stageNumber' => $args["stageNumber"],
-                'isPrepayment' => false,
-            ]);
-        }
+        $contractFilePath = $projectGenerator->generate([
+            'projectData' => $projectData,
+            'stageNumber' => $args["stageNumber"] ?? -1,
+            'dateGenerated' => $args["dateGenerated"],
+        ]);
 
 
         return ['url' => $contractFilePath];

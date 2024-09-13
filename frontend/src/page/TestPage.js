@@ -1,75 +1,149 @@
 import React from 'react';
-import { Badge, Calendar } from 'antd';
-const getListData = (value) => {
-    let listData = []; // Specify the type of listData
-    switch (value.date()) {
-        case 8:
-            listData = [
-                {
-                    type: 'warning',
-                    content: 'This is warning event.',
-                },
-                {
-                    type: 'success',
-                    content: 'This is usual event.',
-                },
-            ];
-            break;
-        case 10:
-            listData = [
-                {
-                    type: 'warning',
-                    content: 'This is warning event.',
-                },
-                {
-                    type: 'success',
-                    content: 'This is usual event.',
-                },
-                {
-                    type: 'error',
-                    content: 'This is error event.',
-                },
-            ];
-            break;
-        case 15:
-            listData = [
-                {
-                    type: 'warning',
-                    content: 'This is warning event',
-                },
-                {
-                    type: 'success',
-                    content: 'This is very long usual event......',
-                },
-                {
-                    type: 'error',
-                    content: 'This is error event 1.',
-                },
-                {
-                    type: 'error',
-                    content: 'This is error event 2.',
-                },
-                {
-                    type: 'error',
-                    content: 'This is error event 3.',
-                },
-                {
-                    type: 'error',
-                    content: 'This is error event 4.',
-                },
-            ];
-            break;
-        default:
-    }
-    return listData || [];
-};
-const getMonthData = (value) => {
-    if (value.month() === 8) {
-        return 1394;
-    }
-};
+import {Input, Space} from "antd";
+
 const App = () => {
 
-    return <Calendar/>;
+    return (
+        <Space direction={"vertical"}> <Space direction={"horizontal"}>
+            <Space direction={"vertical"}>
+                <h1>Формула А</h1>
+                <h1>a1=a2+a3+a4</h1>
+                <p>Формула</p>
+                <Space direction={"horizontal"}>
+                    Переменная а1
+                    <Input/>
+                </Space>
+                <Space direction={"horizontal"}>
+                    Переменная а2
+                    <Input/>
+                </Space>
+                <Space direction={"horizontal"}>
+                    Переменная а3
+                    <Input/>
+                </Space>
+                <Space direction={"horizontal"}>
+                    Переменная а4
+                    <Input/>
+                </Space>
+            </Space>
+            <Space direction={"vertical"}>
+                <h1>Формула Б</h1>
+                <h1>a1=a2+a3+a4</h1>
+
+                <p>Формула</p>
+                <Space direction={"horizontal"}>
+                    Переменная а1
+                    <Input/>
+                </Space>
+                <Space direction={"horizontal"}>
+                    Переменная а2
+                    <Input/>
+                </Space>
+                <Space direction={"horizontal"}>
+                    Переменная а3
+                    <Input/>
+                </Space>
+                <Space direction={"horizontal"}>
+                    Переменная а4
+                    <Input/>
+                </Space>
+
+            </Space>
+            <Space direction={"vertical"}>
+                <h1>Формула Ц</h1>
+                <h1>a1=a2+a3+a4</h1>
+
+                <p>Формула</p>
+                <Space direction={"horizontal"}>
+                    Переменная а1
+                    <Input/>
+                </Space>
+                <Space direction={"horizontal"}>
+                    Переменная а2
+                    <Input/>
+                </Space>
+                <Space direction={"horizontal"}>
+                    Переменная а3
+                    <Input/>
+                </Space>
+                <Space direction={"horizontal"}>
+                    Переменная а4
+                    <Input/>
+                </Space>
+
+            </Space>
+        </Space>
+            <Space direction={"horizontal"}>
+                <Space direction={"vertical"}>
+                    <h1>Формула А</h1>
+                    <h1>a1=a2+a3+a4</h1>
+                    <p>Формула</p>
+                    <Space direction={"horizontal"}>
+                        Переменная а1
+                        <Input/>
+                    </Space>
+                    <Space direction={"horizontal"}>
+                        Переменная а2
+                        <Input/>
+                    </Space>
+                    <Space direction={"horizontal"}>
+                        Переменная а3
+                        <Input/>
+                    </Space>
+                    <Space direction={"horizontal"}>
+                        Переменная а4
+                        <Input/>
+                    </Space>
+                </Space>
+                <Space direction={"vertical"}>
+                    <h1>Формула Б</h1>
+                    <h1>a1=a2+a3+a4</h1>
+
+                    <p>Формула</p>
+                    <Space direction={"horizontal"}>
+                        Переменная а1
+                        <Input/>
+                    </Space>
+                    <Space direction={"horizontal"}>
+                        Переменная а2
+                        <Input/>
+                    </Space>
+                    <Space direction={"horizontal"}>
+                        Переменная а3
+                        <Input/>
+                    </Space>
+                    <Space direction={"horizontal"}>
+                        Переменная а4
+                        <Input/>
+                    </Space>
+
+                </Space>
+                <Space direction={"vertical"}>
+                    <h1>Формула Ц</h1>
+                    <h1>a1=a2+a3+a4</h1>
+
+                    <p>Формула</p>
+                    <Space direction={"horizontal"}>
+                        Переменная а1
+                        <Input/>
+                    </Space>
+                    <Space direction={"horizontal"}>
+                        Переменная а2
+                        <Input/>
+                    </Space>
+                    <Space direction={"horizontal"}>
+                        Переменная а3
+                        <Input/>
+                    </Space>
+                    <Space direction={"horizontal"}>
+                        Переменная а4
+                        <Input/>
+                    </Space>
+
+                </Space>
+            </Space>
+        </Space>
+
+    )
 };
 export default App;

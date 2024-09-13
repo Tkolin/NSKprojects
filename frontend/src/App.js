@@ -29,8 +29,9 @@ import {PermissionsProvider} from "./permission/PermissionsProvider";
 import usePermissionHider from "./permission/usePermissionHider";
 import ProjectForm from "./page/ProjectForm";
 import RequestForm from "./page/simplesForms/RequestForm";
-import DemoBar from "./page/TestPage";
 import StatusLegendComponent from "./page/ProjectTable/components/StatusLegendComponent";
+import TestPage from "./page/TestPage";
+import TechSpecForm from "./page/simplesForms/TechSpecForm";
 
 const GlobalStyles = createGlobalStyle`
     body {
@@ -98,10 +99,11 @@ const App = () => {
                                       error={error?.message ? (error?.message != "Not token found" ? error?.message : null) : null}>
                             <Routes>
                                 <Route path="/" element={<Home/>}/>
-                                <Route path="/test" element={<DemoBar/>}/>
+                                <Route path="/test" element={<TechSpecForm/>}/>
                                 {/*Справочники*/}
                                 <Route path="/references" element={<Home/>}/>
 
+                                <Route path="/ts1" element={<TestPage/>}/>
                                 <Route path="/references/contact" element={<Home/>}/>
                                 <Route path="/references/contact/table" element={<ContactTable/>}/>
                                 <Route path="/references/contact/form" element={
