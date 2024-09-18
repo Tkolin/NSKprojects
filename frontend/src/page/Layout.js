@@ -1,13 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
-import {useLocation, useNavigate} from 'react-router-dom';
-import {Card, Image, Layout, Menu} from 'antd';
+import { Card, Image, Layout, Menu } from 'antd';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Logo from '../resursed/logo512.png';
-import {UserMenuHeaderDropdown} from "./UserCard";
-import {MenuItems, MenuItemsByPermission} from "./MenuItems";
+import { MenuItems, MenuItemsByPermission } from "./MenuItems";
+import { UserMenuHeaderDropdown } from "./UserCard";
 
 const {Header, Content, Footer} = Layout;
-
 
 const styles = {
     header: {

@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
-import {Button, Col, DatePicker, Form, InputNumber, Row, Space, Tooltip} from 'antd';
-import {CaretDownOutlined, CaretUpOutlined, CloseOutlined} from '@ant-design/icons';
-import {CustomAutoCompleteExtension} from "../../components/style/SearchAutoCompleteStyles";
-import {StyledButtonRed} from "../../components/style/ButtonStyles";
-import {AutoCompleteFormItem} from "../../components/CustomForm";
-import {useQuery} from "@apollo/client";
-import {STAGES_QUERY_COMPACT} from "../../../graphql/queriesCompact";
+import { CaretDownOutlined, CaretUpOutlined, CloseOutlined } from '@ant-design/icons';
+import { useQuery } from "@apollo/client";
+import { Button, Col, DatePicker, Form, InputNumber, Row, Space, Tooltip } from 'antd';
+import React, { useState } from 'react';
+import { STAGES_QUERY_COMPACT } from "../../../graphql/queriesCompact";
+import { AutoCompleteFormItem } from "../../components/CustomForm";
+import { StyledButtonRed } from "../../components/style/ButtonStyles";
+import { CustomAutoCompleteExtension } from "../../components/style/SearchAutoCompleteStyles";
 
 const {RangePicker} = DatePicker;
 
@@ -129,7 +129,7 @@ const StageItem = ({
                         </Form.Item>
                     </Tooltip>
                 </Col>
-                <Col span={2}>
+                <Col span={2} data-permission={"read-project-payments"}>
                     <Tooltip title="Стоимость этапа">
 
                         <InputNumber
@@ -140,7 +140,7 @@ const StageItem = ({
 
                     </Tooltip>
                 </Col>
-                <Col span={2}>
+                <Col span={2}  data-permission={"read-project-payments"}>
                     <Tooltip title="Сумма к оплате за этап">
 
                         <InputNumber

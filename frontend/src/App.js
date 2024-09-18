@@ -1,37 +1,37 @@
-import React, {useEffect, useState} from 'react';
-import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
-import {Cookies} from "react-cookie";
-import {ConfigProvider, Space} from "antd";
+import { useLazyQuery } from "@apollo/client";
+import { ConfigProvider, Space } from "antd";
 import ruRU from "antd/locale/ru_RU";
-import {useLazyQuery} from "@apollo/client";
-import {GET_CURRENT_USER} from "./graphql/queries";
-import {createGlobalStyle} from "styled-components";
+import React, { useEffect, useState } from 'react';
+import { Cookies } from "react-cookie";
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { createGlobalStyle } from "styled-components";
+import { GET_CURRENT_USER } from "./graphql/queries";
 import CustomLayout from './page/Layout';
 
 import Home from './page/Home';
 import ContactForm from "./page/simplesForms/ContactForm";
-import PersonForm from "./page/simplesForms/PersonForm";
 import OrganizationForm from "./page/simplesForms/OrganizationForm";
+import PersonForm from "./page/simplesForms/PersonForm";
 
 import ContactTable from "./page/simplesTables/ContactTable";
-import PersonTable from "./page/simplesTables/PersonTable";
 import OrganizationTable from "./page/simplesTables/OrganizationTable";
+import PersonTable from "./page/simplesTables/PersonTable";
 
-import ProjectTable from "./page/ProjectTable";
-import RegisterForm from "./page/simplesForms/RegisterForm";
-import LoginForm from "./page/simplesForms/LoginForm";
-import {NotificationProvider} from "./NotificationProvider";
 import moment from "moment";
+import { NotificationProvider } from "./NotificationProvider";
+import ProjectTable from "./page/ProjectTable";
+import LoginForm from "./page/simplesForms/LoginForm";
+import RegisterForm from "./page/simplesForms/RegisterForm";
 
-import UserTable from "./page/simplesTables/UserTable";
-import RoleTable from "./page/simplesTables/RoleTable";
-import {PermissionsProvider} from "./permission/PermissionsProvider";
-import usePermissionHider from "./permission/usePermissionHider";
-import ProjectForm from "./page/ProjectForm";
-import RequestForm from "./page/simplesForms/RequestForm";
 import StatusLegendComponent from "./page/ProjectTable/components/StatusLegendComponent";
-import TestPage from "./page/TestPage";
+import MathForm from "./page/simplesForms/MathForm";
+import RequestForm from "./page/simplesForms/RequestForm";
 import TechSpecForm from "./page/simplesForms/TechSpecForm";
+import TechSpecProjectForm from './page/simplesForms/TechSpecProjectForm';
+import RoleTable from "./page/simplesTables/RoleTable";
+import UserTable from "./page/simplesTables/UserTable";
+import { PermissionsProvider } from "./permission/PermissionsProvider";
+import usePermissionHider from "./permission/usePermissionHider";
 
 const GlobalStyles = createGlobalStyle`
     body {
@@ -99,11 +99,13 @@ const App = () => {
                                       error={error?.message ? (error?.message != "Not token found" ? error?.message : null) : null}>
                             <Routes>
                                 <Route path="/" element={<Home/>}/>
-                                <Route path="/test" element={<TechSpecForm/>}/>
+                                <Route path="/test1" element={<TechSpecForm/>}/>
+                                <Route path="/test2" element={<TechSpecProjectForm/>}/>
+                                <Route path="/test3" element={<MathForm />}/>
                                 {/*Справочники*/}
                                 <Route path="/references" element={<Home/>}/>
 
-                                <Route path="/ts1" element={<TestPage/>}/>
+                                {/* <Route path="/ts1" element={<TestPage/>}/> */}
                                 <Route path="/references/contact" element={<Home/>}/>
                                 <Route path="/references/contact/table" element={<ContactTable/>}/>
                                 <Route path="/references/contact/form" element={
@@ -187,9 +189,9 @@ const App = () => {
                                     }/>}/>
 
 
-                                {/*Тестирование*/}
+                                {/* Тестирование
                                 <Route path="/test/test1" element={<ProjectForm/>}/>
-                                <Route path="/test/test2" element={<LoginForm/>}/>
+                                <Route path="/test/test2" element={<LoginForm/>}/> */}
                             </Routes>
                         </CustomLayout>
                     </Router>

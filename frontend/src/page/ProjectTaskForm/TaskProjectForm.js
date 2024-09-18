@@ -1,17 +1,16 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Alert, Card, Form, InputNumber, Space, Typography} from 'antd';
+import { Alert, Card, Form, InputNumber, Typography } from 'antd';
+import React, { useContext, useEffect, useState } from 'react';
 
 
+import { useMutation, useQuery } from "@apollo/client";
 import FormItem from "antd/es/form/FormItem";
-import {CustomAutoComplete} from "../components/style/SearchAutoCompleteStyles";
-import {useMutation, useQuery} from "@apollo/client";
-import {PERSONS_QUERY_COMPACT} from "../../graphql/queriesCompact";
-import dayjs from "dayjs";
+import { PERSONS_QUERY_COMPACT } from "../../graphql/queriesCompact";
+import { CustomAutoComplete } from "../components/style/SearchAutoCompleteStyles";
 
-import {NotificationContext} from "../../NotificationProvider";
 import Link from "antd/es/typography/Link";
-import {PROJECT_TASKS_DETAIL_UPDATE} from "../../graphql/mutationsProject";
-import {ModalButton} from "../simplesForms/formComponents/ModalButtonComponent";
+import { PROJECT_TASKS_DETAIL_UPDATE } from "../../graphql/mutationsProject";
+import { NotificationContext } from "../../NotificationProvider";
+import { ModalButton } from "../simplesForms/formComponents/ModalButtonComponent";
 
 const {Text} = Typography;
 
@@ -135,7 +134,7 @@ const TaskProjectForm = ({
                           {limitDuration}
                           <Form.Item name="price" labelCol={{span: 8}} wrapperCol={{span: 16}}
                                      style={{width: '100%'}}
-                                     label="Стоимость">
+                                     label="Стоимость"  data-permission={"read-project-payments"}>
                               <InputNumber suffix={"₽"} style={{width: '100%'}}
                                            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                            parser={value => `${value}`.replace(/[^0-9]/g, '')}/>

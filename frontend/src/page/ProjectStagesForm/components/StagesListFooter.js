@@ -1,8 +1,6 @@
+import { Col, DatePicker, Input, Row, Space } from 'antd';
 import React from 'react';
-import {Row, Col, Input, Form, DatePicker, Space} from 'antd';
-import dayjs from "dayjs";
 
-import moment from "moment/moment";
 
 const {RangePicker} = DatePicker;
 
@@ -57,7 +55,7 @@ const StagesListFooter = ({project, totalToPercent, totalToDuration, freeCol}) =
                             }}/>
                     </div>
                 </Col>
-                <Col span={2}>
+                <Col span={2}  data-permission={"read-project-payments"}>
                     <div style={{width: "100%", textAlign: "center"}}>
                         <Input disabled={true}
                                value={project?.price}
@@ -65,7 +63,7 @@ const StagesListFooter = ({project, totalToPercent, totalToDuration, freeCol}) =
                                suffix={"₽"} style={{width: "100%"}}/>
                     </div>
                 </Col>
-                <Col span={2}>
+                <Col span={2}  data-permission={"read-project-payments"}>
                     <div style={{width: "100%", textAlign: "center"}}>
                         <Input disabled={true}
                                value={project?.price}
@@ -73,7 +71,7 @@ const StagesListFooter = ({project, totalToPercent, totalToDuration, freeCol}) =
                                suffix={"₽"} style={{width: "100%"}}/>
                     </div>
                 </Col>
-                <Col span={1}/>
+                <Col span={1}  data-permission={"read-project-payments"}/>
 
             </Space.Compact>
         </Row>

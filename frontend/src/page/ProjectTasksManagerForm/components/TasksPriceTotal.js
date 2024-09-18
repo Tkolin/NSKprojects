@@ -1,9 +1,6 @@
-import {Button, Card, Col, Divider, Input, Progress, Row, Skeleton, Statistic, Typography} from "antd";
-import {useQuery} from "@apollo/client";
-import {STATUS_PROJECTS_QUERY} from "../../../graphql/queriesSpecial";
-import React, {useEffect, useState} from "react";
-import {AuditOutlined, CalendarOutlined, MinusOutlined, PlusOutlined} from "@ant-design/icons";
-import Title from "antd/es/typography/Title";
+import { AuditOutlined, CalendarOutlined } from "@ant-design/icons";
+import { Card, Col, Divider, Progress, Row, Skeleton, Statistic, Typography } from "antd";
+import React, { useEffect, useState } from "react";
 
 const {Text} = Typography;
 const getTaskCount = (projectTasks, stageNumber) => {
@@ -95,7 +92,7 @@ const TaskItem = ({
             <Progress size="small" {...progressData} style={{paddingLeft: 5, paddingRight: 15}}/>
             <Divider style={{margin: 9}}/>
             <Row style={{width: "100%"}}>
-                <Col span={12}>
+                <Col span={12}  data-permission={"read-project-payments"}>
                     <Statistic suffix={<AuditOutlined/>}
                                title={"Назначенные задачи"}
                                value={data.total_task_count}/>

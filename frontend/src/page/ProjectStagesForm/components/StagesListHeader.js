@@ -1,5 +1,5 @@
+import { Col, Row, Space } from 'antd';
 import React from 'react';
-import {Row, Col, Space, Input} from 'antd';
 
 
 const StagesListHeader = ({}) => {
@@ -26,12 +26,12 @@ const StagesListHeader = ({}) => {
                 </Col>
 
                 <Col span={1}/>
-                <Col span={2}  >
+                <Col span={2}   data-permission={"read-project-payments"}>
                     <strong>
                         Стоимость
                     </strong>
                 </Col>
-                <Col span={3} >
+                <Col span={3}  data-permission={"read-project-payments"}>
                     <strong>
                         (с вычетом аванса)
                     </strong>

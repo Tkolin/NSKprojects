@@ -74,7 +74,7 @@ extend type Mutation {
     ): Project @checkRole(permission:  ["update-project-task", "create-project-task","delete-project-task"])
     projectTaskDetailUpdate(
         data: TaskToProjectDetailInput!
-    ): ProjectTask @checkRole(permission:  ["update-project-task-detail", "create-project-task-detail"])
+    ): ProjectTask @checkRole(permission:  ["update-project-task", "create-project-task"])
     updatePaymentsToProject(
         project: ID
     ): Project
