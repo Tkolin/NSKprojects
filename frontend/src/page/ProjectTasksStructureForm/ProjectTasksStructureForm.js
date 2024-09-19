@@ -1,19 +1,14 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Card, Col, Form, Input, InputNumber, Row, Skeleton, Space, Tooltip, Typography} from "antd";
+import {Card, Col, Form, Row, Skeleton, Space, Tooltip, Typography} from "antd";
 import TasksTreeComponent from "../ProjectTasksManagerForm/components/TasksTreeComponent";
-import {
-    CustomAutoCompleteAndCreate,
-} from "../components/style/SearchAutoCompleteStyles";
+import {CustomAutoCompleteAndCreate,} from "../components/style/SearchAutoCompleteStyles";
 import {useMutation, useQuery} from "@apollo/client";
 import {TASKS_QUERY_COMPACT} from "../../graphql/queriesCompact";
-import LoadingSpinnerStyles from "../components/style/LoadingSpinnerStyles";
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import {ADD_TASK_MUTATION} from "../../graphql/mutationsTask";
 import {NotificationContext} from "../../NotificationProvider";
-import {DeleteOutlined, SaveOutlined} from "@ant-design/icons";
+import {DeleteOutlined} from "@ant-design/icons";
 import Link from "antd/es/typography/Link";
 import {PROJECT_TASKS_STRUCTURE_UPDATE} from "../../graphql/mutationsProject";
-import dayjs from "dayjs";
 import {ModalButton} from "../simplesForms/formComponents/ModalButtonComponent";
 
 
@@ -286,7 +281,7 @@ const ProjectTasksStructureForm = ({actualProject, setLoading, onCompleted, card
                                                               firstBtnOnClick={() => {
                                                                   mutate.rowID = row.number;
                                                                   mutate({
-                                                                      variables: {name: form.getFieldValue([row.number, "task_adder"])?.output ?? ""}
+                                                                      variables: {data: {name: form.getFieldValue([row.number, "task_adder"])?.output ?? ""}}
                                                                   })
                                                               }}
                                                               saveSelected={false}

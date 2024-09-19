@@ -25,7 +25,7 @@ const ContractDocumentBlock = ({record, onUpdated}) => {
             Скачать (подписан) от {record.date_signing}
         </CustomMenuButton>
         </LinkToDownload>
-    </>) : (<>
+    </>) : (<div>
         <Divider style={{margin: "5px"}} orientation={"left"}>Формирование договора</Divider>
         <ProjectFileDownload projectId={record.id} icon={<PlusOutlined/>}
                              children={<CustomMenuButton children={"Сгенерировать договор"}/>}/>
@@ -75,6 +75,6 @@ const ContractDocumentBlock = ({record, onUpdated}) => {
             </Row>
         </>)}
 
-    </>))
+    </div>))
 }
 export default ContractDocumentBlock

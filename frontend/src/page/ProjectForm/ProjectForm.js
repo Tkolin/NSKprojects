@@ -1,9 +1,9 @@
-import { useMutation, useQuery } from '@apollo/client';
-import { Card, Collapse, Form, Input, InputNumber, Modal, Space, } from 'antd';
-import React, { useContext, useEffect, useState } from 'react';
+import {useMutation, useQuery} from '@apollo/client';
+import {Card, Collapse, Form, Input, InputNumber, Modal, Space,} from 'antd';
+import React, {useContext, useEffect, useState} from 'react';
 
 import dayjs from "dayjs";
-import { NotificationContext } from "../../NotificationProvider";
+import {NotificationContext} from "../../NotificationProvider";
 import {
     CONTACTS_QUERY_COMPACT,
     GROUP_TYPE_PROJECTS_QUERY_COMPACT,
@@ -21,15 +21,15 @@ import {
 
 import FacilitiesTreeComponent from "./components/FacilitiesTreeComponent";
 
-import { ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION } from "../../graphql/mutationsProject";
-import { rebuildProjectResultQuery } from "../components/script/rebuildData/ProjectRebuilderQuery";
+import {ADD_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION} from "../../graphql/mutationsProject";
+import {rebuildProjectResultQuery} from "../components/script/rebuildData/ProjectRebuilderQuery";
 
-import { nanoid } from "nanoid";
-import { AutoCompleteFormItem } from "../components/CustomForm";
+import {nanoid} from "nanoid";
+import {AutoCompleteFormItem} from "../components/CustomForm";
 import ContactForm from "../simplesForms/ContactForm";
 import OrganizationForm from "../simplesForms/OrganizationForm";
 import TypeProjectForm from "../simplesForms/TypeProjectForm";
-import { ModalButton } from "../simplesForms/formComponents/ModalButtonComponent";
+import {ModalButton} from "../simplesForms/formComponents/ModalButtonComponent";
 //   APPROVAL_AGREEMENT: ["project", "stage", "ird"],
 //     APPROVAL_KP: ["project", "stage"],
 //     DESIGN_REQUEST: ["project"],
@@ -375,7 +375,7 @@ const ProjectForm = ({
                                   placeholder={"Выберите статус проекта..."}
                               />
                           </Form.Item>
-                          <Space.Compact style={{width: '100%'}} data-permission={"read-project-payments"}> 
+                          <Space.Compact style={{width: '100%'}}>
                               <Form.Item name="price"
                                          style={{
                                              ...((disabledOptions?.includes("price") && disabledOptions?.includes("prepayment")) ? {display: "none"} : {}),

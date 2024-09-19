@@ -221,7 +221,7 @@ const PersonForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                                                      width: '100%',
                                                  }}>
                                           <AddressSuggestions token={TokenDADATA}
-                                                              defaultQuery={address?.regisresidentialtration ?? ""}
+                                                              defaultQuery={address?.registration ?? ""}
                                                               inputProps={{
                                                                   placeholder: 'Введите адрес',
                                                                   style: StyledAddressSuggestionsInput,

@@ -129,7 +129,7 @@ const PersonTable = () => {
                     <StyledButtonGreen
                         loading={loading}
                         style={{marginBottom: 0}}
-                        onClick={() =>  setPersonModalStatus({person_id: null, mode: "add"})}
+                        onClick={() => setPersonModalStatus({person_id: null, mode: "add"})}
                         data-permission={"create-person"}>
                         Создать новую запись</StyledButtonGreen>
                 </Space>
@@ -205,8 +205,11 @@ const PersonTable = () => {
             title={"Исполнитель"}
             children={
                 <PersonForm
-                    onCompleted={() =>
-                        setPersonModalStatus(null)}
+                    onCompleted={() => {
+                        setPersonModalStatus(null);
+                        refetch();
+                    }}
+
                     initialObject={personModalStatus?.person_id ? {id: personModalStatus?.person_id} : null}
                 />
             }
