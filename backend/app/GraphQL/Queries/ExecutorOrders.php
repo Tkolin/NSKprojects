@@ -52,7 +52,7 @@ final readonly class ExecutorOrders
             return $result;
         }
 
-        return $result; // Return the result if no projectId is specified
+        return null; // Return the result if no projectId is specified
     }
 
 }

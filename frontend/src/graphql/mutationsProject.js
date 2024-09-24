@@ -222,6 +222,30 @@ export const SET_IRD_TEMPLATE_TO_PROJECT_MUTATION = gql`
         }
     }
 `;
+export const PROJECT_TS_SYNC_MUTATION = gql`
+    mutation SetIrdTempProject
+    (   $projectId: ID!
+        $chapterIds: [ID]!)
+    {
+        setTemplateProjectIrds(project_id: $projectId, chapters_ids: $chapterIds ) {
+            id
+            project_stages {
+                project_id
+                stage_id
+                number
+                stage {
+                    id
+                    name
+                }
+                date_start
+                duration
+                date_end
+                percent
+                price
+            }
+        }
+    }
+`;
 export const SET_STAGE_TEMPLATE_TO_PROJECT_MUTATION = gql`
     mutation SetStageTempProject
     (   $projectId: ID!
@@ -348,13 +372,7 @@ export const PROJECT_STAGE_SYNC_MUTATION = gql`
         }
     }
 `;
-export const PROJECT_TS_SYNC_MUTATION = gql`
-    mutation СreateProjectTSChapter($projectId: ID!, $chapterIds: [ID]!) {
-        createProjectTSChapter(projectId: $projectId, chapterIds: $chapterIds) {
-            id
-        }
-    }
-`;
+
 
 export const CHANGE_STATUS_PROJECT = gql`
     mutation ProjectStagesSync($projectId: ID!, $statusKey: String!, $dateStart: String) {

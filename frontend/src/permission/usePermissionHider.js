@@ -4,7 +4,7 @@ import { usePermissions } from './PermissionsProvider';
 const usePermissionHider = () => {
     const hock = usePermissions();
  
-    const permissions = JSON.parse(localStorage.getItem("userPermissions")).map(row=>row.name_key);
+    const permissions = localStorage.getItem("userPermissions")  ? JSON.parse(localStorage.getItem("userPermissions")).map(row=>row.name_key) : null;
     // console.log(": = : permissions", permissions);
 
     useEffect(() => {
@@ -18,7 +18,7 @@ const usePermissionHider = () => {
             const requiredPermissions = element.getAttribute('data-permission').split(',').map(p => p.trim());
            // console.log(": = :requiredPermissions", requiredPermissions);
 
-            const hasRequiredPermission = requiredPermissions.some(permission => permissions.includes(permission));
+            const hasRequiredPermission = requiredPermissions.some(permission => permissions?.includes(permission));
            // console.log(": = :hasRequiredPermission", hasRequiredPermission);
             if (hasRequiredPermission) {
                 element.style.display = '';

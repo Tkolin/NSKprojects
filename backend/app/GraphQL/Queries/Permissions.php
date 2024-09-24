@@ -14,11 +14,11 @@ final readonly class Permissions
         if(!isset($args['queryOptions']))
             switch ($args['queryType']){
                 case "COMPACT":
-                    return ['items' => Permissions::all()];
+                    return ['items' => Permission::all()];
                 default:
                     return ['items' => "Ошибка, не верный тип запроса"];
             }
-        $permissionQuery = Permissions::query();
+        $permissionQuery = Permission::query();
 
         $queryService = new QueryService();
         $searchColumns = ['name'];

@@ -4,8 +4,8 @@ import { Button, Card, Form, Input, Modal, Select, Space, Tooltip } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import React, { useContext, useEffect, useState } from "react";
 import {
-    CREATE_TECH_CHAPTER_MUTATION,
-    UPDATE_TECH_CHAPTER_MUTATION,
+  CREATE_TECH_CHAPTER_MUTATION,
+  UPDATE_TECH_CHAPTER_MUTATION,
 } from "../../graphql/mutationsReference";
 import { REFERENCES_QUERY_COMPACT } from "../../graphql/queriesCompact";
 import { NotificationContext } from "../../NotificationProvider";
@@ -405,26 +405,9 @@ const TechSpecForm = ({
                   />
                 </Space>
               ))}
-
-              <Form.Item>
-                <Button
-                  type="dashed"
-                  onClick={() => add()}
-                  icon={<PlusOutlined />}
-                  style={{ width: "100%" }}
-                >
-                  Добавить переменную
-                </Button>
-              </Form.Item>
             </>
           )}
         </Form.List>
-
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Сохранить
-          </Button>
-        </Form.Item>
       </Form>
 
       {/* Модальное окно для ввода таблицы */}

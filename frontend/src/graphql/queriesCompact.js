@@ -11,6 +11,17 @@ export const TASKS_QUERY_COMPACT = gql`
         }
     }
 `;
+export const TS_CHAPTERS_QUERY = gql`
+    query technicalSpecificationChapters  {
+        technicalSpecificationChapters  (queryType: "COMPACT") {
+            items {
+                id
+                name
+            }
+            count
+        }
+    }
+`;
 export const PROJECTS_STAGES_TEMPLATES = gql`
     query ProjectsStagesTemplates {
         projects (queryType: "COMPACT")  {

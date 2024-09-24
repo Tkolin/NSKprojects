@@ -49,7 +49,7 @@ const App = () => {
 
 
     const [data, setData] = useState()
-    const [findActualUsers, {loading, error, refetch: refetchCurr}] = useLazyQuery(GET_CURRENT_USER, {
+    const [findActualUsers] = useLazyQuery(GET_CURRENT_USER, {
         fetchPolicy: 'cache-and-network', // Всегда берет данные с сервера, а не из кэша
         onCompleted: (data) => {
             setData(data.currentUser);
@@ -81,7 +81,7 @@ const App = () => {
             findActualUsers();
 
         } else {
-            console.log("Ошибка аутентификации: " + "Токен отсутствует");
+            
         }
     }, []);
 
@@ -98,8 +98,7 @@ const App = () => {
                     <GlobalStyles/>
 
                     <Router>
-                        <CustomLayout currentUser={data}
-                                      error={error?.message ? (error?.message != "Not token found" ? error?.message : null) : null}>
+                        <CustomLayout currentUser={data}>
                             <Routes>
                                 <Route path="/" element={<Home/>}/>
 
@@ -145,8 +144,12 @@ const App = () => {
                                 <Route path="/math/module/creater" element={<MathForm />}/>
 
                                 <Route path="/math/tech_ref/form/chapter" element={<TechSpecForm/>}/>
-                                <Route path="/math/tech_ref/table/template" element={<ProjectTSManagerForm/>}/>
-                                <Route path="/math/tech_ref/table/values" element={<ProjectTSStructureForm/>}/>
+                                <Route path="/math/tech_ref/table/structure" element={<ProjectTSStructureForm/>}/>
+                                <Route path="/math/tech_ref/table/manager" element={<ProjectTSManagerForm/>}/>
+
+                                <Route path="/math/formula/form" element={<Home />}/>
+                                <Route path="/math/formula/table" element={<Home />}/>
+
                                 {/* <Route path="/math/tech_ref/table/template" element={<ReferenceForm />}/> */}
 
                                 {/*Проекты*/}

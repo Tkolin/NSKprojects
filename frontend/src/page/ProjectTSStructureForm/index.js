@@ -1,290 +1,208 @@
-// import { useMutation } from "@apollo/client";
-// import {
-//     Alert,
-//     Button,
-//     Card,
-//     Col,
-//     Form,
-//     Modal,
-//     Popconfirm,
-//     Row,
-//     Space,
-// } from "antd";
-// import React, { useContext, useEffect, useState } from "react";
+import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
+import { useMutation, useQuery } from "@apollo/client";
+import { Button, Card, Col, Form, Modal, Row, Space, Tooltip } from "antd";
+import React, { useContext, useState } from "react";
+import { AutoCompleteFormItem } from "../components/CustomForm";
 
-// import { PlusOutlined } from "@ant-design/icons";
-// import {
-//     PROJECT_STAGE_SYNC_MUTATION,
-//     SET_STAGE_TEMPLATE_TO_PROJECT_MUTATION,
-// } from "../../graphql/mutationsProject";
-// import { NotificationContext } from "../../NotificationProvider";
-// import { ModalButton } from "../simplesForms/formComponents/ModalButtonComponent";
-// import StageForm from "../simplesForms/StageForm";
-// import TemplatesStageForm from "../simplesForms/TemplatesStageForm";
+import { PROJECT_TS_SYNC_MUTATION } from "../../graphql/mutationsProject";
+import { TS_CHAPTERS_QUERY } from "../../graphql/queriesCompact";
 
-// const ProjectTSStructureForm = ({ onCompleted, project, cardProps }) => {
-//   const [form] = Form.useForm();
+import TextArea from "antd/es/input/TextArea";
+import { NotificationContext } from "../../NotificationProvider";
+import { StyledButtonRed } from "../components/style/ButtonStyles";
+import { CustomAutoCompleteExtension } from "../components/style/SearchAutoCompleteStyles";
+import { ModalButton } from "../simplesForms/formComponents/ModalButtonComponent";
+import TechSpecForm from "../simplesForms/TechChapterForm";
 
-//   const [totalToPercent, setTotalToPercent] = useState(0);
-//   const [templateModalStatus, setTemplateModalStatus] = useState(false);
-//   const [totalToDuration, setTotalToDuration] = useState(0);
-//   const [stageModalStatus, setStageModalStatus] = useState(null);
-//   const { openNotification } = useContext(NotificationContext);
+const IrdToProjectForm = ({ project, onCompleted, ...cardProps }) => {
+  const { openNotification } = useContext(NotificationContext);
 
-//   const [mutateStage, { loading: loading }] = useMutation(
-//     PROJECT_STAGE_SYNC_MUTATION,
-//     {
-//       onCompleted: (data) => {
-//         openNotification(
-//           "topRight",
-//           "success",
-//           `Создание новой записи в таблице  выполнено успешно`
-//         );
-//         onCompleted && onCompleted();
-//       },
-//       onError: (error) => {
-//         openNotification(
-//           "topRight",
-//           "error",
-//           `Ошибка при выполнении создания этапа : ${error.message}`
-//         );
-//       },
-//     }
-//   );
-//   const load = () => {
-//     form.setFieldValue(
-//       "stageList",
-//       project.project_stages.map((row) => ({
-//         stage: { selected: row?.stage?.id, output: row?.stage?.name },
-//         duration: row.duration,
-//         offset: row.offset,
-//         percent: row.percent,
-//       }))
-//     );
-//   };
+  // Первичные данные
+  const [form] = Form.useForm();
+  const [irdModalStatus, setIrdModalStatus] = useState(null);
 
-//   useEffect(() => {
-//     project && load();
-//   }, [project, project.project_stages]);
+  const [mutateChapters, { loading: loadingMutation }] = useMutation(
+    PROJECT_TS_SYNC_MUTATION,
+    {
+      onCompleted: (data) => {
+        openNotification(
+          "topRight",
+          "success",
+          `Создание новой записи в таблице  выполнено успешно`
+        );
+        onCompleted && onCompleted();
+      },
+      onError: (error) => {
+        openNotification(
+          "topRight",
+          "error",
+          `Ошибка при выполнении создания раздел : ${error.message}`
+        );
+        return false;
+      },
+    }
+  );
+  const { loading: chaptersLoading, data: chaptersData } =
+    useQuery(TS_CHAPTERS_QUERY);
+  //   const load = () => {
+  //     console.log(
+  //       "project.project_ts_chapters",
+  //       project.project_ts_chapters?.map((row) => ({
+  //         ...row,
+  //         received_date: row.received_date ? dayjs(row.received_date) : null,
+  //         chapter: { selected: row?.chapter?.id, output: row?.chapter?.name },
+  //       }))
+  //     );
+  //     project &&
+  //       project.project_ts_chapters &&
+  //       form.setFieldsValue({
+  //         irdList:
+  //           project.project_ts_chapters &&
+  //           Object.values(project.project_ts_chapters)?.map((row) => ({
+  //             ...row,
+  //             received_date: row.received_date ? dayjs(row.received_date) : null,
+  //             chapter: { selected: row?.chapter?.id, output: row?.chapter?.name },
+  //           })),
+  //       });
+  //   };
+  const handleSave = () => {
+    console.log(
+      "form DATA",
+      {
+        project_id: project?.id ?? null,
+        chapters_ids: form
+          .getFieldValue("irdList")
+          .map((row) => row.chapter.selected),
+      },
+    );
+    mutateChapters({
+      variables: {
+        data: {
+          project_id: project?.id ?? null,
+          chapters_ids: form
+            .getFieldValue("irdList")
+            .map((row) => row.chapter.selected),
+        },
+      },
+    });
+  };
 
-//   const handleChange = () => {
-//     handleFooterUpdate();
-//   };
-//   const handleFooterUpdate = () => {
-//     const stageList = form.getFieldValue("stageList");
-//     if (Array.isArray(stageList)) {
-//       const totalDuration = stageList.reduce((acc, item) => {
-//         const duration = parseInt(item?.duration_item) || 0;
-//         return acc + duration;
-//       }, 0);
-//       setTotalToDuration(totalDuration);
-//     }
-//     if (Array.isArray(stageList)) {
-//       const totalProcent = stageList.reduce((acc, item) => {
-//         const procent = item?.percent ?? 0;
-//         return acc + procent;
-//       }, 0);
-//       setTotalToPercent(totalProcent);
-//     }
-//   };
-//   const moveItem = (index, newIndex) => {
-//     const stageList = form.getFieldValue("stageList");
-//     if (newIndex < 0 || newIndex >= stageList.length) return;
-//     const [movedItem] = stageList.splice(index, 1);
-//     stageList.splice(newIndex, 0, movedItem);
-//     form.setFieldsValue({ stageList });
-//     handleChange();
-//   };
-//   const handleSave = () => {
-//     let i = 1;
-//     const data = form.getFieldsValue()?.stageList?.map((row) => ({
-//       project_id: project.id,
-//       stage_id: row.stage.selected,
-//       number: i++,
-//       percent: row.percent,
-//       duration: row.duration,
-//       offset: row.offset,
-//     }));
+  return (
+    <>
+      <Card
+        style={{ width: 1200 }}
+        {...cardProps}
+        actions={[
+          <ModalButton
+            modalType={"green"}
+            isMany={cardProps?.actions}
+            loading={loadingMutation}
+            onClick={() => form.submit()}
+            children={project ? `Обновить` : `Создать`}
+          />,
+          ...(cardProps?.actions ?? []),
+        ]}
+        children={
+          <>
+            <Form layout="vertical" onFinish={handleSave} form={form}>
+              <Form.List name="irdList">
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map(({ key, name, ...restField }, index) => (
+                      <Row key={index} gutter={0} style={{ marginBottom: 0 }}>
+                        <Space.Compact style={{ width: "100%" }}>
+                          <Col span={12}>
+                            <Tooltip title="Наименование раздела">
+                              <AutoCompleteFormItem
+                                name={[index,"chapter"]}
+                                rulesValidationRequired={true}
+                                rulesValidationMessage={"Укажите раздел"}
+                              >
+                                <CustomAutoCompleteExtension
+                                  style={{ marginBottom: 0, width: "100%" }}
+                                  placeholder={"Выбор раздела..."}
+                                  visibleMode={"CREATE_WHERE_NON_SELECTED"}
+                                  loading={chaptersLoading}
+                                  firstBtnOnClick={() =>
+                                    setIrdModalStatus({
+                                      mode: "add",
+                                      key: index,
+                                    })
+                                  }
+                                  data={
+                                    chaptersData?.technicalSpecificationChapters
+                                      ?.items
+                                  }
+                                />
+                              </AutoCompleteFormItem>
+                            </Tooltip>
+                          </Col>
+                        <Col span={11}>
+                        <TextArea>
+                            Содержание раздела
+                                                    </TextArea>
+                        </Col>
+                          <Col span={1}>
+                            <StyledButtonRed
+                              icon={<CloseOutlined />}
+                              onClick={() => remove && remove(index)}
+                            />
+                          </Col>
+                        </Space.Compact>
+                      </Row>
+                    ))}
 
-//     mutateStage({ variables: { data: data } });
-//   };
-//   const [mutateTemplate, { loading: loadingResult }] = useMutation(
-//     SET_STAGE_TEMPLATE_TO_PROJECT_MUTATION,
-//     {
-//       onCompleted: (data) => {
-//         console.log(`Ответ: `, data);
-//         onCompleted && onCompleted();
-//       },
-//       onError: (error) => {
-//         console.log(`Ошибка: `, error.message);
-//       },
-//     }
-//   );
+                    <Space.Compact
+                      style={{ width: "100%", marginBottom: 10, marginTop: 0 }}
+                    >
+                      <Button
+                        type={"primary"}
+                        size={"small"}
+                        onClick={() => add()}
+                        style={{ width: "100%" }}
+                        icon={<PlusOutlined />}
+                      >
+                        Добавить раздел к списку
+                      </Button>
+                    </Space.Compact>
+                  </>
+                )}
+              </Form.List>
 
-//   return (
-//     <>
-//       <Card
-//         style={{ width: 1400 }}
-//         {...cardProps}
-//         actions={[
-//           <ModalButton
-//             modalType={"green"}
-//             isMany={cardProps?.actions}
-//             loading={loading}
-//             onClick={() => form.submit()}
-//             children={project ? `Обновить` : `Создать`}
-//           />,
-//           ...(cardProps?.actions ?? []),
-//         ]}
-//         children={
-//           <>
-//             <Row>
-//               <Col span={6}>
-//                 <Space direction={"vertical"} style={{ width: "100%" }}>
-//                   <Popconfirm
-//                     disabled={
-//                       !project.type_project_document?.template_project_id
-//                     }
-//                     okButtonProps={{
-//                       disabled:
-//                         !project.type_project_document?.template_project_id,
-//                       onClick: () =>
-//                         mutateTemplate({
-//                           variables: {
-//                             projectId: project.id,
-//                             templateProjectId:
-//                               project.type_project_document
-//                                 ?.template_project_id,
-//                           },
-//                         }),
-//                     }}
-//                   >
-//                     <Button
-//                       disabled={
-//                         !project.type_project_document?.template_project_id
-//                       }
-//                       style={{ width: "100%" }}
-//                     >
-//                       Загрузить заданный шаблон
-//                     </Button>
-//                   </Popconfirm>
+              <Modal
+                key={irdModalStatus?.mode || irdModalStatus?.chapter_id || null}
+                open={irdModalStatus}
+                onCancel={() => setIrdModalStatus(null)}
+                footer={null}
+                width={"max-content"}
+                title={"раздел"}
+                children={
+                  <TechSpecForm
+                    onCompleted={(value) => {
+                      const newRow = [...form.getFieldValue("irdList")];
+                      newRow[irdModalStatus?.key] = {
+                        chapter: {
+                          selected: value.id,
+                          output: value.name,
+                        },
+                      };
+                      form.setFieldValue("irdList", newRow);
+                      setIrdModalStatus(null);
+                    }}
+                    initialObject={
+                      irdModalStatus?.chapter_id
+                        ? { id: irdModalStatus?.chapter_id }
+                        : null
+                    }
+                  />
+                }
+              />
+            </Form>
+          </>
+        }
+      />
+    </>
+  );
+};
 
-//                   <Button
-//                     style={{ width: "100%" }}
-//                     onClick={() => setTemplateModalStatus(true)}
-//                   >
-//                     Выбрать этапы из проекта
-//                   </Button>
-//                 </Space>
-//               </Col>
-//               <Col span={6}>
-//                 <Alert
-//                   message={
-//                     <>
-//                       Функции загрузки шаблонов этапов:
-//                       <ul>
-//                         <li>
-//                           Загрузить заданный шаблон - загружает список этапов,
-//                           из указанного как шаблон проекта
-//                         </li>
-//                         <li>
-//                           Выбрать этапы из проекта - необходимо выбрать проект,
-//                           который будет взят за шаблон
-//                         </li>
-//                       </ul>
-//                     </>
-//                   }
-//                 />
-//               </Col>
-//             </Row>
-
-//             <Form
-//               layout="vertical"
-//               onFinish={handleSave}
-//               onChange={() => {
-//                 handleChange();
-//               }}
-//               form={form}
-//             >
-//               <Form.List name="stageList">
-//                 {(fields, { add, remove }) => (
-//                   <>
-//                     <StagesListHeader />
-//                     {fields.map(({ key, name, ...restField }, index) => 11111)}
-//                     <StagesListFooter
-//                       project={project}
-//                       totalToDuration={totalToDuration}
-//                       totalToPercent={totalToPercent}
-//                       freeCol={
-//                         <Button
-//                           type="primary"
-//                           size={"small"}
-//                           onClick={() => add()}
-//                           style={{ width: "100%" }}
-//                           icon={<PlusOutlined />}
-//                         >
-//                           Добавить этап к списку
-//                         </Button>
-//                       }
-//                     />
-//                   </>
-//                 )}
-//               </Form.List>
-//             </Form>
-//             <Modal
-//               key={stageModalStatus?.mode || stageModalStatus?.stage_id || null}
-//               open={stageModalStatus}
-//               onCancel={() => setStageModalStatus(null)}
-//               footer={null}
-//               width={"max-content"}
-//               children={
-//                 <StageForm
-//                   cardProps={{ title: "Этап" }}
-//                   onCompleted={(value) => {
-//                     const newRow = [...form.getFieldValue("stageList")];
-//                     newRow[stageModalStatus?.key] = {
-//                       stage: {
-//                         selected: value.id,
-//                         output: value.name,
-//                       },
-//                     };
-//                     form.setFieldValue("stageList", newRow);
-//                     setStageModalStatus(null);
-//                   }}
-//                   initialObject={
-//                     stageModalStatus?.stage_id
-//                       ? { id: stageModalStatus?.stage_id }
-//                       : null
-//                   }
-//                 />
-//               }
-//             />
-//           </>
-//         }
-//       />
-//       <Modal
-//         key={project.id + "temp_stage"}
-//         open={templateModalStatus}
-//         onCancel={() => setTemplateModalStatus(null)}
-//         footer={null}
-//         width={"max-content"}
-//         children={
-//           <Space
-//             style={{ justifyContent: "center", width: "100%" }}
-//             children={
-//               <TemplatesStageForm
-//                 project={project}
-//                 onCompleted={() => {
-//                   onCompleted();
-//                   setTemplateModalStatus(null);
-//                 }}
-//               />
-//             }
-//           />
-//         }
-//       />
-//     </>
-//   );
-// };
-
-// export default ProjectTSStructureForm;
+export default IrdToProjectForm;

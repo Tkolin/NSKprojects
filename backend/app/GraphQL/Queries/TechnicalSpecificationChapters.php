@@ -8,6 +8,9 @@ final readonly class TechnicalSpecificationChapters
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        return TechnicalSpecificationChapter::all();
+    $chapters = TechnicalSpecificationChapter::all();
+        $count = $chapters->count();
+
+        return['items' => $chapters, 'count' => $count] ;
     }
 }

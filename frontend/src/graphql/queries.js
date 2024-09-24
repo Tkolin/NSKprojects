@@ -24,6 +24,7 @@ export const TASKS_QUERY = gql`
         }
     }
 `;
+
 export const REFERENCES_QUERY = gql`
     query ReferencesQuery  ($queryOptions: QueryOptions) {
         references  (queryOptions: $queryOptions) {

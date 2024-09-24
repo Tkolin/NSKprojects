@@ -1,7 +1,7 @@
-import React, {useMemo} from 'react';
-import {ApolloClient, InMemoryCache, ApolloProvider as ApolloHooksProvider, createHttpLink} from '@apollo/client';
-import {setContext} from '@apollo/client/link/context';
-import {Cookies} from 'react-cookie';
+import { ApolloClient, ApolloProvider as ApolloHooksProvider, createHttpLink, InMemoryCache } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+import React, { useMemo } from 'react';
+import { Cookies } from 'react-cookie';
 import getCsrfToken from "./setupAxios";
 
 const httpLink = createHttpLink({
