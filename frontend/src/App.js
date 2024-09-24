@@ -24,10 +24,13 @@ import LoginForm from "./page/simplesForms/LoginForm";
 import RegisterForm from "./page/simplesForms/RegisterForm";
 
 import StatusLegendComponent from "./page/ProjectTable/components/StatusLegendComponent";
+import ProjectTSManagerForm from "./page/ProjectTSManagerForm";
+import ProjectTSStructureForm from "./page/ProjectTSStructureForm";
 import MathForm from "./page/simplesForms/MathForm";
+import ReferenceForm from "./page/simplesForms/ReferenceForm";
 import RequestForm from "./page/simplesForms/RequestForm";
-import TechSpecForm from "./page/simplesForms/TechSpecForm";
-import TechSpecProjectForm from './page/simplesForms/TechSpecProjectForm';
+import TechSpecForm from "./page/simplesForms/TechChapterForm";
+import ReferenceTable from "./page/simplesTables/ReferenceTable";
 import RoleTable from "./page/simplesTables/RoleTable";
 import UserTable from "./page/simplesTables/UserTable";
 import { PermissionsProvider } from "./permission/PermissionsProvider";
@@ -40,11 +43,11 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 const App = () => {
+    usePermissionHider();
 
     const cookies = new Cookies();
 
 
-    usePermissionHider();
     const [data, setData] = useState()
     const [findActualUsers, {loading, error, refetch: refetchCurr}] = useLazyQuery(GET_CURRENT_USER, {
         fetchPolicy: 'cache-and-network', // Всегда берет данные с сервера, а не из кэша
@@ -88,7 +91,7 @@ const App = () => {
 
 
     return (
-        <PermissionsProvider permissions={data?.permissions?.map(row => row.name_key) ?? null}>
+        <PermissionsProvider>
 
             <ConfigProvider locale={ruRU}>
                 <NotificationProvider>
@@ -99,9 +102,7 @@ const App = () => {
                                       error={error?.message ? (error?.message != "Not token found" ? error?.message : null) : null}>
                             <Routes>
                                 <Route path="/" element={<Home/>}/>
-                                <Route path="/test1" element={<TechSpecForm/>}/>
-                                <Route path="/test2" element={<TechSpecProjectForm/>}/>
-                                <Route path="/test3" element={<MathForm />}/>
+
                                 {/*Справочники*/}
                                 <Route path="/references" element={<Home/>}/>
 
@@ -136,6 +137,17 @@ const App = () => {
                                         <OrganizationForm/>
                                     }/>
                                 }/>
+
+                                {/*Расчёты*/}
+                                <Route path="/math/reference/form" element={<ReferenceForm />}/>
+                                <Route path="/math/reference/table" element={<ReferenceTable />}/>
+
+                                <Route path="/math/module/creater" element={<MathForm />}/>
+
+                                <Route path="/math/tech_ref/form/chapter" element={<TechSpecForm/>}/>
+                                <Route path="/math/tech_ref/table/template" element={<ProjectTSManagerForm/>}/>
+                                <Route path="/math/tech_ref/table/values" element={<ProjectTSStructureForm/>}/>
+                                {/* <Route path="/math/tech_ref/table/template" element={<ReferenceForm />}/> */}
 
                                 {/*Проекты*/}
                                 <Route path="/project" element={<Home/>}/>

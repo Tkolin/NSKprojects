@@ -26,7 +26,7 @@ final readonly class Persons
                         return ['items' => 'Ошибка, контакт не найден'];
                     }
                 default:
-                    return ['items' => "Ошибка, не верный тип запрооса"];
+                    return ['items' => "Ошибка, не верный тип запроса"];
             }
 
 
@@ -36,8 +36,8 @@ final readonly class Persons
 
 
             // Поиск
-            if (isset($args['search'])) {
-                $searchTerm = $args['search'];
+            if (isset($args['queryOptions']['search'])) {
+                $searchTerm = $args['queryOptions']['search'];
                 $personQuery = $personQuery->where(function ($query) use ($searchTerm) {
                     $query->where('SHILS', 'like', "%$searchTerm%")
                         ->orWhere('INN', 'like', "%$searchTerm%")

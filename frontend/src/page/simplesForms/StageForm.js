@@ -1,13 +1,13 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Card, Form, Input} from 'antd';
-import {useLazyQuery, useMutation} from '@apollo/client';
-import {NotificationContext} from "../../NotificationProvider";
-import {STAGES_QUERY_BY_ID} from "../../graphql/queriesByID";
+import { useLazyQuery, useMutation } from '@apollo/client';
+import { Card, Form, Input } from 'antd';
+import React, { useContext, useEffect, useState } from 'react';
+import { NotificationContext } from "../../NotificationProvider";
+import { ADD_STAGE_MUTATION, UPDATE_STAGE_MUTATION } from "../../graphql/mutationsStage";
+import { STAGES_QUERY_BY_ID } from "../../graphql/queriesByID";
 import LoadingSpinnerStyles from "../components/style/LoadingSpinnerStyles";
-import {ADD_STAGE_MUTATION, UPDATE_STAGE_MUTATION} from "../../graphql/mutationsStage";
-import {ModalButton} from "./formComponents/ModalButtonComponent";
+import { ModalButton } from "./formComponents/ModalButtonComponent";
 
-const IrdForm = ({localObject, initialObject, onCompleted, cardProps}) => {
+const StageForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     // Первичные данные
     const {openNotification} = useContext(NotificationContext);
     const [form] = Form.useForm();
@@ -82,4 +82,4 @@ const IrdForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     );
 };
 
-export default IrdForm;
+export default StageForm;

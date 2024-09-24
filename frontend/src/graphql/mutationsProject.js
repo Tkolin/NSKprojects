@@ -1,4 +1,4 @@
-import {gql} from "@apollo/client";
+import { gql } from "@apollo/client";
 
 
 export const ADD_PROJECT_MUTATION = gql`
@@ -348,6 +348,13 @@ export const PROJECT_STAGE_SYNC_MUTATION = gql`
         }
     }
 `;
+export const PROJECT_TS_SYNC_MUTATION = gql`
+    mutation СreateProjectTSChapter($projectId: ID!, $chapterIds: [ID]!) {
+        createProjectTSChapter(projectId: $projectId, chapterIds: $chapterIds) {
+            id
+        }
+    }
+`;
 
 export const CHANGE_STATUS_PROJECT = gql`
     mutation ProjectStagesSync($projectId: ID!, $statusKey: String!, $dateStart: String) {
@@ -399,13 +406,7 @@ export const CHANGE_TEMPLATE_TYPE_PROJECT = gql`
 `;
 
 
-// export const IRDS_PROJECT_DOWNLOAD = gql`
-//     mutation IrdsProjectFileDownload($id: ID!) {
-//         projectIrdsFileDownload(projectId: $id) {
-//             url
-//         }
-//     }
-// `;
+ 
 
 export const PAYMENT_INVOICE_PROJECT_DOWNLOAD = gql`
     mutation PaymentInvoiceProjectFileDownload($id: ID!, $stageNumber: ID, $dateGenerated: String!) {

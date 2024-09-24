@@ -2,24 +2,31 @@
 
 namespace App\GraphQL\Queries;
 
-use App\Models\ReferenceModel;
+ use App\Models\ReferenceModel;
 use App\Services\GrpahQL\QueryService;
+use League\CommonMark\Reference\Reference;
 
-final readonly class References
+final readonly class References //reference //references
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-//        $referencesQuery = ReferenceModel::query();
-//
-//        $queryService = new QueryService();
-//        $searchColumns = ['id','name'];
-//        $referencesQuery = $queryService->buildQueryOptions($referencesQuery, $args['queryOptions'],$searchColumns);
-//
-//        $count = $referencesQuery->count();
-//        $references = $queryService->paginate($referencesQuery, $args['queryOptions']['limit'], $args['queryOptions']['page']);
-        //$references. = $queryService->paginate($referencesQuery, $args['queryOptions']['limit'], $args['queryOptions']['page']);
-        return ['items' => ReferenceModel::all(), 'count' => 1];
+        if(!isset($args['queryOptions']))
+            switch ($args['queryType']){
+                case "COMPACT":
+                    return ['items' => ReferenceModel::all()];
+                default:
+                    return ['items' => "Ошибка, не верный тип запрооса"];
+            }
+        $referencesQuery = ReferenceModel::query();
 
+        $queryService = new QueryService();
+        $searchColumns = ['id','name'];
+        $referencesQuery = $queryService->buildQueryOptions($referencesQuery, $args['queryOptions'],$searchColumns);
+
+        $count = $referencesQuery->count();
+        $referencess = $queryService->paginate($referencesQuery, $args['queryOptions']['limit'], $args['queryOptions']['page']);
+
+        return ['items' => $referencess, 'count' => $count];
     }
 }

@@ -1,19 +1,16 @@
-import {Alert, Button, Card, Col, Divider, Form, Modal, Popconfirm, Row, Space,} from "antd";
-import {PlusOutlined,} from "@ant-design/icons";
-import React, {useContext, useEffect, useState} from "react";
-import {useMutation, useQuery} from "@apollo/client";
+import { PlusOutlined, } from "@ant-design/icons";
+import { useMutation, useQuery } from "@apollo/client";
+import { Alert, Button, Card, Col, Form, Modal, Popconfirm, Row, Space } from "antd";
+import React, { useContext, useEffect, useState } from "react";
 
-import {IRDS_QUERY_COMPACT} from "../../graphql/queriesCompact";
-import IrdItem from "./components/IrdItem";
 import dayjs from "dayjs";
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import {PROJECT_IRDS_SYNC_MUTATION, SET_IRD_TEMPLATE_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
+import { PROJECT_IRDS_SYNC_MUTATION, SET_IRD_TEMPLATE_TO_PROJECT_MUTATION } from "../../graphql/mutationsProject";
+import { IRDS_QUERY_COMPACT } from "../../graphql/queriesCompact";
+import IrdItem from "./components/IrdItem";
 
-import {NotificationContext} from "../../NotificationProvider";
-import OrganizationForm from "../simplesForms/OrganizationForm";
+import { NotificationContext } from "../../NotificationProvider";
+import { ModalButton } from "../simplesForms/formComponents/ModalButtonComponent";
 import IrdForm from "../simplesForms/IrdForm";
-import {ModalButton} from "../simplesForms/formComponents/ModalButtonComponent";
-import TemplatesStageForm from "../simplesForms/TemplatesStageForm";
 import TemplatesIrdsForm from "../simplesForms/TemplatesIrdsForm";
 
 const IrdToProjectForm = ({project, onCompleted, ...cardProps}) => {
@@ -108,17 +105,17 @@ const IrdToProjectForm = ({project, onCompleted, ...cardProps}) => {
                                   <Space direction={"vertical"} style={{width: "100%"}}>
 
                                       <Popconfirm
-                                          disabled={!project.type_project_document.template_project_id}
+                                          disabled={!project.type_project_document?.template_project_id}
                                           okButtonProps={{
-                                              disabled: !project.type_project_document.template_project_id,
+                                              disabled: !project.type_project_document?.template_project_id,
                                               onClick: () => mutateTemplate({
                                                   variables: {
                                                       projectId: project.id,
-                                                      templateProjectId: project.type_project_document.template_project_id
+                                                      templateProjectId: project.type_project_document?.template_project_id
                                                   }
                                               })
                                           }}>
-                                          <Button disabled={!project.type_project_document.template_project_id}
+                                          <Button disabled={!project.type_project_document?.template_project_id}
                                                   style={{width: "100%"}}>Загрузить
                                               заданный
                                               шаблон</Button>

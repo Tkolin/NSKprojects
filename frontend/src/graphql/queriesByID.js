@@ -1,4 +1,4 @@
-import {gql} from '@apollo/client';
+import { gql } from '@apollo/client';
 
 export const EMPLOYEES_TO_TASK_BY_PROJECT_TASK_ID = gql`
     query EmpToTaskByProjectTaskId  ( $taskId: ID)  {
@@ -55,6 +55,18 @@ export const BANKS_QUERY_BY_ID = gql`
         }
     }
 `;
+export const REFERENCES_QUERY_BY_ID = gql`
+    query ReferencesQueryByID  ( $id: ID) {
+        references (queryType: "BY_ID", id: $id)
+        {
+            items{
+                id
+                name
+            }
+        }
+    }
+`;
+
 export const PASSPORTS_PLACE_ISSUES_QUERY_BY_ID = gql`
     query PPIQueryByID ( $id: ID) {
         passportPlaceIssues  (queryType: "BY_ID", id: $id) {

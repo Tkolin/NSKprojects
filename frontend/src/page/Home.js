@@ -1,11 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {Button, Card, Col, Divider, Popover, Row, Space} from "antd";
+import { Button, Space } from "antd";
+import React, { useEffect, useState } from 'react';
 
 import '../style.css';
-import {useQuery} from "@apollo/client";
-import {GET_CURRENT_USER} from "../graphql/queries";
-import {MenuItemsByPermission} from "./MenuItems";
-import {useNavigate} from "react-router-dom"; // Подключаем файл со стилями для анимации
+
+import { useNavigate } from "react-router-dom"; // Подключаем файл со стилями для анимации
 
 const Home = () => {
     const navigate = useNavigate();
@@ -26,8 +24,10 @@ const Home = () => {
 
     return (
         <>
-
-            {user?.permissions && MenuItemsByPermission(user ?? null)?.map((main_row) => {
+            <Space data-permission={"kkf"}>
+                <Button>Пельмени</Button>
+            </Space>
+            {/* {user?.permissions && MenuItemsByPermission(user ?? null)?.map((main_row) => {
                 if (!main_row || !main_row.children)
                     return null;
                 return (
@@ -76,7 +76,7 @@ const Home = () => {
                         </Row>
                     </>
                 )
-            })}
+            })} */}
 
         </>
     );

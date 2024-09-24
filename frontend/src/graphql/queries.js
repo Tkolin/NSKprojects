@@ -1,4 +1,4 @@
-import {gql} from '@apollo/client';
+import { gql } from '@apollo/client';
 
 export const FENRIR_QUERY = gql`
     query FenrirQuery  ($queryOptions: QueryOptions) {
@@ -19,6 +19,23 @@ export const TASKS_QUERY = gql`
             items {
                 id
                 name
+            }
+            count
+        }
+    }
+`;
+export const REFERENCES_QUERY = gql`
+    query ReferencesQuery  ($queryOptions: QueryOptions) {
+        references  (queryOptions: $queryOptions) {
+            items {
+                id
+                name
+                content { # массив
+                    key
+                    name
+                    value
+                    description
+                }
             }
             count
         }

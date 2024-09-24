@@ -1,14 +1,14 @@
-import React, {useState} from 'react';
-import {useMutation, useQuery} from '@apollo/client';
-import {Col, Descriptions, Form, Modal, notification, Row, Space, Table,} from 'antd';
-import {PERSONS_QUERY} from '../../graphql/queries';
-import {DELETE_PERSON_MUTATION} from '../../graphql/mutationsPerson';
+import { useMutation, useQuery } from '@apollo/client';
+import { Col, Descriptions, Form, Modal, notification, Row, Space, Table, } from 'antd';
 import Search from "antd/es/input/Search";
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import PersonContractFileDownload from "../components/script/fileDownloadScripts/PersonContractFileDownload";
-import {format} from "date-fns";
-import {DeleteAndEditStyledLinkManagingDataTable} from "../components/style/TableStyles";
+import { format } from "date-fns";
+import React, { useState } from 'react';
+import { DELETE_PERSON_MUTATION } from '../../graphql/mutationsPerson';
+import { PERSONS_QUERY } from '../../graphql/queries';
+import { StyledButtonGreen } from "../components/style/ButtonStyles";
+import { DeleteAndEditStyledLinkManagingDataTable } from "../components/style/TableStyles";
 import PersonForm from "../simplesForms/PersonForm";
+import ExecutorOrderFileGenerated from "../components/script/fileGenerated/ExecutorOrderFileGenerated";
 
 const PersonTable = () => {
 
@@ -95,7 +95,7 @@ const PersonTable = () => {
         }, {
             title: 'Договор', key: 'btnContract', width: 80, align: 'center',
             render: (text, record) => (
-                <PersonContractFileDownload personId={record.id}/>
+                <ExecutorOrderFileGenerated personId={record.id}/>
             ),
         }, {
             title: 'Управление', key: 'edit', width: 100, render: (text, record) => (

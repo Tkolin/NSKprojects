@@ -1,8 +1,8 @@
-import {gql} from "@apollo/client";
+import { gql } from "@apollo/client";
 
 export const EXECUTOR_ORDER_GENERATED = gql`
-    mutation GeneratedExecutorOrder($data: [ID]! ) {
-        generatedExecutorOrder(project_task_ids: $data) {
+    mutation GeneratedExecutorOrder($projecTaskIds: [ID]!, $dateGenerated: String!  ) {
+        generatedExecutorOrder(project_task_ids: $projecTaskIds, date_generated: $dateGenerated) {
             url
             file {
                 id
@@ -11,5 +11,10 @@ export const EXECUTOR_ORDER_GENERATED = gql`
                 size
             }
         }
+    }
+`;
+export const EXECUTOR_ORDER_REMOVE= gql`
+    mutation RemoveExecutorOrder($orederId: ID!  ) {
+        removeExecutorOrder(oreder_id: $orederId) 
     }
 `;

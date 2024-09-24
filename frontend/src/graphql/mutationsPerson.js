@@ -1,4 +1,4 @@
-import {gql} from "@apollo/client";
+import { gql } from "@apollo/client";
 
 export const DELETE_PERSON_MUTATION = gql`
     mutation DeletContact($id: ID! ) {
@@ -144,15 +144,15 @@ export const UPDATE_PPI_MUTATION = gql`
         }
     }
 `;
-export const CONTRACT_PERSON_MUTATION = gql`
-    mutation PersonOrderFileDownload(
-        $id: ID!, $tasksId: [ID]
-    ) {
-        personOrderFileDownload(
-            personId: $id
-            tasksId: $tasksId
-        ) {
-            url
-        }
-    }
-`;
+// export const CONTRACT_PERSON_MUTATION = gql`
+//     mutation personOrderFileGenerated(
+//         $id: ID!, $tasksId: [ID]
+//     ) {
+//         personOrderFileGenerated(
+//             personId: $id
+//             tasksId: $tasksId
+//         ) {
+//             url
+//         }
+//     }
+// `;

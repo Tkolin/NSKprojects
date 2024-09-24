@@ -21,7 +21,7 @@ class TaskExecutorContractGeneratorService extends DocumentGeneratorService
     public function generate(array $data)
     {
         // Проверка, что все ключи существуют
-        if (!isset($data['projectData'], $data['personData'], $data['projectTasksData'], $data['numberOrders'])) {
+        if (!isset($data['projectData'], $data['personData'], $data['projectTasksData'], $data['numberOrders'], $data['numberOrders'])) {
             throw new Exception('Не все необходимые данные предоставлены.');
         }
         // Извлечение данных
@@ -30,6 +30,7 @@ class TaskExecutorContractGeneratorService extends DocumentGeneratorService
         $personData = $data['personData'];
         $projectTasksData = $data['projectTasksData'];
         $numberOrders = $data['numberOrders'];
+        $dateGenerated = $data['dateGenerated'];
 
         // Добор данных
         $myOrg = FormatterService::getMyOrg();
@@ -39,9 +40,8 @@ class TaskExecutorContractGeneratorService extends DocumentGeneratorService
             $contractPrice += $projectTask->price;
         }
         // Загрузка шаблона в PhpWord
-        $date = date('Y-m-d');
 
-        $dateComponents = explode('-', $date);
+        $dateComponents = explode('-', $dateGenerated);
         $year = $dateComponents[0] ?? "__";
         $month = $dateComponents[1] ? MonthEnum::getMonthName($dateComponents[1]) : "__";
         $day = $dateComponents[2] ?? "__";
@@ -88,8 +88,8 @@ class TaskExecutorContractGeneratorService extends DocumentGeneratorService
             'person.passport.number' => $personData['passport']['number'] ?? null,
             'person.passport.date' => $personData['passport']['date'] ?? null,
             'person.passport.birth_date' => $personData['passport']['birth_date'] ?? null,
-            'person.passport.passport_place_issue.name' => $personData['passport']['passport_place_issue']['name'] ?? null,
-            'person.passport.address_registration' => $personData['passport']['address_registration'] ?? null,
+            'person.passport.passport_place_issue.name' => $personData['passport']['passport_place_issue']['name'] ?? "_____",
+            'person.passport.address_registration' => $personData['passport']['address_registration'] ?? "_____",
             'person.INN' => $personData['INN'] ?? null,
             'person.SNILS' => $personData['SHILS'] ?? null,
             'person.BIK.name' => isset($personData['BIK']) ? $personData['BIK']['name'] : null,
@@ -122,9 +122,9 @@ class TaskExecutorContractGeneratorService extends DocumentGeneratorService
         // Создание записи о заказе в базе данных
         $executorOrder = ExecutorOrder::create([
             'number' => $orderNumber,
-            'date_generate' => $date,
-            'date_order' => $date,
-            'date_attachment' => $date,
+            'date_generate' => $dateGenerated,
+            'date_order' => $dateGenerated,
+            'date_attachment' => $dateGenerated,
             'original_file_id' => $file->id,
         ]);
         $taskIds = $projectTasksData->pluck('id')->toArray();

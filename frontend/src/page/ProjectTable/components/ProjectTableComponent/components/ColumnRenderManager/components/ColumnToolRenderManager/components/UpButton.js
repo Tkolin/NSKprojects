@@ -1,9 +1,9 @@
-import {Badge, Button, Popconfirm, Tooltip} from "antd";
-import {DeleteOutlined, DeliveredProcedureOutlined} from "@ant-design/icons";
-import React, {useEffect, useState} from "react";
-import {useMutation} from "@apollo/client";
-import {UP_STATUS_PROJECT} from "../../../../../../../../../graphql/mutationsProject";
+import { DeleteOutlined, DeliveredProcedureOutlined } from "@ant-design/icons";
+import { useMutation } from "@apollo/client";
+import { Badge, Button, Popconfirm, Tooltip } from "antd";
 import dayjs from "dayjs";
+import React, { useEffect, useState } from "react";
+import { UP_STATUS_PROJECT } from "../../../../../../../../../graphql/mutationsProject";
 
 
 const ArchivedButton = ({project, onCompleted}) => {
@@ -113,6 +113,9 @@ const ArchivedButton = ({project, onCompleted}) => {
         }
         setDisabledMessage(result);
     }
+    const permissions = JSON.parse(localStorage.getItem("userPermissions")).map(row=>row.name_key);
+    if(!permissions.includes("update-project"))
+        return null;
     return (
         <Popconfirm
             title={"Переход к следующему этапу"}

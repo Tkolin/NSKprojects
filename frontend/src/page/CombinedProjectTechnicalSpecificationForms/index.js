@@ -2,11 +2,11 @@ import { Button, Divider, Space } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import { EyeOutlined } from "@ant-design/icons";
-import ProjectTasksManagerForm from "../ProjectTasksManagerForm";
-import ProjectTasksStructureForm from "../ProjectTasksStructureForm";
+import ProjectTSManagerForm from '../ProjectTSManagerForm';
+import ProjectTSStructureForm from '../ProjectTSStructureForm';
 
 
-const CombinedProjectTasksForms = ({project}) => {
+const CombinedTSForms = ({project}) => {
     const [page, setPage] = useState("structure");
     const [loading, setLoading] = useState();
     useEffect(() => {
@@ -34,12 +34,12 @@ const CombinedProjectTasksForms = ({project}) => {
 
                 {
                     page === "structure" ? (
-                            <ProjectTasksStructureForm
+                            <ProjectTSStructureForm
                                 actualProject={project}
                                 setLoading={setLoading}/>
                         ) : page === "manage" ?
                           (
-                        <ProjectTasksManagerForm
+                        <ProjectTSManagerForm
                             actualProject={project}
                             setLoading={setLoading}/>
                             ) : setPage("structure")
@@ -54,4 +54,4 @@ const CombinedProjectTasksForms = ({project}) => {
 
 };
 
-export default CombinedProjectTasksForms;
+export default CombinedTSForms;

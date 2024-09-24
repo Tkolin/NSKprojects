@@ -1,12 +1,15 @@
-import {Divider, Modal, Tooltip} from "antd";
-import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
-import React, {useState} from "react";
-import CustomMenuButton from "./CustomMenuButton";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Divider, Modal, Tooltip } from "antd";
+import React, { useState } from "react";
 import ProjectFormExstra from "../../../../../../../../../../ProjectFormExstra";
+import CustomMenuButton from "./CustomMenuButton";
 
 const CRUDBlock = ({record, onUpdated}) => {
-    const [editProjectModalStatus, setEditProjectModalStatus] = useState(false);
 
+    const [editProjectModalStatus, setEditProjectModalStatus] = useState(false);
+    const permissions = JSON.parse(localStorage.getItem("userPermissions")).map(row=>row.name_key);
+    if(!permissions.includes("update-project"))
+        return null;
     return (
         <>
             <Divider style={{margin: "5px"}} orientation={"left"}>Основная информация</Divider>

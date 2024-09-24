@@ -15,7 +15,7 @@ extend type Mutation {
     downloadFile(id: ID!): Url! @checkRole(permission:  ["download-file"])
     uploadFileLink(url: String!): UploadFileLinkResponse! @checkRole(permission:  ["upload-file"])
 
-    personOrderFileDownload(
+    personOrderFileGenerated(
         personId: ID
         tasksId: [ID]
     ): Url! @checkRole(permission:  ["download-file-projectPersonOrder"])
@@ -46,8 +46,12 @@ extend type Mutation {
         projectTasksIds: [ID]
     ): Url! @checkRole(permission:  ["download-file-taskExecutorContract"])
     generatedExecutorOrder(
-        project_task_ids: [ID]
+        project_task_ids: [ID]!
+        date_generated: String!
     ): GenerateFileResult! @checkRole(permission:  ["generated-file-executorOrder"])
+    removeExecutorOrder(
+        oreder_id: ID!
+    ): Boolean @checkRole(permission:  ["remove-file-executorOrder"])
 }
 #-INPUTS:
 #-RESULTS:

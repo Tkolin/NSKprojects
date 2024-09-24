@@ -16,12 +16,6 @@ extend type Query {
 #-INPUTS:
 
 #-TYPES:
-type Reference {
-    id: ID
-    name: String
-    description: String
-    reference_values: String
-}
 
 type ProjectTaskExecutor {
     id: ID!
@@ -39,6 +33,10 @@ type ProjectStatistic{
 #   - MUTATIONS -
 #
 extend type Mutation {
+    createProjectTSChapter(
+        projectId: ID!
+        chapterIds: [ID]!
+    ): Project
     setTemplateProjectStages(
         projectId: ID!
         templateProjectId: ID!
@@ -98,6 +96,8 @@ extend type Mutation {
     projectTaskUp(
         taskId: ID!
     ): ProjectTask @checkRole(permission:  ["update-project-ird"])
+
+
 }
 #-INPUTS:
 input TaskToProjectStructureInput  {
@@ -133,7 +133,7 @@ input StageToProjectInput {
     percent: Int!
     duration: Int!
     offset: Int
- }
+}
 input RequestInput {
     name: ID!
     organization_id: ID!
@@ -154,6 +154,7 @@ input TaskToProject {
     date_start: String
     date_end: String
 }
+
 #-RESULTS:
 type CountProjectByOrganizations{
     organization_id: ID!

@@ -1,9 +1,8 @@
+import { Collapse, Descriptions, Row, Typography } from 'antd';
 import React from 'react';
-import {Row, Descriptions, Collapse, Typography, Space} from 'antd';
 
-import PaymentInvoiceProjectDownload from "../../components/script/fileDownloadScripts/PaymentInvoiceProjectDownload";
 import ActRenderingProjectDownload from "../../components/script/fileDownloadScripts/ActRenderingProjectDownload";
-import ProjectFileDownload from "../../components/script/fileDownloadScripts/ProjectFileDownload";
+import PaymentInvoiceProjectDownload from "../../components/script/fileDownloadScripts/PaymentInvoiceProjectDownload";
 const {Text} = Typography;
 
 

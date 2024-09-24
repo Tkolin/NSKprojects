@@ -1,20 +1,10 @@
-import {Button, Col, Divider, Modal, Row, Tooltip} from "antd";
 import {
-    AppstoreAddOutlined,
-    DownloadOutlined,
-    FilePdfOutlined,
-    FileWordOutlined,
-    PlusOutlined,
-    UploadOutlined
+    AppstoreAddOutlined
 } from "@ant-design/icons";
-import React, {useEffect, useState} from "react";
-import LinkToDownload from "../../../../../../../../../../components/script/LinkToDownload";
-import {UploadFilePopconfirm} from "../../../../../../../../../../components/UploadFile";
-import ProjectFileDownload
-    from "../../../../../../../../../../components/script/fileDownloadScripts/ProjectFileDownload";
-import CustomMenuButton from "./CustomMenuButton";
-import ContactForm from "../../../../../../../../../../simplesForms/ContactForm";
+import { Divider, Modal } from "antd";
+import React, { useEffect, useState } from "react";
 import CombinedProjectTasksForms from "../../../../../../../../../../CombinedProjectTasksForms";
+import CustomMenuButton from "./CustomMenuButton";
 
 
 const TasksManagementBlock = ({record, onUpdated}) => {
@@ -23,6 +13,9 @@ const TasksManagementBlock = ({record, onUpdated}) => {
     useEffect(() => {
         console.log("3 TasksManagementBlock project", record.project_tasks);
     }, [record]);
+    const permissions = JSON.parse(localStorage.getItem("userPermissions")).map(row=>row.name_key);
+    if(!permissions.includes("update-project-task"))
+        return null;
     return (
         <>
             <Divider style={{margin: "5px"}} orientation={"left"}>Управление задачами</Divider>

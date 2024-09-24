@@ -1,17 +1,17 @@
-import {Col, Divider, Row, Tooltip} from "antd";
-import {DownloadOutlined, FilePdfOutlined, FileWordOutlined, PlusOutlined, UploadOutlined} from "@ant-design/icons";
+import { DownloadOutlined, FilePdfOutlined, FileWordOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import { Col, Divider, Row, Tooltip } from "antd";
 import React from "react";
 import LinkToDownload from "../../../../../../../../../../components/script/LinkToDownload";
-import {UploadFilePopconfirm} from "../../../../../../../../../../components/UploadFile";
-import ProjectFileDownload
-    from "../../../../../../../../../../components/script/fileDownloadScripts/ProjectFileDownload";
+import { UploadFilePopconfirm } from "../../../../../../../../../../components/UploadFile";
 import CustomMenuButton from "./CustomMenuButton";
+import ProjectContractFileGenerated
+    from "../../../../../../../../../../components/script/fileGenerated/ProjectContractFileGenerated";
 
 const customLinkProps = {type: "text", style: {width: "100%"}, size: "large"}
 
 const ContractDocumentBlock = ({record, onUpdated}) => {
 
-    const getFileId = (arrayFile, isStamp = false) => {
+     const getFileId = (arrayFile, isStamp = false) => {
         const maxNumberRecord = arrayFile.filter(row => row.type === (isStamp ? "CONTRACT_STAMP" : "CONTRACT")).reduce((max, current) => {
             return (current.number > (max?.number || 0)) ? current : max;
         }, null);
@@ -19,15 +19,18 @@ const ContractDocumentBlock = ({record, onUpdated}) => {
     }
     const contractFileId = getFileId(record?.project_contract_history, false);
     const stampContractFileId = getFileId(record?.project_contract_history, true);
+    const permissions = JSON.parse(localStorage.getItem("userPermissions")).map(row=>row.name_key);
+    if(!permissions.includes("download-file-projectContract"))
+        return null;
     return (record?.contract_file_id ? (<>
         <Divider style={{margin: "5px"}} orientation={"left"}>Договор проекта</Divider>
         <LinkToDownload fileId={record.contract_file_id}><CustomMenuButton icon={<DownloadOutlined/>}>
             Скачать (подписан) от {record.date_signing}
         </CustomMenuButton>
         </LinkToDownload>
-    </>) : (<div>
-        <Divider style={{margin: "5px"}} orientation={"left"}>Формирование договора</Divider>
-        <ProjectFileDownload projectId={record.id} icon={<PlusOutlined/>}
+    </>) : (<div >
+         <Divider  style={{margin: "5px"}} orientation={"left"}>Формирование договора</Divider>
+        <ProjectContractFileGenerated  projectId={record.id} icon={<PlusOutlined/>}
                              children={<CustomMenuButton children={"Сгенерировать договор"}/>}/>
 
         {(contractFileId || stampContractFileId) && (<>

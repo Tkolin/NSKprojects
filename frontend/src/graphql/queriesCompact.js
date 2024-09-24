@@ -1,4 +1,4 @@
-import {gql} from '@apollo/client';
+import { gql } from '@apollo/client';
 
 export const TASKS_QUERY_COMPACT = gql`
     query TasksQueryCompact    {
@@ -80,6 +80,22 @@ export const PASSPORTS_PLACE_ISSUES_QUERY_COMPACT = gql`
             items{
                 id
                 name
+            }
+        }
+    }
+`;
+export const REFERENCES_QUERY_COMPACT = gql`
+    query ReferencesQueryCompact  {
+        references  (queryType: "COMPACT") {
+            items{
+                id
+                name
+                description
+                content{
+                    name
+                    key
+                    description
+                }
             }
         }
     }

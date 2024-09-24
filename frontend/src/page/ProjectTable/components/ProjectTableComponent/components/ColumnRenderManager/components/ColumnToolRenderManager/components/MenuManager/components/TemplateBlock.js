@@ -1,9 +1,9 @@
-import {notification, Popconfirm} from "antd";
-import {PushpinFilled, PushpinOutlined} from "@ant-design/icons";
-import React, {useState} from "react";
+import { PushpinFilled, PushpinOutlined } from "@ant-design/icons";
+import { useMutation } from "@apollo/client";
+import { notification, Popconfirm } from "antd";
+import React, { useState } from "react";
+import { CHANGE_TEMPLATE_TYPE_PROJECT } from "../../../../../../../../../../../graphql/mutationsProject";
 import CustomMenuButton from "./CustomMenuButton";
-import {useMutation} from "@apollo/client";
-import {CHANGE_TEMPLATE_TYPE_PROJECT} from "../../../../../../../../../../../graphql/mutationsProject";
 
 
 const TemplateMenuItem = ({isTemplate, onClick, ...props}) => {
@@ -48,14 +48,13 @@ const TemplateBlock = ({record, onUpdated}) => {
     const createTemplate = () => {
         mutateChangeTemplate({variables: {typeProject: record.type_project_document.id, newTemplate: record.id}});
     }
-
+    const permissions = JSON.parse(localStorage.getItem("userPermissions")).map(row=>row.name_key);
+    if(!permissions.includes("update-project-template"))
+        return null;
     return (
         <>
-
             <TemplateMenuItem onClick={() => createTemplate(record.id)}
                               isTemplate={record.id === record?.type_project_document?.template_project_id}/>
-
-
         </>
     )
 }

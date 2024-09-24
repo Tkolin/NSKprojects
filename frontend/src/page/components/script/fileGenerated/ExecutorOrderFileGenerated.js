@@ -1,13 +1,13 @@
-import {useMutation} from '@apollo/client';
-import {notification, Popconfirm, Typography} from 'antd';
-import {PROJECT_CONTRACT_GENERATED} from "../../../../graphql/mutationsProject";
+import { useMutation } from '@apollo/client';
+import { notification, Popconfirm, Typography } from 'antd';
 import dayjs from "dayjs";
-import {cloneElement, useState} from "react";
-import {CustomDatePicker} from "../../FormattingDateElementComponent";
+import { cloneElement, useState } from "react";
+import { EXECUTOR_ORDER_GENERATED } from '../../../../graphql/mutationsFileGenerated';
+import { CustomDatePicker } from "../../FormattingDateElementComponent";
 
 const {Text, Link} = Typography;
 
-const ProjectContractFileGenerated = ({projectId, children, ...props}) => {
+const ExecutorOrderFileGenerated = ({projecTaskIds, children, onCompleted, ...props}) => {
     const LaravelURL = process.env.REACT_APP_API_URL;
     const [selectedDateContract, setSelectedDateContract] = useState();
 
@@ -18,26 +18,30 @@ const ProjectContractFileGenerated = ({projectId, children, ...props}) => {
         });
     };
 
-    const [downloadProjectContract, {loading: loading}] = useMutation(PROJECT_CONTRACT_GENERATED, {
+    const [generatedOrder, {loading}] = useMutation(EXECUTOR_ORDER_GENERATED, {
         onCompleted: (data) => {
-            //handleDownloadClick(data.projectOrderFileDownload.url);
-            console.log(data.projectContractGenerated)
-            openNotification('topRight', 'success', <Text>Договор сгенерирован! <Link> Нажмите для
-                загрузки...</Link></Text>);
-        },
+            onCompleted && onCompleted(data)
+            openNotification('topRight', 'success', `Данные обновлены`);
+            },
         onError: (error) => {
-
-            openNotification('topRight', 'error', 'Ошибка при загрузке: ' + error.graphQLErrors?.flatMap(row => row?.extensions?.debugMessage));
-        },
+            openNotification('topRight', 'error', 'Ошибка при загрузке: ' + error.message + "/" + error.graphQLErrors?.flatMap(row => row?.extensions?.debugMessage));
+        }
     });
 
+    // const handleDownload = () => {
+    //     console.log(personId);
+    //     downloadContract({ variables: { id: personId, tasksId: tasksId } });
+    // };
+
+ 
     const handleDownload = () => {
         if (!selectedDateContract) {
             openNotification('topRight', 'error', 'Дата не указана');
             return;
         }
-        console.log(selectedDateContract);
-        downloadProjectContract({variables: {id: projectId, dateCreateContract: selectedDateContract}});
+        console.log(projecTaskIds); 
+        
+        generatedOrder({variables: { projecTaskIds: projecTaskIds, dateGenerated: selectedDateContract } });
     };
 
 
@@ -61,5 +65,5 @@ const ProjectContractFileGenerated = ({projectId, children, ...props}) => {
     );
 };
 
-export default ProjectContractFileGenerated;
+export default ExecutorOrderFileGenerated;
 

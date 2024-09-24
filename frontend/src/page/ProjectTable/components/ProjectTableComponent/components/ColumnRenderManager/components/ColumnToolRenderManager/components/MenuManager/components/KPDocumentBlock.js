@@ -1,25 +1,27 @@
-import {Button, Divider, Modal, notification, Popconfirm, Select, Space} from "antd";
-import React, {useEffect, useState} from "react";
-import {useMutation, useQuery} from "@apollo/client";
-import {GENERATED_COMMERCIAL_OFFER_MESSAGE} from "../../../../../../../../../../../graphql/mutationsProject";
+import { useMutation, useQuery } from "@apollo/client";
+import { Button, Divider, Modal, notification, Popconfirm, Select, Space } from "antd";
+import React, { useEffect, useState } from "react";
+import { GENERATED_COMMERCIAL_OFFER_MESSAGE } from "../../../../../../../../../../../graphql/mutationsProject";
 
-import {DownloadOutlined, PlusOutlined, UploadOutlined,} from "@ant-design/icons";
+import { DownloadOutlined, PlusOutlined, UploadOutlined, } from "@ant-design/icons";
 
-import {StyledButtonGreen} from "../../../../../../../../../../components/style/ButtonStyles";
+import { StyledButtonGreen } from "../../../../../../../../../../components/style/ButtonStyles";
 
 import dayjs from "dayjs";
 
-import ContactForm from "../../../../../../../../../../simplesForms/ContactForm";
-import {CONTACTS_BY_ORGANIZATION} from "../../../../../../../../../../../graphql/queriesSpecial";
+import { nanoid } from "nanoid";
+import { DOWNLOAD_FILE } from "../../../../../../../../../../../graphql/mutationsFile";
+import { CONTACTS_BY_ORGANIZATION } from "../../../../../../../../../../../graphql/queriesSpecial";
+import { CustomDatePicker } from "../../../../../../../../../../components/FormattingDateElementComponent";
 import LinkToDownload from "../../../../../../../../../../components/script/LinkToDownload";
+import { UploadFilePopconfirm } from "../../../../../../../../../../components/UploadFile";
+import ContactForm from "../../../../../../../../../../simplesForms/ContactForm";
 import CustomMenuButton from "./CustomMenuButton";
-import {CustomDatePicker} from "../../../../../../../../../../components/FormattingDateElementComponent";
-import {nanoid} from "nanoid";
-import {UploadFilePopconfirm} from "../../../../../../../../../../components/UploadFile";
-import {DOWNLOAD_FILE} from "../../../../../../../../../../../graphql/mutationsFile";
 
 
 const KPDocumentBlock = ({project, onUpdated}) => {
+
+
     const {
         loading: loadingContacts, data: dataContacts
     } = useQuery(CONTACTS_BY_ORGANIZATION, {variables: {organizationId: project?.organization_customer?.id}});
@@ -77,7 +79,9 @@ const KPDocumentBlock = ({project, onUpdated}) => {
             }
         })
     }
-
+    const permissions = JSON.parse(localStorage.getItem("userPermissions")).map(row=>row.name_key);
+    if(!permissions.includes("read-project-kp"))
+        return null;
     return (
         <>
             {project?.kp_file_id ?

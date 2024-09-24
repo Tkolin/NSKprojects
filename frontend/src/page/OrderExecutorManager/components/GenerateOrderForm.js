@@ -1,12 +1,11 @@
-import {Alert, Button, Card, Divider, Form, Tree} from "antd";
-import TextArea from "antd/es/input/TextArea";
-import {StyledButtonGreen} from "../../components/style/ButtonStyles";
-import React, {useContext, useState} from "react";
-import {CarryOutOutlined} from "@ant-design/icons";
-import {useMutation} from "@apollo/client";
-import {UPDATE_TASK_TO_PROJECT_MUTATION} from "../../../graphql/mutationsTask";
-import {EXECUTOR_ORDER_GENERATED} from "../../../graphql/mutationsFileGenerated";
-import {NotificationContext} from "../../../NotificationProvider";
+import { CarryOutOutlined } from "@ant-design/icons";
+import { useMutation } from "@apollo/client";
+import { Alert, Card, Divider, Form, Tree } from "antd";
+import React, { useContext, useState } from "react";
+import { EXECUTOR_ORDER_GENERATED } from "../../../graphql/mutationsFileGenerated";
+import { NotificationContext } from "../../../NotificationProvider";
+import ExecutorOrderFileGenerated from "../../components/script/fileGenerated/ExecutorOrderFileGenerated";
+import { StyledButtonGreen } from "../../components/style/ButtonStyles";
 
 const GenerateOrderForm = ({executorOrders, projectTasks, onCompleted}) => {
     const {openNotification} = useContext(NotificationContext);
@@ -51,13 +50,9 @@ const GenerateOrderForm = ({executorOrders, projectTasks, onCompleted}) => {
             <Tree showIcon showLine checkable checkedKeys={checkedKeys} onCheck={(data)=>setCheckedKeys(data)}
                   treeData={rebuider(projectTasks)}/>
             <Divider/>
+            <ExecutorOrderFileGenerated  projecTaskIds={checkedKeys} disabled={!checkedKeys} onCompleted={onCompleted}
+                                           children={<StyledButtonGreen children={"Сгенерировать договор"}/>}/>
 
-                 <div style={{textAlign: 'center'}}>
-                    <StyledButtonGreen loading={loadingGenerated} style={{marginBottom: 0}} type="primary"
-                        onClick={() => handleSubmit()}>
-                        Сгенерировать
-                    </StyledButtonGreen>
-                </div>
          </Card>
     )
 }

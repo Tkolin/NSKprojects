@@ -1,10 +1,13 @@
-import {Space, Typography} from "antd";
-import React from "react";
+import { Space, Typography } from "antd";
 import dayjs from "dayjs";
+import React from "react";
 
 const {Text} = Typography;
 
 const ColumnMoneyRender = ({text, record}) => {
+    const permissions = JSON.parse(localStorage.getItem("userPermissions")).map(row=>row.name_key);
+    if(!permissions.includes("read-project-payments"))
+        return null;
     return (
         <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
             <Text>Стоимость проекта: <strong>{record.price} руб.</strong></Text>

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\GraphQL\Mutations;
 
@@ -41,9 +43,10 @@ final readonly class GeneratedExecutorOrder
             ->with(['passport', 'passport.passport_place_issue'])
             ->with('bank')
             ->with('BIK')
-            ->where('id',$executorId,'id')
+            ->where('id', $executorId, 'id')
             ->first();
 
+        $dateGenerated = $args['date_generated'];
 
 
         $numberOrders = ExecutorOrder::whereHas('project_tasks', function ($query) use ($projectId) {
@@ -51,6 +54,8 @@ final readonly class GeneratedExecutorOrder
         })->count();
 
         // Проверка данных
+        if (!isset($dateGenerated))
+            throw new Exception('Дата не указана');
         if (!isset($projectData))
             throw new Exception('Проект не найден');
         if (!isset($personData))
@@ -61,8 +66,10 @@ final readonly class GeneratedExecutorOrder
         $contractFilePath = $projectGenerator->generate([
             'projectData' => $projectData,
             'personData' => $personData,
+            'dateGenerated' => $dateGenerated,
             'projectTasksData' => $projectTasksData,
-            'numberOrders' => $numberOrders]);
+            'numberOrders' => $numberOrders
+        ]);
         return ['url' => $contractFilePath];
     }
 }
