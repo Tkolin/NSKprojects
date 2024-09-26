@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProjectTSChapter extends Model
 {
@@ -14,4 +16,12 @@ class ProjectTSChapter extends Model
         'project_id',
         'ts_chapter_id'
     ];
+    public function values(): HasMany
+    {
+        return $this->hasMany(ProjectTSChapterValue::class, 'project_ts_chapter');
+    }
+    public function ts_chapter(): BelongTo
+    {
+        return $this->hasMany(TechnicalSpecificationChapter::class);
+    }
 }

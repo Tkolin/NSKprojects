@@ -12,7 +12,7 @@ export const TASKS_QUERY_COMPACT = gql`
     }
 `;
 export const TS_CHAPTERS_QUERY = gql`
-    query technicalSpecificationChapters  {
+    query TechnicalSpecificationChapters  {
         technicalSpecificationChapters  (queryType: "COMPACT") {
             items {
                 id

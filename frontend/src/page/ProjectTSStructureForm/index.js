@@ -14,9 +14,9 @@ import { CustomAutoCompleteExtension } from "../components/style/SearchAutoCompl
 import { ModalButton } from "../simplesForms/formComponents/ModalButtonComponent";
 import TechSpecForm from "../simplesForms/TechChapterForm";
 
-const IrdToProjectForm = ({ project, onCompleted, ...cardProps }) => {
+const IrdToProjectForm = ({   onCompleted, ...cardProps }) => {
   const { openNotification } = useContext(NotificationContext);
-
+  const project = {id: '1'};
   // Первичные данные
   const [form] = Form.useForm();
   const [irdModalStatus, setIrdModalStatus] = useState(null);
@@ -66,23 +66,20 @@ const IrdToProjectForm = ({ project, onCompleted, ...cardProps }) => {
   //       });
   //   };
   const handleSave = () => {
-    console.log(
-      "form DATA",
-      {
-        project_id: project?.id ?? null,
-        chapters_ids: form
-          .getFieldValue("irdList")
-          .map((row) => row.chapter.selected),
-      },
-    );
+    console.log("form DATA", {
+      projectId: project?.id ?? null,
+      chapterIds: form
+        .getFieldValue("irdList")
+        .map((row) => row.chapter.selected),
+    });
     mutateChapters({
       variables: {
-        data: {
-          project_id: project?.id ?? null,
-          chapters_ids: form
+         
+          projectId: project?.id ?? null,
+          chapterIds: form
             .getFieldValue("irdList")
             .map((row) => row.chapter.selected),
-        },
+        
       },
     });
   };
@@ -114,7 +111,7 @@ const IrdToProjectForm = ({ project, onCompleted, ...cardProps }) => {
                           <Col span={12}>
                             <Tooltip title="Наименование раздела">
                               <AutoCompleteFormItem
-                                name={[index,"chapter"]}
+                                name={[index, "chapter"]}
                                 rulesValidationRequired={true}
                                 rulesValidationMessage={"Укажите раздел"}
                               >
@@ -137,11 +134,9 @@ const IrdToProjectForm = ({ project, onCompleted, ...cardProps }) => {
                               </AutoCompleteFormItem>
                             </Tooltip>
                           </Col>
-                        <Col span={11}>
-                        <TextArea>
-                            Содержание раздела
-                                                    </TextArea>
-                        </Col>
+                          <Col span={11}>
+                            <TextArea>Содержание раздела</TextArea>
+                          </Col>
                           <Col span={1}>
                             <StyledButtonRed
                               icon={<CloseOutlined />}

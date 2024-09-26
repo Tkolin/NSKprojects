@@ -10,8 +10,8 @@ extend type Query {
     projectOrdersPayments(projectId: ID!, executorId: ID!): [Project!]
 
 
-    projectTasksExecutors(taskId: ID): ProjectTaskExecutorResult @checkRole(permission:  ["read-project-task-executor"])
-    countProjectByOrganizations(organizationId: ID!): Int @checkRole(permission:  ["read-organization"])
+    projectTS(projectId: ID): ProjectTS @checkRole(permission:  ["math"])
+     projectTasksExecutors(taskId: ID): ProjectTaskExecutorResult @checkRole(permission:  ["read-project-task-executor"])
 }
 #-INPUTS:
 
@@ -25,6 +25,21 @@ type ProjectTaskExecutor {
     date_start: String
     date_end: String
 }
+type ProjectTS {
+    project_id: Float
+    ts_chapter: TSChapter
+    values: [ProjectTSValue]
+}
+type TSChapter {
+    id: ID!
+    name: String
+    content: String
+}
+type ProjectTSValue {
+    id: ID!
+    name: String
+    value: String
+}
 type ProjectStatistic{
     status: ProjectStatus
     project_ids: [ID]
@@ -33,7 +48,7 @@ type ProjectStatistic{
 #   - MUTATIONS -
 #
 extend type Mutation {
-    createProjectTSChapter(
+    projectTSChapterSync(
         projectId: ID!
         chapterIds: [ID]!
     ): Project

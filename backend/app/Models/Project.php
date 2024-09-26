@@ -72,6 +72,10 @@ class Project extends Model
     {
         return $this->hasMany(ProjectStage::class)->orderBy('number');
     }
+    public function project_ts(): HasMany
+    {
+        return $this->hasMany(ProjectTSChapter::class);
+    }
     //  irds
     public function irds(): BelongsToMany
     {

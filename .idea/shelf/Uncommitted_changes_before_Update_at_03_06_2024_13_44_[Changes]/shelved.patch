@@ -1,0 +1,229 @@
+Index: frontend/src/page/modules/project/components/StagesProjectForm.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import React, { useEffect, useState} from 'react';\r\nimport {useQuery} from '@apollo/client';\r\nimport {Button, Col, Form, Row} from 'antd';\r\nimport {\r\nSTAGES_QUERY_COMPACT\r\n} from '../../../../graphql/queriesCompact';\r\n\r\nimport StageItem from \"./StageItem\";\r\nimport { PlusOutlined} from \"@ant-design/icons\";\r\nimport dayjs from \"dayjs\";\r\nimport StagesListHeader from \"./StagesListHeader\";\r\nimport StagesListFooter from \"./StagesListFooter\";\r\n\r\nconst StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, project }) => {\r\n\r\n    // Первичные данные\r\n    const [form] = Form.useForm();\r\n\r\n    // Внешняя логика\r\n    const [totalToPercent, setTotalToPercent] = useState(0);\r\n    const [totalToDuration,setTotalToDuration] = useState(0);\r\n\r\n\r\n    const load = () => {\r\n        form.setFieldsValue({\r\n            stageList: actualStages && Object.values(actualStages)?.map((row) => ({\r\n                ...row,\r\n                date_range: [\r\n                    row?.date_range?.[0] ? dayjs(row?.date_range?.[0]) : null,\r\n                    row?.date_range?.[1] ? dayjs(row?.date_range?.[1]) : null\r\n                ]\r\n            }))\r\n\r\n        });\r\n    }\r\n    useEffect(() => {\r\n        load();\r\n    }, [actualStages]);\r\n\r\n    const {loading: loadingStages, error: errorStages, data: dataStages} =\r\n        useQuery(STAGES_QUERY_COMPACT);\r\n\r\n    const handleChange = () => {\r\n        console.log(\"stageFormChange\", form.getFieldsValue())\r\n        updateStages({...form.getFieldValue(\"stageList\")});\r\n        handleFooterUpdate();\r\n    }\r\n    const handleFooterUpdate = () => {\r\n        const stageList = form.getFieldValue('stageList');\r\n        if (Array.isArray(stageList)) {\r\n            const totalDuration = stageList.reduce((acc, item) => {\r\n                const duration = parseInt(item?.duration_item) || 0;\r\n                return acc + duration;\r\n            }, 0);\r\n            setTotalToDuration(totalDuration);\r\n        }\r\n        if (Array.isArray(stageList)) {\r\n            const totalProcent = stageList.reduce((acc, item) => {\r\n                const procent = item?.percent ?? 0;\r\n                return acc + procent;\r\n            }, 0);\r\n            setTotalToPercent(totalProcent);\r\n        }\r\n    }\r\n\r\n    return (\r\n        <Form layout=\"vertical\" onChange={() => {\r\n            handleChange();\r\n        }} form={form}>\r\n\r\n            <Form.List name=\"stageList\">\r\n                {(fields, {add, remove}) => (\r\n                    <>\r\n                        <StagesListHeader/>\r\n\r\n                        {fields.map(({key, name, ...restField}, index) => (\r\n                            <>\r\n                                <StageItem\r\n                                    form={form}\r\n\r\n                                    projectPrice={project?.price ?? 0}\r\n                                    prepayment={project?.prepayment ?? 0}\r\n\r\n                                    key={key}\r\n                                    index={index}\r\n                                    value={name}\r\n                                    stagesData={dataStages?.stages?.items}\r\n                                    removeItem={remove}\r\n                                    onChange={handleChange}\r\n                                    isFirst={index === 0}\r\n                                    isLast={index === fields.length - 1}\r\n                                    {...restField}\r\n                                />\r\n                            </>\r\n\r\n                        ))}\r\n                        <StagesListFooter\r\n                        project={project}\r\n                        totalToDuration={totalToDuration}\r\n                        totalToPercent={totalToPercent}/>\r\n\r\n                        <Row>\r\n                            <Col span={24}>\r\n                                <Button\r\n                                    type=\"dashed\"\r\n                                    onClick={() => add()}\r\n                                    style={{width: '100%'}}\r\n                                    icon={<PlusOutlined/>}\r\n                                >\r\n                                    Добавить этап\r\n                                </Button>\r\n                            </Col>\r\n                        </Row>\r\n\r\n                    </>\r\n                )}\r\n            </Form.List>\r\n        </Form>\r\n    );\r\n};\r\n\r\nexport default StagesProjectForm;\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/frontend/src/page/modules/project/components/StagesProjectForm.js b/frontend/src/page/modules/project/components/StagesProjectForm.js
+--- a/frontend/src/page/modules/project/components/StagesProjectForm.js	
++++ b/frontend/src/page/modules/project/components/StagesProjectForm.js	
+@@ -1,6 +1,6 @@
+ import React, { useEffect, useState} from 'react';
+ import {useQuery} from '@apollo/client';
+-import {Button, Col, Form, Row} from 'antd';
++import {Button, Col, Form, Row, Space} from 'antd';
+ import {
+ STAGES_QUERY_COMPACT
+ } from '../../../../graphql/queriesCompact';
+@@ -10,6 +10,7 @@
+ import dayjs from "dayjs";
+ import StagesListHeader from "./StagesListHeader";
+ import StagesListFooter from "./StagesListFooter";
++import {StyledButtonGreen} from "../../../../components/style/ButtonStyles";
+ 
+ const StagesProjectForm = ({onCompleted, onChange, updateStages, actualStages, project }) => {
+ 
+@@ -19,7 +20,7 @@
+     // Внешняя логика
+     const [totalToPercent, setTotalToPercent] = useState(0);
+     const [totalToDuration,setTotalToDuration] = useState(0);
+-
++    const [stageModalStatus, setStageModalStatus] = useState(null);
+ 
+     const load = () => {
+         form.setFieldsValue({
+@@ -99,8 +100,16 @@
+                         totalToDuration={totalToDuration}
+                         totalToPercent={totalToPercent}/>
+ 
+-                        <Row>
+-                            <Col span={24}>
++                        <Space.Compact style={{width: '100%', marginBottom: 10, marginTop: 10}}>
++                                <StyledButtonGreen
++                                    type="dashed"
++                                    onClick={() => add()}
++                                    style={{width: '30%'}}
++                                    icon={<PlusOutlined/>}
++                                >
++                                    Создать этап
++                                </StyledButtonGreen>
++
+                                 <Button
+                                     type="dashed"
+                                     onClick={() => add()}
+@@ -109,12 +118,11 @@
+                                 >
+                                     Добавить этап
+                                 </Button>
+-                            </Col>
+-                        </Row>
+-
++                            </Space.Compact>
+                     </>
+                 )}
+             </Form.List>
++            <StageModalForm
+         </Form>
+     );
+ };
+Index: frontend/src/page/modules/projectTasks/components/TasksToProjectForm.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import React, {useEffect, useState} from 'react';\r\nimport {Col, Divider, Form, Radio, Row} from \"antd\";\r\nimport TaskForm from \"../../../../components/form/modelsForms/TaskForm\";\r\nimport TasksTreeComponent from \"./TasksTreeComponent\";\r\nimport {CustomAutoCompleteAndCreateWitchEdit} from \"../../../../components/style/SearchAutoCompleteStyles\";\r\nimport {useQuery} from \"@apollo/client\";\r\nimport {LEGAL_FORM_QUERY_COMPACT, TASKS_QUERY_COMPACT} from \"../../../../graphql/queriesCompact\";\r\nimport LoadingSpinnerStyles from \"../../../../components/style/LoadingSpinnerStyles\";\r\nimport {colors} from \"../../../../components/style/colors\";\r\nimport StageRadioComponent from \"./StageRadioComponent\";\r\n\r\n\r\nconst TasksToProjectForm = ({actualTasks, updateTasks, actualProject}) => {\r\n\r\n    //Вынести за компонент\r\n    const actualStages = [\r\n        {\r\n            id: 1,\r\n            name: \"этап 1\",\r\n            number: 1,\r\n        }, {\r\n            id: 2,\r\n            name: \"этап 2\",\r\n            number: 2,\r\n\r\n        }, {\r\n            id: 3,\r\n            name: \"этап 3\",\r\n            number: 3,\r\n\r\n        }, {\r\n            id: 4,\r\n            name: \"этап 4\",\r\n            number: 4,\r\n        },\r\n    ]\r\n\r\n\r\n    const [form] = Form.useForm();\r\n    const [stageNumber, setStageNumber] = useState()\r\n\r\n\r\n    // Обновление при наличии tasks\r\n    useEffect(() => {\r\n\r\n    }, [actualTasks]);\r\n    // калбек для изменений\r\n    const formUpdate = () => {\r\n\r\n    }\r\n    // Список задач\r\n    const {\r\n        loading: loadingTasks, error: errorTasks,\r\n        data: dataTasks\r\n    } = useQuery(TASKS_QUERY_COMPACT);\r\n    const [tasksAutoComplete, setTasksAutoComplete] = useState({options: [], selected: {}});\r\n    const [tasksModalStatus, setTasksModalStatus] = useState(null);\r\n\r\n\r\n    // Синхронизация компонентов\r\n    useEffect(() => {\r\n        if (tasksAutoComplete?.selected > 0) {\r\n            const oldTasks = form.getFieldValue(\"tasks\")\r\n            const newTask = tasksAutoComplete;\r\n            console.log(\"oldTasks \", oldTasks, \" newTask\", newTask)\r\n            form.setFieldValue(\"tasks\", {\r\n                ...oldTasks,\r\n                gData: [...oldTasks?.gData ?? [], {\r\n                    title: newTask.options.find(row => row.data === newTask.selected).label,\r\n                    key: newTask.selected\r\n                }]\r\n            })\r\n        }\r\n    }, [tasksAutoComplete?.selected]);\r\n    const handleStageChange = (value) => {\r\n        form.setFieldValue(\"stage_radio\", value)\r\n    }\r\n\r\n    if (loadingTasks)\r\n        return <LoadingSpinnerStyles/>\r\n\r\n    return (\r\n        <Row gutter={1}>\r\n            <Col span={6}>\r\n                <Divider>Создание новой задачи</Divider>\r\n                <TaskForm/>\r\n            </Col>\r\n            <Col span={18}>\r\n                <Form form={form}>\r\n                    <Divider>Список этапов</Divider>\r\n                    <Form.Item name={\"stage_radio\"}>\r\n                        <StageRadioComponent\r\n                            actualStages={actualStages}\r\n                            onChange={(value) => setStageNumber(value?.number)}\r\n                        />\r\n                    </Form.Item>\r\n\r\n                    <Divider>Структура задач</Divider>\r\n\r\n                    <Form.Item name={\"tasks\"}>\r\n                        <TasksTreeComponent\r\n                            stageNumber={stageNumber }\r\n                            onChange={(value) => {\r\n                                console.log(\"TasksTreeComponent\",value);\r\n                                //updateTasks(checkedKeys, selectedKeys, gData);\r\n                            }}/>\r\n                    </Form.Item>\r\n\r\n\r\n                    <CustomAutoCompleteAndCreateWitchEdit\r\n                        formName={\"director_name\"}\r\n                        formLabel={\"Добавить задачу\"}\r\n                        placeholder={\"Начните ввод...\"}\r\n                        loading={loadingTasks}\r\n                        firstBtnOnClick={() => setTasksModalStatus(\"add\")}\r\n                        secondBtnOnClick={() => setTasksModalStatus(\"edit\")}\r\n\r\n                         data={dataTasks?.tasks?.items}\r\n                        stateSearch={tasksAutoComplete}\r\n                        setStateSearch={setTasksAutoComplete}\r\n                    />\r\n                </Form>\r\n\r\n            </Col>\r\n        </Row>\r\n\r\n    )\r\n        ;\r\n\r\n};\r\n\r\nexport default TasksToProjectForm;\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/frontend/src/page/modules/projectTasks/components/TasksToProjectForm.js b/frontend/src/page/modules/projectTasks/components/TasksToProjectForm.js
+--- a/frontend/src/page/modules/projectTasks/components/TasksToProjectForm.js	
++++ b/frontend/src/page/modules/projectTasks/components/TasksToProjectForm.js	
+@@ -1,13 +1,11 @@
+ import React, {useEffect, useState} from 'react';
+-import {Col, Divider, Form, Radio, Row} from "antd";
++import {Col, Divider, Form, Row} from "antd";
+ import TaskForm from "../../../../components/form/modelsForms/TaskForm";
+ import TasksTreeComponent from "./TasksTreeComponent";
+ import {CustomAutoCompleteAndCreateWitchEdit} from "../../../../components/style/SearchAutoCompleteStyles";
+ import {useQuery} from "@apollo/client";
+-import {LEGAL_FORM_QUERY_COMPACT, TASKS_QUERY_COMPACT} from "../../../../graphql/queriesCompact";
+-import LoadingSpinnerStyles from "../../../../components/style/LoadingSpinnerStyles";
+-import {colors} from "../../../../components/style/colors";
+-import StageRadioComponent from "./StageRadioComponent";
++import { TASKS_QUERY_COMPACT} from "../../../../graphql/queriesCompact";
++  import StageRadioComponent from "./StageRadioComponent";
+ 
+ 
+ const TasksToProjectForm = ({actualTasks, updateTasks, actualProject}) => {
+@@ -53,31 +51,30 @@
+         loading: loadingTasks, error: errorTasks,
+         data: dataTasks
+     } = useQuery(TASKS_QUERY_COMPACT);
+-    const [tasksAutoComplete, setTasksAutoComplete] = useState({options: [], selected: {}});
+     const [tasksModalStatus, setTasksModalStatus] = useState(null);
+ 
+ 
+     // Синхронизация компонентов
+-    useEffect(() => {
+-        if (tasksAutoComplete?.selected > 0) {
+-            const oldTasks = form.getFieldValue("tasks")
+-            const newTask = tasksAutoComplete;
+-            console.log("oldTasks ", oldTasks, " newTask", newTask)
++    const selectedTasks = (value) => {
++
++        console.log("selectedTasks", value);
++        if (value?.id){
++            const oldTasks = form.getFieldValue("tasks");
++
+             form.setFieldValue("tasks", {
+                 ...oldTasks,
+                 gData: [...oldTasks?.gData ?? [], {
+-                    title: newTask.options.find(row => row.data === newTask.selected).label,
+-                    key: newTask.selected
++                    title:value.name,
++                    key: value.id, //TODO: установить nanoid() если может быть несколько задач и добавить id
++                    id: value.id //а тут оставить
+                 }]
+             })
+         }
+-    }, [tasksAutoComplete?.selected]);
++    };
+     const handleStageChange = (value) => {
+         form.setFieldValue("stage_radio", value)
+     }
+ 
+-    if (loadingTasks)
+-        return <LoadingSpinnerStyles/>
+ 
+     return (
+         <Row gutter={1}>
+@@ -99,26 +96,25 @@
+ 
+                     <Form.Item name={"tasks"}>
+                         <TasksTreeComponent
+-                            stageNumber={stageNumber }
++                            stageNumber={stageNumber}
+                             onChange={(value) => {
+-                                console.log("TasksTreeComponent",value);
++                                console.log("TasksTreeComponent", value);
+                                 //updateTasks(checkedKeys, selectedKeys, gData);
+                             }}/>
+                     </Form.Item>
+-
++                    <Form.Item name={"director_name"} label={"Добавить задачу"}>
+ 
+-                    <CustomAutoCompleteAndCreateWitchEdit
+-                        formName={"director_name"}
+-                        formLabel={"Добавить задачу"}
+-                        placeholder={"Начните ввод..."}
+-                        loading={loadingTasks}
+-                        firstBtnOnClick={() => setTasksModalStatus("add")}
+-                        secondBtnOnClick={() => setTasksModalStatus("edit")}
+-
+-                         data={dataTasks?.tasks?.items}
+-                        stateSearch={tasksAutoComplete}
+-                        setStateSearch={setTasksAutoComplete}
+-                    />
++                        <CustomAutoCompleteAndCreateWitchEdit
++                            placeholder={"Начните ввод..."}
++                            loading={loadingTasks}
++                            firstBtnOnClick={() => setTasksModalStatus("add")}
++                            secondBtnOnClick={() => setTasksModalStatus("edit")}
++                            onSelect={(value)=>selectedTasks(value)}
++                            data={dataTasks?.tasks?.items}
++
++                        />
++                    </Form.Item>
++
+                 </Form>
+ 
+             </Col>
+Index: frontend/src/graphql/mutationsTask.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import {gql} from \"@apollo/client\";\r\nexport const DELETE_TASK_TO_PROJECT_MUTATION = gql`\r\n    mutation DeleteTaskToProject(\r\n        $id: ID!\r\n    ) {\r\n        deleteTaskToProject(\r\n            id: $id\r\n        ) \r\n    }\r\n`;export const UPDATE_TASK_TO_PROJECT_MUTATION = gql`\r\n    mutation UpdateTaskToProject(\r\n        $data: TasksToProject\r\n    ) {\r\n        updateTaskToProject(\r\n            data: $data\r\n        ) \r\n    }\r\n`;\r\nexport const ADD_TASK_TO_PROJECT_MUTATION = gql`\r\n    mutation AddTaskToProject(\r\n        $data: TasksToProject\r\n    ) {\r\n        createTaskToProject(\r\n            data: $data\r\n        ) \r\n    }\r\n`;\r\nexport const UPDATE_TASK_MUTATION = gql`\r\n    mutation AddAndUpdateTask(\r\n        $names: [String!]\r\n    ) {\r\n        updateTask(\r\n            names: $names\r\n        ) {\r\n            id\r\n            name\r\n        }\r\n    }\r\n`;\r\nexport const ADD_TASK_MUTATION = gql`\r\n    mutation AddAndUpdateTask(\r\n        $names: [String!]\r\n    ) {\r\n        updateTask(\r\n            names: $names\r\n        ) {\r\n            id\r\n            name\r\n        }\r\n    }\r\n`;
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/frontend/src/graphql/mutationsTask.js b/frontend/src/graphql/mutationsTask.js
+--- a/frontend/src/graphql/mutationsTask.js	
++++ b/frontend/src/graphql/mutationsTask.js	
+@@ -12,7 +12,7 @@
+         $data: TasksToProject
+     ) {
+         updateTaskToProject(
+-            data: $data
++            data: $data 
+         ) 
+     }
+ `;
+@@ -26,11 +26,11 @@
+     }
+ `;
+ export const UPDATE_TASK_MUTATION = gql`
+-    mutation AddAndUpdateTask(
+-        $names: [String!]
++    mutation updateTask(
++        $name: String!
+     ) {
+         updateTask(
+-            names: $names
++            name: $name
+         ) {
+             id
+             name
+@@ -38,11 +38,11 @@
+     }
+ `;
+ export const ADD_TASK_MUTATION = gql`
+-    mutation AddAndUpdateTask(
+-        $names: [String!]
++    mutation AddTask(
++        $name: String!
+     ) {
+-        updateTask(
+-            names: $names
++        createTask(
++            name: $name
+         ) {
+             id
+             name

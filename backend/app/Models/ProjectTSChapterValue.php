@@ -16,4 +16,8 @@ class ProjectTSChapterValue extends Model
         'project_value_id',
         'content_key'
     ];
+    public function reference(): HasMany
+    {
+        return $this->hasMany(ProjectTSChapter::class);
+    }
 }

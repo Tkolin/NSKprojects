@@ -223,26 +223,13 @@ export const SET_IRD_TEMPLATE_TO_PROJECT_MUTATION = gql`
     }
 `;
 export const PROJECT_TS_SYNC_MUTATION = gql`
-    mutation SetIrdTempProject
+    mutation ProjectTSChapterSync
     (   $projectId: ID!
         $chapterIds: [ID]!)
     {
-        setTemplateProjectIrds(project_id: $projectId, chapters_ids: $chapterIds ) {
+        projectTSChapterSync(projectId: $projectId, chapterIds: $chapterIds ) {
             id
-            project_stages {
-                project_id
-                stage_id
-                number
-                stage {
-                    id
-                    name
-                }
-                date_start
-                duration
-                date_end
-                percent
-                price
-            }
+            
         }
     }
 `;

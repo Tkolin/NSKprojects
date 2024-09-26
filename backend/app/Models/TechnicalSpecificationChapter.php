@@ -4,19 +4,24 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TechnicalSpecificationChapter extends Model
 {
-    use HasFactory;
+    protected $table = 'technical_specification_chapters';
+
     protected $fillable = [
-        'id',
         'name',
-         'content',
-        'variables_in_content',
+        'content',
+        'created_at',
+        'updated_at',
     ];
 
-    protected $casts = [
-        'content' => 'array', // Преобразование JSON в массив
-    ];
-    protected $table = 'technical_specification_chapters';
+    /**
+     * Связь "один ко многим" с TechnicalSpecificationChapterValue.
+     */
+    public function values(): HasMany
+    {
+        return $this->hasMany(TechnicalSpecificationChapterValue::class, 'chapter_id');
+    }
 }
