@@ -1,9 +1,9 @@
-import {useMutation} from '@apollo/client';
-import {notification, Popconfirm, Typography} from 'antd';
-import {PROJECT_CONTRACT_GENERATED} from "../../../../graphql/mutationsProject";
+import { useMutation } from '@apollo/client';
+import { notification, Popconfirm, Typography } from 'antd';
 import dayjs from "dayjs";
-import {cloneElement, useState} from "react";
-import {CustomDatePicker} from "../../FormattingDateElementComponent";
+import { cloneElement, useState } from "react";
+import { PROJECT_CONTRACT_GENERATED } from "../../../../graphql/mutationsProject";
+import { CustomDatePicker } from "../../FormattingDateElementComponent";
 
 const {Text, Link} = Typography;
 
@@ -55,7 +55,7 @@ const ProjectContractFileGenerated = ({projectId, children, ...props}) => {
             cancelText="Отмена"
         >
             <div>
-                {cloneElement(children, {...props, loading})}
+                {children && cloneElement(children, {...props, loading})}
             </div>
         </Popconfirm>
     );

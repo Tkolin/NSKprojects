@@ -1,21 +1,20 @@
 // MenuItems.js
 import {
-  AuditOutlined,
-  BugOutlined,
-  CalculatorOutlined,
-  ContactsOutlined,
-  EyeOutlined,
-  FileAddOutlined,
-  FileProtectOutlined,
-  FileZipOutlined,
-  FormOutlined,
-  HomeOutlined,
-  IdcardOutlined,
-  LoginOutlined,
-  ProfileOutlined,
-  SolutionOutlined,
-  SyncOutlined,
-  TeamOutlined,
+    AuditOutlined,
+    BugOutlined,
+    CalculatorOutlined,
+    ContactsOutlined,
+    EyeOutlined,
+    FileAddOutlined,
+    FileProtectOutlined,
+    FormOutlined,
+    HomeOutlined,
+    IdcardOutlined,
+    LoginOutlined,
+    ProfileOutlined,
+    SolutionOutlined,
+    SyncOutlined,
+    TeamOutlined
 } from "@ant-design/icons";
 import React from "react";
 
@@ -122,13 +121,7 @@ const MenuItems = [
     ],
 
     children: [
-      {
-        label: "Статистика по проектам",
-        key: "/project/statistic",
-        icon: <FileZipOutlined />,
-        children: null,
-        permission: ["read-project-statistic"],
-      },
+     
       {
         label: "Стадия: Заявка",
         key: "/project/request",
@@ -220,7 +213,7 @@ const MenuItems = [
     ],
   },
   {
-    label: "Бухгалтерия>",
+    label: "Бухгалтерия",
     key: "/bookeep/",
     icon: <SolutionOutlined />,
     permission: ["read-project-payments"],

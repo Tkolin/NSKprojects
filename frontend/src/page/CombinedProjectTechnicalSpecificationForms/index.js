@@ -17,7 +17,6 @@ const CombinedTSForms = ({project}) => {
         <Space>
 
             <Space direction={"vertical"}>
-
                 <Space.Compact block>
                     {/*TODO: Надо спрашивать об сохранении изменений*/}
 

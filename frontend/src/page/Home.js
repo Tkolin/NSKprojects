@@ -1,4 +1,3 @@
-import { Button, Space } from "antd";
 import React, { useEffect, useState } from 'react';
 
 import '../style.css';
@@ -24,9 +23,9 @@ const Home = () => {
 
     return (
         <>
-            <Space data-permission={"kkf"}>
+            {/* <Space data-permission={"kkf"}>
                 <Button>Пельмени</Button>
-            </Space>
+            </Space> */}
             {/* {user?.permissions && MenuItemsByPermission(user ?? null)?.map((main_row) => {
                 if (!main_row || !main_row.children)
                     return null;

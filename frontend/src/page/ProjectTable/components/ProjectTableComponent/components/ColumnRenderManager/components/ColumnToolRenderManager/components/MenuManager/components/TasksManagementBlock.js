@@ -32,6 +32,7 @@ const TasksManagementBlock = ({record, onUpdated}) => {
                 width={"max-content"}
                 children={
                     <CombinedProjectTasksForms
+                        key={record?.id + "_talsks_manager"}
                         project={record}
                     />
                 }

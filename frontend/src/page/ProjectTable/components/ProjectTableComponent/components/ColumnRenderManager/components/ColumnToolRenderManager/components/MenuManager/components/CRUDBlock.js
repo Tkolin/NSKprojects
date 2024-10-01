@@ -32,6 +32,7 @@ const CRUDBlock = ({record, onUpdated}) => {
                 footer={null}
             >
                 <ProjectFormExstra project={record}
+                                    key={record.id}
                                    onCompleted={() => {
                                        onUpdated();
                                        setEditProjectModalStatus(false)

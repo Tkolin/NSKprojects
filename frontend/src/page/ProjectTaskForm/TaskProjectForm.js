@@ -72,8 +72,8 @@ const TaskProjectForm = ({
                 price: taskToProject.price,
                 executor: taskToProject?.executor ? {
                     selected: taskToProject?.executor?.id,
-                    output: taskToProject?.executor?.passport?.lastname ?? null + " " +
-                        taskToProject?.executor?.passport?.first_name ?? null + " " + taskToProject?.executor?.passport?.patronymic ?? null,
+                    output: (taskToProject?.executor?.passport?.last_name ?? " ") + " " +
+                        (taskToProject?.executor?.passport?.first_name ?? " ") + " " + (taskToProject?.executor?.passport?.patronymic  ?? " "),
                 } : null,
                 description: taskToProject.description
             })

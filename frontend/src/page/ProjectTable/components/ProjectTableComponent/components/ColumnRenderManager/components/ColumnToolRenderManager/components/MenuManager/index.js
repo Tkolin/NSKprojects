@@ -6,6 +6,7 @@ import CRUDBlock from "./components/CRUDBlock";
 import ContractDocumentBlock from "./components/ContractDocumentBlock";
 import KPDocumentBlock from "./components/KPDocumentBlock";
 import TasksManagementBlock from "./components/TasksManagementBlock";
+import TechSpecDocumentBlock from "./components/TechSpecDocumentBlock";
 import TemplateBlock from "./components/TemplateBlock";
 
 const Index = ({record, onUpdated, itemOptions = []}) => {
@@ -24,7 +25,7 @@ const Index = ({record, onUpdated, itemOptions = []}) => {
 
             </Tooltip>
             <Drawer
-
+                key={record.id}
                 title="Меню инструментов"
                 placement="left"
                 open={open}
@@ -47,6 +48,9 @@ const Index = ({record, onUpdated, itemOptions = []}) => {
                 </>}
                 {itemOptions.includes("kp")  && <>
                     <KPDocumentBlock project={record} onUpdated={onUpdated}/>
+                </>}
+                {itemOptions.includes("tech_spec")  && <>
+                    <TechSpecDocumentBlock project={record} onUpdated={onUpdated}/>
                 </>}
 
                 {/*</Card>*/}

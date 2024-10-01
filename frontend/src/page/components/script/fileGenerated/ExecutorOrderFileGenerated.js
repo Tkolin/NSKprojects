@@ -59,7 +59,7 @@ const ExecutorOrderFileGenerated = ({projecTaskIds, children, onCompleted, ...pr
             cancelText="Отмена"
         >
             <div>
-                {cloneElement(children, {...props, loading})}
+                {children && cloneElement(children, {...props, loading})}
             </div>
         </Popconfirm>
     );

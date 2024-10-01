@@ -23,6 +23,28 @@ class FormatterService
     {
         return preg_replace('/\+(\d{1,2})?(\d{3})(\d{3})(\d{2})(\d{2})/', '+$1 ($2) $3-$4-$5', $number);
     }
+    public static function formattedMoney($number)
+    { 
+        // Форматируем число: 
+    // 1. первый параметр — само число
+    // 2. второй параметр — количество десятичных знаков (2)
+    // 3. третий параметр — разделитель для десятичных знаков (",")
+    // 4. четвертый параметр — разделитель тысяч (" ")
+    return number_format($number, 2, ',', ' ');
+    }
+    public static function removeFirstPartBeforeComma($address) {
+        if (!$address) {
+            return "_____";
+        }
+        
+        $pos = strpos($address, ',');
+        if ($pos !== false) {
+            return trim(substr($address, $pos + 1));
+        }
+        
+        return $address;
+    }
+    
     public static function formatDuration($days): string
     {
         $months = floor($days / 30); // Рассчитываем количество месяцев
@@ -77,9 +99,9 @@ class FormatterService
         return $myOrg;
     }
 
-    public static function convertToMany($value, $index = true): string
+    public static function convertToMany($value, $index = true, $customIndex = null) 
     {
-        $result = number_format($value, 0, ',', ' ') . ($index ? " р." : "");
+        $result = number_format($value, 0, ',', ' ') . $customIndex ? $customIndex : ($index ? " р." : "") ;
         return $result;
     }
 
@@ -97,7 +119,7 @@ class FormatterService
         }
         $dateComponents = explode('-', $date);
         $year = $dateComponents[0] ?? "__";
-        $month = $dateComponents[1] ? MonthEnum::getMonthRodName($dateComponents[1]) : "__";
+        $month = $dateComponents[1] ? mb_strtolower(MonthEnum::getMonthRodName($dateComponents[1])) : "__";
         $day = $dateComponents[2] ?? "__";
         return $enableHerringboneQuotes ? "«" . $day . "» " . $month . " " . $year . " г." : $day . ' ' . $month . ' ' . $year . ' г.';
     }

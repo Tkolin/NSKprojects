@@ -1,15 +1,15 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Card, Col, Form, Row, Skeleton, Space, Tooltip, Typography} from "antd";
-import TasksTreeComponent from "../ProjectTasksManagerForm/components/TasksTreeComponent";
-import {CustomAutoCompleteAndCreate,} from "../components/style/SearchAutoCompleteStyles";
-import {useMutation, useQuery} from "@apollo/client";
-import {TASKS_QUERY_COMPACT} from "../../graphql/queriesCompact";
-import {ADD_TASK_MUTATION} from "../../graphql/mutationsTask";
-import {NotificationContext} from "../../NotificationProvider";
-import {DeleteOutlined} from "@ant-design/icons";
+import { DeleteOutlined } from "@ant-design/icons";
+import { useMutation, useQuery } from "@apollo/client";
+import { Card, Col, Form, Row, Skeleton, Space, Tooltip, Typography } from "antd";
 import Link from "antd/es/typography/Link";
-import {PROJECT_TASKS_STRUCTURE_UPDATE} from "../../graphql/mutationsProject";
-import {ModalButton} from "../simplesForms/formComponents/ModalButtonComponent";
+import React, { useContext, useEffect, useState } from 'react';
+import { PROJECT_TASKS_STRUCTURE_UPDATE } from "../../graphql/mutationsProject";
+import { ADD_TASK_MUTATION } from "../../graphql/mutationsTask";
+import { TASKS_QUERY_COMPACT } from "../../graphql/queriesCompact";
+import { NotificationContext } from "../../NotificationProvider";
+import { CustomAutoCompleteAndCreate, } from "../components/style/SearchAutoCompleteStyles";
+import TasksTreeComponent from "../ProjectTasksManagerForm/components/TasksTreeComponent";
+import { ModalButton } from "../simplesForms/formComponents/ModalButtonComponent";
 
 
 const {Text} = Typography;
@@ -275,14 +275,18 @@ const ProjectTasksStructureForm = ({actualProject, setLoading, onCompleted, card
                                                       </Form.Item>
                                                       <Form.Item name={[row.number, "task_adder"]}>
                                                           <CustomAutoCompleteAndCreate
-                                                              size={"small"}
-                                                              placeholder={"Начните ввод для поиска задачи..."}
+                                                               placeholder={"Начните ввод для поиска задачи..."}
                                                               loading={loadingTasks}
                                                               firstBtnOnClick={() => {
-                                                                  mutate.rowID = row.number;
-                                                                  mutate({
-                                                                      variables: {data: {name: form.getFieldValue([row.number, "task_adder"])?.output ?? ""}}
-                                                                  })
+                                                                    const input =  form.getFieldValue([row.number, "task_adder"])?.output ?? null;
+                                                                    if(!input) {
+                                                                        openNotification('topRight', 'warning', "Введите название задачи");
+                                                                        return;
+                                                                    }
+                                                                    mutate.rowID = row.number;
+                                                                    mutate({
+                                                                        variables: {data: {name: form.getFieldValue([row.number, "task_adder"])?.output ?? ""}}
+                                                                    })
                                                               }}
                                                               saveSelected={false}
                                                               onSelect={(value) => handleSelectTask(row.number, value, handleDeleteTaskToProject)}

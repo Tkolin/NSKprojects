@@ -2,6 +2,7 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Models\Contact;
 use App\Models\Organization;
 
 final readonly class UpdateOrganization
@@ -11,7 +12,20 @@ final readonly class UpdateOrganization
     {
         $data = $args["data"];
         $organization = Organization::findOrFail($args['id']);
+        if($organization["director_id"] !==   $data['director_id']) {
+            $newDirectoContact = Contact::findOrFail($data['director_id']);
+            $newDirectoContact->position_id = 0;
+            $newDirectoContact->organization_id = $args['id'];
 
+            $newDirectoContact->save();
+            
+            
+            $oldDirectorContact = Contact::findOrFail( $organization->director_id);
+            $oldDirectorContact->position_id = null;
+
+            $oldDirectorContact->save();
+
+        }
         $organization->update([
             'legal_form_id' => $data['legal_form_id'] ?? null,
             'name' => $data['name'] ?? null,

@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import { Alert, Divider, Space } from "antd";
+import React, { useEffect, useState } from 'react';
 import './Styles.css';
 import ProjectTableComponent from "./components/ProjectTableComponent";
-import {Alert, Divider, Space} from "antd";
 import ToolBarComponent from "./components/ToolBarComponent";
 
 const template = {
@@ -29,7 +29,7 @@ const template = {
             //  Первая колонка кнопок управления таблицей
             tool: {
                 //  Компоненты скрытые в ...
-                menu: ["crud", "kp", "stages", "template"],
+                menu: ["crud", "kp","tech_spec","stages", "template"],
                 //  Кнопки быстрых действий
                 hotKey: ["archive", "up"],
             },

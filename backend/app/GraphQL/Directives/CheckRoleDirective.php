@@ -53,7 +53,7 @@ class CheckRoleDirective extends BaseDirective implements FieldMiddleware
                         // Проверяем, есть ли у пользователя хотя бы одно из необходимых разрешений
                         foreach ($allowedPermissions as $permission) {
                             if (in_array($permission, $userPermissions)) {
-                                return $previousResolver($root, $args, $context, $resolveInfo);
+                                return $previousResolver($root, $args, $context, $resolveInfo, $userPermissions);
                             }
                         }
 
