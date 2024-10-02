@@ -17,32 +17,12 @@ const {Text} = Typography;
 const ProjectTasksStructureForm = ({actualProject, setLoading, onCompleted, cardProps}) => {
     //Вынести за компонен
     const [form] = Form.useForm();
-    const [tasksModalStatus, setTasksModalStatus] = useState({options: [], selected: {}});
     const {openNotification} = useContext(NotificationContext);
     const [selectedTasksIds, setSelectedTasksIds] = useState([]);
-    const [stageTaskArray, setStageTaskArray] = useState([]);
     const [projectTasksTimings, setProjectTasksTimings] = useState({});
 
     // Функция для обновления состояния с новыми значениями
-    const handleOffsetChange = (taskId, value) => {
-        setProjectTasksTimings(prevTimings => ({
-            ...prevTimings,
-            [taskId]: {
-                ...prevTimings[taskId],
-                offset: value
-            }
-        }));
-    };
-
-    const handleDurationChange = (taskId, value) => {
-        setProjectTasksTimings(prevTimings => ({
-            ...prevTimings,
-            [taskId]: {
-                ...prevTimings[taskId],
-                duration: value
-            }
-        }));
-    };
+ 
     // const [addMarker, setAddMarker] = useState();
     // Список задач
     const {
@@ -143,7 +123,10 @@ const ProjectTasksStructureForm = ({actualProject, setLoading, onCompleted, card
 
     const handleDeleteTaskToProject = (taskToProjectId) => {
         if (taskToProjectId > 0) {
+            console.log("handleDeleteTaskToProject",taskToProjectId);
             const oldTasks = form.getFieldsValue();
+            console.log("oldTasks",oldTasks);
+
             if (!oldTasks)
                 return;
             const newTasks = {};
@@ -152,7 +135,7 @@ const ProjectTasksStructureForm = ({actualProject, setLoading, onCompleted, card
                 newTasks[key] = {
                     ...oldTask,
                     tasks: oldTask?.tasks?.filter(row =>
-                        row.id !== taskToProjectId
+                        row.key !== taskToProjectId
                     )
                 }
             });
@@ -237,9 +220,9 @@ const ProjectTasksStructureForm = ({actualProject, setLoading, onCompleted, card
     const [mutate, {loading: loadingSave}] = useMutation(ADD_TASK_MUTATION, {
         onCompleted: (data) => {
             refetchTasks();
-            const rowID = mutate.rowID;
+            //const rowID = mutate.rowID;
             openNotification('topRight', 'success', `Задача создана`);
-            handleSelectTask(rowID, data?.createTask);
+            //handleSelectTask(rowID, data?.createTask, handleDeleteTaskToProject);
         },
         onError: (error) => {
             openNotification('topRight', 'error', `Ошибка при создании задачи: ${error.message}`);
@@ -267,6 +250,7 @@ const ProjectTasksStructureForm = ({actualProject, setLoading, onCompleted, card
                                   {!loadingTasks ?
                                       (actualProject?.project_stages?.map((row) => (
                                           <Card style={{marginBottom: 5, paddingTop: 0}}
+                                                key={row.number+"_stage"} 
                                                 title={row?.number + " " + row?.stage?.name}>
                                               <Space.Compact style={{width: "100%"}} direction={"vertical"}>
                                                   <div style={{width: "100%"}}>
@@ -275,7 +259,7 @@ const ProjectTasksStructureForm = ({actualProject, setLoading, onCompleted, card
                                                       </Form.Item>
                                                       <Form.Item name={[row.number, "task_adder"]}>
                                                           <CustomAutoCompleteAndCreate
-                                                               placeholder={"Начните ввод для поиска задачи..."}
+                                                              placeholder={"Начните ввод для поиска задачи..."}
                                                               loading={loadingTasks}
                                                               firstBtnOnClick={() => {
                                                                     const input =  form.getFieldValue([row.number, "task_adder"])?.output ?? null;

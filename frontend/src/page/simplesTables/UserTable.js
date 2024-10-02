@@ -1,12 +1,12 @@
-import React, {useContext, useState} from 'react';
-import {useMutation, useQuery} from '@apollo/client';
-import {Form, Space, Table, Typography} from 'antd';
-import {USERS_QUERY} from '../../graphql/queries';
-import {DELETE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
+import { useMutation, useQuery } from '@apollo/client';
+import { Form, Space, Table, Typography } from 'antd';
 import Search from "antd/es/input/Search";
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import {format} from "date-fns";
-import {NotificationContext} from "../../NotificationProvider";
+import { format } from "date-fns";
+import React, { useContext, useState } from 'react';
+import { DELETE_CONTACT_MUTATION } from '../../graphql/mutationsContact';
+import { USERS_QUERY } from '../../graphql/queries';
+import { NotificationContext } from "../../NotificationProvider";
+import { StyledButtonGreen } from "../components/style/ButtonStyles";
 
 const {Text} = Typography;
 const UserTable = () => {
@@ -98,7 +98,7 @@ const UserTable = () => {
                     <Search
                         placeholder="Найти..."
                         allowClear
-                        enterButton="Найти"
+                        
                         onSearch={onSearch}
                     />
                     <StyledButtonGreen

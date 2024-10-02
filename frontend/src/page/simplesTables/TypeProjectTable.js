@@ -1,14 +1,14 @@
-import React, {useState} from 'react';
-import {useMutation, useQuery} from '@apollo/client';
-import {Form,  notification, Space, Table} from 'antd';
-import {TYPES_PROJECTS_QUERY} from '../../graphql/queries';
-import {DELETE_TYPE_PROJECT_MUTATION} from '../../graphql/mutationsTypeProject';
+import { useMutation, useQuery } from '@apollo/client';
+import { Form, notification, Space, Table } from 'antd';
+import React, { useState } from 'react';
+import { DELETE_TYPE_PROJECT_MUTATION } from '../../graphql/mutationsTypeProject';
+import { TYPES_PROJECTS_QUERY } from '../../graphql/queries';
 
 import Search from "antd/es/input/Search";
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import {DeleteAndEditStyledLinkManagingDataTable} from "../components/style/TableStyles";
+import { nanoid } from "nanoid";
 import TypeProjectModalForm from "../components/modal/TypeProjectModalForm";
-import {nanoid} from "nanoid";
+import { StyledButtonGreen } from "../components/style/ButtonStyles";
+import { DeleteAndEditStyledLinkManagingDataTable } from "../components/style/TableStyles";
 
 const TypeProjectTable = () => {
 
@@ -113,7 +113,7 @@ const TypeProjectTable = () => {
                         <Search
                             placeholder="Найти..."
                             allowClear
-                            enterButton="Найти"
+                            
                             onSearch={onSearch}
                         />
                         <StyledButtonGreen style={{marginBottom: 0}}

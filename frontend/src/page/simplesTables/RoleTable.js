@@ -1,15 +1,15 @@
-import React, {useContext, useState} from 'react';
-import {useMutation, useQuery} from '@apollo/client';
-import {Form, Modal, Space, Table, Typography} from 'antd';
-import {ROLES_TABLE} from '../../graphql/queries';
-import {DELETE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
-import Search from "antd/es/input/Search";
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import {format} from "date-fns";
-import {nanoid} from "nanoid";
-import {NotificationContext} from "../../NotificationProvider";
+import { useMutation, useQuery } from '@apollo/client';
+import { Form, Input, Modal, Space, Table, Typography } from 'antd';
+import { format } from "date-fns";
+import React, { useContext, useState } from 'react';
+import { DELETE_CONTACT_MUTATION } from '../../graphql/mutationsContact';
+import { ROLES_TABLE } from '../../graphql/queries';
+import { NotificationContext } from "../../NotificationProvider";
+import { StyledButtonGreen } from "../components/style/ButtonStyles";
 import ContactForm from "../simplesForms/ContactForm";
 const {Text} = Typography;
+const { Search } = Input;
+
 const RoleTable = () => {
 
     // Состояния
@@ -106,7 +106,7 @@ const RoleTable = () => {
                     <Search
                         placeholder="Найти..."
                         allowClear
-                        enterButton="Найти"
+                        
                         onSearch={onSearch}
                     />
                     <StyledButtonGreen

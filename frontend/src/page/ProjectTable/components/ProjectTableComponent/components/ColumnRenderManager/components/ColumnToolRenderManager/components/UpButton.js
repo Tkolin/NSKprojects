@@ -2,11 +2,12 @@ import { DeleteOutlined, DeliveredProcedureOutlined } from "@ant-design/icons";
 import { useMutation } from "@apollo/client";
 import { Badge, Button, Popconfirm, Tooltip } from "antd";
 import dayjs from "dayjs";
+import { nanoid } from "nanoid";
 import React, { useEffect, useState } from "react";
 import { UP_STATUS_PROJECT } from "../../../../../../../../../graphql/mutationsProject";
 
 
-const ArchivedButton = ({project, onCompleted}) => {
+const UpButton = ({project, onCompleted}) => {
 
     const [changeProjectStatusMutate, {loading: changeProjectStatusLoading}] = useMutation(UP_STATUS_PROJECT, {
         onCompleted: () => {
@@ -134,9 +135,9 @@ const ArchivedButton = ({project, onCompleted}) => {
                 }
             })}
         >
-            <Tooltip title={(disabledMessage.length > 0) &&
+            <Tooltip key={nanoid()} title={(disabledMessage.length > 0) &&
                 disabledMessage.map(row => {
-                    return <>{row}<br/></>
+                    return <div  key={nanoid()}>{row}<br/></div>
                 })}>
                 <Badge count={disabledMessage.length} offset={[-5, 0]}>
                     <Button className={!(disabledMessage.length > 0) && "green-btn"}
@@ -152,4 +153,4 @@ const ArchivedButton = ({project, onCompleted}) => {
         </Popconfirm>
     )
 }
-export default ArchivedButton;
+export default UpButton;

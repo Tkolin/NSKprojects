@@ -1,10 +1,9 @@
-import {Alert, Col, notification, Progress, Row, Space, Table, Tooltip, Typography} from "antd";
-import React, {useEffect} from "react";
-import {EditOutlined} from "@ant-design/icons";
+import { useMutation } from "@apollo/client";
+import { Alert, Col, notification, Progress, Row, Space, Table, Tooltip, Typography } from "antd";
 import Link from "antd/es/typography/Link";
 import dayjs from "dayjs";
-import {useMutation} from "@apollo/client";
-import {PROJECT_TASK_UP_MUTATION} from "../../../../../../../graphql/mutationsProject";
+import React, { useEffect } from "react";
+import { PROJECT_TASK_UP_MUTATION } from "../../../../../../../graphql/mutationsProject";
 
 const openNotification = (placement, type, message) => {
     notification[type]({
@@ -79,78 +78,51 @@ const TableProjectTasksManagment = ({setEditModalStatus, project}) => {
 
 export default TableProjectTasksManagment;
 const CustomProgressBar = ({projectTask, ...props}) => {
-
-    const progress = dayjs(projectTask.date_start).diff(dayjs(), "day");
-    const naturalProgress = dayjs(projectTask.date_start).diff(dayjs(), "day");
-
+    const progress = dayjs().diff(dayjs(projectTask.date_start), "day"); // дни выполнения
+    const totalDuration = dayjs(projectTask.date_end).diff(dayjs(projectTask.date_start), "day"); // общая продолжительность
+    const percentComplete = Math.min((progress / totalDuration) * 100, 100); // процент выполнения
 
     switch (projectTask.status) {
         case "NOT_EXECUTOR":
             return "Ошибка";
         case "AWAITING":
-            return (<>
-                {progress < 0 ?
-                    (<Alert style={{padding: 2}} type="info" showIcon message={
-                            <> До начала: {Math.abs(progress)} д. </>
-                        }/>
-                    )
-                    : (<Alert style={{padding: 2}} type="error" showIcon message={
-                            <> Просрочка на: {Math.abs(progress)} д. </>
-                        }/>
-                    )
-                }
-            </>);
+            return (
+                <>
+                    {progress < 0 ? (
+                        <Alert style={{ padding: 2 }} type="info" showIcon message={`До начала: ${Math.abs(progress)} д.`} />
+                    ) : (
+                        <Alert style={{ padding: 2 }} type="error" showIcon message={`Просрочка на: ${Math.abs(progress)} д.`} />
+                    )}
+                </>
+            );
         case "WORKING":
-            return (<>
-                {progress < 0 ?
-                    (progress <= projectTask.duration ?
-                            (
-                                <>
-                                    До начала: {Math.abs(progress)} д.
-                                    <Progress steps={5} percent={projectTask.duration / 100 * Math.abs(progress)}
-
-                                              size={[28, 14]}/>
-                                </>
-                            )
-                            : (
-                                <>
-                                    Просрочка на: {Math.abs(progress)} д.
-                                    <Progress steps={5} percent={Math.abs(progress) - projectTask.duration}
-                                              size={[28, 14]}/>
-                                </>
-                            )
-                    ) :
-                    (
+            return (
+                <>
+                    {progress < 0 ? (
                         <>
-                            Задача была начало заранее: {Math.abs(progress)} д.
-                            <Progress steps={5} percent={0}
-                                      size={[28, 14]}/>
+                            До начала: {Math.abs(progress)} д.
+                            <Progress steps={5} percent={percentComplete} size={[28, 14]} />
                         </>
-                    )
-                    // (
-                    //     <>
-                    //         Просрочка
-                    //         <Progress steps={5} percent={100} strokeColor={[green[6], green[6], red[5]]} size={[28, 14]}/>
-                    //         {progress >= 0 ? "До начала работы " + Math.abs(progress) : Math.abs(progress) <= projectTask.duration ? "В работе" + Math.abs(progress) : "Со дня завершения " + (Math.abs(progress) - projectTask.duration)}
-                    //
-                    //     </>)
-                    // : (<>
-                    //     Нормально
-                    //     <Progress steps={5} percent={100} strokeColor={[green[6], green[6], red[5]]} size={[28, 14]}/>
-                    //     {progress >= 0 ? "До начала работы " + Math.abs(progress) : Math.abs(progress) <= projectTask.duration ? "В работе" + Math.abs(progress) : "Со дня завершения " + (Math.abs(progress) - projectTask.duration)}
-                    // </>)
-                }
-            </>);
+                    ) : (
+                        <>
+                            Задача просрочена на: {Math.abs(progress)} д.
+                            <Progress steps={5} percent={percentComplete} size={[28, 14]} />
+                        </>
+                    )}
+                </>
+            );
         case "COMPLETED":
-            return (<>
-                Задача выполнена
-                <Progress steps={5} percent={100} size={[28, 14]}/>
-                {progress >= 0 ? "До начала работы " + Math.abs(progress) : Math.abs(progress) <= projectTask.duration ? "В работе" + Math.abs(progress) : "Со дня завершения " + (Math.abs(progress) - projectTask.duration)}
-
-            </>);
+            return (
+                <>
+                    Задача выполнена
+                    <Progress steps={5} percent={100} size={[28, 14]} />
+                </>
+            );
+        default:
+            return "Неизвестный статус";
     }
+};
 
-}
 const StatusRender = ({projectTask}) => {
     const x = 5;
     const dateNow = dayjs().subtract(projectTask.duration / x, 'day');

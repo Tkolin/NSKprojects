@@ -1,10 +1,10 @@
-import {Avatar, Badge, Button, Card, Divider, Dropdown, Space, Typography} from "antd";
-import {LoginOutlined, LogoutOutlined, MailOutlined, UserOutlined} from "@ant-design/icons";
-import React, {useEffect, useState} from "react";
-import {StyledButtonGreenGhost} from "./components/style/ButtonStyles";
-import {useNavigate} from "react-router-dom";
-import {Cookies} from "react-cookie";
+import { LoginOutlined, LogoutOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
+import { Avatar, Badge, Button, Card, Divider, Dropdown, Space, Typography } from "antd";
+import React, { useEffect, useState } from "react";
+import { Cookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 import catImage from '../resursed/cat.jpg';
+import { StyledButtonGreenGhost } from "./components/style/ButtonStyles";
 
 
 const {Text, Link} = Typography;
@@ -15,9 +15,10 @@ export const UserCard = ({}) => {
     const cookies = new Cookies();
     const [user, setUser] = useState()
     useEffect(() => {
+        console.log("localStorage.getItem(user)", localStorage.getItem("userData"));
         setUser({
             permissions: JSON.parse(localStorage.getItem("userPermissions")),
-            user: JSON.parse(localStorage.getItem("user")),
+            user: JSON.parse(localStorage.getItem("userData")),
         })
     }, []);
     const Out = () => {

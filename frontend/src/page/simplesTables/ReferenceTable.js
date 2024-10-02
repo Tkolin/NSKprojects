@@ -150,7 +150,7 @@ const ReferenceTable = () => {
             <Search
               placeholder="Найти..."
               allowClear
-              enterButton="Найти"
+              
               onSearch={onSearch}
             />
             <StyledButtonGreen

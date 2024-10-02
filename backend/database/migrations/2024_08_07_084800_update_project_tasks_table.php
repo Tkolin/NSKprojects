@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('project_tasks', function (Blueprint $table) {
-            $table->enum('status', ['NOT_EXECUTOR', 'AWAITING','WORKING', 'COMPLETED'])->default('NOT_EXECUTOR');
+            $table->enum('status', [ 'AWAITING','WORKING', 'COMPLETED'])->default('AWAITING');
         });
     }
 };

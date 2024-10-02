@@ -1,7 +1,7 @@
 import { CaretDownOutlined, CaretUpOutlined, CloseOutlined } from '@ant-design/icons';
 import { useQuery } from "@apollo/client";
 import { Button, Col, DatePicker, Form, InputNumber, Row, Space, Tooltip } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { STAGES_QUERY_COMPACT } from "../../../graphql/queriesCompact";
 import { AutoCompleteFormItem } from "../../components/CustomForm";
 import { StyledButtonRed } from "../../components/style/ButtonStyles";
@@ -18,8 +18,7 @@ const StageItem = ({
                        removeItem,
                        setStageModalStatus,
                        value,
-
-
+                        rowForm,
                    }) => {
 
 
@@ -37,6 +36,11 @@ const StageItem = ({
             })
         }
     };
+    useEffect(() => {
+        if(rowForm?.percent ?? null)
+            handlePriceChange(rowForm?.percent);
+    }, [rowForm?.percent]);
+ 
     return (
         <Row key={index} gutter={0} style={{marginBottom: 0}}>
             <Space.Compact style={{width: "100%"}}>
@@ -65,6 +69,7 @@ const StageItem = ({
                             <InputNumber disabled={true}
                                          style={{width: "100%" }}
                                          value={index + 1}
+                                         controls={false}
                                          min={1}
                                          max={25}/>
                         </Tooltip>
@@ -122,9 +127,8 @@ const StageItem = ({
                             name={[index, 'percent']}
                             rules={[{required: true, message: "Процент от стоимости обязателен"}]}>
                             <InputNumber max={100} min={0}
-                                         onChange={(value) => handlePriceChange(value)}
-
                                          suffix={"%"}
+                                         controls={false}
                                          style={{width: "100%"}}/>
                         </Form.Item>
                     </Tooltip>

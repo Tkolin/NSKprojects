@@ -1,14 +1,14 @@
-import React, {useState} from 'react';
-import {useMutation, useQuery} from '@apollo/client';
-import {Divider, Form, notification, Space, Table} from 'antd';
-import {STAGES_QUERY} from '../../graphql/queries';
-import {DELETE_STAGE_MUTATION} from '../../graphql/mutationsStage';
+import { useMutation, useQuery } from '@apollo/client';
+import { Divider, Form, notification, Space, Table } from 'antd';
 import Search from "antd/es/input/Search";
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
 import Title from "antd/es/typography/Title";
-import {DeleteAndEditStyledLinkManagingDataTable} from "../components/style/TableStyles";
-import {nanoid} from "nanoid";
+import { nanoid } from "nanoid";
+import React, { useState } from 'react';
+import { DELETE_STAGE_MUTATION } from '../../graphql/mutationsStage';
+import { STAGES_QUERY } from '../../graphql/queries';
 import StageModalForm from "../components/modal/StageModalForm";
+import { StyledButtonGreen } from "../components/style/ButtonStyles";
+import { DeleteAndEditStyledLinkManagingDataTable } from "../components/style/TableStyles";
 
 const StageTable = () => {
     // Состояния
@@ -106,7 +106,7 @@ const StageTable = () => {
                         <Search
                             placeholder="Найти..."
                             allowClear
-                            enterButton="Найти"
+                            
                             onSearch={onSearch}
                         />
                         <StyledButtonGreen

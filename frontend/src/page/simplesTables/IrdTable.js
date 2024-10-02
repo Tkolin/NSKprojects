@@ -1,15 +1,14 @@
-import React, {useState} from 'react';
-import {useMutation, useQuery} from '@apollo/client';
-import {Divider, Form, notification, Space, Table} from 'antd';
-import {IRDS_QUERY} from '../../graphql/queries';
-import {DELETE_IRD_MUTATION} from '../../graphql/mutationsIrd';
-import Search from "antd/es/input/Search";
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import Title from "antd/es/typography/Title";
-import {DeleteAndEditStyledLinkManagingDataTable} from "../components/style/TableStyles";
-import {nanoid} from "nanoid";
+import { useMutation, useQuery } from '@apollo/client';
+import { Divider, Form, Input, notification, Space, Table, Text } from 'antd';
+import { nanoid } from "nanoid";
+import React, { useState } from 'react';
+import { DELETE_IRD_MUTATION } from '../../graphql/mutationsIrd';
+import { IRDS_QUERY } from '../../graphql/queries';
 import IrdModalForm from "../components/modal/IrdModalForm";
-
+import { StyledButtonGreen } from "../components/style/ButtonStyles";
+import { DeleteAndEditStyledLinkManagingDataTable } from "../components/style/TableStyles";
+const {Search} = Input;
+const {Title} = Text;
 const IrdTable = () => {
 
     // Состояния
@@ -129,7 +128,7 @@ const IrdTable = () => {
                         <Search
                             placeholder="Найти..."
                             allowClear
-                            enterButton="Найти"
+                            
                             onSearch={onSearch}
                         />
                         <StyledButtonGreen

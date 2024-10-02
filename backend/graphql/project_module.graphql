@@ -8,6 +8,7 @@ extend type Query {
     projectsStatistic(projectStatuses: [String]!): [ProjectStatistic] @checkRole(permission:  ["read-project"])
     executorOrders(projectId: ID, executorId: ID): [ExecutorOrder!]
     projectOrdersPayments(projectId: ID!, executorId: ID!): [Project!]
+    
 
 
     projectTS(projectId: ID): ProjectTS @checkRole(permission:  ["math"])
@@ -60,7 +61,7 @@ extend type Mutation {
         projectId: ID!
         templateProjectId: ID!
     ): Project @checkRole(permission:  ["update-project-ird"])
-
+    projectTaskDateSync(projectId: ID!): [Project!] @checkRole(permission:  ["update-project-task", "create-project-task","delete-project-task"])
     projectIrdsSync(
         items: [IrdToProjectInput]!
     ): Project @checkRole(permission:  ["update-project-ird"])

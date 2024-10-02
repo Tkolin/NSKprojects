@@ -36,7 +36,8 @@ const CombinedTSForms = ({project}) => {
                             <ProjectTSStructureForm
                                 actualProject={project}
                                 setLoading={setLoading}/>
-                        ) : page === "manage" ?
+                        ) : page === "manage" ?import { Input, Space } from 'antd';
+import type { GetProps } from 'antd';
                           (
                         <ProjectTSManagerForm
                             actualProject={project}

@@ -1,19 +1,19 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Card, Form, Input, Modal, Skeleton, Space} from 'antd';
-import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
+import { Card, Form, Input, Modal, Skeleton, Space } from 'antd';
+import React, { useContext, useEffect, useState } from 'react';
 
-import {NotificationContext} from "../../NotificationProvider";
-import {CONTACTS_QUERY_COMPACT, ORGANIZATIONS_QUERY_COMPACT,} from "../../graphql/queriesCompact";
-import {CustomAutoCompleteAndCreateWitchEdit} from "../components/style/SearchAutoCompleteStyles";
-import {REQUEST_QUERY_BY_ID} from "../../graphql/queriesByID";
-import {CustomDatePicker} from "../components/FormattingDateElementComponent";
-import {ADD_REQUEST_MUTATION, UPDATE_REQUEST_MUTATION} from "../../graphql/mutationsRequest";
 import dayjs from "dayjs";
-import OrganizationForm from "./OrganizationForm";
-import {ModalButton} from "./formComponents/ModalButtonComponent";
+import { nanoid } from "nanoid";
+import { NotificationContext } from "../../NotificationProvider";
+import { ADD_REQUEST_MUTATION, UPDATE_REQUEST_MUTATION } from "../../graphql/mutationsRequest";
+import { REQUEST_QUERY_BY_ID } from "../../graphql/queriesByID";
+import { CONTACTS_QUERY_COMPACT, ORGANIZATIONS_QUERY_COMPACT, } from "../../graphql/queriesCompact";
+import { AutoCompleteFormItem } from "../components/CustomForm";
+import { CustomDatePicker } from "../components/FormattingDateElementComponent";
+import { CustomAutoCompleteAndCreateWitchEdit } from "../components/style/SearchAutoCompleteStyles";
 import ContactForm from "./ContactForm";
-import {AutoCompleteFormItem} from "../components/CustomForm";
-import {nanoid} from "nanoid";
+import OrganizationForm from "./OrganizationForm";
+import { ModalButton } from "./formComponents/ModalButtonComponent";
 
 const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     // Первичные данные
@@ -201,6 +201,7 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                                              onCompleted={(value) => {
                                                  setOrganizationModalStatus(null)
                                                  refetchOrganizations();
+                                                 refetchContacts();
                                                  form.setFieldValue("organization", {
                                                      selected: value?.id,
                                                      output: value.name

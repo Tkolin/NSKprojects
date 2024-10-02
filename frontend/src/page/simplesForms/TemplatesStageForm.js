@@ -1,10 +1,10 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Alert, Card, Select, Space} from 'antd';
-import {useMutation, useQuery} from '@apollo/client';
-import {PROJECTS_STAGES_TEMPLATES} from "../../graphql/queriesCompact";
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import {SET_STAGE_TEMPLATE_TO_PROJECT_MUTATION} from "../../graphql/mutationsProject";
-import {NotificationContext} from "../../NotificationProvider";
+import { useMutation, useQuery } from '@apollo/client';
+import { Alert, Card, Select, Space } from 'antd';
+import React, { useContext, useEffect, useState } from 'react';
+import { SET_STAGE_TEMPLATE_TO_PROJECT_MUTATION } from "../../graphql/mutationsProject";
+import { PROJECTS_STAGES_TEMPLATES } from "../../graphql/queriesCompact";
+import { NotificationContext } from "../../NotificationProvider";
+import { StyledButtonGreen } from "../components/style/ButtonStyles";
 
 const TemplatesStageForm = ({project, onCompleted}) => {
     const {loading, data} = useQuery(PROJECTS_STAGES_TEMPLATES);
@@ -12,7 +12,7 @@ const TemplatesStageForm = ({project, onCompleted}) => {
 
     const [mutate, {loading: loadingResult}] = useMutation(SET_STAGE_TEMPLATE_TO_PROJECT_MUTATION, {
         onCompleted: (data) => {
-            openNotification('topRight', 'error', `Шаблон установлен!`);
+            openNotification('topRight', 'success', `Шаблон установлен!`);
             onCompleted && onCompleted()
         },
         onError: (error) => {

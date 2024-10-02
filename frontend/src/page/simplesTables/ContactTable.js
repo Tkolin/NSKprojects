@@ -1,16 +1,16 @@
-import React, {useContext, useState} from 'react';
-import {useMutation, useQuery} from '@apollo/client';
-import {Form, Modal, Space, Table} from 'antd';
-import {CONTACTS_QUERY} from '../../graphql/queries';
-import {DELETE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
-import Search from "antd/es/input/Search";
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import {format} from "date-fns";
-import {DeleteAndEditStyledLinkManagingDataTable} from "../components/style/TableStyles";
-import {nanoid} from "nanoid";
-import {NotificationContext} from "../../NotificationProvider";
-import ContactForm from "../simplesForms/ContactForm";
+import { useMutation, useQuery } from '@apollo/client';
+import { Form, Input, Modal, Space, Table } from 'antd';
 
+import { format } from "date-fns";
+import { nanoid } from "nanoid";
+import React, { useContext, useState } from 'react';
+import { DELETE_CONTACT_MUTATION } from '../../graphql/mutationsContact';
+import { CONTACTS_QUERY } from '../../graphql/queries';
+import { NotificationContext } from "../../NotificationProvider";
+import { StyledButtonGreen } from "../components/style/ButtonStyles";
+import { DeleteAndEditStyledLinkManagingDataTable } from "../components/style/TableStyles";
+import ContactForm from "../simplesForms/ContactForm";
+const {Search} = Input;
 const ContactTable = () => {
 
     // Состояния
@@ -127,7 +127,7 @@ const ContactTable = () => {
                     <Search
                         placeholder="Найти..."
                         allowClear
-                        enterButton="Найти"
+                        
                         onSearch={onSearch}
                     />
                     <StyledButtonGreen

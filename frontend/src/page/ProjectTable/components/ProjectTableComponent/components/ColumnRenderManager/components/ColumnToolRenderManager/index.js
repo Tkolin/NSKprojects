@@ -1,7 +1,7 @@
-import {Divider, Space} from "antd";
-import MenuManager from "./components/MenuManager";
-import ExpandableButton from "./components/ExpandableButton";
+import { Divider, Space } from "antd";
 import ArchivedButton from "./components/ArchivedButton";
+import ExpandableButton from "./components/ExpandableButton";
+import MenuManager from "./components/MenuManager";
 
 import UpButton from "./components/UpButton";
 // options: {
@@ -18,7 +18,7 @@ const ColumnToolRenderManager = ({
                                  }) => {
 
     return (
-        <Space direction={"vertical"}>
+        <Space direction={"vertical"} key={record.id}>
             <MenuManager record={record} onUpdated={onUpdated} itemOptions={options?.menu}/>
             <Divider style={{margin: 0}}/>
             <Space.Compact direction={"vertical"}>
@@ -31,7 +31,7 @@ const ColumnToolRenderManager = ({
                         }
                         {
                             options.hotKey.includes("archive") &&
-                            <ArchivedButton projectId={record.id} onCompleted={onUpdated}/>
+                            <ArchivedButton  projectId={record.id} onCompleted={onUpdated}/>
                         }
                     </>)
                 }

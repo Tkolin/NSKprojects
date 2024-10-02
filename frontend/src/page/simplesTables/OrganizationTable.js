@@ -1,16 +1,15 @@
-import React, {useState} from 'react';
-import {useMutation, useQuery} from '@apollo/client';
-import {Col, Descriptions, Form, Modal, notification, Row, Space, Table} from 'antd';
-import {DELETE_ORGANIZATION_MUTATION} from '../../graphql/mutationsOrganization';
-import Search from "antd/es/input/Search";
-import {DeleteAndEditStyledLinkManagingDataTable} from "../components/style/TableStyles";
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import {ORGANIZATIONS_QUERY} from "../../graphql/queries";
+import { useMutation, useQuery } from '@apollo/client';
+import { Col, Descriptions, Form, Input, Modal, notification, Row, Space, Table } from 'antd';
+import React, { useState } from 'react';
+import { DELETE_ORGANIZATION_MUTATION } from '../../graphql/mutationsOrganization';
+import { ORGANIZATIONS_QUERY } from "../../graphql/queries";
+import { StyledButtonGreen } from "../components/style/ButtonStyles";
+import { DeleteAndEditStyledLinkManagingDataTable } from "../components/style/TableStyles";
 
 import OrganizationContactsCompactTable from "../ProjectTable/components/OrganizationContactsCompactTable";
 
 import OrganizationForm from "../simplesForms/OrganizationForm";
-
+const {Search} = Input;
 
 const OrganizationTable = () => {
     // Состояния
@@ -122,7 +121,7 @@ const OrganizationTable = () => {
                     <Search
                         placeholder="Найти..."
                         allowClear
-                        enterButton="Найти"
+                        
                         onSearch={onSearch}
                     />
                     <StyledButtonGreen

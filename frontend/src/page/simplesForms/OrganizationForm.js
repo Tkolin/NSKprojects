@@ -1,24 +1,24 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Alert, Card, Col, Form, Input, Modal, Row, Select, Skeleton, Space} from 'antd';
-import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
-import {ADD_ORGANIZATION_MUTATION, UPDATE_ORGANIZATION_MUTATION,} from '../../graphql/mutationsOrganization';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
+import { Alert, Card, Col, Form, Input, Modal, Row, Select, Skeleton, Space } from 'antd';
+import React, { useContext, useEffect, useState } from 'react';
+import { ADD_ORGANIZATION_MUTATION, UPDATE_ORGANIZATION_MUTATION, } from '../../graphql/mutationsOrganization';
 
 import 'react-dadata/dist/react-dadata.css';
+import { NotificationContext } from "../../NotificationProvider";
+import { ORGANIZATIONS_QUERY_BY_ID } from "../../graphql/queriesByID";
+import { BIKS_QUERY_COMPACT, CONTACTS_QUERY_COMPACT, LEGAL_FORM_QUERY_COMPACT, } from "../../graphql/queriesCompact";
 import './style.css';
-import {NotificationContext} from "../../NotificationProvider";
-import {BIKS_QUERY_COMPACT, CONTACTS_QUERY_COMPACT, LEGAL_FORM_QUERY_COMPACT,} from "../../graphql/queriesCompact";
-import {ORGANIZATIONS_QUERY_BY_ID} from "../../graphql/queriesByID";
 
-import {CustomAutoCompleteAndCreateWitchEdit} from "../components/style/SearchAutoCompleteStyles";
+import { CustomAutoCompleteAndCreateWitchEdit } from "../components/style/SearchAutoCompleteStyles";
 
 
-import {AddressSuggestions} from "react-dadata";
-import {StyledAddressSuggestionsInput} from "../components/style/InputStyles";
+import { AddressSuggestions } from "react-dadata";
+import { StyledAddressSuggestionsInput } from "../components/style/InputStyles";
 
-import ContactForm from "./ContactForm";
-import {ModalButton} from "./formComponents/ModalButtonComponent";
+import { AutoCompleteFormItem } from "../components/CustomForm";
 import BikForm from "./BikForm";
-import {AutoCompleteFormItem} from "../components/CustomForm";
+import ContactForm from "./ContactForm";
+import { ModalButton } from "./formComponents/ModalButtonComponent";
 
 const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardProps}) => {
     // Первичные данные
@@ -85,7 +85,7 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
 
 
     // Получение данных для выпадающих списков
-    const {loading: loadingContacts, error: errorContacts, data: dataContacts} = useQuery(CONTACTS_QUERY_COMPACT);
+    const {loading: loadingContacts, error: errorContacts, data: dataContacts, refetch: refetchContacts} = useQuery(CONTACTS_QUERY_COMPACT);
     const {loading: loadingLegalForm, error: errorLegalForm, data: dataLegalForm} = useQuery(LEGAL_FORM_QUERY_COMPACT);
     const {loading: loadingBik, error: errorBik, data: dataBik} = useQuery(BIKS_QUERY_COMPACT);
 
@@ -185,7 +185,6 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
                                               })}
                                       />
                                   </AutoCompleteFormItem>
-
                                   <Space.Compact style={{width: "100%", alignItems: 'flex-start'}}>
                                       <Form.Item name="address_legal" label="Юридический адрес" minchars={3}
                                                  delay={50}
@@ -340,10 +339,11 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
                                   cardProps={{title: "Контакт"}}
                                   options={{disabled: ["organization"]}}
                                   onCompleted={(value) => {
+                                    refetchContacts();
                                       console.log("onCompleted", value);
                                       form.setFieldValue("director", {
                                           selected: value?.id,
-                                          output: value.last_name + " " + value.first_name + " " + value?.patronymic !== null ? value?.patronymic : ""
+                                          output: value.last_name + " " + value.first_name + " " + (value?.patronymic ?? "") 
                                       });
                                       setContactModalStatus(null);
                                   }}

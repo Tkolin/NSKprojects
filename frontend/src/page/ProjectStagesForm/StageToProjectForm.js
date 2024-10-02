@@ -1,21 +1,21 @@
 import { useMutation } from "@apollo/client";
 import {
-    Alert,
-    Button,
-    Card,
-    Col,
-    Form,
-    Modal,
-    Popconfirm,
-    Row,
-    Space,
+  Alert,
+  Button,
+  Card,
+  Col,
+  Form,
+  Modal,
+  Popconfirm,
+  Row,
+  Space,
 } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 
 import { PlusOutlined } from "@ant-design/icons";
 import {
-    PROJECT_STAGE_SYNC_MUTATION,
-    SET_STAGE_TEMPLATE_TO_PROJECT_MUTATION,
+  PROJECT_STAGE_SYNC_MUTATION,
+  SET_STAGE_TEMPLATE_TO_PROJECT_MUTATION,
 } from "../../graphql/mutationsProject";
 import { NotificationContext } from "../../NotificationProvider";
 import { ModalButton } from "../simplesForms/formComponents/ModalButtonComponent";
@@ -31,7 +31,7 @@ const StageToProjectForm = ({ onCompleted, project, cardProps }) => {
   const [form] = Form.useForm();
 
   // Внешняя логика
-  const [totalToPercent, setTotalToPercent] = useState(0);
+  const [totalToPercent, setTotalToPercent] = useState( );
   const [templateModalStatus, setTemplateModalStatus] = useState(false);
   const [totalToDuration, setTotalToDuration] = useState(0);
   const [stageModalStatus, setStageModalStatus] = useState(null);
@@ -68,7 +68,7 @@ const StageToProjectForm = ({ onCompleted, project, cardProps }) => {
       }))
     );
   };
-
+ 
   useEffect(() => {
     project && load();
   }, [project, project.project_stages]);
@@ -216,7 +216,7 @@ const StageToProjectForm = ({ onCompleted, project, cardProps }) => {
                   <>
                     <StagesListHeader />
                     {fields.map(({ key, name, ...restField }, index) => (
-                      <StageItem
+                  <StageItem
                         index={index}
                         moveItem={moveItem}
                         setStageModalStatus={setStageModalStatus}
@@ -233,6 +233,7 @@ const StageToProjectForm = ({ onCompleted, project, cardProps }) => {
                           duration: project.duration,
                         }}
                         restField={restField}
+                        rowForm={form.getFieldValue("stageList")[index]}
                       />
                     ))}
                     <StagesListFooter

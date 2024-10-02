@@ -1,20 +1,19 @@
 // MenuItems.js
 import {
-    AuditOutlined,
-    BugOutlined,
-    CalculatorOutlined,
-    ContactsOutlined,
-    EyeOutlined,
-    FileAddOutlined,
-    FileProtectOutlined,
-    FormOutlined,
-    HomeOutlined,
-    IdcardOutlined,
-    LoginOutlined,
-    ProfileOutlined,
-    SolutionOutlined,
-    SyncOutlined,
-    TeamOutlined
+  AuditOutlined,
+  CalculatorOutlined,
+  ContactsOutlined,
+  EyeOutlined,
+  FileAddOutlined,
+  FileProtectOutlined,
+  FormOutlined,
+  HomeOutlined,
+  IdcardOutlined,
+  LoginOutlined,
+  ProfileOutlined,
+  SolutionOutlined,
+  SyncOutlined,
+  TeamOutlined
 } from "@ant-design/icons";
 import React from "react";
 
@@ -227,58 +226,58 @@ const MenuItems = [
       },
     ],
   },
-  {
-    label: "Пользователи",
-    key: "/user/",
-    icon: <IdcardOutlined />,
-    permission: ["dev"],
-    children: [
-      {
-        label: "Учётные записи",
-        key: "/user/person",
-        icon: null,
-        permission: ["dev"],
-        children: [
-          {
-            label: "Регистрация учётной записи",
-            key: "/user/person/form",
-            icon: null,
-            children: null,
-            permission: ["dev"],
-          },
-          {
-            label: "Список учётных записей",
-            key: "/user/person/table",
-            icon: null,
-            children: null,
-            permission: ["dev"],
-          },
-        ],
-      },
-      {
-        label: "Роли и права доступа",
-        key: "/user/role",
-        icon: null,
-        permission: ["dev"],
-        children: [
-          {
-            label: "Создать роль",
-            key: "/user/role/form",
-            icon: null,
-            children: null,
-            permission: ["dev"],
-          },
-          {
-            label: "Список ролей и прав доступа",
-            key: "/user/role/table",
-            icon: null,
-            children: null,
-            permission: ["dev"],
-          },
-        ],
-      },
-    ],
-  },
+  // {
+  //   label: "Пользователи",
+  //   key: "/user/",
+  //   icon: <IdcardOutlined />,
+  //   permission: ["dev"],
+  //   children: [
+  //     {
+  //       label: "Учётные записи",
+  //       key: "/user/person",
+  //       icon: null,
+  //       permission: ["dev"],
+  //       children: [
+  //         {
+  //           label: "Регистрация учётной записи",
+  //           key: "/user/person/form",
+  //           icon: null,
+  //           children: null,
+  //           permission: ["dev"],
+  //         },
+  //         {
+  //           label: "Список учётных записей",
+  //           key: "/user/person/table",
+  //           icon: null,
+  //           children: null,
+  //           permission: ["dev"],
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       label: "Роли и права доступа",
+  //       key: "/user/role",
+  //       icon: null,
+  //       permission: ["dev"],
+  //       children: [
+  //         {
+  //           label: "Создать роль",
+  //           key: "/user/role/form",
+  //           icon: null,
+  //           children: null,
+  //           permission: ["dev"],
+  //         },
+  //         {
+  //           label: "Список ролей и прав доступа",
+  //           key: "/user/role/table",
+  //           icon: null,
+  //           children: null,
+  //           permission: ["dev"],
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
   {
     label: "Расчёты",
     key: "/math/",
@@ -398,35 +397,35 @@ const MenuItems = [
   //     children: [],
   //     permission: ['dev1'
   // },
-  {
-    label: "",
-    key: "/test",
-    permission: ["dev"],
-    icon: <BugOutlined />,
-    children: [
-      {
-        label: "Тест 1",
-        key: "/test/test1",
-        icon: null,
-        children: null,
-        permission: ["dev"],
-      },
-      {
-        label: "Тест 2",
-        key: "/test/test2",
-        icon: null,
-        children: null,
-        permission: ["dev"],
-      },
-      {
-        label: "Распределение задач",
-        key: "/form/tasks_project",
-        icon: null,
-        children: null,
-        permission: ["dev"],
-      },
-    ],
-  },
+  // {
+  //   label: "",
+  //   key: "/test",
+  //   permission: ["dev"],
+  //   icon: <BugOutlined />,
+  //   children: [
+  //     {
+  //       label: "Тест 1",
+  //       key: "/test/test1",
+  //       icon: null,
+  //       children: null,
+  //       permission: ["dev"],
+  //     },
+  //     {
+  //       label: "Тест 2",
+  //       key: "/test/test2",
+  //       icon: null,
+  //       children: null,
+  //       permission: ["dev"],
+  //     },
+  //     {
+  //       label: "Распределение задач",
+  //       key: "/form/tasks_project",
+  //       icon: null,
+  //       children: null,
+  //       permission: ["dev"],
+  //     },
+  //   ],
+  // },
   // Без индексации
   {
     label: "Авторизация",

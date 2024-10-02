@@ -1,11 +1,9 @@
-import React, {useState} from 'react';
+import { Divider, Form, Input, Space } from "antd";
+import React, { useState } from 'react';
 import './Styles.css'; // Импорт вашего CSS файла
-import StatusLegend from "./components/StatusLegendComponent";
 import ProjectTableComponent from "./components/ProjectTableComponent";
-import {Divider, Form, Space} from "antd";
-import Title from "antd/es/typography/Title";
-import Search from "antd/es/input/Search";
-
+import StatusLegend from "./components/StatusLegendComponent";
+const {Search} = Input;
 
 const DistributionPermissionsRole = ({projectStatuses}) => {
         const [formSearch] = Form.useForm();
@@ -20,8 +18,8 @@ const DistributionPermissionsRole = ({projectStatuses}) => {
                         <Space>
                             <Search
                                 placeholder="Найти..."
-                                allowClear
-                                enterButton="Найти"
+                          
+                                
                                 onSearch={value => setSearch(value)}
                             />
                         </Space>

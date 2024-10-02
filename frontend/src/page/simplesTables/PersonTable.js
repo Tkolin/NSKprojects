@@ -1,15 +1,14 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { Col, Descriptions, Form, Modal, notification, Row, Space, Table, } from 'antd';
-import Search from "antd/es/input/Search";
+import { Col, Descriptions, Form, Input, Modal, notification, Row, Space, Table } from 'antd';
 import { format } from "date-fns";
 import React, { useState } from 'react';
 import { DELETE_PERSON_MUTATION } from '../../graphql/mutationsPerson';
 import { PERSONS_QUERY } from '../../graphql/queries';
+import ExecutorOrderFileGenerated from "../components/script/fileGenerated/ExecutorOrderFileGenerated";
 import { StyledButtonGreen } from "../components/style/ButtonStyles";
 import { DeleteAndEditStyledLinkManagingDataTable } from "../components/style/TableStyles";
 import PersonForm from "../simplesForms/PersonForm";
-import ExecutorOrderFileGenerated from "../components/script/fileGenerated/ExecutorOrderFileGenerated";
-
+const {Search} = Input;
 const PersonTable = () => {
 
     // Состояния
@@ -123,7 +122,7 @@ const PersonTable = () => {
                     <Search
                         placeholder="Найти..."
                         allowClear
-                        enterButton="Найти"
+                        
                         onSearch={onSearch}
                     />
                     <StyledButtonGreen

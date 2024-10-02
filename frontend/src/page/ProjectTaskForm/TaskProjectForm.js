@@ -115,6 +115,9 @@ const TaskProjectForm = ({
                           </Text>} type="warning" showIcon/>)}
                       <Form form={form} onFinish={handleComplete}
                             labelAlign="left" disabled={localDisabled}>
+                                <Alert message={durationLock ? "Смещение относительно начала проекта" :
+                                 "Смещение относительно начала этапа: (Продолжительность: " + limitDuration + ")"} 
+                                style={{marginBottom: "25px"}}/>
                           <FormItem name={"offset"}
                                     label={"Смещение"}>
                               <InputNumber style={{width: "100%"}} min={0}
@@ -131,7 +134,7 @@ const TaskProjectForm = ({
                                            onChange={(value) => setLimitTimes({...limitTimes, duration: value})}
                                            placeholder={"Продолжительность задачи"}/>
                           </FormItem>
-                          {limitDuration}
+                          
                           <Form.Item name="price" labelCol={{span: 8}} wrapperCol={{span: 16}}
                                      style={{width: '100%'}}
                                      label="Стоимость"  data-permission={"read-project-payments"}>

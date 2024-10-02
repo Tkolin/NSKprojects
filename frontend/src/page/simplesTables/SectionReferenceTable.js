@@ -137,7 +137,7 @@
 //                         <Search
 //                             placeholder="Найти..."
 //                             allowClear
-//                             enterButton="Найти"
+//                             
 //                             onSearch={onSearch}
 //                         />
 //                         <StyledButtonGreen   style={{    marginBottom: 0}} onClick={() => handleAdd()}>Создать новую запись</StyledButtonGreen>

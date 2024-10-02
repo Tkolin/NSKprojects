@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {Tree} from 'antd';
+import { Tree } from 'antd';
+import React from 'react';
 
 const App = ({value, onChange, onSelect, draggable, selectable, multiple, checkable, onCheck}) => {
 
