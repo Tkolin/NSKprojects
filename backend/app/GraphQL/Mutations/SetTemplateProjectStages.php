@@ -21,11 +21,12 @@ final readonly class SetTemplateProjectStages
         $projectPrepayment = (int)$currentProject->prepayment;
 
         $syncData = [];
+        $number = 1;
         foreach ($stages as $stage) {
             $percent = (int)$stage["percent"];
             $price = ($projectPrice / 100) * $percent;
             $priceToPaid = $price - ($price / 100) * $projectPrepayment;
-            $number = 1;
+          
             $syncData[(int)$stage["stage_id"]] = [
                 'number' => $number++,
 //                'date_start' => isset($stage["date_start"]) ? substr((string)$stage["date_start"], 0, 10) : null,

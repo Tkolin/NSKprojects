@@ -62,7 +62,7 @@ class TheActRenderingServicesTemplateGeneratorService extends DocumentGeneratorS
 
             'projectOrganization.director.ShortFullName' => FormatterService::getFullName($projectData["organization_customer"]['director']['last_name'],
                 $projectData["organization_customer"]['director']['first_name'],
-                $projectData["organization_customer"]['director']['patronymic'], true),
+                $projectData["organization_customer"]['director']['patronymic'], true) ?? null,
 
             'projectOrganization.nameOrType' => isset($projectData["organization_customer"]) ? $projectData["organization_customer"]["legal_form"]['name'] . " " . $projectData["organization_customer"]['name'] : "(данные отсутвуют)",
             'projectOrganization.director.position' => $projectData["organization_customer"]['director']['position']['name'] ?? null,

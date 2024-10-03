@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/client";
 import { Alert, Col, notification, Progress, Row, Space, Table, Tooltip, Typography } from "antd";
 import Link from "antd/es/typography/Link";
 import dayjs from "dayjs";
-import React, { useEffect } from "react";
+import React from "react";
 import { PROJECT_TASK_UP_MUTATION } from "../../../../../../../graphql/mutationsProject";
 
 const openNotification = (placement, type, message) => {
@@ -37,7 +37,10 @@ const TableProjectTasksManagment = ({setEditModalStatus, project}) => {
                                     </Space.Compact>
                                 </Col>
                                 <Col span={12}>
-                                    <Text strong>{record?.date_start} - {record?.date_end} ({record.duration})</Text>
+                                    <Text strong>{record?.date_start && 
+                                    dayjs(record?.date_start).format("DD.MM.YYYY")} - 
+                                        {dayjs(record?.date_end).format("DD.MM.YYYY")} 
+                                        ({record.duration})</Text>
                                 </Col>
                             </Row>
                         </Space.Compact>
@@ -88,27 +91,39 @@ const CustomProgressBar = ({projectTask, ...props}) => {
         case "AWAITING":
             return (
                 <>
-                    {progress < 0 ? (
-                        <Alert style={{ padding: 2 }} type="info" showIcon message={`До начала: ${Math.abs(progress)} д.`} />
+                    {progress < -3 ? ( 
+                        <Alert style={{ padding: 2 }} type="info" showIcon message={`До начала : ${Math.abs(progress)} д.`} />
+                    ) : 
+                    progress >= -3 && progress <= 0 ? (
+                        <Alert style={{ padding: 2 }} type="warning" showIcon message={`До начала: ${Math.abs(progress)} д.`} />
                     ) : (
                         <Alert style={{ padding: 2 }} type="error" showIcon message={`Просрочка на: ${Math.abs(progress)} д.`} />
-                    )}
+                    )
+                
+                }
                 </>
             );
         case "WORKING":
             return (
                 <>
-                    {progress < 0 ? (
+                    {progress >= 0 ? (
                         <>
-                            До начала: {Math.abs(progress)} д.
-                            <Progress steps={5} percent={percentComplete} size={[28, 14]} />
+                            В работе: {Math.abs(progress)} д.
+                            <Progress steps={5} percent={Math.trunc(percentComplete, 3)} size={[28, 14]} />
+                        </>
+                    ) : progress >= (totalDuration - 4) && progress <= totalDuration ? (
+                        <>
+                            Скоро завершение задачи: {Math.abs(progress)} д.
+                            <Progress steps={5} status="warning" percent={percentComplete} size={[28, 14]} />
                         </>
                     ) : (
                         <>
                             Задача просрочена на: {Math.abs(progress)} д.
-                            <Progress steps={5} percent={percentComplete} size={[28, 14]} />
+                            <Progress steps={5} status="error" percent={percentComplete} size={[28, 14]} />
                         </>
-                    )}
+                    )
+                    
+                    }
                 </>
             );
         case "COMPLETED":
@@ -125,10 +140,7 @@ const CustomProgressBar = ({projectTask, ...props}) => {
 
 const StatusRender = ({projectTask}) => {
     const x = 5;
-    const dateNow = dayjs().subtract(projectTask.duration / x, 'day');
-    useEffect(() => {
-        console.log(projectTask.date_end, dateNow.format("YYYY-MM-DD"), dayjs(projectTask.date_end) <= dateNow)
-    }, []);
+  
     // Мутация
     const [upMutate, {loading: loadingSave}] = useMutation(PROJECT_TASK_UP_MUTATION, {
         onCompleted: (data) => {

@@ -1,16 +1,16 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Alert, Card, Divider, Form, Input, Modal, Skeleton, Space} from 'antd';
-import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
-import {ADD_CONTACT_MUTATION, UPDATE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
-import {NotificationContext} from "../../NotificationProvider";
-import {ORGANIZATIONS_QUERY_COMPACT, POSITIONS_QUERY_COMPACT} from "../../graphql/queriesCompact";
-import {CustomAutoComplete, CustomAutoCompleteAndCreateWitchEdit} from "../components/style/SearchAutoCompleteStyles";
-import {CONTACTS_QUERY_BY_ID} from "../../graphql/queriesByID";
-import {CustomDatePicker} from "../components/FormattingDateElementComponent";
-import OrganizationForm from "./OrganizationForm";
-import {ModalButton} from "./formComponents/ModalButtonComponent";
-import {AutoCompleteFormItem} from "../components/CustomForm";
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
+import { Alert, Card, Divider, Form, Input, Modal, Skeleton, Space } from 'antd';
 import dayjs from "dayjs";
+import React, { useContext, useEffect, useState } from 'react';
+import { NotificationContext } from "../../NotificationProvider";
+import { ADD_CONTACT_MUTATION, UPDATE_CONTACT_MUTATION } from '../../graphql/mutationsContact';
+import { CONTACTS_QUERY_BY_ID } from "../../graphql/queriesByID";
+import { ORGANIZATIONS_QUERY_COMPACT, POSITIONS_QUERY_COMPACT } from "../../graphql/queriesCompact";
+import { AutoCompleteFormItem } from "../components/CustomForm";
+import { CustomDatePicker } from "../components/FormattingDateElementComponent";
+import { CustomAutoComplete, CustomAutoCompleteAndCreateWitchEdit } from "../components/style/SearchAutoCompleteStyles";
+import OrganizationForm from "./OrganizationForm";
+import { ModalButton } from "./formComponents/ModalButtonComponent";
 
 const ContactForm = ({localObject, initialObject, options, onCompleted, cardProps}) => {
     // Первичные данные
@@ -44,6 +44,7 @@ const ContactForm = ({localObject, initialObject, options, onCompleted, cardProp
             openNotification('topRight', 'error', `Ошибка при выполнении сооздания контакта: ${error.message}`);
         },
     });
+    const [coldMutate, {loading: loadingSaveCold}] = useMutation(actualObject ? UPDATE_CONTACT_MUTATION : ADD_CONTACT_MUTATION);
 
 
     // Подгрузка при обновлении
@@ -78,7 +79,7 @@ const ContactForm = ({localObject, initialObject, options, onCompleted, cardProp
         data: dataOrganizations
     } = useQuery(ORGANIZATIONS_QUERY_COMPACT);
 
-    const handleSubmit = () => {
+    const handleSubmit = (cold = false) => {
         const formData = form.getFieldsValue();
         const data = {
             last_name: formData.last_name,
@@ -92,12 +93,23 @@ const ContactForm = ({localObject, initialObject, options, onCompleted, cardProp
             organization_id: formData?.organization?.selected ?? null,
             position_id: formData?.position?.selected ?? null
         };
-        mutate({
-            variables: {
-                ...(actualObject ? {id: actualObject.id} : {}),
-                data,
-            }
-        });
+        if(cold){
+            coldMutate({
+                variables: {
+                    ...(actualObject ? {id: actualObject.id} : {}),
+                    data,
+                }
+            })
+        }
+        else{
+            mutate({
+                variables: {
+                    ...(actualObject ? {id: actualObject.id} : {}),
+                    data,
+                }
+            })
+        }
+        ;
     };
     if (errorOrganizations || errorPositions) return `Ошибка! ${errorOrganizations?.message || errorPositions?.message}`;
 
@@ -223,17 +235,20 @@ const ContactForm = ({localObject, initialObject, options, onCompleted, cardProp
                                               data={dataOrganizations?.organizations?.items}
                                               onChange={(value) => form.setFieldValue("organization", value)}
                                               placeholder="Выберите организацию"
-                                              firstBtnOnClick={() =>
+                                              firstBtnOnClick={() =>{
+                                                    handleSubmit(true);
                                                   setOrganizationModalStatus({
                                                       organization_id: form.getFieldValue("organization")?.selected,
                                                       mode: "add"
                                                   })}
-                                              secondBtnOnClick={() =>
+                                                }
+                                              secondBtnOnClick={() => {
+                                                handleSubmit(true);
                                                   form.getFieldValue("organization")?.selected &&
                                                   setOrganizationModalStatus({
                                                       organization_id: form.getFieldValue("organization")?.selected,
                                                       mode: "edit"
-                                                  })}
+                                                  })}}
                                           />
                                       </AutoCompleteFormItem> </>)}
                               </>
@@ -251,8 +266,13 @@ const ContactForm = ({localObject, initialObject, options, onCompleted, cardProp
                                      children={
                                          <OrganizationForm
                                              cardProps={{title: "Организация"}}
-                                             onCompleted={() =>
-                                                 setOrganizationModalStatus(null)}
+                                             onCompleted={(value) => {
+                                                form.setFieldValue("organization", {
+                                                    selected: value?.id,
+                                                    output: value.name 
+                                                });
+                                                 setOrganizationModalStatus(null);
+                                             }}
                                              initialObject={organizationModalStatus?.organization_id ? {id: organizationModalStatus?.organization_id} : null}
                                          />
                                      }

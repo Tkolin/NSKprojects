@@ -232,6 +232,16 @@ export const PROJECTS_QUERY = gql`
                     last_name
                     patronymic
                 }
+               
+                project_irds {
+                    stage_number
+                    application_project
+                    ird {
+                        id
+                        name
+                    }
+                    received_date
+                }
                 project_stages {
                     number
                     stage {
@@ -246,15 +256,6 @@ export const PROJECTS_QUERY = gql`
                     percent
                     price
 
-                }
-                project_irds {
-                    stage_number
-                    application_project
-                    ird {
-                        id
-                        name
-                    }
-                    received_date
                 }
                 project_tasks {
                     id

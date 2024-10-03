@@ -115,7 +115,7 @@ class FormatterService
     public static function getFullDate($date, $enableHerringboneQuotes = false): string
     {
         if (!isset($date)) {
-            throw new Exception("Дата не указана");
+           return "Дата не указана";
         }
         $dateComponents = explode('-', $date);
         $year = $dateComponents[0] ?? "__";
@@ -127,6 +127,7 @@ class FormatterService
     public static function getShortDate($date): string
     {
         if (!isset($date)) {
+            return "Дата не указана";
             throw new Exception("Дата не указана");
         }
         $dateComponents = explode('-', $date);

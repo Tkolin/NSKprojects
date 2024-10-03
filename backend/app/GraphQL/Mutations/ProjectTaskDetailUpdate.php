@@ -31,15 +31,14 @@ final readonly class ProjectTaskDetailUpdate
  //        $dateStart = $item['date_start'] ?? $task->date_start ?? null;
 //        $dateEnd = $item['date_end'] ?? $task->date_end ?? null;
 //        $duration = !(isset($dateStart) && isset($dateEnd)) ? $duration : (new \DateTime($dateStart))->diff(new \DateTime($dateEnd))->days;
-
-
-        $projectTask->fill(array_filter([
+ 
+        $projectTask->update ([
             'description' => $data['description']  ,
             'duration' => $data["duration"]  ,
             'offset' => $data['offset']  ,
             'price' => $data['price'] ,
-            'executor_id' => $data['executor_id'],
-        ]));
+            'executor_id' => $data['executor_id'] ?? null,
+        ]);
 
         $projectTask->save();
         return $projectTask;

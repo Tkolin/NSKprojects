@@ -71,6 +71,7 @@ const StageToProjectForm = ({ onCompleted, project, cardProps }) => {
  
   useEffect(() => {
     project && load();
+    handleChange();
   }, [project, project.project_stages]);
 
   const handleChange = () => {
@@ -133,13 +134,22 @@ const StageToProjectForm = ({ onCompleted, project, cardProps }) => {
         style={{ width: 1400 }}
         {...cardProps}
         actions={[
+          <div>
+            { 
+              totalToPercent && totalToPercent !== 100 && (
+                <Alert message="Скорректируйте % от стоимости проектов за этап" style={{marginBottom:"15px"}}  type="error"/>
+              )
+            }
+
           <ModalButton
             modalType={"green"}
             isMany={cardProps?.actions}
             loading={loading}
             onClick={() => form.submit()}
             children={project ? `Обновить` : `Создать`}
-          />,
+          />
+          </div>
+          ,
           ...(cardProps?.actions ?? []),
         ]}
         children={
@@ -284,6 +294,8 @@ const StageToProjectForm = ({ onCompleted, project, cardProps }) => {
                 />
               }
             />
+                       
+
           </>
         }
       />

@@ -1,18 +1,17 @@
 import { DeleteOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "@apollo/client";
 import { Card, Col, Form, Row, Skeleton, Space, Tooltip, Typography } from "antd";
-import Link from "antd/es/typography/Link";
 import React, { useContext, useEffect, useState } from 'react';
 import { PROJECT_TASKS_STRUCTURE_UPDATE } from "../../graphql/mutationsProject";
 import { ADD_TASK_MUTATION } from "../../graphql/mutationsTask";
 import { TASKS_QUERY_COMPACT } from "../../graphql/queriesCompact";
 import { NotificationContext } from "../../NotificationProvider";
 import { CustomAutoCompleteAndCreate, } from "../components/style/SearchAutoCompleteStyles";
-import TasksTreeComponent from "../ProjectTasksManagerForm/components/TasksTreeComponent";
 import { ModalButton } from "../simplesForms/formComponents/ModalButtonComponent";
+import TasksTreeComponent from "./components/TasksTreeComponent";
 
 
-const {Text} = Typography;
+const {Text, Link} = Typography;
 
 const ProjectTasksStructureForm = ({actualProject, setLoading, onCompleted, cardProps}) => {
     //Вынести за компонен
