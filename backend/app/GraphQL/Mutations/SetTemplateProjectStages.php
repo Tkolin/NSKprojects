@@ -28,7 +28,7 @@ final readonly class SetTemplateProjectStages
             $priceToPaid = $price - ($price / 100) * $projectPrepayment;
           
             $syncData[(int)$stage["stage_id"]] = [
-                'number' => $number++,
+                'number' => $stage["number"],
 //                'date_start' => isset($stage["date_start"]) ? substr((string)$stage["date_start"], 0, 10) : null,
                 'duration' => $stage["duration"] ?? null,
 //                'date_end' => isset($stage["date_end"]) ? substr((string)$stage["date_end"], 0, 10) : null,
@@ -37,7 +37,9 @@ final readonly class SetTemplateProjectStages
                 'price' => $price,
                 'price_to_paid' => $priceToPaid,
             ];
-        }
+            $number += 1;
+        }   
+
 
         $currentProject->stages()->sync($syncData);
         $currentProject = Project::with('project_stages')->find($currentProject->id);

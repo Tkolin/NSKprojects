@@ -233,6 +233,16 @@ export const PROJECT_TS_SYNC_MUTATION = gql`
         }
     }
 `;
+export const PROJECT_TASK_DATE_SYNC_MUTATION = gql`
+    mutation ProjectTaskDateSync
+    (   $id: ID!)
+    {
+        projectTaskDateSync(id: $id) {
+            id
+            
+        }
+    }
+`;
 export const SET_STAGE_TEMPLATE_TO_PROJECT_MUTATION = gql`
     mutation SetStageTempProject
     (   $projectId: ID!

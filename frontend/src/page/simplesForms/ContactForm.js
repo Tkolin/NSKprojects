@@ -132,7 +132,7 @@ const ContactForm = ({localObject, initialObject, options, onCompleted, cardProp
                       <Form
                           onChange={() => console.log("change", form.getFieldsValue())}
                           form={form}
-                          onFinish={handleSubmit}
+                          onFinish={()=>handleSubmit(false)}
                           labelCol={{span: 8}}
                           labelAlign="left"
                           wrapperCol={{span: 16}}
@@ -271,6 +271,7 @@ const ContactForm = ({localObject, initialObject, options, onCompleted, cardProp
                                                     selected: value?.id,
                                                     output: value.name 
                                                 });
+                                                form.validateFields(["organization"]);
                                                  setOrganizationModalStatus(null);
                                              }}
                                              initialObject={organizationModalStatus?.organization_id ? {id: organizationModalStatus?.organization_id} : null}

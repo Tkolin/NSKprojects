@@ -438,6 +438,7 @@ const ProjectForm = ({
                                   onCompleted={(value) => {
                                       refetchOrganizations();
                                       form.setFieldValue("organization_customer", {selected: value.id, output: value.name});
+                                      form.validateFields(["organization_customer"]);
                                       setOrganizationsModalStatus(null);
                                       setSelectedOrganizationId(value.id);
                                   }}
@@ -460,6 +461,7 @@ const ProjectForm = ({
                                           output: value.code + " - " + value.name,
                                           selected: value.id
                                       })
+                                      form.validateFields(["type_project_document"]);
                                       setTypeProjectModalStatus(null)
                                   }}
                                   localObject={typeProjectModalStatus?.object}

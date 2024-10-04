@@ -182,6 +182,7 @@ const IrdToProjectForm = ({   onCompleted, ...cardProps }) => {
                         },
                       };
                       form.setFieldValue("irdList", newRow);
+                      form.validateFields(["irdList"]);
                       setIrdModalStatus(null);
                     }}
                     initialObject={

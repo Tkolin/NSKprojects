@@ -77,8 +77,7 @@ const StageItem = ({
                 </Col>
                 <Col span={11} style={{width: "100%"}}>
                     <Tooltip title="Наименование этапа">
-                        <AutoCompleteFormItem rulesValidationRequired={true}
-                                              rulesValidationMessage={"Выбор этапа обязателен"} name={[index, 'stage']}>
+                        <AutoCompleteFormItem name={[index, 'stage']}>
                             <CustomAutoCompleteExtension
                                 visibleMode={"CREATE_WHERE_NON_SELECTED"}
                                 firstBtnOnClick={() =>

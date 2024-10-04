@@ -206,6 +206,7 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                                                      selected: value?.id,
                                                      output: value.name
                                                  });
+                                                 form.validateFields(["organization"]);
                                              }}
                                              initialObject={organizationModalStatus?.organization_id ? {id: organizationModalStatus?.organization_id} : null}
                                          />
@@ -231,6 +232,7 @@ const RequestForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                                                      selected: value?.id,
                                                      output: value.last_name + " " + value.first_name + " " + value.patronymic
                                                  });
+                                                 form.validateFields(["contact"]);
                                              }}
                                              initialObject={contactModalStatus?.contact_id ?
                                                  {id: contactModalStatus?.contact_id} : null}

@@ -72,7 +72,7 @@ class CommercialOfferMessageGeneratorService extends DocumentGeneratorService
  
             'project.main_delegation_full_name' => $delegation['first_name'] . " " . $delegation['patronymic'],
             'project.name' => $projectData['name'],
-            'project.price' => FormatterService::convertToMany($projectData['price'], false),
+                'project.price' =>  number_format($projectData['price'], 0,',', ' '),
             'project.price_name' => FormatterService::convertNumbToStringr($projectData['price']),
             'project.durationMark' => FormatterService::formatDuration($projectData['duration']) . " ",
             'project.prepayment' => $projectData['prepayment'] . "; </w:r><w:r>",

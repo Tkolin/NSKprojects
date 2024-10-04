@@ -322,7 +322,10 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
                                   onCompleted={(value) => {
                                       form.setFieldValue("bik", {selected: value?.id, output: value?.name});
                                       setBikModalStatus(null);
+                                      form.validateFields(["bik"]);
                                   }}
+                               
+
                                   initialObject={bikModalStatus?.bik_id ? {id: bikModalStatus?.bik_id} : null}
                               />
                           }
@@ -345,6 +348,8 @@ const OrganizationForm = ({localObject, initialObject, onCompleted, style, cardP
                                           selected: value?.id,
                                           output: value.last_name + " " + value.first_name + " " + (value?.patronymic ?? "") 
                                       });
+                                      form.validateFields(["director"]);
+
                                       setContactModalStatus(null);
                                   }}
                                   initialObject={contactModalStatus?.contact_id ? {id: contactModalStatus?.contact_id} : null}

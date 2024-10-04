@@ -284,6 +284,7 @@ const StageToProjectForm = ({ onCompleted, project, cardProps }) => {
                       },
                     };
                     form.setFieldValue("stageList", newRow);
+                    form.validateFields(["stageList"]);
                     setStageModalStatus(null);
                   }}
                   initialObject={

@@ -1,23 +1,23 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Card, Col, Divider, Form, Input, Modal, Row, Skeleton} from 'antd';
-import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
-import {ADD_PERSON_MUTATION, UPDATE_PERSON_MUTATION} from '../../graphql/mutationsPerson';
-import {AddressSuggestions} from "react-dadata";
-import {StyledAddressSuggestionsInput} from "../components/style/InputStyles";
-import {NotificationContext} from "../../NotificationProvider";
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
+import { Card, Col, Divider, Form, Input, Modal, Row, Skeleton } from 'antd';
+import React, { useContext, useEffect, useState } from 'react';
+import { AddressSuggestions } from "react-dadata";
+import { NotificationContext } from "../../NotificationProvider";
+import { ADD_PERSON_MUTATION, UPDATE_PERSON_MUTATION } from '../../graphql/mutationsPerson';
+import { PERSONS_QUERY_BY_ID } from "../../graphql/queriesByID";
 import {
     BANKS_QUERY_COMPACT,
     BIKS_QUERY_COMPACT,
     PASSPORTS_PLACE_ISSUES_QUERY_COMPACT,
 } from "../../graphql/queriesCompact";
-import {PERSONS_QUERY_BY_ID} from "../../graphql/queriesByID";
-import {CustomAutoComplete, CustomAutoCompleteAndCreate} from "../components/style/SearchAutoCompleteStyles";
+import { StyledAddressSuggestionsInput } from "../components/style/InputStyles";
+import { CustomAutoComplete, CustomAutoCompleteAndCreate } from "../components/style/SearchAutoCompleteStyles";
 
 import dayjs from "dayjs";
-import {CustomDatePicker} from "../components/FormattingDateElementComponent";
-import PassportPlaceIssuesForm from "./PassportPlaceIssuesForm";
+import { CustomDatePicker } from "../components/FormattingDateElementComponent";
 import BikForm from "./BikForm";
-import {ModalButton} from "./formComponents/ModalButtonComponent";
+import PassportPlaceIssuesForm from "./PassportPlaceIssuesForm";
+import { ModalButton } from "./formComponents/ModalButtonComponent";
 
 const PersonForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     // Первичные данные
@@ -304,6 +304,7 @@ const PersonForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                                           selected: value?.id,
                                           output: value?.name
                                       });
+                                      form.validateFields(["passport_place_issue"]);
                                       setPpiModalStatus(null);
                                   }}
                                   initialObject={ppiModalStatus?.ppi_id ? {id: ppiModalStatus?.ppi_id} : null}
@@ -321,6 +322,7 @@ const PersonForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                                   cardProps={{title: "Бик"}}
                                   onCompleted={(value) => {
                                       form.setFieldValue("bik", {selected: value?.id, output: value?.name});
+                                      form.validateFields(["bik"]);
                                       setBikModalStatus(null);
                                   }}
                                   initialObject={bikModalStatus?.bik_id ? {id: bikModalStatus?.bik_id} : null}

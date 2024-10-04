@@ -202,6 +202,7 @@ const IrdToProjectForm = ({project, onCompleted, ...cardProps}) => {
                                                   }
                                               };
                                               form.setFieldValue("irdList", newRow);
+                                              form.validateFields(["irdList"]);
                                               setIrdModalStatus(null);
                                           }}
                                           initialObject={irdModalStatus?.ird_id ? {id: irdModalStatus?.ird_id} : null}

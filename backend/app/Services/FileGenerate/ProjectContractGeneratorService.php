@@ -22,11 +22,11 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
         error_log("log" . $key);
         switch ($key) {
             case "DESIGN_ASSIGNMENT":
-                return "техническое задание";
+                return "Техническое задание";
             case "GEOLOGICAL_ASSIGNEMNT":
-                return "геологическое задание";
+                return "Геологическое задание";
             case "TERMS_REFERENCE":
-                return "задание на проектирование";
+                return "Задание на проектирование";
         }
         return null;
     }
@@ -40,7 +40,7 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
 
         // Извлечение данных
         $projectData = $data['projectData'];
-        $dateCreateContract = $data['dateCreateContract'];
+        $dateCreateContract = $data['dateCrea  teContract'];
         $contractNumber = $data['contractNumber'];
 
 
@@ -99,13 +99,13 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
         $this->replacements = [
             'date_create_full' => $date_create_full ? mb_strtolower($date_create_full) : null,
             'date_create_short' => $date_create_short ? mb_strtolower($date_create_short) : null,
-            'projectStages.stage.priceTotal' => isset($projectData['price']) ? FormatterService::convertToMany($projectData['price']) : null,
-            'projectStages.stage.endPriceTotal' => isset($projectData['price']) ? FormatterService::convertToMany($projectData['price']) : null,
-            'projectStages.stage.priceTotalToName' => FormatterService::convertNumbToStringr($projectData['price']) ?? null,
+            'projectStages.stage.priceTotal' => isset($projectData['price']) ?  number_format($projectData['price'],0,',',' ') : null,
+            'projectStages.stage.endPriceTotal' => isset($projectData['price']) ? number_format($projectData['price'],0,',',' ') : null,
+            'projectStages.stage.priceTotalToName' => FormatterService::convertNumbToStringr($projectData['price']) . " р." ?? null,
             'projectStages.stage.endPriceTotalToName' => FormatterService::convertNumbToStringr($projectData['price']) ?? null,
             'myOrg.full_name' => $myOrg['full_name'] ?? null,
             'myOrg.nameOrType' => $myOrg["legal_form"]['name'] . " " . $myOrg['name'] ?? null,
-            'myOrg.director.full_name' => $nclNameCaseRu->q(fullname: $myOrg['director']['last_name'] . ' ' . $myOrg['director']['first_name'] . ' ' . $myOrg['director']['patronymic'], NCL::$VINITELN) ?? '' ?? null,
+            'myOrg.director.full_name' => $nclNameCaseRu->q(  $myOrg['director']['last_name'] . ' ' . $myOrg['director']['first_name'] . ' ' . $myOrg['director']['patronymic'], NCL::$VINITELN) ?? '' ?? null,
             'myOrg.director.position.name' => $myOrg['director']['position']['name'] ?? null,
             'project.name' => $projectData['name'] ?? '' ?? null,
             'myOrg.INN' => $myOrg['INN'] ?? null,
