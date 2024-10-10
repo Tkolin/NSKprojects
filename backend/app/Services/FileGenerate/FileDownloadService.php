@@ -24,8 +24,10 @@ class FileDownloadService
         }
 
         // Копирование файла в public/storage
-        $temporaryFilePath = 'temporary/' . Str::random(10) . '_' . $file->name;
-        Storage::disk('public')->put($temporaryFilePath, Storage::disk('localERPFiles')->get($filePath));
+        $filename = pathinfo($file->name, PATHINFO_FILENAME);
+        $extension = pathinfo($file->name, PATHINFO_EXTENSION);
+        $temporaryFilePath = 'temporary/' . $filename . '_' . Str::random(10) . '.' . $extension;
+                Storage::disk('public')->put($temporaryFilePath, Storage::disk('localERPFiles')->get($filePath));
 
         // Генерация ссылки для скачивания
         $url = Storage::disk('public')->url($temporaryFilePath);

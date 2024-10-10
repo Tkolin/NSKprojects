@@ -1,7 +1,6 @@
-import {Button, notification, Typography} from "antd";
-import {useMutation} from "@apollo/client";
-import {DOWNLOAD_FILE} from "../../../graphql/mutationsFile";
-import {cloneElement} from "react";
+import { useMutation } from "@apollo/client";
+import { notification, Typography } from "antd";
+import { DOWNLOAD_FILE } from "../../../graphql/mutationsFile";
 
 const {Link} = Typography;
 

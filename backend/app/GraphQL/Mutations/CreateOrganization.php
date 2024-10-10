@@ -12,7 +12,12 @@ final readonly class CreateOrganization
     {
         $data = $args['data'];
         $orgData = Organization::create($data);
-
+        if($orgData["director_id"] !==   $data['director_id']) {
+            $newDirectoContact = Contact::findOrFail($data['director_id']);
+            $newDirectoContact->position_id = 0;
+            $newDirectoContact->organization_id = $args['id'];
+            $newDirectoContact->save();
+        }
         if (isset($args['data']['director_id'])) {
             $directorId = $args['data']['director_id'];
             $directorData = Contact::find($directorId);

@@ -19,11 +19,14 @@ final readonly class UpdateOrganization
 
             $newDirectoContact->save();
             
-            
-            $oldDirectorContact = Contact::findOrFail( $organization->director_id);
-            $oldDirectorContact->position_id = null;
+            if (isset($organization->director_id)){
 
-            $oldDirectorContact->save();
+                $oldDirectorContact = Contact::findOrFail( $organization->director_id);
+                $oldDirectorContact->position_id = null;
+    
+                $oldDirectorContact->save();
+            }
+
 
         }
         $organization->update([

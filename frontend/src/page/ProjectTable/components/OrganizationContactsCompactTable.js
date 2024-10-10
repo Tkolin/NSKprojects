@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
  
-import {Modal, notification, Space, Table, Tooltip, Typography} from 'antd';
+import { Modal, notification, Space, Table, Tooltip, Typography } from 'antd';
  
 
+import { PlusOutlined } from "@ant-design/icons";
 import Link from "antd/es/typography/Link";
-import {PlusOutlined} from "@ant-design/icons";
-import {EditStyledLinkManagingDataTable} from "../../components/style/TableStyles";
-import {format} from "date-fns";
+import { format } from "date-fns";
+import { EditStyledLinkManagingDataTable } from "../../components/style/TableStyles";
  
  import ContactForm from "../../simplesForms/ContactForm";
  
@@ -29,20 +29,6 @@ const OrganizationContactsCompactTable = ({data, refetch}) => {
         });
     };
 
-    // Мутация для удаления
-    // const [deleteContact] = useMutation(DELETE_CONTACT_MUTATION, {
-    //     onCompleted: () => {
-    //         openNotification('topRight', 'success', 'Данные успешно удалены!');
-    //         refetch();
-    //     },
-    //     onError: (error) => {
-    //         openNotification('topRight', 'error', 'Ошибка при удалении данных: ' + error.message);
-    //         refetch();
-    //     },
-    // });
-
-    // Обработчик событий
-
     // Обработка загрузки и ошибок
     const formatDate = (date) => {
         return format(new Date(date), 'dd.MM.yyyy');
@@ -64,7 +50,6 @@ const OrganizationContactsCompactTable = ({data, refetch}) => {
         children: [
             {
                 width: '35%',
-
                 title: 'ФИО',
                 dataIndex: 'FIO',
                 key: 'FIO',
@@ -77,7 +62,6 @@ const OrganizationContactsCompactTable = ({data, refetch}) => {
             },
             {
                 width: '30%',
-
                 title: 'Контактные данные',
                 dataIndex: 'FIO',
                 key: 'FIO',

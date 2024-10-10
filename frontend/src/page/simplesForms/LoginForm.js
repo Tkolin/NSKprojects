@@ -1,11 +1,11 @@
-import React, {useContext, useState} from 'react';
-import {Card, Form, Input, message} from 'antd';
-import {useMutation} from '@apollo/client';
-import {LOGIN_MUTATION} from '../../graphql/mutationsAuth';
-import {useNavigate} from 'react-router-dom';
-import {Cookies} from "react-cookie";
-import {NotificationContext} from "../../NotificationProvider";
-import {ModalButton} from "./formComponents/ModalButtonComponent";
+import { useMutation } from '@apollo/client';
+import { Card, Form, Input, message } from 'antd';
+import React, { useContext, useState } from 'react';
+import { Cookies } from "react-cookie";
+import { useNavigate } from 'react-router-dom';
+import { LOGIN_MUTATION } from '../../graphql/mutationsAuth';
+import { NotificationContext } from "../../NotificationProvider";
+import { ModalButton } from "./formComponents/ModalButtonComponent";
 
 const LoginForm = ({cardProps}) => {
     const [form] = Form.useForm();
@@ -37,7 +37,8 @@ const LoginForm = ({cardProps}) => {
             const {access_token, permissions, user} = response.data.login;
             //  Установка ответа в куки и локалсторадж
             const cookies = new Cookies();
-            cookies.set('accessToken', access_token);
+            console.log("auth", access_token, response)
+            localStorage.setItem('accessToken', access_token);
             localStorage.setItem('userData', JSON.stringify(user));
             localStorage.setItem('userPermissions', JSON.stringify(permissions));
             //  Переход на главную страницу с перезагрузкой (для подключения localStorage)

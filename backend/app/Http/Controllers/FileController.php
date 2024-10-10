@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers;
-
 class FileController extends Controller
 {
     public function downloadFile($filename)
@@ -10,10 +8,13 @@ class FileController extends Controller
         if (!file_exists($filePath)) {
             abort(404);
         }
-        // Удаление первых 40 знаков из имени файла
-             $filename = substr($filename, 42);
+
+        // Удалить всё до первого символа '_' включительно
+        $position = strpos($filename, '_');
+        if ($position !== false) {
+            $filename = substr($filename, $position + 1);
+        }
 
         return response()->download($filePath, $filename)->deleteFileAfterSend(true);
     }
-
 }

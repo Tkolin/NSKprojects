@@ -1,6 +1,0 @@
-  <Space.Compact align="start" direction={"vertical"}>
-
-                <ArchivedButtonComponent project={record} onCompleted={onUpdated}/>
-
-            </Space.Compact>
-

@@ -4,85 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b6d940bc-57e0-45e2-92a6-a7243dba9ad6" name="Changes" comment="0.5.0.8 - hotFix генерация документов">
-      <change beforePath="$PROJECT_DIR$/backend/app/GraphQL/Mutations/GeneratedExecutorOrder.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/GraphQL/Mutations/GeneratedExecutorOrder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/GraphQL/Mutations/PersonOrderFileDownload.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/GraphQL/Queries/Persons.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/GraphQL/Queries/Persons.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/GraphQL/Queries/References.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/GraphQL/Queries/References.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Services/FileGenerate/TaskExecutorContractGeneratorService.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Services/FileGenerate/TaskExecutorContractGeneratorService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/graphql/fenrir_module.graphql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/graphql/file_module.graphql" beforeDir="false" afterPath="$PROJECT_DIR$/backend/graphql/file_module.graphql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/graphql/models.graphql" beforeDir="false" afterPath="$PROJECT_DIR$/backend/graphql/models.graphql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/graphql/project_module.graphql" beforeDir="false" afterPath="$PROJECT_DIR$/backend/graphql/project_module.graphql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/devtoolH/Devtools.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/devtoolH/NodeInspector.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/devtoolH/ViewportLogger.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/devtoolH/style.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/ConvertOutputToCSVScript.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/FenrirComputingForm.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/FenrirPage.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/FenrirStyles.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/devtoolH/Devtools.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/devtoolH/NodeInspector.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/devtoolH/ViewportLogger.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/devtoolH/style.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/form/FenrirForm.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/form/FenrirView.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/form/FormulaForm.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/form/ReferenceForm.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/nodes/FormulaNode.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/nodes/InputArrayNode.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/nodes/InputNode.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/nodes/MathOperationNode.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/nodes/OutputNode.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/nodes/ReferenceNode.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/nodes/StylesNodesHandle.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/guillaume/store.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/template/Index.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/template/Store.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/template/components/IrdsTemplateForm.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/template/components/SectionReferenceTemplateForm.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/template/components/StagesTemplateForm.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/template/components/TasksTemplateForm.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/test.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/test2.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/_dev/test3.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/graphql/mutationsFileGenerated.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/graphql/mutationsFileGenerated.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/graphql/mutationsFormula.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/graphql/mutationsFormula.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/graphql/mutationsPerson.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/graphql/mutationsPerson.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/graphql/mutationsProject.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/graphql/mutationsProject.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/graphql/queries.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/graphql/queries.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/graphql/queriesByID.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/graphql/queriesByID.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/graphql/queriesCompact.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/graphql/queriesCompact.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/CreateNewProject/components/ProjectDetails.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/CreateNewProject/components/ProjectDetails.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/Home.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/Home.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/MenuItems.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/MenuItems.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/OrderExecutorManager/components/ExecutorOrdersTable.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/OrderExecutorManager/components/ExecutorOrdersTable.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/OrderExecutorManager/components/GenerateOrderForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/OrderExecutorManager/components/GenerateOrderForm.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/ProjectForm/ProjectForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/ProjectForm/ProjectForm.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/ProjectIrdsForm/IrdToProjectForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/ProjectIrdsForm/IrdToProjectForm.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/ProjectStagesForm/StageToProjectForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/ProjectStagesForm/StageToProjectForm.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnMoneyRender.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnMoneyRender.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/ArchivedButton.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/ArchivedButton.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/MenuManager/components/CRUDBlock.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/MenuManager/components/CRUDBlock.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/MenuManager/components/ContractDocumentBlock.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/MenuManager/components/ContractDocumentBlock.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/MenuManager/components/KPDocumentBlock.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/MenuManager/components/KPDocumentBlock.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/MenuManager/components/TasksManagementBlock.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/MenuManager/components/TasksManagementBlock.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/MenuManager/components/TemplateBlock.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/MenuManager/components/TemplateBlock.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/MenuManager/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/MenuManager/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/UpButton.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/UpButton.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/ProjectTasksManagerForm/components/TasksPriceTotal.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/ProjectTasksManagerForm/components/TasksPriceTotal.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/components/script/fileDownloadScripts/PersonContractFileDownload.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/components/script/fileDownloadScripts/ProjectFileDownload.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/components/script/fileGenerated/ProjectContractFileGenerated.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/components/script/fileGenerated/ProjectContractFileGenerated.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/simplesForms/StageForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/simplesForms/StageForm.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/simplesForms/TechSpecForm.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/page/simplesTables/PersonTable.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/page/simplesTables/PersonTable.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/permission/PermissionsProvider.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/permission/PermissionsProvider.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/permission/usePermissionHider.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/permission/usePermissionHider.js" afterDir="false" />
-    </list>
+    <list default="true" id="b6d940bc-57e0-45e2-92a6-a7243dba9ad6" name="Changes" comment="drop" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -289,31 +211,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;Node.js.Index.js.executor&quot;: &quot;Run&quot;,
-    &quot;Node.js.mutationsTask.js.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.laravel-idea.update-module-directories&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/v1/frontend/src/page/simplesForms&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.build&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\v1\\frontend\\node_modules\\typescript\\lib&quot;,
-    &quot;two.files.diff.last.used.file&quot;: &quot;C:/v1/backend/database/migrations/2024_07_31_070315_update_projects_table.php&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Node.js.Index.js.executor": "Run",
+    "Node.js.mutationsTask.js.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.laravel-idea.update-module-directories": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "Rebasing master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/v1/frontend/src/page/simplesForms",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "configurable.group.build",
+    "ts.external.directory.path": "C:\\v1\\frontend\\node_modules\\typescript\\lib",
+    "two.files.diff.last.used.file": "C:/v1/backend/database/migrations/2024_07_31_070315_update_projects_table.php",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="ReactDesignerToolWindowState">
     <option name="myId2Visible">
       <map>
@@ -416,14 +338,7 @@
       <workItem from="1726210349612" duration="4558000" />
       <workItem from="1726715763389" duration="16342000" />
       <workItem from="1727085721859" duration="2460000" />
-    </task>
-    <task id="LOCAL-00009" summary="Фиксы">
-      <option name="closed" value="true" />
-      <created>1717749224921</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1717749224921</updated>
+      <workItem from="1728551799647" duration="333000" />
     </task>
     <task id="LOCAL-00010" summary="Фиксы">
       <option name="closed" value="true" />
@@ -809,7 +724,15 @@
       <option name="project" value="LOCAL" />
       <updated>1726717937957</updated>
     </task>
-    <option name="localTasksCounter" value="58" />
+    <task id="LOCAL-00058" summary="drop">
+      <option name="closed" value="true" />
+      <created>1728551878707</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1728551878708</updated>
+    </task>
+    <option name="localTasksCounter" value="59" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -840,7 +763,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="0.4.8-1 - hotFix" />
     <MESSAGE value="0.4.9 - рефракторинг" />
     <MESSAGE value="0.4.9.1 - файловая система для договора" />
     <MESSAGE value="0.4.9.2 - файловая система для договора" />
@@ -865,7 +787,8 @@
     <MESSAGE value="0.5.0.6 - hotFix генерация документов" />
     <MESSAGE value="0.5.0.7 - hotFix генерация документов" />
     <MESSAGE value="0.5.0.8 - hotFix генерация документов" />
-    <option name="LAST_COMMIT_MESSAGE" value="0.5.0.8 - hotFix генерация документов" />
+    <MESSAGE value="drop" />
+    <option name="LAST_COMMIT_MESSAGE" value="drop" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />

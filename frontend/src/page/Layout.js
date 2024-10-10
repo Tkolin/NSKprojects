@@ -59,18 +59,29 @@ export const getErrorLayout = (error) => {
 };
 
 
-const AppLayout = ({children, currentUser, error}) => {
+const AppLayout = ({children, error}) => {
+
+  
+
     const navigate = useNavigate();
     const location = useLocation();
     const [current, setCurrent] = useState(location.pathname);
     const [items, setItems] = useState();
     const [title, setTitle] = useState();
+    const [currentUser, setCurrentUser] = useState();
     useEffect(() => {
+        console.log("getCurrentUser");
         setItems(MenuItemsByPermission(currentUser ?? null));
     }, [currentUser]);
     useEffect(() => {
-        setCurrent(location.pathname); // Обновить current при изменении пути
-
+        console.log("setCurrentUser");
+        setCurrentUser({
+            permissions: JSON.parse(localStorage.getItem("userPermissions")),
+            user: JSON.parse(localStorage.getItem("userData")),
+        });
+    }, []);
+    useEffect(() => {
+        setCurrent(location.pathname);
     }, [location.pathname]);
     useEffect(() => {
         const item = findMenuItemByKey(current, MenuItems);

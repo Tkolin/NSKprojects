@@ -40,7 +40,7 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
 
         // Извлечение данных
         $projectData = $data['projectData'];
-        $dateCreateContract = $data['dateCrea  teContract'];
+        $dateCreateContract = $data['dateCreateContract'];
         $contractNumber = $data['contractNumber'];
 
 

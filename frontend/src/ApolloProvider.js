@@ -10,9 +10,11 @@ const httpLink = createHttpLink({
 
 const createApolloClient = () => {
     const authLink = setContext((_, {headers}) => {
+        console.log("setContext");
         const cookies = new Cookies();
-        const token = cookies.get('accessToken');
+        const token = localStorage.getItem('accessToken');
         const CsrfToken = getCsrfToken();
+        console.log("token",token);
         return {
             headers: {
                 ...headers,

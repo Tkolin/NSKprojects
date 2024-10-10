@@ -48,8 +48,9 @@ class FileUploadController extends Controller
             $pathProjectFolder = $project->path_project_folder;
             $storagePath = "/" . $pathProjectFolder . "/Договора_с_заказчиком/" . $file->getClientOriginalName();
             error_log('$project' . $project);
+            Storage::disk('localERPFiles')->put($storagePath, file_get_contents($file->getRealPath()));
 
-            Storage::disk('localERPFiles')->put($storagePath, $file->getClientOriginalName());
+            Storage::disk('localERPFiles')->put($storagePath, file_get_contents($file->getRealPath()));
 
             $fileRecord = File::create([
                 'name' => $file->getClientOriginalName(),
@@ -125,7 +126,7 @@ class FileUploadController extends Controller
             $storagePath = "/" . $pathProjectFolder . "/Договора_с_исполнителями/" . $file->getClientOriginalName();
 
             error_log('$storagePath' . $storagePath);
-            Storage::disk('localERPFiles')->put($storagePath, $file->getClientOriginalName());
+            Storage::disk('localERPFiles')->put($storagePath, file_get_contents($file->getRealPath()));
 
             $fileRecord = File::create([
                 'name' => $file->getClientOriginalName(),
@@ -160,7 +161,7 @@ class FileUploadController extends Controller
             $storagePath = "/" . $pathProjectFolder . "/Договора_с_исполнителями/Оплаты/" . $file->getClientOriginalName();
 
             error_log('$storagePath' . $storagePath);
-            Storage::disk('localERPFiles')->put($storagePath, $file->getClientOriginalName());
+            Storage::disk('localERPFiles')->put($storagePath, file_get_contents($file->getRealPath()));
 
             $fileRecord = File::create([
                 'name' => $file->getClientOriginalName(),

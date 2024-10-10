@@ -43,8 +43,7 @@ const UpButton = ({project, onCompleted}) => {
                     result.push("Отсутствует тип документации;  ");
                 if (!project.price)
                     result.push("Отсутствует стоимость;  ");
-                if (!project.prepayment)
-                    result.push("Отсутствует аванс;  ");
+ 
                 break;
 
             case "APPROVAL_KP":
@@ -60,8 +59,7 @@ const UpButton = ({project, onCompleted}) => {
                     result.push("Отсутствует тип документации;  ");
                 if (!project.price)
                     result.push("Отсутствует стоимость;  ");
-                if (!project.prepayment)
-                    result.push("Отсутствует аванс;  ");
+            
 
                 if (project.project_stages?.length <= 0)
                     result.push("Отсутствуют этапы;  ")
@@ -82,15 +80,13 @@ const UpButton = ({project, onCompleted}) => {
                     result.push("Отсутствует тип документации;  ");
                 if (!project.price)
                     result.push("Отсутствует стоимость;  ");
-                if (!project.prepayment)
-                    result.push("Отсутствует аванс;  ");
-
+ 
                 if (project.project_stages?.length <= 0)
                     result.push("Отсутствуют этапы;  ")
                 if (!project.kp_file_id)
                     result.push("Отсутствует подписанный файл кп;  ")
 
-                if (project.project_irds?.length <= 1)
+                if (project.project_irds?.length <= 0 )
                     result.push("Ирд не сформировано;  ");
                 if (project.project_irds?.filter(row => (row.stage_number === 1) && (row.received_date)) > 0)
                     result.push("Ирд не получено;  ", project.project_irds?.filter(row => (row.stage_number === 1) && (row.received_date)).length);

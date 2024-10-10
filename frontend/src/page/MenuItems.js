@@ -437,12 +437,14 @@ const MenuItems = [
 ];
 
 const MenuItemsByPermission = (currentUser) => {
-  console.log(currentUser);
   if (!currentUser) return [];
-
+console.log("112 currentUser",currentUser.permissions)
   // Получаем список прав пользователя
   const userPermissions =
     currentUser?.permissions?.map((p) => p.name_key) ?? [];
+  
+    console.log(userPermissions);
+
   const hasPermission = (userPermissions, requiredPermissions) => {
     return requiredPermissions.some((row) => userPermissions.includes(row));
   };

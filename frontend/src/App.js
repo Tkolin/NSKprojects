@@ -1,220 +1,228 @@
-import { useLazyQuery } from "@apollo/client";
-import { ConfigProvider, Space } from "antd";
-import ruRU from "antd/locale/ru_RU";
-import React, { useEffect, useState } from 'react';
-import { Cookies } from "react-cookie";
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { createGlobalStyle } from "styled-components";
-import { GET_CURRENT_USER } from "./graphql/queries";
-import CustomLayout from './page/Layout';
+import { ConfigProvider, Space } from 'antd'
+import ruRU from 'antd/locale/ru_RU'
+import React from 'react'
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import { createGlobalStyle } from 'styled-components'
+import CustomLayout from './page/Layout'
 
-import Home from './page/Home';
-import ContactForm from "./page/simplesForms/ContactForm";
-import OrganizationForm from "./page/simplesForms/OrganizationForm";
-import PersonForm from "./page/simplesForms/PersonForm";
+import Home from './page/Home'
+import ContactForm from './page/simplesForms/ContactForm'
+import OrganizationForm from './page/simplesForms/OrganizationForm'
+import PersonForm from './page/simplesForms/PersonForm'
 
-import ContactTable from "./page/simplesTables/ContactTable";
-import OrganizationTable from "./page/simplesTables/OrganizationTable";
-import PersonTable from "./page/simplesTables/PersonTable";
+import ContactTable from './page/simplesTables/ContactTable'
+import OrganizationTable from './page/simplesTables/OrganizationTable'
+import PersonTable from './page/simplesTables/PersonTable'
 
-import moment from "moment";
-import { NotificationProvider } from "./NotificationProvider";
-import ProjectTable from "./page/ProjectTable";
-import LoginForm from "./page/simplesForms/LoginForm";
-import RegisterForm from "./page/simplesForms/RegisterForm";
+import moment from 'moment'
+import { NotificationProvider } from './NotificationProvider'
+import ProjectTable from './page/ProjectTable'
+import LoginForm from './page/simplesForms/LoginForm'
+import RegisterForm from './page/simplesForms/RegisterForm'
 
-import StatusLegendComponent from "./page/ProjectTable/components/StatusLegendComponent";
-import ProjectTSManagerForm from "./page/ProjectTSManagerForm";
-import ProjectTSStructureForm from "./page/ProjectTSStructureForm";
-import MathForm from "./page/simplesForms/MathForm";
-import ReferenceForm from "./page/simplesForms/ReferenceForm";
-import RequestForm from "./page/simplesForms/RequestForm";
-import TechSpecForm from "./page/simplesForms/TechChapterForm";
-import ReferenceTable from "./page/simplesTables/ReferenceTable";
-import RoleTable from "./page/simplesTables/RoleTable";
-import UserTable from "./page/simplesTables/UserTable";
-import { PermissionsProvider } from "./permission/PermissionsProvider";
-import usePermissionHider from "./permission/usePermissionHider";
+import StatusLegendComponent from './page/ProjectTable/components/StatusLegendComponent'
+import ProjectTSManagerForm from './page/ProjectTSManagerForm'
+import ProjectTSStructureForm from './page/ProjectTSStructureForm'
+import MathForm from './page/simplesForms/MathForm'
+import ReferenceForm from './page/simplesForms/ReferenceForm'
+import RequestForm from './page/simplesForms/RequestForm'
+import TechSpecForm from './page/simplesForms/TechChapterForm'
+import ReferenceTable from './page/simplesTables/ReferenceTable'
+import RoleTable from './page/simplesTables/RoleTable'
+import UserTable from './page/simplesTables/UserTable'
+import { PermissionsProvider } from './permission/PermissionsProvider'
+import usePermissionHider from './permission/usePermissionHider'
 
 const GlobalStyles = createGlobalStyle`
     body {
         margin: 0;
     }
-`;
+`
 
 const App = () => {
-    usePermissionHider();
+  usePermissionHider()
 
-    const cookies = new Cookies();
- 
+  moment.locale('ru')
+  return (
+    <PermissionsProvider>
+      <ConfigProvider locale={ruRU}>
+        <NotificationProvider>
+          <GlobalStyles />
 
-    const [data, setData] = useState()
-    const [findActualUsers] = useLazyQuery(GET_CURRENT_USER, {
-        fetchPolicy: 'cache-and-network', // Всегда берет данные с сервера, а не из кэша
-        onCompleted: (data) => {
-            setData(data.currentUser);
-            const oldUser = localStorage.getItem("userData");
-            const oldPermissions = localStorage.getItem("userPermissions");
-            const newUser = JSON.stringify(data.currentUser.user);
-            const newPermissions = JSON.stringify(data.currentUser.permissions);
+          <Router>
+            <CustomLayout>
+              <Routes>
+                <Route path='/' element={<Home />} />
 
-            if (!(oldUser === newUser && oldPermissions === newPermissions)) {
+                {/*Справочники*/}
+                <Route path='/references' element={<Home />} />
 
-                localStorage.setItem("userData", JSON.stringify(data.currentUser.user));
-                localStorage.setItem("userPermissions", JSON.stringify(data.currentUser.permissions));
-                window.location.reload();
-            }
-        },
-        onError: (error) => {
-            console.log("Ошибка аутентификации: " + error.message);
-        }
-    });
-    useEffect(() => {
-        //  Запрос на актуальные данные в сервере если токен есть
-        if (cookies.get("accessToken")) {
-            if (localStorage.getItem("userData") && localStorage.getItem("userPermissions")) {
-                setData({
-                    permissions: JSON.parse(localStorage.getItem("userPermissions")),
-                    user: JSON.parse(localStorage.getItem("userPermissions")),
-                })
-            }
-            findActualUsers();
+                {/* <Route path="/ts1" element={<TestPage/>}/> */}
+                <Route path='/references/contact' element={<Home />} />
+                <Route
+                  path='/references/contact/table'
+                  element={<ContactTable />}
+                />
+                <Route
+                  path='/references/contact/form'
+                  element={
+                    <Space
+                      style={{ width: '100%', justifyContent: 'center' }}
+                      children={<ContactForm />}
+                    />
+                  }
+                />
 
-        } else {
-            
-        }
-    }, []);
+                <Route
+                  path='/user/person/form'
+                  element={
+                    <Space
+                      style={{ width: '100%', justifyContent: 'center' }}
+                      children={<RegisterForm />}
+                    />
+                  }
+                />
 
-    // if (loading) return <LoadingSpinnerStyles/>;
+                <Route path='/references/person' element={<Home />} />
+                <Route
+                  path='/references/person/table'
+                  element={<PersonTable />}
+                />
+                <Route
+                  path='/references/person/form'
+                  element={
+                    <Space
+                      style={{ width: '100%', justifyContent: 'center' }}
+                      children={<PersonForm />}
+                    />
+                  }
+                />
 
-    moment.locale('ru');
+                <Route path='/references/organization' element={<Home />} />
+                <Route
+                  path='/references/organization/table'
+                  element={<OrganizationTable />}
+                />
+                <Route
+                  path='/references/organization/form'
+                  element={
+                    <Space
+                      style={{ width: '100%', justifyContent: 'center' }}
+                      children={<OrganizationForm />}
+                    />
+                  }
+                />
 
+                {/*Расчёты*/}
+                <Route
+                  path='/math/reference/form'
+                  element={<ReferenceForm />}
+                />
+                <Route
+                  path='/math/reference/table'
+                  element={<ReferenceTable />}
+                />
 
-    return (
-        <PermissionsProvider>
+                <Route path='/math/module/creater' element={<MathForm />} />
 
-            <ConfigProvider locale={ruRU}>
-                <NotificationProvider>
-                    <GlobalStyles/>
+                <Route
+                  path='/math/tech_ref/form/chapter'
+                  element={<TechSpecForm />}
+                />
+                <Route
+                  path='/math/tech_ref/table/structure'
+                  element={<ProjectTSStructureForm />}
+                />
+                <Route
+                  path='/math/tech_ref/table/manager'
+                  element={<ProjectTSManagerForm />}
+                />
 
-                    <Router>
-                        <CustomLayout currentUser={data}>
-                            <Routes>
-                                <Route path="/" element={<Home/>}/>
+                <Route path='/math/formula/form' element={<Home />} />
+                <Route path='/math/formula/table' element={<Home />} />
 
-                                {/*Справочники*/}
-                                <Route path="/references" element={<Home/>}/>
+                {/* <Route path="/math/tech_ref/table/template" element={<ReferenceForm />}/> */}
 
-                                {/* <Route path="/ts1" element={<TestPage/>}/> */}
-                                <Route path="/references/contact" element={<Home/>}/>
-                                <Route path="/references/contact/table" element={<ContactTable/>}/>
-                                <Route path="/references/contact/form" element={
-                                    <Space style={{width: "100%", justifyContent: "center"}} children={
-                                        <ContactForm/>
-                                    }/>
-                                }/>
+                {/*Проекты*/}
+                <Route path='/project' element={<Home />} />
 
+                <Route
+                  path='/project/statistic'
+                  element={<StatusLegendComponent />}
+                />
 
-                                <Route path="/user/person/form" element={
-                                    <Space style={{width: "100%", justifyContent: "center"}} children={
-                                        <RegisterForm/>
-                                    }/>
-                                }/>
+                <Route path='/project/request' element={<Home />} />
+                <Route
+                  path='/project/request/table'
+                  element={<ProjectTable mode={'request'} />}
+                />
+                <Route
+                  path='/project/request/form'
+                  element={
+                    <Space
+                      style={{ width: '100%', justifyContent: 'center' }}
+                      children={<RequestForm />}
+                    />
+                  }
+                />
 
-                                <Route path="/references/person" element={<Home/>}/>
-                                <Route path="/references/person/table" element={<PersonTable/>}/>
-                                <Route path="/references/person/form" element={
-                                    <Space style={{width: "100%", justifyContent: "center"}} children={
-                                        <PersonForm/>
-                                    }/>
-                                }/>
+                <Route path='/project/kp' element={<Home />} />
+                <Route
+                  path='/project/kp/table'
+                  element={<ProjectTable mode={'kp'} />}
+                />
+                <Route path='/project/kp/form' element={<Home />} />
 
-                                <Route path="/references/organization" element={<Home/>}/>
-                                <Route path="/references/organization/table" element={<OrganizationTable/>}/>
-                                <Route path="/references/organization/form" element={
-                                    <Space style={{width: "100%", justifyContent: "center"}} children={
-                                        <OrganizationForm/>
-                                    }/>
-                                }/>
+                <Route path='/project/contract' element={<Home />} />
+                <Route
+                  path='/project/contract/table'
+                  element={<ProjectTable mode={'contract'} />}
+                />
+                <Route path='/project/contract/form' element={<Home />} />
 
-                                {/*Расчёты*/}
-                                <Route path="/math/reference/form" element={<ReferenceForm />}/>
-                                <Route path="/math/reference/table" element={<ReferenceTable />}/>
+                <Route path='/project/work' element={<Home />} />
+                <Route
+                  path='/project/work/table'
+                  element={<ProjectTable mode={'work'} />}
+                />
 
-                                <Route path="/math/module/creater" element={<MathForm />}/>
+                <Route path='/project/tasks_distribution' element={<Home />} />
+                <Route
+                  path='/project/tasks_distribution/table'
+                  element={<ProjectTable mode={'executorPayment'} />}
+                />
 
-                                <Route path="/math/tech_ref/form/chapter" element={<TechSpecForm/>}/>
-                                <Route path="/math/tech_ref/table/structure" element={<ProjectTSStructureForm/>}/>
-                                <Route path="/math/tech_ref/table/manager" element={<ProjectTSManagerForm/>}/>
+                <Route
+                  path='/bookeep/executor_order_table'
+                  element={<ProjectTable mode={'executorPayment'} />}
+                />
 
-                                <Route path="/math/formula/form" element={<Home />}/>
-                                <Route path="/math/formula/table" element={<Home />}/>
+                <Route path='/project/work/form' element={<Home />} />
+                {/*Учётки*/}
+                <Route path='/user/person/table' element={<UserTable />} />
+                <Route path='/user/role/table' element={<RoleTable />} />
 
-                                {/* <Route path="/math/tech_ref/table/template" element={<ReferenceForm />}/> */}
+                <Route path='/auth/register' element={<RegisterForm />} />
+                <Route
+                  path='/auth/login'
+                  element={
+                    <Space
+                      style={{ width: '100%', justifyContent: 'center' }}
+                      children={<LoginForm />}
+                    />
+                  }
+                />
 
-                                {/*Проекты*/}
-                                <Route path="/project" element={<Home/>}/>
-
-                                <Route path="/project/statistic" element={<StatusLegendComponent/>}
-                                />
-
-                                <Route path="/project/request" element={<Home/>}/>
-                                <Route path="/project/request/table"
-                                       element={<ProjectTable mode={"request"}/>}/>
-                                <Route path="/project/request/form" element={
-                                    <Space style={{width: "100%", justifyContent: "center"}} children={
-                                        <RequestForm/>
-                                    }/>
-                                }/>
-
-                                <Route path="/project/kp" element={<Home/>}/>
-                                <Route path="/project/kp/table"
-                                       element={<ProjectTable mode={"kp"}/>}/>
-                                <Route path="/project/kp/form" element={<Home/>}/>
-
-                                <Route path="/project/contract" element={<Home/>}/>
-                                <Route path="/project/contract/table"
-                                       element={<ProjectTable mode={"contract"}/>}
-                                />
-                                <Route path="/project/contract/form" element={<Home/>}/>
-
-                                <Route path="/project/work" element={<Home/>}/>
-                                <Route path="/project/work/table"
-                                       element={<ProjectTable mode={'work'}/>}/>
-
-                                <Route path="/project/tasks_distribution" element={<Home/>}/>
-                                <Route path="/project/tasks_distribution/table"
-                                       element={<ProjectTable mode={'executorPayment'}/>}/>
-
-
-                                <Route path="/bookeep/executor_order_table"
-                                       element={<ProjectTable mode={"executorPayment"}/>}/>
-
-
-                                <Route path="/project/work/form" element={<Home/>}/>
-                                {/*Учётки*/}
-                                <Route path="/user/person/table" element={<UserTable/>}/>
-                                <Route path="/user/role/table" element={<RoleTable/>}/>
-
-
-                                <Route path="/auth/register" element={<RegisterForm/>}/>
-                                <Route path="/auth/login" element={
-                                    <Space style={{width: "100%", justifyContent: "center"}} children={
-                                        <LoginForm/>
-                                    }/>}/>
-
-
-                                {/* Тестирование
+                {/* Тестирование
                                 <Route path="/test/test1" element={<ProjectForm/>}/>
                                 <Route path="/test/test2" element={<LoginForm/>}/> */}
-                            </Routes>
-                        </CustomLayout>
-                    </Router>
-                </NotificationProvider>
-            </ConfigProvider>
-        </PermissionsProvider>
+              </Routes>
+            </CustomLayout>
+          </Router>
+        </NotificationProvider>
+      </ConfigProvider>
+    </PermissionsProvider>
+  )
+}
 
-    );
-};
-
-export default App;
+export default App

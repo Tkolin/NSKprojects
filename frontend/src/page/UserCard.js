@@ -3,7 +3,6 @@ import { Avatar, Badge, Button, Card, Divider, Dropdown, Space, Typography } fro
 import React, { useEffect, useState } from "react";
 import { Cookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
-import catImage from '../resursed/cat.jpg';
 import { StyledButtonGreenGhost } from "./components/style/ButtonStyles";
 
 
@@ -24,7 +23,7 @@ export const UserCard = ({}) => {
     const Out = () => {
         console.log("Данные кэша сброшены");
         setUser(null);
-        cookies.set("accessToken", null);
+         localStorage.setItem("accessToken", null);
         localStorage.clear();
         navigate("auth/login")
         window.location.reload();
@@ -134,7 +133,7 @@ export const UserCard = ({}) => {
               style={{minWidth: "300px", justifyContent: 'center', alignItems: 'center'}}>
             <Space.Compact size={"large"} direction="vertical"
                            style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                <Avatar shape="square" size={64} icon={<UserOutlined/>} src={user ? catImage : null}/>
+                <Avatar shape="square" size={64} icon={<UserOutlined/>} />
                 <Text style={{fontSize: "16px"}} strong>{user?.user?.name ?? "Неизвестно"}</Text>
                 <Link type={"secondary"}>{user?.user?.email ?? "Неизвестно"}</Link>
             </Space.Compact>
@@ -174,7 +173,7 @@ export const UserMenuHeaderDropdown = ({currentUser}) => {
                 <Link>
 
                     <Avatar
-                        src={currentUser ? catImage : null}
+                        src={currentUser ? null : null}
                         icon={<UserOutlined/>}
                         children={currentUser ? currentUser.user?.name?.slice(0, 2) :
                             <UserOutlined/>}
