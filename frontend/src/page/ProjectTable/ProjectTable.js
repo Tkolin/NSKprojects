@@ -78,6 +78,7 @@ const template = {
             "irds",
             "executors",
             "stages-extra",
+            "task-chart",
             "tasks",
             "executor_orders",
         ]
@@ -148,6 +149,7 @@ const template = {
             "irds",
             "executors",
             "stages-extra",
+            "task-chart",
             "tasks",
             "executor_orders",
         ]

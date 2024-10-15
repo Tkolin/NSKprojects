@@ -58,20 +58,20 @@ const MenuItems = [
         ],
       },
       {
-        label: "Подрядчики",
+        label: "Исполнители",
         key: "/references/person/",
         icon: <IdcardOutlined />,
         permission: ["read-person", "create-person"],
         children: [
           {
-            label: "Просмотр подрядчиков",
+            label: "Просмотр исполнителей",
             key: "/references/person/table",
             icon: <EyeOutlined />,
             children: null,
             permission: ["read-person"],
           },
           {
-            label: "Создать нового подрядчика",
+            label: "Создать нового исполнителя",
             key: "/references/person/form",
             icon: <FormOutlined />,
             children: null,
@@ -179,7 +179,7 @@ const MenuItems = [
             permission: ["read-project-contract"],
           },
           {
-            label: "Создать нового подрядчика: Согласовании договора",
+            label: "Создать нового исполнителя: Согласовании договора",
             key: "/project/contract/form",
             icon: <FormOutlined />,
             children: null,
@@ -201,7 +201,7 @@ const MenuItems = [
             permission: ["read-project-work"],
           },
           {
-            label: "Создать нового подрядчика",
+            label: "Создать нового исполнителя",
             key: "/project/work/form",
             icon: <FormOutlined />,
             children: null,

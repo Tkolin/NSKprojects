@@ -24,6 +24,22 @@ export const TASKS_QUERY = gql`
         }
     }
 `;
+export const PROJECT_TASKS_QUERY = gql`
+    query ProjectTasksQuery  ($projectId: ID!) {
+        projectTasksQuery  (projectId: $projectId) {
+            items {
+                id
+                task{
+                    id
+                    name
+                }
+                date_start
+                date_end
+            }
+ 
+        }
+    }
+`;
 
 export const REFERENCES_QUERY = gql`
     query ReferencesQuery  ($queryOptions: QueryOptions) {

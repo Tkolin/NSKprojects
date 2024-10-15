@@ -12,10 +12,9 @@ final readonly class ProjectTasksQuery
     {
          $projectTasks = ProjectTasks::with('task')
             ->with('executor')
-             ->with('inherited_task_ids')
             ->where('project_id', $args['projectId'])
             ->get();
 
-         return $projectTasks;
+         return ['items' => $projectTasks];
     }
 }

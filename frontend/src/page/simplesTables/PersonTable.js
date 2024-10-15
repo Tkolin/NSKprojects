@@ -102,7 +102,7 @@ const PersonTable = () => {
                     deletePermission={"delete-person"}
                     updatePermission={"update-person"}
                     title={"Удаление контакта"}
-                    description={"Вы уверены, что нужно удалить этого подрядчика?"}
+                    description={"Вы уверены, что нужно удалить этого исполнителяа?"}
                     handleEdit={() => {
                         setPersonModalStatus({person_id: record.id, mode: "edit"})
                     }}

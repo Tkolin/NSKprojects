@@ -1,0 +1,104 @@
+# #
+# #   - QUERY -
+# #
+# extend type Query {
+#     projectIrds( projectId: ID): [Project] @checkRole(permission:  ["read-project-ird"])
+#     projectStages( projectId: ID): [Project] @checkRole(permission:  ["read-project-stage"])
+#     projectTasksQuery(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [Project] @checkRole(permission:  ["read-project-task"])
+#     projectsStatistic(projectStatuses: [String]!): [ProjectStatistic] @checkRole(permission:  ["read-project"])
+#     executorOrders(projectId: ID, executorId: ID): [ExecutorOrder!]
+#     projectOrdersPayments(projectId: ID!, executorId: ID!): [Project!]
+#     projectTS(projectId: ID): ProjectTS @checkRole(permission:  ["math"])
+#      projectTasksExecutors(taskId: ID): ProjectTaskExecutorResult @checkRole(permission:  ["read-project-task-executor"])
+# }
+# #-INPUTS:
+
+# #-TYPES:
+
+type Delay {
+    id: ID
+    date_start: String
+    date_end: String
+    duration: Int
+    description: String
+    delay_type: String
+    provider: String
+    delay_project_tasks: [DelayProjectTask]
+}
+type DelayProjectTask {
+    project_task_id: ID!
+    delay_id: ID!
+}
+
+extend type Mutation {
+    createDelay(
+        data: DelayInput!
+        chapterIds: [ID]!
+    ): Delay
+}
+# #-INPUTS:
+input DelayInput  {
+    date_start: String
+    duration: Int
+    description: String
+    delay_type: String
+    provider: String
+    delay_project_task: [InputDelayProjectTask]
+}
+input InputDelayProjectTask {
+    project_task_id: ID!
+    type: String
+}
+
+# #-TYPES:
+# type ProjectTaskExecutorResult
+# input TaskToProjectDetailInput  {
+#     id: ID
+
+#     description: String
+#     duration: Int
+#     offset: Int
+#     price: Float
+#     executor_id: ID
+# }
+# input IrdToProjectInput {
+#     project_id: ID!
+#     ird_id: ID!
+#     stage_number: Int!
+#     application_project: Int
+#     received_date: String
+# }
+# input StageToProjectInput {
+#     project_id: ID!
+#     stage_id: ID!
+#     number: Int!
+#     percent: Int!
+#     duration: Int!
+#     offset: Int
+# }
+# input RequestInput {
+#     name: ID!
+#     organization_id: ID!
+#     type_project: ID
+#     contact_id: ID!
+#     message: String
+#     number_message: String
+#     date_send: String!
+#     file_name: String
+# }
+# input TaskToProject {
+#     project_id: ID!
+#     task_id: ID
+
+#     project_task_inherited_id: ID
+#     price: Float
+#     stage_number: Int
+#     date_start: String
+#     date_end: String
+# }
+
+# #-RESULTS:
+# type CountProjectByOrganizations{
+#     organization_id: ID!
+#     count_project: Int!
+# }

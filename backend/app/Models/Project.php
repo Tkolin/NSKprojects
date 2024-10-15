@@ -28,7 +28,7 @@ class Project extends Model
         'path_project_folder',
         'contract_file_id',
         'kp_file_id'
-        ];
+    ];
     public function executor_orders()
     {
         return $this->hasManyThrough(
@@ -47,7 +47,7 @@ class Project extends Model
     }
     public function project_contract_history(): HasMany
     {
-        return $this->hasMany(ProjectFile::class)->whereIn("type", ["CONTRACT", "CONTRACT_STAMP"],)->orderBy('number', 'DESC');
+        return $this->hasMany(ProjectFile::class)->whereIn("type", ["CONTRACT", "CONTRACT_STAMP"], )->orderBy('number', 'DESC');
     }
     //  project kp history
     public function kp_files(): BelongsToMany
@@ -89,20 +89,18 @@ class Project extends Model
     public function project_tasks(): HasMany
     {
         return $this->hasMany(ProjectTasks::class, 'project_id', 'id')->orderBy('offset');
-
     }
     public function tasks(): BelongsToMany
     {
         return $this->BelongsToMany(Task::class, 'project_tasks', 'project_id', 'task_is');
-
     }
     public function delegations(): BelongsToMany
     {
-        return $this->belongsToMany(Contact::class, "project_delegations","project_id","delegation_id");
+        return $this->belongsToMany(Contact::class, "project_delegations", "project_id", "delegation_id");
     }
     public function facilities(): BelongsToMany
     {
-        return $this->belongsToMany(Facility::class,"project_facilities","project_id","facility_id");
+        return $this->belongsToMany(Facility::class, "project_facilities", "project_id", "facility_id");
     }
 
     public function organization_customer(): BelongsTo
@@ -118,10 +116,6 @@ class Project extends Model
     {
         return $this->belongsTo(ProjectStatus::class, 'status_id', 'name_key');
     }
-
-
-
-
     public function project_status(): HasMany
     {
         return $this->hasMany(ProjectStatus::class);
@@ -134,7 +128,5 @@ class Project extends Model
     {
         return $this->hasMany(ProjectFacilities::class);
     }
-
-
 }
 

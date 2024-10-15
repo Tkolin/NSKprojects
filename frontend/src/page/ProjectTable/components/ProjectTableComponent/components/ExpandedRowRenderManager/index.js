@@ -1,13 +1,14 @@
-import React, {useState} from "react";
-import {Collapse, Modal, Space} from "antd";
-import TableStagesComponent from "./components/TableStagesComponent";
-import TableIrdsComponent from "./components/TableIrdsComponent";
-import TableExecutorsComponent from "./components/TableExecutorsComponent";
-import TableProjectTasksManagment from "./components/TableProjectTasksManagment";
-import TablePaymentExecutorOrdersComponent from "./components/TablePaymentExecutorOrdersComponent";
-import {nanoid} from "nanoid";
+import { Collapse, Modal, Space } from "antd";
+import { nanoid } from "nanoid";
+import React, { useState } from "react";
 import IrdsProjectForm from "../../../../../ProjectIrdsForm";
 import StageToProjectForm from "../../../../../ProjectStagesForm";
+import TableExecutorsComponent from "./components/TableExecutorsComponent";
+import TableIrdsComponent from "./components/TableIrdsComponent";
+import TablePaymentExecutorOrdersComponent from "./components/TablePaymentExecutorOrdersComponent";
+import TableProjectTasksManagment from "./components/TableProjectTasksManagment";
+import TableStagesComponent from "./components/TableStagesComponent";
+import TaskGanttChartComponent from "./components/TaskGanttChartComponent";
 
 const Index = ({project, expandable, options}) => {
     const [editModalStatus, setEditModalStatus] = useState();
@@ -74,7 +75,7 @@ const Index = ({project, expandable, options}) => {
                         ...(options.includes("stages-extra") ? [
                             {
                                 key: '4',
-                                label: "Этапы",
+                                label: "Акты и Счета по Этапам",
                                 children:
                                     <TableStagesComponent data-permission={"read-project-stage"} project={project}
                                                           options={['acts', 'payments']}
@@ -94,12 +95,19 @@ const Index = ({project, expandable, options}) => {
                         ...(options.includes("executor_orders") ? [
                             {
                                 key: '6',
-                                label: "Исполнители",
+                                label: "Оплата договоров с исполнителями",
                                 children:
                                     <TablePaymentExecutorOrdersComponent
                                         data-permission={"read-project-task-executor"}
                                         project={project}
                                         setEditModalStatus={() => setEditModalStatus("executor_orders")}/>
+                            }] : []),
+                        ...(options.includes("task-chart") ? [
+                            {
+                                key: '7',
+                                label: "График задач",
+                                children:
+                                    <TaskGanttChartComponent projectId={project.id}/>
                             }] : []),
 
                     ]

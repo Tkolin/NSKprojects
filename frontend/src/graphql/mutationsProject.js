@@ -243,6 +243,7 @@ export const PROJECT_TASK_DATE_SYNC_MUTATION = gql`
         }
     }
 `;
+ 
 export const SET_STAGE_TEMPLATE_TO_PROJECT_MUTATION = gql`
     mutation SetStageTempProject
     (   $projectId: ID!

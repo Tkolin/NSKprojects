@@ -26,7 +26,7 @@ const PersonForm = ({localObject, initialObject, onCompleted, cardProps}) => {
     useEffect(() => {
         console.log("initialObject", initialObject)
     }, [initialObject]);
-    const nameModel = 'Подрядчики';
+    const nameModel = 'исполнителя';
     const TokenDADATA = process.env.REACT_APP_TOKEN_DADATAADDRESS;
     const [actualObject, setActualObject] = useState(localObject?.id ?? (initialObject ?? null));
     const [loadContact, {loading, data}] = useLazyQuery(PERSONS_QUERY_BY_ID, {

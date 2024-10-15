@@ -4,11 +4,11 @@
 extend type Query {
     projectIrds( projectId: ID): [Project] @checkRole(permission:  ["read-project-ird"])
     projectStages( projectId: ID): [Project] @checkRole(permission:  ["read-project-stage"])
-    projectTasksQuery(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [Project] @checkRole(permission:  ["read-project-task"])
+    projectTasksQuery(projectId: ID): ProjectTasksResult @checkRole(permission:  ["read-project-task"])
     projectsStatistic(projectStatuses: [String]!): [ProjectStatistic] @checkRole(permission:  ["read-project"])
     executorOrders(projectId: ID, executorId: ID): [ExecutorOrder!]
     projectOrdersPayments(projectId: ID!, executorId: ID!): [Project!]
-    
+
 
 
     projectTS(projectId: ID): ProjectTS @checkRole(permission:  ["math"])
@@ -175,4 +175,7 @@ input TaskToProject {
 type CountProjectByOrganizations{
     organization_id: ID!
     count_project: Int!
+}
+type ProjectTasksResult{
+    items: [ProjectTask]
 }

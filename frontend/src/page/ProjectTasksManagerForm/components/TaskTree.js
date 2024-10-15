@@ -1,4 +1,4 @@
-// ColoredTree.jsx
+// TaskTree.jsx
 
 import { Skeleton, Tree } from 'antd';
 import React, { useEffect, useState } from 'react';
@@ -110,7 +110,7 @@ const transformTreeData = (nodes) => {
   });
 };
 
-const ColoredTree = ({
+const TaskTree = ({
   project_tasks, // Плоский список задач
   onChange, // Функция для обновления задач при изменении дерева
   onSelect, // Функция при выборе узла
@@ -224,4 +224,4 @@ const ColoredTree = ({
   );
 };
 
-export default ColoredTree;
+export default TaskTree;

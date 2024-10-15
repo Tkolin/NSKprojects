@@ -1,18 +1,18 @@
 import {
-    Card,
-    Col,
-    Divider,
-    Form,
-    Input,
-    Row,
-    Space,
-    Tooltip,
-    Typography,
+  Card,
+  Col,
+  Divider,
+  Form,
+  Input,
+  Row,
+  Space,
+  Tooltip,
+  Typography,
 } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import { NotificationContext } from "../../NotificationProvider";
 import TaskProjectForm from "../ProjectTaskForm/TaskProjectForm";
-import ColoredTree from "./components/ColoredTree";
+import TaskTree from "./components/TaskTree";
 import TasksPriceTotal from "./components/TasksPriceTotal";
 
 const { Text } = Typography;
@@ -160,7 +160,7 @@ const ProjectTasksManagerForm = ({ actualProject, onCompleted }) => {
       <Row gutter={4} style={{ width: "100%" }}>
         <Col span={12}>
           <Card title="Структура задач проекта" style={{ padding: "20px" }}>
-            <ColoredTree
+            <TaskTree
               project_tasks={actualProject?.project_tasks}
               // onChange={handleTreeChange}
               onSelect={(selectedKeys, info) => {
@@ -180,7 +180,7 @@ const ProjectTasksManagerForm = ({ actualProject, onCompleted }) => {
           {/* <TasksTreeBlock /> */}
           {/* <Card title={"Список задач"}>
                         <Form.Item name={"tasks"}>
-                            <ColoredTree
+                            <TaskTree
                                 project_stages={project_stages}
                                 project_tasks={project_tasks}
                                 onChange={(newTreeData) => {
