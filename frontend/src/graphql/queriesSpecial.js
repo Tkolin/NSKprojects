@@ -1,4 +1,4 @@
-import {gql} from "@apollo/client";
+import { gql } from "@apollo/client";
 
 export const STATUS_PROJECTS_QUERY = gql`
     query StagesQuery ($projectStatuses: [String]!) {
@@ -42,6 +42,7 @@ export const EXECUTOR_ORDERS_QUERY = gql`
             project_tasks {
                 id
                 project_id
+                is_delay
             }
             executor_order_payments {
                 id
@@ -70,6 +71,7 @@ export const EXECUTOR_ORDERS_PROJECT_QUERY = gql`
                 project_id
                 date_start
                 date_end
+                is_delay
                 status
                 task {
                     name

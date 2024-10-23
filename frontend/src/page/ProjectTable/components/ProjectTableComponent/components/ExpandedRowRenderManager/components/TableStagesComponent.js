@@ -1,13 +1,10 @@
-import {Space, Table, Tooltip, Typography} from "antd";
-import React from "react";
-import {DownloadOutlined, EditOutlined} from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
+import { Space, Table, Tooltip, Typography } from "antd";
 import Link from "antd/es/typography/Link";
+import React from "react";
 
-import PaymentInvoiceProjectDownload
-    from "../../../../../../components/script/fileDownloadScripts/PaymentInvoiceProjectDownload";
-import ActRenderingProjectDownload
-    from "../../../../../../components/script/fileDownloadScripts/ActRenderingProjectDownload";
-import {calc} from "antd/es/theme/internal";
+import ActRenderingProjectDownload from "../../../../../../components/script/fileDownloadScripts/ActRenderingProjectDownload";
+import PaymentInvoiceProjectDownload from "../../../../../../components/script/fileDownloadScripts/PaymentInvoiceProjectDownload";
 
 const {Text} = Typography;
 
@@ -83,7 +80,7 @@ const TableStagesComponent = ({setEditModalStatus, project, options}) => {
     ];
     return (
         <Table
-
+            style={{display: "flex", flexDirection: "column", marginInline: "none"}}
             size={"small"}
             columns={columnsStages}
             dataSource={project?.project_stages ? [{

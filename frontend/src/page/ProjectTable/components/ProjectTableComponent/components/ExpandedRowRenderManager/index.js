@@ -1,4 +1,5 @@
-import { Collapse, Modal, Space } from "antd";
+import { SunOutlined } from "@ant-design/icons";
+import { Modal, Space, Tabs } from "antd";
 import { nanoid } from "nanoid";
 import React, { useState } from "react";
 import IrdsProjectForm from "../../../../../ProjectIrdsForm";
@@ -6,6 +7,7 @@ import StageToProjectForm from "../../../../../ProjectStagesForm";
 import TableExecutorsComponent from "./components/TableExecutorsComponent";
 import TableIrdsComponent from "./components/TableIrdsComponent";
 import TablePaymentExecutorOrdersComponent from "./components/TablePaymentExecutorOrdersComponent";
+import TableProjectTasksDelayManagment from "./components/TableProjectTasksDelayManagment";
 import TableProjectTasksManagment from "./components/TableProjectTasksManagment";
 import TableStagesComponent from "./components/TableStagesComponent";
 import TaskGanttChartComponent from "./components/TaskGanttChartComponent";
@@ -42,11 +44,17 @@ const Index = ({project, expandable, options}) => {
     };
     return (
         <>
-            <Space style={{maxWidth: "1200px"}} direction={"vertical"} align={"start"}>
-                <Collapse size={"small"} accordion items={
+            <Space  direction={"vertical"} align={"start"} style={{
+                width: "100%",
+                padding: "20px 70px 20px 20px", 
+                borderRadius: "10px",
+                backgroundColor : "#fff"}}>
+                <Tabs size={"small"} type="card" accordion style={{
+                width: "100%"}} items={
                     [
                         ...(options.includes("stages") ? [{
                             key: '1',
+                            icon: <SunOutlined/>,
                             label: "Этапы",
                             children:
                                 <TableStagesComponent data-permission={"read-project-stage"} project={project}
@@ -56,6 +64,7 @@ const Index = ({project, expandable, options}) => {
                         ...(options.includes("irds") ? [
                             {
                                 key: '2',
+                                icon: <SunOutlined/>,
                                 label: "ИРД",
                                 children:
                                     <TableIrdsComponent data-permission={"read-project-ird"} project={project}
@@ -66,6 +75,7 @@ const Index = ({project, expandable, options}) => {
                         ...(options.includes("executors") ? [
                             {
                                 key: '3',
+                                icon: <SunOutlined/>,
                                 label: "Исполнители",
                                 children:
                                     <TableExecutorsComponent data-permission={"read-project-task-executor"}
@@ -75,6 +85,7 @@ const Index = ({project, expandable, options}) => {
                         ...(options.includes("stages-extra") ? [
                             {
                                 key: '4',
+                                icon: <SunOutlined/>,
                                 label: "Акты и Счета по Этапам",
                                 children:
                                     <TableStagesComponent data-permission={"read-project-stage"} project={project}
@@ -84,6 +95,7 @@ const Index = ({project, expandable, options}) => {
                         ...(options.includes("tasks") ? [
                             {
                                 key: '5',
+                                icon: <SunOutlined/>,
                                 label: "Задачи",
                                 children:
                                     <TableProjectTasksManagment
@@ -95,6 +107,7 @@ const Index = ({project, expandable, options}) => {
                         ...(options.includes("executor_orders") ? [
                             {
                                 key: '6',
+                                icon: <SunOutlined/>,
                                 label: "Оплата договоров с исполнителями",
                                 children:
                                     <TablePaymentExecutorOrdersComponent
@@ -105,9 +118,19 @@ const Index = ({project, expandable, options}) => {
                         ...(options.includes("task-chart") ? [
                             {
                                 key: '7',
+                                icon: <SunOutlined/>,
                                 label: "График задач",
                                 children:
-                                    <TaskGanttChartComponent projectId={project.id}/>
+                                    <TaskGanttChartComponent style={{width: "100%"}} projectId={project.id}/>
+                            }] : []),
+                        ...(options.includes("task-chart") ? [
+                            {
+                                key: '8',
+                                icon: <SunOutlined/>,
+                                label: "Задержки",
+                                children:
+                                <TableProjectTasksDelayManagment
+                                     projectId={project.id} />
                             }] : []),
 
                     ]
@@ -121,9 +144,7 @@ const Index = ({project, expandable, options}) => {
                 onCancel={() => setEditModalStatus(null)}
                 footer={null}
                 title={getNameModalView(editModalStatus)}
-
                 width={"max-content"}
-
                 onClose={() => setEditModalStatus(null)}
             >
                 {renderEditModalContent({

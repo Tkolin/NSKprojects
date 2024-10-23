@@ -35,6 +35,8 @@ export const PROJECT_TASKS_QUERY = gql`
                 }
                 date_start
                 date_end
+                stage_number
+                project_task_inherited_id
             }
  
         }
@@ -277,6 +279,7 @@ export const PROJECTS_QUERY = gql`
                     id
                     project_id
                     task_id
+                    is_delay
                     status
                     task {
                         id
@@ -585,6 +588,15 @@ export const STAGES_TO_PROJECT_QUERY = gql`
                 date_end
                 progress
             }
+        }
+    }
+`;
+export const PROJECT_DELAYS_QUERY = gql`
+    query ProjectDelay ($projectId: ID){
+        projectDelay(projectId: $projectId)   {
+            id
+            date_start
+            date_end
         }
     }
 `;

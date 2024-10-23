@@ -61,8 +61,7 @@ extend type Mutation {
         projectId: ID!
         templateProjectId: ID!
     ): Project @checkRole(permission:  ["update-project-ird"])
-    projectTaskDateSync(id: ID!): [Project!] @checkRole(permission:  ["update-project-task", "create-project-task","delete-project-task"])
-    projectIrdsSync(
+     projectIrdsSync(
         items: [IrdToProjectInput]!
     ): Project @checkRole(permission:  ["update-project-ird"])
 
@@ -84,6 +83,7 @@ extend type Mutation {
         items: [StageToProjectInput]!
     ): Project @checkRole(permission:  ["update-project-stage"])
     projectTasksStructureUpdate(
+        project_id: ID!
         data: [TaskToProjectStructureInput]!
     ): Project @checkRole(permission:  ["update-project-task", "create-project-task","delete-project-task"])
     projectTaskDetailUpdate(
@@ -117,15 +117,12 @@ extend type Mutation {
 }
 #-INPUTS:
 input TaskToProjectStructureInput  {
-    task_id: ID
-    project_id: ID
-    inherited_task_id: ID
-    date_start: String
-    date_end: String
-    duration: Int
-    offset: Int
-    stage_number: Int
+    task_id: ID!
+    local_id: String!
+    local_id_inherited: String
+    stage_number: Int!
 }
+
 input TaskToProjectDetailInput  {
     id: ID
 

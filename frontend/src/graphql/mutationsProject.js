@@ -77,6 +77,7 @@ export const ADD_PROJECT_MUTATION = gql`
                 task_id
                 date_start
                 offset
+                is_delay
                 duration
                 date_end
                 price
@@ -177,7 +178,7 @@ export const UPDATE_PROJECT_MUTATION = gql`
                 offset
                 duration
                 date_start
-
+                is_delay
                 date_end
                 price
             }
@@ -233,16 +234,7 @@ export const PROJECT_TS_SYNC_MUTATION = gql`
         }
     }
 `;
-export const PROJECT_TASK_DATE_SYNC_MUTATION = gql`
-    mutation ProjectTaskDateSync
-    (   $id: ID!)
-    {
-        projectTaskDateSync(id: $id) {
-            id
-            
-        }
-    }
-`;
+ 
  
 export const SET_STAGE_TEMPLATE_TO_PROJECT_MUTATION = gql`
     mutation SetStageTempProject
@@ -290,11 +282,12 @@ export const PROJECT_TASKS_DETAIL_UPDATE = gql`
     }
 `;
 export const PROJECT_TASKS_STRUCTURE_UPDATE = gql`
-    mutation ProjectTasksStructureUpdate($data: [TaskToProjectStructureInput]!) {
-        projectTasksStructureUpdate(data: $data) {
+    mutation ProjectTasksStructureUpdate($data: [TaskToProjectStructureInput]!, $project_id: ID!) {
+        projectTasksStructureUpdate(data: $data, project_id: $project_id) {
             id
             project_tasks {
                 id
+                is_delay
                 task_id
                 project_task_inherited_id
                 task {

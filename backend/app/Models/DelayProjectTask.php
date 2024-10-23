@@ -10,6 +10,7 @@ class DelayProjectTask extends Model
 {
     protected $fillable = [
         'delay_type',
+        'delay_id',
         'project_task_id',
     ];
     public function project_task(): HasOne

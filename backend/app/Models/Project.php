@@ -19,6 +19,8 @@ class Project extends Model
         'date_signing',
         'duration',
         'date_end',
+        'date_end_fact',
+        'date_start_fact',
         'date_start',
         'status_id',
         'prepayment',
