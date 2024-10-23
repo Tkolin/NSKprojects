@@ -60,7 +60,7 @@ final readonly class StopDelay
 
                     case 'WORKING':
                         $projectTask->duration += $duration;
-                    error_log("projectTask->date_start_fact". $projectTask->date_start_fact);
+                        error_log("projectTask->date_start_fact". $projectTask->date_start_fact);
                         $projectTaskDateStartFact = new DateTime($projectTask->date_start_fact);
 
                         // Вычисляем фактическую дату окончания на основе фактической даты начала и длительности задачи
