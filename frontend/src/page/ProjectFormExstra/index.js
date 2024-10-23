@@ -1,17 +1,16 @@
-import {Alert, Button, Divider, Space} from "antd";
-import {EyeOutlined, SaveOutlined} from "@ant-design/icons";
-import React, {useEffect, useState} from "react";
-import IrdToProjectForm from "../ProjectIrdsForm";
-import {StyledButtonGreen} from "../components/style/ButtonStyles";
-import StageToProjectForm from "../ProjectStagesForm";
+import { EyeOutlined } from "@ant-design/icons";
+import { Alert, Button, Divider, Space } from "antd";
+import React, { useEffect, useState } from "react";
 import ProjectForm from "../ProjectForm";
+import IrdToProjectForm from "../ProjectIrdsForm";
+import StageToProjectForm from "../ProjectStagesForm";
 
 const template = {
     APPROVAL_AGREEMENT: ["project", "stage", "ird"],
     APPROVAL_KP: ["project", "stage"],
     DESIGN_REQUEST: ["project"],
     WAITING_SOURCE: ["project", "stage", "ird"],
-    WORKING: ["project", "stage", "ird"],
+    WORKING: ["project"],
 }
 const Index = ({project, status}) => {
     const [page, setPage] = useState("project")

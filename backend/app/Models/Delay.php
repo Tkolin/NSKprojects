@@ -4,12 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Delay extends Model
 {
     protected $fillable = [
         'id',
-        'project_Id',
+        'project_id',
         'date_start',
         'date_end',
         'duration',
@@ -22,6 +25,23 @@ class Delay extends Model
     {
         return $this->hasMany(
             DelayProjectTask::class
+        );
+    }
+    public function project_tasks(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            ProjectTasks::class,
+            DelayProjectTask::class,
+            'delay_id',
+            'id',
+            'id',
+            'project_task_id'
+        );
+    }
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(
+            Project::class
         );
     }
 }

@@ -26,6 +26,72 @@ export const EMPLOYEES_TO_TASK_BY_PROJECT_TASK_ID = gql`
     }
   }
 `;
+export const PROJECT_QUERY = gql`
+  query Project($id: ID) {
+    project(id: $id) {
+                id
+                number
+                name
+                duration
+                date_start
+                contract_file_id
+                kp_file_id
+                date_signing
+                date_start
+                date_end
+                prepayment
+                date_completion
+                price
+                project_stages {
+                  number
+                  stage { 
+                    id
+                    name
+                  }
+                }
+                project_tasks {
+                  id 
+                  stage_number
+                  task {
+                    id
+                    name
+                  }
+                  project_task_inherited_id
+                  status
+                  executor {
+                    id
+                    passport {
+                        first_name
+                        last_name
+                        patronymic
+                    }
+                }
+                }
+    }
+  }
+`;
+export const PROJECT_TASK_QUERY = gql`
+  query ProjectTask($id: ID) {
+    projectTask(id: $id) {
+                  id 
+                  stage_number
+                  executor {
+                    id
+                    passport {
+                        first_name
+                        last_name
+                        patronymic
+                    }
+                }
+                  task {
+                    id
+                    name
+                  }
+                
+    }
+  }
+`;
+ 
 export const TASKS_QUERY_BY_ID = gql`
   query TasksQueryByID($id: ID) {
     tasks(queryType: "BY_ID", id: $id) {

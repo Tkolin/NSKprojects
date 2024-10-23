@@ -27,9 +27,11 @@ const buildTree = (tasks) => {
 
 // Функция для определения цвета узла на основе исполнителей
 const determineColor = (node) => {
-  if (!node.children || node.children.length === 0) {
-    // Узел без подзадач
-    return node.executor ? 'green' : 'red';
+  console.log("nodes  colorice", node.executor);
+  if (node.executor) {
+    return   'green'  ;
+  } else if (node.children.length <= 0) {
+    return 'red';
   }
 
   let allChildrenAssigned = true;

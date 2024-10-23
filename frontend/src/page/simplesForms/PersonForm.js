@@ -179,7 +179,7 @@ const PersonForm = ({localObject, initialObject, onCompleted, cardProps}) => {
                                           <Input/>
                                       </Form.Item>
                                       <Divider orientation={"left"}>Данные паспорта:</Divider>
-                                      <Form.Item name="birth_date" label="Дата рождения" rules={[{required: true, message: "Укажите дату рождения"}]}>
+                                      <Form.Item name="birth_date" label="Дата рождения"  >
                                           <CustomDatePicker/>
                                       </Form.Item>
                                       <Form.Item name="date" label="Дата выдачи">

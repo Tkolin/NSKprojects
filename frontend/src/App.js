@@ -37,6 +37,7 @@ const GlobalStyles = createGlobalStyle`
     body {
         margin: 0;
     }
+ 
 `
 
 const App = () => {

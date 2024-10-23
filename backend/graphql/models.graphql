@@ -2,6 +2,9 @@
 #   - SIMPLE TYPE QUERY -
 #
 type Query {
+    project(id: ID): Project  @checkRole(permission:  ["read-project"])
+    projectTask(id: ID): ProjectTask  @checkRole(permission:  ["read-project"])
+
     contacts(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): ContactsResult @checkRole(permission:  ["read-contact"])
     references(id: ID, queryOptions: QueryOptions, queryType: String, referenceId: ID): ReferenceResult @checkRole(permission:  ["read-contact"])
     technicalSpecificationChapters(id: ID, queryOptions: QueryOptions, queryType: String, referenceId: ID): TSChapterResult @checkRole(permission:  ["read-contact"])
@@ -157,6 +160,7 @@ type ProjectStage{
 }
 type ProjectTask{
     id: ID
+    is_delay: Boolean
     project_id: ID
     task_id: ID
     executor_orders: [ExecutorOrder]

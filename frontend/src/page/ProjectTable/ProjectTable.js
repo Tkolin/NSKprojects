@@ -66,9 +66,9 @@ const template = {
             //  Первая колонка кнопок управления таблицей
             tool: {
                 //  Компоненты скрытые в ...
-                menu: ["crud", "contract", "tasks_management", "template"],
+                menu: ["contract", "tasks_management", "template"],
                 //  Кнопки быстрых действий
-                hotKey: ["archive", "up"],
+                hotKey: ["archive"],
             },
             //  Ключи колонок таблицы
             columns: ["main"],

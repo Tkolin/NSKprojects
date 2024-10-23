@@ -3,6 +3,7 @@
 namespace App\GraphQL\Mutations;
 
 use App\Models\ProjectTasks;
+use DateTime;
 
 final readonly class ProjectTaskUp
 {
@@ -17,6 +18,7 @@ final readonly class ProjectTaskUp
                 break;
             case "AWAITING":
                 $taskData->status = 'WORKING';
+                $taskData->date_start_fact = (new DateTime())->format("Y-m-d");
                 break;
             case "WORKING":
                 $taskData->status = 'COMPLETED';

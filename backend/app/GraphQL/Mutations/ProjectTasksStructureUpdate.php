@@ -4,82 +4,81 @@ namespace App\GraphQL\Mutations;
 
 use App\Models\Project;
 use App\Models\ProjectTasks;
-use Cassandra\Date;
+use Exception;
 
-final readonly class ProjectTasksStructureUpdate
+final class ProjectTasksStructureUpdate
 {
     /**
      * Обновление структуры задач.
      *
-     * @param array{
+     * @param array $args {
+     *     project_id: ID!,
      *     data: [{
-     *      task_id: ID
-     *      project_id: ID
-     *      inherited_task_id: ID
-     *      date_start: String
-     *      date_end: String
-     *      duration: Int
-     *      stage_number: Int
+     *      task_id: ID!,
+     *      local_id: ID!, // Локальный id НЕ ИЗ БАЗЫ задачи_проекта
+     *      local_id_inherited: ID!, // Локальный id НЕ ИЗ БАЗЫ задачи_проекта родителя
+     *      stage_number: int! // Номер этапа
      *     }]
-     * } $args
+     * }
      *
+     * @return Project|null
+     * @throws Exception
      */
-
-    public function __invoke(null $_, array $args)
+    public function __invoke($_, array $args)
     {
-        $data = $args['data'];
-        $projectId = $data[0]['project_id'];
-        $taskIds = array_column($data, 'task_id');
-        $tasks = ProjectTasks::whereIn('task_id', $taskIds)
-            ->where('project_id', $projectId)
-            ->get()
-            ->keyBy('task_id');
-        $actualTasks = [];
+        // Валидация входящих данных
+        if (!isset($args['project_id']) || !isset($args['data']) || !is_array($args['data'])) {
+            throw new Exception('Invalid input');
+        }
 
-        foreach ($data as $item) {
-            $task = $tasks->get($item['task_id']);
-            if (!$task) {
-                $task = [
-                    'task_id' => $item['task_id'],
-                    'project_id' => $projectId,
-                ];
+        $projectId = $args['project_id'];
+        $tasks = $args['data'];
+
+         $tasksActual = [];
+        $incomingTaskIds = []; // Массив для хранения task_id задач, которые пришли с текущим запросом
+
+         foreach ($tasks as &$task) {
+            if (!isset($task['task_id']) || !isset($task['local_id']) || !isset($task['stage_number'])) {
+                throw new Exception('Invalid task data');
             }
-//            $duration =$item['duration'] ?? 0;
-//            $dateStart = $item['date_start'] ?? $task->date_start ?? null;
-//            $dateEnd = $item['date_end'] ?? $task->date_end ?? null;
-//            $duration = !(isset($dateStart) && isset($dateEnd)) ? $duration : (new \DateTime($dateStart))->diff(new \DateTime($dateEnd))->days;
-             $task = ProjectTasks::updateOrCreate(
-                [
+
+            $actualProjectTask = ProjectTasks::where('project_id', $projectId)
+                ->where('task_id', $task['task_id'])
+                ->where('stage_number', $task['stage_number'])
+                ->first();
+
+            if ($actualProjectTask) {
+                $task['id'] = $actualProjectTask->id;
+            } else {
+                $newProjectTask = ProjectTasks::create([
+                    'project_id' => $projectId,
                     'task_id' => $task['task_id'],
-                    'project_id' => $projectId,
-                ],
-                [
-                'project_task_inherited_id' => null,
-              //  'date_start' => $dateStart,
-               // 'date_end' => $dateEnd,
-                'duration' => $item["duration"] ?? null,
-                'offset' => $item["offset"] ?? null,
-                'stage_number' => $item['stage_number'] ?? $task->stage_number  ?? null,
-            ]);
+                    'stage_number' => $task['stage_number'],
+                ]);
+                $task['id'] = $newProjectTask->id;
+            }
 
-            $actualTasks[$task->task_id] = $task;
+            $incomingTaskIds[] = $task['id'];
+            $tasksActual[$task['local_id']] = $task;
         }
+        unset($task);
 
-        // Добавление вложенных задач
-        foreach ($data as $item) {
-            $task = $actualTasks[$item['task_id']];
-            if ($item['inherited_task_id']) {
-                $task->project_task_inherited_id = $actualTasks[$item['inherited_task_id']]->id; // получить id записи;
-                $task->save();
+         foreach ($tasks as $task) {
+            $actualProjectTask = ProjectTasks::find($task['id']);
+            if ($actualProjectTask) {
+                if (isset($task['local_id_inherited']) && isset($tasksActual[$task['local_id_inherited']])) {
+                    $actualProjectTask->project_task_inherited_id = $tasksActual[$task['local_id_inherited']]['id'];
+                } else {
+                    $actualProjectTask->project_task_inherited_id = null;
+                }
+                $actualProjectTask->save();
+            } else {
+                throw new Exception('Task not found');
             }
         }
-
-        // Удаление задач, которые не присутствуют в новом списке
-        $actualIds = array_column($actualTasks, 'id');
-        if($actualIds) {
-            ProjectTasks::query()->where('project_id',$projectId)->whereNotIn('id',$actualIds)->delete();
-        }
-
+    ProjectTasks::where('project_id', $projectId)
+        ->whereNotIn('id', $incomingTaskIds)
+        ->delete();
         return Project::with('project_tasks')->find($projectId);
     }
 }

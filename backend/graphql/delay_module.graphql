@@ -1,16 +1,10 @@
 # #
 # #   - QUERY -
 # #
-# extend type Query {
-#     projectIrds( projectId: ID): [Project] @checkRole(permission:  ["read-project-ird"])
-#     projectStages( projectId: ID): [Project] @checkRole(permission:  ["read-project-stage"])
-#     projectTasksQuery(id: ID, queryOptions: QueryOptions ,projectId: ID, queryType: String): [Project] @checkRole(permission:  ["read-project-task"])
-#     projectsStatistic(projectStatuses: [String]!): [ProjectStatistic] @checkRole(permission:  ["read-project"])
-#     executorOrders(projectId: ID, executorId: ID): [ExecutorOrder!]
-#     projectOrdersPayments(projectId: ID!, executorId: ID!): [Project!]
-#     projectTS(projectId: ID): ProjectTS @checkRole(permission:  ["math"])
-#      projectTasksExecutors(taskId: ID): ProjectTaskExecutorResult @checkRole(permission:  ["read-project-task-executor"])
-# }
+extend type Query {
+    projectDelay( projectId: ID): [Delay] @checkRole(permission:  ["read-project"])
+
+    }
 # #-INPUTS:
 
 # #-TYPES:
@@ -31,13 +25,26 @@ type DelayProjectTask {
 }
 
 extend type Mutation {
-    createDelay(
-        data: DelayInput!
-        chapterIds: [ID]!
-    ): Delay
+    createDelay(data: DelayInput!, chapterIds: [ID]!): Delay
+    startDelay(
+        projectId: ID!
+        date_start: String!
+        description: String!
+        type: String!
+        provider: String!
+        primaryTaskIds: [ID]!
+    ): DelayResult
+
+    stopDelay(
+        id: ID!
+        date_end: String!
+        offset_mode: String!
+    ): DelayResult
+
+
 }
 # #-INPUTS:
-input DelayInput  {
+input DelayInput {
     date_start: String
     duration: Int
     description: String
@@ -97,8 +104,8 @@ input InputDelayProjectTask {
 #     date_end: String
 # }
 
-# #-RESULTS:
-# type CountProjectByOrganizations{
-#     organization_id: ID!
-#     count_project: Int!
-# }
+#-RESULTS:
+type DelayResult{
+    delay: Delay!
+    project: Project!
+}

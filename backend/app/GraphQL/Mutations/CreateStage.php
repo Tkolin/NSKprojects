@@ -2,7 +2,10 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\GraphQL\Queries\ProjectTask;
+use App\Models\ProjectTasks;
 use App\Models\Stage;
+use App\Models\Task;
 
 final readonly class CreateStage
 {
@@ -10,6 +13,18 @@ final readonly class CreateStage
     public function __invoke(null $_, array $args)
     {
         $data = $args['data'];
-        return Stage::create($data);
+
+        // Находим задачу по имени или создаем новую задачу
+        $task = Task::firstOrCreate(
+            ['name' => $data['name']],
+            ['created_at' => now(), 'updated_at' => now()]
+        );
+        // Создаем новый этап с task_id
+        $stage = new Stage();
+        $stage->name = $data['name'];
+        $stage->task_id = $task->id;
+        $stage->save();
+
+        return $stage;
     }
 }
