@@ -116,7 +116,7 @@ abstract class DocumentGeneratorService
     public function saveDocument($fileName)
     {
         $this->fileName = Str::random(30) . "_" . $fileName;
-        $this->filePath = storage_path('app/' . $this->fileName);
+        $this->filePath = storage_path('app/public/temporary/' . $this->fileName);
         $this->templateProcessor->saveAs($this->filePath);
     }
 

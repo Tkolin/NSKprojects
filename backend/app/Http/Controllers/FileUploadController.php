@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+
 
 namespace App\Http\Controllers;
 
@@ -12,16 +13,27 @@ use Illuminate\Support\Facades\Storage;
 
 class FileUploadController extends Controller
 {
+    private function generateUniqueFilePath($directory, $originalFileName)
+    {
+        $storagePath = $directory . $originalFileName;
+        $uniqueSuffix = "_" . time();
+        $storagePath = $directory . pathinfo($originalFileName, PATHINFO_FILENAME) . $uniqueSuffix . "." . pathinfo($originalFileName, PATHINFO_EXTENSION);
+        return $storagePath;
+    }
+
     public function upload(Request $request, $projectNumber)
     {
         error_log("projectNumber" . $projectNumber);
         if ($request->hasFile('file')) {
             $file = $request->file('file');
-            $path = $file->store('uploads');
+            $directory = 'uploads/';
+            $storagePath = $this->generateUniqueFilePath($directory, $file->getClientOriginalName());
+
+            Storage::disk('local')->put($storagePath, file_get_contents($file->getRealPath()));
 
             $fileRecord = File::create([
-                'name' => $file->getClientOriginalName(),
-                'path' => $path,
+                'name' => pathinfo($storagePath, PATHINFO_BASENAME),
+                'path' => $storagePath,
                 'size' => $file->getSize(),
                 'mime_type' => $file->getClientMimeType(),
             ]);
@@ -44,20 +56,18 @@ class FileUploadController extends Controller
             $file = $request->file('file');
 
             $project = Project::find($projectId);
-
-            $pathProjectFolder = $project->path_project_folder;
-            $storagePath = "/" . $pathProjectFolder . "/Договора_с_заказчиком/" . $file->getClientOriginalName();
-            error_log('$project' . $project);
-            Storage::disk('localERPFiles')->put($storagePath, file_get_contents($file->getRealPath()));
+            $directory = "/" . $project->path_project_folder . "/Договора с заказчиком/";
+            $storagePath = $this->generateUniqueFilePath($directory, $file->getClientOriginalName());
 
             Storage::disk('localERPFiles')->put($storagePath, file_get_contents($file->getRealPath()));
 
             $fileRecord = File::create([
-                'name' => $file->getClientOriginalName(),
+                'name' => pathinfo($storagePath, PATHINFO_BASENAME),
                 'path' => $storagePath,
                 'size' => $file->getSize(),
                 'mime_type' => $file->getClientMimeType(),
             ]);
+
             ProjectFile::create([
                 'project_id' => $projectId,
                 'file_id' => $fileRecord->id,
@@ -66,6 +76,7 @@ class FileUploadController extends Controller
                 'date_document' => $dateSinging,
             ]);
             $project->update(['contract_file_id' => $fileRecord->id, 'date_signing' => $dateSinging]);
+
             return response()->json([
                 'success' => true,
                 'file' => $fileRecord,
@@ -84,19 +95,18 @@ class FileUploadController extends Controller
             $file = $request->file('file');
 
             $project = Project::find($projectId);
-
-            $pathProjectFolder = $project->path_project_folder;
-            $storagePath = "/" . $pathProjectFolder . "/Коммерческое_предложение/" . $file->getClientOriginalName();
-            error_log('$project' . $project);
+            $directory = "/" . $project->path_project_folder . "/Коммерческие предложения/";
+            $storagePath = $this->generateUniqueFilePath($directory, $file->getClientOriginalName());
 
             Storage::disk('localERPFiles')->put($storagePath, file_get_contents($file->getRealPath()));
 
             $fileRecord = File::create([
-                'name' => $file->getClientOriginalName(),
+                'name' => pathinfo($storagePath, PATHINFO_BASENAME),
                 'path' => $storagePath,
                 'size' => $file->getSize(),
                 'mime_type' => $file->getClientMimeType(),
             ]);
+
             ProjectFile::create([
                 'project_id' => $projectId,
                 'file_id' => $fileRecord->id,
@@ -104,7 +114,9 @@ class FileUploadController extends Controller
                 'number' => -1,
                 'date_document' => $dateSinging,
             ]);
+
             $project->update(['kp_file_id' => $fileRecord->id]);
+
             return response()->json([
                 'success' => true,
                 'file' => $fileRecord,
@@ -116,25 +128,25 @@ class FileUploadController extends Controller
 
     public function uploadExecutorOrder(Request $request, $orderId)
     {
-
         error_log("orderId " . $orderId);
         if ($request->hasFile('file')) {
             $file = $request->file('file');
 
             $order = ExecutorOrder::with('project_tasks.project')->find($orderId);
-            $pathProjectFolder = $order->project_tasks[0]->project->path_project_folder;
-            $storagePath = "/" . $pathProjectFolder . "/Договора_с_исполнителями/" . $file->getClientOriginalName();
+            $directory = "/" . $order->project_tasks[0]->project->path_project_folder . "/Договора с исполнителями/";
+            $storagePath = $this->generateUniqueFilePath($directory, $file->getClientOriginalName());
 
-            error_log('$storagePath' . $storagePath);
             Storage::disk('localERPFiles')->put($storagePath, file_get_contents($file->getRealPath()));
 
             $fileRecord = File::create([
-                'name' => $file->getClientOriginalName(),
+                'name' => pathinfo($storagePath, PATHINFO_BASENAME),
                 'path' => $storagePath,
                 'size' => $file->getSize(),
                 'mime_type' => $file->getClientMimeType(),
             ]);
+
             $order->update(['signed_file_id' => $fileRecord->id]);
+
             return response()->json([
                 'success' => true,
                 'file' => $fileRecord,
@@ -157,18 +169,18 @@ class FileUploadController extends Controller
             $file = $request->file('file');
 
             $order = ExecutorOrder::with('project_tasks.project')->find($executorOrderId);
-            $pathProjectFolder = $order->project_tasks[0]->project->path_project_folder;
-            $storagePath = "/" . $pathProjectFolder . "/Договора_с_исполнителями/Оплаты/" . $file->getClientOriginalName();
+            $directory = "/" . $order->project_tasks[0]->project->path_project_folder . "/Договора с исполнителями/Оплаты/";
+            $storagePath = $this->generateUniqueFilePath($directory, $file->getClientOriginalName());
 
-            error_log('$storagePath' . $storagePath);
             Storage::disk('localERPFiles')->put($storagePath, file_get_contents($file->getRealPath()));
 
             $fileRecord = File::create([
-                'name' => $file->getClientOriginalName(),
+                'name' => pathinfo($storagePath, PATHINFO_BASENAME),
                 'path' => $storagePath,
                 'size' => $file->getSize(),
                 'mime_type' => $file->getClientMimeType(),
             ]);
+
             ExecutorOrderPayment::create([
                 'file_id' => $fileRecord->id,
                 'executor_order_id' => $order->id,
@@ -185,3 +197,4 @@ class FileUploadController extends Controller
         return response()->json(['success' => false, 'message' => 'No file uploaded'], 400);
     }
 }
+
