@@ -26,7 +26,7 @@ final class StartDelay
                 'project_id' => $args['projectId'],
                 'date_start' => $args['date_start'],
                 'description' => $args['description'],
-                'delay_type' => $args['type'],
+                'delay_type' =>'OTHER_PROBLEM',
                 'provider' => $args['provider'],
             ]);
 

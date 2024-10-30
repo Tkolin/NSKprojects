@@ -18,7 +18,9 @@ class Delay extends Model
         'duration',
         'description',
         'delay_type',
-        'provider'
+        'provider',
+        'updated_at',
+        'created_at',
     ];
 
     public function delay_project_tasks(): HasMany

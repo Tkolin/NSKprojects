@@ -40,7 +40,11 @@ extend type Mutation {
         date_end: String!
         offset_mode: String!
     ): DelayResult
-
+    generatedDelayCustomerMessage(
+        projectId: ID!
+        dateOffer: String!
+        delegationId: ID!
+    ): Url
 
 }
 # #-INPUTS:

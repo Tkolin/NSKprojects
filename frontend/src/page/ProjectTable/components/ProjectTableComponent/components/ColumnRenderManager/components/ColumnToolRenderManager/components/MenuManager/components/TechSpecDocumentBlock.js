@@ -83,7 +83,7 @@ const TechSpecDocumentBlock = ({project, onUpdated}) => {
         <>
             {project?.kp_file_id ?
                 (<>
-                    <Divider style={{margin: "5px"}} orientation={"left"}>КП проекта</Divider>
+                    <Divider style={{margin: "5px"}} orientation={"left"}>ТЗ проекта</Divider>
                     <LinkToDownload fileId={project.kp_file_id}><CustomMenuButton icon={<DownloadOutlined/>}>
                         Скачать (согласован)
                     </CustomMenuButton>
@@ -92,7 +92,7 @@ const TechSpecDocumentBlock = ({project, onUpdated}) => {
                 :
 
                 <>
-                    <Divider style={{margin: "5px"}} orientation={"left"}>Формирование КП</Divider>
+                    <Divider style={{margin: "5px"}} orientation={"left"}>Формирование ТЗ</Divider>
                     
                     <CustomMenuButton icon={<DownloadOutlined/>}
                                           disabled={project?.project_kp_history?.length <= 0}>
@@ -148,7 +148,7 @@ const TechSpecDocumentBlock = ({project, onUpdated}) => {
                         }
                         showCancel={false}
                         children={
-                            <CustomMenuButton>Сгенерировать КП</CustomMenuButton>
+                            <CustomMenuButton>Сгенерировать ТЗ</CustomMenuButton>
                         }
                     /> */}
          
@@ -159,7 +159,7 @@ const TechSpecDocumentBlock = ({project, onUpdated}) => {
                         action={"project/upload/project_kp/page?projectId=" + project.id}
                         children={<CustomMenuButton className={'danger_text_btn'}
                                                     icon={<UploadOutlined/>}
-                                                    children={"Прикрепить КП"}/>}
+                                                    children={"Прикрепить ТЗ"}/>}
                     />
 
                     <Modal

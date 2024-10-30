@@ -4,6 +4,7 @@ import { nanoid } from "nanoid";
 import React, { useEffect, useState } from "react";
 import CRUDBlock from "./components/CRUDBlock";
 import ContractDocumentBlock from "./components/ContractDocumentBlock";
+import DelayCustomerDocumentBlock from "./components/DelayCustomerDocumentBlock";
 import KPDocumentBlock from "./components/KPDocumentBlock";
 import TasksManagementBlock from "./components/TasksManagementBlock";
 import TechSpecDocumentBlock from "./components/TechSpecDocumentBlock";
@@ -51,6 +52,9 @@ const Index = ({record, onUpdated, itemOptions = []}) => {
                 </>}
                 {itemOptions.includes("tech_spec")  && <>
                     <TechSpecDocumentBlock project={record} onUpdated={onUpdated}/>
+                </>}
+                {itemOptions.includes("delay_customer")  && <>
+                    <DelayCustomerDocumentBlock project={record} onUpdated={onUpdated}/>
                 </>}
 
                 {/*</Card>*/}
