@@ -26,7 +26,7 @@ export const EMPLOYEES_TO_TASK_BY_PROJECT_TASK_ID = gql`
     }
   }
 `;
-export const PROJECT_QUERY = gql`
+export const  PROJECT_QUERY = gql`
   query Project($id: ID) {
     project(id: $id) {
                 id
@@ -41,9 +41,15 @@ export const PROJECT_QUERY = gql`
                 date_end
                 prepayment
                 date_completion
+                prepayment_file_id
+                prepayment_date
                 price
                 project_stages {
                   number
+                  payment_file_id
+                  work_act_singing_file_id
+                  payment_date
+                  work_act_singing_date
                   stage { 
                     id
                     name

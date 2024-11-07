@@ -3,6 +3,7 @@
 namespace App\Services\FileGenerate;
 
 use App\Models\ProjectFile;
+use App\Models\ProjectStage;
 use Exception;
 
 class PaymentInvoiceTemplateGeneratorService extends DocumentGeneratorService
@@ -110,13 +111,15 @@ class PaymentInvoiceTemplateGeneratorService extends DocumentGeneratorService
         $storagePath = "/" . $projectData->path_project_folder . "/Invoices/" . $this->fileName;
 
         $file = $this->saveFileToProject($storagePath, $this->filePath, $this->fileName);
-        ProjectFile::create([
+       $projectFile = ProjectFile::create([
             'project_id' => $projectData->id,
             'file_id' => $file->id,
             'type_id' => "PAYMENT_INVOICE",
             'number' => 0,
             'date_document' => $dateCreated,
         ]);
+        ProjectStage::where("project_id",$projectFile["id"])
+        ->update(["payment_file_id"=> $projectFile->id ]);
 
 
         return $file->id;

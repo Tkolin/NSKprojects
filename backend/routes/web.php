@@ -26,6 +26,10 @@ Route::get('/temporary/{filename}', [FileController::class, 'downloadFile']);
 Route::post('/upload', [FileUploadController::class, 'upload']);
 
 Route::post('/project/upload/executor_order/{orderId}', [FileUploadController::class, 'uploadExecutorOrder']);
+
+Route::post('/project/upload/work_act_singing/page', [FileUploadController::class, 'uploadWorkActSinging']);
+Route::post('/project/upload/payment_invoice/page', [FileUploadController::class, 'uploadPaymentInvoice']);
+
 Route::post('/project/upload/executor_order_payment/page', [FileUploadController::class, 'uploadOrderPayment']);
 Route::post('/project/upload/project_contract/page', [FileUploadController::class, 'uploadProjectContract']);
 Route::post('/project/upload/project_kp/page', [FileUploadController::class, 'uploadProjectKp']);

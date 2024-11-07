@@ -34,18 +34,15 @@ extend type Mutation {
         provider: String!
         primaryTaskIds: [ID]!
     ): DelayResult
-
     stopDelay(
         id: ID!
         date_end: String!
         offset_mode: String!
     ): DelayResult
     generatedDelayCustomerMessage(
-        projectId: ID!
-        dateOffer: String!
-        delegationId: ID!
-    ): Url
-
+        delayId: ID!
+        dateFixed: String!
+     ): Url
 }
 # #-INPUTS:
 input DelayInput {

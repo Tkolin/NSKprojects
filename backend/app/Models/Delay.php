@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Delay extends Model
 {
@@ -17,7 +18,7 @@ class Delay extends Model
         'date_end',
         'duration',
         'description',
-        'delay_type',
+        'delay_type_key',
         'provider',
         'updated_at',
         'created_at',
@@ -27,6 +28,13 @@ class Delay extends Model
     {
         return $this->hasMany(
             DelayProjectTask::class
+        );
+    }
+
+    public function delay_type(): BelongsTo
+    {
+        return $this->belongsTo(
+            DelayType::class, "delay_type_key","key"
         );
     }
     public function project_tasks(): HasManyThrough

@@ -2,27 +2,73 @@
 #   - SIMPLE TYPE QUERY -
 #
 type Query {
-    project(id: ID): Project  @checkRole(permission:  ["read-project"])
-    projectTask(id: ID): ProjectTask  @checkRole(permission:  ["read-project"])
+    project(id: ID): Project @checkRole(permission: ["read-project"])
+    projectTask(id: ID): ProjectTask @checkRole(permission: ["read-project"])
 
-    contacts(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): ContactsResult @checkRole(permission:  ["read-contact"])
-    references(id: ID, queryOptions: QueryOptions, queryType: String, referenceId: ID): ReferenceResult @checkRole(permission:  ["read-contact"])
-    technicalSpecificationChapters(id: ID, queryOptions: QueryOptions, queryType: String, referenceId: ID): TSChapterResult @checkRole(permission:  ["read-contact"])
-    organizations(id: ID, queryOptions: QueryOptions, queryType: String, organizationId: ID): OrganizationsResult @checkRole(permission:  ["read-organization"])
-    positions(id: ID, queryOptions: QueryOptions, queryType: String): PositionsResult
-    irds(id: ID, queryOptions: QueryOptions, queryType: String): IrdsResult @checkRole(permission:  ["read-ird"])
-    stages(id: ID, queryOptions: QueryOptions, queryType: String): StagesResult @checkRole(permission:  ["read-stage"])
-    tasks(id: ID, queryOptions: QueryOptions, queryType: String): TasksResult @checkRole(permission:  ["read-task"])
-    projects(id: ID, queryOptions: QueryOptions, queryType: String, projectId: ID, projectStatuses: [String]): ProjectsResult
+    contacts(
+        id: ID
+        queryOptions: QueryOptions
+        queryType: String
+        organizationId: ID
+    ): ContactsResult @checkRole(permission: ["read-contact"])
+    references(
+        id: ID
+        queryOptions: QueryOptions
+        queryType: String
+        referenceId: ID
+    ): ReferenceResult @checkRole(permission: ["read-contact"])
+    technicalSpecificationChapters(
+        id: ID
+        queryOptions: QueryOptions
+        queryType: String
+        referenceId: ID
+    ): TSChapterResult @checkRole(permission: ["read-contact"])
+    organizations(
+        id: ID
+        queryOptions: QueryOptions
+        queryType: String
+        organizationId: ID
+    ): OrganizationsResult @checkRole(permission: ["read-organization"])
+    positions(
+        id: ID
+        queryOptions: QueryOptions
+        queryType: String
+    ): PositionsResult
+    irds(id: ID, queryOptions: QueryOptions, queryType: String): IrdsResult
+        @checkRole(permission: ["read-ird"])
+    stages(id: ID, queryOptions: QueryOptions, queryType: String): StagesResult
+        @checkRole(permission: ["read-stage"])
+    tasks(id: ID, queryOptions: QueryOptions, queryType: String): TasksResult
+        @checkRole(permission: ["read-task"])
+    projects(
+        id: ID
+        queryOptions: QueryOptions
+        queryType: String
+        projectId: ID
+        projectStatuses: [String]
+    ): ProjectsResult
 
+    delayTypes: [DelayType]
 
-
-    persons(id: ID, queryOptions: QueryOptions, queryType: String): PersonsResult @checkRole(permission:  ["read-person"])
-    biks(id: ID, queryOptions: QueryOptions, queryType: String): BikResult @checkRole(permission:  ["read-person"])
-    passportPlaceIssues(id: ID, queryOptions: QueryOptions, queryType: String): PassportPlaceIssueResult
+    persons(
+        id: ID
+        queryOptions: QueryOptions
+        queryType: String
+    ): PersonsResult @checkRole(permission: ["read-person"])
+    biks(id: ID, queryOptions: QueryOptions, queryType: String): BikResult
+        @checkRole(permission: ["read-person"])
+    passportPlaceIssues(
+        id: ID
+        queryOptions: QueryOptions
+        queryType: String
+    ): PassportPlaceIssueResult
     banks(id: ID, queryOptions: QueryOptions, queryType: String): BanksResult
     groupTypeProjects(id: ID): [GroupTypeProjectDocument]
-    typeProjects(id: ID, queryOptions: QueryOptions, queryType: String): TypeProjectsResult
+    typeProjects(
+        id: ID
+        queryOptions: QueryOptions
+        queryType: String
+    ): TypeProjectsResult
     projectStatuses: [ProjectStatus!]!
 
     legalForms: [LegalForm]!
@@ -30,6 +76,14 @@ type Query {
 }
 #-TYPES:
 #   reference
+type DelayType {
+    key: String
+    name: String
+    description: String
+    type: String
+    content: String
+    content_number: Int
+}
 type ReferenceContent {
     key: Int
     name: String
@@ -103,12 +157,14 @@ type FormulaVariable {
     id: ID
 }
 #   project 1
-type Project{
+type Project {
     id: ID!
     number: String
     name: String
     prepayment: Int
     status_id: ID
+    prepayment_file_id: ID
+    prepayment_date: String
     organization_customer: Organization
     type_project_document: TypeProjectDocument
     facilities: [Facility]
@@ -130,7 +186,7 @@ type Project{
     kp_file_id: ID
 }
 #   project 2 (Указаны в основной модели)
-type ProjectIrd{
+type ProjectIrd {
     project_id: ID!
     ird_id: ID!
     project: Project!
@@ -139,11 +195,11 @@ type ProjectIrd{
     stage_number: String!
     application_project: String
 }
-type ProjectStatus{
+type ProjectStatus {
     name: String!
     name_key: String!
 }
-type ProjectStage{
+type ProjectStage {
     project_id: ID!
     stage_id: ID!
     project: Project!
@@ -157,8 +213,12 @@ type ProjectStage{
     duration: Int!
     date_end: String
     progress: Int!
+    payment_file_id: String
+    work_act_singing_file_id: String
+    payment_date: String
+    work_act_singing_date: String
 }
-type ProjectTask{
+type ProjectTask {
     id: ID
     is_delay: Boolean
     project_id: ID
@@ -176,7 +236,7 @@ type ProjectTask{
     price: Float
     description: String
 }
-type ProjectFile{
+type ProjectFile {
     project_id: ID
     file_id: ID
     type: String
@@ -186,7 +246,7 @@ type ProjectFile{
 }
 
 #   project 3 (Указаны в моделях 2 уровня)
-type   ExecutorOrder {
+type ExecutorOrder {
     id: ID!
     number: String
     created_at: String
@@ -204,7 +264,7 @@ type   ExecutorOrder {
     project_tasks: [ProjectTask]
     executor_order_payments: [ExecutorOrderPayment]
 }
-type   ExecutorOrderPayment {
+type ExecutorOrderPayment {
     id: ID
     file_id: ID
     status: String
@@ -212,7 +272,7 @@ type   ExecutorOrderPayment {
     executor_order_id: ID!
 }
 #   organization 1
-type Organization{
+type Organization {
     id: ID!
     legal_form: LegalForm!
     name: String!
@@ -228,13 +288,13 @@ type Organization{
     OGRN: String
     OKPO: String
     KPP: String
-    bik:  bik
+    bik: bik
     payment_account: String
     director: Contact
     employees: [Contact]
 }
 #   organization 2 (Указаны в основной модели)
-type LegalForm{
+type LegalForm {
     id: ID!
     name: String!
 }
@@ -258,19 +318,19 @@ type Position {
 }
 
 #   bik
-type  bik{
+type bik {
     id: ID!
     BIK: String
     name: String
     correspondent_account: String
 }
 #   bank
-type Bank{
+type Bank {
     id: ID!
     name: String!
 }
 #   person 1
-type Person{
+type Person {
     id: ID!
     passport: Passport!
     SHILS: String
@@ -280,10 +340,10 @@ type Person{
     email: String
     email_sibnipi: String
     bank: Bank
-    bik:  bik
+    bik: bik
 }
 #   person 2 (Указаны в основной модели)
-type Passport{
+type Passport {
     id: ID!
     first_name: String
     last_name: String
@@ -297,13 +357,13 @@ type Passport{
     date: String
 }
 #   person 3 (Указаны в моделях 2 уровня)
-type PassportPlaceIssue{
+type PassportPlaceIssue {
     id: ID!
     name: String!
     code: String!
 }
 #   facility 1
-type Facility{
+type Facility {
     id: ID!
     name: String!
     code: Int
@@ -311,11 +371,11 @@ type Facility{
     group_facility: GroupFacility
 }
 #   facility 2 (Указаны в основной модели)
-type TypeFacility{
+type TypeFacility {
     id: ID!
     name: String!
 }
-type GroupFacility{
+type GroupFacility {
     id: ID!
     name: String!
     code: Int
@@ -323,7 +383,7 @@ type GroupFacility{
     subselection_facility: SubselectionFacility
 }
 #   facility 3 (Указаны в моделях 2 уровня)
-type SubselectionFacility{
+type SubselectionFacility {
     id: ID!
     name: String!
     code: Int
@@ -331,7 +391,7 @@ type SubselectionFacility{
     selection_facility: SelectionFacility
 }
 #   facility 3 (Указаны в моделях 3 уровня)
-type SelectionFacility{
+type SelectionFacility {
     id: ID!
     name: String!
     code: Int
@@ -346,36 +406,36 @@ type File {
     mime_type: String
 }
 #   ird
-type Ird{
+type Ird {
     id: ID!
     name: String!
 }
 #   typeProjectDocument
-type TypeProjectDocument{
+type TypeProjectDocument {
     id: ID!
     name: String!
     code: String!
     group: GroupTypeProjectDocument
     template_project_id: ID
 }
-type GroupTypeProjectDocument{
+type GroupTypeProjectDocument {
     id: ID
     name: String
     code: String
     technical_specification: TypeTechnicalSpecification
 }
-type TypeTechnicalSpecification{
+type TypeTechnicalSpecification {
     id: ID!
     name: String!
 }
 #   stage
-type Stage{
+type Stage {
     id: ID!
     name: String
     task_id: Int
 }
 #   task
-type Task{
+type Task {
     id: ID!
     name: String
 }
@@ -398,127 +458,85 @@ type TypePayment {
 #
 type Mutation {
     #   request
-    updateRequests(
-        data: RequestInput
-    ): Project! @checkRole(permission:  ["update-request"])
-    createRequests(
-        data: RequestInput
-    ): Project! @checkRole(permission:  ["create-request"])
+    updateRequests(data: RequestInput): Project!
+        @checkRole(permission: ["update-request"])
+    createRequests(data: RequestInput): Project!
+        @checkRole(permission: ["create-request"])
     #   ird
-    createIrd(
-        data: IrdInput
-    ): Ird! @checkRole(permission:  ["create-ird"])
-    updateIrd(
-        id: ID!
-        data: IrdInput
-    ): Ird! @checkRole(permission:  ["update-ird"])
-    deleteIrd (
-        id: ID!
-    ): String @checkRole(permission:  ["delete-ird"])
+    createIrd(data: IrdInput): Ird! @checkRole(permission: ["create-ird"])
+    updateIrd(id: ID!, data: IrdInput): Ird!
+        @checkRole(permission: ["update-ird"])
+    deleteIrd(id: ID!): String @checkRole(permission: ["delete-ird"])
     #   groupTypeProject
-    createGroupTypeProject(
-        data: GroupTypeProject
-    ): GroupTypeProjectDocument @checkRole(permission:  ["create-project-typeProject-group"])
+    createGroupTypeProject(data: GroupTypeProject): GroupTypeProjectDocument
+        @checkRole(permission: ["create-project-typeProject-group"])
     updateGroupTypeProject(
         id: ID
         data: GroupTypeProject
-    ): GroupTypeProjectDocument @checkRole(permission:  ["update-project-typeProject-group"])
+    ): GroupTypeProjectDocument
+        @checkRole(permission: ["update-project-typeProject-group"])
     #   typeProject
-    createTypeProject(
-        data: TypeProjectInput
-    ): TypeProjectDocument @checkRole(permission:  ["create-project-typeProject"])
-    updateTypeProject(
-        id: ID!
-        data: TypeProjectInput
-    ): TypeProjectDocument @checkRole(permission:  ["update-project-typeProject"])
-    deleteTypeProject (
-        id: ID
-    ): String @checkRole(permission:  ["delete-project-typeProject"])
+    createTypeProject(data: TypeProjectInput): TypeProjectDocument
+        @checkRole(permission: ["create-project-typeProject"])
+    updateTypeProject(id: ID!, data: TypeProjectInput): TypeProjectDocument
+        @checkRole(permission: ["update-project-typeProject"])
+    deleteTypeProject(id: ID): String
+        @checkRole(permission: ["delete-project-typeProject"])
     #   task
-    updateTask(
-        id: ID
-        data: TaskInput
-    ): Task @checkRole(permission:  ["update-project-task"])
-    createTask(
-        data: TaskInput
-    ): Task @checkRole(permission:  ["create-project-task"])
+    updateTask(id: ID, data: TaskInput): Task
+        @checkRole(permission: ["update-project-task"])
+    createTask(data: TaskInput): Task
+        @checkRole(permission: ["create-project-task"])
     #   project
-    updateProject(
-        id: ID
-        data: ProjectInput
-    ): Project! @checkRole(permission:  ["update-project"])
+    updateProject(id: ID, data: ProjectInput): Project!
+        @checkRole(permission: ["update-project"])
     createProject(
         data: ProjectInput
         templates: ProjectTemplatesSetting
-    ): Project! @checkRole(permission:  ["create-project"])
+    ): Project! @checkRole(permission: ["create-project"])
     #   bik
-    createBik(
-        data: BikInput
-    ):  bik!
-    updateBik(
-        id: ID!
-        data: BikInput
-    ):  bik!
+    createBik(data: BikInput): bik!
+    updateBik(id: ID!, data: BikInput): bik!
     #   person
-    createPerson(
-        data: PersonInput
-    ): Person! @checkRole(permission:  ["create-person"])
-    updatePerson(
-        id: ID!
-        data: PersonInput
-    ): Person! @checkRole(permission:  ["update-person"])
-    deletePerson (
-        id: ID!
-    ): Person @checkRole(permission:  ["delete-person"])
-    createPpi(
-        data: PassportPlaceIssueInput
-    ): PassportPlaceIssue!
-    updatePpi(
-        id: ID!
-        data: PassportPlaceIssueInput
-    ): PassportPlaceIssue!
+    createPerson(data: PersonInput): Person!
+        @checkRole(permission: ["create-person"])
+    updatePerson(id: ID!, data: PersonInput): Person!
+        @checkRole(permission: ["update-person"])
+    deletePerson(id: ID!): Person @checkRole(permission: ["delete-person"])
+    createPpi(data: PassportPlaceIssueInput): PassportPlaceIssue!
+    updatePpi(id: ID!, data: PassportPlaceIssueInput): PassportPlaceIssue!
     #   stage
-    createStage(
-        data: StageInput!
-    ): Stage! @checkRole(permission:  ["create-stage"])
-    updateStage(
-        id: ID!
-        data: StageInput!
-    ): Stage! @checkRole(permission:  ["update-stage"])
-    deleteStage (
-        id: ID!
-    ): String @checkRole(permission:  ["delete-stage"])
+    createStage(data: StageInput!): Stage!
+        @checkRole(permission: ["create-stage"])
+    updateStage(id: ID!, data: StageInput!): Stage!
+        @checkRole(permission: ["update-stage"])
+    deleteStage(id: ID!): String @checkRole(permission: ["delete-stage"])
     #   contact
-    createContact(
-        data: ContactInput
-    ): Contact! @checkRole(permission:  ["create-contact"])
-    updateContact(
-        id: ID!
-        data: ContactInput
-    ): Contact! @checkRole(permission:  ["update-contact"])
-    deleteContact (
-        id: ID!
-    ): Boolean @checkRole(permission:  ["delete-contact"])
+    createContact(data: ContactInput): Contact!
+        @checkRole(permission: ["create-contact"])
+    updateContact(id: ID!, data: ContactInput): Contact!
+        @checkRole(permission: ["update-contact"])
+    deleteContact(id: ID!): Boolean @checkRole(permission: ["delete-contact"])
     #   organization
-    createOrganization(
-        data: OrganizationInput
-    ): Organization! @checkRole(permission:  ["create-organization"])
-    updateOrganization(
-        id: ID!
-        data: OrganizationInput
-    ): Organization! @checkRole(permission:  ["update-organization"])
-    deleteOrganization (
-        id: ID!
-    ): Boolean @checkRole(permission:  ["delete-organization"])
+    createOrganization(data: OrganizationInput): Organization!
+        @checkRole(permission: ["create-organization"])
+    updateOrganization(id: ID!, data: OrganizationInput): Organization!
+        @checkRole(permission: ["update-organization"])
+    deleteOrganization(id: ID!): Boolean
+        @checkRole(permission: ["delete-organization"])
     #   reference
 
-    createReference (data: ReferenceInput): Reference @checkRole(permission:  ["math"])
-    updateReference (data: ReferenceInput, id: ID): Reference @checkRole(permission:  ["math"])
-    deleteReference (id: ID): Reference @checkRole(permission:  ["math"])
+    createReference(data: ReferenceInput): Reference
+        @checkRole(permission: ["math"])
+    updateReference(data: ReferenceInput, id: ID): Reference
+        @checkRole(permission: ["math"])
+    deleteReference(id: ID): Reference @checkRole(permission: ["math"])
 
-    createTSChapter (data: TSChapterInput): TSChapter @checkRole(permission:  ["math"])
-    updateTSChapter (data: TSChapterInput, id: ID): TSChapter @checkRole(permission:  ["math"])
-    deleteTSChapter (id: ID): TSChapter @checkRole(permission:  ["math"])
+    createTSChapter(data: TSChapterInput): TSChapter
+        @checkRole(permission: ["math"])
+    updateTSChapter(data: TSChapterInput, id: ID): TSChapter
+        @checkRole(permission: ["math"])
+    deleteTSChapter(id: ID): TSChapter @checkRole(permission: ["math"])
 }
 #-INPUTS:
 input PersonInput {
@@ -539,8 +557,9 @@ input PersonInput {
     email: String
     email_sibnipi: String
     bank_id: ID
-    bik_id: ID}
-input OrganizationInput{
+    bik_id: ID
+}
+input OrganizationInput {
     legal_form_id: ID!
     name: String!
     full_name: String!
@@ -559,7 +578,7 @@ input OrganizationInput{
     payment_account: String
     director_id: ID!
 }
-input ContactInput{
+input ContactInput {
     first_name: String!
     last_name: String
     patronymic: String
@@ -569,27 +588,35 @@ input ContactInput{
     mobile_phone: String
     email: String
     position_id: ID
-    organization_id: ID}
-input StageInput{
-    name: String}
-input TaskInput{
-    name: String}
-input PassportPlaceIssueInput{
-    name: String!
-    code: String!}
-input GroupTypeProject{
+    organization_id: ID
+}
+input StageInput {
     name: String
-    techical_specification: ID}
-input IrdInput{
-    name: String}
-input BikInput{
+}
+input TaskInput {
+    name: String
+}
+input PassportPlaceIssueInput {
+    name: String!
+    code: String!
+}
+input GroupTypeProject {
+    name: String
+    techical_specification: ID
+}
+input IrdInput {
+    name: String
+}
+input BikInput {
     BIK: String!
     name: String!
-    correspondent_account: String}
-input TypeProjectInput{
+    correspondent_account: String
+}
+input TypeProjectInput {
     name: String!
     group_id: ID!
-    code: String!}
+    code: String!
+}
 input ProjectInput {
     number: String
     name: String!
@@ -606,10 +633,12 @@ input ProjectInput {
     prepayment: Int!
 
     facility_id: [ID]
-    delegates_id: [ID]}
+    delegates_id: [ID]
+}
 input ProjectTemplatesSetting {
     project_id_to_stages: [ID]
-    project_id_to_irds: [ID]}
+    project_id_to_irds: [ID]
+}
 
 input ReferenceInput {
     name: String!
@@ -638,10 +667,12 @@ input TSChapterVariablesInput {
 type BikResult {
     items: [bik]
     count: Int
-}type FormulaResult {
+}
+type FormulaResult {
     items: [Formula]
     count: Int
-}type ReferenceResult {
+}
+type ReferenceResult {
     items: [Reference]
     count: Int
 }
@@ -652,54 +683,71 @@ type TSChapterResult {
 type PassportPlaceIssueResult {
     items: [PassportPlaceIssue]
     count: Int
-}type ContactsResult {
+}
+type ContactsResult {
     items: [Contact]
     count: Int
-}type UsersResult {
+}
+type UsersResult {
     items: [User]
     count: Int
-}type RolesResult {
+}
+type RolesResult {
     items: [Role]
     count: Int
-}type BanksResult {
+}
+type BanksResult {
     items: [Bank]
     count: Int
-}type PermissionResult {
+}
+type PermissionResult {
     items: [Permission]
     count: Int
-}type ProjectTaskExecutorResult {
+}
+type ProjectTaskExecutorResult {
     items: [ProjectTaskExecutor]
     count: Int
-}type OrganizationsResult {
+}
+type OrganizationsResult {
     items: [Organization]
     count: Int
-}type CountProjectByOrganizationsResult {
+}
+type CountProjectByOrganizationsResult {
     items: [CountProjectByOrganizations]
-}type PositionsResult {
+}
+type PositionsResult {
     items: [Position]
     count: Int
-}type ProjectsResult {
+}
+type ProjectsResult {
     items: [Project]
     count: Int
-}type PersonsResult {
+}
+type PersonsResult {
     items: [Person]
     count: Int
-}type FenrirsResult {
+}
+type FenrirsResult {
     items: [Fenrir]
     count: Int
-}type IrdsResult {
+}
+type IrdsResult {
     items: [Ird]
     count: Int
-}type StagesResult {
+}
+type StagesResult {
     items: [Stage]
     count: Int
-}type TasksResult {
+}
+type TasksResult {
     items: [Task]
     count: Int
-}type TypeProjectsResult {
+}
+type TypeProjectsResult {
     items: [TypeProjectDocument]
     count: Int
-}type groupTypeProjecResult {
+}
+type groupTypeProjecResult {
     items: [GroupTypeProjectDocument]
     count: Int
 }

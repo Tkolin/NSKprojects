@@ -17,6 +17,7 @@ class ProjectIrds extends Pivot
         'stage_number',
         'application_project',
         'received_date',
+        'is_broken',
     ];
 
     public function project(): BelongsTo

@@ -43,8 +43,12 @@ const LinkToDownload = ({children, fileId, disabled, ...props}) => {
         }
     };
 
-    return (<div onClick={() => handleDownload()} {...props}>
+    return <>
+    {
+        fileId ? (<div onClick={() => handleDownload()} {...props}>
         {children}
-    </div>)
+        </div>) : <div style={{color: "red"}}>Файл не передан</div>
+    }
+    </> 
 }
 export default LinkToDownload;

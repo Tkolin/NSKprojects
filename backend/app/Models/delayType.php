@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class delayType extends Model
+class DelayType extends Model
 {
     use HasFactory;
     protected $fillable = [
@@ -13,6 +13,7 @@ class delayType extends Model
         'name',
         'description',
         'type',
+        'content',
+        'content_number',
     ];
-
 }

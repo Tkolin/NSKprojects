@@ -8,6 +8,7 @@ use App\Models\ExecutorOrderPayment;
 use App\Models\File;
 use App\Models\Project;
 use App\Models\ProjectFile;
+use App\Models\ProjectStage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -121,6 +122,142 @@ class FileUploadController extends Controller
                 'success' => true,
                 'file' => $fileRecord,
             ]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'No file uploaded'], 400);
+    }
+    public function uploadWorkActSinging(Request $request)
+    {
+        $projectId = $request->query('projectId');
+        $stageNumber = $request->query('stageNumber');
+        $datePayment = $request->query('date');
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+
+            $projectStage = ProjectStage::where("project_id", "=", $projectId)
+                ->where("number", "=", $stageNumber)->first();
+
+            // Проверка на существование этапа проекта
+            if (!isset($projectStage)) {
+                return response()->json(['success' => false, 'message' => 'Project stage not found numb' . $stageNumber . ' in project ' . $projectId], 404);
+            }
+
+            $project = $projectStage->project;
+            $directory = "/" . $project->path_project_folder . "/Счета на оплату (подтверждённые)/";
+            $storagePath = $this->generateUniqueFilePath($directory, $file->getClientOriginalName());
+
+            Storage::disk('localERPFiles')->put($storagePath, file_get_contents($file->getRealPath()));
+
+            $fileRecord = File::create([
+                'name' => pathinfo($storagePath, PATHINFO_BASENAME),
+                'path' => $storagePath,
+                'size' => $file->getSize(),
+                'mime_type' => $file->getClientMimeType(),
+            ]);
+
+            ProjectFile::create([
+                'project_id' => $project->id,
+                'file_id' => $fileRecord->id,
+                'type' => "STAGE_WORK_ACT",
+                'number' => -1,
+                'date_document' => $datePayment,
+            ]);
+
+ 
+            ProjectStage::where("project_id", "=", $projectId)->where("number", "=", $stageNumber)
+                ->update([
+                    'work_act_singing_file_id' => $fileRecord->id,
+                    'work_act_singing_date' => $datePayment,
+                ]);
+            return response()->json([
+                'success' => true,
+                'file' => $fileRecord,
+            ]);
+        }
+        return response()->json(['success' => false, 'message' => 'No file uploaded'], 400);
+    }
+
+    public function uploadPaymentInvoice(Request $request)
+    {
+        $projectId = $request->query('projectId');
+        $stageNumber = $request->query('stageNumber');
+        $datePayment = $request->query('date');
+        if ($request->hasFile('file')) {
+
+            $file = $request->file('file');
+            if ($stageNumber === '0') {
+
+                $project = Project::find($projectId);
+                $directory = "/" . $project->path_project_folder . "/Счета на оплату (подтверждённые)/";
+                $storagePath = $this->generateUniqueFilePath($directory, $file->getClientOriginalName());
+
+                Storage::disk('localERPFiles')->put($storagePath, file_get_contents($file->getRealPath()));
+
+                $fileRecord = File::create([
+                    'name' => pathinfo($storagePath, PATHINFO_BASENAME),
+                    'path' => $storagePath,
+                    'size' => $file->getSize(),
+                    'mime_type' => $file->getClientMimeType(),
+                ]);
+
+                $projectFileRecord = ProjectFile::create([
+                    'project_id' => $project->id,
+                    'file_id' => $fileRecord->id,
+                    'type' => "STAGE_PAYMENT",
+                    'number' => -1,
+                    'date_document' => $datePayment,
+                ]);
+
+                $project->prepayment_date = $datePayment;
+                $project->prepayment_file_id = $projectFileRecord->file_id;
+                $project->save();
+                return response()->json([
+                    'success' => true,
+                    'file' => $fileRecord,
+                ]);
+            } else {
+                $projectStage = ProjectStage::where("project_id", "=", $projectId)
+                    ->where("number", "=", $stageNumber)->first();
+
+                // Проверка на существование этапа проекта
+                if (!isset($projectStage)) {
+                    return response()->json(['success' => false, 'message' => 'Project stage not found numb' . $stageNumber . ' in project ' . $projectId], 404);
+                }
+
+                $project = $projectStage->project;
+                $directory = "/" . $project->path_project_folder . "/Счета на оплату (подтверждённые)/";
+                $storagePath = $this->generateUniqueFilePath($directory, $file->getClientOriginalName());
+
+                Storage::disk('localERPFiles')->put($storagePath, file_get_contents($file->getRealPath()));
+
+                $fileRecord = File::create([
+                    'name' => pathinfo($storagePath, PATHINFO_BASENAME),
+                    'path' => $storagePath,
+                    'size' => $file->getSize(),
+                    'mime_type' => $file->getClientMimeType(),
+                ]);
+
+                ProjectFile::create([
+                    'project_id' => $project->id,
+                    'file_id' => $fileRecord->id,
+                    'type' => "STAGE_PAYMENT",
+                    'number' => -1,
+                    'date_document' => $datePayment,
+                ]);
+
+
+                ProjectStage::where("project_id", "=", $projectId)->where("number", "=", $stageNumber)
+                    ->update([
+                        'payment_file_id' => $fileRecord->id,
+                        'payment_date' => $datePayment,
+                    ]);
+                return response()->json([
+                    'success' => true,
+                    'file' => $fileRecord,
+                ]);
+
+            }
+
         }
 
         return response()->json(['success' => false, 'message' => 'No file uploaded'], 400);

@@ -22,8 +22,10 @@ final readonly class TaskExecutorContractFileDownload
 
         // Набор данных для задач
         $projectTasksData = ProjectTasks::with(['task', 'executor'])
-            ->whereIn('id', $projectTasksIds)
-            ->get();
+        ->whereIn('id', $projectTasksIds)
+        ->orderBy('date_start')
+        ->get();
+
         error_log($projectTasksData . '$projectTasksData[0]');
 
         if (!isset($projectTasksData))

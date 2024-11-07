@@ -1,7 +1,7 @@
-import {Table, Typography} from "antd";
-import React, {useEffect, useState} from "react";
-import {useQuery} from "@apollo/client";
-import {PROJECTS_QUERY} from "../../../../graphql/queries";
+import { useQuery } from "@apollo/client";
+import { Table, Typography } from "antd";
+import React, { useEffect, useState } from "react";
+import { PROJECTS_QUERY } from "../../../../graphql/queries";
 import getColumn from "./components/ColumnRenderManager";
 import ExpandedRowRenderManager from "./components/ExpandedRowRenderManager";
 
@@ -58,16 +58,10 @@ const Index = ({settings, projectStatuses, mode, search, columnSettings, options
     useEffect(() => {
         refetch();
     }, [state]);
-// Мутация для удаления
     const refetch = () => {
         console.log("PROJECTS_QUERY refetchg");
         refetchProject();
     }
-
-
-// Таблица
-
-
     const onChange = (pagination, filters, sorter) => {
         if ((sorter.field !== undefined) && currentSort !== sorter) {
             setCurrentSort(sorter);
@@ -96,9 +90,7 @@ const Index = ({settings, projectStatuses, mode, search, columnSettings, options
         <div>
             <Table
                 style={{border: "black"}}
-                // rowClassName={(record) => 'my-ant-table-row-' + record?.status?.name_key?.toLowerCase()
-                //     //+ ((record.id % 2 === 0) ? ' my-ant-table-row-danger' : ' my-ant-table-row-warning')
-                // }
+
                 size={'small'}
                 sticky={{
                     offsetHeader: '64px',

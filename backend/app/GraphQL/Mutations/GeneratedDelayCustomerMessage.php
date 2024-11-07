@@ -6,6 +6,7 @@ use App\Models\Contact;
 use App\Models\Delay;
 use App\Models\Organization;
 use App\Models\Project;
+use App\Models\ProjectStage;
 use App\Services\FileGenerate\DelayCustomerMessageGeneratorService;
 
 final readonly class GeneratedDelayCustomerMessage
@@ -13,12 +14,23 @@ final readonly class GeneratedDelayCustomerMessage
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        $projectId = $args["projectId"];
-        $dateOffer = $args["dateOffer"];
-        $delegationId = $args["delegationId"];
-        $delay = Delay::find('50');
+        $delayId = $args["delayId"];
+        $dateOffer = $args["dateFixed"];
+
+
+
+
+
         // Добор данных
-        $projectData = Project::with("project_kp_history")->find($projectId);
+        $delay = Delay::find($delayId);
+        $stageNumber = $delay->project_tasks["stage_number"];
+
+
+
+        $projectData = Project::with("project_kp_history")
+            ->with("project_stages")
+            ->with("project_irds")
+            ->find($delay->project_id);
         $delegationData = Contact::find($delegationId);
         $delegationOrgData = Organization::with("legal_form")->find($projectData->organization_customer_id);
         // Генерация файла
@@ -27,6 +39,7 @@ final readonly class GeneratedDelayCustomerMessage
             'delegationData' => $delegationData,
             'dateOffer' => $dateOffer,
             'delay' => $delay,
+            'stageNumber' => $stageNumber,
             'delegationOrgData' => $delegationOrgData,
         ]);
 

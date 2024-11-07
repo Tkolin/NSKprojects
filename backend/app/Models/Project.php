@@ -29,7 +29,11 @@ class Project extends Model
         'date_start',
         'path_project_folder',
         'contract_file_id',
-        'kp_file_id'
+        'kp_file_id',
+
+        'prepayment_date',
+        'prepayment_file_id'
+        
     ];
     public function executor_orders()
     {
@@ -70,6 +74,7 @@ class Project extends Model
     {
         return $this->BelongsToMany(Stage::class, 'project_stages', 'project_id', 'stage_id');
     }
+
     public function project_stages(): HasMany
     {
         return $this->hasMany(ProjectStage::class)->orderBy('number');

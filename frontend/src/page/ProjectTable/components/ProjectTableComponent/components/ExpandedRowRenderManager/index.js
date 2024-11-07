@@ -12,7 +12,7 @@ import TableProjectTasksManagment from "./components/TableProjectTasksManagment"
 import TableStagesComponent from "./components/TableStagesComponent";
 import TaskGanttChartComponent from "./components/TaskGanttChartComponent";
 
-const Index = ({project, expandable, options}) => {
+const Index = ({project, expandable,refetchProject, options}) => {
     const [editModalStatus, setEditModalStatus] = useState();
     const getNameModalView = (type) => {
         switch (type) {

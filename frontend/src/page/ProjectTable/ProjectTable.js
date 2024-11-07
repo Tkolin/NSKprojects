@@ -71,7 +71,7 @@ const template = {
                 hotKey: ["archive"],
             },
             //  Ключи колонок таблицы
-            columns: ["main"],
+            columns: ["main", "files", "duration"],
         },
         //  Все компоненты в выпадающем меню
         expandable: ["stages",

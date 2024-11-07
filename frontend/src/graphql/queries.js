@@ -13,6 +13,18 @@ export const FENRIR_QUERY = gql`
         }
     }
 `;
+export const DELAY_TYPES_QUERY = gql`
+    query DelayTypeQuery   {
+        delayTypes   {
+            key
+            name
+            description
+            type
+            content
+            content_number
+        }
+    }
+`;
 export const TASKS_QUERY = gql`
     query TasksQuery  ($queryOptions: QueryOptions) {
         tasks  (queryOptions: $queryOptions) {
@@ -182,6 +194,8 @@ export const PROJECTS_QUERY = gql`
                 date_start
                 contract_file_id
                 kp_file_id
+                prepayment_file_id
+                prepayment_date
                 project_contract_history
                 {
                     file_id
@@ -273,7 +287,10 @@ export const PROJECTS_QUERY = gql`
                     date_end
                     percent
                     price
-
+                    payment_file_id
+                    work_act_singing_file_id
+                    payment_date
+                    work_act_singing_date
                 }
                 project_tasks {
                     id
