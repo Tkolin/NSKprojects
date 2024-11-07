@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GENERATED_DELAY_CUSTOMER_MUTATION = gql`
-    mutation GeneratedDelayCustomerMessage($projectId: ID!, $dateOffer: String!, $delegationId: ID!) {
-        generatedDelayCustomerMessage(projectId: $projectId, dateOffer: $dateOffer, delegationId: $delegationId) {
+    mutation GeneratedDelayCustomerMessage($delayId: ID!, $dateFixed: String!) {
+        generatedDelayCustomerMessage(delayId: $delayId, dateFixed: $dateFixed) {
             url
         }
     }

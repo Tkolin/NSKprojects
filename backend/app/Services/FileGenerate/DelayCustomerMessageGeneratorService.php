@@ -19,7 +19,7 @@ class DelayCustomerMessageGeneratorService extends DocumentGeneratorService
     public function generate(array $data)
     {
         // Проверка обязательных данных
-        $requiredFields = ['projectData', 'delegationData', 'dateOffer', 'delegationOrgData', 'delay'];
+        $requiredFields = ['projectData',  'dateOffer', 'delegationOrgData', 'delay'];
         foreach ($requiredFields as $field) {
             if (!isset($data[$field])) {
                 throw new Exception("Отсутствует необходимый параметр: $field.");
@@ -28,11 +28,11 @@ class DelayCustomerMessageGeneratorService extends DocumentGeneratorService
 
         // Извлечение данных
         $projectData = $data['projectData'];
-        $delegation = $data['delegationData'];
-        $dateOffer = $data['dateOffer'];
+         $dateOffer = $data['dateOffer'];
         $delay = $data['delay'];
-        $delayStageIncludes = $data['stageNumber'];
+        $projectStageData = $data['projectStageData'];
         $delegationOrgData = $data['delegationOrgData'];
+        $delegation  = $delegationOrgData->director  ;
 
         // Форматирование даты и номера документа
         $contractNumber = FormatterService::formatWithLeadingZeros(count($projectData->project_kp_history) + 1, 2);
@@ -79,10 +79,10 @@ class DelayCustomerMessageGeneratorService extends DocumentGeneratorService
                     $project_irds = $projectData->project_irds;
                     foreach ($project_irds as $key => $ird) {
                         error_log($ird["received_date"]);
-                        if ($ird["stage_number"] === $delayStageIncludes && $ird["received_date"] === null) {
+                        if ($ird["stage_number"] === $projectStageData["number"] && $ird["received_date"] === null) {
                             $noIrdText .= $noIrdIndex . ") " . $ird->ird["name"] . ".</w:t><w:p/><w:t>";
                             $noIrdIndex++;
-                        } else if ($ird["stage_number"] === $delayStageIncludes && new DateTime($ird["received_date"]) >= new DateTime()) {
+                        } else if ($ird["stage_number"] === $projectStageData["number"] && new DateTime($ird["received_date"]) >= new DateTime()) {
                             if ($irdDelayIndex === 1) {
                                 $irdDelayText .= " Передана с задержкой: </w:t><w:p/><w:t>";
                             }
@@ -110,19 +110,19 @@ class DelayCustomerMessageGeneratorService extends DocumentGeneratorService
                     break;
                 case ("NO_PAYMENT"):
                     $this->replacements = [
-                        'project_payment.number_and_date' => $projectData->project_stages[$delayStageIncludes]->payment_invoice_file["document_number"],
-                        'project_act.number_and_date' => $projectData->project_stages[$delayStageIncludes]->act_rendering_file["document_number"],
-                        'project.stage_number' => $projectData->project_stages[$delayStageIncludes]->number,
-                        'project.stage_name' => $projectData->project_stages[$delayStageIncludes]->stage->name,
+                        'project_payment.number_and_date' =>"projectStageData->payment_invoice_file_id",
+                        'project_act.number_and_date' => "projectData->project_stages[delayStageIncludes]->act_rendering_file[document_number]",
+                        'project.stage_number' =>$projectStageData["number"],
+                        'project.stage_name' => $projectStageData->stage["name"],
                     ];
 
                     $this->replaceValues();
                     break;
                 case ("NO_WORK_ACT"):
                 $this->replacements = [
-                     'project_act.number_and_date' => $projectData->project_stages[$delayStageIncludes]->act_rendering_file["document_number"],
-                    'project.stage_number' => $projectData->project_stages[$delayStageIncludes]->number,
-                    'project.stage_name' => $projectData->project_stages[$delayStageIncludes]->stage->name,
+                     'project_act.number_and_date' => "projectData->project_stages[delayStageIncludes]->act_rendering_file[document_number]",
+                    'project.stage_number' => $projectStageData["number"],
+                    'project.stage_name' => $projectStageData->stage["name"] ,
                 ];
 
                 $this->replaceValues();
@@ -133,7 +133,7 @@ class DelayCustomerMessageGeneratorService extends DocumentGeneratorService
                 $project_irds = $projectData->project_irds;
                 foreach ($project_irds as $key => $ird) {
                     error_log($ird["received_date"]);
-                    if ($ird["stage_number"] === $delayStageIncludes && $ird["is_broken"]) {
+                    if ($ird["stage_number"] === $projectStageData["number"] && $ird["is_broken"]) {
                         $irdBrokenText .= $irdBrokenIndex . ") " . $ird->ird["name"] . ".</w:t><w:p/><w:t>";
                         $irdBrokenIndex++;
                     }

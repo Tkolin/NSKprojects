@@ -63,7 +63,7 @@ const TableStagesComponent = ({
           ),
         },
         {
-          title: "Сроки этара",
+          title: "Сроки этапа",
           dataIndex: "stage_durations",
           key: "stage_durations",
           align: "left",

@@ -1,22 +1,19 @@
 import { useMutation, useQuery } from "@apollo/client";
 import {
-    Button,
-    Divider,
-    Modal,
-    notification,
-    Popconfirm,
-    Select,
-    Space,
+  Button,
+  Divider,
+  Modal,
+  notification,
+  Popconfirm,
+  Space
 } from "antd";
 import React, { useEffect, useState } from "react";
 
 import {
-    DownloadOutlined,
-    PlusOutlined,
-    UploadOutlined,
+  DownloadOutlined,
+  UploadOutlined
 } from "@ant-design/icons";
 
-import { StyledButtonGreen } from "../../../../../../../../../../components/style/ButtonStyles";
 
 import dayjs from "dayjs";
 
@@ -94,15 +91,13 @@ const DelayCustomerDocumentBlock = ({ project, onUpdated }) => {
     }
   );
 
-  const [selectedDelegations, setSelectedDelegations] = useState();
   const [selectedDateContract, setSelectedDateContract] = useState();
   const [contactModalStatus, setContactModalStatus] = useState();
   const handleGeneratedKp = () => {
     generateKpMutate({
       variables: {
-        projectId: project.id,
-        delegationId: selectedDelegations,
-        dateOffer: selectedDateContract,
+        delayId: project.id,
+        dateFixed: selectedDateContract,
       },
     });
   };
@@ -136,33 +131,9 @@ const DelayCustomerDocumentBlock = ({ project, onUpdated }) => {
                     : setSelectedDateContract(null);
                 }}
               />
-              <Space.Compact style={{ width: "100%" }}>
-                <Select
-                  placeholder={"Кому обращение"}
-                  style={{ width: "100%" }}
-                  onChange={(value, option) =>
-                    value
-                      ? setSelectedDelegations(value)
-                      : setSelectedDelegations(null)
-                  }
-                  value={selectedDelegations}
-                  loading={loadingContacts}
-                >
-                  {dataContacts?.contacts?.items?.map((row) => (
-                    <Select.Option key={row.id} value={row.id}>
-                      {row.last_name} {row.first_name} {row.patronymic}
-                    </Select.Option>
-                  ))}
-                </Select>
-                <StyledButtonGreen
-                  icon={<PlusOutlined />}
-                  onClick={() => setContactModalStatus("add")}
-                />
-              </Space.Compact>
-
-              <Button
+               <Button
                 block
-                disabled={!selectedDateContract && !selectedDelegations}
+                disabled={!selectedDateContract}
                 loading={generateKpLoading}
                 onClick={() => handleGeneratedKp()}
                 style={{ width: "200px", marginTop: 15 }}
