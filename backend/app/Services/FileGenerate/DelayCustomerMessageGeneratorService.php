@@ -98,6 +98,16 @@ class DelayCustomerMessageGeneratorService extends DocumentGeneratorService
 
                     $this->replaceValues();
                     break;
+                case ("NO_PREPAYMENT"):
+                    $this->replacements = [
+                        // 'project_payment.number_and_date' => $projectData->project_stages[$delayStageIncludes]->payment_invoice_file["document_number"],
+                        // 'project_act.number_and_date' => $projectData->project_stages[$delayStageIncludes]->act_rendering_file["document_number"],
+                        // 'project.stage_number' => $projectData->project_stages[$delayStageIncludes]->number,
+                        // 'project.stage_name' => $projectData->project_stages[$delayStageIncludes]->stage->name,
+                    ];
+
+                    $this->replaceValues();
+                    break;
                 case ("NO_PAYMENT"):
                     $this->replacements = [
                         'project_payment.number_and_date' => $projectData->project_stages[$delayStageIncludes]->payment_invoice_file["document_number"],

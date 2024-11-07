@@ -9,6 +9,7 @@ use App\Models\File;
 use App\Models\Project;
 use App\Models\ProjectFile;
 use App\Models\ProjectStage;
+use App\Services\FileGenerate\FormatterService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -154,13 +155,17 @@ class FileUploadController extends Controller
                 'size' => $file->getSize(),
                 'mime_type' => $file->getClientMimeType(),
             ]);
-
+            $orderNumber = "А" . FormatterService::formatWithLeadingZeros($project["organization_customer"]['id'], 4) . "-" .
+            FormatterService::formatWithLeadingZeros($projectStage['id'] ?? $project['id'], 4)
+            . rand(100, 999);
             ProjectFile::create([
                 'project_id' => $project->id,
                 'file_id' => $fileRecord->id,
                 'type' => "STAGE_WORK_ACT",
-                'number' => -1,
+                'number' => 1,
                 'date_document' => $datePayment,
+                'document_number' => $orderNumber,
+
             ]);
 
  
@@ -199,13 +204,16 @@ class FileUploadController extends Controller
                     'size' => $file->getSize(),
                     'mime_type' => $file->getClientMimeType(),
                 ]);
-
+                $orderNumber = "Д" . FormatterService::formatWithLeadingZeros($project["organization_customer"]['id'], 4) . "-" .
+                FormatterService::formatWithLeadingZeros($projectStage['id'] ?? $project['id'], 4) . rand(100, 999);
+    
                 $projectFileRecord = ProjectFile::create([
                     'project_id' => $project->id,
                     'file_id' => $fileRecord->id,
                     'type' => "STAGE_PAYMENT",
-                    'number' => -1,
+                    'number' => 1,
                     'date_document' => $datePayment,
+                    'document_number' =>  $orderNumber,
                 ]);
 
                 $project->prepayment_date = $datePayment;
@@ -236,13 +244,16 @@ class FileUploadController extends Controller
                     'size' => $file->getSize(),
                     'mime_type' => $file->getClientMimeType(),
                 ]);
-
+                $orderNumber = "Д" . FormatterService::formatWithLeadingZeros($project["organization_customer"]['id'], 4) . "-" .
+                FormatterService::formatWithLeadingZeros($projectStage['id'] ?? $project['id'], 4) . rand(100, 999);
+    
                 ProjectFile::create([
                     'project_id' => $project->id,
                     'file_id' => $fileRecord->id,
                     'type' => "STAGE_PAYMENT",
-                    'number' => -1,
+                    'number' => 1,
                     'date_document' => $datePayment,
+                    'document_number' =>  $orderNumber,
                 ]);
 
 

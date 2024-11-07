@@ -94,7 +94,7 @@ class TaskExecutorContractGeneratorService extends DocumentGeneratorService
             'person.passport.serial' => $personData['passport']['serial'] ?? null,
             'person.passport.number' => $personData['passport']['number'] ?? null,
             'person.passport.date' => FormatterService::getShortDate($personData['passport']['date']) ?? null,
-            'person.passport.birth_date' => $personData['passport']['birth_date'] ?? null,
+            'person.passport.birth_date' => FormatterService::getShortDate($personData['passport']['birth_date']) ?? null,
             'person.passport.passport_place_issue.name' => $personData['passport']['passport_place_issue']['name'] ?? "_____",
             'person.passport.address_registration' =>$personData['passport']['address_registration'] ? 
             FormatterService::removeFirstPartBeforeComma($personData['passport']['address_registration']) : null,

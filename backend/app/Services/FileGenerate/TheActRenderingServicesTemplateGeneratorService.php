@@ -113,6 +113,7 @@ class TheActRenderingServicesTemplateGeneratorService extends DocumentGeneratorS
             'type' => "ACT_RENDERING",
             'number' => 0,
             'date_document' => $dateCreated,
+            'document_number' => $orderNumber,
         ]);
 
 

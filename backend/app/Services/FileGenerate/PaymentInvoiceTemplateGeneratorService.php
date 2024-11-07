@@ -111,12 +111,13 @@ class PaymentInvoiceTemplateGeneratorService extends DocumentGeneratorService
         $storagePath = "/" . $projectData->path_project_folder . "/Invoices/" . $this->fileName;
 
         $file = $this->saveFileToProject($storagePath, $this->filePath, $this->fileName);
-       $projectFile = ProjectFile::create([
+        $projectFile = ProjectFile::create([
             'project_id' => $projectData->id,
             'file_id' => $file->id,
             'type_id' => "PAYMENT_INVOICE",
             'number' => 0,
             'date_document' => $dateCreated,
+            'document_number' => $orderNumber,
         ]);
         ProjectStage::where("project_id",$projectFile["id"])
         ->update(["payment_file_id"=> $projectFile->id ]);
