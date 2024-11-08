@@ -117,6 +117,7 @@ class TaskExecutorContractGeneratorService extends DocumentGeneratorService
             'project_tasks.names_to_price' => $projectTasksToPrice ?? null,
 
             'project.name' => $projectData->name ?? null,
+            'project.number_and_date' => $projectData->number . ' от ' . FormatterService::getShortDate($projectData["date_signing"]),
             'total_price' => $sumPrice ? FormatterService::formattedMoney
             ($sumPrice) . " рублей" : null,
         ];
