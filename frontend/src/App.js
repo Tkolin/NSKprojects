@@ -187,6 +187,12 @@ const App = () => {
                   element={<ProjectTable mode={'work'} />}
                 />
 
+                <Route path='/project/waiting_start_work' element={<Home />} />
+                <Route
+                  path='/project/waiting_start_work/table'
+                  element={<ProjectTable mode={'waiting_start_work'} />}
+                />
+
                 <Route path='/project/tasks_distribution' element={<Home />} />
                 <Route
                   path='/project/tasks_distribution/table'

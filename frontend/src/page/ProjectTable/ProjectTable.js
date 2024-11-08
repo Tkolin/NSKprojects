@@ -47,7 +47,7 @@ const template = {
             tool: {
                 //  Компоненты скрытые в ...
                 menu: ["crud", "contract", "stages",
-                    "irds", "template"],
+                    "irds", "template", "tasks_management"],
                 //  Кнопки быстрых действий
                 hotKey: ["archive", "up"],
             },
@@ -57,6 +57,30 @@ const template = {
         //  Все компоненты в выпадающем меню
         expandable: ["stages",
             "irds",
+        ]
+    },
+    waiting_start_work: {
+        projectStatuses: ["WAITING_START_WORK"],
+        //  Параметры таблицы
+        column: {
+            //  Первая колонка кнопок управления таблицей
+            tool: {
+                //  Компоненты скрытые в ...
+                menu: ["contract", "tasks_management", "template","delay_customer"],
+                //  Кнопки быстрых действий
+                hotKey: ["archive"],
+            },
+            //  Ключи колонок таблицы
+            columns: ["main", "files", "duration"],
+        },
+        //  Все компоненты в выпадающем меню
+        expandable: ["stages",
+            "irds",
+            "executors",
+            "stages-extra",
+            "task-chart",
+            "tasks",
+            "executor_orders",
         ]
     },
     work: {

@@ -121,8 +121,8 @@ class DelayCustomerMessageGeneratorService extends DocumentGeneratorService
                 case ("NO_WORK_ACT"):
                 $this->replacements = [
                      'project_act.number_and_date' => "projectData->project_stages[delayStageIncludes]->act_rendering_file[document_number]",
-                    'project.stage_number' => $projectStageData["number"],
-                    'project.stage_name' => $projectStageData->stage["name"] ,
+                    'project.stage_number' => "projectStageData[number]",
+                    'project.stage_name' => "projectStageData->stage[name] ",
                 ];
 
                 $this->replaceValues();

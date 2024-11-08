@@ -11,10 +11,17 @@ final readonly class Projects
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
-        if (!isset($args['queryOptions']))
+        if (!isset($args['queryOptions']) ||(isset($args['queryType']) && 
+         in_array($args['queryType'], ["COMPACT", "STATISTIC"])))
             switch ($args['queryType']) {
                 case "COMPACT":
                     return ['items' => Project::all()];
+                case "STATISTIC":
+                     $projects = Project::all()->sortBy(function ($project) {
+                        return count($project->requirements ?? []);
+                    });
+                    return ['items' => $projects->values()];
+
                 case "BY_ID":
                     if (!isset($args['id'])) {
                         return ['items' => 'Ошибка, отсутствует id'];
@@ -40,8 +47,19 @@ final readonly class Projects
             ->with('project_stages.stage');
 
         $queryService = new QueryService();
-        $searchColumns = ['id', 'name', 'organization_customer_id', 'type_project_document_id', 'facility_id', 'date_signing',
-            'duration', 'date_end', 'status_id', 'date_completion', 'delegate_id'];
+        $searchColumns = [
+            'id',
+            'name',
+            'organization_customer_id',
+            'type_project_document_id',
+            'facility_id',
+            'date_signing',
+            'duration',
+            'date_end',
+            'status_id',
+            'date_completion',
+            'delegate_id'
+        ];
         $projectsQuery = $queryService->buildQueryOptions($projectsQuery, $args['queryOptions'], $searchColumns);
 
         if (isset($args["projectStatuses"])) {

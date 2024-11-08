@@ -42,7 +42,7 @@ extend type Mutation {
     generatedDelayCustomerMessage(
         delayId: ID!
         dateFixed: String!
-     ): Url
+     ): ID
 }
 # #-INPUTS:
 input DelayInput {

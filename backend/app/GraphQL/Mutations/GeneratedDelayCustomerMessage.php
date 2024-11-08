@@ -26,7 +26,8 @@ final readonly class GeneratedDelayCustomerMessage
             ->with("project_irds")
             ->find($delay->project_id);
          $delegationOrgData = Organization::with("legal_form")->find($projectData->organization_customer_id);
-        $projectStageData = ProjectStage::where("project_id","=",$delay->project_id)->where("number","=",$stageNumber);
+        $projectStageData = ProjectStage::where("project_id", "=",$delay->project_id)
+        ->where("number", "=",$stageNumber);
          // Генерация файла
         $contractFilePath = (new DelayCustomerMessageGeneratorService)->generate([
             'projectData' => $projectData,
@@ -36,6 +37,6 @@ final readonly class GeneratedDelayCustomerMessage
             'delegationOrgData' => $delegationOrgData,
         ]);
 
-        return ['url' => $contractFilePath];
+        return  $contractFilePath;
     }
 }

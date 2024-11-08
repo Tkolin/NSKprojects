@@ -195,6 +195,9 @@ export const PROJECTS_QUERY = gql`
                 contract_file_id
                 kp_file_id
                 prepayment_file_id
+                requirements {
+                    comment
+                }
                 prepayment_date
                 project_contract_history
                 {

@@ -184,7 +184,14 @@ type Project {
     executor_orders: [ExecutorOrder]
     contract_file_id: ID
     kp_file_id: ID
+
+    requirements: [Requirement]
 }
+
+type Requirement {
+    comment: String!
+}
+
 #   project 2 (Указаны в основной модели)
 type ProjectIrd {
     project_id: ID!

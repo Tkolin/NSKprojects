@@ -95,3 +95,107 @@ export const EXECUTOR_ORDERS_PROJECT_QUERY = gql`
     }
 `;
 
+export const PROJECTS_QUERY_STATISTICS = gql`
+    query ProjectQuery  {
+        projects (queryType: "STATISTIC" ) {
+            items{
+                id
+                number
+                name
+                duration
+                date_start
+                contract_file_id
+                kp_file_id
+                prepayment_file_id
+                requirements {
+                    comment
+                }
+                prepayment_date
+              
+                organization_customer
+                {
+                    id
+                    name
+                }
+                type_project_document
+                {
+                    id
+                     name
+                   
+                }
+               
+                date_signing
+                date_start
+                date_end
+                prepayment
+                status
+                {
+                    name
+                    name_key
+                }
+                date_completion
+                
+                project_irds {
+                    stage_number
+                    application_project
+                    ird {
+                        id
+                        name
+                    }
+                    received_date
+                }
+                project_stages {
+                    number
+                    stage {
+                        id
+                        name
+                        task_id
+                    }
+                    date_start
+                    duration
+                    offset
+                    date_end
+ 
+                     payment_file_id
+                    work_act_singing_file_id
+                    payment_date
+                    work_act_singing_date
+                }
+                project_tasks {
+                    id
+                    project_id
+                    task_id
+                    is_delay
+                    status
+                    task {
+                        id
+                        name
+                    }
+                    project_task_inherited_id
+                    date_start
+                    date_end
+                    offset
+                    duration
+                    executor_orders {
+                        id
+                        number
+                    }
+                    stage_number
+                    executor {
+                        id
+                        passport {
+                            id
+                            first_name
+                            last_name
+                            patronymic
+                        }
+                    }
+                    price
+                    description
+                }
+                price
+            }
+            count
+        }
+    }
+`;

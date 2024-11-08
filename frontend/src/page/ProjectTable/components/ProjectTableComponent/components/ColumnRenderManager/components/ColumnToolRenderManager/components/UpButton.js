@@ -28,86 +28,8 @@ const UpButton = ({project, onCompleted}) => {
         reloadDisabled();
     }, [project,]);
     const reloadDisabled = () => {
-        const result = [];
-        switch (project.status.name_key) {
-            case "DESIGN_REQUEST":
-                if (!project.name)
-                    result.push("Отсутствует имя проекта;  ");
-                if (!project.organization_customer?.id)
-                    result.push("Отсутствует организация заказчик;  ");
-                if (project.facilities.length <= 0)
-                    result.push("Отсутствуют объекты проектирования;  ");
-                if (!project.duration)
-                    result.push("Отсутствует продолжительность;  ")
-                if (!project.type_project_document?.id)
-                    result.push("Отсутствует тип документации;  ");
-                if (!project.price)
-                    result.push("Отсутствует стоимость;  ");
- 
-                break;
-
-            case "APPROVAL_KP":
-                if (!project.name)
-                    result.push("Отсутствует имя проекта;  ");
-                if (!project.organization_customer?.id)
-                    result.push("Отсутствует организация заказчик;  ");
-                if (project.facilities.length <= 0)
-                    result.push("Отсутствуют объекты проектирования;  ");
-                if (!project.duration)
-                    result.push("Отсутствует продолжительность;  ")
-                if (!project.type_project_document?.id)
-                    result.push("Отсутствует тип документации;  ");
-                if (!project.price)
-                    result.push("Отсутствует стоимость;  ");
-            
-
-                if (project.project_stages?.length <= 0)
-                    result.push("Отсутствуют этапы;  ")
-                if (!project.kp_file_id)
-                    result.push("Отсутствует подписанный файл;  ")
-                break;
-
-            case "APPROVAL_AGREEMENT":
-                if (!project.name)
-                    result.push("Отсутствует имя проекта;  ");
-                if (!project.organization_customer?.id)
-                    result.push("Отсутствует организация заказчик;  ");
-                if (project.facilities.length <= 0)
-                    result.push("Отсутствуют объекты проектирования;  ");
-                if (!project.duration)
-                    result.push("Отсутствует продолжительность;  ")
-                if (!project.type_project_document?.id)
-                    result.push("Отсутствует тип документации;  ");
-                if (!project.price)
-                    result.push("Отсутствует стоимость;  ");
- 
-                if (project.project_stages?.length <= 0)
-                    result.push("Отсутствуют этапы;  ")
-                if (!project.kp_file_id)
-                    result.push("Отсутствует подписанный файл кп;  ")
-
-                if (project.project_irds?.length <= 0 )
-                    result.push("Ирд не сформировано;  ");
-                if (project.project_irds?.filter(row => (row.stage_number === 1) && (row.received_date)) > 0)
-                    result.push("Ирд не получено;  ", project.project_irds?.filter(row => (row.stage_number === 1) && (row.received_date)).length);
-                if (!project.date_signing)
-                    result.push("Отсутствует дата подписания;  ")
-                if (!project.contract_file_id)
-                    result.push("Отсутствует подписанный файл договора;  ")
-                break;
-            case "ARCHIVE":
-                result.push("Не реализованно;  ")
-                break;
-            case "COMPLETED":
-                result.push("Не реализованно;  ");
-                break;
-            case "WAITING_SOURCE":
-                result.push("Не реализованно;  ")
-                break;
-            case "WORKING":
-                result.push("Не реализованно;  ");
-                break;
-        }
+        const result = project?.requirements?.map(row => row.comment);
+        
         setDisabledMessage(result);
     }
     const permissions = JSON.parse(localStorage.getItem("userPermissions")).map(row=>row.name_key);

@@ -51,6 +51,84 @@ class Project extends Model
     {
         return $this->BelongsToMany(File::class, 'project_file', 'project_id', 'file_id')->where("type_id", "CONTRACT");
     }
+    protected $appends = ['requirements'];
+
+    public function getRequirementsAttribute()
+    {
+        $result = [];
+
+        switch ($this->status->name_key) {
+            case 'DESIGN_REQUEST':
+                if (!$this->name)
+                    $result[] = ['comment' => 'Отсутствует имя проекта'];
+                if (!$this->organization_customer?->id)
+                    $result[] = ['comment' => 'Отсутствует организация заказчик'];
+                if ($this->facilities->count() <= 0)
+                    $result[] = ['comment' => 'Отсутствуют объекты проектирования'];
+                if (!$this->duration)
+                    $result[] = ['comment' => 'Отсутствует продолжительность'];
+                if (!$this->type_project_document?->id)
+                    $result[] = ['comment' => 'Отсутствует тип документации'];
+                if (!$this->price)
+                    $result[] = ['comment' => 'Отсутствует стоимость'];
+                break;
+
+            case 'APPROVAL_KP':
+                if (!$this->name)
+                    $result[] = ['comment' => 'Отсутствует имя проекта'];
+                if (!$this->organization_customer?->id)
+                    $result[] = ['comment' => 'Отсутствует организация заказчик'];
+                if ($this->facilities->count() <= 0)
+                    $result[] = ['comment' => 'Отсутствуют объекты проектирования'];
+                if (!$this->duration)
+                    $result[] = ['comment' => 'Отсутствует продолжительность'];
+                if (!$this->type_project_document?->id)
+                    $result[] = ['comment' => 'Отсутствует тип документации'];
+                if (!$this->price)
+                    $result[] = ['comment' => 'Отсутствует стоимость'];
+                if ($this->project_stages->count() <= 0)
+                    $result[] = ['comment' => 'Отсутствуют этапы'];
+                if (!$this->kp_file_id)
+                    $result[] = ['comment' => 'Отсутствует подписанный файл'];
+                break;
+
+            case 'APPROVAL_AGREEMENT':
+                if (!$this->name)
+                    $result[] = ['comment' => 'Отсутствует имя проекта'];
+                if (!$this->organization_customer?->id)
+                    $result[] = ['comment' => 'Отсутствует организация заказчик'];
+                if ($this->facilities->count() <= 0)
+                    $result[] = ['comment' => 'Отсутствуют объекты проектирования'];
+                if (!$this->duration)
+                    $result[] = ['comment' => 'Отсутствует продолжительность'];
+                if (!$this->type_project_document?->id)
+                    $result[] = ['comment' => 'Отсутствует тип документации'];
+                if (!$this->price)
+                    $result[] = ['comment' => 'Отсутствует стоимость'];
+                if ($this->project_stages->count() <= 0)
+                    $result[] = ['comment' => 'Отсутствуют этапы'];
+                if (!$this->kp_file_id)
+                    $result[] = ['comment' => 'Отсутствует подписанный файл кп'];
+                if ($this->project_irds->count() <= 0)
+                    $result[] = ['comment' => 'Ирд не сформировано'];
+                if ($this->project_irds->filter(fn($row) => $row->stage_number === 1 && !$row->received_date)->count() > 0)
+                    $result[] = ['comment' => 'Ирд не получено'];
+                if (!$this->date_signing)
+                    $result[] = ['comment' => 'Отсутствует дата подписания'];
+                if (!$this->contract_file_id)
+                    $result[] = ['comment' => 'Отсутствует подписанный файл договора'];
+                break;
+
+            case 'ARCHIVE':
+            case 'COMPLETED':
+            case 'WAITING_SOURCE':
+            case 'WORKING':
+                $result[] = ['comment' => 'Не реализованно'];
+                break;
+        }
+
+        return $result;
+    }
     public function project_contract_history(): HasMany
     {
         return $this->hasMany(ProjectFile::class)->whereIn("type", ["CONTRACT", "CONTRACT_STAMP"], )->orderBy('number', 'DESC');

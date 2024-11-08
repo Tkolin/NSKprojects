@@ -1,4 +1,3 @@
-import { DownloadOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   Button,
@@ -41,9 +40,10 @@ const TableProjectTasksDelayManagment = ({ projectId }) => {
     variables: { organizationId: data?.organization_customer?.id },
   });
 
-  const [generateKpMutate] = useMutation(GENERATED_DELAY_CUSTOMER_MUTATION, {
+  const [generateDelayMutate] = useMutation(GENERATED_DELAY_CUSTOMER_MUTATION, {
     onCompleted: (data) => {
-      openNotification("topRight", "success", "Файл успешно сгенерирован");
+      openNotification("topRight", "success", "Файл успешно сгенерирован " + data.generatedDelayCustomerMessage);
+      downloadFile({variables: {id: data.generatedDelayCustomerMessage}});
       setGenerateKpLoading(false);
       refetch();
     },
@@ -72,7 +72,7 @@ const TableProjectTasksDelayManagment = ({ projectId }) => {
 
   const handleGenerateFile = (delayId) => {
     setGenerateKpLoading(true);
-    generateKpMutate({
+    generateDelayMutate({
       variables: {
         delayId, 
         dateFixed: dayjs(selectedDelegations).format("YYYY-MM-DD"),
@@ -80,10 +80,10 @@ const TableProjectTasksDelayManagment = ({ projectId }) => {
     });
   };
 
-  const handleDownloadFile = (fileId) => {
-    setDownloadFileLoading(true);
-    downloadFile({ variables: { id: fileId } });
-  };
+  // const handleDownloadFile = (fileId) => {
+  //   setDownloadFileLoading(true);
+  //   downloadFile({ variables: { id: fileId } });
+  // };
 
   const columnsTasks = [
     {
@@ -134,14 +134,7 @@ const TableProjectTasksDelayManagment = ({ projectId }) => {
               >
                 <Button>Сгенерировать</Button>
                </Popconfirm>
-              <Button
-                icon={<DownloadOutlined />}
-                onClick={() => handleDownloadFile(record.file_id)}
-                loading={downloadFileLoading}
-                disabled={!record.file_id}
-              >
-                Скачать
-              </Button>
+          
             </Space>
           ),
         },
