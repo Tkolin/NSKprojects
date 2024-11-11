@@ -15,10 +15,7 @@ extend type Mutation {
     downloadFile(id: ID!): Url! @checkRole(permission:  ["download-file"])
     uploadFileLink(url: String!): UploadFileLinkResponse! @checkRole(permission:  ["upload-file"])
 
-    personOrderFileGenerated(
-        personId: ID
-        tasksId: [ID]
-    ): Url! @checkRole(permission:  ["download-file-projectPersonOrder"])
+ 
     projectPaymentInvoiceFileDownload(
         projectId: ID!
         stageNumber: ID
@@ -36,9 +33,7 @@ extend type Mutation {
     projectOrderFileDownload(
         projectId: ID
     ): Url! @checkRole(permission:  ["download-file-projectOrder"])
-    projectIrdsFileDownload(
-        projectId: ID
-    ): Url! @checkRole(permission:  ["download-file-projectIrds"])
+ 
     projectStagesFileDownload(
         projectId: ID
     ): Url! @checkRole(permission:  ["download-file-projectStages"])

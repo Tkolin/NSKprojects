@@ -12,12 +12,16 @@ class ProjectIrds extends Pivot
     protected $table = 'project_irds';
 
     protected $fillable = [
+        'id',
         'project_id',
         'ird_id',
         'stage_number',
         'application_project',
         'received_date',
         'is_broken',
+        'is_viewed',
+        'acceptance_date',
+        
     ];
 
     public function project(): BelongsTo

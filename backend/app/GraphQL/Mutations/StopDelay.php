@@ -19,8 +19,8 @@ final readonly class StopDelay
         try {
             Log::info('Start processing StopDelay mutation', ['args' => $args]);
 
-            $id = $args["id"];
-            $dateEnd = new DateTime($args["date_end"]); // Преобразование строки в DateTime
+            $id = $args["delayId"];
+            $dateEnd = new DateTime($args["dateStop"]); // Преобразование строки в DateTime
 
             $delay = Delay::find($id);
 

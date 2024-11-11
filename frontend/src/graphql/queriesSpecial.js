@@ -136,6 +136,7 @@ export const PROJECTS_QUERY_STATISTICS = gql`
                 date_completion
                 
                 project_irds {
+                    id
                     stage_number
                     application_project
                     ird {

@@ -4,26 +4,30 @@
 extend type Query {
     projectDelay( projectId: ID): [Delay] @checkRole(permission:  ["read-project"])
 
-    }
+}
 # #-INPUTS:
 
-# #-TYPES:
 
+
+# #-TYPES:
 type Delay {
     id: ID
     date_start: String
     date_end: String
     duration: Int
     description: String
-    delay_type: String
+    delay_type: DelayType
     provider: String
-    delay_project_tasks: [DelayProjectTask]
+    delay_type_key: String
+     delay_project_tasks: [DelayProjectTask]
 }
 type DelayProjectTask {
     project_task_id: ID!
     delay_id: ID!
 }
-
+type DelayType {
+    name: String
+}
 extend type Mutation {
     createDelay(data: DelayInput!, chapterIds: [ID]!): Delay
     startDelay(
@@ -35,10 +39,9 @@ extend type Mutation {
         primaryTaskIds: [ID]!
     ): DelayResult
     stopDelay(
-        id: ID!
-        date_end: String!
-        offset_mode: String!
-    ): DelayResult
+        delayId: ID!
+        dateStop: String!
+     ): DelayResult
     generatedDelayCustomerMessage(
         delayId: ID!
         dateFixed: String!

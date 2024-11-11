@@ -6,16 +6,19 @@ import {
   Space,
   Table,
   Tooltip,
-  Typography
+  Typography,
 } from "antd";
 import dayjs from "dayjs";
 import React, { useState } from "react";
-import { GENERATED_DELAY_CUSTOMER_MUTATION } from "../../../../../../../graphql/mutationsDelay";
+import {
+  GENERATED_DELAY_CUSTOMER_MUTATION,
+  STOP_DELAY_MUTATION,
+} from "../../../../../../../graphql/mutationsDelay";
 import { DOWNLOAD_FILE } from "../../../../../../../graphql/mutationsFile";
 import { PROJECT_DELAYS_QUERY } from "../../../../../../../graphql/queries";
 import { CONTACTS_BY_ORGANIZATION } from "../../../../../../../graphql/queriesSpecial";
 import { CustomDatePicker } from "../../../../../../components/FormattingDateElementComponent";
-    
+
 const { Text } = Typography;
 
 const openNotification = (placement, type, message) => {
@@ -27,63 +30,109 @@ const openNotification = (placement, type, message) => {
 
 const TableProjectTasksDelayManagment = ({ projectId }) => {
   const [selectedDateContract, setSelectedDateContract] = useState();
-  const [selectedDelegations, setSelectedDelegations] = useState();
-  const [generateKpLoading, setGenerateKpLoading] = useState(false);
+  const [selectedDateStopDelay, setSelectedDateStopDelay] = useState();
   const [downloadFileLoading, setDownloadFileLoading] = useState(false);
+  const LaravelURL = process.env.REACT_APP_API_URL;
 
-  const { data, loading, refetch } = useQuery(PROJECT_DELAYS_QUERY, {
+  const {
+    data: dataProjectDelay,
+    loading: loadingProjectDelay,
+    refetch: refetchProjectDelay,
+  } = useQuery(PROJECT_DELAYS_QUERY, {
     variables: { projectId },
     onCompleted: (result) => console.log(result),
   });
 
-  const { loading: loadingContacts, data: dataContacts } = useQuery(CONTACTS_BY_ORGANIZATION, {
-    variables: { organizationId: data?.organization_customer?.id },
-  });
+  const { data: dataContacts, loading: loadingContacts } = useQuery(
+    CONTACTS_BY_ORGANIZATION,
+    {
+      variables: {
+        organizationId: dataProjectDelay?.organization_customer?.id,
+      },
+    }
+  );
 
-  const [generateDelayMutate] = useMutation(GENERATED_DELAY_CUSTOMER_MUTATION, {
-    onCompleted: (data) => {
-      openNotification("topRight", "success", "Файл успешно сгенерирован " + data.generatedDelayCustomerMessage);
-      downloadFile({variables: {id: data.generatedDelayCustomerMessage}});
-      setGenerateKpLoading(false);
-      refetch();
-    },
-    onError: (error) => {
-      openNotification("topRight", "error", `Ошибка генерации: ${error.message}`);
-      setGenerateKpLoading(false);
-    },
-  });
+  const [generateDelayMutate, { loading: loadingGeneratedDelay }] = useMutation(
+    GENERATED_DELAY_CUSTOMER_MUTATION,
+    {
+      onCompleted: (data) => {
+        openNotification(
+          "topRight",
+          "success",
+          "Файл успешно сгенерирован, начало загрузки... "
+        );
+        downloadFile({ variables: { id: data.generatedDelayCustomerMessage } });
+        refetchProjectDelay();
+      },
+      onError: (error) => {
+        openNotification(
+          "topRight",
+          "error",
+          `Ошибка генерации: ${error.message}`
+        );
+      },
+    }
+  );
+  const [stopDelay, { loading: loadingStopDelay }] = useMutation(
+    STOP_DELAY_MUTATION,
+    {
+      onCompleted: (data) => {
+        openNotification("topRight", "success", "Задержка успешно завершена");
+        refetchProjectDelay();
+      },
+      onError: (error) => {
+        openNotification(
+          "topRight",
+          "error",
+          `Ошибка генерации: ${error.message}`
+        );
+      },
+    }
+  );
 
   const [downloadFile] = useMutation(DOWNLOAD_FILE, {
     onCompleted: (data) => {
-      const link = document.createElement("a");
-      link.href = data.downloadFile.url;
-      link.download = "DelayFile";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      handleDownloadClick(data.downloadFile.url);
       openNotification("topRight", "success", "Файл успешно загружен");
       setDownloadFileLoading(false);
     },
     onError: (error) => {
-      openNotification("topRight", "error", `Ошибка загрузки файла: ${error.message}`);
+      openNotification(
+        "topRight",
+        "error",
+        `Ошибка загрузки файла: ${error.message}`
+      );
       setDownloadFileLoading(false);
     },
   });
-
+  const handleDownloadClick = async (downloadedFileUrl) => {
+    try {
+      const link = document.createElement("a");
+      console.log(link);
+      link.href = `${LaravelURL}${downloadedFileUrl}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Ошибка при скачивании файла:", error);
+    }
+  };
   const handleGenerateFile = (delayId) => {
-    setGenerateKpLoading(true);
     generateDelayMutate({
       variables: {
-        delayId, 
-        dateFixed: dayjs(selectedDelegations).format("YYYY-MM-DD"),
-       },
+        delayId,
+        dateFixed: dayjs(selectedDateContract).format("YYYY-MM-DD"),
+      },
     });
   };
-
-  // const handleDownloadFile = (fileId) => {
-  //   setDownloadFileLoading(true);
-  //   downloadFile({ variables: { id: fileId } });
-  // };
+  const handleStopDelay = (delayId) => {
+    stopDelay({
+      variables: {
+        delayId,
+        dateStop: dayjs(selectedDateStopDelay).format("YYYY-MM-DD"),
+      },
+    });
+  };
 
   const columnsTasks = [
     {
@@ -100,11 +149,16 @@ const TableProjectTasksDelayManagment = ({ projectId }) => {
           key: "status",
           align: "left",
           render: (text, record) => (
-            <div style={{ color: record.date_end ? "green" : "red" }}>
-              {dayjs(record.date_start).format("DD.MM.YY")}
-              <span> - </span>
-              {record.date_end ? dayjs(record.date_end).format("DD.MM.YY") : "Не закрыто"}
-            </div>
+            <Space.Compact direction="vertical">
+              {record.delay_type.name}
+              <div style={{ color: record.date_end ? "green" : "red" }}>
+                {dayjs(record.date_start).format("DD.MM.YY")}
+                <span> - </span>
+                {record.date_end
+                  ? dayjs(record.date_end).format("DD.MM.YY")
+                  : "Не закрыто"}
+              </div>
+            </Space.Compact>
           ),
         },
         {
@@ -112,7 +166,30 @@ const TableProjectTasksDelayManagment = ({ projectId }) => {
           key: "actions",
           align: "left",
           render: (text, record) => (
-            <Space>
+            <Space.Compact direction="vertical">
+              {(!record?.date_end || true) && (
+                <Popconfirm
+                  title={
+                    <Space direction="vertical" style={{ width: "200px" }}>
+                      <CustomDatePicker
+                        size="small"
+                        placeholder="Выберите дату..."
+                        onChange={(value) =>
+                          setSelectedDateContract(
+                            value ? dayjs(value).format("YYYY-MM-DD") : null
+                          )
+                        }
+                      />
+                    </Space>
+                  }
+                  onConfirm={() => handleGenerateFile(record.id)}
+                  okText="Сгенерировать"
+                  cancelText="Отмена"
+                >
+                  <Button loading={loadingGeneratedDelay}>Сгенерировать</Button>
+                </Popconfirm>
+              )}
+
               <Popconfirm
                 title={
                   <Space direction="vertical" style={{ width: "200px" }}>
@@ -120,22 +197,20 @@ const TableProjectTasksDelayManagment = ({ projectId }) => {
                       size="small"
                       placeholder="Выберите дату..."
                       onChange={(value) =>
-                        setSelectedDateContract(
+                        setSelectedDateStopDelay(
                           value ? dayjs(value).format("YYYY-MM-DD") : null
                         )
                       }
                     />
-                  
                   </Space>
                 }
-                onConfirm={()=>handleGenerateFile(record.id)}
+                onConfirm={() => handleStopDelay(record.id)}
                 okText="Сгенерировать"
                 cancelText="Отмена"
               >
-                <Button>Сгенерировать</Button>
-               </Popconfirm>
-          
-            </Space>
+                <Button loading={loadingStopDelay}>Завершить задержку</Button>
+              </Popconfirm>
+            </Space.Compact>
           ),
         },
       ],
@@ -144,11 +219,11 @@ const TableProjectTasksDelayManagment = ({ projectId }) => {
 
   return (
     <Table
-      loading={loading}
+      loading={loadingProjectDelay}
       style={{ margin: 0, width: "100%" }}
       size="small"
       columns={columnsTasks}
-      dataSource={data?.projectDelay}
+      dataSource={dataProjectDelay?.projectDelay}
       pagination={false}
     />
   );

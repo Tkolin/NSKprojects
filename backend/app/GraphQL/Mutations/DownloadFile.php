@@ -25,11 +25,24 @@ final readonly class DownloadFile
             throw new \Exception('File does not exist in the specified location.');
         }
 
-        // Копирование файла в public/storage
-        $temporaryFilePath = 'temporary/' . Str::random(length: 2) . '_' . $file->name;
+        // Формирование имени файла
+        $filename = pathinfo($file->name, PATHINFO_FILENAME);
+        $extension = pathinfo($file->name, PATHINFO_EXTENSION);
+
+        // Сокращение имени файла, если оно длиннее 40 символов
+        if (mb_strlen($filename) > 40) {
+            $filename = mb_substr($filename, 31); // Убираем первые 31 символ
+        }
+
+        // Добавление временной метки
+        $timestamp = now()->format('YmdHis');
+        $temporaryFilePath = 'temporary/' . $filename . '_' . $timestamp . '.' . $extension;
+
+        // Копирование файла во временную директорию
         Storage::disk('public')->put($temporaryFilePath, Storage::disk('localERPFiles')->get($filePath));
 
         // Генерация ссылки для скачивания
+        $url = Storage::disk('public')->url($temporaryFilePath);
 
         return ['url' => $temporaryFilePath];
     }

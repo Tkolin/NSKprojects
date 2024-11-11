@@ -83,6 +83,7 @@ export const ADD_PROJECT_MUTATION = gql`
                 price
             }
             project_irds {
+                id
                 ird_id
                 project_id
                 stage_number
@@ -183,6 +184,7 @@ export const UPDATE_PROJECT_MUTATION = gql`
                 price
             }
             project_irds {
+                id
                 ird_id
                 project_id
                 stage_number
@@ -319,6 +321,7 @@ export const PROJECT_IRDS_SYNC_MUTATION = gql`
         projectIrdsSync(items: $data) {
             id
             project_irds {
+                id
                 ird_id
                 project_id
                 ird {

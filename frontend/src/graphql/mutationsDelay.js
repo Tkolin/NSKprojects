@@ -1,77 +1,75 @@
 import { gql } from "@apollo/client";
 
 export const GENERATED_DELAY_CUSTOMER_MUTATION = gql`
-    mutation GeneratedDelayCustomerMessage($delayId: ID!, $dateFixed: String!) {
-        generatedDelayCustomerMessage(delayId: $delayId, dateFixed: $dateFixed) 
-    }
+  mutation GeneratedDelayCustomerMessage($delayId: ID!, $dateFixed: String!) {
+    generatedDelayCustomerMessage(delayId: $delayId, dateFixed: $dateFixed)
+  }
 `;
 export const START_DELAY_MUTATION = gql`
-    mutation StartDelay(
-        $projectId: ID!, 
-        $date_start: String!, 
-        $description: String!, 
-        $type: String!, 
-        $provider: String!, 
-        $primaryTaskIds: [ID]!   
+  mutation StartDelay(
+    $projectId: ID!
+    $date_start: String!
+    $description: String!
+    $type: String!
+    $provider: String!
+    $primaryTaskIds: [ID]!
+  ) {
+    startDelay(
+      projectId: $projectId
+      date_start: $date_start
+      description: $description
+      type: $type
+      provider: $provider
+      primaryTaskIds: $primaryTaskIds
     ) {
-        startDelay(
-            projectId: $projectId, 
-            date_start: $date_start, 
-            description: $description, 
-            type: $type, 
-            provider: $provider, 
-            primaryTaskIds: $primaryTaskIds
-        ) {
-            delay {
-                id
-                date_start
-                date_end
-        }
-         project {   id
+      delay {
+        id
+        date_start
+        date_end
+      }
+      project {
+        id
+        name
+        project_tasks {
+          id
+          is_delay
+          task {
+            id
             name
-            project_tasks {
-                id
-                is_delay
-                task {
-                    id
-                    name
-                }
-                date_end
-                date_start
-                status
-            }}
+          }
+          date_end
+          date_start
+          status
         }
+      }
     }
+  }
 `;
 export const STOP_DELAY_MUTATION = gql`
-    mutation StopDelay(
-        $id: ID!, 
-        $date_end: String!,
-        $offset_mode: String!
-    ) {
-        stopDelay(
-          id: $id,
-          date_end: $date_end,
-          offset_mode: $offset_mode
-        ) {
-            delay {
-                id
-                date_start
-                date_end
-            }
-         project {   id
+  mutation StopDelay($delayId: ID!, $dateStop: String!) # $offset_mode: String!
+  {
+    stopDelay(delayId: $delayId, dateStop: $dateStop) #   offset_mode: $offset_mode
+    {
+      delay {
+        id
+        date_start
+        date_end
+      }
+      project {
+        id
+        name
+        project_tasks {
+          id
+          is_delay
+          task {
+            id
             name
-            project_tasks {
-                id
-                is_delay
-                task {
-                    id
-                    name
-                }
-                date_end
-                date_start
-                status
-            }}
+          }
+          date_end
+          date_start
+          status
         }
+      }
     }
+  }
 `;

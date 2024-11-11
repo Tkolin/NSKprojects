@@ -144,15 +144,4 @@ export const UPDATE_PPI_MUTATION = gql`
         }
     }
 `;
-// export const CONTRACT_PERSON_MUTATION = gql`
-//     mutation personOrderFileGenerated(
-//         $id: ID!, $tasksId: [ID]
-//     ) {
-//         personOrderFileGenerated(
-//             personId: $id
-//             tasksId: $tasksId
-//         ) {
-//             url
-//         }
-//     }
-// `;
+ 

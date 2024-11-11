@@ -194,6 +194,7 @@ type Requirement {
 
 #   project 2 (Указаны в основной модели)
 type ProjectIrd {
+    id: ID!
     project_id: ID!
     ird_id: ID!
     project: Project!
@@ -201,6 +202,9 @@ type ProjectIrd {
     received_date: String
     stage_number: String!
     application_project: String
+    is_broken: Boolean
+    is_viewed: Boolean
+    acceptance_date: String
 }
 type ProjectStatus {
     name: String!

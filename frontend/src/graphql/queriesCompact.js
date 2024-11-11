@@ -55,6 +55,7 @@ export const PROJECTS_IRDS_TEMPLATES = gql`
                 date_start
                 date_end
                 project_irds {
+                    id
                     project_id
                     ird_id
                     ird {

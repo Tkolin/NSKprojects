@@ -332,6 +332,7 @@ export const PROJECTS_QUERY_BY_ID = gql`
           date_end
         }
         project_irds {
+          id
           project_id
           ird_id
           stage_number
