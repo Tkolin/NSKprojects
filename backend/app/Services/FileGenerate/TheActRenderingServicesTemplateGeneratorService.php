@@ -3,6 +3,7 @@
 namespace App\Services\FileGenerate;
 
 use App\Models\ProjectFile;
+use App\Models\ProjectStage;
 
 class TheActRenderingServicesTemplateGeneratorService extends DocumentGeneratorService
 {
@@ -107,7 +108,7 @@ class TheActRenderingServicesTemplateGeneratorService extends DocumentGeneratorS
         $file = $this->saveFileToProject($storagePath, $this->filePath, $this->fileName);
 
 
-        ProjectFile::create([
+        $projectFile = ProjectFile::create([
             'project_id' => $projectData->id,
             'file_id' => $file->id,
             'type' => "ACT_RENDERING",
@@ -115,8 +116,9 @@ class TheActRenderingServicesTemplateGeneratorService extends DocumentGeneratorS
             'date_document' => $dateCreated,
             'document_number' => $orderNumber,
         ]);
-
-
+        ProjectStage::where("project_id","=",$projectData["id"])->where("number", "=", $stageNumber)
+        ->update(["work_act_file_id"=> $projectFile->file_id ]) ;
+ 
         return $file->id;
     }
 

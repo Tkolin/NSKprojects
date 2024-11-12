@@ -1,4 +1,4 @@
-import { SunOutlined } from "@ant-design/icons";
+import { AuditOutlined, BarsOutlined, BookOutlined, ExceptionOutlined, FieldTimeOutlined, FundProjectionScreenOutlined, ReconciliationOutlined, SignatureOutlined } from "@ant-design/icons";
 import { Modal, Space, Tabs } from "antd";
 import { nanoid } from "nanoid";
 import React, { useState } from "react";
@@ -54,7 +54,7 @@ const Index = ({project, expandable,refetchProject, options}) => {
                     [
                         ...(options.includes("stages") ? [{
                             key: '1',
-                            icon: <SunOutlined/>,
+                            icon: <BarsOutlined />,
                             label: "Этапы",
                             children:
                                 <TableStagesComponent data-permission={"read-project-stage"} project={project}
@@ -64,7 +64,7 @@ const Index = ({project, expandable,refetchProject, options}) => {
                         ...(options.includes("irds") ? [
                             {
                                 key: '2',
-                                icon: <SunOutlined/>,
+                                icon: <BookOutlined />,
                                 label: "ИРД",
                                 children:
                                     <TableIrdsComponent data-permission={"read-project-ird"} project={project}
@@ -75,7 +75,7 @@ const Index = ({project, expandable,refetchProject, options}) => {
                         ...(options.includes("executors") ? [
                             {
                                 key: '3',
-                                icon: <SunOutlined/>,
+                                icon: <AuditOutlined />,
                                 label: "Исполнители",
                                 children:
                                     <TableExecutorsComponent data-permission={"read-project-task-executor"}
@@ -85,7 +85,7 @@ const Index = ({project, expandable,refetchProject, options}) => {
                         ...(options.includes("stages-extra") ? [
                             {
                                 key: '4',
-                                icon: <SunOutlined/>,
+                                icon: <ExceptionOutlined />,
                                 label: "Акты и Счета по Этапам",
                                 children:
                                     <TableStagesComponent data-permission={"read-project-stage"} project={project}
@@ -95,7 +95,7 @@ const Index = ({project, expandable,refetchProject, options}) => {
                         ...(options.includes("tasks") ? [
                             {
                                 key: '5',
-                                icon: <SunOutlined/>,
+                                icon: <SignatureOutlined />,
                                 label: "Задачи",
                                 children:
                                     <TableProjectTasksManagment
@@ -107,7 +107,7 @@ const Index = ({project, expandable,refetchProject, options}) => {
                         ...(options.includes("executor_orders") ? [
                             {
                                 key: '6',
-                                icon: <SunOutlined/>,
+                                icon:<ReconciliationOutlined />,
                                 label: "Оплата договоров с исполнителями",
                                 children:
                                     <TablePaymentExecutorOrdersComponent
@@ -118,7 +118,7 @@ const Index = ({project, expandable,refetchProject, options}) => {
                         ...(options.includes("task-chart") ? [
                             {
                                 key: '7',
-                                icon: <SunOutlined/>,
+                                icon: <FundProjectionScreenOutlined />,
                                 label: "График задач",
                                 children:
                                     <TaskGanttChartComponent style={{width: "100%"}} projectId={project.id}/>
@@ -126,7 +126,7 @@ const Index = ({project, expandable,refetchProject, options}) => {
                         ...(options.includes("task-chart") ? [
                             {
                                 key: '8',
-                                icon: <SunOutlined/>,
+                                icon: <FieldTimeOutlined />,
                                 label: "Задержки",
                                 children:
                                 <TableProjectTasksDelayManagment

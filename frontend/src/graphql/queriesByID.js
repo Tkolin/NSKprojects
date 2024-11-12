@@ -47,7 +47,7 @@ export const  PROJECT_QUERY = gql`
                 project_stages {
                   number
                   payment_file_id
-                  work_act_singing_file_id
+                  work_act_file_id
                   payment_date
                   work_act_singing_date
                   stage { 

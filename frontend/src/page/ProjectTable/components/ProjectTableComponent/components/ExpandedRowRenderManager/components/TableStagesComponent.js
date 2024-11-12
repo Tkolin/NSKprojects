@@ -163,10 +163,10 @@ const TableStagesComponent = ({
                     {record?.type === "prepayment" ? (
                       "-"
                     ) : 
-                      record?.work_act_singing_file_id ? (
+                      record?.work_act_file_id ? (
                         <>
                           <LinkToDownload
-                            fileId={record?.work_act_singing_file_id}
+                            fileId={record?.work_act_file_id}
                             style={{ width: "100%" }}
                           >
                             <StyledButtonGreen icon={<DownloadOutlined />}>

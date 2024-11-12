@@ -30,7 +30,7 @@ class ProjectStage extends Pivot
         'payment_file_id',
         'payment_date',
 
-        'work_act_singing_file_id',
+        'work_act_file_id',
         'work_act_singing_date',
     ];
 
@@ -41,5 +41,13 @@ class ProjectStage extends Pivot
     public function stage(): BelongsTo
     {
         return $this->belongsTo(Stage::class);
+    }
+    public function payment_file(): BelongsTo
+    {
+        return $this->belongsTo(ProjectFile::class,"payment_file_id", "file_id");
+    }
+    public function work_act_file(): BelongsTo
+    {
+        return $this->belongsTo(ProjectFile::class, "work_act_file_id", "file_id");
     }
 }

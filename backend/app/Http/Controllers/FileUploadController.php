@@ -171,7 +171,7 @@ class FileUploadController extends Controller
  
             ProjectStage::where("project_id", "=", $projectId)->where("number", "=", $stageNumber)
                 ->update([
-                    'work_act_singing_file_id' => $fileRecord->id,
+                    'work_act_file_id' => $fileRecord->id,
                     'work_act_singing_date' => $datePayment,
                 ]);
             return response()->json([

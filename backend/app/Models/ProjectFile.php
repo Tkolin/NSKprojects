@@ -13,7 +13,8 @@ class ProjectFile extends Model
         'file_id',
         'type',
         'number',
-        'date_document'
+        'date_document',
+        'document_number'
     ];
 
 

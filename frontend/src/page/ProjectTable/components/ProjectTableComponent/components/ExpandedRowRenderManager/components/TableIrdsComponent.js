@@ -201,7 +201,7 @@ const TableIrdsComponent = ({ setEditModalStatus, project }) => {
               direction={"vertical"}
               style={{ alignContent: "start" }}
             >
-              <Text strong>{record?.ird?.name}</Text>
+              <Text strong>{record?.ird?.name}  <strong>(Этап №{record?.stage_number})</strong></Text> 
             </Space.Compact>
           ),
         },

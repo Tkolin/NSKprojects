@@ -151,6 +151,7 @@ const TableProjectTasksDelayManagment = ({ projectId }) => {
           render: (text, record) => (
             <Space.Compact direction="vertical">
               {record.delay_type.name}
+              <span>{record.delay_type.key}</span>
               <div style={{ color: record.date_end ? "green" : "red" }}>
                 {dayjs(record.date_start).format("DD.MM.YY")}
                 <span> - </span>

@@ -114,15 +114,14 @@ class PaymentInvoiceTemplateGeneratorService extends DocumentGeneratorService
         $projectFile = ProjectFile::create([
             'project_id' => $projectData->id,
             'file_id' => $file->id,
-            'type_id' => "PAYMENT_INVOICE",
+            'type' => "STAGE_PAYMENT",
             'number' => 0,
             'date_document' => $dateCreated,
             'document_number' => $orderNumber,
         ]);
-        ProjectStage::where("project_id",$projectFile["id"])
-        ->update(["payment_file_id"=> $projectFile->id ]);
+          ProjectStage::where("project_id","=",$projectData["id"])->where("number", "=", $stageNumber)
+        ->update(["payment_file_id"=> $projectFile->file_id ]) ;
 
-
-        return $file->id;
+         return $file->id;
     }
 }

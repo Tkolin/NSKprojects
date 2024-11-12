@@ -158,7 +158,7 @@ export const PROJECTS_QUERY_STATISTICS = gql`
                     date_end
  
                      payment_file_id
-                    work_act_singing_file_id
+                    work_act_file_id
                     payment_date
                     work_act_singing_date
                 }

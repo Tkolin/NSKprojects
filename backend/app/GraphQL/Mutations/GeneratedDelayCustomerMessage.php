@@ -20,23 +20,26 @@ final readonly class GeneratedDelayCustomerMessage
         // Добор данных
         $delay = Delay::find($delayId);
         $stageNumber = $delay->project_tasks[0]["stage_number"];
- 
+
         $projectData = Project::with("project_kp_history")
             ->with("project_stages")
             ->with("project_irds")
             ->find($delay->project_id);
-         $delegationOrgData = Organization::with("legal_form")->find($projectData->organization_customer_id);
-        $projectStageData = ProjectStage::where("project_id", "=",$delay->project_id)
-        ->where("number", "=",$stageNumber);
-         // Генерация файла
+        $delegationOrgData = Organization::with("legal_form")
+            ->find($projectData->organization_customer_id);
+        $projectStageData = ProjectStage::with("payment_file")
+            ->with("work_act_file")
+            ->where("project_id", "=", $delay->project_id)
+            ->where("number", "=", $stageNumber)->first();
+        // Генерация файла
         $contractFilePath = (new DelayCustomerMessageGeneratorService)->generate([
             'projectData' => $projectData,
-             'dateOffer' => $dateOffer,
+            'dateOffer' => $dateOffer,
             'delay' => $delay,
             'projectStageData' => $projectStageData,
             'delegationOrgData' => $delegationOrgData,
         ]);
 
-        return  $contractFilePath;
+        return $contractFilePath;
     }
 }

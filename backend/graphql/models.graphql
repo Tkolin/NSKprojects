@@ -225,9 +225,12 @@ type ProjectStage {
     date_end: String
     progress: Int!
     payment_file_id: String
-    work_act_singing_file_id: String
+    work_act_file_id: String
     payment_date: String
     work_act_singing_date: String
+
+    payment_file: ProjectFile
+    work_act_file: ProjectFile
 }
 type ProjectTask {
     id: ID

@@ -141,8 +141,8 @@ const columnFiles = () => ({
         <Space direction="horizontal">
           Этап №{row.number}
           <Space direction="vertical"></Space>
-          {row.work_act_singing_file_id ? (
-            <LinkToDownload fileId={row.work_act_singing_file_id}>
+          {row.work_act_file_id ? (
+            <LinkToDownload fileId={row.work_act_file_id}>
               <Link strong>Выполненых работ</Link>
             </LinkToDownload>
           ) : (
