@@ -48,6 +48,7 @@ const template = {
         menu: [
           "crud",
           "contract",
+          "kp",
           "stages",
           "irds",
           "template",
@@ -69,7 +70,13 @@ const template = {
       //  Первая колонка кнопок управления таблицей
       tool: {
         //  Компоненты скрытые в ...
-        menu: ["contract", "tasks_management", "template", "delay_customer"],
+        menu: [
+          "contract",
+          "kp",
+          "tasks_management",
+          "template",
+          "delay_customer",
+        ],
         //  Кнопки быстрых действий
         hotKey: ["archive"],
       },
