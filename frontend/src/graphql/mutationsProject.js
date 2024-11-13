@@ -5,97 +5,144 @@ export const ADD_PROJECT_MUTATION = gql`
     mutation AddProject($data: ProjectInput) {
         createProject(data: $data) {
             id
-            number
+        number
+        name
+        duration
+        date_start
+        contract_file_id
+        kp_file_id
+        prepayment_file_id
+        requirements {
+          comment
+        }
+        prepayment_date
+        project_contract_history {
+          file_id
+          date_document
+          type
+          number
+        }
+        project_kp_history {
+          file_id
+          type
+          date_document
+          number
+        }
+        organization_customer {
+          id
+          name
+        }
+        type_project_document {
+          id
+          code
+          name
+          template_project_id
+          group {
+            id
+            code
             name
-            prepayment
-            organization_customer {
-                id
-                name
-            }
-            type_project_document {
-                id
-                code
-                name
-                template_project_id
-                group {
-                    id
-                    code
-                    name
-                }
-            }
-            facilities {
+          }
+        }
+        facilities {
+          id
+          name
+          code
+          group_facility {
+            id
+            name
+            code
+            subselection_facility {
+              id
+              name
+              code
+              selection_facility {
                 id
                 name
                 code
-                group_facility {
-                    id
-                    name
-                    code
-                    subselection_facility {
-                        id
-                        name
-                        code
-                        selection_facility {
-                            id
-                            name
-                            code
-                        }
-                    }
-                }
+              }
             }
-            date_signing
-            duration
-            date_end
-            date_start
-            status {
-                name_key
-                name
-            }
-            date_completion
-            delegations {
-                id
-                first_name
-                last_name
-                patronymic
-            }
-            project_stages {
-                stage_id
-                project_id
-                number
-                stage {
-                    id
-                    name
-                }
-                date_start
-                duration
-                date_end
-                percent
-                price
-            }
-            project_tasks {
-                id
-                task_id
-                date_start
-                offset
-                is_delay
-                duration
-                date_end
-                price
-            }
-            project_irds {
-                id
-                ird_id
-                project_id
-                stage_number
-                application_project
-                ird {
-                    id
-                    name
-                }
-                received_date
-            }
-            price
+          }
+        }
+        date_signing
+        date_start
+        date_end
+        prepayment
+        status {
+          name
+          name_key
+        }
+        date_completion
+        delegations {
+          id
+          first_name
+          last_name
+          patronymic
+        }
 
+        project_irds {
+          id
+          stage_number
+          application_project
+          ird {
+            id
+            name
+          }
+          received_date
+          is_broken
+          is_viewed
+          acceptance_date
+        }
+        project_stages {
+          number
+          stage {
+            id
+            name
+            task_id
+          }
+          date_start
+          duration
+          offset
+          date_end
+          percent
+          price
+          payment_file_id
+          work_act_file_id
+          payment_date
+          work_act_singing_date
+        }
+        project_tasks {
+          id
+          project_id
+          task_id
+          is_delay
+          status
+          task {
+            id
+            name
+          }
+          project_task_inherited_id
+          date_start
+          date_end
+          offset
+          duration
+          executor_orders {
+            id
+            number
+          }
+          stage_number
+          executor {
+            id
+            passport {
+              id
+              first_name
+              last_name
+              patronymic
+            }
+          }
+          price
+          description
+        }
+        price
         }
     }
 
@@ -105,97 +152,144 @@ export const UPDATE_PROJECT_MUTATION = gql`
     mutation UpdateProject($id: ID, $data: ProjectInput) {
         updateProject(id: $id, data: $data) {
             id
-            number
+        number
+        name
+        duration
+        date_start
+        contract_file_id
+        kp_file_id
+        prepayment_file_id
+        requirements {
+          comment
+        }
+        prepayment_date
+        project_contract_history {
+          file_id
+          date_document
+          type
+          number
+        }
+        project_kp_history {
+          file_id
+          type
+          date_document
+          number
+        }
+        organization_customer {
+          id
+          name
+        }
+        type_project_document {
+          id
+          code
+          name
+          template_project_id
+          group {
+            id
+            code
             name
-            prepayment
-            date_start
-            organization_customer {
-                id
-                name
-            }
-            type_project_document {
-                id
-                code
-                name
-                template_project_id
-                group {
-                    id
-                    code
-                    name
-                }
-            }
-            facilities {
+          }
+        }
+        facilities {
+          id
+          name
+          code
+          group_facility {
+            id
+            name
+            code
+            subselection_facility {
+              id
+              name
+              code
+              selection_facility {
                 id
                 name
                 code
-                group_facility {
-                    id
-                    name
-                    code
-                    subselection_facility {
-                        id
-                        name
-                        code
-                        selection_facility {
-                            id
-                            name
-                            code
-                        }
-                    }
-                }
+              }
             }
-            date_signing
-            duration
-            date_end
-            date_start
-            status {
-                name_key
-                name
+          }
+        }
+        date_signing
+        date_start
+        date_end
+        prepayment
+        status {
+          name
+          name_key
+        }
+        date_completion
+        delegations {
+          id
+          first_name
+          last_name
+          patronymic
+        }
+
+        project_irds {
+          id
+          stage_number
+          application_project
+          ird {
+            id
+            name
+          }
+          received_date
+          is_broken
+          is_viewed
+          acceptance_date
+        }
+        project_stages {
+          number
+          stage {
+            id
+            name
+            task_id
+          }
+          date_start
+          duration
+          offset
+          date_end
+          percent
+          price
+          payment_file_id
+          work_act_file_id
+          payment_date
+          work_act_singing_date
+        }
+        project_tasks {
+          id
+          project_id
+          task_id
+          is_delay
+          status
+          task {
+            id
+            name
+          }
+          project_task_inherited_id
+          date_start
+          date_end
+          offset
+          duration
+          executor_orders {
+            id
+            number
+          }
+          stage_number
+          executor {
+            id
+            passport {
+              id
+              first_name
+              last_name
+              patronymic
             }
-            date_completion
-            delegations {
-                id
-                first_name
-                last_name
-                patronymic
-            }
-            project_stages {
-                project_id
-                stage_id
-                number
-                stage {
-                    id
-                    name
-                }
-                date_start
-                duration
-                date_end
-                percent
-                price
-            }
-            project_tasks {
-                id
-                task_id
-                offset
-                duration
-                date_start
-                is_delay
-                date_end
-                price
-            }
-            project_irds {
-                id
-                ird_id
-                project_id
-                stage_number
-                application_project
-                ird {
-                    id
-                    name
-                }
-                received_date
-            }
-            price
+          }
+          price
+          description
+        }
+        price
 
         }
     }

@@ -34,6 +34,7 @@ const createApolloClient = () => {
                     }
                 },
                 Project: {
+                    keyFields: ["id"],
                     fields: {
                         project_irds: {
                             merge(existing = [], incoming) {

@@ -175,8 +175,9 @@ class DelayCustomerMessageGeneratorService extends DocumentGeneratorService
 
 
         // Сохранение файла
-        $this->saveDocument($projectData['number'] . '_оповещения_о_задержке_на_проекте.docx');
-        $storagePath = "/" . $projectData->path_project_folder . "/ОПОВЕЩЕНИЕ_ДЛЯ_ЗАКАЗЧИКА/" . $this->fileName;
+        error_log("check". $projectData->number);
+        $this->saveDocument( $projectData->number . '_ОПОВЕЩЕНИЕ_О_ЗАДЕРЕЖКЕ_НА_ПРОЕКТЕ.docx');
+        $storagePath = "/" . $projectData->path_project_folder . "/ОПОВЕЩЕНИЕ ДЛЯ ЗАКАЗЧИКА/" . $this->fileName;
 
         // Фиксация в базе
         $file = $this->saveFileToProject($storagePath, $this->filePath, $this->fileName);

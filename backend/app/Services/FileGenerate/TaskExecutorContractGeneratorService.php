@@ -32,7 +32,10 @@ class TaskExecutorContractGeneratorService extends DocumentGeneratorService
         $projectTasksData = $data['projectTasksData'];
         $numberOrders = $data['numberOrders'];
         $dateGenerated = $data['dateGenerated'];
-
+        $projectTasksData = $projectTasksData->sortBy(function ($task) {
+            return strtotime($task['date_start']);
+        });
+        
         // Добор данных
         $myOrg = FormatterService::getMyOrg();
 

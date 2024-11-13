@@ -1,9 +1,8 @@
-import {Modal, Space, Table, Tooltip, Typography} from "antd";
-import {DownloadOutlined, EditOutlined, EyeOutlined} from "@ant-design/icons";
-import React, {useState} from "react";
+import { Modal, Space, Table, Typography } from "antd";
+import React, { useState } from "react";
 
 import Link from "antd/es/typography/Link";
-import {nanoid} from "nanoid";
+import { nanoid } from "nanoid";
 import OrderExecutorManager from "../../../../../../OrderExecutorManager";
 
 const {Text} = Typography;
@@ -84,7 +83,7 @@ const TableExecutorsComponent = ({setEditModalStatus, project, onUpdated}) => {
             size={"small"}
             columns={columnsExecutors}
             dataSource={
-                groupTasksByExecutor(project.project_tasks)}
+                groupTasksByExecutor(project.project_tasks).sort((a, b) => new Date(a.date_start) - new Date(b.date_start))}
             pagination={false}
         />
     <Modal

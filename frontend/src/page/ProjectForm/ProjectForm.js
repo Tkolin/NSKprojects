@@ -174,7 +174,7 @@ const ProjectForm = ({
         // Логика формы
         const [mutateProject, {loading: loading}] = useMutation(project?.id ? UPDATE_PROJECT_MUTATION : ADD_PROJECT_MUTATION, {
             onCompleted: (data) => {
-                openNotification('topRight', 'success', `Создание новой записи в таблице  выполнено успешно`);
+                openNotification('topRight', 'success', project?.id ? `Обновление данных выполнено успешно` : `Создание новой записи в таблице выполнено успешно`);
                 onCompleted && (onCompleted(data?.createProject || data?.updateProject) || onCompleted());
             },
             onError: (error) => {

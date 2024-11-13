@@ -1,5 +1,4 @@
-import {Space, Table, Typography} from "antd";
-import {useEffect} from "react";
+import { Space, Table, Typography } from "antd";
 import dayjs from "dayjs";
 
 const {Text} = Typography;
@@ -66,7 +65,7 @@ export const ProjectTasksTable = ({projectTasks}) => {
             size={"small"}
             rowClassName={(record) => record?.file_path ? 'my-ant-table-row-danger' : ""}
             columns={columns}
-            dataSource={projectTasks}
+            dataSource={projectTasks.sort((a, b) => new Date(a.date_start) - new Date(b.date_start))}
         />
     );
 }
