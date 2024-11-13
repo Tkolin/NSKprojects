@@ -1,7 +1,7 @@
 #
 #   QUERY
 #
-type Mutation {
+extend type Mutation {
     adminCheckDatabaseFiles: [ID!]!
 }
 # INPUTS:

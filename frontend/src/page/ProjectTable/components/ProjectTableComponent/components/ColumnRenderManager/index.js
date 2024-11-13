@@ -2,7 +2,7 @@ import { Divider, Space, Typography } from "antd";
 import React from "react";
 
 import Link from "antd/es/typography/Link";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 import LinkToDownload from "../../../../../components/script/LinkToDownload";
 import ColumnCustomerRender from "./components/ColumnCustomerRender";
 import ColumnDurationRender from "./components/ColumnDurationRender";
@@ -32,12 +32,13 @@ const getColumn = ({ options = {}, onUpdated, expandableTableProps }) => {
 
   //  Добавление остальных колонок согласно параметрам
   if (options.columns) {
-    options.columns.includes("progress") && columns.push(columnProgressComponent());
+    options.columns.includes("progress") &&
+      columns.push(columnProgressComponent());
     options.columns.includes("money") && columns.push(columnMoneyComponent());
     columns.push(columnMainDataComponent());
     options.columns.includes("files") && columns.push(columnFiles());
-    options.columns.includes("duration") && columns.push(columnDurationComponent());
-
+    options.columns.includes("duration") &&
+      columns.push(columnDurationComponent());
   }
   return columns;
 };
@@ -117,24 +118,29 @@ const columnFiles = () => ({
 
       {record.kp_file_id ? (
         <LinkToDownload fileId={record.kp_file_id}>
-          <Link strong>Скачать кп подписан: {record.kp_file_id}</Link>
+          <Link strong>Скачать кп подписан</Link>
         </LinkToDownload>
       ) : (
-        <Text   style={{ color: "red" }}>Отсутвует</Text>
+        <Text style={{ color: "red" }}>Отсутвует</Text>
       )}
-      {record.kp_file_id ? (
-        <LinkToDownload fileId={record.kp_file_id}>
-          <Link strong>Скачать договор подписан: {dayjs(record.date_signing).format("DD.MM.YYYY")}</Link>
+      {record.contract_file_id ? (
+        <LinkToDownload fileId={record.contract_file_id}>
+          <Link strong>
+            Скачать договор подписан:{" "}
+            {dayjs(record.date_signing).format("DD.MM.YYYY")}
+          </Link>
         </LinkToDownload>
       ) : (
-        <Text   style={{ color: "red" }}>Отсутвует</Text>
+        <Text style={{ color: "red" }}>Отсутвует</Text>
       )}
       {record.prepayment_file_id ? (
         <LinkToDownload fileId={record.prepayment_file_id}>
           <Link strong>Факт аванса: {record.prepayment_file_id}</Link>
         </LinkToDownload>
-      ) : ( 
-        <Text   style={{ color: "red" }}>Отсутвует документ подтверждающий аванс</Text>
+      ) : (
+        <Text style={{ color: "red" }}>
+          Отсутвует документ подтверждающий аванс
+        </Text>
       )}
       <Divider>По этапам</Divider>
       {record?.project_stages?.map((row) => (

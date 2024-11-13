@@ -93,19 +93,20 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
         $this->templateProcessor->cloneRowAndSetValues('projectStages.number', $tableStage);
         if (!isset($projectData["organization_customer"]['director'])) {
             throw new Exception("Ошибка данных заказчика");
-        }        $nclNameCaseRu = new NCLNameCaseRu();
- 
+        }
+        $nclNameCaseRu = new NCLNameCaseRu();
+
 
         $this->replacements = [
             'date_create_full' => $date_create_full ? mb_strtolower($date_create_full) : null,
             'date_create_short' => $date_create_short ? mb_strtolower($date_create_short) : null,
-            'projectStages.stage.priceTotal' => isset($projectData['price']) ?  number_format($projectData['price'],0,',',' ') : null,
-            'projectStages.stage.endPriceTotal' => isset($projectData['price']) ? number_format($projectData['price'],0,',',' ') : null,
+            'projectStages.stage.priceTotal' => isset($projectData['price']) ? number_format($projectData['price'], 0, ',', ' ') : null,
+            'projectStages.stage.endPriceTotal' => isset($projectData['price']) ? number_format($projectData['price'], 0, ',', ' ') : null,
             'projectStages.stage.priceTotalToName' => FormatterService::convertNumbToStringr($projectData['price']) . " р." ?? null,
             'projectStages.stage.endPriceTotalToName' => FormatterService::convertNumbToStringr($projectData['price']) ?? null,
             'myOrg.full_name' => $myOrg['full_name'] ?? null,
             'myOrg.nameOrType' => $myOrg["legal_form"]['name'] . " " . $myOrg['name'] ?? null,
-            'myOrg.director.full_name' => $nclNameCaseRu->q(  $myOrg['director']['last_name'] . ' ' . $myOrg['director']['first_name'] . ' ' . $myOrg['director']['patronymic'], NCL::$VINITELN) ?? '' ?? null,
+            'myOrg.director.full_name' => $nclNameCaseRu->q($myOrg['director']['last_name'] . ' ' . $myOrg['director']['first_name'] . ' ' . $myOrg['director']['patronymic'], NCL::$VINITELN) ?? '' ?? null,
             'myOrg.director.position.name' => $myOrg['director']['position']['name'] ?? null,
             'project.name' => $projectData['name'] ?? '' ?? null,
             'myOrg.INN' => $myOrg['INN'] ?? null,
@@ -125,8 +126,8 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
             'project.number' => $projectData['number'] ?? null,
             "project.typeProject.Specification" => $this->getTypeName($projectData["type_project_document"]["group"]["technical_specification"]) ?? null,
             'projectOrganization.director.full_name' => $nclNameCaseRu->q($projectData["organization_customer"]['director']['last_name'] . ' ' .
-            $projectData["organization_customer"]['director']['first_name'] . ' ' .
-            $projectData["organization_customer"]['director']['patronymic'] ?? null, NCL::$VINITELN),
+                $projectData["organization_customer"]['director']['first_name'] . ' ' .
+                $projectData["organization_customer"]['director']['patronymic'] ?? null, NCL::$VINITELN),
             'projectOrganization.director.positionRG' => strtolower($nclNameCaseRu->q($projectData["organization_customer"]['director']['position']['name'] ?? null, NCL::$RODITLN)),
             'projectOrganization.director.position' => $projectData["organization_customer"]['director']['position']['name'] ?? null,
             'projectOrganization.INN' => $projectData["organization_customer"]['INN'] ?? null,
@@ -154,7 +155,7 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
 
         //  Сохранение файла
         $this->saveDocument($projectData['number'] . '_ДОГОВОР.docx');
-        $storagePath = "/" . $projectData->path_project_folder . "/КП/" . $this->fileName;
+        $storagePath = "/" . $projectData->path_project_folder . "/Договора/" . $this->fileName;
 
         //  Фиксация в базе
         $file = $this->saveFileToProject($storagePath, $this->filePath, $this->fileName);
