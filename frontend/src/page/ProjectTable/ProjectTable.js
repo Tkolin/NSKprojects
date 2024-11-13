@@ -94,13 +94,7 @@ const template = {
       //  Первая колонка кнопок управления таблицей
       tool: {
         //  Компоненты скрытые в ...
-        menu: [
-          "contract",
-          "tasks_management",
-          "kp",
-          "template",
-          "delay_customer",
-        ],
+        menu: ["contract", "tasks_management", "kp", "template"],
         //  Кнопки быстрых действий
         hotKey: ["archive"],
       },
