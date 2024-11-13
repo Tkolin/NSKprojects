@@ -129,7 +129,7 @@ class TaskExecutorContractGeneratorService extends DocumentGeneratorService
 
         //  Сохранение файла
         $this->saveDocument($orderNumber . '_ДОГОВОР_С_ИСПОЛНИТЕЛЕМ.docx');
-        $storagePath = "/" . $projectData->path_project_folder . "/Договора_с_исполнителями/" . $this->fileName;
+        $storagePath = "/" . $projectData->path_project_folder . "/Договора с исполнителями/" . $this->fileName;
 
         $file = $this->saveFileToExecutorOrder($storagePath, $this->filePath, $this->fileName);
 

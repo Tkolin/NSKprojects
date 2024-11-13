@@ -11,10 +11,10 @@ class FileController extends Controller
         }
 
         // Удалить всё до первого символа '_' включительно
-        $position = strpos($filename, '_');
-        if ($position !== false) {
-            $filename = substr($filename, $position + 1);
-        }
+        // $position = strpos($filename, '_');
+        // if ($position !== false) {
+        //     $filename = substr($filename, $position + 1);
+        // }
 
         return response()->download($filePath, $filename)->deleteFileAfterSend(true);
     }

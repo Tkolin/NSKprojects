@@ -5,5 +5,6 @@
 #import models.graphql
 #import auth_module.graphql
 #import delay_module.graphql
+#import administration.graphql
 
 directive @checkRole(permission: [String!]) on FIELD_DEFINITION | FIELD

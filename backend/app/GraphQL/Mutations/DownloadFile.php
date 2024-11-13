@@ -27,16 +27,19 @@ final readonly class DownloadFile
 
         // Формирование имени файла
         $filename = pathinfo($file->name, PATHINFO_FILENAME);
+        error_log("filename ". $filename);
         $extension = pathinfo($file->name, PATHINFO_EXTENSION);
 
         // Сокращение имени файла, если оно длиннее 40 символов
         if (mb_strlen($filename) > 40) {
             $filename = mb_substr($filename, 31); // Убираем первые 31 символ
         }
+        error_log(message: "new filename ". $filename);
 
         // Добавление временной метки
         $timestamp = now()->format('YmdHis');
-        $temporaryFilePath = 'temporary/' . $filename . '_' . $timestamp . '.' . $extension;
+        $temporaryFilePath = 'temporary/' . $filename .   '.' . $extension;
+        error_log(message: "new temporaryFilePath ". $temporaryFilePath);
 
         // Копирование файла во временную директорию
         Storage::disk('public')->put($temporaryFilePath, Storage::disk('localERPFiles')->get($filePath));

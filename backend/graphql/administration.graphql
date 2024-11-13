@@ -1,0 +1,7 @@
+#
+#   QUERY
+#
+type Mutation {
+    adminCheckDatabaseFiles: [ID!]!
+}
+# INPUTS:

@@ -103,7 +103,7 @@ class TheActRenderingServicesTemplateGeneratorService extends DocumentGeneratorS
         $this->replaceValues();
         //  Сохранение файла
         $this->saveDocument($projectData['number'] . '_АКТ_ВЫПОЛНЕНЫХ_РАБОТ' . ("_НОМЕР_" . $stageNumber) . '.docx');
-        $storagePath = "/" . $projectData->path_project_folder . "/ЭТАПЫ/АКТЫ" . $this->fileName;
+        $storagePath = "/" . $projectData->path_project_folder . "/Акты выполненных работ/" . $this->fileName;
         //  Фиксация в базе
         $file = $this->saveFileToProject($storagePath, $this->filePath, $this->fileName);
 

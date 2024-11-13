@@ -108,7 +108,7 @@ class PaymentInvoiceTemplateGeneratorService extends DocumentGeneratorService
 
         $fileName = $projectData['number'] . '_СЧЕТ_НА_ОПЛАТУ' . ($stageNumber ? ("_НОМЕР_" . $stageNumber) : "_АВАНС") . '.docx';
         $this->saveDocument($fileName);
-        $storagePath = "/" . $projectData->path_project_folder . "/Invoices/" . $this->fileName;
+        $storagePath = "/" . $projectData->path_project_folder . "/Счета на оплату/" . $this->fileName;
 
         $file = $this->saveFileToProject($storagePath, $this->filePath, $this->fileName);
         $projectFile = ProjectFile::create([

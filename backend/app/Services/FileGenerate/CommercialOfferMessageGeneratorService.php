@@ -82,7 +82,7 @@ class CommercialOfferMessageGeneratorService extends DocumentGeneratorService
         //  Сохранение файла
         error_log("НОМЕР " . $projectData['number']);
         $this->saveDocument($projectData['number'] . '_КОМЕРЧЕСКОЕ_ПРЕДЛОЖЕНИЕ.docx');
-        $storagePath = "/" . $projectData->path_project_folder . "/КП/" . $this->fileName;
+        $storagePath = "/" . $projectData->path_project_folder . "/Коммерческие предложения/" . $this->fileName;
 
         //  Фиксация в базе
         $file = $this->saveFileToProject($storagePath, $this->filePath, $this->fileName);
