@@ -1,0 +1,12 @@
+extend type Query {
+    checkStatusProject(projectId: ID): [Notification]
+        @checkRole(permission: ["read-project"])
+}
+type Notification {
+    id: ID
+    title: String
+    type: String
+    content: String
+    link_text: String
+    link_button: String
+}

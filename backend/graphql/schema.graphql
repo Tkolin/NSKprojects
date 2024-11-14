@@ -1,4 +1,5 @@
 #import test.graphql
+#import notification.graphql
 #import file_module.graphql
 #import global_module.graphql
 #import project_module.graphql

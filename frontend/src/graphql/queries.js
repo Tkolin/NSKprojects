@@ -13,6 +13,18 @@ export const FENRIR_QUERY = gql`
     }
   }
 `;
+export const CHECK_STATUS_PROJECT_QUERY = gql`
+  query CheckStatusProject($projectId: ID) {
+    checkStatusProject(projectId: $projectId) {
+      id
+      title
+      type
+      content
+      link_text
+      link_button
+    }
+  }
+`;
 export const DELAY_TYPES_QUERY = gql`
   query DelayTypeQuery {
     delayTypes {
@@ -604,7 +616,7 @@ export const PROJECT_IRDS_QUERY = gql`
       id
       project_id
       ird_id
-      
+
       ird {
         id
         name

@@ -44,13 +44,16 @@ export const UploadFileWorkActSinging = ({
     <UploadFilePopconfirm
       options={{ datePicker: true }}
       title={"Укажите дату подписания"}
-      onUpdated={() => onUpdated  && onUpdated()}
+      onUpdated={() => onUpdated && onUpdated()}
       action={
-        "project/upload/work_act_singing/page?stageNumber=" + stageNumber + "&projectId=" + projectId
+        "project/upload/work_act_singing/page?stageNumber=" +
+        stageNumber +
+        "&projectId=" +
+        projectId
       }
       children={
         <Button
-           icon={<UploadOutlined />}
+          icon={<UploadOutlined />}
           children={"Прикрепить подписанный акт"}
         />
       }
@@ -62,19 +65,21 @@ export const UploadFilePaymentSuccess = ({
   stageNumber,
   projectId,
   ...props
-}) => { 
+}) => {
   return (
-  
     <UploadFilePopconfirm
       options={{ datePicker: true }}
       title={"Укажите дату оплаты"}
-      onUpdated={() => onUpdated  && onUpdated()}
+      onUpdated={() => onUpdated && onUpdated()}
       action={
-        "project/upload/payment_invoice/page?stageNumber=" + stageNumber + "&projectId=" + projectId
+        "project/upload/payment_invoice/page?stageNumber=" +
+        stageNumber +
+        "&projectId=" +
+        projectId
       }
       children={
         <Button
-           icon={<UploadOutlined />}
+          icon={<UploadOutlined />}
           children={"Прикрепить подтверждающий документ"}
         />
       }
@@ -106,7 +111,7 @@ export const UploadFilePopconfirm = ({
   return (
     <Popconfirm
       style={{ width: "200px" }}
-      placement="topLeft"
+      placement="bottom"
       open={open}
       onCancel={() => setOpen(false)}
       description={

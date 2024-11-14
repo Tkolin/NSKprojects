@@ -277,6 +277,7 @@ type ExecutorOrder {
     payment_file_completed: [String]
     project_tasks: [ProjectTask]
     executor_order_payments: [ExecutorOrderPayment]
+    executor: Person
 }
 type ExecutorOrderPayment {
     id: ID

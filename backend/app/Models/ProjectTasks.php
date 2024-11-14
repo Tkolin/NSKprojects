@@ -29,17 +29,19 @@ class ProjectTasks extends Model
 
     public function executor_orders(): BelongsToMany
     {
-        return $this->belongsToMany(ExecutorOrder::class,
+        return $this->belongsToMany(
+            ExecutorOrder::class,
             'executor_order_task',
             'project_task_id',
-            'executor_order_id');
+            'executor_order_id'
+        );
     }
     public function executor(): BelongsTo
     {
-        return $this->belongsTo(Person::class);
+        return $this->belongsTo(Person::class, "executor_id");
     }
 
-//    public function executor_orders(): HasMany
+    //    public function executor_orders(): HasMany
 //    {
 //        return $this->hasMany(ExecutorOrder::class, 'project_id', 'id');
 //    }

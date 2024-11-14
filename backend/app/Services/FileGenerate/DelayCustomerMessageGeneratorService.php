@@ -68,10 +68,10 @@ class DelayCustomerMessageGeneratorService extends DocumentGeneratorService
                     $index = 0;
                     $actualProjectIrds = $projectData->project_irds;
                     foreach ($actualProjectIrds as $key => $pIrd) {
-                        error_log("pIrd". $pIrd);
+                        error_log("pIrd" . $pIrd);
                         if ($pIrd->stage_number === $projectStageData->number && $pIrd->is_broken === 1 && isset($pIrd["received_date"])) {
                             $index++;
-                            $irdsTextContent .= $index . ". " . $pIrd->ird["name"] . " (от " . FormatterService::getShortDate( $pIrd["received_date"]) . ");</w:t><w:p/><w:t>";
+                            $irdsTextContent .= $index . ". " . $pIrd->ird["name"] . " (от " . FormatterService::getShortDate($pIrd["received_date"]) . ");</w:t><w:p/><w:t>";
                         }
                     }
                     if ($index === 0)
@@ -87,35 +87,35 @@ class DelayCustomerMessageGeneratorService extends DocumentGeneratorService
                     $this->replacements = [];
                     $this->replaceValues();
                     break;
-                    case "NO_IRD":
+                case "NO_IRD":
                     $noIrdContent = "";
                     $index = 0;
-                
+
                     // Получаем коллекцию
                     $actualProjectIrds = $projectData->project_irds;
-                
+
                     if (!$actualProjectIrds || $actualProjectIrds->isEmpty()) {
                         throw new \Exception('Нет данных для обработки ИРД.');
                     }
-                
+
                     foreach ($actualProjectIrds as $pIrd) {
                         if ($pIrd->stage_number === $projectStageData["number"] && is_null($pIrd->received_date)) {
                             $index++;
-                            $noIrdContent .= $index . ". " . $pIrd->ird->name .  ";</w:t><w:p/><w:t>";
+                            $noIrdContent .= $index . ". " . $pIrd->ird->name . ";</w:t><w:p/><w:t>";
                         }
                     }
-                
+
                     if ($index === 0) {
                         throw new \Exception('Отсутствуют недостающие ИРД.');
                     }
-                
+
                     $this->replacements = [
                         'noIrdContent' => $noIrdContent,
                         'date_generated' => FormatterService::getShortDate($dateOffer)
                     ];
                     $this->replaceValues();
                     break;
-                
+
                 case "NO_PAYMENT":
                     //Согласно пунктам 5.4., 5.5., 5.10., если оплата выполненных работ со стороны Заказчика с задержкой большей чем предусмотрено в договоре, 
                     //работы по проекту останавливаются до полного погашения задолженности, должна проводиться в течении 5 рабочих дней. Счет ${project_payment.number_and_date},
@@ -123,11 +123,11 @@ class DelayCustomerMessageGeneratorService extends DocumentGeneratorService
                     $projectStageData["dateStart"];
                     // TODO: if (isset($projectStageData["payment_date"]))
                     //     throw new \Exception('Счёт уплачен.');
-                    error_log("projectStageData". $projectStageData);
+                    error_log("projectStageData" . $projectStageData);
                     $this->replacements = [
                         'project.stage_number' => $projectStageData["number"],
                         'project.stage_name' => $projectStageData->stage["name"],
-                        'project_payment.number_and_date' => $projectStageData->payment_file->document_number  . " (от " . FormatterService::getShortDate($projectStageData->payment_file["date_document"]) . " )",
+                        'project_payment.number_and_date' => $projectStageData->payment_file->document_number . " (от " . FormatterService::getShortDate($projectStageData->payment_file["date_document"]) . " )",
                         'project_act.number_and_date' => $projectStageData->work_act_file["document_number"] . " (от " . FormatterService::getShortDate(date: $projectStageData->work_act_file["date_document"]) . " )",
 
                     ];
@@ -147,7 +147,9 @@ class DelayCustomerMessageGeneratorService extends DocumentGeneratorService
                     //Согласно пункту 3.2., изменения требований и спецификаций проекта отличные от технического задания со 
                     //стороны Заказчика должны оформляться дополнительным соглашением.
 
-                    $this->replacements = [];
+                    $this->replacements = [
+                        "project.typeProject.Specification" => $projectData["type_project_document"]["group"]["technical_specification"],
+                    ];
                     $this->replaceValues();
                     break;
                 case "NO_WORK_ACT":
@@ -160,8 +162,8 @@ class DelayCustomerMessageGeneratorService extends DocumentGeneratorService
                     $this->replacements = [
                         'project.stage_number' => $projectStageData["number"],
                         'project.stage_name' => $projectStageData->stage["name"],
-                        'project_act.number_and_date' => $projectStageData->work_act_file["document_number"] . " (от " .FormatterService::getShortDate( $projectStageData->payment_file["date_document"]) . " )",
-                      
+                        'project_act.number_and_date' => $projectStageData->work_act_file["document_number"] . " (от " . FormatterService::getShortDate($projectStageData->payment_file["date_document"]) . " )",
+
                     ];
                     $this->replaceValues();
                     break;
@@ -175,8 +177,8 @@ class DelayCustomerMessageGeneratorService extends DocumentGeneratorService
 
 
         // Сохранение файла
-        error_log("check". $projectData->number);
-        $this->saveDocument( $projectData->number . '_ОПОВЕЩЕНИЕ_О_ЗАДЕРЕЖКЕ_НА_ПРОЕКТЕ.docx');
+        error_log("check" . $projectData->number);
+        $this->saveDocument($projectData->number . '_ОПОВЕЩЕНИЕ_О_ЗАДЕРЕЖКЕ_НА_ПРОЕКТЕ.docx');
         $storagePath = "/" . $projectData->path_project_folder . "/Уведомления о задержках/" . $this->fileName;
 
         // Фиксация в базе

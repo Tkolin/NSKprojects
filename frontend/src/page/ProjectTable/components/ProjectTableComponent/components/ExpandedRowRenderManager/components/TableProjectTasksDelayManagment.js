@@ -166,53 +166,59 @@ const TableProjectTasksDelayManagment = ({ projectId }) => {
           title: "Действия",
           key: "actions",
           align: "left",
-          render: (text, record) => (
-            <Space.Compact direction="vertical">
-              {(!record?.date_end || true) && (
-                <Popconfirm
-                  title={
-                    <Space direction="vertical" style={{ width: "200px" }}>
-                      <CustomDatePicker
-                        size="small"
-                        placeholder="Выберите дату..."
-                        onChange={(value) =>
-                          setSelectedDateContract(
-                            value ? dayjs(value).format("YYYY-MM-DD") : null
-                          )
-                        }
-                      />
-                    </Space>
-                  }
-                  onConfirm={() => handleGenerateFile(record.id)}
-                  okText="Сгенерировать"
-                  cancelText="Отмена"
-                >
-                  <Button loading={loadingGeneratedDelay}>Сгенерировать</Button>
-                </Popconfirm>
-              )}
+          render: (text, record) => {
+            return (
+              !record.date_end && (
+                <Space.Compact direction="vertical">
+                  <Popconfirm
+                    title={
+                      <Space direction="vertical" style={{ width: "200px" }}>
+                        <CustomDatePicker
+                          size="small"
+                          placeholder="Выберите дату..."
+                          onChange={(value) =>
+                            setSelectedDateContract(
+                              value ? dayjs(value).format("YYYY-MM-DD") : null
+                            )
+                          }
+                        />
+                      </Space>
+                    }
+                    onConfirm={() => handleGenerateFile(record.id)}
+                    okText="Сгенерировать"
+                    cancelText="Отмена"
+                  >
+                    <Button loading={loadingGeneratedDelay}>
+                      Сгенерировать
+                    </Button>
+                  </Popconfirm>
 
-              <Popconfirm
-                title={
-                  <Space direction="vertical" style={{ width: "200px" }}>
-                    <CustomDatePicker
-                      size="small"
-                      placeholder="Выберите дату..."
-                      onChange={(value) =>
-                        setSelectedDateStopDelay(
-                          value ? dayjs(value).format("YYYY-MM-DD") : null
-                        )
-                      }
-                    />
-                  </Space>
-                }
-                onConfirm={() => handleStopDelay(record.id)}
-                okText="Сгенерировать"
-                cancelText="Отмена"
-              >
-                <Button loading={loadingStopDelay}>Завершить задержку</Button>
-              </Popconfirm>
-            </Space.Compact>
-          ),
+                  <Popconfirm
+                    title={
+                      <Space direction="vertical" style={{ width: "200px" }}>
+                        <CustomDatePicker
+                          size="small"
+                          placeholder="Выберите дату..."
+                          onChange={(value) =>
+                            setSelectedDateStopDelay(
+                              value ? dayjs(value).format("YYYY-MM-DD") : null
+                            )
+                          }
+                        />
+                      </Space>
+                    }
+                    onConfirm={() => handleStopDelay(record.id)}
+                    okText="Сгенерировать"
+                    cancelText="Отмена"
+                  >
+                    <Button loading={loadingStopDelay}>
+                      Завершить задержку
+                    </Button>
+                  </Popconfirm>
+                </Space.Compact>
+              )
+            );
+          },
         },
       ],
     },
