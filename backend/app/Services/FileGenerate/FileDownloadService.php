@@ -28,7 +28,7 @@ class FileDownloadService
         $extension = pathinfo($file->name, PATHINFO_EXTENSION);
 
         // Сокращение имени файла, если оно больше 40 символов
-        if (mb_strlen($filename) > 40) {
+        if (mb_strlen($filename) > 40 && $file->source === "GENERATED") {
             $filename = mb_substr($filename, 31); // Убираем первые 31 символа
         }
 

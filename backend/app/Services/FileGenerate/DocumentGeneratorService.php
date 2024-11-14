@@ -83,6 +83,7 @@ abstract class DocumentGeneratorService
         $file = File::create([
             'name' => $fileName,
             'path' => $storagePath,
+            'source' => 'GENERATED',
             'size' => $fileSize,
             'mime_type' => $mimeType,
         ]);
@@ -100,6 +101,7 @@ abstract class DocumentGeneratorService
         $file = File::create([
             'name' => $fileName,
             'path' => $storagePath,
+            'source' => 'GENERATED',
             'size' => $fileSize,
             'mime_type' => $mimeType,
         ]);

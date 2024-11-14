@@ -3,7 +3,7 @@
 namespace App\GraphQL\Mutations;
 
 use App\Models\File;
-use Str;
+use Illuminate\Support\Str;
 
 final readonly class UploadFile
 {
@@ -17,12 +17,13 @@ final readonly class UploadFile
 
         // Сохраняем информацию о файле в базе данных
         $fileRecord = File::create([
-            'name' => Str::random(30) . "_" . $file->getClientOriginalName(),
+            'name' => $file->getClientOriginalName(),
             'path' => $path,
             'size' => $file->getSize(),
+            'source' => 'UPLOAD',
             'mime_type' => $file->getClientMimeType(),
         ]);
 
         return $fileRecord;
-     }
+    }
 }

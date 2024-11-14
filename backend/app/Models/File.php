@@ -13,6 +13,7 @@ class File extends Model
         'name',
         'path',
         'size',
+        'source',
         'mime_type'
     ];
 }

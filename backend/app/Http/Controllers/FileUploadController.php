@@ -36,6 +36,7 @@ class FileUploadController extends Controller
             $fileRecord = File::create([
                 'name' => pathinfo($storagePath, PATHINFO_BASENAME),
                 'path' => $storagePath,
+                'source' => 'UPLOAD',
                 'size' => $file->getSize(),
                 'mime_type' => $file->getClientMimeType(),
             ]);
@@ -66,6 +67,7 @@ class FileUploadController extends Controller
             $fileRecord = File::create([
                 'name' => pathinfo($storagePath, PATHINFO_BASENAME),
                 'path' => $storagePath,
+                'source' => 'UPLOAD',
                 'size' => $file->getSize(),
                 'mime_type' => $file->getClientMimeType(),
             ]);
@@ -105,6 +107,7 @@ class FileUploadController extends Controller
             $fileRecord = File::create([
                 'name' => pathinfo($storagePath, PATHINFO_BASENAME),
                 'path' => $storagePath,
+                'source' => 'UPLOAD',
                 'size' => $file->getSize(),
                 'mime_type' => $file->getClientMimeType(),
             ]);
@@ -152,6 +155,7 @@ class FileUploadController extends Controller
             $fileRecord = File::create([
                 'name' => pathinfo($storagePath, PATHINFO_BASENAME),
                 'path' => $storagePath,
+                'source' => 'UPLOAD',
                 'size' => $file->getSize(),
                 'mime_type' => $file->getClientMimeType(),
             ]);
@@ -201,6 +205,7 @@ class FileUploadController extends Controller
                 $fileRecord = File::create([
                     'name' => pathinfo($storagePath, PATHINFO_BASENAME),
                     'path' => $storagePath,
+                    'source' => 'UPLOAD',
                     'size' => $file->getSize(),
                     'mime_type' => $file->getClientMimeType(),
                 ]);
@@ -241,6 +246,7 @@ class FileUploadController extends Controller
                 $fileRecord = File::create([
                     'name' => pathinfo($storagePath, PATHINFO_BASENAME),
                     'path' => $storagePath,
+                    'source' => 'UPLOAD',
                     'size' => $file->getSize(),
                     'mime_type' => $file->getClientMimeType(),
                 ]);
@@ -289,6 +295,7 @@ class FileUploadController extends Controller
             $fileRecord = File::create([
                 'name' => pathinfo($storagePath, PATHINFO_BASENAME),
                 'path' => $storagePath,
+                'source' => 'UPLOAD',
                 'size' => $file->getSize(),
                 'mime_type' => $file->getClientMimeType(),
             ]);
@@ -325,6 +332,7 @@ class FileUploadController extends Controller
             $fileRecord = File::create([
                 'name' => pathinfo($storagePath, PATHINFO_BASENAME),
                 'path' => $storagePath,
+                'source' => 'UPLOAD',
                 'size' => $file->getSize(),
                 'mime_type' => $file->getClientMimeType(),
             ]);
