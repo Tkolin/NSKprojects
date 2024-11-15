@@ -2,6 +2,7 @@ import {
   AuditOutlined,
   BarsOutlined,
   BookOutlined,
+  BulbOutlined,
   ExceptionOutlined,
   FieldTimeOutlined,
   FundProjectionScreenOutlined,
@@ -76,8 +77,7 @@ const Index = ({ project, expandable, refetchProject, options }) => {
               ? [
                   {
                     key: "0",
-                    icon: <BarsOutlined />,
-                    label: "Уведоления на проекте",
+                    icon: <BulbOutlined />,
                     children: (
                       <TableNotificationsComponent
                         data-permission={"read-project"}

@@ -12,7 +12,14 @@ const openNotification = (placement, type, message) => {
     placement,
   });
 };
-
+function formatToRub(value) {
+  return new Intl.NumberFormat("ru-RU", {
+    style: "currency",
+    currency: "RUB",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
 const { Text } = Typography;
 const TablePaymentExecutorOrdersComponent = ({
   setEditModalStatus,
@@ -84,12 +91,14 @@ const TablePaymentExecutorOrdersComponent = ({
                 direction={"vertical"}
                 style={{ alignContent: "start", width: "100%" }}
               >
-                <Text strong>Общая сумма: {totalPrice}</Text>
+                <Text strong>Общая сумма: {formatToRub(totalPrice)}</Text>
                 {/* TODO:Добавить проверку */}
                 <Text strong>
-                  Платежи: <span>{totalPrice * 0.3}</span>/
-                  <span>{totalPrice * 0.3}</span>/
-                  <span>{totalPrice * 0.4}</span>
+                  Аванс/Основная сумма/Постоплата:
+                  <br />
+                  <span>{formatToRub(totalPrice * 0.3)}</span>/
+                  <span>{formatToRub(totalPrice * 0.3)}</span>/
+                  <span>{formatToRub(totalPrice * 0.4)}</span>
                 </Text>
               </Space.Compact>
             );
@@ -106,7 +115,7 @@ const TablePaymentExecutorOrdersComponent = ({
               style={{ alignContent: "start", width: "100%" }}
             >
               {!record?.signed_file_id ? (
-                <Text type={"danger"}>Договор не подписан</Text>
+                <Text>Договор не подписан</Text>
               ) : !record?.payment_file_completed?.includes("PREPAYMENT") ? (
                 <UploadFilePopconfirm
                   options={{ datePicker: true }}
@@ -117,9 +126,9 @@ const TablePaymentExecutorOrdersComponent = ({
                     "&status=PREPAYMENT"
                   }
                 >
-                  <Button type={"text"}>Подтвердить оплату аванса</Button>
+                  <Button danger>Необходимо Подтвердить оплату аванса</Button>
                 </UploadFilePopconfirm>
-              ) : !record?.payment_file_completed?.includes("MAINPAYMENT") ? (
+              ) : !record?.payment_file_completed?.includes("PAYMENT") ? (
                 record.is_tasks_completed ? (
                   <UploadFilePopconfirm
                     options={{ datePicker: true }}
@@ -127,17 +136,15 @@ const TablePaymentExecutorOrdersComponent = ({
                     action={
                       "project/upload/executor_order_payment/page?executorOrderId=" +
                       record.id +
-                      "&status=MAINPAYMENT"
+                      "&status=PAYMENT"
                     }
                   >
-                    <Button warring type={"text"}>
-                      Подтвердить оплату основной суммы
+                    <Button danger>
+                      Необходимо Подтвердить оплату основной суммы
                     </Button>
                   </UploadFilePopconfirm>
                 ) : (
-                  <Button type={"text"} disabled>
-                    В работе
-                  </Button>
+                  <Button danger>В работе</Button>
                 )
               ) : !record?.payment_file_completed?.includes("POSTPAYMENT") &&
                 record.project_completed ? (
@@ -151,7 +158,7 @@ const TablePaymentExecutorOrdersComponent = ({
                   }
                 >
                   <Button warring type={"text"}>
-                    Подтвердить постоплату
+                    Необходимо Подтвердить постоплату
                   </Button>
                 </UploadFilePopconfirm>
               ) : (
@@ -197,7 +204,7 @@ const TablePaymentExecutorOrdersComponent = ({
       if (!record?.payment_file_completed?.includes("PREPAYMENT")) {
         return 1; // Аванс
       }
-      if (!record?.payment_file_completed?.includes("MAINPAYMENT")) {
+      if (!record?.payment_file_completed?.includes("PAYMENT")) {
         return 2; // Основная оплата
       }
       if (
