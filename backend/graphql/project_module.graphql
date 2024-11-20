@@ -2,12 +2,16 @@
 #   - QUERY -
 #
 extend type Query {
-    projectIrds( projectId: ID): [ProjectIrd] @checkRole(permission:  ["read-project-ird"])
-    projectTasksQuery(projectId: ID): ProjectTasksResult @checkRole(permission:  ["read-project-task"])
-    projectsStatistic(projectStatuses: [String]!): [ProjectStatistic] @checkRole(permission:  ["read-project"])
+    projectIrds(projectId: ID): [ProjectIrd]
+        @checkRole(permission: ["read-project-ird"])
+    projectTasksQuery(projectId: ID): ProjectTasksResult
+        @checkRole(permission: ["read-project-task"])
+    projectsStatistic(projectStatuses: [String]!): [ProjectStatistic]
+        @checkRole(permission: ["read-project"])
     executorOrders(projectId: ID, executorId: ID): [ExecutorOrder!]
+    fullExecutorOrders(status: String): [ExecutorOrder!]
 
-    projectTS(projectId: ID): ProjectTS @checkRole(permission:  ["math"])
+    projectTS(projectId: ID): ProjectTS @checkRole(permission: ["math"])
 }
 #-INPUTS:
 
@@ -36,61 +40,52 @@ type ProjectTSValue {
     name: String
     value: String
 }
-type ProjectStatistic{
+type ProjectStatistic {
     status: ProjectStatus
     project_ids: [ID]
 }
 #
 #   - MUTATIONS -
 #
-extend type Mutation { 
-    acceptIrd (irdId: ID!, dateAccept: String!): ProjectIrd
-    receivedIrd (irdId: ID!, dateReceived: String!): ProjectIrd
-    rejectIrd (irdId: ID!): ProjectIrd
-    viewedIrd (irdIds: [ID]! ): [ProjectIrd]
-    projectTSChapterSync(
-        projectId: ID!
-        chapterIds: [ID]!
-    ): Project
-    setTemplateProjectStages(
-        projectId: ID!
-        templateProjectId: ID!
-    ): Project @checkRole(permission:  ["update-project-ird"])
-    setTemplateProjectIrds(
-        projectId: ID!
-        templateProjectId: ID!
-    ): Project @checkRole(permission:  ["update-project-ird"])
-     projectIrdsSync(
-        items: [IrdToProjectInput]!
-    ): Project @checkRole(permission:  ["update-project-ird"])
+extend type Mutation {
+    acceptIrd(irdId: ID!, dateAccept: String!): ProjectIrd
+    receivedIrd(irdId: ID!, dateReceived: String!): ProjectIrd
+    rejectIrd(irdId: ID!): ProjectIrd
+    viewedIrd(irdIds: [ID]!): [ProjectIrd]
+    projectTSChapterSync(projectId: ID!, chapterIds: [ID]!): Project
+    setTemplateProjectStages(projectId: ID!, templateProjectId: ID!): Project
+        @checkRole(permission: ["update-project-ird"])
+    setTemplateProjectIrds(projectId: ID!, templateProjectId: ID!): Project
+        @checkRole(permission: ["update-project-ird"])
+    projectIrdsSync(items: [IrdToProjectInput]!): Project
+        @checkRole(permission: ["update-project-ird"])
 
-    upProjectStatus(
-        projectId: ID!
-        date: String!
-    ): Project @checkRole(permission:  ["update-project-ird"])
-    archivingProjectStatus(
-        projectId: ID!
-        date: String
-    ): Project @checkRole(permission:  ["update-project-ird"])
+    upProjectStatus(projectId: ID!, date: String!): Project
+        @checkRole(permission: ["update-project-ird"])
+    archivingProjectStatus(projectId: ID!, date: String): Project
+        @checkRole(permission: ["update-project-ird"])
     changeProjectStatus(
         projectId: ID!
         statusKey: String!
         dateStart: String
-    ): Project @checkRole(permission:  ["update-project-ird"])
+    ): Project @checkRole(permission: ["update-project-ird"])
 
-    projectStagesSync(
-        items: [StageToProjectInput]!
-    ): Project @checkRole(permission:  ["update-project-stage"])
+    projectStagesSync(items: [StageToProjectInput]!): Project
+        @checkRole(permission: ["update-project-stage"])
     projectTasksStructureUpdate(
         project_id: ID!
         data: [TaskToProjectStructureInput]!
-    ): Project @checkRole(permission:  ["update-project-task", "create-project-task","delete-project-task"])
-    projectTaskDetailUpdate(
-        data: TaskToProjectDetailInput!
-    ): ProjectTask @checkRole(permission:  ["update-project-task", "create-project-task"])
-    updatePaymentsToProject(
-        project: ID
     ): Project
+        @checkRole(
+            permission: [
+                "update-project-task"
+                "create-project-task"
+                "delete-project-task"
+            ]
+        )
+    projectTaskDetailUpdate(data: TaskToProjectDetailInput!): ProjectTask
+        @checkRole(permission: ["update-project-task", "create-project-task"])
+    updatePaymentsToProject(project: ID): Project
 
     changeTemplateTypeProject(
         typeProject: ID!
@@ -106,23 +101,20 @@ extend type Mutation {
         tasksIds: [ID]
         employeesIds: [ID]
         stageNumber: Int
-    ): [ProjectTask] @checkRole(permission:  ["update-project-task-executor"])
+    ): [ProjectTask] @checkRole(permission: ["update-project-task-executor"])
 
-    projectTaskUp(
-        taskId: ID!
-    ): ProjectTask @checkRole(permission:  ["update-project-ird"])
-
-
+    projectTaskUp(taskId: ID!): ProjectTask
+        @checkRole(permission: ["update-project-ird"])
 }
 #-INPUTS:
-input TaskToProjectStructureInput  {
+input TaskToProjectStructureInput {
     task_id: ID!
     local_id: String!
     local_id_inherited: String
     stage_number: Int!
 }
 
-input TaskToProjectDetailInput  {
+input TaskToProjectDetailInput {
     id: ID
 
     description: String
@@ -168,10 +160,10 @@ input TaskToProject {
 }
 
 #-RESULTS:
-type CountProjectByOrganizations{
+type CountProjectByOrganizations {
     organization_id: ID!
     count_project: Int!
 }
-type ProjectTasksResult{
+type ProjectTasksResult {
     items: [ProjectTask]
 }

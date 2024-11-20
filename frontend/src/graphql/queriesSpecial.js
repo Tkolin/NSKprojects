@@ -204,3 +204,54 @@ export const PROJECTS_QUERY_STATISTICS = gql`
     }
   }
 `;
+export const FULL_EXECUTOR_ORDERS_QUERY = gql`
+  query FullExecutorOrders($status: String = "all") {
+    fullExecutorOrders(status: $status) {
+      id
+      is_tasks_completed
+      payment_file_completed
+      is_project_completed
+      date_generate
+      date_order
+      date_attachment
+      number
+      original_file_id
+      signed_file_id
+      project_tasks {
+        id
+        project_id
+        date_start
+        date_end
+        is_delay
+        status
+        price
+        task {
+          name
+        }
+        executor {
+          id
+          passport {
+            id
+            first_name
+            last_name
+            patronymic
+          }
+        }
+      }
+      executor_order_payments {
+        id
+        file_id
+        status
+      }
+      executor {
+        id
+        passport {
+          id
+          first_name
+          last_name
+          patronymic
+        }
+      }
+    }
+  }
+`;

@@ -14,7 +14,7 @@ import {
   ProfileOutlined,
   ReconciliationOutlined,
   SolutionOutlined,
-  TeamOutlined
+  TeamOutlined,
 } from "@ant-design/icons";
 import React from "react";
 
@@ -121,7 +121,6 @@ const MenuItems = [
     ],
 
     children: [
-     
       {
         label: "Стадия: Заявка",
         key: "/project/request",
@@ -177,8 +176,15 @@ const MenuItems = [
     permission: ["read-project-payments"],
     children: [
       {
-        label: "Запросы на оплату Исполнителям",
+        label: "Оплаты по проектам",
         key: "/bookeep/executor_order_table",
+        icon: null,
+        children: null,
+        permission: ["read-project-payments"],
+      },
+      {
+        label: "Все запросы на оплату исполнителям",
+        key: "/bookeep/all_executor_order_table",
         icon: null,
         children: null,
         permission: ["read-project-payments"],
@@ -397,12 +403,12 @@ const MenuItems = [
 
 const MenuItemsByPermission = (currentUser) => {
   if (!currentUser) return [];
-console.log("112 currentUser",currentUser.permissions)
+  console.log("112 currentUser", currentUser.permissions);
   // Получаем список прав пользователя
   const userPermissions =
     currentUser?.permissions?.map((p) => p.name_key) ?? [];
-  
-    console.log(userPermissions);
+
+  console.log(userPermissions);
 
   const hasPermission = (userPermissions, requiredPermissions) => {
     return requiredPermissions.some((row) => userPermissions.includes(row));
@@ -430,4 +436,3 @@ console.log("112 currentUser",currentUser.permissions)
 };
 
 export { MenuItems, MenuItemsByPermission };
-

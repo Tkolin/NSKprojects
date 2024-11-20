@@ -95,15 +95,14 @@ const Index = ({ project, expandable, refetchProject, options }) => {
                     label: "Этапы",
                     children: (
                       <TableStagesComponent
+                        projectId={project.id}
                         data-permission={"read-project-stage"}
-                        project={project}
                         setEditModalStatus={() => setEditModalStatus("stages")}
                       />
                     ),
                   },
                 ]
               : []),
-
             ...(options.includes("irds")
               ? [
                   {
@@ -112,15 +111,14 @@ const Index = ({ project, expandable, refetchProject, options }) => {
                     label: "ИРД",
                     children: (
                       <TableIrdsComponent
+                        projectId={project.id}
                         data-permission={"read-project-ird"}
-                        project={project}
                         setEditModalStatus={() => setEditModalStatus("irds")}
                       />
                     ),
                   },
                 ]
               : []),
-
             ...(options.includes("executors")
               ? [
                   {
@@ -148,7 +146,7 @@ const Index = ({ project, expandable, refetchProject, options }) => {
                     children: (
                       <TableStagesComponent
                         data-permission={"read-project-stage"}
-                        project={project}
+                        projectId={project.id}
                         options={["acts", "payments"]}
                         setEditModalStatus={() => setEditModalStatus("stages")}
                       />
@@ -172,7 +170,6 @@ const Index = ({ project, expandable, refetchProject, options }) => {
                   },
                 ]
               : []),
-
             ...(options.includes("executor_orders")
               ? [
                   {

@@ -1,0 +1,110 @@
+type Mutation {
+    createParameter(input: ParameterInput!): Parameter @create
+    updateParameter(id: ID!, input: ParameterInput!): Parameter @update
+    deleteParameter(id: ID!): Parameter @delete
+}
+
+input ParameterInput {
+    name: String
+    unit_id: ID
+    min: Float
+    max: Float
+}
+
+type Mutation {
+    createEquipmentTypesActivity(
+        data: EquipmentTypesActivityInput!
+    ): EquipmentTypesActivity @create
+    updateEquipmentTypesActivity(
+        id: ID!
+        data: EquipmentTypesActivityInput!
+    ): EquipmentTypesActivity @update
+    deleteEquipmentTypesActivity(id: ID!): EquipmentTypesActivity @delete
+}
+
+input EquipmentTypesActivityInput {
+    name: String
+}
+
+type Mutation {
+    createEquipmentType(input: EquipmentTypeInput!): EquipmentType @create
+    updateEquipmentType(id: ID!, data: EquipmentTypeInput!): EquipmentType
+        @update
+    deleteEquipmentType(id: ID!): EquipmentType @delete
+}
+
+input EquipmentTypeInput {
+    name: String!
+}
+
+type Mutation {
+    createEquipmentModel(input: EquipmentModelInput!): EquipmentModel @create
+    updateEquipmentModel(id: ID!, input: EquipmentModelInput!): EquipmentModel
+        @update
+    deleteEquipmentModel(id: ID!): EquipmentModel @delete
+}
+
+input EquipmentModelInput {
+    model_name: String!
+    equipment_type_id: ID
+    equipment_type_activity_id: ID
+    supplier_id: ID
+}
+
+type Mutation {
+    createEquipmentModel(input: EquipmentModelInput!): EquipmentModel @create
+    updateEquipmentModel(id: ID!, data: EquipmentModelInput!): EquipmentModel
+        @update
+    deleteEquipmentModel(id: ID!): EquipmentModel @delete
+}
+
+input EquipmentModelInput {
+    model_name: String
+    equipment_type_id: ID
+    equipment_type_activity_id: ID
+    supplier_id: ID
+}
+
+type Mutation {
+    createEquipmentGroup(input: EquipmentGroupInput!): EquipmentGroup @create
+    updateEquipmentGroup(id: ID!, data: EquipmentGroupInput!): EquipmentGroup
+        @update
+    deleteEquipmentGroup(id: ID!): EquipmentGroup @delete
+}
+
+input EquipmentGroupInput {
+    name: String!
+}
+
+type EquipmentGroup {
+    id: ID!
+    name: String!
+    description: String
+}
+
+type EquipmentModel {
+    id: ID!
+    model_name: String
+    equipment_type_id: ID
+    equipment_type_activity_id: ID
+    supplier_id: ID
+    parameters: [Parameter]
+}
+
+type EquipmentType {
+    id: ID!
+    name: String!
+}
+
+type EquipmentTypesActivity {
+    id: ID!
+    activity_name: String!
+}
+
+type Parameter {
+    id: ID!
+    name: String!
+    unit_id: ID
+    min: Float
+    max: Float
+}

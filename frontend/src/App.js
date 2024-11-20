@@ -1,49 +1,50 @@
-import { ConfigProvider, Space } from 'antd'
-import ruRU from 'antd/locale/ru_RU'
-import React from 'react'
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
-import { createGlobalStyle } from 'styled-components'
-import CustomLayout from './page/Layout'
+import { ConfigProvider, Space } from "antd";
+import ruRU from "antd/locale/ru_RU";
+import React from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { createGlobalStyle } from "styled-components";
+import CustomLayout from "./page/Layout";
 
-import Home from './page/Home'
-import ContactForm from './page/simplesForms/ContactForm'
-import OrganizationForm from './page/simplesForms/OrganizationForm'
-import PersonForm from './page/simplesForms/PersonForm'
+import Home from "./page/Home";
+import ContactForm from "./page/simplesForms/ContactForm";
+import OrganizationForm from "./page/simplesForms/OrganizationForm";
+import PersonForm from "./page/simplesForms/PersonForm";
 
-import ContactTable from './page/simplesTables/ContactTable'
-import OrganizationTable from './page/simplesTables/OrganizationTable'
-import PersonTable from './page/simplesTables/PersonTable'
+import ContactTable from "./page/simplesTables/ContactTable";
+import OrganizationTable from "./page/simplesTables/OrganizationTable";
+import PersonTable from "./page/simplesTables/PersonTable";
 
-import moment from 'moment'
-import { NotificationProvider } from './NotificationProvider'
-import ProjectTable from './page/ProjectTable'
-import LoginForm from './page/simplesForms/LoginForm'
-import RegisterForm from './page/simplesForms/RegisterForm'
+import moment from "moment";
+import { NotificationProvider } from "./NotificationProvider";
+import ProjectTable from "./page/ProjectTable";
+import LoginForm from "./page/simplesForms/LoginForm";
+import RegisterForm from "./page/simplesForms/RegisterForm";
 
-import StatusLegendComponent from './page/ProjectTable/components/StatusLegendComponent'
-import ProjectTSManagerForm from './page/ProjectTSManagerForm'
-import ProjectTSStructureForm from './page/ProjectTSStructureForm'
-import MathForm from './page/simplesForms/MathForm'
-import ReferenceForm from './page/simplesForms/ReferenceForm'
-import RequestForm from './page/simplesForms/RequestForm'
-import TechSpecForm from './page/simplesForms/TechChapterForm'
-import ReferenceTable from './page/simplesTables/ReferenceTable'
-import RoleTable from './page/simplesTables/RoleTable'
-import UserTable from './page/simplesTables/UserTable'
-import { PermissionsProvider } from './permission/PermissionsProvider'
-import usePermissionHider from './permission/usePermissionHider'
+import StatusLegendComponent from "./page/ProjectTable/components/StatusLegendComponent";
+import ProjectTSManagerForm from "./page/ProjectTSManagerForm";
+import ProjectTSStructureForm from "./page/ProjectTSStructureForm";
+import MathForm from "./page/simplesForms/MathForm";
+import ReferenceForm from "./page/simplesForms/ReferenceForm";
+import RequestForm from "./page/simplesForms/RequestForm";
+import TechSpecForm from "./page/simplesForms/TechChapterForm";
+import ExecutorPaymentsTable from "./page/simplesTables/ExecutorPaymentsTable";
+import ReferenceTable from "./page/simplesTables/ReferenceTable";
+import RoleTable from "./page/simplesTables/RoleTable";
+import UserTable from "./page/simplesTables/UserTable";
+import { PermissionsProvider } from "./permission/PermissionsProvider";
+import usePermissionHider from "./permission/usePermissionHider";
 
 const GlobalStyles = createGlobalStyle`
     body {
         margin: 0;
     }
  
-`
+`;
 
 const App = () => {
-  usePermissionHider()
+  usePermissionHider();
 
-  moment.locale('ru')
+  moment.locale("ru");
   return (
     <PermissionsProvider>
       <ConfigProvider locale={ruRU}>
@@ -53,62 +54,62 @@ const App = () => {
           <Router>
             <CustomLayout>
               <Routes>
-                <Route path='/' element={<Home />} />
+                <Route path="/" element={<Home />} />
 
                 {/*Справочники*/}
-                <Route path='/references' element={<Home />} />
+                <Route path="/references" element={<Home />} />
 
                 {/* <Route path="/ts1" element={<TestPage/>}/> */}
-                <Route path='/references/contact' element={<Home />} />
+                <Route path="/references/contact" element={<Home />} />
                 <Route
-                  path='/references/contact/table'
+                  path="/references/contact/table"
                   element={<ContactTable />}
                 />
                 <Route
-                  path='/references/contact/form'
+                  path="/references/contact/form"
                   element={
                     <Space
-                      style={{ width: '100%', justifyContent: 'center' }}
+                      style={{ width: "100%", justifyContent: "center" }}
                       children={<ContactForm />}
                     />
                   }
                 />
 
                 <Route
-                  path='/user/person/form'
+                  path="/user/person/form"
                   element={
                     <Space
-                      style={{ width: '100%', justifyContent: 'center' }}
+                      style={{ width: "100%", justifyContent: "center" }}
                       children={<RegisterForm />}
                     />
                   }
                 />
 
-                <Route path='/references/person' element={<Home />} />
+                <Route path="/references/person" element={<Home />} />
                 <Route
-                  path='/references/person/table'
+                  path="/references/person/table"
                   element={<PersonTable />}
                 />
                 <Route
-                  path='/references/person/form'
+                  path="/references/person/form"
                   element={
                     <Space
-                      style={{ width: '100%', justifyContent: 'center' }}
+                      style={{ width: "100%", justifyContent: "center" }}
                       children={<PersonForm />}
                     />
                   }
                 />
 
-                <Route path='/references/organization' element={<Home />} />
+                <Route path="/references/organization" element={<Home />} />
                 <Route
-                  path='/references/organization/table'
+                  path="/references/organization/table"
                   element={<OrganizationTable />}
                 />
                 <Route
-                  path='/references/organization/form'
+                  path="/references/organization/form"
                   element={
                     <Space
-                      style={{ width: '100%', justifyContent: 'center' }}
+                      style={{ width: "100%", justifyContent: "center" }}
                       children={<OrganizationForm />}
                     />
                   }
@@ -116,105 +117,110 @@ const App = () => {
 
                 {/*Расчёты*/}
                 <Route
-                  path='/math/reference/form'
+                  path="/math/reference/form"
                   element={<ReferenceForm />}
                 />
                 <Route
-                  path='/math/reference/table'
+                  path="/math/reference/table"
                   element={<ReferenceTable />}
                 />
 
-                <Route path='/math/module/creater' element={<MathForm />} />
+                <Route path="/math/module/creater" element={<MathForm />} />
 
                 <Route
-                  path='/math/tech_ref/form/chapter'
+                  path="/math/tech_ref/form/chapter"
                   element={<TechSpecForm />}
                 />
                 <Route
-                  path='/math/tech_ref/table/structure'
+                  path="/math/tech_ref/table/structure"
                   element={<ProjectTSStructureForm />}
                 />
                 <Route
-                  path='/math/tech_ref/table/manager'
+                  path="/math/tech_ref/table/manager"
                   element={<ProjectTSManagerForm />}
                 />
 
-                <Route path='/math/formula/form' element={<Home />} />
-                <Route path='/math/formula/table' element={<Home />} />
+                <Route path="/math/formula/form" element={<Home />} />
+                <Route path="/math/formula/table" element={<Home />} />
 
                 {/* <Route path="/math/tech_ref/table/template" element={<ReferenceForm />}/> */}
 
                 {/*Проекты*/}
-                <Route path='/project' element={<Home />} />
+                <Route path="/project" element={<Home />} />
 
                 <Route
-                  path='/project/statistic'
+                  path="/project/statistic"
                   element={<StatusLegendComponent />}
                 />
 
-                <Route path='/project/request' element={<Home />} />
+                <Route path="/project/request" element={<Home />} />
                 <Route
-                  path='/project/request/table'
-                  element={<ProjectTable mode={'request'} />}
+                  path="/project/request/table"
+                  element={<ProjectTable mode={"request"} />}
                 />
                 <Route
-                  path='/project/request/form'
+                  path="/project/request/form"
                   element={
                     <Space
-                      style={{ width: '100%', justifyContent: 'center' }}
+                      style={{ width: "100%", justifyContent: "center" }}
                       children={<RequestForm />}
                     />
                   }
                 />
 
-                <Route path='/project/kp' element={<Home />} />
+                <Route path="/project/kp" element={<Home />} />
                 <Route
-                  path='/project/kp/table'
-                  element={<ProjectTable mode={'kp'} />}
+                  path="/project/kp/table"
+                  element={<ProjectTable mode={"kp"} />}
                 />
-                <Route path='/project/kp/form' element={<Home />} />
+                <Route path="/project/kp/form" element={<Home />} />
 
-                <Route path='/project/contract' element={<Home />} />
+                <Route path="/project/contract" element={<Home />} />
                 <Route
-                  path='/project/contract/table'
-                  element={<ProjectTable mode={'contract'} />}
+                  path="/project/contract/table"
+                  element={<ProjectTable mode={"contract"} />}
                 />
-                <Route path='/project/contract/form' element={<Home />} />
+                <Route path="/project/contract/form" element={<Home />} />
 
-                <Route path='/project/work' element={<Home />} />
+                <Route path="/project/work" element={<Home />} />
                 <Route
-                  path='/project/work/table'
-                  element={<ProjectTable mode={'work'} />}
-                />
-
-                <Route path='/project/waiting_start_work' element={<Home />} />
-                <Route
-                  path='/project/waiting_start_work/table'
-                  element={<ProjectTable mode={'waiting_start_work'} />}
+                  path="/project/work/table"
+                  element={<ProjectTable mode={"work"} />}
                 />
 
-                <Route path='/project/tasks_distribution' element={<Home />} />
+                <Route path="/project/waiting_start_work" element={<Home />} />
                 <Route
-                  path='/project/tasks_distribution/table'
-                  element={<ProjectTable mode={'executorPayment'} />}
+                  path="/project/waiting_start_work/table"
+                  element={<ProjectTable mode={"waiting_start_work"} />}
+                />
+
+                <Route path="/project/tasks_distribution" element={<Home />} />
+                <Route
+                  path="/project/tasks_distribution/table"
+                  element={<ProjectTable mode={"executorPayment"} />}
                 />
 
                 <Route
-                  path='/bookeep/executor_order_table'
-                  element={<ProjectTable mode={'executorPayment'} />}
+                  path="/bookeep/executor_order_table"
+                  element={<ProjectTable mode={"executorPayment"} />}
                 />
 
-                <Route path='/project/work/form' element={<Home />} />
+                <Route
+                  path="bookeep/all_executor_order_table"
+                  element={<ExecutorPaymentsTable />}
+                />
+
+                <Route path="/project/work/form" element={<Home />} />
                 {/*Учётки*/}
-                <Route path='/user/person/table' element={<UserTable />} />
-                <Route path='/user/role/table' element={<RoleTable />} />
+                <Route path="/user/person/table" element={<UserTable />} />
+                <Route path="/user/role/table" element={<RoleTable />} />
 
-                <Route path='/auth/register' element={<RegisterForm />} />
+                <Route path="/auth/register" element={<RegisterForm />} />
                 <Route
-                  path='/auth/login'
+                  path="/auth/login"
                   element={
                     <Space
-                      style={{ width: '100%', justifyContent: 'center' }}
+                      style={{ width: "100%", justifyContent: "center" }}
                       children={<LoginForm />}
                     />
                   }
@@ -229,7 +235,7 @@ const App = () => {
         </NotificationProvider>
       </ConfigProvider>
     </PermissionsProvider>
-  )
-}
+  );
+};
 
-export default App
+export default App;

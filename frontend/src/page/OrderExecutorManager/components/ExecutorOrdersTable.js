@@ -25,8 +25,8 @@ export const ExecutorOrdersTable = ({ executorOrders, onUpdated }) => {
 
   const [removeOrder, { loading }] = useMutation(EXECUTOR_ORDER_REMOVE, {
     onCompleted: (data) => {
-      onUpdated && onUpdated(data);
       openNotification("topRight", "success", `Данные обновлены`);
+      onUpdated && onUpdated(data);
     },
     onError: (error) => {
       openNotification(
@@ -74,7 +74,8 @@ export const ExecutorOrdersTable = ({ executorOrders, onUpdated }) => {
                 <UploadFileExecutorOrder
                   onUpdated={() => onUpdated()}
                   orderId={record.id}
-                  size={"small"} style={{width: "300px"}}
+                  size={"small"}
+                  style={{ width: "300px" }}
                 >
                   Загрузить подписанный файл
                 </UploadFileExecutorOrder>
@@ -89,9 +90,13 @@ export const ExecutorOrdersTable = ({ executorOrders, onUpdated }) => {
                 {/*/>*/}
                 <ExecutorOrderFileGenerated
                   projecTaskIds={record.project_tasks}
-                  onCompleted={onUpdated}
+                  onCompleted={() => onUpdated()}
                   children={
-                    <Button size={"small"} style={{width: "300px"}} children={"Сгенерировать договор"} />
+                    <Button
+                      size={"small"}
+                      style={{ width: "300px" }}
+                      children={"Сгенерировать договор"}
+                    />
                   }
                 />
                 <Popconfirm
@@ -99,14 +104,18 @@ export const ExecutorOrdersTable = ({ executorOrders, onUpdated }) => {
                   title={"Удаление договора"}
                   description={"Вы уверены что хотите отменить договор?"}
                   okText="Удалить"
-                  onConfirm={()=>removeOrder({variables: {orederId: record.id}})}
+                  onConfirm={() =>
+                    removeOrder({ variables: { orederId: record.id } })
+                  }
                   cancelText="Отмена"
                 >
-                  <Button size={"small"} style={{width: "300px"}}>Отменить договор</Button>
+                  <Button size={"small"} style={{ width: "300px" }}>
+                    Отменить договор
+                  </Button>
                 </Popconfirm>
 
                 <LinkToDownload fileId={record.original_file_id}>
-                  <Button size={"small"} style={{width: "300px"}} danger>
+                  <Button size={"small"} style={{ width: "300px" }} danger>
                     Скачать (не подписан)
                   </Button>
                 </LinkToDownload>

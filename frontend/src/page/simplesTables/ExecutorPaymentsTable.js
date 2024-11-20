@@ -4,8 +4,8 @@ import { Button, notification, Space, Table, Tooltip, Typography } from "antd";
 import Link from "antd/es/typography/Link";
 import { nanoid } from "nanoid";
 import React, { useEffect } from "react";
-import { EXECUTOR_ORDERS_PROJECT_QUERY } from "../../../../../../../graphql/queriesSpecial";
-import { UploadFilePopconfirm } from "../../../../../../components/UploadFile";
+import { FULL_EXECUTOR_ORDERS_QUERY } from "../../graphql/queriesSpecial";
+import { UploadFilePopconfirm } from "../components/UploadFile";
 
 const openNotification = (placement, type, message) => {
   notification[type]({
@@ -35,11 +35,7 @@ const TablePaymentExecutorOrdersComponent = ({
   const [
     updateExecutorOrders,
     { data: executorOrders, loading: loading, error: error, refetch: refetch },
-  ] = useLazyQuery(EXECUTOR_ORDERS_PROJECT_QUERY, {
-    variables: {
-      projectId: projectId,
-    },
-  });
+  ] = useLazyQuery(FULL_EXECUTOR_ORDERS_QUERY);
 
   useEffect(() => {
     console.log(executorOrders);
@@ -72,9 +68,9 @@ const TablePaymentExecutorOrdersComponent = ({
             >
               <Text strong>{record?.number}</Text>
               <Text strong>
-                {record.executor.passport.last_name}{" "}
-                {record.executor.passport.first_name}{" "}
-                {record.executor.passport.patronymic}
+                {record?.executor?.passport.last_name}{" "}
+                {record?.executor?.passport.first_name}{" "}
+                {record?.executor?.passport.patronymic}
               </Text>
               {/*{record.project_tasks.map(row=><>{row?.task?.name}</>)}*/}
             </Space.Compact>
@@ -241,7 +237,7 @@ const TablePaymentExecutorOrdersComponent = ({
       size={"small"}
       columns={columnsTasks}
       loading={loading}
-      dataSource={filterAndSortOrders(executorOrders?.executorOrders)}
+      dataSource={filterAndSortOrders(executorOrders?.fullExecutorOrders)}
       pagination={false}
     />
   );
