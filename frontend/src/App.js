@@ -27,9 +27,12 @@ import MathForm from "./page/simplesForms/MathForm";
 import ReferenceForm from "./page/simplesForms/ReferenceForm";
 import RequestForm from "./page/simplesForms/RequestForm";
 import TechSpecForm from "./page/simplesForms/TechChapterForm";
+import EquipmentModelTable from "./page/simplesTables/EquipmentModelTable";
+import EquipmentTypeTable from "./page/simplesTables/EquipmentTypeTable";
 import ExecutorPaymentsTable from "./page/simplesTables/ExecutorPaymentsTable";
 import ReferenceTable from "./page/simplesTables/ReferenceTable";
 import RoleTable from "./page/simplesTables/RoleTable";
+import SupplierTable from "./page/simplesTables/SupplierTable";
 import UserTable from "./page/simplesTables/UserTable";
 import { PermissionsProvider } from "./permission/PermissionsProvider";
 import usePermissionHider from "./permission/usePermissionHider";
@@ -55,10 +58,8 @@ const App = () => {
             <CustomLayout>
               <Routes>
                 <Route path="/" element={<Home />} />
-
                 {/*Справочники*/}
                 <Route path="/references" element={<Home />} />
-
                 {/* <Route path="/ts1" element={<TestPage/>}/> */}
                 <Route path="/references/contact" element={<Home />} />
                 <Route
@@ -74,7 +75,6 @@ const App = () => {
                     />
                   }
                 />
-
                 <Route
                   path="/user/person/form"
                   element={
@@ -84,7 +84,6 @@ const App = () => {
                     />
                   }
                 />
-
                 <Route path="/references/person" element={<Home />} />
                 <Route
                   path="/references/person/table"
@@ -99,7 +98,6 @@ const App = () => {
                     />
                   }
                 />
-
                 <Route path="/references/organization" element={<Home />} />
                 <Route
                   path="/references/organization/table"
@@ -114,7 +112,48 @@ const App = () => {
                     />
                   }
                 />
-
+                <Route path="/references/suppliers" element={<Home />} />
+                <Route
+                  path="/references/suppliers/table"
+                  element={<SupplierTable />}
+                />
+                <Route
+                  path="/references/suppliers/form"
+                  element={
+                    <Space
+                      style={{ width: "100%", justifyContent: "center" }}
+                      children={<OrganizationForm />}
+                    />
+                  }
+                />
+                <Route path="/references/equipment_type" element={<Home />} />
+                <Route
+                  path="/references/equipment_type/table"
+                  element={<EquipmentTypeTable />}
+                />
+                <Route
+                  path="/references/equipment_type/form"
+                  element={
+                    <Space
+                      style={{ width: "100%", justifyContent: "center" }}
+                      children={<OrganizationForm />}
+                    />
+                  }
+                />
+                <Route path="/references/equipment_model" element={<Home />} />
+                <Route
+                  path="/references/equipment_model/table"
+                  element={<EquipmentModelTable />}
+                />
+                <Route
+                  path="/references/equipment_model/form"
+                  element={
+                    <Space
+                      style={{ width: "100%", justifyContent: "center" }}
+                      children={<OrganizationForm />}
+                    />
+                  }
+                />
                 {/*Расчёты*/}
                 <Route
                   path="/math/reference/form"
@@ -124,9 +163,7 @@ const App = () => {
                   path="/math/reference/table"
                   element={<ReferenceTable />}
                 />
-
                 <Route path="/math/module/creater" element={<MathForm />} />
-
                 <Route
                   path="/math/tech_ref/form/chapter"
                   element={<TechSpecForm />}
@@ -139,20 +176,15 @@ const App = () => {
                   path="/math/tech_ref/table/manager"
                   element={<ProjectTSManagerForm />}
                 />
-
                 <Route path="/math/formula/form" element={<Home />} />
                 <Route path="/math/formula/table" element={<Home />} />
-
                 {/* <Route path="/math/tech_ref/table/template" element={<ReferenceForm />}/> */}
-
                 {/*Проекты*/}
                 <Route path="/project" element={<Home />} />
-
                 <Route
                   path="/project/statistic"
                   element={<StatusLegendComponent />}
                 />
-
                 <Route path="/project/request" element={<Home />} />
                 <Route
                   path="/project/request/table"
@@ -167,54 +199,45 @@ const App = () => {
                     />
                   }
                 />
-
                 <Route path="/project/kp" element={<Home />} />
                 <Route
                   path="/project/kp/table"
                   element={<ProjectTable mode={"kp"} />}
                 />
                 <Route path="/project/kp/form" element={<Home />} />
-
                 <Route path="/project/contract" element={<Home />} />
                 <Route
                   path="/project/contract/table"
                   element={<ProjectTable mode={"contract"} />}
                 />
                 <Route path="/project/contract/form" element={<Home />} />
-
                 <Route path="/project/work" element={<Home />} />
                 <Route
                   path="/project/work/table"
                   element={<ProjectTable mode={"work"} />}
                 />
-
                 <Route path="/project/waiting_start_work" element={<Home />} />
                 <Route
                   path="/project/waiting_start_work/table"
                   element={<ProjectTable mode={"waiting_start_work"} />}
                 />
-
                 <Route path="/project/tasks_distribution" element={<Home />} />
                 <Route
                   path="/project/tasks_distribution/table"
                   element={<ProjectTable mode={"executorPayment"} />}
                 />
-
                 <Route
                   path="/bookeep/executor_order_table"
                   element={<ProjectTable mode={"executorPayment"} />}
                 />
-
                 <Route
                   path="bookeep/all_executor_order_table"
                   element={<ExecutorPaymentsTable />}
                 />
-
                 <Route path="/project/work/form" element={<Home />} />
                 {/*Учётки*/}
                 <Route path="/user/person/table" element={<UserTable />} />
                 <Route path="/user/role/table" element={<RoleTable />} />
-
                 <Route path="/auth/register" element={<RegisterForm />} />
                 <Route
                   path="/auth/login"
@@ -225,7 +248,6 @@ const App = () => {
                     />
                   }
                 />
-
                 {/* Тестирование
                                 <Route path="/test/test1" element={<ProjectForm/>}/>
                                 <Route path="/test/test2" element={<LoginForm/>}/> */}

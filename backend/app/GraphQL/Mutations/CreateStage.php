@@ -12,6 +12,9 @@ final readonly class CreateStage
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
+        if (!isset($args['data']))
+            throw new \InvalidArgumentException('data is required.');
+
         $data = $args['data'];
 
         // Находим задачу по имени или создаем новую задачу

@@ -18,17 +18,6 @@ final readonly class FullExecutorOrders
                 'payment_file_completed' => $order->getFilesPaymentsTypes()
             ];
         });
-
-        // $result = ExecutorOrder::with("executor_order_payments", "project_tasks")
-        // ->get()->map(function ($order) {
-        //     return [
-        //         ...$order->toArray(),
-        //         'is_project_completed' => $order->isProjectCompleted(),
-        //         'is_tasks_completed' => $order->isTaskCompleted(),
-        //         'payment_file_completed' => $order->getFilesPaymentsTypes()
-        //     ];
-        // });
-        // signed_file_id
         return $result;
     }
 }

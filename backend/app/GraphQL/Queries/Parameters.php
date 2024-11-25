@@ -2,11 +2,13 @@
 
 namespace App\GraphQL\Queries;
 
+use App\Models\ParameterModel;
+
 final readonly class Parameters
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        return ['items ' => Parameter::all()];
+        return ['items' => ParameterModel::all()];
     }
 }

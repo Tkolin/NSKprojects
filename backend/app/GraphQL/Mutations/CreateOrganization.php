@@ -10,9 +10,12 @@ final readonly class CreateOrganization
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
+        if (!isset($args['data']))
+            throw new \InvalidArgumentException('data is required.');
+
         $data = $args['data'];
         $orgData = Organization::create($data);
-        if($orgData["director_id"] !==   $data['director_id']) {
+        if ($orgData["director_id"] !== $data['director_id']) {
             $newDirectoContact = Contact::findOrFail($data['director_id']);
             $newDirectoContact->position_id = 0;
             $newDirectoContact->organization_id = $args['id'];

@@ -1,5 +1,72 @@
 type Mutation {
-    createParameter(input: ParameterInput!): Parameter @create
+    updateEquipmentTypeParameters(
+        equipment_type_id: ID
+        add_parameter_ids: [ID]
+        remove_parameter_ids: [ID]
+    ): EquipmentType
+}
+extend type Query {
+    suppliers(
+        id: ID
+        queryOptions: QueryOptions
+        queryType: String
+    ): SupplierResult
+    parameter(id: ID): Parameter
+    parameters(
+        id: ID
+        queryOptions: QueryOptions
+        queryType: String
+    ): [ParameterResult]
+    equipmentGroups(
+        id: ID
+        queryOptions: QueryOptions
+        queryType: String
+    ): EquipmentGroupResult
+    equipmentModels(
+        id: ID
+        queryOptions: QueryOptions
+        queryType: String
+    ): EquipmentModelResult
+    equipmentTypes(
+        id: ID
+        queryOptions: QueryOptions
+        queryType: String
+    ): EquipmentTypeResult
+    equipmentTypesActivitys: [EquipmentTypesActivity]
+}
+
+type ParameterResult {
+    items: [Parameter]
+    count: Int
+}
+type SupplierResult {
+    items: [Supplier]
+    count: Int
+}
+type EquipmentGroupResult {
+    items: [EquipmentGroup]
+    count: Int
+}
+type EquipmentModelResult {
+    items: [EquipmentModel]
+    count: Int
+}
+type EquipmentTypeResult {
+    items: [EquipmentType]
+    count: Int
+}
+type Supplier {
+    id: ID
+    name: String
+    contact: Contact
+    email: String
+    phone_number: String
+    equipment_types: [EquipmentType]
+}
+
+type Mutation {
+    createParameter(data: ParameterInput!): Parameter @create
+    updateParameter(data: ParameterInput!, id: ID): Parameter @create
     updateParameter(id: ID!, input: ParameterInput!): Parameter @update
     deleteParameter(id: ID!): Parameter @delete
 }
@@ -86,14 +153,18 @@ type EquipmentModel {
     id: ID!
     model_name: String
     equipment_type_id: ID
+    equipment_type: EquipmentType
     equipment_type_activity_id: ID
     supplier_id: ID
+    supplier: Supplier
     parameters: [Parameter]
+    parameterValue: [ParameterValue]
 }
 
 type EquipmentType {
     id: ID!
     name: String!
+    parameters: [Parameter]
 }
 
 type EquipmentTypesActivity {
@@ -105,6 +176,15 @@ type Parameter {
     id: ID!
     name: String!
     unit_id: ID
+    unit: Unit
     min: Float
     max: Float
+}
+type ParameterValue {
+    parameter: Parameter
+    value: Float
+}
+type Unit {
+    id: ID!
+    name: String!
 }

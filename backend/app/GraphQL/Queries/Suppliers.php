@@ -2,10 +2,10 @@
 
 namespace App\GraphQL\Queries;
 
-use App\Models\EquipmentType;
+use App\Models\Supplier;
 use App\Services\GrpahQL\QueryService;
 
-final readonly class EquipmentTypes
+final readonly class Suppliers
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
@@ -13,12 +13,12 @@ final readonly class EquipmentTypes
         if (!isset($args['queryOptions']))
             switch ($args['queryType']) {
                 case "COMPACT":
-                    return ['items' => EquipmentType::all()];
+                    return ['items' => Supplier::all()];
                 default:
                     return ['items' => "Ошибка, не верный тип запрооса"];
             }
 
-        $stageQuery = EquipmentType::query();
+        $stageQuery = Supplier::with('equipment_types.parameters');
         error_log("stages " . $stageQuery->get());
 
         $queryService = new QueryService();
@@ -28,5 +28,6 @@ final readonly class EquipmentTypes
         $count = $stageQuery->count();
         $data = $queryService->paginate($stageQuery, $args['queryOptions']['limit'], $args['queryOptions']['page']);
         return ['items' => $data, 'count' => $count];
+
     }
 }

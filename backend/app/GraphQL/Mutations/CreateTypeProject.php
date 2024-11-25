@@ -9,6 +9,9 @@ final readonly class CreateTypeProject
     /** @param array{} $args */
     public function __invoke(null $_, array $args)
     {
+        if (!isset($args['data']))
+            throw new \InvalidArgumentException('data is required.');
+
         $data = $args["data"];
         return TypeProjectDocument::create($data);
     }

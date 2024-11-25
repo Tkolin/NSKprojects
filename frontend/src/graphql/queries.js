@@ -643,3 +643,79 @@ export const PROJECT_DELAYS_QUERY = gql`
     }
   }
 `;
+export const EQUIPMENT_TYPES_QUERY = gql`
+  query EquipmentTypes($queryOptions: QueryOptions) {
+    equipmentTypes(queryOptions: $queryOptions) {
+      items {
+        id
+        name
+        parameters {
+          id
+          name
+
+          min
+          max
+        }
+      }
+      count
+    }
+  }
+`;
+export const SUPPLIERS_QUERY = gql`
+  query suppliersQuery($queryOptions: QueryOptions) {
+    suppliers(queryOptions: $queryOptions) {
+      items {
+        id
+        name
+        contact {
+          id
+        }
+        email
+        phone_number
+        equipment_types {
+          id
+          name
+          parameters {
+            id
+            name
+
+            min
+            max
+          }
+        }
+      }
+      count
+    }
+  }
+`;
+export const EQUIPMENT_MODELS_QUERY = gql`
+  query EquipmentModels($queryOptions: QueryOptions) {
+    equipmentModels(queryOptions: $queryOptions) {
+      items {
+        id
+        model_name
+        supplier {
+          id
+          name
+          contact {
+            id
+          }
+          email
+          phone_number
+          equipment_types {
+            id
+            name
+            parameters {
+              id
+              name
+
+              min
+              max
+            }
+          }
+        }
+      }
+      count
+    }
+  }
+`;

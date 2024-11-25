@@ -1,9 +1,1 @@
-extend type Query {
-    testMutata: String
-}
-type Test {
-    id:ID
-    name: String
-
-
-}
+ 

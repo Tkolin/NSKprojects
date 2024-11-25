@@ -15,6 +15,7 @@ import {
   ReconciliationOutlined,
   SolutionOutlined,
   TeamOutlined,
+  TruckOutlined,
 } from "@ant-design/icons";
 import React from "react";
 
@@ -99,6 +100,81 @@ const MenuItems = [
             icon: <FormOutlined />,
             children: null,
             permission: ["create-organization"],
+          },
+        ],
+      },
+      {
+        label: "Поставщики и оборудование",
+        key: "/references/suppliers_and_equipment/",
+        icon: <TruckOutlined />,
+        permission: ["read-suppliers", "create-suppliers"],
+        children: [
+          {
+            label: "Поставщики",
+            key: "/references/suppliers/",
+            icon: <EyeOutlined />,
+            children: [
+              {
+                label: "Просмотр поставщиков",
+                key: "/references/suppliers/table",
+                icon: <EyeOutlined />,
+                children: null,
+                permission: ["read-suppliers"],
+              },
+              {
+                label: "Создать нового поставщика",
+                key: "/references/suppliers/form",
+                icon: <FormOutlined />,
+                children: null,
+                permission: ["create-suppliers"],
+              },
+            ],
+            permission: ["read-suppliers", "create-suppliers"],
+          },
+          {
+            label: "Классификация оборудования",
+            key: "/references/equipment_type/",
+            icon: <EyeOutlined />,
+            permission: ["read-equipment-type", "create-equipment-type"],
+            children: [
+              {
+                label: "Просмотр классификации оборудования",
+                key: "/references/equipment_type/table",
+                icon: <EyeOutlined />,
+                children: null,
+                permission: ["read-equipment-type"],
+              },
+              {
+                label: "Регистрация классификации оборудования",
+                key: "/references/equipment_type/form",
+                icon: <FormOutlined />,
+                children: null,
+                permission: ["create-equipment-type"],
+              },
+            ],
+          },
+
+          {
+            label: "Зарегистрированное оборудования",
+            key: "/references/equipment_model/",
+            icon: <EyeOutlined />,
+            permission: ["create-equipment-models", "read-equipment-models"],
+            children: [
+              {
+                label: "Просмотр зарегистрированного оборудования",
+                key: "/references/equipment_model/table",
+                icon: <EyeOutlined />,
+                children: null,
+                permission: ["read-equipment-models"],
+              },
+              {
+                label: "Регистрация оборудования",
+                key: "/references/equipment_model/form",
+                icon: <FormOutlined />,
+                children: null,
+                permission: ["create-equipment-models"],
+              },
+            ],
           },
         ],
       },

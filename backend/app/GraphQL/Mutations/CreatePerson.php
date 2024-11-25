@@ -10,6 +10,9 @@ final readonly class CreatePerson
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
+        if (!isset($args['data']))
+            throw new \InvalidArgumentException('data is required.');
+
         $data = $args['data'];
         $passport = Passport::create([
             'first_name' => $data['first_name'] ?? null,
@@ -18,7 +21,7 @@ final readonly class CreatePerson
             'serial' => $data['serial'] ?? null,
             'number' => $data['number'] ?? null,
             'address_registration' => $data['address_registration'] ?? null,
-            'address_residential' =>  $data['address_residential'] ?? null,
+            'address_residential' => $data['address_residential'] ?? null,
             'passport_place_issue_id' => $data['passport_place_issue_id'] ?? null,
             'birth_date' => isset($data['birth_date']) ? substr((string) $data['birth_date'], 0, 10) : null, // 'birth_date' вместо 'birth_day'
             'date' => isset($data['date']) ? substr((string) $data['date'], 0, 10) : null, // 'date' вместо 'birth_day'
