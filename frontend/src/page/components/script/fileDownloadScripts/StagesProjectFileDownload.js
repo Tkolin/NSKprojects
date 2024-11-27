@@ -1,54 +1,58 @@
-import { useMutation } from '@apollo/client';
-import { notification, Typography} from 'antd';
-import {STAGE_PROJECT_DOWNLOAD} from "../../../../graphql/mutationsProject";
-const {Text, Link} = Typography;
+import { useMutation } from "@apollo/client";
+import { notification, Typography } from "antd";
+import { STAGE_PROJECT_DOWNLOAD } from "../../../../graphql/mutations/project";
+const { Text, Link } = Typography;
 
-const StagesProjectFileDownload = ({projectId, style,text}) => {
-    const LaravelURL = process.env.REACT_APP_API_URL;
+const StagesProjectFileDownload = ({ projectId, style, text }) => {
+  const LaravelURL = process.env.REACT_APP_API_URL;
 
-
-    const openNotification = (placement, type, message) => {
-        notification[type]({
-            message: message,
-            placement,
-        });
-    };
-
-    const [downloadProjectStage] = useMutation(STAGE_PROJECT_DOWNLOAD, {
-        onCompleted: (data) => {
-            handleDownloadClick(data.projectStagesFileDownload.url);
-            openNotification('topRight', 'success', 'Загрузка начата!');
-        },
-        onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при загрузке: ' + error.message);
-        },
+  const openNotification = (placement, type, message) => {
+    notification[type]({
+      message: message,
+      placement,
     });
+  };
 
-    const handleDownload = () => {
-        console.log(projectId);
-        downloadProjectStage({ variables: { id: projectId } });
-    };
+  const [downloadProjectStage] = useMutation(STAGE_PROJECT_DOWNLOAD, {
+    onCompleted: (data) => {
+      handleDownloadClick(data.projectStagesFileDownload.url);
+      openNotification("topRight", "success", "Загрузка начата!");
+    },
+    onError: (error) => {
+      openNotification(
+        "topRight",
+        "error",
+        "Ошибка при загрузке: " + error.message
+      );
+    },
+  });
 
-    const handleDownloadClick = async (downloadedFileUrl) => {
-        try {
-            const link = document.createElement('a');
-            console.log(link);
+  const handleDownload = () => {
+    console.log(projectId);
+    downloadProjectStage({ variables: { id: projectId } });
+  };
 
-            link.href = `${LaravelURL}download-projectStages/${downloadedFileUrl}`;
-            link.download = 'График работ.docx';
+  const handleDownloadClick = async (downloadedFileUrl) => {
+    try {
+      const link = document.createElement("a");
+      console.log(link);
 
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (error) {
-            console.error('Ошибка при скачивании файла:', error);
-        }
-    };
+      link.href = `${LaravelURL}download-projectStages/${downloadedFileUrl}`;
+      link.download = "График работ.docx";
 
-    return (
-        <Link style={style} onClick={handleDownload}>{text ?? 'скачать'}</Link>
-    );
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Ошибка при скачивании файла:", error);
+    }
+  };
+
+  return (
+    <Link style={style} onClick={handleDownload}>
+      {text ?? "скачать"}
+    </Link>
+  );
 };
 
 export default StagesProjectFileDownload;
-

@@ -6,8 +6,8 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   CREATE_REFERENCE_MUTATION,
   UPDATE_REFERENCE_MUTATION,
-} from "../../graphql/mutationsReference";
-import { REFERENCES_QUERY_BY_ID } from "../../graphql/queriesByID";
+} from "../../graphql/mutations/reference";
+import { REFERENCES_QUERY_BY_ID } from "../../graphql/queries/queriesByID";
 import { NotificationContext } from "../../NotificationProvider";
 import LoadingSpinnerStyles from "../components/style/LoadingSpinnerStyles";
 import { ModalButton } from "./formComponents/ModalButtonComponent";
@@ -132,7 +132,7 @@ const ReferenceForm = ({
               placeholder="Введите описание/коментарий к справочнику"
             />
           </Form.Item>
-          <Divider style={{margin: 0, marginBottom: 5}}>-</Divider>
+          <Divider style={{ margin: 0, marginBottom: 5 }}>-</Divider>
 
           <Form.List name="content">
             {(fields, { add, remove }) => (
@@ -143,11 +143,10 @@ const ReferenceForm = ({
                     style={{ width: "100%" }}
                     direction="vertical"
                   >
-                    <Space direction="horizontal"
- >
+                    <Space direction="horizontal">
                       <Form.Item
                         {...restField}
-                        name={[index,"name"]}
+                        name={[index, "name"]}
                         rules={[
                           {
                             required: true,
@@ -159,7 +158,7 @@ const ReferenceForm = ({
                       </Form.Item>
                       <Form.Item
                         {...restField}
-                        name={[index,"value"]}
+                        name={[index, "value"]}
                         rules={[
                           {
                             required: true,
@@ -169,17 +168,22 @@ const ReferenceForm = ({
                       >
                         <InputNumber placeholder="Введите значение" />
                       </Form.Item>
-                      <div style={{display: "flex", margin: "auto"}} >
-
-                      <MinusCircleOutlined onClick={() => remove(index)} />
+                      <div style={{ display: "flex", margin: "auto" }}>
+                        <MinusCircleOutlined onClick={() => remove(index)} />
                       </div>
-
                     </Space>
-                
-                      <Form.Item {...restField} name={[index, "description"]} style={{width: "100%"}}>
-                        <TextArea style={{width: "100%"}} placeholder="Добавьте описание/коментарий (при необходимости)" />
-                      </Form.Item>
-                    <Divider style={{margin: 0, marginBottom: 5}}>-</Divider>
+
+                    <Form.Item
+                      {...restField}
+                      name={[index, "description"]}
+                      style={{ width: "100%" }}
+                    >
+                      <TextArea
+                        style={{ width: "100%" }}
+                        placeholder="Добавьте описание/коментарий (при необходимости)"
+                      />
+                    </Form.Item>
+                    <Divider style={{ margin: 0, marginBottom: 5 }}>-</Divider>
                   </Space>
                 ))}
 

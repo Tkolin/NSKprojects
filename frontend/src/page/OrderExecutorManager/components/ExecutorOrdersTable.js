@@ -8,7 +8,7 @@ import {
   Typography,
 } from "antd";
 import { useEffect } from "react";
-import { EXECUTOR_ORDER_REMOVE } from "../../../graphql/mutationsFileGenerated";
+import { EXECUTOR_ORDER_REMOVE } from "../../../graphql/mutations/fileGenerated";
 import ExecutorOrderFileGenerated from "../../components/script/fileGenerated/ExecutorOrderFileGenerated";
 import LinkToDownload from "../../components/script/LinkToDownload";
 import { UploadFileExecutorOrder } from "../../components/UploadFile";

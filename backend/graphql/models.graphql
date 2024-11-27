@@ -94,7 +94,6 @@ type Reference {
     id: ID
     name: String
     description: String
-    content: [ReferenceContent]
 }
 #   tz chapter
 type TSChapter {
@@ -277,6 +276,7 @@ type ExecutorOrder {
     payment_file_completed: [String]
     project_tasks: [ProjectTask]
     executor_order_payments: [ExecutorOrderPayment]
+    project: Project
     executor: Person
 }
 type ExecutorOrderPayment {
@@ -285,6 +285,8 @@ type ExecutorOrderPayment {
     status: String
     type_payment: String
     executor_order_id: ID!
+    paycheck_file_id: Int
+    project: Project
 }
 #   organization 1
 type Organization {

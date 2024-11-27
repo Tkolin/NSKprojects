@@ -1,23 +1,14 @@
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
-import {
-  Alert,
-  Card,
-  Divider,
-  Form,
-  Input,
-  Modal,
-  Skeleton,
-  Space,
-} from "antd";
+import { Alert, Card, Form, Input, Modal, Skeleton, Space } from "antd";
 import dayjs from "dayjs";
 import React, { useContext, useEffect, useState } from "react";
 import { NotificationContext } from "../../NotificationProvider";
 import {
   CREATE_PARAMETER_MUTATION,
   UPDATE_PARAMETER_MUTATION,
-} from "../../graphql/mutationsEquipments";
-import { PARAMETERS_QUERY_COMPACT } from "../../graphql/queriesCompact";
-import { PARAMETER_QUERY } from "../../graphql/queriesSingle";
+} from "../../graphql/mutations/equipments";
+import { PARAMETERS_QUERY_COMPACT } from "../../graphql/queries/queriesCompact";
+import { PARAMETER_QUERY } from "../../graphql/queries/queriesSingle";
 import { AutoCompleteFormItem } from "../components/CustomForm";
 import { CustomAutoCompleteAndCreateWitchEdit } from "../components/style/SearchAutoCompleteStyles";
 import UnitForm from "./UnitForm";
@@ -170,7 +161,6 @@ const ParameterForm = ({
           >
             {!loading ? (
               <>
-                <Divider orientation="left">ФИО:</Divider>
                 <Form.Item
                   name="name"
                   label="Наименование"

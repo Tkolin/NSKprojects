@@ -1,10 +1,11 @@
 import { DownloadOutlined, EditOutlined } from "@ant-design/icons";
-import { useLazyQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import { Space, Table, Tooltip, Typography } from "antd";
 import Link from "antd/es/typography/Link";
 import dayjs from "dayjs";
-import React, { useEffect } from "react";
-import { PROJECT_QUERY } from "../../../../../../../graphql/queriesByID";
+import React from "react";
+import { PROJECT_STAGES_QUERY } from "../../../../../../../graphql/queries/all";
+import { PROJECT_QUERY } from "../../../../../../../graphql/queries/queriesByID";
 import ActRenderingProjectDownload from "../../../../../../components/script/fileDownloadScripts/ActRenderingProjectDownload";
 import PaymentInvoiceProjectDownload from "../../../../../../components/script/fileDownloadScripts/PaymentInvoiceProjectDownload";
 import LinkToDownload from "../../../../../../components/script/LinkToDownload";
@@ -22,12 +23,12 @@ const TableStagesComponent = ({
   options,
   onUpdated,
 }) => {
-  useEffect(() => {
-    updateProject();
-  }, [projectId]);
-  useEffect(() => {
-    updateProject();
-  }, []);
+  const { data, loading, refetch } = useQuery(PROJECT_STAGES_QUERY, {
+    variables: {
+      projectId: projectId,
+    },
+  });
+
   const [
     updateProject,
     { data: actualProject, loading: loadingActualProject },
@@ -105,9 +106,9 @@ const TableStagesComponent = ({
                     style={{ alignContent: "start" }}
                   >
                     {record?.type === "prepayment" ? (
-                      actualProject?.project?.prepayment_date ? (
+                      data.projectStages?.prepayment_date ? (
                         <LinkToDownload
-                          fileId={actualProject?.project?.prepayment_file_id}
+                          fileId={data.projectStages?.prepayment_file_id}
                         >
                           <StyledButtonGreen icon={<DownloadOutlined />}>
                             Скачать
@@ -117,7 +118,7 @@ const TableStagesComponent = ({
                         <Space.Compact direction="vertical">
                           <PaymentInvoiceProjectDownload
                             isPrepayment={true}
-                            projectId={actualProject?.project?.id}
+                            projectId={projectId}
                             type="acts"
                           />
                           <UploadFilePaymentSuccess
@@ -125,7 +126,7 @@ const TableStagesComponent = ({
                               record?.type === "prepayment" ? 0 : record.number
                             }
                             onUpdated={() => updateProject()}
-                            projectId={actualProject?.project?.id}
+                            projectId={projectId}
                           />
                         </Space.Compact>
                       )
@@ -144,7 +145,7 @@ const TableStagesComponent = ({
                       <Space.Compact direction="vertical">
                         <PaymentInvoiceProjectDownload
                           stageNumber={record.number}
-                          projectId={actualProject?.project?.id}
+                          projectId={projectId}
                           type="acts"
                         />
                         <UploadFilePaymentSuccess
@@ -152,7 +153,7 @@ const TableStagesComponent = ({
                             record?.type === "prepayment" ? 0 : record.number
                           }
                           onUpdated={() => updateProject()}
-                          projectId={actualProject?.project?.id}
+                          projectId={projectId}
                         />
                       </Space.Compact>
                     )}
@@ -191,13 +192,13 @@ const TableStagesComponent = ({
                       <Space.Compact direction="vertical">
                         <ActRenderingProjectDownload
                           stageNumber={record.number}
-                          projectId={actualProject?.project?.id}
+                          projectId={projectId}
                           type="acts"
                         />
                         <UploadFileWorkActSinging
                           stageNumber={record.number}
                           onUpdated={() => updateProject()}
-                          projectId={actualProject?.project?.id}
+                          projectId={projectId}
                         />
                       </Space.Compact>
                     )}
@@ -213,10 +214,10 @@ const TableStagesComponent = ({
     <Table
       style={{ display: "flex", flexDirection: "column", marginInline: "none" }}
       size={"small"}
-      loading={loadingActualProject}
+      loading={loading}
       columns={columnsStages}
       dataSource={
-        actualProject?.project?.project_stages
+        data?.projectStages
           ? [
               {
                 id: -1,
@@ -224,7 +225,7 @@ const TableStagesComponent = ({
                 type: "prepayment",
                 stage: { name: "Аванс" },
               },
-              ...actualProject?.project?.project_stages,
+              ...data?.projectStages,
             ]
           : [{}]
       }

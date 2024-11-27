@@ -1,6 +1,14 @@
 import { EditOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "@apollo/client";
-import { Button, notification, Popconfirm, Space, Table, Tooltip, Typography } from "antd";
+import {
+  Button,
+  notification,
+  Popconfirm,
+  Space,
+  Table,
+  Tooltip,
+  Typography,
+} from "antd";
 import Link from "antd/es/typography/Link";
 import dayjs from "dayjs";
 import React, { useState } from "react";
@@ -9,13 +17,13 @@ import {
   RECEIVED_IRD_MUTATION,
   REJECT_IRD_MUTATION,
   VIEWED_IRD_MUTATION,
-} from "../../../../../../../graphql/mutationsProjectIrd";
-import { PROJECT_IRDS_QUERY } from "../../../../../../../graphql/queries";
+} from "../../../../../../../graphql/mutations/projectIrd";
+import { PROJECT_IRDS_QUERY } from "../../../../../../../graphql/queries/all";
 import { CustomDatePicker } from "../../../../../../components/FormattingDateElementComponent";
 
 const { Text } = Typography;
 
-const TableIrdsComponent = ({ setEditModalStatus, project }) => {
+const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
   const openNotification = (placement, type, message) => {
     notification[type]({
       message: message,
@@ -28,26 +36,22 @@ const TableIrdsComponent = ({ setEditModalStatus, project }) => {
     refetch: refetchProjectIrds,
   } = useQuery(PROJECT_IRDS_QUERY, {
     variables: {
-      projectId: project.id,
+      projectId: projectId,
     },
   });
   const [viewedProjectIrd, { loading: loadingViewedProjectIrd }] = useMutation(
     VIEWED_IRD_MUTATION,
     {
       onCompleted: (data) => {
-        openNotification(         
+        openNotification(
           "topRight",
           "success",
           "Ирд отмечено как просмотренное"
         );
         refetchProjectIrds();
-       },
+      },
       onError: (error) => {
-        openNotification(         
-          "topRight",
-          "error",
-          "ошибка VIEWED_IRD_MUTATION"
-        );
+        openNotification("topRight", "error", "ошибка VIEWED_IRD_MUTATION");
       },
     }
   );
@@ -55,67 +59,43 @@ const TableIrdsComponent = ({ setEditModalStatus, project }) => {
     ACCEPT_IRD_MUTATION,
     {
       onCompleted: (data) => {
-        openNotification(         
-          "topRight",
-          "success",
-          "ИРД подтвержено специалистом"
-        );
+        openNotification("topRight", "success", "ИРД подтвержено специалистом");
         refetchProjectIrds();
       },
       onError: (error) => {
-        openNotification(         
-          "topRight",
-          "error",
-          "ошибка ACCEPT_IRD_MUTATION"
-        );
+        openNotification("topRight", "error", "ошибка ACCEPT_IRD_MUTATION");
       },
     }
   );
   const [receivedProjectIrd, { loading: loadingReceivedProjectIrd }] =
     useMutation(RECEIVED_IRD_MUTATION, {
       onCompleted: (data) => {
-        openNotification(         
-          "topRight",
-          "success",
-          "ИРД подтвержено специалистом"
-        );
+        openNotification("topRight", "success", "ИРД подтвержено специалистом");
         refetchProjectIrds();
       },
       onError: (error) => {
-         
-          openNotification(         
-            "topRight",
-            "error",
-            "ошибка RECEIVED_IRD_MUTATION"
-          );
+        openNotification("topRight", "error", "ошибка RECEIVED_IRD_MUTATION");
       },
     });
   const [rejectProjectIrd, { loading: loadingRejectProjectIrd }] = useMutation(
     REJECT_IRD_MUTATION,
     {
       onCompleted: (data) => {
-        openNotification(         
-          "topRight",
-          "success",
-          "ИРД подтвержено специалистом"
-        );
+        openNotification("topRight", "success", "ИРД подтвержено специалистом");
         refetchProjectIrds();
       },
       onError: (error) => {
-          openNotification(         
-            "topRight",
-            "error",
-            "ошибка REJECT_IRD_MUTATION"
-          );
-    },
-});
-   const [receivedDate, setReceivedDate] = useState();
+        openNotification("topRight", "error", "ошибка REJECT_IRD_MUTATION");
+      },
+    }
+  );
+  const [receivedDate, setReceivedDate] = useState();
   const [acceptDate, setAcceptDate] = useState();
- 
+
   const handleViewed = (projectIrdId) => {
     if (!projectIrdId) throw new Error("Ключ ирд не переданн!");
     viewedProjectIrd({
-      variables: { irdIds: [projectIrdId]   },
+      variables: { irdIds: [projectIrdId] },
     });
   };
   const handleAccept = (projectIrdId) => {
@@ -125,7 +105,8 @@ const TableIrdsComponent = ({ setEditModalStatus, project }) => {
     });
   };
   const handleReceived = (projectIrdId) => {
-    if (!projectIrdId || !receivedDate) throw new Error("Ключ ирд не переданн!");
+    if (!projectIrdId || !receivedDate)
+      throw new Error("Ключ ирд не переданн!");
     receivedProjectIrd({
       variables: { irdId: projectIrdId, dateReceived: receivedDate },
     });
@@ -133,7 +114,7 @@ const TableIrdsComponent = ({ setEditModalStatus, project }) => {
   const handleReject = (projectIrdId) => {
     if (!projectIrdId) throw new Error("Ключ ирд не переданн!");
     rejectProjectIrd({
-      variables: { irdId: projectIrdId   },
+      variables: { irdId: projectIrdId },
     });
   };
 
@@ -165,8 +146,12 @@ const TableIrdsComponent = ({ setEditModalStatus, project }) => {
               style={{ alignContent: "center", textAlign: "center" }}
             >
               {record.is_viewed ? "Да" : "Нет"}
-              <Button type="link" onClick={() => handleViewed(record.id)} loading={loadingViewedProjectIrd}> 
-                отметить  
+              <Button
+                type="link"
+                onClick={() => handleViewed(record?.id)}
+                loading={loadingViewedProjectIrd}
+              >
+                отметить
               </Button>
             </Space.Compact>
           ),
@@ -183,7 +168,11 @@ const TableIrdsComponent = ({ setEditModalStatus, project }) => {
               style={{ alignContent: "start" }}
             >
               {record.is_broken ? "Да" : "Нет"}
-              <Button type="link" onClick={() => handleReject(record.id)} loading={loadingRejectProjectIrd}>
+              <Button
+                type="link"
+                onClick={() => handleReject(record.id)}
+                loading={loadingRejectProjectIrd}
+              >
                 +
               </Button>
             </Space.Compact>
@@ -201,7 +190,10 @@ const TableIrdsComponent = ({ setEditModalStatus, project }) => {
               direction={"vertical"}
               style={{ alignContent: "start" }}
             >
-              <Text strong>{record?.ird?.name}  <strong>(Этап №{record?.stage_number})</strong></Text> 
+              <Text strong>
+                {record?.ird?.name}{" "}
+                <strong>(Этап №{record?.stage_number})</strong>
+              </Text>
             </Space.Compact>
           ),
         },
@@ -213,7 +205,7 @@ const TableIrdsComponent = ({ setEditModalStatus, project }) => {
           key: "status_confirm",
           align: "left",
           render: (text, record) => (
-            <Text strong  >
+            <Text strong>
               {record.acceptance_date
                 ? "Принято: " +
                   dayjs(record?.acceptance_date).format("DD.MM.YYYY") +
@@ -223,7 +215,7 @@ const TableIrdsComponent = ({ setEditModalStatus, project }) => {
                   dayjs(record?.received_date).format("DD.MM.YYYY") +
                   " )г."
                 : "Не переданно заказчиком"}
-  <br/>
+              <br />
               <Popconfirm
                 title={
                   <Space direction="vertical" style={{ width: "200px" }}>
@@ -242,7 +234,9 @@ const TableIrdsComponent = ({ setEditModalStatus, project }) => {
                 okText="Принять"
                 cancelText="Отмена"
               >
-                <Button loading={loadingReceivedProjectIrd}>Отметить как полученное</Button>
+                <Button loading={loadingReceivedProjectIrd}>
+                  Отметить как полученное
+                </Button>
               </Popconfirm>
               <Popconfirm
                 title={
@@ -262,7 +256,9 @@ const TableIrdsComponent = ({ setEditModalStatus, project }) => {
                 okText="Принять"
                 cancelText="Отмена"
               >
-                <Button loading={loadingAcceptProjectIrd}>Отметить как принятое</Button>
+                <Button loading={loadingAcceptProjectIrd}>
+                  Отметить как принятое
+                </Button>
               </Popconfirm>
             </Text>
           ),

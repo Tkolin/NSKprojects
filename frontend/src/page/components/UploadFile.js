@@ -23,7 +23,7 @@ const UPLOAD_FILE_LINK_MUTATION = gql`
 export const UploadFileExecutorOrder = ({ onUpdated, orderId, ...props }) => {
   return (
     <UploadFile
-      action={"project/upload/executor_order/" + orderId}
+      action={"project/upload/executor_order/page?executor_order_id=" + orderId}
       accept={".pdf"}
       title={"Укажите дату подписания"}
       onConfirm={() => onUpdated && onUpdated()}
@@ -35,6 +35,7 @@ export const UploadFileExecutorOrder = ({ onUpdated, orderId, ...props }) => {
     />
   );
 };
+
 export const UploadFileWorkActSinging = ({
   stageNumber,
   projectId,

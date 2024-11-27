@@ -10,13 +10,13 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import React, { useState } from "react";
+import { DOWNLOAD_FILE } from "../../../../../../../graphql/mutations/file";
 import {
   GENERATED_DELAY_CUSTOMER_MUTATION,
   STOP_DELAY_MUTATION,
-} from "../../../../../../../graphql/mutationsDelay";
-import { DOWNLOAD_FILE } from "../../../../../../../graphql/mutationsFile";
-import { PROJECT_DELAYS_QUERY } from "../../../../../../../graphql/queries";
-import { CONTACTS_BY_ORGANIZATION } from "../../../../../../../graphql/queriesSpecial";
+} from "../../../../../../../graphql/mutations/projectDelay";
+import { PROJECT_DELAYS_QUERY } from "../../../../../../../graphql/queries/all";
+import { CONTACTS_BY_ORGANIZATION } from "../../../../../../../graphql/queries/queriesSpecial";
 import { CustomDatePicker } from "../../../../../../components/FormattingDateElementComponent";
 
 const { Text } = Typography;

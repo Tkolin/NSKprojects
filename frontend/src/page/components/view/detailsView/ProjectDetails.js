@@ -1,46 +1,30 @@
-import {StyledBlockBig, StyledBlockLarge, StyledBlockRegular} from "../../style/BlockStyles";
-import React, {useState} from "react";
-import {Col, Divider, Form, Modal, Row, Select} from "antd";
-import TypeProjectForm from "../../../simplesForms/TypeProjectForm";
-import IrdsTemplateForm from "../../form/composedForm/template/templateForm/IrdsTemplateForm";
-import StagesTemplateForm from "../../form/composedForm/template/templateForm/StagesTemplateForm";
-import {TYPES_PROJECTS_QUERY} from "../../../graphql/queries";
-import {useQuery} from "@apollo/client";
-import ProjectForm from "../../form/modelsForms/Index";
-import IrdsProjectForm from "../../form/composedForm/CreateNewProject/components/IrdsProjectForm";
+import { Col, Divider, Row, Select } from "antd";
+import React from "react";
 import StagesProjectForm from "../../form/composedForm/CreateNewProject/components/Index";
+import IrdsProjectForm from "../../form/composedForm/CreateNewProject/components/IrdsProjectForm";
+import ProjectForm from "../../form/modelsForms/Index";
+import { StyledBlockLarge } from "../../style/BlockStyles";
 
+const { Option } = Select;
 
-const {Option} = Select;
+const ProjectDetails = ({ project }) => {
+  return (
+    <StyledBlockLarge>
+      <Row gutter={8}>
+        <Col span={24}>
+          <Divider>Проект</Divider>
+          <ProjectForm project={project} />
 
-const ProjectDetails = ({project}) => {
+          <Divider>Этапы</Divider>
 
+          <StagesProjectForm />
+          <Divider>Ирд</Divider>
 
-
-    return (
-        <StyledBlockLarge>
-            <Row gutter={8}>
-<Col span={24}>
-<Divider>Проект</Divider>
-    <ProjectForm project={project}/>
-
-    <Divider>Этапы</Divider>
-
-
-
-    <StagesProjectForm/>
-    <Divider>Ирд</Divider>
-
-    <IrdsProjectForm/>
-
-</Col>
-
-
-
-
-            </Row>
-        </StyledBlockLarge>
-    );
+          <IrdsProjectForm />
+        </Col>
+      </Row>
+    </StyledBlockLarge>
+  );
 };
 
 export default ProjectDetails;

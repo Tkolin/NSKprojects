@@ -6,33 +6,37 @@ type Mutation {
     ): EquipmentType
 }
 extend type Query {
-    suppliers(
-        id: ID
-        queryOptions: QueryOptions
-        queryType: String
-    ): SupplierResult
+    suppliers(queryOptions: QueryOptions, queryType: String): SupplierResult
     parameter(id: ID): Parameter
-    parameters(
-        id: ID
+    parameters(queryOptions: QueryOptions, queryType: String): [ParameterResult]
+
+    equipmentTypeActivitys(
         queryOptions: QueryOptions
         queryType: String
-    ): [ParameterResult]
+    ): EquipmentTypeActivitysResult
+
     equipmentGroups(
-        id: ID
         queryOptions: QueryOptions
         queryType: String
     ): EquipmentGroupResult
     equipmentModels(
-        id: ID
         queryOptions: QueryOptions
         queryType: String
     ): EquipmentModelResult
     equipmentTypes(
-        id: ID
         queryOptions: QueryOptions
         queryType: String
     ): EquipmentTypeResult
-    equipmentTypesActivitys: [EquipmentTypesActivity]
+    equipmentType(id: ID): EquipmentType
+}
+type EquipmentTypeActivity {
+    id: ID
+    name: String
+}
+
+type EquipmentTypeActivitysResult {
+    items: [EquipmentTypeActivity]
+    count: Int
 }
 
 type ParameterResult {
@@ -67,7 +71,7 @@ type Supplier {
 type Mutation {
     createParameter(data: ParameterInput!): Parameter @create
     updateParameter(data: ParameterInput!, id: ID): Parameter @create
-    updateParameter(id: ID!, input: ParameterInput!): Parameter @update
+    updateParameter(id: ID!, data: ParameterInput!): Parameter @update
     deleteParameter(id: ID!): Parameter @delete
 }
 
@@ -86,27 +90,29 @@ type Mutation {
         id: ID!
         data: EquipmentTypesActivityInput!
     ): EquipmentTypesActivity @update
-    deleteEquipmentTypesActivity(id: ID!): EquipmentTypesActivity @delete
+    deleteEquipmentTypesActivity(id: ID!): EquipmentTypesActivity
 }
 
 input EquipmentTypesActivityInput {
     name: String
 }
 
-type Mutation {
-    createEquipmentType(input: EquipmentTypeInput!): EquipmentType @create
+extend type Mutation {
+    createEquipmentType(data: EquipmentTypeInput!): EquipmentType
     updateEquipmentType(id: ID!, data: EquipmentTypeInput!): EquipmentType
         @update
-    deleteEquipmentType(id: ID!): EquipmentType @delete
+    deleteEquipmentType(id: ID!): EquipmentType
 }
 
 input EquipmentTypeInput {
     name: String!
+    type_activity_id: ID
+    group_id: ID
 }
 
 type Mutation {
-    createEquipmentModel(input: EquipmentModelInput!): EquipmentModel @create
-    updateEquipmentModel(id: ID!, input: EquipmentModelInput!): EquipmentModel
+    createEquipmentModel(data: EquipmentModelInput!): EquipmentModel @create
+    updateEquipmentModel(id: ID!, data: EquipmentModelInput!): EquipmentModel
         @update
     deleteEquipmentModel(id: ID!): EquipmentModel @delete
 }
@@ -119,7 +125,7 @@ input EquipmentModelInput {
 }
 
 type Mutation {
-    createEquipmentModel(input: EquipmentModelInput!): EquipmentModel @create
+    createEquipmentModel(data: EquipmentModelInput!): EquipmentModel @create
     updateEquipmentModel(id: ID!, data: EquipmentModelInput!): EquipmentModel
         @update
     deleteEquipmentModel(id: ID!): EquipmentModel @delete
@@ -133,7 +139,7 @@ input EquipmentModelInput {
 }
 
 type Mutation {
-    createEquipmentGroup(input: EquipmentGroupInput!): EquipmentGroup @create
+    createEquipmentGroup(data: EquipmentGroupInput!): EquipmentGroup @create
     updateEquipmentGroup(id: ID!, data: EquipmentGroupInput!): EquipmentGroup
         @update
     deleteEquipmentGroup(id: ID!): EquipmentGroup @delete
@@ -146,7 +152,6 @@ input EquipmentGroupInput {
 type EquipmentGroup {
     id: ID!
     name: String!
-    description: String
 }
 
 type EquipmentModel {
@@ -164,12 +169,14 @@ type EquipmentModel {
 type EquipmentType {
     id: ID!
     name: String!
+    type_activity: EquipmentTypesActivity
+    group: EquipmentGroup
     parameters: [Parameter]
 }
 
 type EquipmentTypesActivity {
     id: ID!
-    activity_name: String!
+    name: String!
 }
 
 type Parameter {
@@ -177,8 +184,14 @@ type Parameter {
     name: String!
     unit_id: ID
     unit: Unit
+    reference: Reference
+    group: ParameterGroup
     min: Float
     max: Float
+}
+type ParameterGroup {
+    id: ID!
+    name: String!
 }
 type ParameterValue {
     parameter: Parameter
@@ -187,4 +200,5 @@ type ParameterValue {
 type Unit {
     id: ID!
     name: String!
+    name_latex: String
 }

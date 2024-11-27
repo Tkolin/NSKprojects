@@ -1,7 +1,7 @@
 import { useLazyQuery } from "@apollo/client";
 import { Alert, Col, Row, Switch } from "antd";
 import { useEffect } from "react";
-import { PROJECT_TS_QUERY } from "../../graphql/queriesByID";
+import { PROJECT_TS_QUERY } from "../../graphql/queries/queriesByID";
 
 const DataEntryForm = ({ projectId }) => {
   const [loadContact, { loading, data }] = useLazyQuery(PROJECT_TS_QUERY, {

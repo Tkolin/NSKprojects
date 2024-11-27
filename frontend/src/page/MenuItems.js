@@ -145,6 +145,13 @@ const MenuItems = [
                 permission: ["read-equipment-type"],
               },
               {
+                label: "Справочник параметров",
+                key: "/references/equipment_type/table1",
+                icon: <EyeOutlined />,
+                children: null,
+                permission: ["read-equipment-type"],
+              },
+              {
                 label: "Регистрация классификации оборудования",
                 key: "/references/equipment_type/form",
                 icon: <FormOutlined />,

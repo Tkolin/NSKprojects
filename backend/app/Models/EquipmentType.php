@@ -12,11 +12,16 @@ class EquipmentType extends Model
     protected $fillable = [
         'id',
         'name',
+        'type_activity_id',
         'group_id'
     ];
     public function group(): BelongsTo
     {
         return $this->belongsTo(EquipmentGroup::class, 'group_id', 'id');
+    }
+    public function type_activity(): BelongsTo
+    {
+        return $this->belongsTo(EquipmentTypeActivity::class, 'type_activity_id', 'id');
     }
     public function parameters(): BelongsToMany
     {

@@ -15,12 +15,12 @@ import { NotificationContext } from "../../NotificationProvider";
 import {
   ADD_CONTACT_MUTATION,
   UPDATE_CONTACT_MUTATION,
-} from "../../graphql/mutationsContact";
-import { CONTACTS_QUERY_BY_ID } from "../../graphql/queriesByID";
+} from "../../graphql/mutations/contact";
+import { CONTACTS_QUERY_BY_ID } from "../../graphql/queries/queriesByID";
 import {
   ORGANIZATIONS_QUERY_COMPACT,
   POSITIONS_QUERY_COMPACT,
-} from "../../graphql/queriesCompact";
+} from "../../graphql/queries/queriesCompact";
 import { AutoCompleteFormItem } from "../components/CustomForm";
 import { CustomDatePicker } from "../components/FormattingDateElementComponent";
 import {

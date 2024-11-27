@@ -3,8 +3,8 @@ import { Button, Divider, Form, Modal, notification, Space, Table } from "antd";
 import Search from "antd/es/input/Search";
 import Title from "antd/es/typography/Title";
 import React, { useState } from "react";
-import { DELETE_REFERENCE_MUTATION } from "../../graphql/mutationsReference";
-import { REFERENCES_QUERY } from "../../graphql/queries";
+import { DELETE_REFERENCE_MUTATION } from "../../graphql/mutations/reference";
+import { REFERENCES_QUERY } from "../../graphql/queries/all";
 import { StyledButtonGreen } from "../components/style/ButtonStyles";
 import { DeleteAndEditStyledLinkManagingDataTable } from "../components/style/TableStyles";
 
@@ -12,7 +12,8 @@ const ReferenceTable = () => {
   // Состояния
   const [formSearch] = Form.useForm();
   const [referenceModalStatus, setReferenceModalStatus] = useState(null);
-  const [selectedReferenceContent, setSelectedReferenceContent] = useState(null); // Для хранения данных для модального окна
+  const [selectedReferenceContent, setSelectedReferenceContent] =
+    useState(null); // Для хранения данных для модального окна
 
   // Данные
   const [page, setPage] = useState(1);
@@ -75,8 +76,8 @@ const ReferenceTable = () => {
   // Обработка загрузки и ошибок
   if (error) return `Ошибка! ${error.message}`;
 
-   const showContentModal = (content) => {
-    setSelectedReferenceContent(content); 
+  const showContentModal = (content) => {
+    setSelectedReferenceContent(content);
   };
 
   // Закрытие модального окна
@@ -147,12 +148,7 @@ const ReferenceTable = () => {
         </Divider>
         <Form.Item label="Поиск:" name="search">
           <Space>
-            <Search
-              placeholder="Найти..."
-              allowClear
-              
-              onSearch={onSearch}
-            />
+            <Search placeholder="Найти..." allowClear onSearch={onSearch} />
             <StyledButtonGreen
               loading={loading}
               style={{ marginBottom: 0 }}

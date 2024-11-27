@@ -1,11 +1,10 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
-import {useMutation, useQuery} from '@apollo/client';
-import {Button, notification, Table} from 'antd';
-import {CONTACTS_QUERY, PROJECTS_QUERY} from '../../graphql/queries';
-import {DELETE_CONTACT_MUTATION} from '../../graphql/mutationsContact';
-import {EXECUTOR_ORDERS_QUERY, PROJECTS_EXECUTOR_ORDERS_PAYMENTS_QUERY} from "../../graphql/queriesSpecial";
-
+import { useMutation, useQuery } from '@apollo/client';
+import { notification, Table } from 'antd';
+import { DELETE_CONTACT_MUTATION } from '../../graphql/mutations/contact';
+import { EXECUTOR_ORDERS_QUERY } from "../../graphql/queries/queriesSpecial";
+/graphql/queries/all
 const ProjectPaymentExecutorOrderTable = () => {
     // Данные
     const [page, setPage] = useState(1);

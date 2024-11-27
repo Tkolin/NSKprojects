@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { Space, Table, Typography } from "antd";
 import React from "react";
-import { CHECK_STATUS_PROJECT_QUERY } from "../../../../../../../graphql/queries";
+import { CHECK_STATUS_PROJECT_QUERY } from "../../../../../../../graphql/queries/all";
 
 const { Text } = Typography;
 

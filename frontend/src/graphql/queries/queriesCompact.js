@@ -1,5 +1,28 @@
 import { gql } from "@apollo/client";
 
+export const EQUIPMENT_TYPES_ACTIVITY_QUERY_COMPACT = gql`
+  query EquipmentTypeActivitys {
+    equipmentTypeActivitys(queryType: "COMPACT") {
+      items {
+        id
+        name
+      }
+      count
+    }
+  }
+`;
+export const EQUIPMENT_GROUPS_QUERY_COMPACT = gql`
+  query EquipmentGroups {
+    equipmentGroups(queryType: "COMPACT") {
+      items {
+        id
+        name
+      }
+      count
+    }
+  }
+`;
+
 export const PARAMETERS_QUERY_COMPACT = gql`
   query ParametersQuery {
     parameters(queryType: "COMPACT") {

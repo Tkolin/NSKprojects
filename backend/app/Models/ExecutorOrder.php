@@ -26,7 +26,7 @@ class ExecutorOrder extends Model
 
     public function isProjectCompleted(): bool
     {
-// Получаем первую задачу
+        // Получаем первую задачу
         $task = $this->tasks()->first();
 
         // Проверяем, существует ли задача и ее проект
@@ -52,6 +52,12 @@ class ExecutorOrder extends Model
     public function signed_file(): BelongsTo
     {
         return $this->belongsTo(File::class, 'signed_file_id', 'id');
+    }
+    public function project(): BelongsTo
+    {
+        $task = $this->project_tasks()->first();
+
+        return $task ? $task->project : null;
     }
 
 

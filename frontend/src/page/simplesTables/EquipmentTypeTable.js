@@ -1,17 +1,33 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { Form, Input, Modal, notification, Space, Table } from "antd";
+import {
+  Divider,
+  Form,
+  Input,
+  Modal,
+  notification,
+  Space,
+  Table,
+  Tabs,
+} from "antd";
 import React, { useState } from "react";
-import { DELETE_ORGANIZATION_MUTATION } from "../../graphql/mutationsOrganization";
 import { StyledButtonGreen } from "../components/style/ButtonStyles";
 
-import { EQUIPMENT_TYPES_QUERY } from "../../graphql/queries";
-import OrganizationForm from "../simplesForms/OrganizationForm";
+import { SettingOutlined } from "@ant-design/icons";
+import Link from "antd/es/typography/Link";
+import { DELETE_EQUIPMENT_TYPE_MUTATION } from "../../graphql/mutations/equipments";
+import { EQUIPMENT_TYPES_QUERY } from "../../graphql/queries/all";
+import EquipmentTypeForm from "../simplesForms/EquipmentTypeForm";
 const { Search } = Input;
 
 const EquipmentTypeTable = () => {
   // Состояния
 
-  const [organizationModalStatus, setOrganizationModalStatus] = useState(false);
+  const [equipmentTypeModalStatus, setEquipmentTypeModalStatus] =
+    useState(false);
+  const [
+    equipmentTypeParametrsModalStatus,
+    setEquipmentTypeParametrsModalStatus,
+  ] = useState(null);
   const [formSearch] = Form.useForm();
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   // Данные
@@ -43,7 +59,7 @@ const EquipmentTypeTable = () => {
   };
 
   // Мутация для удаления
-  const [deleteOrganization] = useMutation(DELETE_ORGANIZATION_MUTATION, {
+  const [deleteEquipmentType] = useMutation(DELETE_EQUIPMENT_TYPE_MUTATION, {
     onCompleted: () => {
       openNotification("topRight", "success", "Данные успешно удалены!");
       refetch();
@@ -59,8 +75,8 @@ const EquipmentTypeTable = () => {
   });
 
   // Обработчик событий
-  const handleDelete = (organizationId) => {
-    deleteOrganization({ variables: { id: organizationId } });
+  const handleDelete = (equipmentTypeId) => {
+    deleteEquipmentType({ variables: { id: equipmentTypeId } });
   };
   const onSearch = (value) => {
     setSearch(value);
@@ -87,6 +103,29 @@ const EquipmentTypeTable = () => {
       sorter: true,
       ellipsis: true,
     },
+    {
+      title: "Группа",
+      key: "group_name",
+      sorter: true,
+      ellipsis: true,
+      render: (record) => record?.group?.name,
+    },
+    {
+      title: "Сфера применения",
+      key: "type_activity_name",
+      sorter: true,
+      ellipsis: true,
+      render: (record) => record?.type_activity?.name,
+    },
+    {
+      title: "Действия",
+      dataIndex: "action",
+      key: "action",
+      sorter: true,
+      render: (record) => (
+        <Space.Compact direction="vertical">{record?.id}</Space.Compact>
+      ),
+    },
   ];
 
   const onChange = (sorter) => {
@@ -108,11 +147,11 @@ const EquipmentTypeTable = () => {
             <Search placeholder="Найти..." allowClear onSearch={onSearch} />
             <StyledButtonGreen
               loading={loading}
-              data-permission={"create-organization"}
+              data-permission={"create-equipmentType"}
               style={{ marginBottom: 0 }}
               onClick={() =>
-                setOrganizationModalStatus({
-                  organization_id: null,
+                setEquipmentTypeModalStatus({
+                  equipmentType_id: null,
                   mode: "add",
                 })
               }
@@ -123,7 +162,7 @@ const EquipmentTypeTable = () => {
         </Form.Item>
       </Form>
       <Table
-        data-permission={"read-organization"}
+        data-permission={"read-equipmentType"}
         size={"small"}
         sticky={{
           offsetHeader: "64px",
@@ -150,78 +189,93 @@ const EquipmentTypeTable = () => {
           showSizeChanger: true,
           pageSizeOptions: ["10", "50", "100", "200"],
         }}
-        // expandable={{
-        //   expandedRowKeys,
-        //   onExpand: (expanded, record) => {
-        //     const keys = expanded ? [record.key] : [];
-        //     setExpandedRowKeys(keys);
-        //   },
-        //   expandedRowRender: (record) => (
-        //     <Row>
-        //       <Col span={12}>
-        //         <Descriptions size={"small"} column={1}>
-        //           <Descriptions.Item label="Полное наименование">
-        //             {record.full_name}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="Юридический адрес">
-        //             {record.address_legal} {record.office_number_legal}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="Почтовый адрес">
-        //             {record.address_mail} {record.office_number_mail}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="Электронный адресс">
-        //             {record.email}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="Факс">
-        //             {record.fax_number}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="ИНН">
-        //             {record.INN}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="ОГРН">
-        //             {record.OGRN}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="ОКПО">
-        //             {record.OKPO}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="КПП">
-        //             {record.KPP}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="БИК">
-        //             {record?.bik?.BIK} - {record?.bik?.name}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="Расчетный счет">
-        //             {record.payment_account}
-        //           </Descriptions.Item>
-        //         </Descriptions>
-        //       </Col>
-        //       <Col span={12}>
-        //         <OrganizationContactsCompactTable data={record?.employees} />
-        //       </Col>
-        //     </Row>
-        //   ),
-        // }}
+        expandable={{
+          expandedRowKeys,
+          onExpand: (expanded, record) => {
+            const keys = expanded ? [record.key] : [];
+            setExpandedRowKeys(keys);
+          },
+          expandedRowRender: (record) => (
+            <Space
+              direction={"vertical"}
+              align={"start"}
+              style={{
+                width: "100%",
+                padding: "20px 70px 20px 20px",
+                borderRadius: "10px",
+                backgroundColor: "#fff",
+              }}
+            >
+              <Tabs
+                size={"small"}
+                type="card"
+                accordion
+                style={{
+                  width: "100%",
+                }}
+                items={[
+                  {
+                    key: "0",
+                    label: "Технические параметры",
+                    icon: <SettingOutlined />,
+                    children: (
+                      <div>
+                        <Space.Compact
+                          direction="vertical"
+                          style={{ textAlign: "center" }}
+                        >
+                          <Divider style={{ marginBottom: "0px" }}>
+                            Технические параметры
+                          </Divider>
+                          <Link
+                            onClick={() =>
+                              setEquipmentTypeParametrsModalStatus(record.id)
+                            }
+                          >
+                            Изменить
+                          </Link>
+                        </Space.Compact>
+
+                        <div>
+                          <ul>
+                            {record?.parameters.length > 0
+                              ? record?.parameters?.map((row) => (
+                                  <li>
+                                    {row.name} - ({row?.unit?.name_latex})
+                                  </li>
+                                ))
+                              : "Параметры отсутвуют "}
+                          </ul>
+                        </div>
+                      </div>
+                    ),
+                  },
+                ]}
+              />
+            </Space>
+          ),
+        }}
       />
       <Modal
         key={
-          organizationModalStatus?.mode ||
-          organizationModalStatus?.organization_id ||
+          equipmentTypeModalStatus?.mode ||
+          equipmentTypeModalStatus?.equipmentType_id ||
           null
         }
-        open={organizationModalStatus}
-        onCancel={() => setOrganizationModalStatus(null)}
+        open={equipmentTypeModalStatus}
+        onCancel={() => setEquipmentTypeModalStatus(null)}
         footer={null}
         width={"max-content"}
         children={
-          <OrganizationForm
-            cardProps={{ title: "Организация" }}
+          <EquipmentTypeForm
+            cardProps={{ title: "Класс оборудования" }}
             onCompleted={() => {
               refetch();
-              setOrganizationModalStatus(null);
+              setEquipmentTypeModalStatus(null);
             }}
             initialObject={
-              organizationModalStatus?.organization_id
-                ? { id: organizationModalStatus?.organization_id }
+              equipmentTypeModalStatus?.equipmentType_id
+                ? { id: equipmentTypeModalStatus?.equipmentType_id }
                 : null
             }
           />

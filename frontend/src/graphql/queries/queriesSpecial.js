@@ -46,7 +46,11 @@ export const EXECUTOR_ORDERS_QUERY = gql`
       executor_order_payments {
         id
         file_id
+        paycheck_file_id
         status
+        project {
+          id
+        }
       }
     }
   }
@@ -88,7 +92,11 @@ export const EXECUTOR_ORDERS_PROJECT_QUERY = gql`
       executor_order_payments {
         id
         file_id
+        paycheck_file_id
         status
+        project {
+          id
+        }
       }
       executor {
         id
@@ -241,7 +249,11 @@ export const FULL_EXECUTOR_ORDERS_QUERY = gql`
       executor_order_payments {
         id
         file_id
+        paycheck_file_id
         status
+        project {
+          id
+        }
       }
       executor {
         id

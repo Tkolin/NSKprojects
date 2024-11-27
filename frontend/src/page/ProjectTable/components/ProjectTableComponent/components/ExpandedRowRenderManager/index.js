@@ -128,7 +128,7 @@ const Index = ({ project, expandable, refetchProject, options }) => {
                     children: (
                       <TableExecutorsComponent
                         data-permission={"read-project-task-executor"}
-                        project={project}
+                        projectId={project?.id}
                         setEditModalStatus={() =>
                           setEditModalStatus("executor")
                         }

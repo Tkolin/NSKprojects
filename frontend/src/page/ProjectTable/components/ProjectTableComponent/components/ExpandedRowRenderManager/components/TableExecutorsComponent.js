@@ -1,19 +1,27 @@
 import { Modal, Space, Table, Typography } from "antd";
 import React, { useState } from "react";
 
+import { useQuery } from "@apollo/client";
 import Link from "antd/es/typography/Link";
 import { nanoid } from "nanoid";
+import { PROJECT_TASKS_QUERY } from "../../../../../../../graphql/queries/all";
 import OrderExecutorManager from "../../../../../../OrderExecutorManager";
 
 const { Text } = Typography;
 
 const TableExecutorsComponent = ({
   setEditModalStatus,
-  project,
+  projectId,
   onUpdated,
 }) => {
   const [executorOrderModalStatus, setExecutorOrderModalStatus] = useState();
+  const { data, loading, refetch } = useQuery(PROJECT_TASKS_QUERY, {
+    variables: {
+      projectId: projectId,
+    },
+  });
   const groupTasksByExecutor = (tasks) => {
+    if (!(tasks?.length > 0)) return [];
     return tasks.reduce((acc, task) => {
       if (!task.executor) {
         return acc; // Пропускаем задачи без исполнителя
@@ -78,7 +86,7 @@ const TableExecutorsComponent = ({
           key: "contract",
           align: "left",
           render: (text, record) => {
-            const s = project?.project_tasks?.filter(
+            const s = data?.projectTasks?.items?.filter(
               (row) => row?.executor?.id === record?.executor.id
             );
             return (
@@ -103,8 +111,9 @@ const TableExecutorsComponent = ({
       <Table
         style={{ margin: 0, width: "max-content" }}
         size={"small"}
+        loading={loading}
         columns={columnsExecutors}
-        dataSource={groupTasksByExecutor(project.project_tasks).sort(
+        dataSource={groupTasksByExecutor(data?.projectTasks?.items).sort(
           (a, b) => new Date(a.date_start) - new Date(b.date_start)
         )}
         pagination={false}

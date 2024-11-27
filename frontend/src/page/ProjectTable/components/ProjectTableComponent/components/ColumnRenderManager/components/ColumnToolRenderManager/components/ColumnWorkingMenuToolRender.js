@@ -8,7 +8,7 @@
 // } from "antd";
 // import React, {useContext, useEffect, useState} from "react";
 // import {useMutation} from "@apollo/client";
-// import {CHANGE_STATUS_PROJECT, CHANGE_TEMPLATE_TYPE_PROJECT} from "../../../../../../../../../graphql/mutationsProject";
+// import {CHANGE_STATUS_PROJECT, CHANGE_TEMPLATE_TYPE_PROJECT} from "../../../../../../../../../graphql/mutations/project";
 // import {
 //     CheckSquareOutlined,
 //     DeleteOutlined,

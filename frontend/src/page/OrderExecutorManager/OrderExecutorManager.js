@@ -2,7 +2,7 @@ import { useLazyQuery } from "@apollo/client";
 import { Card, Divider, Modal, Space, Typography } from "antd";
 import { nanoid } from "nanoid";
 import React, { useContext, useEffect, useState } from "react";
-import { EXECUTOR_ORDERS_QUERY } from "../../graphql/queriesSpecial";
+import { EXECUTOR_ORDERS_QUERY } from "../../graphql/queries/queriesSpecial";
 import { NotificationContext } from "../../NotificationProvider";
 import { ExecutorOrdersTable } from "./components/ExecutorOrdersTable";
 import GenerateOrderForm from "./components/GenerateOrderForm";

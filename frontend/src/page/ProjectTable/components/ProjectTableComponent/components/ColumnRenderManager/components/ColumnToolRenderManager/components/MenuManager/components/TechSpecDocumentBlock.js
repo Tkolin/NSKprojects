@@ -1,104 +1,124 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { Divider, Modal, notification } from "antd";
 import React, { useEffect, useState } from "react";
-import { GENERATED_COMMERCIAL_OFFER_MESSAGE } from "../../../../../../../../../../../graphql/mutationsProject";
+import { GENERATED_COMMERCIAL_OFFER_MESSAGE } from "../../../../../../../../../../../graphql/mutations/project";
 
 import { DownloadOutlined, UploadOutlined } from "@ant-design/icons";
 
-
-
 import { nanoid } from "nanoid";
-import { DOWNLOAD_FILE } from "../../../../../../../../../../../graphql/mutationsFile";
-import { CONTACTS_BY_ORGANIZATION } from "../../../../../../../../../../../graphql/queriesSpecial";
+import { DOWNLOAD_FILE } from "../../../../../../../../../../../graphql/mutations/file";
+import { CONTACTS_BY_ORGANIZATION } from "../../../../../../../../../../../graphql/queries/queriesSpecial";
 import LinkToDownload from "../../../../../../../../../../components/script/LinkToDownload";
 import { UploadFilePopconfirm } from "../../../../../../../../../../components/UploadFile";
 import ContactForm from "../../../../../../../../../../simplesForms/ContactForm";
 import CustomMenuButton from "./CustomMenuButton";
 
-
-const TechSpecDocumentBlock = ({project, onUpdated}) => {
-
-
-    const {
-        loading: loadingContacts, data: dataContacts
-    } = useQuery(CONTACTS_BY_ORGANIZATION, {variables: {organizationId: project?.organization_customer?.id}});
-    useEffect(() => {
-        console.log("KPDocumentBlock", project);
-    }, [project,]);
-    const openNotification = (placement, type, message) => {
-        notification[type]({
-            message: message, placement,
-        });
-    };
-    const LaravelURL = process.env.REACT_APP_API_URL;
-
-    const [downloadFile, {loading: loading}] = useMutation(DOWNLOAD_FILE, {
-        onCompleted: (data) => {
-            handleDownloadClick(data.downloadFile.url);
-        },
-        onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при загрузке: ' + error.message);
-        },
+const TechSpecDocumentBlock = ({ project, onUpdated }) => {
+  const { loading: loadingContacts, data: dataContacts } = useQuery(
+    CONTACTS_BY_ORGANIZATION,
+    { variables: { organizationId: project?.organization_customer?.id } }
+  );
+  useEffect(() => {
+    console.log("KPDocumentBlock", project);
+  }, [project]);
+  const openNotification = (placement, type, message) => {
+    notification[type]({
+      message: message,
+      placement,
     });
-    const handleDownloadClick = async (downloadedFileUrl) => {
-        try {
-            const link = document.createElement('a');
-            console.log(link);
-            link.href = `${LaravelURL}${downloadedFileUrl}`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (error) {
-            console.error('Ошибка при скачивании файла:', error);
-        }
-    };
-    const [generateKpMutate, {loading: generateKpLoading}] = useMutation(GENERATED_COMMERCIAL_OFFER_MESSAGE, {
-        onCompleted: (data) => {
-            downloadFile({variables: {id: data.generatedCommercialOfferMessage.url}})
-            openNotification('topRight', 'success', `Коммерческое предложение сгенерировано`);
-            onUpdated && onUpdated();
-        }, onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при генерации: ` + error.message);
+  };
+  const LaravelURL = process.env.REACT_APP_API_URL;
 
-        }
-
-    });
-
-    const [selectedDelegations, setSelectedDelegations] = useState();
-    const [selectedDateContract, setSelectedDateContract] = useState();
-    const [contactModalStatus, setContactModalStatus] = useState();
-    const handleGeneratedKp = () => {
-        generateKpMutate({
-            variables: {
-                projectId: project.id,
-                delegationId: selectedDelegations,
-                dateOffer: selectedDateContract
-            }
-        })
+  const [downloadFile, { loading: loading }] = useMutation(DOWNLOAD_FILE, {
+    onCompleted: (data) => {
+      handleDownloadClick(data.downloadFile.url);
+    },
+    onError: (error) => {
+      openNotification(
+        "topRight",
+        "error",
+        "Ошибка при загрузке: " + error.message
+      );
+    },
+  });
+  const handleDownloadClick = async (downloadedFileUrl) => {
+    try {
+      const link = document.createElement("a");
+      console.log(link);
+      link.href = `${LaravelURL}${downloadedFileUrl}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Ошибка при скачивании файла:", error);
     }
-    const permissions = JSON.parse(localStorage.getItem("userPermissions")).map(row=>row.name_key);
-    if(!permissions.includes("read-project-kp"))
-        return null;
-    return (
-        <>
-            {project?.kp_file_id ?
-                (<>
-                    <Divider style={{margin: "5px"}} orientation={"left"}>ТЗ проекта</Divider>
-                    <LinkToDownload fileId={project.kp_file_id}><CustomMenuButton icon={<DownloadOutlined/>}>
-                        Скачать (согласован)
-                    </CustomMenuButton>
-                    </LinkToDownload>
-                </>)
-                :
+  };
+  const [generateKpMutate, { loading: generateKpLoading }] = useMutation(
+    GENERATED_COMMERCIAL_OFFER_MESSAGE,
+    {
+      onCompleted: (data) => {
+        downloadFile({
+          variables: { id: data.generatedCommercialOfferMessage.url },
+        });
+        openNotification(
+          "topRight",
+          "success",
+          `Коммерческое предложение сгенерировано`
+        );
+        onUpdated && onUpdated();
+      },
+      onError: (error) => {
+        openNotification(
+          "topRight",
+          "error",
+          `Ошибка при генерации: ` + error.message
+        );
+      },
+    }
+  );
 
-                <>
-                    <Divider style={{margin: "5px"}} orientation={"left"}>Формирование ТЗ</Divider>
-                    
-                    <CustomMenuButton icon={<DownloadOutlined/>}
-                                          disabled={project?.project_kp_history?.length <= 0}>
-                            Скачать Шаблон ТЗ
-                        </CustomMenuButton>
-                    {/* <Popconfirm
+  const [selectedDelegations, setSelectedDelegations] = useState();
+  const [selectedDateContract, setSelectedDateContract] = useState();
+  const [contactModalStatus, setContactModalStatus] = useState();
+  const handleGeneratedKp = () => {
+    generateKpMutate({
+      variables: {
+        projectId: project.id,
+        delegationId: selectedDelegations,
+        dateOffer: selectedDateContract,
+      },
+    });
+  };
+  const permissions = JSON.parse(localStorage.getItem("userPermissions")).map(
+    (row) => row.name_key
+  );
+  if (!permissions.includes("read-project-kp")) return null;
+  return (
+    <>
+      {project?.kp_file_id ? (
+        <>
+          <Divider style={{ margin: "5px" }} orientation={"left"}>
+            ТЗ проекта
+          </Divider>
+          <LinkToDownload fileId={project.kp_file_id}>
+            <CustomMenuButton icon={<DownloadOutlined />}>
+              Скачать (согласован)
+            </CustomMenuButton>
+          </LinkToDownload>
+        </>
+      ) : (
+        <>
+          <Divider style={{ margin: "5px" }} orientation={"left"}>
+            Формирование ТЗ
+          </Divider>
+
+          <CustomMenuButton
+            icon={<DownloadOutlined />}
+            disabled={project?.project_kp_history?.length <= 0}
+          >
+            Скачать Шаблон ТЗ
+          </CustomMenuButton>
+          {/* <Popconfirm
                         style={
                             {
                                 width: "200px"
@@ -151,36 +171,40 @@ const TechSpecDocumentBlock = ({project, onUpdated}) => {
                             <CustomMenuButton>Сгенерировать ТЗ</CustomMenuButton>
                         }
                     /> */}
-         
-                    <UploadFilePopconfirm
-                        options={{datePicker: true}}
-                        title={"Укажите дату принятия"}
-                        onUpdated={() => onUpdated()}
-                        action={"project/upload/project_kp/page?projectId=" + project.id}
-                        children={<CustomMenuButton className={'danger_text_btn'}
-                                                    icon={<UploadOutlined/>}
-                                                    children={"Прикрепить ТЗ"}/>}
-                    />
 
-                    <Modal
-                        key={nanoid()}
-                        open={contactModalStatus}
-                        onCancel={() => setContactModalStatus(null)}
-                        footer={null}
-                        width={"max-content"}
-                        title={"Контакт"}
-                        styles={{header: {textAlign: "center"}}}
-                    >
+          <UploadFilePopconfirm
+            options={{ datePicker: true }}
+            title={"Укажите дату принятия"}
+            onUpdated={() => onUpdated()}
+            action={"project/upload/project_kp/page?projectId=" + project.id}
+            children={
+              <CustomMenuButton
+                className={"danger_text_btn"}
+                icon={<UploadOutlined />}
+                children={"Прикрепить ТЗ"}
+              />
+            }
+          />
 
-                        <ContactForm onCompleted={() => {
-                            setContactModalStatus(null);
-                        }}/>
-
-                    </Modal>
-                </>}
+          <Modal
+            key={nanoid()}
+            open={contactModalStatus}
+            onCancel={() => setContactModalStatus(null)}
+            footer={null}
+            width={"max-content"}
+            title={"Контакт"}
+            styles={{ header: { textAlign: "center" } }}
+          >
+            <ContactForm
+              onCompleted={() => {
+                setContactModalStatus(null);
+              }}
+            />
+          </Modal>
         </>
-    )
-        ;
-}
+      )}
+    </>
+  );
+};
 
 export default TechSpecDocumentBlock;

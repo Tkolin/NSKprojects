@@ -8,7 +8,10 @@ final readonly class ProjectTask
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        $projectId = $args['id'];
-        return   ModelsProjectTask::find($args['id']);
+        if (!isset($args['id']))
+            throw new \Exception("The 'id' argument is required.");
+
+        $modelId = $args['id'];
+        return ModelsProjectTask::find($modelId);
     }
 }

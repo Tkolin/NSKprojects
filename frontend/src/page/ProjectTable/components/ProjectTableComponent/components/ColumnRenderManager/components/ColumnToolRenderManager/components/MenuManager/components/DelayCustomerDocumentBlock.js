@@ -1,26 +1,15 @@
 import { useMutation, useQuery } from "@apollo/client";
-import {
-  Button,
-  Divider,
-  Modal,
-  notification,
-  Popconfirm,
-  Space
-} from "antd";
+import { Button, Divider, Modal, notification, Popconfirm, Space } from "antd";
 import React, { useEffect, useState } from "react";
 
-import {
-  DownloadOutlined,
-  UploadOutlined
-} from "@ant-design/icons";
-
+import { DownloadOutlined, UploadOutlined } from "@ant-design/icons";
 
 import dayjs from "dayjs";
 
 import { nanoid } from "nanoid";
-import { GENERATED_DELAY_CUSTOMER_MUTATION } from "../../../../../../../../../../../graphql/mutationsDelay";
-import { DOWNLOAD_FILE } from "../../../../../../../../../../../graphql/mutationsFile";
-import { CONTACTS_BY_ORGANIZATION } from "../../../../../../../../../../../graphql/queriesSpecial";
+import { DOWNLOAD_FILE } from "../../../../../../../../../../../graphql/mutations/file";
+import { GENERATED_DELAY_CUSTOMER_MUTATION } from "../../../../../../../../../../../graphql/mutations/projectDelay";
+import { CONTACTS_BY_ORGANIZATION } from "../../../../../../../../../../../graphql/queries/queriesSpecial";
 import { CustomDatePicker } from "../../../../../../../../../../components/FormattingDateElementComponent";
 import LinkToDownload from "../../../../../../../../../../components/script/LinkToDownload";
 import { UploadFilePopconfirm } from "../../../../../../../../../../components/UploadFile";
@@ -131,7 +120,7 @@ const DelayCustomerDocumentBlock = ({ project, onUpdated }) => {
                     : setSelectedDateContract(null);
                 }}
               />
-               <Button
+              <Button
                 block
                 disabled={!selectedDateContract}
                 loading={generateKpLoading}

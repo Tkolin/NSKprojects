@@ -49,19 +49,50 @@ export const TASKS_QUERY = gql`
   }
 `;
 export const PROJECT_TASKS_QUERY = gql`
-  query ProjectTasksQuery($projectId: ID!) {
-    projectTasksQuery(projectId: $projectId) {
-      items {
+  query ProjectTasks($projectId: ID!) {
+    projectTasks(projectId: $projectId) {
+      id
+      task {
         id
-        task {
-          id
-          name
-        }
-        date_start
-        date_end
-        stage_number
-        project_task_inherited_id
+        name
       }
+      executor {
+        id
+        passport {
+          id
+          first_name
+          last_name
+          patronymic
+        }
+      }
+      date_start
+      date_end
+      stage_number
+      project_task_inherited_id
+    }
+  }
+`;
+export const PROJECT_STAGES_QUERY = gql`
+  query ProjectStages($projectId: ID!) {
+    projectStages(projectId: $projectId) {
+      id
+      task {
+        id
+        name
+      }
+      executor {
+        id
+        passport {
+          id
+          first_name
+          last_name
+          patronymic
+        }
+      }
+      date_start
+      date_end
+      stage_number
+      project_task_inherited_id
     }
   }
 `;
@@ -649,14 +680,31 @@ export const EQUIPMENT_TYPES_QUERY = gql`
       items {
         id
         name
+        type_activity {
+          id
+          name
+        }
+        group {
+          id
+          name
+        }
         parameters {
           id
           name
-
           min
           max
+          group {
+            id
+            name
+          }
+          unit {
+            id
+            name
+            name_latex
+          }
         }
       }
+
       count
     }
   }

@@ -2,7 +2,7 @@ import { CarryOutOutlined } from "@ant-design/icons";
 import { useMutation } from "@apollo/client";
 import { Alert, Card, Divider, Form, Tree } from "antd";
 import React, { useContext, useState } from "react";
-import { EXECUTOR_ORDER_GENERATED } from "../../../graphql/mutationsFileGenerated";
+import { EXECUTOR_ORDER_GENERATED } from "../../../graphql/mutations/fileGenerated";
 import { NotificationContext } from "../../../NotificationProvider";
 import ExecutorOrderFileGenerated from "../../components/script/fileGenerated/ExecutorOrderFileGenerated";
 import { StyledButtonGreen } from "../../components/style/ButtonStyles";

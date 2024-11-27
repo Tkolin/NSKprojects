@@ -1,10 +1,10 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { Form, Input, Modal, notification, Space, Table } from "antd";
 import React, { useState } from "react";
-import { DELETE_ORGANIZATION_MUTATION } from "../../graphql/mutationsOrganization";
+import { DELETE_ORGANIZATION_MUTATION } from "../../graphql/mutations/organization";
 import { StyledButtonGreen } from "../components/style/ButtonStyles";
 
-import { EQUIPMENT_MODELS_QUERY } from "../../graphql/queries";
+import { EQUIPMENT_MODELS_QUERY } from "../../graphql/queries/all";
 import OrganizationForm from "../simplesForms/OrganizationForm";
 const { Search } = Input;
 

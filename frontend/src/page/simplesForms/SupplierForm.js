@@ -15,16 +15,16 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   ADD_ORGANIZATION_MUTATION,
   UPDATE_ORGANIZATION_MUTATION,
-} from "../../graphql/mutationsOrganization";
+} from "../../graphql/mutations/organization";
 
 import "react-dadata/dist/react-dadata.css";
-import { NotificationContext } from "../../NotificationProvider";
-import { ORGANIZATIONS_QUERY_BY_ID } from "../../graphql/queriesByID";
+import { ORGANIZATIONS_QUERY_BY_ID } from "../../graphql/queries/queriesByID";
 import {
   BIKS_QUERY_COMPACT,
   CONTACTS_QUERY_COMPACT,
   LEGAL_FORM_QUERY_COMPACT,
-} from "../../graphql/queriesCompact";
+} from "../../graphql/queries/queriesCompact";
+import { NotificationContext } from "../../NotificationProvider";
 import "./style.css";
 
 import { CustomAutoCompleteAndCreateWitchEdit } from "../components/style/SearchAutoCompleteStyles";

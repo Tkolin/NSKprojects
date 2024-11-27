@@ -1,7 +1,7 @@
 import { useLazyQuery } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
-import { PROJECT_TASKS_QUERY } from "../../../../../../../graphql/queries";
+import { PROJECT_TASKS_QUERY } from "../../../../../../../graphql/queries/all";
 
 const App = ({ projectId }) => {
   function addOneDay(date = new Date()) {
@@ -20,10 +20,10 @@ const App = ({ projectId }) => {
       variables: { projectId: projectId },
       onCompleted: (data) => {
         //openNotification('topRight', 'success', `Данные подгружены.`);
-        console.log(data.projectTasksQuery.items);
+        console.log(data.projectTasks);
         let i = 0;
         let stagesIds = [];
-        data.projectTasksQuery.items.forEach((row) => {
+        data.projectTasks.forEach((row) => {
           if (!row.project_task_inherited_id) {
             stagesIds.push(row.id);
           }
@@ -32,9 +32,9 @@ const App = ({ projectId }) => {
 
         setВata([
           columns,
-          ...data.projectTasksQuery.items.map((row) => {
+          ...data.projectTasks.map((row) => {
             //console.log("mama v childe", mamaAndChild[row.id]?.toString());
-            if (data.projectTasksQuery.items)
+            if (data.projectTasks)
               return [
                 row.id,
                 (row.project_task_inherited_id
@@ -45,19 +45,21 @@ const App = ({ projectId }) => {
                 row.stage_number,
                 row.date_start !== row.date_end
                   ? new Date(row.date_start)
-                  : minusOneDay(new Date( row.date_start )),
+                  : minusOneDay(new Date(row.date_start)),
                 row.date_start !== row.date_end
                   ? new Date(row.date_end)
                   : addOneDay(new Date(row.date_end)),
                 null,
                 100,
-                !stagesIds.includes(row.id) ? null : row.project_task_inherited_id ?? null, //mamaAndChild[row.id] ? mamaAndChild[row.id].toString() :  null,   // родитель
+                !stagesIds.includes(row.id)
+                  ? null
+                  : row.project_task_inherited_id ?? null, //mamaAndChild[row.id] ? mamaAndChild[row.id].toString() :  null,   // родитель
               ];
           }),
         ]);
         console.log("ffa4gaaergae", [
           columns,
-          data.projectTasksQuery.items.map((row) => {
+          data.projectTasks.map((row) => {
             return [
               row.id,
               row.stage_number + " " + row.task.name,

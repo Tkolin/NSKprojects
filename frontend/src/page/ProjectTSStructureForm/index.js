@@ -4,8 +4,8 @@ import { Button, Card, Col, Form, Modal, Row, Space, Tooltip } from "antd";
 import React, { useContext, useState } from "react";
 import { AutoCompleteFormItem } from "../components/CustomForm";
 
-import { PROJECT_TS_SYNC_MUTATION } from "../../graphql/mutationsProject";
-import { TS_CHAPTERS_QUERY } from "../../graphql/queriesCompact";
+import { TS_CHAPTERS_QUERY } from "../..//graphql/queries/queriesCompact";
+import { PROJECT_TS_SYNC_MUTATION } from "../../graphql/mutations/project";
 
 import TextArea from "antd/es/input/TextArea";
 import { NotificationContext } from "../../NotificationProvider";
@@ -14,9 +14,9 @@ import { CustomAutoCompleteExtension } from "../components/style/SearchAutoCompl
 import { ModalButton } from "../simplesForms/formComponents/ModalButtonComponent";
 import TechSpecForm from "../simplesForms/TechChapterForm";
 
-const IrdToProjectForm = ({   onCompleted, ...cardProps }) => {
+const IrdToProjectForm = ({ onCompleted, ...cardProps }) => {
   const { openNotification } = useContext(NotificationContext);
-  const project = {id: '1'};
+  const project = { id: "1" };
   // Первичные данные
   const [form] = Form.useForm();
   const [irdModalStatus, setIrdModalStatus] = useState(null);
@@ -74,12 +74,10 @@ const IrdToProjectForm = ({   onCompleted, ...cardProps }) => {
     });
     mutateChapters({
       variables: {
-         
-          projectId: project?.id ?? null,
-          chapterIds: form
-            .getFieldValue("irdList")
-            .map((row) => row.chapter.selected),
-        
+        projectId: project?.id ?? null,
+        chapterIds: form
+          .getFieldValue("irdList")
+          .map((row) => row.chapter.selected),
       },
     });
   };

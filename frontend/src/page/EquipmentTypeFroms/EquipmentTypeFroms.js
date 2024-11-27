@@ -7,8 +7,8 @@ import dayjs from "dayjs";
 import {
   PROJECT_IRDS_SYNC_MUTATION,
   SET_IRD_TEMPLATE_TO_PROJECT_MUTATION,
-} from "../../graphql/mutationsProject";
-import { IRDS_QUERY_COMPACT } from "../../graphql/queriesCompact";
+} from "../../graphql/mutations/project";
+import { IRDS_QUERY_COMPACT } from "../../graphql/queries/queriesCompact";
 import IrdItem from "./components/IrdItem";
 
 import { NotificationContext } from "../../NotificationProvider";

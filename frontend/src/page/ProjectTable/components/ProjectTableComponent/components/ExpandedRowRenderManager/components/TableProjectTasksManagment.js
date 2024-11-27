@@ -1,21 +1,21 @@
 import { useMutation } from "@apollo/client";
 import {
-    Alert,
-    Card,
-    Col,
-    Modal,
-    notification,
-    Progress,
-    Row,
-    Space,
-    Table,
-    Tooltip,
-    Typography,
+  Alert,
+  Card,
+  Col,
+  Modal,
+  notification,
+  Progress,
+  Row,
+  Space,
+  Table,
+  Tooltip,
+  Typography,
 } from "antd";
 import Link from "antd/es/typography/Link";
 import dayjs from "dayjs";
 import React, { useState } from "react";
-import { PROJECT_TASK_UP_MUTATION } from "../../../../../../../graphql/mutationsProject";
+import { PROJECT_TASK_UP_MUTATION } from "../../../../../../../graphql/mutations/project";
 import StartDelayForm from "../../../../../../StartDelayForm";
 
 const openNotification = (placement, type, message) => {
@@ -258,17 +258,27 @@ const StatusRender = ({ projectTask }) => {
     switch (projectTask.status) {
       case "AWAITING":
         return (
-          <div style={{display: "flex", flexDirection: "column", 
-            alignItems: "center"}}> 
-            <Alert type="warning" message="Есть задержка в зависимых задачах"/>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Alert type="warning" message="Есть задержка в зависимых задачах" />
             <DefaultLink>Начать выполнение задачи</DefaultLink>
           </div>
         );
       case "WORKING":
         return (
-          <div style={{display: "flex", flexDirection: "column", 
-            alignItems: "center"}}>
-            <Alert type="error" message="Задержка посреди рабочего процесса"/>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Alert type="error" message="Задержка посреди рабочего процесса" />
             <DefaultLink>Завершить?</DefaultLink>
           </div>
         );

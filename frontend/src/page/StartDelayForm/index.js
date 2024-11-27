@@ -1,10 +1,21 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { Button, Checkbox, DatePicker, Form, Select, Space, Switch } from "antd";
+import {
+  Button,
+  Checkbox,
+  DatePicker,
+  Form,
+  Select,
+  Space,
+  Switch,
+} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useState } from "react";
-import { START_DELAY_MUTATION } from "../../graphql/mutationsDelay";
-import { DELAY_TYPES_QUERY } from "../../graphql/queries";
-import { PROJECT_QUERY, PROJECT_TASK_QUERY } from "../../graphql/queriesByID";
+import { START_DELAY_MUTATION } from "../../graphql/mutations/projectDelay";
+import { DELAY_TYPES_QUERY } from "../../graphql/queries/all";
+import {
+  PROJECT_QUERY,
+  PROJECT_TASK_QUERY,
+} from "../../graphql/queries/queriesByID";
 
 const StartDelayForm = ({ projectId, selectedTasksId, onCompleted }) => {
   const [form] = Form.useForm();
@@ -12,10 +23,11 @@ const StartDelayForm = ({ projectId, selectedTasksId, onCompleted }) => {
   const [selectedTaskIds, setSelectedTaskIds] = useState([]);
 
   const { data } = useQuery(PROJECT_QUERY, {
-    variables: { id: projectId }
+    variables: { id: projectId },
   });
 
-  const { data: dataDelaysTypes, loading: loadingDelaysTypes } = useQuery(DELAY_TYPES_QUERY);
+  const { data: dataDelaysTypes, loading: loadingDelaysTypes } =
+    useQuery(DELAY_TYPES_QUERY);
 
   const { data: dataTask } = useQuery(PROJECT_TASK_QUERY, {
     variables: { id: selectedTasksId },
@@ -32,7 +44,7 @@ const StartDelayForm = ({ projectId, selectedTasksId, onCompleted }) => {
     startDelay({
       variables: {
         projectId,
-        date_start: values.date_start.format('YYYY-MM-DD'),
+        date_start: values.date_start.format("YYYY-MM-DD"),
         description: values.description,
         type: values.reason,
         provider: values.initiator ? "we" : "executor",
@@ -42,9 +54,15 @@ const StartDelayForm = ({ projectId, selectedTasksId, onCompleted }) => {
   };
 
   const handleSelectAllTasks = () => {
-    const taskIds = data?.project?.project_tasks
-      ?.filter(row => row.stage_number === thisTask?.projectTask.stage_number && row.status === "WORKING" && row.executor)
-      .map(row => row.id) || [];
+    const taskIds =
+      data?.project?.project_tasks
+        ?.filter(
+          (row) =>
+            row.stage_number === thisTask?.projectTask.stage_number &&
+            row.status === "WORKING" &&
+            row.executor
+        )
+        .map((row) => row.id) || [];
     setSelectedTaskIds(taskIds);
   };
 
@@ -52,15 +70,16 @@ const StartDelayForm = ({ projectId, selectedTasksId, onCompleted }) => {
     <Form form={form} onFinish={handleSubmit}>
       <Space direction="vertical">
         <span>
-          Список задач на текущем этапе, которые будут <strong>приостановлены</strong>
+          Список задач на текущем этапе, которые будут{" "}
+          <strong>приостановлены</strong>
         </span>
-
-        <Button onClick={handleSelectAllTasks}>Отметить все</Button> {/* Кнопка для отметки всех задач */}
-        
+        <Button onClick={handleSelectAllTasks}>Отметить все</Button>{" "}
+        {/* Кнопка для отметки всех задач */}
         {thisTask?.projectTask?.id &&
           data?.project?.project_tasks?.map(
             (row) =>
-              row.stage_number === thisTask?.projectTask.stage_number && row.executor  &&
+              row.stage_number === thisTask?.projectTask.stage_number &&
+              row.executor &&
               row.status === "WORKING" && (
                 <Form.Item key={row.id} style={{ marginBottom: "0px" }}>
                   <Checkbox
@@ -86,7 +105,8 @@ const StartDelayForm = ({ projectId, selectedTasksId, onCompleted }) => {
         {thisTask?.projectTask?.id &&
           data?.project?.project_tasks?.map(
             (row) =>
-              row.stage_number === thisTask?.projectTask.stage_number && row.executor &&
+              row.stage_number === thisTask?.projectTask.stage_number &&
+              row.executor &&
               row.status === "AWAITING" && (
                 <Checkbox
                   checked={selectedTaskIds.includes(row.id)}
@@ -112,10 +132,9 @@ const StartDelayForm = ({ projectId, selectedTasksId, onCompleted }) => {
         </Form.Item>
         <Form.Item name="reason" label="Причина">
           <Select loading={loadingDelaysTypes}>
-          { dataDelaysTypes?.delayTypes?.map(row => (
-            <Select.Option value={row.key}>{row.name}</Select.Option>
-          ))}
- 
+            {dataDelaysTypes?.delayTypes?.map((row) => (
+              <Select.Option value={row.key}>{row.name}</Select.Option>
+            ))}
           </Select>
         </Form.Item>
         <Form.Item name="date_start" label="Дата начала задержки">

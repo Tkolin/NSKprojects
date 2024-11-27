@@ -2,6 +2,8 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Models\EquipmentTypeActivity;
+
 final readonly class CreateEquipmentTypesActivity
 {
     /** @param  array{}  $args */
@@ -9,7 +11,8 @@ final readonly class CreateEquipmentTypesActivity
     {
         if (!isset($args['data']))
             throw new \InvalidArgumentException('data is required.');
+        $data = $args['data'];
 
-        // TODO implement the resolver
+        return EquipmentTypeActivity::create($data);
     }
 }

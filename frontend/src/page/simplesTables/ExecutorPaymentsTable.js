@@ -4,7 +4,7 @@ import { Button, notification, Space, Table, Tooltip, Typography } from "antd";
 import Link from "antd/es/typography/Link";
 import { nanoid } from "nanoid";
 import React, { useEffect } from "react";
-import { FULL_EXECUTOR_ORDERS_QUERY } from "../../graphql/queriesSpecial";
+import { FULL_EXECUTOR_ORDERS_QUERY } from "../../graphql/queries/queriesSpecial";
 import { UploadFilePopconfirm } from "../components/UploadFile";
 
 const openNotification = (placement, type, message) => {

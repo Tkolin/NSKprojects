@@ -4,10 +4,13 @@
 extend type Query {
     projectIrds(projectId: ID): [ProjectIrd]
         @checkRole(permission: ["read-project-ird"])
-    projectTasksQuery(projectId: ID): ProjectTasksResult
+    projectTasks(projectId: ID): [ProjectTasks]
         @checkRole(permission: ["read-project-task"])
+    projectStages(projectId: ID): [ProjectTask]
+        @checkRole(permission: ["read-project-stage"])
     projectsStatistic(projectStatuses: [String]!): [ProjectStatistic]
         @checkRole(permission: ["read-project"])
+
     executorOrders(projectId: ID, executorId: ID): [ExecutorOrder!]
     fullExecutorOrders(status: String): [ExecutorOrder!]
 

@@ -1,20 +1,20 @@
 import { DeleteOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "@apollo/client";
 import {
-    Card,
-    Col,
-    Form,
-    Row,
-    Skeleton,
-    Space,
-    Tooltip,
-    Typography,
+  Card,
+  Col,
+  Form,
+  Row,
+  Skeleton,
+  Space,
+  Tooltip,
+  Typography,
 } from "antd";
 import { nanoid } from "nanoid";
 import React, { useContext, useEffect, useState } from "react";
-import { PROJECT_TASKS_STRUCTURE_UPDATE } from "../../graphql/mutationsProject";
-import { ADD_TASK_MUTATION } from "../../graphql/mutationsTask";
-import { TASKS_QUERY_COMPACT } from "../../graphql/queriesCompact";
+import { TASKS_QUERY_COMPACT } from "../..//graphql/queries/queriesCompact";
+import { PROJECT_TASKS_STRUCTURE_UPDATE } from "../../graphql/mutations/project";
+import { ADD_TASK_MUTATION } from "../../graphql/mutations/task";
 import { NotificationContext } from "../../NotificationProvider";
 import { CustomAutoCompleteAndCreate } from "../components/style/SearchAutoCompleteStyles";
 import { ModalButton } from "../simplesForms/formComponents/ModalButtonComponent";
@@ -153,37 +153,37 @@ const ProjectTasksStructureForm = ({
 
   const handleDeleteTaskToProject = (taskToProjectId) => {
     console.log("handleDeleteTaskToProject", taskToProjectId);
-    
+
     const oldTasks = form.getFieldsValue();
     console.log("oldTasks", oldTasks);
-  
+
     if (!oldTasks) return;
-  
-     const removeTaskWithChildren = (tasks, taskToDeleteKey) => {
+
+    const removeTaskWithChildren = (tasks, taskToDeleteKey) => {
       return tasks
-        .filter((task) => task.key !== taskToDeleteKey)  
+        .filter((task) => task.key !== taskToDeleteKey)
         .map((task) => {
           if (task.children && task.children.length > 0) {
-             return {
+            return {
               ...task,
               children: removeTaskWithChildren(task.children, taskToDeleteKey),
             };
           }
-          return task;  
+          return task;
         });
     };
-  
+
     const newTasks = {};
-    
+
     Object.keys(oldTasks).forEach((key) => {
       const oldTask = oldTasks[key];
       newTasks[key] = {
         ...oldTask,
-        tasks: removeTaskWithChildren(oldTask?.tasks ?? [], taskToProjectId),  
+        tasks: removeTaskWithChildren(oldTask?.tasks ?? [], taskToProjectId),
       };
     });
-  
-    form.setFieldsValue(newTasks); 
+
+    form.setFieldsValue(newTasks);
   };
   const rebuider = (tasks, handleDelete) => {
     const taskMap = {};
@@ -211,7 +211,7 @@ const ProjectTasksStructureForm = ({
                   </Link>
                 </Tooltip>
               )}
-              {task.task.name }
+              {task.task.name}
             </Text>
           </Space.Compact>
         ),
@@ -220,27 +220,27 @@ const ProjectTasksStructureForm = ({
       taskMap["o_" + task.id] = newTask;
     });
     // Строим дерево
-    console.log("Строим дерево",taskMap);
+    console.log("Строим дерево", taskMap);
     tasks.forEach((task) => {
       if (!task.project_task_inherited_id) {
-        tree.push(taskMap["o_"+task.id]);
+        tree.push(taskMap["o_" + task.id]);
       } else {
-        console.log("Строим дерево","o_"+task.id,taskMap["o_"+task.id]);
+        console.log("Строим дерево", "o_" + task.id, taskMap["o_" + task.id]);
 
-        const parentId = "o_"+task.project_task_inherited_id;
+        const parentId = "o_" + task.project_task_inherited_id;
         if (taskMap[parentId]) {
-          taskMap[parentId].children.push(taskMap["o_"+task.id]);
+          taskMap[parentId].children.push(taskMap["o_" + task.id]);
         }
       }
     });
-    console.log("дерево",tree);
+    console.log("дерево", tree);
 
     return tree;
   };
   const groupTasksByStageNumber = (tasks) => {
     if (!tasks) return tasks;
     return tasks.reduce((acc, task) => {
-        console.log(task);
+      console.log(task);
       const stageNumber = task?.stage_number;
       if (!acc[stageNumber]) {
         acc[stageNumber] = { tasks: [] };

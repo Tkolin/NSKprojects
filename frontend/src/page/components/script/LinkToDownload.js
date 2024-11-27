@@ -1,54 +1,60 @@
 import { useMutation } from "@apollo/client";
 import { notification, Typography } from "antd";
-import { DOWNLOAD_FILE } from "../../../graphql/mutationsFile";
+import { DOWNLOAD_FILE } from "../../../graphql/mutations/file";
 
-const {Link} = Typography;
+const { Link } = Typography;
 
-const LinkToDownload = ({children, fileId, disabled, ...props}) => {
-    const LaravelURL = process.env.REACT_APP_API_URL;
-    const openNotification = (placement, type, message) => {
-        notification[type]({
-            message: message,
-            placement,
-        });
-    };
-    const [downloadFile, {loading: loading}] = useMutation(DOWNLOAD_FILE, {
-        onCompleted: (data) => {
-            console.log(data.downloadFile.url);
-            handleDownloadClick(data.downloadFile.url);
-            openNotification('topRight', 'success', 'Загрузка начата!');
-        },
-        onError: (error) => {
-            openNotification('topRight', 'error', 'Ошибка при загрузке: ' + error.message);
-        },
+const LinkToDownload = ({ children, fileId, disabled, ...props }) => {
+  const LaravelURL = process.env.REACT_APP_API_URL;
+  const openNotification = (placement, type, message) => {
+    notification[type]({
+      message: message,
+      placement,
     });
-    const handleDownload = () => {
-        if (disabled)
-            return false;
-        console.log(fileId);
-        downloadFile({variables: {id: fileId}});
-    };
+  };
+  const [downloadFile, { loading: loading }] = useMutation(DOWNLOAD_FILE, {
+    onCompleted: (data) => {
+      console.log(data.downloadFile.url);
+      handleDownloadClick(data.downloadFile.url);
+      openNotification("topRight", "success", "Загрузка начата!");
+    },
+    onError: (error) => {
+      openNotification(
+        "topRight",
+        "error",
+        "Ошибка при загрузке: " + error.message
+      );
+    },
+  });
+  const handleDownload = () => {
+    if (disabled) return false;
+    console.log(fileId);
+    downloadFile({ variables: { id: fileId } });
+  };
 
-
-    const handleDownloadClick = async (downloadedFileUrl) => {
-        try {
-            const link = document.createElement('a');
-            console.log(link);
-            link.href = `${LaravelURL}${downloadedFileUrl}`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (error) {
-            console.error('Ошибка при скачивании файла:', error);
-        }
-    };
-
-    return <>
-    {
-        fileId ? (<div onClick={() => handleDownload()} {...props}>
-        {children}
-        </div>) : <div style={{color: "red"}}>Файл не передан</div>
+  const handleDownloadClick = async (downloadedFileUrl) => {
+    try {
+      const link = document.createElement("a");
+      console.log(link);
+      link.href = `${LaravelURL}${downloadedFileUrl}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Ошибка при скачивании файла:", error);
     }
-    </> 
-}
+  };
+
+  return (
+    <>
+      {fileId ? (
+        <div onClick={() => handleDownload()} {...props}>
+          {children}
+        </div>
+      ) : (
+        <div style={{ color: "red" }}>Файл не передан</div>
+      )}
+    </>
+  );
+};
 export default LinkToDownload;

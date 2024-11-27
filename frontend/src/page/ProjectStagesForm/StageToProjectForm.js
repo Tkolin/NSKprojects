@@ -16,7 +16,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import {
   PROJECT_STAGE_SYNC_MUTATION,
   SET_STAGE_TEMPLATE_TO_PROJECT_MUTATION,
-} from "../../graphql/mutationsProject";
+} from "../../graphql/mutations/project";
 import { NotificationContext } from "../../NotificationProvider";
 import { ModalButton } from "../simplesForms/formComponents/ModalButtonComponent";
 import StageForm from "../simplesForms/StageForm";
@@ -31,7 +31,7 @@ const StageToProjectForm = ({ onCompleted, project, cardProps }) => {
   const [form] = Form.useForm();
 
   // Внешняя логика
-  const [totalToPercent, setTotalToPercent] = useState( );
+  const [totalToPercent, setTotalToPercent] = useState();
   const [templateModalStatus, setTemplateModalStatus] = useState(false);
   const [totalToDuration, setTotalToDuration] = useState(0);
   const [stageModalStatus, setStageModalStatus] = useState(null);
@@ -68,7 +68,7 @@ const StageToProjectForm = ({ onCompleted, project, cardProps }) => {
       }))
     );
   };
- 
+
   useEffect(() => {
     project && load();
     handleChange();
@@ -135,21 +135,22 @@ const StageToProjectForm = ({ onCompleted, project, cardProps }) => {
         {...cardProps}
         actions={[
           <div>
-            { 
-              totalToPercent && totalToPercent !== 100 && (
-                <Alert message="Скорректируйте % от стоимости проектов за этап" style={{marginBottom:"15px"}}  type="error"/>
-              )
-            }
+            {totalToPercent && totalToPercent !== 100 && (
+              <Alert
+                message="Скорректируйте % от стоимости проектов за этап"
+                style={{ marginBottom: "15px" }}
+                type="error"
+              />
+            )}
 
-          <ModalButton
-            modalType={"green"}
-            isMany={cardProps?.actions}
-            loading={loading}
-            onClick={() => form.submit()}
-            children={project ? `Обновить` : `Создать`}
-          />
-          </div>
-          ,
+            <ModalButton
+              modalType={"green"}
+              isMany={cardProps?.actions}
+              loading={loading}
+              onClick={() => form.submit()}
+              children={project ? `Обновить` : `Создать`}
+            />
+          </div>,
           ...(cardProps?.actions ?? []),
         ]}
         children={
@@ -226,7 +227,7 @@ const StageToProjectForm = ({ onCompleted, project, cardProps }) => {
                   <>
                     <StagesListHeader />
                     {fields.map(({ key, name, ...restField }, index) => (
-                  <StageItem
+                      <StageItem
                         index={index}
                         moveItem={moveItem}
                         setStageModalStatus={setStageModalStatus}
@@ -295,8 +296,6 @@ const StageToProjectForm = ({ onCompleted, project, cardProps }) => {
                 />
               }
             />
-                       
-
           </>
         }
       />

@@ -6,8 +6,8 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   CREATE_TECH_CHAPTER_MUTATION,
   UPDATE_TECH_CHAPTER_MUTATION,
-} from "../../graphql/mutationsReference";
-import { REFERENCES_QUERY_COMPACT } from "../../graphql/queriesCompact";
+} from "../../graphql/mutations/reference";
+import { REFERENCES_QUERY_COMPACT } from "../../graphql/queries/queriesCompact";
 import { NotificationContext } from "../../NotificationProvider";
 import { AutoCompleteFormItem } from "../components/CustomForm";
 import { CustomAutoCompleteExtension } from "../components/style/SearchAutoCompleteStyles";
@@ -257,12 +257,11 @@ const TechSpecForm = ({
       }
     );
 
-    const result = 
-      {
-        name: processedData.name,
-        content: processedData.content,
-        variables_in_content: processedVariables,
-      };
+    const result = {
+      name: processedData.name,
+      content: processedData.content,
+      variables_in_content: processedVariables,
+    };
 
     // Выводим результат (можно отправить на сервер или использовать по необходимости)
     mutate({ variables: { data: result } });

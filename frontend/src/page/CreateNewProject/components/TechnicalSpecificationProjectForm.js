@@ -4,9 +4,9 @@
 // import {CloudUploadOutlined, MinusCircleOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons";
 // import React, {useEffect, useState} from "react";
 // import {useMutation, useQuery} from "@apollo/client";
-// import {UPDATE_TechnicalSpecificationS_TO_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION} from "../../../../graphql/mutationsProject";
-// import {TechnicalSpecificationS_QUERY, PROJECTS_QUERY, STAGES_QUERY, TEMPLATE_TechnicalSpecificationS_TYPE_PROJECTS_QUERY} from "../../../../graphql/queries";
-// import {ADD_TechnicalSpecification_MUTATION} from "../../../../graphql/mutationsTechnicalSpecification";
+// import {UPDATE_TechnicalSpecificationS_TO_PROJECT_MUTATION, UPDATE_PROJECT_MUTATION} from "../../../../graphql/mutations/project";
+// import {TechnicalSpecificationS_QUERY, PROJECTS_QUERY, STAGES_QUERY, TEMPLATE_TechnicalSpecificationS_TYPE_PROJECTS_QUERY} from "../../../../graphql/queries/all";
+// import {ADD_TechnicalSpecification_MUTATION} from "../../../../graphql/mutations/technicalSpecification";
 // import LoadingSpinnerStyles from "../../../style/LoadingSpinnerStyles";
 // import {StyledButtonGreen} from "../../../style/ButtonStyles";
 // import TechnicalSpecificationForm from "../../simpleForm/TechnicalSpecificationForm";

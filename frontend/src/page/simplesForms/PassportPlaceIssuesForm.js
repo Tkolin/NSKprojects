@@ -1,97 +1,130 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Card, Form, Input} from 'antd';
-import {useLazyQuery, useMutation} from '@apollo/client';
-import {ADD_PPI_MUTATION, UPDATE_PPI_MUTATION} from '../../graphql/mutationsPerson';
-import {NotificationContext} from "../../NotificationProvider";
-import {PASSPORTS_PLACE_ISSUES_QUERY_BY_ID} from "../../graphql/queriesByID";
-import {ModalButton} from "./formComponents/ModalButtonComponent";
+import { useLazyQuery, useMutation } from "@apollo/client";
+import { Card, Form, Input } from "antd";
+import React, { useContext, useEffect, useState } from "react";
+import {
+  ADD_PPI_MUTATION,
+  UPDATE_PPI_MUTATION,
+} from "../../graphql/mutations/person";
+import { PASSPORTS_PLACE_ISSUES_QUERY_BY_ID } from "../../graphql/queries/queriesByID";
+import { NotificationContext } from "../../NotificationProvider";
+import { ModalButton } from "./formComponents/ModalButtonComponent";
 
+const PassportPlaceIssuesForm = ({
+  localObject,
+  initialObject,
+  onCompleted,
+  cardProps,
+}) => {
+  // Первичные данные
+  const { openNotification } = useContext(NotificationContext);
+  const [form] = Form.useForm();
+  const nameModel = "Адрес регистрации";
+  const [actualObject, setActualObject] = useState(
+    localObject?.id ?? initialObject ?? null
+  );
+  const [loadContext, { loading, data }] = useLazyQuery(
+    PASSPORTS_PLACE_ISSUES_QUERY_BY_ID,
+    {
+      variables: { id: 0 },
+      onCompleted: (data) => {
+        setActualObject(data?.passportPlaceIssues?.items[0]);
+        updateForm(data?.passportPlaceIssues?.items[0]);
+      },
+      onError: (error) => {
+        openNotification(
+          "topRight",
+          "error",
+          `Ошибка при загрузке данных: ${error.message}`
+        );
+      },
+    }
+  );
+  // Мутация
+  const [mutate, { loading: loadingSave }] = useMutation(
+    initialObject ? UPDATE_PPI_MUTATION : ADD_PPI_MUTATION,
+    {
+      onCompleted: (data) => {
+        openNotification(
+          "topRight",
+          "success",
+          `Создание ${nameModel} выполнена успешно`
+        );
+        console.log(data?.createPpi || data?.updatePpi);
+        form.resetFields();
+        onCompleted && onCompleted(data?.createPpi || data?.updatePpi);
+      },
+      onError: (error) => {
+        openNotification(
+          "topRight",
+          "error",
+          `Ошибка при выполнении мутации ${nameModel}: ${error.message}`
+        );
+      },
+    }
+  );
 
-const PassportPlaceIssuesForm = ({localObject,initialObject, onCompleted, cardProps}) => {
-    // Первичные данные
-    const {openNotification} = useContext(NotificationContext);
-    const [form] = Form.useForm();
-    const nameModel = 'Адрес регистрации';
-    const [actualObject, setActualObject] = useState(localObject?.id ?? (initialObject ?? null));
-    const [loadContext, {loading, data}] = useLazyQuery(PASSPORTS_PLACE_ISSUES_QUERY_BY_ID, {
-        variables: {id: 0},
-        onCompleted: (data) => {
-            setActualObject(data?.passportPlaceIssues?.items[0]);
-            updateForm(data?.passportPlaceIssues?.items[0]);
-        },
-        onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при загрузке данных: ${error.message}`);
-        },
-    });
-    // Мутация
-    const [mutate, {loading: loadingSave}] = useMutation(initialObject ? UPDATE_PPI_MUTATION : ADD_PPI_MUTATION, {
-        onCompleted: (data) => {
-            openNotification('topRight', 'success', `Создание ${nameModel} выполнена успешно`);
-            console.log(data?.createPpi || data?.updatePpi);
-            form.resetFields();
-            onCompleted && onCompleted(data?.createPpi || data?.updatePpi);
-        },
-        onError: (error) => {
-            openNotification('topRight', 'error', `Ошибка при выполнении мутации ${nameModel}: ${error.message}`);
-        },
-    });
+  // Подгрузка при обновлении
+  useEffect(() => {
+    if (initialObject?.id) loadContext();
+  }, [initialObject]);
+  useEffect(() => {
+    if (localObject?.id) updateForm(localObject);
+  }, [localObject]);
+  const updateForm = (data) => {
+    if (data) {
+      form.resetFields();
+      form.setFieldsValue({ ...data });
+    }
+  };
 
-    // Подгрузка при обновлении
-    useEffect(() => {
-        if (initialObject?.id)
-            loadContext();
-    }, [initialObject]);
-    useEffect(() => {
-        if (localObject?.id)
-            updateForm(localObject);
-    }, [localObject]);
-    const updateForm = (data) => {
-        if (data) {
-            form.resetFields();
-            form.setFieldsValue({...data});
-        }
+  // Завершение
+  const handleSubmit = () => {
+    const formData = form.getFieldsValue();
+    const data = {
+      code: formData.code,
+      name: formData.name,
     };
 
-    // Завершение
-    const handleSubmit = () => {
-        const formData = form.getFieldsValue();
-        const data = {
-            code: formData.code,
-            name: formData.name,
+    mutate({
+      variables: {
+        ...(actualObject ? { id: actualObject.id } : {}),
+        data,
+      },
+    });
+  };
 
-        };
-
-        mutate({
-            variables: {
-                ...(actualObject ? { id: actualObject.id } : {}),
-                data
-            }
-        });
-    };
-
-    return (
-        <Card style={{width: 400}}
-            {...cardProps}
-              actions={[
-                  <ModalButton
-                      modalType={"green"}
-                      isMany={cardProps?.actions}
-                      loading={loadingSave}
-                      onClick={()=>form.submit()}
-                      children={actualObject ? `Обновить` : `Создать`}/>
-                  , ...cardProps?.actions ?? []
-              ]}
-              children={<>
-            <Form form={form} onFinish={handleSubmit} layout="vertical">
-                <Form.Item name="name" label="Наименование" rules={[{required: true}]}>
-                    <Input/>
-                </Form.Item>
-                <Form.Item name="code" label="Код" rules={[{required: true}]}>
-                    <Input/>
-                </Form.Item>
-            </Form>
-        </>}/>
-    );
+  return (
+    <Card
+      style={{ width: 400 }}
+      {...cardProps}
+      actions={[
+        <ModalButton
+          modalType={"green"}
+          isMany={cardProps?.actions}
+          loading={loadingSave}
+          onClick={() => form.submit()}
+          children={actualObject ? `Обновить` : `Создать`}
+        />,
+        ...(cardProps?.actions ?? []),
+      ]}
+      children={
+        <>
+          <Form form={form} onFinish={handleSubmit} layout="vertical">
+            <Form.Item
+              name="name"
+              label="Наименование"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item name="code" label="Код" rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+          </Form>
+        </>
+      }
+    />
+  );
 };
 
 export default PassportPlaceIssuesForm;
