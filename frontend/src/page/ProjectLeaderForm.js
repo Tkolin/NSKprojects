@@ -1,45 +1,62 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { Card, Form, Input } from "antd";
-import React, { useContext } from "react";
+import { Card, Divider, Form } from "antd";
+import React, { useContext, useEffect } from "react";
 
-import { SET_NEW_LEADER } from "../graphql/mutations/projectSecondaryAtribute";
-import { PERSONS_SHORT_QUERY } from "./../graphql/queries/all";
+import { SET_NEW_PROJECT_LEADER } from "../graphql/mutations/projectSecondaryAtribute";
+import { PERSONS_QUERY_COMPACT } from "../graphql/queries/queriesCompact";
 import { NotificationContext } from "./../NotificationProvider";
+import { CustomAutoComplete } from "./components/style/SearchAutoCompleteStyles";
 import { ModalButton } from "./simplesForms/formComponents/ModalButtonComponent";
 
 const ProjectLeaderForm = ({ cardProps, project, onCompleted }) => {
   // Первичные данные
   const { openNotification } = useContext(NotificationContext);
   const [form] = Form.useForm();
-  const nameModel = "ИРД";
+  useEffect(() => {
+    if (project?.leader?.id)
+      form.setFieldValue("leader", {
+        output:
+          project?.leader.passport.last_name +
+          " " +
+          project?.leader.passport.first_name +
+          " " +
+          project?.leader.passport.patronymic,
+        selected: project?.leader.id,
+      });
+  }, [project]);
   // Данные
-  const { data: personsData, loading: personsLoading } =
-    useQuery(PERSONS_SHORT_QUERY);
+  const { data: dataPersons, loading: loadingPersons } = useQuery(
+    PERSONS_QUERY_COMPACT
+  );
   // Мутация
-  const [mutate, { loading: loadingSave }] = useMutation(SET_NEW_LEADER, {
-    onCompleted: (data) => {
-      openNotification(
-        "topRight",
-        "success",
-        `Мутация ${nameModel} выполнена успешно`
-      );
-      form.resetFields();
-      onCompleted && onCompleted(data?.updateIrd || data?.createIrd);
-    },
-    onError: (error) => {
-      openNotification(
-        "topRight",
-        "error",
-        `Ошибка при выполнении мутации ${nameModel}: ${error.message}`
-      );
-    },
-  });
+  const [mutate, { loading: loadingSave }] = useMutation(
+    SET_NEW_PROJECT_LEADER,
+    {
+      onCompleted: (data) => {
+        openNotification(
+          "topRight",
+          "success",
+          `Назначен новый ответственный на проекте`
+        );
+        onCompleted && onCompleted(data?.updateIrd || data?.createIrd);
+      },
+      onError: (error) => {
+        openNotification(
+          "topRight",
+          "error",
+          `Ошибка SET_NEW_PROJECT_LEADER : ${error.message}`
+        );
+      },
+    }
+  );
 
   // Завершение
   const handleSubmit = () => {
+    console.log(form.getFieldValue("leader"));
     mutate({
       variables: {
-        data: { name: form.getFieldValue("leader")?.selected },
+        personId: form.getFieldValue("leader")?.selected,
+        projectId: project.id,
       },
     });
   };
@@ -60,12 +77,18 @@ const ProjectLeaderForm = ({ cardProps, project, onCompleted }) => {
       ]}
       children={
         <Form form={form} onFinish={handleSubmit} layout="vertical">
-          <Form.Item
-            name="name"
-            label="Наименование"
-            rules={[{ required: true }]}
-          >
-            <Input />
+          <Divider>Назначьте главного на проекте</Divider>
+          <Form.Item name={"leader"} label="Главный проекта">
+            <CustomAutoComplete
+              loading={loadingPersons}
+              typeData="FIO"
+              style={{ width: "100%" }}
+              placeholder={"Выбор исполнителя..."}
+              data={dataPersons?.persons?.items.map((row) => ({
+                ...row.passport,
+                id: row.id,
+              }))}
+            />
           </Form.Item>
         </Form>
       }

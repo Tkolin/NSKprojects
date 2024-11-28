@@ -55,7 +55,11 @@ const TasksManagementBlock = ({ record, onUpdated }) => {
         footer={null}
         width={"max-content"}
         children={
-          <ProjectLeaderForm key={record?.id + "_p_leader"} project={record} />
+          <ProjectLeaderForm
+            key={record?.id + "_p_leader"}
+            project={record}
+            onCompleted={() => setOpenProjectLeader(null)}
+          />
         }
       />
     </>

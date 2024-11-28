@@ -375,7 +375,7 @@ const TablePaymentExecutorOrdersComponent = ({
                       )?.id
                     }
                   >
-                    <Button type={"text"}>Прикрепите подтв. файл</Button>
+                    <Button type={"text"}>Прикрепите чек</Button>
                   </UploadFilePopconfirm>
                 )
               ) : (
@@ -410,7 +410,7 @@ const TablePaymentExecutorOrdersComponent = ({
                       )?.id
                     }
                   >
-                    <Button type={"text"}>Прикрепите подтв. файл</Button>
+                    <Button type={"text"}>Прикрепите чек</Button>
                   </UploadFilePopconfirm>
                 )
               ) : (

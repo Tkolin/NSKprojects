@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
-export const SET_NEW_LEADER = gql`
-  mutation SetNewProjectLeader($personId: ID, $projectId: ID) {
+export const SET_NEW_PROJECT_LEADER = gql`
+  mutation SetNewProjectLeader($personId: ID!, $projectId: ID!) {
     setNewProjectLeader(personId: $personId, projectId: $projectId) {
       id
       leader {
