@@ -75,8 +75,9 @@ const TableProjectTasksManagment = ({ setEditModalStatus, projectId }) => {
                 <Col span={12}>
                   <Text strong>
                     {record?.date_start &&
-                      dayjs(record?.date_start).format("DD.MM.YYYY")}{" "}
-                    -{dayjs(record?.date_end).format("DD.MM.YYYY")}(
+                      dayjs(record?.date_start).format("DD.MM.YYYY") +
+                        "г."}{" "}
+                    -{dayjs(record?.date_end).format("DD.MM.YYYY") + "г."}(
                     {record.duration})
                   </Text>
                 </Col>

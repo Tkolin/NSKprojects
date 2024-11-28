@@ -248,10 +248,21 @@ export const PROJECTS_QUERY = gql`
           date_document
           number
         }
+        leader {
+          id
+          passport {
+            id
+            first_name
+            last_name
+            patronymic
+          }
+        }
         organization_customer {
           id
           name
+          full_name
         }
+        date_first_ird_completed
         type_project_document {
           id
           code

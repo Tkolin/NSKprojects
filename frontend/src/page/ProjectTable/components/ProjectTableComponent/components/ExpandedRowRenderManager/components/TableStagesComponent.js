@@ -88,9 +88,10 @@ const TableStagesComponent = ({
               style={{ alignContent: "start" }}
             >
               {record?.date_start &&
-                dayjs(record?.date_start).format("DD.MM.YYYY")}{" "}
+                dayjs(record?.date_start).format("DD.MM.YYYY") + "г."}{" "}
               -{" "}
-              {record?.date_end && dayjs(record?.date_end).format("DD.MM.YYYY")}{" "}
+              {record?.date_end &&
+                dayjs(record?.date_end).format("DD.MM.YYYY") + "г."}{" "}
               ({record.duration})
             </Space.Compact>
           ),
@@ -117,7 +118,7 @@ const TableStagesComponent = ({
                               Скачать, потверждено от:{" "}
                               {dayjs(
                                 actualProject?.project?.prepayment_date
-                              )?.format("DD.MM.YYYY")}
+                              )?.format("DD.MM.YYYY") + "г."}
                             </StyledButtonGreen>
                           </LinkToDownload>
                         ) : (
@@ -125,7 +126,7 @@ const TableStagesComponent = ({
                             Файл отсутвует, потверждено от:{" "}
                             {dayjs(
                               actualProject?.project?.prepayment_date
-                            )?.format("DD.MM.YYYY")}
+                            )?.format("DD.MM.YYYY") + "г."}
                           </>
                         )
                       ) : (
@@ -158,13 +159,14 @@ const TableStagesComponent = ({
                               Скачать, потверждено от:{" "}
                               {dayjs(record?.payment_date)?.format(
                                 "DD.MM.YYYY"
-                              )}
+                              ) + "г."}
                             </StyledButtonGreen>
                           </LinkToDownload>
                         ) : (
                           <>
                             Файл отсутвует, потверждено от:{" "}
-                            {dayjs(record?.payment_date)?.format("DD.MM.YYYY")}
+                            {dayjs(record?.payment_date)?.format("DD.MM.YYYY") +
+                              "г."}
                           </>
                         )}
                       </>

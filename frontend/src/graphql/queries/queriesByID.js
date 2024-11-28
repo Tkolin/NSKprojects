@@ -264,10 +264,21 @@ export const PROJECTS_QUERY_BY_ID = gql`
         number
         name
         prepayment
+        leader {
+          id
+          passport {
+            id
+            first_name
+            last_name
+            patronymic
+          }
+        }
         organization_customer {
           id
           name
+          full_name
         }
+        date_first_ird_completed
         type_project_document {
           id
           code

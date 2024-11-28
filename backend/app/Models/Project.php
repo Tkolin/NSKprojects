@@ -30,11 +30,35 @@ class Project extends Model
         'path_project_folder',
         'contract_file_id',
         'kp_file_id',
+        'leader_id',
 
         'prepayment_date',
         'prepayment_file_id'
-        
+
     ];
+    protected $appends = ['date_first_ird_completed', 'requirements'];
+
+    public function getDateFirstIrdCompletedAttribute()
+    {
+        return $this->date_first_ird_completed();
+    }
+
+    public function date_first_ird_completed()
+    {
+        $hasNullAcceptanceDate = $this->project_irds()
+            ->where('stage_number', 1)
+            ->whereNull('acceptance_date')
+            ->exists();
+
+        if ($hasNullAcceptanceDate) {
+            return false;
+        }
+
+        return $this->project_irds()
+            ->where('stage_number', 1)
+            ->max('acceptance_date');
+    }
+
     public function executor_orders()
     {
         return $this->hasManyThrough(
@@ -46,12 +70,12 @@ class Project extends Model
             'task_id', // Local key on ProjectTask table...
         );
     }
+
     //  project contract history
     public function contracts_files(): BelongsToMany
     {
         return $this->BelongsToMany(File::class, 'project_file', 'project_id', 'file_id')->where("type_id", "CONTRACT");
     }
-    protected $appends = ['requirements'];
 
     public function getRequirementsAttribute()
     {
@@ -195,6 +219,11 @@ class Project extends Model
     public function type_project_document(): BelongsTo
     {
         return $this->belongsTo(TypeProjectDocument::class);
+    }
+
+    public function leader(): BelongsTo
+    {
+        return $this->belongsTo(Person::class, 'leader_id', 'id');
     }
 
     public function status(): BelongsTo

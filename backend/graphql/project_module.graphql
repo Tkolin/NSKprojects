@@ -51,6 +51,7 @@ type ProjectStatistic {
 #   - MUTATIONS -
 #
 extend type Mutation {
+    setNewProjectLeader(projectId: ID!, personId: ID!): Project
     acceptIrd(irdId: ID!, dateAccept: String!): ProjectIrd
     receivedIrd(irdId: ID!, dateReceived: String!): ProjectIrd
     rejectIrd(irdId: ID!): ProjectIrd

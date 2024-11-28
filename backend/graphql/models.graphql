@@ -165,12 +165,16 @@ type Project {
     prepayment_file_id: ID
     prepayment_date: String
     organization_customer: Organization
+    date_first_ird_completed: String
     type_project_document: TypeProjectDocument
+    leader_id: Int
+    leader: Person
     facilities: [Facility]
     date_signing: String
     duration: Int
     date_end: String
     date_start: String
+    date_end_fact: String
     status: ProjectStatus
     date_completion: String
     delegations: [Contact]

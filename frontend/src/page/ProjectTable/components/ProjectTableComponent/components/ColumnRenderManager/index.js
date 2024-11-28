@@ -127,7 +127,7 @@ const columnFiles = () => ({
         <LinkToDownload fileId={record.contract_file_id}>
           <Link strong>
             Скачать договор подписан:{" "}
-            {dayjs(record.date_signing).format("DD.MM.YYYY")}
+            {dayjs(record.date_signing).format("DD.MM.YYYY") + "г."}
           </Link>
         </LinkToDownload>
       ) : (

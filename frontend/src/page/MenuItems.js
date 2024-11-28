@@ -10,6 +10,7 @@ import {
   HistoryOutlined,
   HomeOutlined,
   IdcardOutlined,
+  KeyOutlined,
   LoginOutlined,
   ProfileOutlined,
   ReconciliationOutlined,
@@ -204,6 +205,20 @@ const MenuItems = [
     ],
 
     children: [
+      {
+        label: "Эксклюзивные варианты отображения",
+        key: "/project/extra",
+        icon: <KeyOutlined />,
+        permission: ["read-project-extra1"],
+        children: [
+          {
+            label: "Эксклюзивный вариант 1",
+            key: "/project/extra/table_1",
+            icon: <EyeOutlined />,
+            permission: ["read-project-extra1"],
+          },
+        ],
+      },
       {
         label: "Стадия: Заявка",
         key: "/project/request",

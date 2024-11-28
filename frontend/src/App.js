@@ -19,6 +19,7 @@ import { NotificationProvider } from "./NotificationProvider";
 import ProjectTable from "./page/ProjectTable";
 import LoginForm from "./page/simplesForms/LoginForm";
 import RegisterForm from "./page/simplesForms/RegisterForm";
+import SimpleProjectTable from "./page/simplesTables/ProjectTable";
 
 import StatusLegendComponent from "./page/ProjectTable/components/StatusLegendComponent";
 import ProjectTSManagerForm from "./page/ProjectTSManagerForm";
@@ -181,6 +182,10 @@ const App = () => {
                 {/* <Route path="/math/tech_ref/table/template" element={<ReferenceForm />}/> */}
                 {/*Проекты*/}
                 <Route path="/project" element={<Home />} />
+                <Route
+                  path="/project/extra/table_1"
+                  element={<SimpleProjectTable />}
+                />
                 <Route
                   path="/project/statistic"
                   element={<StatusLegendComponent />}
