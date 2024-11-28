@@ -7,8 +7,9 @@ use App\Models\File;
 use App\Models\Project;
 use App\Models\ProjectFile;
 use App\Models\ProjectStage as ProjectStageModel;
-use App\Services\FileUploadService;
+use App\Services\FileUpload\FileUploadService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProjectStage extends Controller
 {
@@ -38,12 +39,16 @@ class ProjectStage extends Controller
 
         $orderNumber = $this->generateOrderNumber($project, $projectStage);
 
-        $this->fileUploadService->createProjectFile($project->id, $fileRecord->id, 'STAGE_WORK_ACT', $datePayment, $orderNumber);
+        $this->fileUploadService->createProjectFile($projectId, $fileRecord->id, 'STAGE_WORK_ACT', $datePayment, $orderNumber);
+        error_log("ss" . $projectStage);
 
-        $projectStage->update([
-            'work_act_file_id' => $fileRecord->id,
-            'work_act_singing_date' => $datePayment,
-        ]);
+        DB::update(
+            'UPDATE project_stages
+         SET work_act_file_id = ?, work_act_singing_date = ?, updated_at = NOW()
+         WHERE project_id = ? AND stage_id = ?',
+            [$fileRecord->id, $datePayment, $projectId, $projectStage->stage_id]
+        );
+
 
         return response()->json(['success' => true, 'file' => $fileRecord->id]);
     }
@@ -53,56 +58,87 @@ class ProjectStage extends Controller
         $projectId = $request->query('projectId');
         $stageNumber = $request->query('stageNumber');
         $datePayment = $request->query('date');
-        $file = $this->fileUploadService->validateAndGetFile($request);
+        $file = $request->file('file'); // Проверяем, есть ли файл в запросе
 
         if ($stageNumber === '0') {
+            // Работа с проектом без этапа
             $project = Project::findOrFail($projectId);
 
-            $fileRecord = $this->fileUploadService->uploadFile(
-                $file,
-                '/' . $project->path_project_folder . '/Счета на оплату (подтверждённые)/',
-                'localERPFiles'
-            );
+            if ($file) {
+                // Если файл передан, выполняем загрузку
+                $fileRecord = $this->fileUploadService->uploadFile(
+                    $file,
+                    '/' . $project->path_project_folder . '/Счета на оплату (подтверждённые)/',
+                    'localERPFiles'
+                );
 
-            $orderNumber = $this->generateOrderNumber($project);
+                $orderNumber = $this->generateOrderNumber($project);
 
-            $this->fileUploadService->createProjectFile($project->id, $fileRecord->id, 'STAGE_PAYMENT', $datePayment, $orderNumber);
+                $this->fileUploadService->createProjectFile($project->id, $fileRecord->id, 'STAGE_PAYMENT', $datePayment, $orderNumber);
 
-            $project->update([
-                'prepayment_date' => $datePayment,
-                'prepayment_file_id' => $fileRecord->id,
-            ]);
+                $project->update([
+                    'prepayment_date' => $datePayment,
+                    'prepayment_file_id' => $fileRecord->id,
+                ]);
 
-            return response()->json(['success' => true, 'file' => $fileRecord->id]);
+                return response()->json(['success' => true, 'file' => $fileRecord->id]);
+            } else {
+                // Если файл не передан, обновляем только дату
+                $project->update([
+                    'prepayment_date' => $datePayment,
+                ]);
+
+                return response()->json(['success' => true, 'message' => 'Payment date updated without file.']);
+            }
+        } else {
+            // Работа с этапом проекта
+            $projectStage = $this->findProjectStage($projectId, $stageNumber);
+
+            if (!$projectStage) {
+                return response()->json(['error' => 'Project stage not found'], 404);
+            }
+
+            $project = $projectStage->project;
+
+            if ($file) {
+                // Если файл передан, выполняем загрузку
+                $fileRecord = $this->fileUploadService->uploadFile(
+                    $file,
+                    '/' . $project->path_project_folder . '/Счета на оплату (подтверждённые)/',
+                    'localERPFiles'
+                );
+
+                $orderNumber = $this->generateOrderNumber($project, $projectStage);
+
+                $this->fileUploadService->createProjectFile($project->id, $fileRecord->id, 'STAGE_PAYMENT', $datePayment, $orderNumber);
+
+                DB::update(
+                    'UPDATE project_stages
+                 SET payment_file_id = ?, payment_date = ?, updated_at = NOW()
+                 WHERE project_id = ? AND stage_id = ?',
+                    [$fileRecord->id, $datePayment, $projectId, $projectStage->stage_id]
+                );
+
+                return response()->json(['success' => true, 'file' => $fileRecord->id]);
+            } else {
+                // Если файл не передан, обновляем только дату
+                DB::update(
+                    'UPDATE project_stages
+                 SET payment_date = ?, updated_at = NOW()
+                 WHERE project_id = ? AND stage_id = ?',
+                    [$datePayment, $projectId, $projectStage->stage_id]
+                );
+
+                return response()->json(['success' => true, 'message' => 'Payment date updated without file.']);
+            }
         }
-
-        $projectStage = $this->findProjectStage($projectId, $stageNumber);
-
-        $project = $projectStage->project;
-
-        $fileRecord = $this->fileUploadService->uploadFile(
-            $file,
-            '/' . $project->path_project_folder . '/Счета на оплату (подтверждённые)/',
-            'localERPFiles'
-        );
-
-        $orderNumber = $this->generateOrderNumber($project, $projectStage);
-
-        $this->fileUploadService->createProjectFile($project->id, $fileRecord->id, 'STAGE_PAYMENT', $datePayment, $orderNumber);
-
-        $projectStage->update([
-            'payment_file_id' => $fileRecord->id,
-            'payment_date' => $datePayment,
-        ]);
-
-        return response()->json(['success' => true, 'file' => $fileRecord->id]);
     }
 
 
     private function findProjectStage($projectId, $stageNumber)
     {
         $projectStage = ProjectStageModel::where('project_id', $projectId)
-            ->where('number', $stageNumber)
+            ->where('number', "=", $stageNumber)
             ->first();
 
         if (!$projectStage) {

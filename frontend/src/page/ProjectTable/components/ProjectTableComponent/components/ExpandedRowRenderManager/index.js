@@ -25,6 +25,7 @@ import TaskGanttChartComponent from "./components/TaskGanttChartComponent";
 
 const Index = ({ project, expandable, refetchProject, options }) => {
   const [editModalStatus, setEditModalStatus] = useState();
+  const [uniqueKey, setUniqueKey] = useState("");
   const getNameModalView = (type) => {
     switch (type) {
       case "project":
@@ -66,6 +67,7 @@ const Index = ({ project, expandable, refetchProject, options }) => {
         }}
       >
         <Tabs
+          onChange={() => setUniqueKey(nanoid())}
           size={"small"}
           type="card"
           accordion
@@ -76,10 +78,11 @@ const Index = ({ project, expandable, refetchProject, options }) => {
             ...(options.includes("stages")
               ? [
                   {
-                    key: "0",
+                    key: project.id + "_tab_item_0",
                     icon: <BulbOutlined />,
                     children: (
                       <TableNotificationsComponent
+                        key={"item_0_" + uniqueKey}
                         data-permission={"read-project"}
                         projectId={project.id}
                       />
@@ -90,11 +93,12 @@ const Index = ({ project, expandable, refetchProject, options }) => {
             ...(options.includes("stages")
               ? [
                   {
-                    key: "1",
+                    key: project.id + "_tab_item_1",
                     icon: <BarsOutlined />,
                     label: "Этапы",
                     children: (
                       <TableStagesComponent
+                        key={"item_1_" + uniqueKey}
                         projectId={project.id}
                         data-permission={"read-project-stage"}
                         setEditModalStatus={() => setEditModalStatus("stages")}
@@ -106,11 +110,12 @@ const Index = ({ project, expandable, refetchProject, options }) => {
             ...(options.includes("irds")
               ? [
                   {
-                    key: "2",
+                    key: project.id + "_tab_item_2",
                     icon: <BookOutlined />,
                     label: "ИРД",
                     children: (
                       <TableIrdsComponent
+                        key={"item_2_" + uniqueKey}
                         projectId={project.id}
                         data-permission={"read-project-ird"}
                         setEditModalStatus={() => setEditModalStatus("irds")}
@@ -122,11 +127,12 @@ const Index = ({ project, expandable, refetchProject, options }) => {
             ...(options.includes("executors")
               ? [
                   {
-                    key: "3",
+                    key: project.id + "_tab_item_3",
                     icon: <AuditOutlined />,
                     label: "Исполнители",
                     children: (
                       <TableExecutorsComponent
+                        key={"item_3_" + uniqueKey}
                         data-permission={"read-project-task-executor"}
                         projectId={project?.id}
                         setEditModalStatus={() =>
@@ -140,11 +146,12 @@ const Index = ({ project, expandable, refetchProject, options }) => {
             ...(options.includes("stages-extra")
               ? [
                   {
-                    key: "4",
+                    key: project.id + "_tab_item_4",
                     icon: <ExceptionOutlined />,
                     label: "Акты и Счета по Этапам",
                     children: (
                       <TableStagesComponent
+                        key={"item_4_" + uniqueKey}
                         data-permission={"read-project-stage"}
                         projectId={project.id}
                         options={["acts", "payments"]}
@@ -157,13 +164,14 @@ const Index = ({ project, expandable, refetchProject, options }) => {
             ...(options.includes("tasks")
               ? [
                   {
-                    key: "5",
+                    key: project.id + "_tab_item_5",
                     icon: <SignatureOutlined />,
                     label: "Задачи",
                     children: (
                       <TableProjectTasksManagment
+                        key={"item_5_" + uniqueKey}
                         data-permission={"read-project-task-executor"}
-                        project={project}
+                        projectId={project.id}
                         setEditModalStatus={() => setEditModalStatus("tasks")}
                       />
                     ),
@@ -173,11 +181,12 @@ const Index = ({ project, expandable, refetchProject, options }) => {
             ...(options.includes("executor_orders")
               ? [
                   {
-                    key: "6",
+                    key: project.id + "_tab_item_6",
                     icon: <ReconciliationOutlined />,
                     label: "Оплата договоров с исполнителями",
                     children: (
                       <TablePaymentExecutorOrdersComponent
+                        key={"item_5_" + uniqueKey}
                         data-permission={"read-project-task-executor"}
                         projectId={project.id}
                         setEditModalStatus={() =>
@@ -191,11 +200,12 @@ const Index = ({ project, expandable, refetchProject, options }) => {
             ...(options.includes("task-chart")
               ? [
                   {
-                    key: "7",
+                    key: project.id + "_tab_item_7",
                     icon: <FundProjectionScreenOutlined />,
                     label: "График задач",
                     children: (
                       <TaskGanttChartComponent
+                        key={"item_5_" + uniqueKey}
                         style={{ width: "100%" }}
                         projectId={project.id}
                       />
@@ -206,11 +216,14 @@ const Index = ({ project, expandable, refetchProject, options }) => {
             ...(options.includes("task-chart")
               ? [
                   {
-                    key: "8",
+                    key: project.id + "_tab_item_8",
                     icon: <FieldTimeOutlined />,
                     label: "Задержки",
                     children: (
-                      <TableProjectTasksDelayManagment projectId={project.id} />
+                      <TableProjectTasksDelayManagment
+                        key={"item_5_" + uniqueKey}
+                        projectId={project.id}
+                      />
                     ),
                   },
                 ]

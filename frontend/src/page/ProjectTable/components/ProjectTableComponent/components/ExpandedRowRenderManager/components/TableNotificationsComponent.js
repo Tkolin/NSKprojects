@@ -6,10 +6,9 @@ import { CHECK_STATUS_PROJECT_QUERY } from "../../../../../../../graphql/queries
 const { Text } = Typography;
 
 const TableNotificationsComponent = ({ projectId }) => {
-  const { data: notificationsData, loading: notificationsLoading } = useQuery(
-    CHECK_STATUS_PROJECT_QUERY,
-    { variables: { projectId: projectId } }
-  );
+  const { data, loading } = useQuery(CHECK_STATUS_PROJECT_QUERY, {
+    variables: { projectId: projectId },
+  });
 
   const columnsExecutors = [
     {
@@ -37,29 +36,11 @@ const TableNotificationsComponent = ({ projectId }) => {
       <Table
         style={{ margin: 0, width: "max-content" }}
         size={"small"}
-        loading={notificationsLoading}
+        loading={loading}
         columns={columnsExecutors}
-        dataSource={notificationsData?.checkStatusProject}
+        dataSource={data?.checkStatusProject}
         pagination={false}
       />
-      {/* <Modal
-        key={nanoid()}
-        open={
-          executorOrderModalStatus?.executor &&
-          executorOrderModalStatus?.projectTasks
-        }
-        onCancel={() => setExecutorOrderModalStatus(null)}
-        footer={null}
-        title={"Договора с исполнителем"}
-        width={1300}
-        onClose={() => setExecutorOrderModalStatus(null)}
-      >
-        <OrderExecutorManager
-          onUpdated={() => onUpdated()}
-          executor={executorOrderModalStatus?.executor}
-          projectTasks={executorOrderModalStatus?.projectTasks}
-        />
-      </Modal> */}
     </>
   );
 };

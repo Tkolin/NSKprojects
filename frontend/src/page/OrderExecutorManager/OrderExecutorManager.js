@@ -29,7 +29,7 @@ export const OrderExecutorManager = ({
   const [loadOrders, { loading, data }] = useLazyQuery(EXECUTOR_ORDERS_QUERY, {
     variables: {
       executorId: executor.id,
-      projectId: projectTasks[0].project_id,
+      projectId: projectId,
     },
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {

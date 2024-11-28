@@ -7,7 +7,7 @@ use App\Models\ExecutorOrder;
 use App\Models\ExecutorOrderPayment;
 use App\Models\File;
 use App\Models\ProjectFile;
-use App\Services\FileUploadService;
+use App\Services\FileUpload\FileUploadService;
 use Illuminate\Http\Request;
 
 class ProjectExecutor extends Controller
@@ -21,11 +21,15 @@ class ProjectExecutor extends Controller
 
     public function uploadOrderPaymentPaycheck(Request $request)
     {
-        $executorOrderPaymentId = $request->query('executor_order_payment_id');
+        $executorOrderPaymentId = $request->query('executorOrderPaymentId');
         $file = $this->fileUploadService->validateAndGetFile($request);
 
         $executorOrderPayment = ExecutorOrderPayment::findOrFail($executorOrderPaymentId);
-        $project = $executorOrderPayment->project;
+        $project = $executorOrderPayment->getProject(); // BelongsTo вернёт единственный проект.
+
+        if (!$project) {
+            return response()->json(['error' => 'Project not found for this payment' . $executorOrderPayment], 404);
+        }
 
         $fileRecord = $this->fileUploadService->uploadFile(
             $file,
@@ -38,6 +42,7 @@ class ProjectExecutor extends Controller
 
         return response()->json(['success' => true, 'file' => $fileRecord->id]);
     }
+
 
     public function uploadExecutorOrder(Request $request)
     {
@@ -53,7 +58,7 @@ class ProjectExecutor extends Controller
             'localERPFiles'
         );
 
-        $this->fileUploadService->createProjectFile($project->id, $fileRecord->id, 'EXECUTER_ORDER', $order->number);
+        $this->fileUploadService->createProjectFile($project->id, $fileRecord->id, 'EXECUTOR_ORDER', null, $order->number);
         $order->update(['signed_file_id' => $fileRecord->id]);
 
         return response()->json(['success' => true, 'file' => $fileRecord->id]);
@@ -63,7 +68,8 @@ class ProjectExecutor extends Controller
     {
         $executorOrderId = $request->query('executorOrderId');
         $status = $request->query('status');
-        $file = $this->fileUploadService->validateAndGetFile($request);
+        $date = $request->query('date');
+        $file = $this->fileUploadService->validateAndGetFile(request: $request);
 
         $order = ExecutorOrder::with('project_tasks.project')->findOrFail($executorOrderId);
         $project = $order->project_tasks[0]->project;
@@ -74,13 +80,20 @@ class ProjectExecutor extends Controller
             'localERPFiles'
         );
 
-        $this->fileUploadService->createProjectFile($project->id, $fileRecord->id, 'EXECUTOR_ORDER_PAYMENT_UP', $status);
-        ExecutorOrderPayment::create([
-            'file_id' => $fileRecord->id,
-            'executor_order_id' => $order->id,
-            'status' => 'COMPLETED',
-            'type_payment' => $status,
-        ]);
+        $this->fileUploadService->createProjectFile($project->id, $fileRecord->id, 'EXECUTOR_ORDER_PAYMENT_UP', $date);
+        ExecutorOrderPayment::updateOrCreate(
+            [
+                'executor_order_id' => $order->id,
+                'type_payment' => $status,
+            ]
+            ,
+            [
+                'file_id' => $fileRecord->id,
+                'executor_order_id' => $order->id,
+                'type_payment' => $status,
+                'status' => 'COMPLETED',
+            ]
+        );
 
         return response()->json(['success' => true, 'file' => $fileRecord->id]);
     }

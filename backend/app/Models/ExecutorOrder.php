@@ -41,14 +41,13 @@ class ExecutorOrder extends Model
 
     public function getFilesPaymentsTypes(): array
     {
-        return $this->tasks()
-            ->join('executor_order_task as eot', 'project_tasks.id', '=', 'eot.project_task_id')
-            ->join('executor_order_payments as eop', 'eot.executor_order_id', '=', 'eop.executor_order_id')
-            ->where('eot.executor_order_id', $this->id)
-            ->whereNotNull('eop.file_id') // Условие, что file_id не должен быть NULL
-            ->pluck('eop.type_payment') // Получить массив значений type_payment
-            ->toArray(); // Преобразовать Collection в массив
+        return $this->executor_order_payments()
+            ->whereNotNull('file_id')
+            ->where('status', 'COMPLETED')
+            ->pluck('type_payment')
+            ->toArray();
     }
+
     public function signed_file(): BelongsTo
     {
         return $this->belongsTo(File::class, 'signed_file_id', 'id');

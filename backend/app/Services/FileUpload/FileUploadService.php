@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\FileUpload;
 
 use App\Models\File;
 use App\Models\ProjectFile;
@@ -38,7 +38,7 @@ class FileUploadService
             'file_id' => $fileId,
             'type' => $type,
             'number' => $number,
-            'date_document' => $dateDocument,
+            'date_document' => $dateDocument ?? now(),
             'document_number' => $documentNumber,
         ]);
     }

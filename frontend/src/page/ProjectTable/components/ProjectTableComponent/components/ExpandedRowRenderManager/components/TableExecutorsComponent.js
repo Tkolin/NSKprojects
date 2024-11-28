@@ -1,5 +1,5 @@
 import { Modal, Space, Table, Typography } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useQuery } from "@apollo/client";
 import Link from "antd/es/typography/Link";
@@ -20,6 +20,9 @@ const TableExecutorsComponent = ({
       projectId: projectId,
     },
   });
+  useEffect(() => {
+    refetch();
+  }, []);
   const groupTasksByExecutor = (tasks) => {
     if (!(tasks?.length > 0)) return [];
     return tasks.reduce((acc, task) => {
@@ -86,7 +89,7 @@ const TableExecutorsComponent = ({
           key: "contract",
           align: "left",
           render: (text, record) => {
-            const s = data?.projectTasks?.items?.filter(
+            const s = data?.projectTasks?.filter(
               (row) => row?.executor?.id === record?.executor.id
             );
             return (
@@ -113,7 +116,7 @@ const TableExecutorsComponent = ({
         size={"small"}
         loading={loading}
         columns={columnsExecutors}
-        dataSource={groupTasksByExecutor(data?.projectTasks?.items).sort(
+        dataSource={groupTasksByExecutor(data?.projectTasks).sort(
           (a, b) => new Date(a.date_start) - new Date(b.date_start)
         )}
         pagination={false}
@@ -133,6 +136,7 @@ const TableExecutorsComponent = ({
         <OrderExecutorManager
           onUpdated={() => onUpdated()}
           executor={executorOrderModalStatus?.executor}
+          projectId={projectId}
           projectTasks={executorOrderModalStatus?.projectTasks}
         />
       </Modal>

@@ -21,14 +21,19 @@ class ExecutorOrderPayment extends Model
     {
         return $this->belongsTo(ExecutorOrder::class, 'executor_order_id', 'id');
     }
-    public function project(): ?Project
-    {
-        // Получаем связанную запись executor_order
-        $executorOrder = $this->executor_order()->first();
 
-        // Возвращаем проект через связь executor_order->project()
-        return $executorOrder ? $executorOrder->project : null;
+    public function getProject(): ?Project
+    {
+        return Project::query()
+            ->join('project_tasks', 'projects.id', '=', 'project_tasks.project_id')
+            ->join('executor_order_task', 'project_tasks.id', '=', 'executor_order_task.project_task_id')
+            ->join('executor_orders', 'executor_order_task.executor_order_id', '=', 'executor_orders.id')
+            ->join('executor_order_payments', 'executor_orders.id', '=', 'executor_order_payments.executor_order_id')
+            ->where('executor_order_payments.id', $this->id)
+            ->select('projects.*')
+            ->first();
     }
+
 
 
 }

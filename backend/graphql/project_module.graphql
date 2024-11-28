@@ -4,9 +4,9 @@
 extend type Query {
     projectIrds(projectId: ID): [ProjectIrd]
         @checkRole(permission: ["read-project-ird"])
-    projectTasks(projectId: ID): [ProjectTasks]
+    projectTasks(projectId: ID): [ProjectTask]
         @checkRole(permission: ["read-project-task"])
-    projectStages(projectId: ID): [ProjectTask]
+    projectStages(projectId: ID): [ProjectStage]
         @checkRole(permission: ["read-project-stage"])
     projectsStatistic(projectStatuses: [String]!): [ProjectStatistic]
         @checkRole(permission: ["read-project"])

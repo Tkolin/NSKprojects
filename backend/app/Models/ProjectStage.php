@@ -12,7 +12,7 @@ class ProjectStage extends Pivot
     protected $table = 'project_stages';
     protected $primaryKey = null;
     public $incrementing = false;
-    
+
 
     protected $fillable = [
         'project_id',
@@ -26,7 +26,7 @@ class ProjectStage extends Pivot
         'percent',
         'price',
         'price_to_paid',
-        
+
         'payment_file_id',
         'payment_date',
 
@@ -44,7 +44,7 @@ class ProjectStage extends Pivot
     }
     public function payment_file(): BelongsTo
     {
-        return $this->belongsTo(ProjectFile::class,"payment_file_id", "file_id");
+        return $this->belongsTo(ProjectFile::class, "payment_file_id", "file_id");
     }
     public function work_act_file(): BelongsTo
     {

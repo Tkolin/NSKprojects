@@ -3,8 +3,8 @@ import { useLazyQuery, useQuery } from "@apollo/client";
 import { Space, Table, Tooltip, Typography } from "antd";
 import Link from "antd/es/typography/Link";
 import dayjs from "dayjs";
-import React from "react";
-import { PROJECT_STAGES_QUERY } from "../../../../../../../graphql/queries/all";
+import React, { useEffect } from "react";
+import { PROJECT_STAGES_QUERY } from "../../../../../../../graphql/queries/projectStage";
 import { PROJECT_QUERY } from "../../../../../../../graphql/queries/queriesByID";
 import ActRenderingProjectDownload from "../../../../../../components/script/fileDownloadScripts/ActRenderingProjectDownload";
 import PaymentInvoiceProjectDownload from "../../../../../../components/script/fileDownloadScripts/PaymentInvoiceProjectDownload";
@@ -28,7 +28,10 @@ const TableStagesComponent = ({
       projectId: projectId,
     },
   });
-
+  useEffect(() => {
+    refetch();
+    updateProject();
+  }, []);
   const [
     updateProject,
     { data: actualProject, loading: loadingActualProject },
@@ -39,13 +42,12 @@ const TableStagesComponent = ({
       console.log("Данные проекта обновлены");
     },
   });
-
   const columnsStages = [
     {
       title: (
         <Space>
           <Tooltip title={"Список ИРД"}>
-            <Text style={{ marginRight: 10 }}>Список этапы</Text>
+            <Text style={{ marginRight: 10 }}>Список этапов</Text>
           </Tooltip>
           <Link type={"warning"}>
             <EditOutlined
@@ -106,14 +108,26 @@ const TableStagesComponent = ({
                     style={{ alignContent: "start" }}
                   >
                     {record?.type === "prepayment" ? (
-                      data.projectStages?.prepayment_date ? (
-                        <LinkToDownload
-                          fileId={data.projectStages?.prepayment_file_id}
-                        >
-                          <StyledButtonGreen icon={<DownloadOutlined />}>
-                            Скачать
-                          </StyledButtonGreen>
-                        </LinkToDownload>
+                      actualProject?.project?.prepayment_date ? (
+                        actualProject?.project?.prepayment_file_id ? (
+                          <LinkToDownload
+                            fileId={actualProject?.project?.prepayment_file_id}
+                          >
+                            <StyledButtonGreen icon={<DownloadOutlined />}>
+                              Скачать, потверждено от:{" "}
+                              {dayjs(
+                                actualProject?.project?.prepayment_date
+                              )?.format("DD.MM.YYYY")}
+                            </StyledButtonGreen>
+                          </LinkToDownload>
+                        ) : (
+                          <>
+                            Файл отсутвует, потверждено от:{" "}
+                            {dayjs(
+                              actualProject?.project?.prepayment_date
+                            )?.format("DD.MM.YYYY")}
+                          </>
+                        )
                       ) : (
                         <Space.Compact direction="vertical">
                           <PaymentInvoiceProjectDownload
@@ -125,21 +139,34 @@ const TableStagesComponent = ({
                             stageNumber={
                               record?.type === "prepayment" ? 0 : record.number
                             }
-                            onUpdated={() => updateProject()}
+                            onUpdated={() => {
+                              refetch();
+                              updateProject();
+                            }}
                             projectId={projectId}
                           />
                         </Space.Compact>
                       )
-                    ) : record?.payment_file_id ? (
+                    ) : record?.payment_date ? (
                       <>
-                        <LinkToDownload
-                          fileId={record?.payment_file_id}
-                          style={{ width: "100%" }}
-                        >
-                          <StyledButtonGreen icon={<DownloadOutlined />}>
-                            Скачать
-                          </StyledButtonGreen>
-                        </LinkToDownload>
+                        {record?.payment_file_id ? (
+                          <LinkToDownload
+                            fileId={record?.payment_file_id}
+                            style={{ width: "100%" }}
+                          >
+                            <StyledButtonGreen icon={<DownloadOutlined />}>
+                              Скачать, потверждено от:{" "}
+                              {dayjs(record?.payment_date)?.format(
+                                "DD.MM.YYYY"
+                              )}
+                            </StyledButtonGreen>
+                          </LinkToDownload>
+                        ) : (
+                          <>
+                            Файл отсутвует, потверждено от:{" "}
+                            {dayjs(record?.payment_date)?.format("DD.MM.YYYY")}
+                          </>
+                        )}
                       </>
                     ) : (
                       <Space.Compact direction="vertical">
@@ -152,7 +179,10 @@ const TableStagesComponent = ({
                           stageNumber={
                             record?.type === "prepayment" ? 0 : record.number
                           }
-                          onUpdated={() => updateProject()}
+                          onUpdated={() => {
+                            refetch();
+                            updateProject();
+                          }}
                           projectId={projectId}
                         />
                       </Space.Compact>
@@ -197,7 +227,10 @@ const TableStagesComponent = ({
                         />
                         <UploadFileWorkActSinging
                           stageNumber={record.number}
-                          onUpdated={() => updateProject()}
+                          onUpdated={() => {
+                            refetch();
+                            updateProject();
+                          }}
                           projectId={projectId}
                         />
                       </Space.Compact>

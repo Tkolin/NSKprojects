@@ -52,47 +52,30 @@ export const PROJECT_TASKS_QUERY = gql`
   query ProjectTasks($projectId: ID!) {
     projectTasks(projectId: $projectId) {
       id
+      is_delay
+      project_id
+      task_id
+      project_task_inherited_id
       task {
         id
         name
       }
+      stage_number
+      date_start
+      status
+      date_end
+      duration
+      offset
       executor {
         id
         passport {
-          id
           first_name
           last_name
           patronymic
         }
       }
-      date_start
-      date_end
-      stage_number
-      project_task_inherited_id
-    }
-  }
-`;
-export const PROJECT_STAGES_QUERY = gql`
-  query ProjectStages($projectId: ID!) {
-    projectStages(projectId: $projectId) {
-      id
-      task {
-        id
-        name
-      }
-      executor {
-        id
-        passport {
-          id
-          first_name
-          last_name
-          patronymic
-        }
-      }
-      date_start
-      date_end
-      stage_number
-      project_task_inherited_id
+      price
+      description
     }
   }
 `;
@@ -638,26 +621,6 @@ export const BIKS_QUERY = gql`
         correspondent_account
       }
       count
-    }
-  }
-`;
-export const PROJECT_IRDS_QUERY = gql`
-  query ProjectIrds($projectId: ID) {
-    projectIrds(projectId: $projectId) {
-      id
-      project_id
-      ird_id
-
-      ird {
-        id
-        name
-      }
-      received_date
-      stage_number
-      application_project
-      is_broken
-      is_viewed
-      acceptance_date
     }
   }
 `;

@@ -70,7 +70,7 @@ export const UploadFilePaymentSuccess = ({
 }) => {
   return (
     <UploadFilePopconfirm
-      options={{ datePicker: true }}
+      options={{ datePicker: true, fileNoRequired: true }}
       title={"Укажите дату оплаты"}
       onUpdated={() => onUpdated && onUpdated()}
       action={
@@ -82,7 +82,7 @@ export const UploadFilePaymentSuccess = ({
       children={
         <Button
           icon={<UploadOutlined />}
-          children={"Прикрепить подтверждающий документ"}
+          children={"Прикрепить платёжное поручение"}
         />
       }
     />
@@ -106,6 +106,33 @@ export const UploadFilePopconfirm = ({
 
   // Закрытие Popconfirm при клике вне его
   useClickAway(popconfirmRef, () => !openDp && setOpen(false));
+
+  const coldFetch = () => {
+    const url =
+      process.env.REACT_APP_API_URL +
+      action +
+      (options?.datePicker ? "&date=" + selectedDateContract : "");
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+
+        Authorization: "Bearer " + localStorage.getItem("accessToken"),
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          message.success("Payment confirmed successfully!");
+        } else {
+          message.error(data.error || "Failed to confirm payment.");
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        message.error("Error occurred while confirming payment.");
+      });
+  };
 
   if (!action)
     return <Alert showIcon type={"error"} message={"Эндпоинт не указан"} />;
@@ -140,7 +167,8 @@ export const UploadFilePopconfirm = ({
           <UploadFile
             style={{ width: "200px", marginTop: 7, backgroundColor: "red" }}
             action={
-              action + (options?.datePicker && "&date=" + selectedDateContract)
+              action +
+              (options?.datePicker ? "&date=" + selectedDateContract : "")
             }
             accept={".pdf"}
             disabled={options?.datePicker && !selectedDateContract}
@@ -154,12 +182,29 @@ export const UploadFilePopconfirm = ({
               type={"dashed"}
               onClick={() => setOpen(true)}
               block
-              disabled={!selectedDateContract}
+              disabled={options?.datePicker && !selectedDateContract}
               style={{ width: "200px", marginTop: 15 }}
             >
               Отправить файл
             </Button>
           </UploadFile>
+          {options.fileNoRequired && (
+            <Button
+              type={"dashed"}
+              danger
+              block
+              onClick={() => {
+                coldFetch();
+                setOpen(false);
+                onUpdated && onUpdated();
+                options?.datePicker && setSelectedDateContract(null);
+              }}
+              disabled={options?.datePicker && !selectedDateContract}
+              style={{ width: "200px", marginTop: 0 }}
+            >
+              Подтвердить без файла
+            </Button>
+          )}
         </Space>
       }
       okButtonProps={{ style: { display: "none" } }}

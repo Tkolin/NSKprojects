@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\File;
 use App\Models\Project;
 use App\Models\ProjectFile;
-use App\Services\FileUploadService;
+use App\Services\FileUpload\FileUploadService;
 use Illuminate\Http\Request;
 
 class ProjectMain extends Controller

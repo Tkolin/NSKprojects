@@ -26,7 +26,7 @@ export const CONTACTS_BY_ORGANIZATION = gql`
   }
 `;
 export const EXECUTOR_ORDERS_QUERY = gql`
-  query ExecutorOrders($projectId: ID!, $executorId: ID!) {
+  query ExecutorOrders($projectId: ID, $executorId: ID) {
     executorOrders(projectId: $projectId, executorId: $executorId) {
       id
       date_generate
@@ -46,6 +46,7 @@ export const EXECUTOR_ORDERS_QUERY = gql`
       executor_order_payments {
         id
         file_id
+        type_payment
         paycheck_file_id
         status
         project {
@@ -56,7 +57,7 @@ export const EXECUTOR_ORDERS_QUERY = gql`
   }
 `;
 export const EXECUTOR_ORDERS_PROJECT_QUERY = gql`
-  query ExecutorOrders($projectId: ID!) {
+  query ExecutorOrders($projectId: ID) {
     executorOrders(projectId: $projectId) {
       id
       is_tasks_completed
@@ -92,6 +93,7 @@ export const EXECUTOR_ORDERS_PROJECT_QUERY = gql`
       executor_order_payments {
         id
         file_id
+        type_payment
         paycheck_file_id
         status
         project {
@@ -249,6 +251,7 @@ export const FULL_EXECUTOR_ORDERS_QUERY = gql`
       executor_order_payments {
         id
         file_id
+        type_payment
         paycheck_file_id
         status
         project {

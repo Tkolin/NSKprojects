@@ -11,14 +11,14 @@ import {
 } from "antd";
 import Link from "antd/es/typography/Link";
 import dayjs from "dayjs";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ACCEPT_IRD_MUTATION,
   RECEIVED_IRD_MUTATION,
   REJECT_IRD_MUTATION,
   VIEWED_IRD_MUTATION,
 } from "../../../../../../../graphql/mutations/projectIrd";
-import { PROJECT_IRDS_QUERY } from "../../../../../../../graphql/queries/all";
+import { PROJECT_IRDS_QUERY } from "../../../../../../../graphql/queries/projectIrds";
 import { CustomDatePicker } from "../../../../../../components/FormattingDateElementComponent";
 
 const { Text } = Typography;
@@ -30,15 +30,14 @@ const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
       placement,
     });
   };
-  const {
-    data: dataProjectIrd,
-    loading: loadingProjectIrds,
-    refetch: refetchProjectIrds,
-  } = useQuery(PROJECT_IRDS_QUERY, {
+  const { data, loading, refetch } = useQuery(PROJECT_IRDS_QUERY, {
     variables: {
       projectId: projectId,
     },
   });
+  useEffect(() => {
+    refetch();
+  }, []);
   const [viewedProjectIrd, { loading: loadingViewedProjectIrd }] = useMutation(
     VIEWED_IRD_MUTATION,
     {
@@ -48,7 +47,7 @@ const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
           "success",
           "Ирд отмечено как просмотренное"
         );
-        refetchProjectIrds();
+        refetch();
       },
       onError: (error) => {
         openNotification("topRight", "error", "ошибка VIEWED_IRD_MUTATION");
@@ -60,7 +59,7 @@ const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
     {
       onCompleted: (data) => {
         openNotification("topRight", "success", "ИРД подтвержено специалистом");
-        refetchProjectIrds();
+        refetch();
       },
       onError: (error) => {
         openNotification("topRight", "error", "ошибка ACCEPT_IRD_MUTATION");
@@ -71,7 +70,7 @@ const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
     useMutation(RECEIVED_IRD_MUTATION, {
       onCompleted: (data) => {
         openNotification("topRight", "success", "ИРД подтвержено специалистом");
-        refetchProjectIrds();
+        refetch();
       },
       onError: (error) => {
         openNotification("topRight", "error", "ошибка RECEIVED_IRD_MUTATION");
@@ -82,7 +81,7 @@ const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
     {
       onCompleted: (data) => {
         openNotification("topRight", "success", "ИРД подтвержено специалистом");
-        refetchProjectIrds();
+        refetch();
       },
       onError: (error) => {
         openNotification("topRight", "error", "ошибка REJECT_IRD_MUTATION");
@@ -270,9 +269,9 @@ const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
     <Table
       style={{ margin: 0, width: "100%" }}
       size={"small"}
-      loading={loadingProjectIrds}
+      loading={loading}
       columns={columnsIrds}
-      dataSource={dataProjectIrd?.projectIrds}
+      dataSource={data?.projectIrds}
       pagination={false}
     />
   );
