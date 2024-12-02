@@ -17,6 +17,28 @@
         transform: rotateY(360deg); /* Заключительное положение вращения по оси Y (горизонтальная ось) */
     }
 }
+ span.green {
+     background-color: #95de64;
+  display: inline-block; /* Обеспечивает корректное округление */
+  border-radius: 20px;
+  padding: 1px 10px;
+  line-height: 120%;
+ }
+span.yellow {
+  background-color: #ffe58f;
+    display: inline-block; /* Обеспечивает корректное округление */
+  border-radius: 20px;
+  padding: 1px 10px;
+  line-height: 120%;
+}
+span.red {
+  background-color: #ffa39e;
+    display: inline-block; /* Обеспечивает корректное округление */
+  border-radius: 20px;
+  padding: 1px 10px;
+  line-height: 120%;
+}
+ 
 .ant-card-actions li {
     margin: 0 !important;
     padding: 0 !important;

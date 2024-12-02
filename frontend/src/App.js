@@ -184,7 +184,11 @@ const App = () => {
                 <Route path="/project" element={<Home />} />
                 <Route
                   path="/project/extra/table_1"
-                  element={<SimpleProjectTable />}
+                  element={<SimpleProjectTable columnKey={"v1"} />}
+                />
+                <Route
+                  path="/project/extra/table_2"
+                  element={<SimpleProjectTable columnKey={"v2"} />}
                 />
                 <Route
                   path="/project/statistic"

@@ -6,9 +6,10 @@ import { StyledButtonGreen } from "../components/style/ButtonStyles";
 import dayjs from "dayjs";
 import { PROJECTS_QUERY } from "../../graphql/queries/all";
 import { formatToRub } from "../../utils/MoneyFormater";
+import ColumnDurationRender from "../ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnDurationRender";
 const { Search } = Input;
 
-const ProjectTable = () => {
+const ProjectTable = ({ columnKey = "v1" }) => {
   // Состояния
 
   const [equipmentTypqModalStatus, setProjectStatus] = useState(false);
@@ -46,110 +47,262 @@ const ProjectTable = () => {
   if (error) return `Ошибка! ${error.message}`;
 
   // Формат таблицы
-  const columns = [
-    {
-      title: "№",
-      dataIndex: "number",
-      key: "number",
-    },
-    {
-      title: "Наименование проекта",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Заказчик",
-      key: "organization_customer",
-      render: (record) =>
-        record?.organization_customer?.full_name ??
-        record?.organization_customer?.name,
-    },
-    {
-      title: "Дата подписания (Договора)",
-      key: "date_signing",
-      render: (record) =>
-        record?.date_signing
-          ? dayjs(record?.date_signing).format("DD.MM.YYYY") + "г."
-          : "отсутствует",
-    },
-    {
-      title: "Дата получения ИРД (на 1 этап)",
-      key: "date_first_ird_completed",
-      render: (record) =>
-        record?.date_first_ird_completed
-          ? dayjs(record?.date_first_ird_completed).format("DD.MM.YYYY") + "г."
-          : "отсутствует",
-    },
-    {
-      title: "Про-сть",
-      dataIndex: "duration",
-      key: "duration",
-    },
-
-    {
-      title: "Дата окончания (по плану)",
-      key: "date_end_compute",
-      render: (record) => {
-        if (!record?.date_start || !record?.duration) {
-          return "не рассчитана";
-        }
-
-        return (
-          dayjs(record.date_start)
-            .add(record.duration, "day")
-            .format("DD.MM.YYYY") + " г."
-        );
+  const columns = {
+    v1: [
+      {
+        title: "№",
+        dataIndex: "number",
+        key: "number",
       },
-    },
-    {
-      title: "Дата окончания (по факту)",
-      key: "date_end_fact",
-      render: (record) =>
-        record?.date_end_fact
-          ? dayjs(record?.date_end_fact).format("DD.MM.YYYY") + "г."
-          : "не рассчитана",
-    },
-    {
-      title: "Руководитель",
-      key: "leader",
-      render: (record) =>
-        record.leader
-          ? record?.leader.passport.last_name +
-            " " +
-            record?.leader.passport.first_name +
-            " " +
-            record?.leader.passport.patronymic
-          : "отсутствует",
-    },
-    {
-      title: "Стоимость проекта",
-      key: "price",
-      render: (record) => formatToRub(record.price),
-    },
-    {
-      title: "Количество этапов",
-      key: "project_stages.length",
-      render: (record) => record?.project_stages.length,
-    },
-    {
-      title: "Аванс",
-      key: "prepayment",
-      render: (record) => record?.prepayment + "%",
-    },
-    {
-      title: "Фактическое закрытие проекта",
-      key: "date_end",
-      render: (record) =>
-        record.date_end
-          ? dayjs(record.date_end).format("DD.MM.YYYY") + "г."
-          : "в работе",
-    },
-    {
-      title: "Статус",
-      key: "status",
-      render: (record) => record?.status.name,
-    },
-  ];
+      {
+        title: "Наименование проекта",
+        dataIndex: "name",
+        key: "name",
+      },
+      {
+        title: "Заказчик",
+        key: "organization_customer",
+        render: (record) =>
+          record?.organization_customer?.full_name ??
+          record?.organization_customer?.name,
+      },
+      {
+        title: "Дата подписания (Договора)",
+        key: "date_signing",
+        render: (record) =>
+          record?.date_signing
+            ? dayjs(record?.date_signing).format("DD.MM.YYYY") + "г."
+            : "отсутствует",
+      },
+      {
+        title: "Дата получения ИРД (на 1 этап)",
+        key: "date_first_ird_completed",
+        render: (record) =>
+          record?.date_first_ird_completed
+            ? dayjs(record?.date_first_ird_completed).format("DD.MM.YYYY") +
+              "г."
+            : "отсутствует",
+      },
+      {
+        title: "Про-сть",
+        dataIndex: "duration",
+        key: "duration",
+      },
+
+      {
+        title: "Дата окончания (по плану)",
+        key: "date_end_compute",
+        render: (record) => {
+          if (!record?.date_start || !record?.duration) {
+            return "не рассчитана";
+          }
+
+          return (
+            dayjs(record.date_start)
+              .add(record.duration, "day")
+              .format("DD.MM.YYYY") + " г."
+          );
+        },
+      },
+      {
+        title: "Дата окончания (по факту)",
+        key: "date_end_fact",
+        render: (record) =>
+          record?.date_end_fact
+            ? dayjs(record?.date_end_fact).format("DD.MM.YYYY") + "г."
+            : "не рассчитана",
+      },
+      {
+        title: "Руководитель",
+        key: "leader",
+        render: (record) =>
+          record.leader
+            ? record?.leader.passport.last_name +
+              " " +
+              record?.leader.passport.first_name +
+              " " +
+              record?.leader.passport.patronymic
+            : "отсутствует",
+      },
+      {
+        title: "Стоимость проекта",
+        key: "price",
+        render: (record) => formatToRub(record.price),
+      },
+      {
+        title: "Количество этапов",
+        key: "project_stages.length",
+        render: (record) => record?.project_stages.length,
+      },
+      {
+        title: "Аванс",
+        key: "prepayment",
+        render: (record) => record?.prepayment + "%",
+      },
+      {
+        title: "Фактическое закрытие проекта",
+        key: "date_end",
+        render: (record) =>
+          record.date_end
+            ? dayjs(record.date_end).format("DD.MM.YYYY") + "г."
+            : "в работе",
+      },
+      {
+        title: "Статус",
+        key: "status",
+        render: (record) => record?.status.name,
+      },
+    ],
+    v2: [
+      {
+        title: "№",
+        dataIndex: "number",
+        key: "number",
+      },
+      {
+        title: "Тип",
+        key: "type_group",
+        render: (record) => record?.type_project_document?.group?.code,
+      },
+      {
+        title: "Наименование проекта",
+        dataIndex: "name",
+        key: "name",
+      },
+      {
+        title: "Заказчик",
+        key: "organization_customer",
+        render: (record) =>
+          record?.organization_customer?.full_name ??
+          record?.organization_customer?.name,
+      },
+      {
+        title: "Дата подписания - дата окончания (по договору)",
+        key: "date_signing",
+        render: (record) =>
+          (record?.date_signing
+            ? dayjs(record?.date_signing).format("DD.MM.YYYY") + "г."
+            : "отсутствует") +
+          " - " +
+          (record?.date_signing
+            ? dayjs(record?.date_signing)
+                .add(record.duration, "day")
+                .format("DD.MM.YYYY") + "г."
+            : "отсутствует"),
+      },
+      {
+        title: "Дата получения ИРД (на 1 этап) - дата получения аванса",
+        key: "date_first_ird_completed",
+        render: (record) => {
+          const getStatusClass = (date) => {
+            if (!date || !record?.date_signing) return "default";
+            const signingDate = dayjs(record.date_signing);
+            const targetDate = dayjs(date);
+
+            const diffDays = targetDate.diff(signingDate, "day");
+
+            if (diffDays > 5) return "green"; // В рамках договора
+            if (diffDays >= 0) return "yellow"; // Срок подошёл
+            return "red"; // Задержка более 5 дней
+          };
+
+          const formatDateWithClass = (date) => {
+            return (
+              <span class={getStatusClass(date)}>
+                {date ? dayjs(date).format("DD.MM.YYYY") + "г." : "отсутствует"}
+              </span>
+            );
+          };
+
+          return (
+            <div>
+              <span class={getStatusClass(record?.date_first_ird_completed)}>
+                {record?.date_first_ird_completed
+                  ? dayjs(record?.date_first_ird_completed).format(
+                      "DD.MM.YYYY"
+                    ) + "г."
+                  : "отсутствует"}
+              </span>
+              <span> - </span>
+              <span class={getStatusClass(record?.date_first_ird_completed)}>
+                {record?.date_first_ird_completed
+                  ? dayjs(record?.date_first_ird_completed).format(
+                      "DD.MM.YYYY"
+                    ) + "г."
+                  : "отсутствует"}
+              </span>
+            </div>
+          );
+        },
+      },
+      {
+        title: "Фактическая дата начала",
+        key: "date_start",
+        render: (record) => {
+          const getStatusClass = (date) => {
+            if (!date || !record?.date_signing) return "default";
+            const signingDate = dayjs(record.date_signing);
+            const startDate = dayjs(date);
+
+            const diffDays = startDate.diff(signingDate, "day");
+
+            if (diffDays > 5) return "green"; // В рамках договора
+            if (diffDays >= 0) return "yellow"; // Срок подошёл
+            return "red"; // Задержка более 5 дней
+          };
+
+          const formatDateWithClass = (date) => {
+            return (
+              <span class={getStatusClass(date)}>
+                {date ? dayjs(date).format("DD.MM.YYYY") + "г." : "отсутствует"}
+              </span>
+            );
+          };
+
+          return formatDateWithClass(record?.date_start);
+        },
+      },
+      {
+        title: "Про-сть",
+        dataIndex: "duration",
+        key: "duration",
+      },
+      {
+        title: "Дата окончания (по факту)",
+        key: "date_end_fact",
+        render: (record) =>
+          record?.date_end_fact
+            ? dayjs(record?.date_end_fact).format("DD.MM.YYYY") + "г."
+            : "не рассчитана",
+      },
+
+      {
+        title: "Аванс, руб (%)",
+        key: "prepayment",
+        render: (record) => formatToRub(record.prepayment),
+      },
+      {
+        title: "Стоимость проекта",
+        key: "price",
+        render: (record) => formatToRub(record.price),
+      },
+      {
+        title: "Этап в работе",
+        key: "actual_stage",
+        render: (record) => (
+          <ColumnDurationRender
+            record={record}
+            option={{ projectDuration: false, projectCurrentStageInfo: true }}
+          />
+        ),
+      },
+      {
+        title: "Статус",
+        key: "status",
+        render: (record) => record?.status.name,
+      },
+    ],
+  };
 
   const onChange = (sorter) => {
     setSortField(sorter?.field ?? "");
@@ -195,7 +348,7 @@ const ProjectTable = () => {
           ...org,
           key: index,
         }))}
-        columns={columns}
+        columns={columns[columnKey]}
         onChange={(pagination, filters, sorter, extra) => onChange(sorter)}
         pagination={{
           total: data?.projects?.count,

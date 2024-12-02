@@ -217,6 +217,12 @@ const MenuItems = [
             icon: <EyeOutlined />,
             permission: ["read-project-extra1"],
           },
+          {
+            label: "Эксклюзивный вариант 2",
+            key: "/project/extra/table_2",
+            icon: <EyeOutlined />,
+            permission: ["read-project-extra1"],
+          },
         ],
       },
       {

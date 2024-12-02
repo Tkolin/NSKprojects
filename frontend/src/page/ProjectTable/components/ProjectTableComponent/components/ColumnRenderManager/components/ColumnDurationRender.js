@@ -3,7 +3,10 @@ import dayjs from "dayjs";
 
 const { Text } = Typography;
 
-const ColumnDurationRender = ({ record }) => {
+const ColumnDurationRender = ({
+  record,
+  option = { projectDuration: false, projectCurrentStageInfo: true },
+}) => {
   const projectDuration =
     record?.date_start && record?.date_end
       ? dayjs(record.date_end).diff(dayjs(record.date_start), "days")
@@ -37,33 +40,35 @@ const ColumnDurationRender = ({ record }) => {
 
   return (
     <Space direction="vertical">
-      <Text>
-        Сроки проекта:{" "}
-        {record?.date_start
-          ? dayjs(record.date_start).format("DD.MM.YYYY") + "г."
-          : "—"}{" "}
-        -{" "}
-        {record?.date_start
-          ? dayjs(record.date_start)
-              .add(record.duration, "day")
-              .format("DD.MM.YYYY") + "г."
-          : "—"}
-        {projectDuration !== null && `(${projectDuration} дней)`}{" "}
-        {daysRemaining !== null && `(осталось ${daysRemaining} дней)`}
-      </Text>
-      <Text style={{ whiteSpace: "pre-wrap" }}>
-        Текущий этап:{"\n"}
-        {currentStage
-          ? `№${currentStage.number} ${currentStage.stage.name}\n(${
-              dayjs(currentStage.date_start).format("DD.MM.YYYY") + "г."
-            } - ${dayjs(currentStage.date_end).format("DD.MM.YYYY") + "г."})`
-          : "—"}
-        {"\n"}
-        {currentStageDuration !== null &&
-          `Продолжительность: ${currentStageDuration} дней (прошло ${daysToEndOfCurrentStage}/ осталось ${
-            currentStageDuration - daysToEndOfCurrentStage
-          })`}
-      </Text>
+      {option?.projectDuration && (
+        <Text>
+          {record?.date_start
+            ? dayjs(record.date_start).format("DD.MM.YYYY") + "г."
+            : "—"}{" "}
+          -{" "}
+          {record?.date_start
+            ? dayjs(record.date_start)
+                .add(record.duration, "day")
+                .format("DD.MM.YYYY") + "г."
+            : "—"}
+          {projectDuration !== null && `(${projectDuration} дней)`}{" "}
+          {daysRemaining !== null && `(осталось ${daysRemaining} дней)`}
+        </Text>
+      )}
+      {option?.projectCurrentStageInfo && (
+        <Text style={{ whiteSpace: "pre-wrap" }}>
+          {currentStage
+            ? `№${currentStage.number} ${currentStage.stage.name}\n(${
+                dayjs(currentStage.date_start).format("DD.MM.YYYY") + "г."
+              } - ${dayjs(currentStage.date_end).format("DD.MM.YYYY") + "г."})`
+            : "—"}
+          {"\n"}
+          {currentStageDuration !== null &&
+            `Продолжительность: ${currentStageDuration} дней (прошло ${daysToEndOfCurrentStage}/ осталось ${
+              currentStageDuration - daysToEndOfCurrentStage
+            })`}
+        </Text>
+      )}
     </Space>
   );
 };
