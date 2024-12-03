@@ -192,6 +192,28 @@ export const IRDS_QUERY = gql`
     }
   }
 `;
+
+export const PARAMETERS_QUERY = gql`
+  query IrdQuery($queryOptions: QueryOptions) {
+    parameters(queryOptions: $queryOptions) {
+      items {
+        id
+        name
+        min
+        max
+        group {
+          id
+          name
+        }
+        unit {
+          id
+          name
+        }
+      }
+      count
+    }
+  }
+`;
 export const TYPES_PROJECTS_QUERY = gql`
   query TypeProjectsQuery($queryOptions: QueryOptions) {
     typeProjects(queryOptions: $queryOptions) {
@@ -738,6 +760,34 @@ export const EQUIPMENT_MODELS_QUERY = gql`
         }
       }
       count
+    }
+  }
+`;
+export const EQUIPMENT_MODEL_QUERY = gql`
+  query EquipmentModel($id: ID!) {
+    equipmentModel(id: $id) {
+      id
+      model_name
+      supplier {
+        id
+        name
+        contact {
+          id
+        }
+        email
+        phone_number
+        equipment_types {
+          id
+          name
+          parameters {
+            id
+            name
+
+            min
+            max
+          }
+        }
+      }
     }
   }
 `;

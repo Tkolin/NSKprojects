@@ -25,7 +25,6 @@ class EquipmentType extends Model
     }
     public function parameters(): BelongsToMany
     {
-
         return $this->belongsToMany(
             ParameterModel::class,
             'equipment_type_parameters',
@@ -34,5 +33,5 @@ class EquipmentType extends Model
         );
 
     }
-    use HasFactory;
+
 }

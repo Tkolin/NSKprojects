@@ -35,7 +35,7 @@ class TaskExecutorContractGeneratorService extends DocumentGeneratorService
         $projectTasksData = $projectTasksData->sortBy(function ($task) {
             return strtotime($task['date_start']);
         });
-        
+
         // Добор данных
         $myOrg = FormatterService::getMyOrg();
 
@@ -65,26 +65,25 @@ class TaskExecutorContractGeneratorService extends DocumentGeneratorService
         }
         $projectTasksNames = substr($projectTasksNames, 0, -1);
         $projectTasksToDateEnd = substr($projectTasksToDateEnd, 0, -1);
-        $projectTasksToPrice = substr($projectTasksToPrice, 0, -1);
 
         $orderNumber = FormatterService::formatWithLeadingZeros($projectData->id, 3) . "-" .
             FormatterService::formatWithLeadingZeros($personData->id, 3) . "-" . "240" .
             FormatterService::formatWithLeadingZeros($numberOrders, 3);
-               error_log("fadfad".$dateGenerated);
+        error_log("fadfad" . $dateGenerated);
         $date_create_full = FormatterService::getFullDate($dateGenerated, true);
         $nclNameCaseRu = new NCLNameCaseRu();
 
-        
+
         $this->replacements = [
             'day' => $day,
             'month' => $month,
             'year' => $year,
             'id' => $orderNumber,
-            'date_create_full' =>  $date_create_full, 
+            'date_create_full' => $date_create_full,
             'myOrg.name' => $myOrg['name'] ?? null,
             'myOrg.full_name' => $myOrg['full_name'] ?? null,
-            'myOrg.director.FullName' => 
-             $nclNameCaseRu->q(FormatterService::getFullNameInArray($myOrg['director']), caseNum: NCLNameCaseRu::$VINITELN) ?? null,
+            'myOrg.director.FullName' =>
+                $nclNameCaseRu->q(FormatterService::getFullNameInArray($myOrg['director']), caseNum: NCLNameCaseRu::$VINITELN) ?? null,
             'myOrg.INN' => $myOrg['INN'] ?? null,
             'myOrg.payment_account' => $myOrg['payment_account'] ?? null,
             'myOrg.BIK.name' => $myOrg['BIK']['name'] ?? null,
@@ -99,8 +98,8 @@ class TaskExecutorContractGeneratorService extends DocumentGeneratorService
             'person.passport.date' => FormatterService::getShortDate($personData['passport']['date']) ?? null,
             'person.passport.birth_date' => FormatterService::getShortDate($personData['passport']['birth_date']) ?? null,
             'person.passport.passport_place_issue.name' => $personData['passport']['passport_place_issue']['name'] ?? "_____",
-            'person.passport.address_registration' =>$personData['passport']['address_registration'] ? 
-            FormatterService::removeFirstPartBeforeComma($personData['passport']['address_registration']) : null,
+            'person.passport.address_registration' => $personData['passport']['address_registration'] ?
+                FormatterService::removeFirstPartBeforeComma($personData['passport']['address_registration']) : null,
             'person.INN' => $personData['INN'] ?? null,
             'person.SNILS' => $personData['SHILS'] ?? null,
             'person.BIK.name' => isset($personData['BIK']) ? $personData['BIK']['name'] : null,
@@ -108,13 +107,18 @@ class TaskExecutorContractGeneratorService extends DocumentGeneratorService
             'person.BIK.correspondent_account' => isset($personData['BIK']) ? $personData['BIK']['correspondent_account'] : null,
             'person.payment_account' => $personData['payment_account'] ?? null,
             'myOrg.director.ShortFullName' => FormatterService::getFullNameInArray($myOrg['director'], true) ?? null,
-            'person.FullName' =>                FormatterService::getFullNameInArray(
-                ['first_name' => $personData['passport']['first_name'] ?? null,
-                    'last_name'=>$personData['passport']['last_name'] ?? null,
-                    'patronymic'=>$personData['passport']['patronymic'] ?? null]) ?? null,
-            'person.ShortFullName' => FormatterService::getFullNameInArray(['first_name' => $personData['passport']['first_name'] ?? null,
-            'last_name'=>$personData['passport']['last_name'] ?? null,
-            'patronymic'=>$personData['passport']['patronymic'] ?? null], true) ?? null,
+            'person.FullName' => FormatterService::getFullNameInArray(
+                [
+                    'first_name' => $personData['passport']['first_name'] ?? null,
+                    'last_name' => $personData['passport']['last_name'] ?? null,
+                    'patronymic' => $personData['passport']['patronymic'] ?? null
+                ]
+            ) ?? null,
+            'person.ShortFullName' => FormatterService::getFullNameInArray([
+                'first_name' => $personData['passport']['first_name'] ?? null,
+                'last_name' => $personData['passport']['last_name'] ?? null,
+                'patronymic' => $personData['passport']['patronymic'] ?? null
+            ], true) ?? null,
             'project_tasks.names' => $projectTasksNames ?? null,
             'project_tasks.names_to_date_end' => $projectTasksToDateEnd ?? null,
             'project_tasks.names_to_price' => $projectTasksToPrice ?? null,

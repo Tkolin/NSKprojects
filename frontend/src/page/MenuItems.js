@@ -147,7 +147,7 @@ const MenuItems = [
               },
               {
                 label: "Справочник параметров",
-                key: "/references/equipment_type/table1",
+                key: "/references/equipment_type/parameters",
                 icon: <EyeOutlined />,
                 children: null,
                 permission: ["read-equipment-type"],

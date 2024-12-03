@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   CREATE_EQUIPMENT_TYPE_MUTATION,
   UPDATE_EQUIPMENT_TYPE_MUTATION,
-} from "../../graphql/mutations/equipments.js";
+} from "../../graphql/mutations/equipment";
 import {
   EQUIPMENT_GROUPS_QUERY_COMPACT,
   EQUIPMENT_TYPES_ACTIVITY_QUERY_COMPACT,

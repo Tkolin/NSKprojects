@@ -1,15 +1,18 @@
-type Mutation {
-    updateEquipmentTypeParameters(
-        equipment_type_id: ID
-        add_parameter_ids: [ID]
-        remove_parameter_ids: [ID]
+extend type Mutation {
+    syncEquipmentTypeParameters(
+        equipmentTypeId: ID!
+        parametersIds: [ID]!
     ): EquipmentType
 }
 extend type Query {
     suppliers(queryOptions: QueryOptions, queryType: String): SupplierResult
     parameter(id: ID): Parameter
-    parameters(queryOptions: QueryOptions, queryType: String): [ParameterResult]
-
+    parameters(queryOptions: QueryOptions, queryType: String): ParameterResult
+    parameterGroups(
+        queryOptions: QueryOptions
+        queryType: String
+    ): ParameterGroupResult
+    units(queryOptions: QueryOptions, queryType: String): UnitResult
     equipmentTypeActivitys(
         queryOptions: QueryOptions
         queryType: String
@@ -23,6 +26,7 @@ extend type Query {
         queryOptions: QueryOptions
         queryType: String
     ): EquipmentModelResult
+    equipmentModel(id: ID!): EquipmentModel
     equipmentTypes(
         queryOptions: QueryOptions
         queryType: String
@@ -38,9 +42,16 @@ type EquipmentTypeActivitysResult {
     items: [EquipmentTypeActivity]
     count: Int
 }
-
+type UnitResult {
+    items: [Unit]
+    count: Int
+}
 type ParameterResult {
     items: [Parameter]
+    count: Int
+}
+type ParameterGroupResult {
+    items: [ParameterGroup]
     count: Int
 }
 type SupplierResult {
@@ -68,18 +79,31 @@ type Supplier {
     equipment_types: [EquipmentType]
 }
 
-type Mutation {
-    createParameter(data: ParameterInput!): Parameter @create
-    updateParameter(data: ParameterInput!, id: ID): Parameter @create
-    updateParameter(id: ID!, data: ParameterInput!): Parameter @update
-    deleteParameter(id: ID!): Parameter @delete
+extend type Mutation {
+    createParameter(data: ParameterInput!): Parameter
+    updateParameter(data: ParameterInput!, id: ID): Parameter
+    updateParameter(id: ID!, data: ParameterInput!): Parameter
+    deleteParameter(id: ID!): Boolean @delete
 }
 
 input ParameterInput {
     name: String
     unit_id: ID
+    group_id: ID
     min: Float
     max: Float
+}
+type Mutation {
+    createParameterGroup(data: ParameterInputGroup!): ParameterGroup @create
+    updateParameterGroup(data: ParameterInputGroup!, id: ID): ParameterGroup
+        @create
+    updateParameterGroup(id: ID!, data: ParameterInputGroup!): ParameterGroup
+        @update
+    deleteParameterGroup(id: ID!): Boolean @delete
+}
+
+input ParameterInputGroup {
+    name: String
 }
 
 type Mutation {
@@ -90,7 +114,7 @@ type Mutation {
         id: ID!
         data: EquipmentTypesActivityInput!
     ): EquipmentTypesActivity @update
-    deleteEquipmentTypesActivity(id: ID!): EquipmentTypesActivity
+    deleteEquipmentTypesActivity(id: ID!): Boolean
 }
 
 input EquipmentTypesActivityInput {
@@ -101,7 +125,7 @@ extend type Mutation {
     createEquipmentType(data: EquipmentTypeInput!): EquipmentType
     updateEquipmentType(id: ID!, data: EquipmentTypeInput!): EquipmentType
         @update
-    deleteEquipmentType(id: ID!): EquipmentType
+    deleteEquipmentType(id: ID!): Boolean
 }
 
 input EquipmentTypeInput {
@@ -114,7 +138,7 @@ type Mutation {
     createEquipmentModel(data: EquipmentModelInput!): EquipmentModel @create
     updateEquipmentModel(id: ID!, data: EquipmentModelInput!): EquipmentModel
         @update
-    deleteEquipmentModel(id: ID!): EquipmentModel @delete
+    deleteEquipmentModel(id: ID!): Boolean @delete
 }
 
 input EquipmentModelInput {
@@ -128,7 +152,7 @@ type Mutation {
     createEquipmentModel(data: EquipmentModelInput!): EquipmentModel @create
     updateEquipmentModel(id: ID!, data: EquipmentModelInput!): EquipmentModel
         @update
-    deleteEquipmentModel(id: ID!): EquipmentModel @delete
+    deleteEquipmentModel(id: ID!): Boolean @delete
 }
 
 input EquipmentModelInput {
@@ -142,7 +166,7 @@ type Mutation {
     createEquipmentGroup(data: EquipmentGroupInput!): EquipmentGroup @create
     updateEquipmentGroup(id: ID!, data: EquipmentGroupInput!): EquipmentGroup
         @update
-    deleteEquipmentGroup(id: ID!): EquipmentGroup @delete
+    deleteEquipmentGroup(id: ID!): Boolean @delete
 }
 
 input EquipmentGroupInput {
@@ -183,6 +207,7 @@ type Parameter {
     id: ID!
     name: String!
     unit_id: ID
+    group_id: ID
     unit: Unit
     reference: Reference
     group: ParameterGroup

@@ -9,24 +9,25 @@ import {
   Table,
   Tabs,
 } from "antd";
-import React, { useState } from "react";
+import { nanoid } from "nanoid";
+import React, { useEffect, useState } from "react";
 import { StyledButtonGreen } from "../components/style/ButtonStyles";
 
 import { SettingOutlined } from "@ant-design/icons";
 import Link from "antd/es/typography/Link";
-import { DELETE_EQUIPMENT_TYPE_MUTATION } from "../../graphql/mutations/equipments";
+import { DELETE_EQUIPMENT_TYPE_MUTATION } from "../../graphql/mutations/equipment";
 import { EQUIPMENT_TYPES_QUERY } from "../../graphql/queries/all";
+import EquipmentTypeParametersStructureForm from "../EquipmentTypeParametersStructureForm";
 import EquipmentTypeForm from "../simplesForms/EquipmentTypeForm";
 const { Search } = Input;
 
 const EquipmentTypeTable = () => {
   // Состояния
-
   const [equipmentTypeModalStatus, setEquipmentTypeModalStatus] =
     useState(false);
   const [
-    equipmentTypeParametrsModalStatus,
-    setEquipmentTypeParametrsModalStatus,
+    equipmentTypeParametersModalStatus,
+    setEquipmentTypeParametersModalStatus,
   ] = useState(null);
   const [formSearch] = Form.useForm();
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
@@ -36,7 +37,6 @@ const EquipmentTypeTable = () => {
 
   const [sortField, setSortField] = useState("");
   const [sortOrder, setSortOrder] = useState("");
-
   const [search, setSearch] = useState("");
 
   const {
@@ -49,6 +49,10 @@ const EquipmentTypeTable = () => {
       queryOptions: { page, limit, search, sortField, sortOrder },
     },
   });
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   // Функции уведомлений
   const openNotification = (placement, type, message) => {
@@ -87,15 +91,6 @@ const EquipmentTypeTable = () => {
 
   // Формат таблицы
   const columns = [
-    // {
-    //   title: "Тип",
-    //   dataIndex: "legal_form",
-    //   key: "legal_form",
-    //   width: 60,
-    //   ellipsis: true,
-
-    //   render: (legal_form) => (legal_form ? legal_form.name : ""),
-    // },
     {
       title: "Название классификатора",
       dataIndex: "name",
@@ -229,10 +224,10 @@ const EquipmentTypeTable = () => {
                           </Divider>
                           <Link
                             onClick={() =>
-                              setEquipmentTypeParametrsModalStatus(record.id)
+                              setEquipmentTypeParametersModalStatus(record.id)
                             }
                           >
-                            Изменить
+                            Изменить {record.id}
                           </Link>
                         </Space.Compact>
 
@@ -257,11 +252,7 @@ const EquipmentTypeTable = () => {
         }}
       />
       <Modal
-        key={
-          equipmentTypeModalStatus?.mode ||
-          equipmentTypeModalStatus?.equipmentType_id ||
-          null
-        }
+        key={nanoid()}
         open={equipmentTypeModalStatus}
         onCancel={() => setEquipmentTypeModalStatus(null)}
         footer={null}
@@ -278,6 +269,23 @@ const EquipmentTypeTable = () => {
                 ? { id: equipmentTypeModalStatus?.equipmentType_id }
                 : null
             }
+          />
+        }
+      />
+      <Modal
+        key={nanoid()}
+        open={equipmentTypeParametersModalStatus}
+        onCancel={() => setEquipmentTypeParametersModalStatus(null)}
+        footer={null}
+        width={"max-content"}
+        children={
+          <EquipmentTypeParametersStructureForm
+            cardProps={{ title: "Характеристики оборудования" }}
+            onCompleted={() => {
+              refetch();
+              setEquipmentTypeParametersModalStatus(null);
+            }}
+            equipmentTypeId={equipmentTypeParametersModalStatus}
           />
         }
       />

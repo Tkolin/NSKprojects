@@ -32,6 +32,7 @@ export const EQUIPMENT_TYPE_QUERY = gql`
         id
         min
         max
+        name
         group {
           id
           name

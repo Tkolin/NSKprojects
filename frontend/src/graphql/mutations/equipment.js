@@ -51,9 +51,11 @@ export const UPDATE_EQUIPMENT_TYPE_MUTATION = gql`
 `;
 
 export const DELETE_PARAMETER_MUTATION = gql`
-  mutation CreateParameter($id: ID!) {
-    createParameter(data: $data) {
+  mutation DeleteParameter($id: ID!) {
+    deleteParameter(data: $data) {
+      id
       name
+      group_id
       unit_id
       min
       max
@@ -63,7 +65,9 @@ export const DELETE_PARAMETER_MUTATION = gql`
 export const CREATE_PARAMETER_MUTATION = gql`
   mutation CreateParameter($data: ParameterInput!) {
     createParameter(data: $data) {
+      id
       name
+      group_id
       unit_id
       min
       max
@@ -74,7 +78,9 @@ export const CREATE_PARAMETER_MUTATION = gql`
 export const UPDATE_PARAMETER_MUTATION = gql`
   mutation UpdateParameter($data: ParameterInput!, $id: ID!) {
     updateParameter(data: $data, id: $id) {
+      id
       name
+      group_id
       unit_id
       min
       max

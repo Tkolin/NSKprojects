@@ -1,0 +1,2 @@
+import EquipmentTypeParametersStructureForm from "./EquipmentTypeParametersStructureForm";
+export default EquipmentTypeParametersStructureForm;

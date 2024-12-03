@@ -121,6 +121,27 @@ export const BANKS_QUERY_COMPACT = gql`
     }
   }
 `;
+export const UNITS_QUERY_COMPACT = gql`
+  query UnitsCompact {
+    units(queryType: "COMPACT") {
+      items {
+        id
+        name
+        name_latex
+      }
+    }
+  }
+`;
+export const PARAMETER_GROUPS_QUERY_COMPACT = gql`
+  query ParameterGroup {
+    parameterGroups(queryType: "COMPACT") {
+      items {
+        id
+        name
+      }
+    }
+  }
+`;
 export const PASSPORTS_PLACE_ISSUES_QUERY_COMPACT = gql`
   query PPIQueryCompact {
     passportPlaceIssues(queryType: "COMPACT") {

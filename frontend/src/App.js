@@ -31,6 +31,7 @@ import TechSpecForm from "./page/simplesForms/TechChapterForm";
 import EquipmentModelTable from "./page/simplesTables/EquipmentModelTable";
 import EquipmentTypeTable from "./page/simplesTables/EquipmentTypeTable";
 import ExecutorPaymentsTable from "./page/simplesTables/ExecutorPaymentsTable";
+import ParameterTable from "./page/simplesTables/ParameterTable";
 import ReferenceTable from "./page/simplesTables/ReferenceTable";
 import RoleTable from "./page/simplesTables/RoleTable";
 import SupplierTable from "./page/simplesTables/SupplierTable";
@@ -131,6 +132,10 @@ const App = () => {
                 <Route
                   path="/references/equipment_type/table"
                   element={<EquipmentTypeTable />}
+                />
+                <Route
+                  path="/references/equipment_type/parameters"
+                  element={<ParameterTable />}
                 />
                 <Route
                   path="/references/equipment_type/form"

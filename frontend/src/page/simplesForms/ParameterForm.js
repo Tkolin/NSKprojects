@@ -1,13 +1,25 @@
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
-import { Alert, Card, Form, Input, Modal, Skeleton, Space } from "antd";
-import dayjs from "dayjs";
+import {
+  Alert,
+  Card,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Skeleton,
+  Space,
+} from "antd";
+import { nanoid } from "nanoid";
 import React, { useContext, useEffect, useState } from "react";
 import { NotificationContext } from "../../NotificationProvider";
 import {
   CREATE_PARAMETER_MUTATION,
   UPDATE_PARAMETER_MUTATION,
-} from "../../graphql/mutations/equipments";
-import { PARAMETERS_QUERY_COMPACT } from "../../graphql/queries/queriesCompact";
+} from "../../graphql/mutations/equipment";
+import {
+  PARAMETER_GROUPS_QUERY_COMPACT,
+  UNITS_QUERY_COMPACT,
+} from "../../graphql/queries/queriesCompact";
 import { PARAMETER_QUERY } from "../../graphql/queries/queriesSingle";
 import { AutoCompleteFormItem } from "../components/CustomForm";
 import { CustomAutoCompleteAndCreateWitchEdit } from "../components/style/SearchAutoCompleteStyles";
@@ -44,6 +56,8 @@ const ParameterForm = ({
 
   // Состояния
   const [unitModalStatus, setUnitModalStatus] = useState(null);
+  const [parameterGroupModalStatus, setParameterGroupModalStatus] =
+    useState(null);
   useEffect(() => {
     console.log("unitModalStatus", unitModalStatus);
   }, [unitModalStatus]);
@@ -54,7 +68,8 @@ const ParameterForm = ({
       onCompleted: (data) => {
         openNotification("topRight", "success", `Новый параметр создан`);
         form.resetFields();
-        onCompleted && onCompleted(data?.createContact || data?.updateContact);
+        onCompleted &&
+          onCompleted(data?.createParameter || data?.updateParameter);
       },
       onError: (error) => {
         openNotification(
@@ -88,7 +103,10 @@ const ParameterForm = ({
           selected: data?.unit?.id,
           output: data?.unit?.name,
         },
-        birth_day: data?.birth_day ? dayjs(data.birth_day) : null,
+        parameterGroup: {
+          selected: data?.group?.id,
+          output: data?.group?.name,
+        },
       });
     }
   };
@@ -98,23 +116,21 @@ const ParameterForm = ({
     loading: loadingUnits,
     error: errorUnits,
     data: dataUnits,
-  } = useQuery(PARAMETERS_QUERY_COMPACT);
+  } = useQuery(UNITS_QUERY_COMPACT);
+  const {
+    loading: loadingParameterGroups,
+    error: errorParameterGroups,
+    data: dataParameterGroups,
+  } = useQuery(PARAMETER_GROUPS_QUERY_COMPACT);
 
   const handleSubmit = (cold = false) => {
     const formData = form.getFieldsValue();
     const data = {
-      last_name: formData.last_name,
-      first_name: formData.first_name,
-      patronymic: formData.patronymic,
-      work_phone: formData.work_phone,
-      mobile_phone: formData.mobile_phone,
-      email: formData.email,
-      work_email: formData.work_email,
-      birth_day: formData.birth_day
-        ? dayjs(formData.birth_day).format("YYYY-MM-DD")
-        : null,
+      name: formData.name,
+      min: formData.min,
+      max: formData.max,
       unit_id: formData?.unit?.selected ?? null,
-      position_id: formData?.position?.selected ?? null,
+      group_id: formData?.parameterGroup?.selected ?? null,
     };
     if (cold) {
       coldMutate({
@@ -136,7 +152,7 @@ const ParameterForm = ({
 
   return (
     <Card
-      style={{ width: 400 }}
+      style={{ minWidth: "300px", width: "max-content" }}
       {...cardProps}
       actions={[
         <ModalButton
@@ -155,9 +171,9 @@ const ParameterForm = ({
             onChange={() => console.log("change", form.getFieldsValue())}
             form={form}
             onFinish={() => handleSubmit(false)}
-            labelCol={{ span: 8 }}
+            // labelCol={{ span: 12 }}
             labelAlign="left"
-            wrapperCol={{ span: 16 }}
+            // wrapperCol={{ span: 12 }}
           >
             {!loading ? (
               <>
@@ -180,7 +196,7 @@ const ParameterForm = ({
                     { required: false, message: "Пожалуйста, заполните поле" },
                   ]}
                 >
-                  <Input />
+                  <InputNumber />
                 </Form.Item>
                 <Form.Item
                   name="max"
@@ -189,7 +205,7 @@ const ParameterForm = ({
                     { required: false, message: "Пожалуйста, заполните поле" },
                   ]}
                 >
-                  <Input />
+                  <InputNumber />
                 </Form.Item>
                 <AutoCompleteFormItem
                   name={"unit"}
@@ -201,7 +217,7 @@ const ParameterForm = ({
                 >
                   <CustomAutoCompleteAndCreateWitchEdit
                     loading={loadingUnits}
-                    data={dataUnits?.parametrs?.items}
+                    data={dataUnits?.units?.items}
                     onChange={(value) => form.setFieldValue("unit", value)}
                     placeholder="Выберите единицу измерения"
                     firstBtnOnClick={() => {
@@ -220,7 +236,41 @@ const ParameterForm = ({
                         });
                     }}
                   />
-                </AutoCompleteFormItem>{" "}
+                </AutoCompleteFormItem>
+                <AutoCompleteFormItem
+                  name={"parameterGroup"}
+                  label={"Группа параметров"}
+                  style={{ width: "100%" }}
+
+                  // rulesValidationRequired={true}
+                  // rulesValidationMessage={'Пожалуйста, укажите организацию'}
+                >
+                  <CustomAutoCompleteAndCreateWitchEdit
+                    loading={loadingParameterGroups}
+                    data={dataParameterGroups?.parameterGroups?.items}
+                    onChange={(value) =>
+                      form.setFieldValue("parameterGroup", value)
+                    }
+                    placeholder="Выберите группу параметров"
+                    firstBtnOnClick={() => {
+                      handleSubmit(true);
+                      setParameterGroupModalStatus({
+                        parameterGroup_id:
+                          form.getFieldValue("parameterGroup")?.selected,
+                        mode: "add",
+                      });
+                    }}
+                    secondBtnOnClick={() => {
+                      handleSubmit(true);
+                      form.getFieldValue("parameterGroup")?.selected &&
+                        setParameterGroupModalStatus({
+                          parameterGroup_id:
+                            form.getFieldValue("parameterGroup")?.selected,
+                          mode: "edit",
+                        });
+                    }}
+                  />
+                </AutoCompleteFormItem>
               </>
             ) : (
               <Skeleton active />
@@ -228,7 +278,7 @@ const ParameterForm = ({
           </Form>
 
           <Modal
-            key={unitModalStatus?.mode || unitModalStatus?.unit_id || null}
+            key={nanoid()}
             open={unitModalStatus}
             onCancel={() => setUnitModalStatus(null)}
             footer={null}
@@ -238,7 +288,7 @@ const ParameterForm = ({
                 style={{ justifyContent: "center", width: "100%" }}
                 children={
                   <UnitForm
-                    cardProps={{ title: "Еденица измерения" }}
+                    cardProps={{ title: "Группа параметров" }}
                     onCompleted={(value) => {
                       form.setFieldValue("unit", {
                         selected: value?.id,
@@ -250,6 +300,36 @@ const ParameterForm = ({
                     initialObject={
                       unitModalStatus?.unit_id
                         ? { id: unitModalStatus?.unit_id }
+                        : null
+                    }
+                  />
+                }
+              />
+            }
+          />
+          <Modal
+            key={nanoid()}
+            open={parameterGroupModalStatus}
+            onCancel={() => setParameterGroupModalStatus(null)}
+            footer={null}
+            width={"max-content"}
+            children={
+              <Space
+                style={{ justifyContent: "center", width: "100%" }}
+                children={
+                  <UnitForm
+                    cardProps={{ title: "Группа параметров" }}
+                    onCompleted={(value) => {
+                      form.setFieldValue("parameterGroup", {
+                        selected: value?.id,
+                        output: value.name,
+                      });
+                      form.validateFields(["parameterGroup"]);
+                      setParameterGroupModalStatus(null);
+                    }}
+                    initialObject={
+                      parameterGroupModalStatus?.parameterGroup_id
+                        ? { id: parameterGroupModalStatus?.parameterGroup_id }
                         : null
                     }
                   />
