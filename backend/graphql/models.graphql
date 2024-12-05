@@ -46,6 +46,7 @@ type Query {
         queryType: String
         projectId: ID
         projectStatuses: [String]
+        projectExtraFilters: ProjectExtraFilters
     ): ProjectsResult
 
     delayTypes: [DelayType]
@@ -180,6 +181,7 @@ type Project {
     delegations: [Contact]
     price: Int
     project_irds: [ProjectIrd]
+    project_delays: [Delay]
     project_stages: [ProjectStage]
     project_tasks: [ProjectTask]
     project_contract_history: [ProjectFile]

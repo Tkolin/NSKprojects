@@ -1,8 +1,9 @@
 import { useQuery } from "@apollo/client";
-import { Form, Input, notification, Space, Table } from "antd";
-import React, { useState } from "react";
+import { Form, Input, notification, Select, Space, Table } from "antd";
+import React, { useEffect, useState } from "react";
 import { StyledButtonGreen } from "../components/style/ButtonStyles";
 
+import { Option } from "antd/es/mentions";
 import dayjs from "dayjs";
 import { PROJECTS_QUERY } from "../../graphql/queries/all";
 import { formatToRub } from "../../utils/MoneyFormater";
@@ -25,12 +26,6 @@ const ProjectTable = ({ columnKey = "v1" }) => {
 
   const [search, setSearch] = useState("");
 
-  const { loading, error, data, refetch } = useQuery(PROJECTS_QUERY, {
-    variables: {
-      queryOptions: { page, limit, search, sortField, sortOrder },
-    },
-  });
-
   // Функции уведомлений
   const openNotification = (placement, type, message) => {
     notification[type]({
@@ -43,16 +38,13 @@ const ProjectTable = ({ columnKey = "v1" }) => {
     setSearch(value);
   };
 
-  // Обработка загрузки и ошибок
-  if (error) return `Ошибка! ${error.message}`;
-
   // Формат таблицы
   const columns = {
     v1: [
       {
         title: "№",
-        dataIndex: "number",
-        key: "number",
+        dataIndex: "number_natural", // Используем поле number
+        key: "number_natural",
       },
       {
         title: "Наименование проекта",
@@ -156,12 +148,14 @@ const ProjectTable = ({ columnKey = "v1" }) => {
     v2: [
       {
         title: "№",
-        dataIndex: "number",
-        key: "number",
+        width: "30px",
+        dataIndex: "number_natural", // Используем поле number
+        key: "number_natural",
       },
       {
         title: "Тип",
         key: "type_group",
+        width: "60px",
         render: (record) => record?.type_project_document?.group?.code,
       },
       {
@@ -169,26 +163,58 @@ const ProjectTable = ({ columnKey = "v1" }) => {
         dataIndex: "name",
         key: "name",
       },
+      // {
+      //   title: "Заказчик",
+      //   key: "organization_customer",
+      //   render: (record) =>
+      //     record?.organization_customer?.full_name ??
+      //     record?.organization_customer?.name,
+      // },
       {
         title: "Заказчик",
-        key: "organization_customer",
-        render: (record) =>
-          record?.organization_customer?.full_name ??
-          record?.organization_customer?.name,
+        key: "organization_customer_short",
+        render: (record) => record?.organization_customer?.name,
       },
       {
         title: "Дата подписания - дата окончания (по договору)",
         key: "date_signing",
-        render: (record) =>
-          (record?.date_signing
-            ? dayjs(record?.date_signing).format("DD.MM.YYYY") + "г."
-            : "отсутствует") +
-          " - " +
-          (record?.date_signing
-            ? dayjs(record?.date_signing)
-                .add(record.duration, "day")
-                .format("DD.MM.YYYY") + "г."
-            : "отсутствует"),
+        render: (record) => {
+          const status =
+            record?.project_delays?.length <= 0
+              ? -1
+              : record?.project_delays.filter((row) => !row.date_end).length;
+          return (
+            <div>
+              <span class={status > 0 ? "red" : status === 0 ? "yellow" : ""}>
+                {record?.date_signing
+                  ? dayjs(record?.date_signing).format("DD.MM.YYYY") + "г."
+                  : "отсутствует"}
+              </span>
+              <br />
+              <span class={status > 0 ? "red" : status === 0 ? "yellow" : ""}>
+                {record?.date_signing
+                  ? dayjs(record?.date_signing)
+                      .add(record.duration, "day")
+                      .format("DD.MM.YYYY") + "г."
+                  : "отсутствует"}
+              </span>
+              <br />
+              <span class={status > 0 ? "red" : status === 0 ? "yellow" : ""}>
+                {record?.duration && "(" + record.duration + " дней)"}
+              </span>
+              <br />
+              <span class={status > 0 ? "red" : status === 0 ? "yellow" : ""}>
+                {status > 0
+                  ? "(" +
+                    status +
+                    " актив. задержек из " +
+                    record?.project_delays?.length +
+                    ")"
+                  : ""}
+              </span>
+            </div>
+          );
+        },
       },
       {
         title: "Дата получения ИРД (на 1 этап) - дата получения аванса",
@@ -223,7 +249,7 @@ const ProjectTable = ({ columnKey = "v1" }) => {
                     ) + "г."
                   : "отсутствует"}
               </span>
-              <span> - </span>
+              <br />
               <span class={getStatusClass(record?.date_first_ird_completed)}>
                 {record?.date_first_ird_completed
                   ? dayjs(record?.date_first_ird_completed).format(
@@ -236,7 +262,7 @@ const ProjectTable = ({ columnKey = "v1" }) => {
         },
       },
       {
-        title: "Фактическая дата начала",
+        title: "Фактическая дата начала - окончания",
         key: "date_start",
         render: (record) => {
           const getStatusClass = (date) => {
@@ -253,33 +279,47 @@ const ProjectTable = ({ columnKey = "v1" }) => {
 
           const formatDateWithClass = (date) => {
             return (
-              <span class={getStatusClass(date)}>
-                {date ? dayjs(date).format("DD.MM.YYYY") + "г." : "отсутствует"}
-              </span>
+              <div>
+                <span class={getStatusClass(date)}>
+                  {date
+                    ? dayjs(date).format("DD.MM.YYYY") + "г."
+                    : "отсутствует"}
+                </span>
+                <br />
+                <span>
+                  {record?.date_end_fact
+                    ? dayjs(record?.date_end_fact).format("DD.MM.YYYY") + "г."
+                    : "отсутствует"}
+                </span>
+              </div>
             );
           };
 
           return formatDateWithClass(record?.date_start);
         },
       },
-      {
-        title: "Про-сть",
-        dataIndex: "duration",
-        key: "duration",
-      },
-      {
-        title: "Дата окончания (по факту)",
-        key: "date_end_fact",
-        render: (record) =>
-          record?.date_end_fact
-            ? dayjs(record?.date_end_fact).format("DD.MM.YYYY") + "г."
-            : "не рассчитана",
-      },
+      // {
+      //   title: "Про-сть",
+      //   dataIndex: "duration",
+      //   key: "duration",
+      // },
+      // {
+      //   title: "Дата окончания (по факту)",
+      //   key: "date_end_fact",
+      //   render: (record) =>
+      // record?.date_end_fact
+      //   ? dayjs(record?.date_end_fact).format("DD.MM.YYYY") + "г."
+      //   : "не рассчитана",
+      // },
 
       {
         title: "Аванс, руб (%)",
         key: "prepayment",
-        render: (record) => formatToRub(record.prepayment),
+        render: (record) =>
+          formatToRub((record.price / 100) * record.prepayment) +
+          " (" +
+          record.prepayment +
+          "%)",
       },
       {
         title: "Стоимость проекта",
@@ -314,6 +354,82 @@ const ProjectTable = ({ columnKey = "v1" }) => {
         : ""
     );
   };
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState("ALL");
+  const handleBlurSelectedStatusFilter = () => {
+    if (!selectedStatusFilter) {
+      console.error("Выберите значение из списка!");
+    }
+  };
+  const handleChangeSelectedStatusFilter = (selectedValue) => {
+    setSelectedStatusFilter(selectedValue);
+  };
+
+  const [selectedDelayFilter, setSelectedDelayFilter] = useState("ALL");
+  const handleBlurSelectedDelayFilter = () => {
+    if (!selectedDelayFilter) {
+      console.error("Выберите значение из списка!");
+    }
+  };
+  const handleChangeSelectedDelayFilter = (selectedValue) => {
+    setSelectedDelayFilter(selectedValue);
+  };
+  useEffect(() => {
+    console.log(
+      "selectedStatusFilter, selectedDelayFilter",
+      selectedStatusFilter,
+      selectedDelayFilter
+    );
+  }, [selectedStatusFilter, selectedDelayFilter]);
+  const { loading, error, data, refetch } = useQuery(PROJECTS_QUERY, {
+    variables: {
+      queryOptions: { page, limit, search, sortField, sortOrder },
+      projectExtraFilters: {
+        delay_mode:
+          selectedStatusFilter !== "WORK"
+            ? selectedDelayFilter || "ALL"
+            : "ALL",
+        status_key: selectedStatusFilter || "ALL",
+      },
+    },
+  });
+  const options_status = [
+    {
+      key: "ALL",
+      name: "Все",
+    },
+    {
+      key: "PRE_WORK",
+      name: "Подготовка к работе",
+    },
+    {
+      key: "WORK",
+      name: "В работе",
+    },
+    {
+      key: "POST_WORK",
+      name: "Завершённые",
+    },
+  ];
+  const options_delay = [
+    {
+      key: "ALL",
+      name: "Все",
+    },
+    {
+      key: "DELAY",
+      name: "С задержками",
+    },
+    {
+      key: "NO_DELAY",
+      name: "Без задержек",
+    },
+    {
+      key: "END_DELAY",
+      name: "С закрытыми задержками",
+    },
+  ];
+  // Обработка загрузки и ошибок
+  if (error) return `Ошибка! ${error.message}`;
 
   return (
     <>
@@ -334,19 +450,52 @@ const ProjectTable = ({ columnKey = "v1" }) => {
             >
               Создать новую запись
             </StyledButtonGreen>
+            Статус проекта:
+            <Select
+              placeholder="Выберите статус"
+              value={selectedStatusFilter}
+              defaultValue={"ALL"}
+              onChange={handleChangeSelectedStatusFilter}
+              onBlur={handleBlurSelectedStatusFilter}
+              style={{ minWidth: 200 }}
+              allowClear
+            >
+              {options_status.map((row) => (
+                <Option value={row.key}>{row.name}</Option>
+              ))}
+            </Select>
+            <Space>
+              Задержки:
+              <Select
+                placeholder="Задержки"
+                disabled={selectedStatusFilter !== "WORK"}
+                value={selectedDelayFilter}
+                defaultValue={"ALL"}
+                onChange={handleChangeSelectedDelayFilter}
+                onBlur={handleBlurSelectedDelayFilter}
+                style={{ minWidth: 200 }}
+                allowClear
+              >
+                {options_delay.map((row) => (
+                  <Option value={row.key}>{row.name}</Option>
+                ))}
+              </Select>
+            </Space>
           </Space>
         </Form.Item>
       </Form>
       <Table
+        tableLayout="auto"
         data-permission={"read-project"}
         size={"small"}
         sticky={{
           offsetHeader: "64px",
         }}
         loading={loading}
-        dataSource={data?.projects?.items?.map((org, index) => ({
-          ...org,
-          key: index,
+        dataSource={data?.projects?.items?.map((row, index) => ({
+          ...row,
+          key: index + row.id,
+          number_natural: index + 1 + (page - 1) * 10,
         }))}
         columns={columns[columnKey]}
         onChange={(pagination, filters, sorter, extra) => onChange(sorter)}

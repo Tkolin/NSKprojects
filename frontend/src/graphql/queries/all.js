@@ -239,11 +239,13 @@ export const PROJECTS_QUERY = gql`
     $queryOptions: QueryOptions
     $projectId: ID
     $projectStatuses: [String]
+    $projectExtraFilters: ProjectExtraFilters
   ) {
     projects(
       queryOptions: $queryOptions
       projectId: $projectId
       projectStatuses: $projectStatuses
+      projectExtraFilters: $projectExtraFilters
     ) {
       items {
         id
@@ -362,6 +364,14 @@ export const PROJECTS_QUERY = gql`
           work_act_file_id
           payment_date
           work_act_singing_date
+        }
+        project_delays {
+          id
+          date_start
+          date_end
+          delay_type {
+            name
+          }
         }
         project_tasks {
           id

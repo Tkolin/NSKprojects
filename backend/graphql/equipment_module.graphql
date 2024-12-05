@@ -4,6 +4,15 @@ extend type Mutation {
         parametersIds: [ID]!
     ): EquipmentType
 }
+
+extend type Mutation {
+    deleteSupplier(id: ID!): Boolean
+    createSupplier(data: SupplierInput!): Supplier
+    updateSupplier(id: ID!, data: SupplierInput!): Supplier
+}
+input SupplierInput {
+    name: String
+}
 extend type Query {
     suppliers(queryOptions: QueryOptions, queryType: String): SupplierResult
     parameter(id: ID): Parameter

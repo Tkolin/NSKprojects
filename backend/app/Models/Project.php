@@ -58,6 +58,11 @@ class Project extends Model
             ->where('stage_number', 1)
             ->max('acceptance_date');
     }
+    public function project_delays(): HasMany
+    {
+        // error_log("testetr " . $this->hasMany(Delay::class)->all());
+        return $this->hasMany(Delay::class);
+    }
 
     public function executor_orders()
     {

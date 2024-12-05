@@ -1,24 +1,9 @@
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
-import {
-  Alert,
-  Card,
-  Col,
-  Form,
-  Input,
-  Modal,
-  Row,
-  Select,
-  Skeleton,
-  Space,
-} from "antd";
+import { Alert, Card, Form, Input, Skeleton } from "antd";
 import React, { useContext, useEffect, useState } from "react";
-import {
-  ADD_ORGANIZATION_MUTATION,
-  UPDATE_ORGANIZATION_MUTATION,
-} from "../../graphql/mutations/organization";
 
 import "react-dadata/dist/react-dadata.css";
-import { ORGANIZATIONS_QUERY_BY_ID } from "../../graphql/queries/queriesByID";
+import { SUPPLIER_QUERY_BY_ID } from "../../graphql/queries/queriesByID";
 import {
   BIKS_QUERY_COMPACT,
   CONTACTS_QUERY_COMPACT,
@@ -27,14 +12,10 @@ import {
 import { NotificationContext } from "../../NotificationProvider";
 import "./style.css";
 
-import { CustomAutoCompleteAndCreateWitchEdit } from "../components/style/SearchAutoCompleteStyles";
-
-import { AddressSuggestions } from "react-dadata";
-import { StyledAddressSuggestionsInput } from "../components/style/InputStyles";
-
-import { AutoCompleteFormItem } from "../components/CustomForm";
-import BikForm from "./BikForm";
-import ContactForm from "./ContactForm";
+import {
+  CREATE_SUPPLIER_MUTATION,
+  UPDATE_SUPPLIER_MUTATION,
+} from "../../graphql/mutations/supplier";
 import { ModalButton } from "./formComponents/ModalButtonComponent";
 
 const SupplierForm = ({
@@ -51,23 +32,20 @@ const SupplierForm = ({
   const [actualObject, setActualObject] = useState(
     localObject?.id ?? initialObject ?? null
   );
-  const [loadContext, { loading, data }] = useLazyQuery(
-    ORGANIZATIONS_QUERY_BY_ID,
-    {
-      variables: { id: initialObject?.id ?? null },
-      onCompleted: (data) => {
-        setActualObject(data?.organizations?.items[0]);
-        updateForm(data?.organizations?.items[0]);
-      },
-      onError: (error) => {
-        openNotification(
-          "topRight",
-          "error",
-          `Ошибка при загрузке данных: ${error.message}`
-        );
-      },
-    }
-  );
+  const [loadContext, { loading, data }] = useLazyQuery(SUPPLIER_QUERY_BY_ID, {
+    variables: { id: initialObject?.id ?? null },
+    onCompleted: (data) => {
+      setActualObject(data?.suppliers?.items[0]);
+      updateForm(data?.suppliers?.items[0]);
+    },
+    onError: (error) => {
+      openNotification(
+        "topRight",
+        "error",
+        `Ошибка при загрузке данных: ${error.message}`
+      );
+    },
+  });
   // Состояния
   const [contactModalStatus, setContactModalStatus] = useState(null);
   const [bikModalStatus, setBikModalStatus] = useState(null);
@@ -75,7 +53,7 @@ const SupplierForm = ({
 
   // Мутация
   const [mutate, { loading: loadingSave }] = useMutation(
-    actualObject ? UPDATE_ORGANIZATION_MUTATION : ADD_ORGANIZATION_MUTATION,
+    actualObject ? UPDATE_SUPPLIER_MUTATION : CREATE_SUPPLIER_MUTATION,
     {
       onCompleted: (data) => {
         openNotification(
@@ -87,10 +65,10 @@ const SupplierForm = ({
         setAddress({ legal: "", mail: "" });
         console.log(
           `Создание новой записи в таблице организаций выполнено успешно`,
-          data?.updateOrganization || data?.createOrganization
+          data?.updateSupplier || data?.createSupplier
         );
         onCompleted &&
-          onCompleted(data?.updateOrganization || data?.createOrganization);
+          onCompleted(data?.updateSupplier || data?.createSupplier);
       },
       onError: (error) => {
         openNotification(
@@ -157,25 +135,7 @@ const SupplierForm = ({
   const handleSubmit = () => {
     const formData = form.getFieldsValue();
     const data = {
-      legal_form_id: formData.legal_form_id,
       name: formData.name,
-      full_name: formData.full_name,
-      address_legal:
-        formData?.address_legal?.unrestricted_value ?? address?.legal ?? null,
-      office_number_legal: formData.office_number_legal,
-      address_mail:
-        formData?.address_mail?.unrestricted_value ?? address?.mail ?? null,
-      office_number_mail: formData.office_number_mail,
-      phone_number: formData.phone_number,
-      fax_number: formData.fax_number,
-      email: formData.email,
-      INN: formData.INN,
-      OGRN: formData.OGRN,
-      OKPO: formData.OKPO,
-      KPP: formData.KPP,
-      bik_id: formData?.bik?.selected,
-      payment_account: formData.payment_account,
-      director_id: formData?.director?.selected,
     };
 
     mutate({
@@ -191,7 +151,7 @@ const SupplierForm = ({
 
   return (
     <Card
-      style={{ width: 900 }}
+      style={{ minWidth: 300 }}
       {...cardProps}
       actions={[
         <ModalButton
@@ -209,281 +169,28 @@ const SupplierForm = ({
           <Form form={form} onFinish={handleSubmit}>
             {!loading ? (
               <>
-                <Space.Compact style={{ width: "100%", alignItems: "start" }}>
-                  <Form.Item
-                    name="name"
-                    label={"Наименование компании"}
-                    rules={[
-                      {
-                        required: true,
-                        message: "Укажите наименование компании",
-                      },
-                    ]}
-                    style={{ width: "90%" }}
-                  >
-                    <Input
-                      style={{ width: "100%)" }}
-                      placeholder={"Наименование"}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    style={{ width: "10%" }}
-                    name="legal_form_id"
-                    rules={[
-                      { required: true, message: "Укажите тип организации" },
-                    ]}
-                  >
-                    <Select
-                      placeholder={"Форма"}
-                      style={{ width: "100%)" }}
-                      onChange={(value, option) => {
-                        if (!form.getFieldValue("name"))
-                          form.setFieldValue("name", option.children + " ");
-                      }}
-                      loading={loadingLegalForm}
-                    >
-                      {dataLegalForm?.legalForms?.map((row) => (
-                        <Select.Option key={row.id} value={row.id}>
-                          {row.name}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Space.Compact>
                 <Form.Item
-                  name="full_name"
-                  label="Полное наименование"
+                  name="name"
+                  label={"Наименование компании"}
                   rules={[
                     {
                       required: true,
-                      message: "Укажите полное наименование компании",
+                      message: "Укажите наименование компании",
                     },
                   ]}
+                  style={{ width: "90%" }}
                 >
-                  <Input />
-                </Form.Item>
-                <AutoCompleteFormItem
-                  name="director"
-                  label="Руководитель"
-                  rulesValidationRequired={true}
-                  rulesValidationMessage={"Укажите руководителя организации"}
-                >
-                  <CustomAutoCompleteAndCreateWitchEdit
-                    data={dataContacts?.contacts?.items}
-                    typeData={"FIO"}
-                    loading={loadingContacts}
-                    firstBtnOnClick={() =>
-                      setContactModalStatus({ contact_id: null, mode: "add" })
-                    }
-                    secondBtnOnClick={() =>
-                      form.getFieldValue("director")?.selected &&
-                      setContactModalStatus({
-                        contact_id: form.getFieldValue("director")?.selected,
-                        mode: "edit",
-                      })
-                    }
+                  <Input
+                    style={{ width: "100%)" }}
+                    placeholder={"Наименование"}
                   />
-                </AutoCompleteFormItem>
-                <Space.Compact
-                  style={{ width: "100%", alignItems: "flex-start" }}
-                >
-                  <Form.Item
-                    name="address_legal"
-                    label="Юридический адрес"
-                    minchars={3}
-                    delay={50}
-                    style={{ width: "100%" }}
-                  >
-                    <AddressSuggestions
-                      token={TokenDADATA}
-                      defaultQuery={address?.legal ?? ""}
-                      inputProps={{
-                        placeholder: "Введите адрес",
-                        style: StyledAddressSuggestionsInput,
-                      }}
-                      onChange={(suggestion) =>
-                        setAddress({
-                          ...address,
-                          legal: suggestion?.unrestricted_value,
-                        })
-                      }
-                      style={{ width: "100%" }}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    name="office_number_legal"
-                    style={{ width: "10%" }}
-                  >
-                    <Input placeholder="Офис" style={{ width: "100%" }} />
-                  </Form.Item>
-                </Space.Compact>
-                <Space.Compact
-                  style={{ width: "100%", alignItems: "flex-start" }}
-                >
-                  <Form.Item
-                    name="address_mail"
-                    label="Почтовый адрес"
-                    minchars={3}
-                    delay={50}
-                    style={{ width: "100%" }}
-                  >
-                    <AddressSuggestions
-                      token={TokenDADATA}
-                      defaultQuery={address?.mail ?? ""}
-                      inputProps={{
-                        placeholder: "Введите адрес",
-                        style: StyledAddressSuggestionsInput,
-                      }}
-                      onChange={(suggestion) =>
-                        setAddress({
-                          ...address,
-                          mail: suggestion?.unrestricted_value,
-                        })
-                      }
-                    />
-                  </Form.Item>
-                  <Form.Item name="office_number_mail" style={{ width: "10%" }}>
-                    <Input placeholder="Офис" style={{ width: "100%" }} />
-                  </Form.Item>
-                </Space.Compact>
-                <Row gutter={8}>
-                  <Col span={12}>
-                    <Form.Item
-                      name="phone_number"
-                      label="Телефон"
-                      rules={[
-                        {
-                          pattern: /^\+[0-9\s()-]+$/,
-                          message: "Пожалуйста, введите в формате +79003001234",
-                        },
-                      ]}
-                    >
-                      <Input
-                        placeholder="+790031001234"
-                        maxLength={12}
-                        minLength={11}
-                      />
-                    </Form.Item>
-                    <Form.Item name="fax_number" label="Факс">
-                      <Input placeholder="Введите номер факса" />
-                    </Form.Item>
-                    <Form.Item
-                      name="email"
-                      label="e-mail"
-                      rules={[
-                        {
-                          type: "email",
-                          message:
-                            "Пожалуйста, введите корректный почтовый адрес",
-                        },
-                      ]}
-                    >
-                      <Input placeholder="Введите почтовый адрес" />
-                    </Form.Item>
-                    <Form.Item name="payment_account" label="Расчётынй счёт">
-                      <Input placeholder="Введите номер расчётного счёта" />
-                    </Form.Item>
-                    <AutoCompleteFormItem
-                      rulesValidationRequired={false}
-                      rulesValidationMessage={"Пожалуйста, укажите бик"}
-                      name="bik"
-                      label="Бик"
-                      style={{ width: "100%" }}
-                    >
-                      <CustomAutoCompleteAndCreateWitchEdit
-                        typeData={"CODENAME"}
-                        data={dataBik?.biks?.items}
-                        loading={loadingBik}
-                        firstBtnOnClick={() =>
-                          setBikModalStatus({ bik_id: null, mode: "add" })
-                        }
-                        secondBtnOnClick={() =>
-                          form.getFieldValue("bik").selected &&
-                          setBikModalStatus({
-                            bik_id: form.getFieldValue("bik").selected,
-                            mode: "edit",
-                          })
-                        }
-                      />
-                    </AutoCompleteFormItem>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item
-                      name="INN"
-                      label="ИНН"
-                      rules={[
-                        {
-                          pattern: /^[\d\s]+$/,
-                          message: "Пожалуйста, введите корректный номер ИНН",
-                        },
-                      ]}
-                    >
-                      <Input
-                        placeholder="Введите номер ИНН"
-                        maxLength={12}
-                        minLength={10}
-                        pattern="\d*"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="OGRN"
-                      label="ОГРН"
-                      rules={[
-                        {
-                          pattern: /^[\d\s]+$/,
-                          message: "Пожалуйста, введите корректный номер ОГРН",
-                        },
-                      ]}
-                    >
-                      <Input
-                        placeholder="Введите номер ОГРН"
-                        maxLength={13}
-                        minLength={13}
-                        pattern="\d*"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="OKPO"
-                      label="ОКПО"
-                      rules={[
-                        {
-                          pattern: /^[\d\s]+$/,
-                          message: "Пожалуйста, введите корректный номер ОКПО",
-                        },
-                      ]}
-                    >
-                      <Input
-                        placeholder="Введите номер ОКПО"
-                        maxLength={10}
-                        minLength={8}
-                        pattern="\d*"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="KPP"
-                      label="КПП"
-                      rules={[
-                        {
-                          pattern: /^[\d\s]+$/,
-                          message: "Пожалуйста, введите корректный номер КПП",
-                        },
-                      ]}
-                    >
-                      <Input
-                        placeholder="Введите номер КПП"
-                        maxLength={9}
-                        minLength={9}
-                        pattern="\d*"
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>{" "}
+                </Form.Item>
               </>
             ) : (
               <Skeleton active />
             )}
           </Form>
-          <Modal
+          {/* <Modal
             key={bikModalStatus?.mode || bikModalStatus?.bik_id || null}
             open={bikModalStatus}
             onCancel={() => setBikModalStatus(null)}
@@ -517,7 +224,7 @@ const SupplierForm = ({
             children={
               <ContactForm
                 cardProps={{ title: "Контакт" }}
-                options={{ disabled: ["organization"] }}
+                options={{ disabled: ["supplier"] }}
                 onCompleted={(value) => {
                   refetchContacts();
                   console.log("onCompleted", value);
@@ -539,9 +246,9 @@ const SupplierForm = ({
                     ? { id: contactModalStatus?.contact_id }
                     : null
                 }
-              />
-            }
-          />
+              /> */}
+          {/* }
+          /> */}
         </>
       }
     />

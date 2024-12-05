@@ -56,7 +56,7 @@ const ColumnDurationRender = ({
         </Text>
       )}
       {option?.projectCurrentStageInfo && (
-        <Text style={{ whiteSpace: "pre-wrap" }}>
+        <Text>
           {currentStage
             ? `№${currentStage.number} ${currentStage.stage.name}\n(${
                 dayjs(currentStage.date_start).format("DD.MM.YYYY") + "г."

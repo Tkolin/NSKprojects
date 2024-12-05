@@ -26,6 +26,14 @@ export const EMPLOYEES_TO_TASK_BY_PROJECT_TASK_ID = gql`
     }
   }
 `;
+export const SUPPLIER_QUERY_BY_ID = gql`
+  query SupplierQuery($id: ID) {
+    supplier(id: $id) {
+      id
+      name
+    }
+  }
+`;
 export const PROJECT_QUERY = gql`
   query Project($id: ID) {
     project(id: $id) {

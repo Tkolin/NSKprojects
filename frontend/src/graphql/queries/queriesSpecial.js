@@ -205,6 +205,14 @@ export const PROJECTS_QUERY_STATISTICS = gql`
             id
             number
           }
+          project_delays {
+            id
+            date_start
+            date_end
+            delay_type {
+              name
+            }
+          }
           stage_number
           executor {
             id

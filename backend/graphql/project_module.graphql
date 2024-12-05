@@ -117,6 +117,10 @@ input TaskToProjectStructureInput {
     local_id_inherited: String
     stage_number: Int!
 }
+input ProjectExtraFilters {
+    delay_mode: String
+    status_key: String
+}
 
 input TaskToProjectDetailInput {
     id: ID

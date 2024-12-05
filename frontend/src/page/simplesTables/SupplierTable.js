@@ -1,19 +1,35 @@
-import { useMutation, useQuery } from "@apollo/client";
-import { Button, Form, Input, Modal, notification, Space, Table } from "antd";
+import { useQuery } from "@apollo/client";
+import {
+  Button,
+  Divider,
+  Form,
+  Input,
+  Modal,
+  notification,
+  Space,
+  Table,
+  Tabs,
+} from "antd";
 import React, { useState } from "react";
-import { DELETE_ORGANIZATION_MUTATION } from "../../graphql/mutations/organization";
 import { StyledButtonGreen } from "../components/style/ButtonStyles";
 
+import { SettingOutlined } from "@ant-design/icons";
+import { nanoid } from "nanoid";
+import { Link } from "react-router-dom";
 import { SUPPLIERS_QUERY } from "../../graphql/queries/all";
-import OrganizationForm from "../simplesForms/OrganizationForm";
+import SupplierForm from "../simplesForms/SupplierForm";
 const { Search } = Input;
 
 const SupplierTable = () => {
   // Состояния
 
-  const [organizationModalStatus, setOrganizationModalStatus] = useState(false);
+  const [supplierModalStatus, setSupplierModalStatus] = useState(false);
   const [formSearch] = Form.useForm();
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+  const [
+    equipmentTypeSupplierModalStatus,
+    setEquipmentTypeSupplierModalStatus,
+  ] = useState(false);
   // Данные
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -43,27 +59,27 @@ const SupplierTable = () => {
   };
 
   // Мутация для удаления
-  const [deleteOrganization] = useMutation(DELETE_ORGANIZATION_MUTATION, {
-    onCompleted: () => {
-      openNotification("topRight", "success", "Данные успешно удалены!");
-      refetch();
-    },
-    onError: (error) => {
-      openNotification(
-        "topRight",
-        "error",
-        "Ошибка при удалении данных: " + error.message
-      );
-      refetch();
-    },
-  });
+  // const [deleteSupplier] = useMutation(DELETE_ORGANIZATION_MUTATION, {
+  //   onCompleted: () => {
+  //     openNotification("topRight", "success", "Данные успешно удалены!");
+  //     refetch();
+  //   },
+  //   onError: (error) => {
+  //     openNotification(
+  //       "topRight",
+  //       "error",
+  //       "Ошибка при удалении данных: " + error.message
+  //     );
+  //     refetch();
+  //   },
+  // });
 
   // Обработчик событий
-  const handleDelete = (organizationId) => {
-    deleteOrganization({ variables: { id: organizationId } });
+  const handleDelete = (supplierId) => {
+    // deleteSupplier({ variables: { id: supplierId } });
   };
-  const getLinkToForm = (organizationId) => {
-    console.log("getLinkToForm", organizationId);
+  const getLinkToForm = (supplierId) => {
+    console.log("getLinkToForm", supplierId);
   };
   const onSearch = (value) => {
     setSearch(value);
@@ -113,11 +129,11 @@ const SupplierTable = () => {
             <Search placeholder="Найти..." allowClear onSearch={onSearch} />
             <StyledButtonGreen
               loading={loading}
-              data-permission={"create-organization"}
+              data-permission={"create-supplier"}
               style={{ marginBottom: 0 }}
               onClick={() =>
-                setOrganizationModalStatus({
-                  organization_id: null,
+                setSupplierModalStatus({
+                  supplier_id: null,
                   mode: "add",
                 })
               }
@@ -128,7 +144,7 @@ const SupplierTable = () => {
         </Form.Item>
       </Form>
       <Table
-        data-permission={"read-organization"}
+        data-permission={"read-supplier"}
         size={"small"}
         sticky={{
           offsetHeader: "64px",
@@ -155,78 +171,109 @@ const SupplierTable = () => {
           showSizeChanger: true,
           pageSizeOptions: ["10", "50", "100", "200"],
         }}
-        // expandable={{
-        //   expandedRowKeys,
-        //   onExpand: (expanded, record) => {
-        //     const keys = expanded ? [record.key] : [];
-        //     setExpandedRowKeys(keys);
-        //   },
-        //   expandedRowRender: (record) => (
-        //     <Row>
-        //       <Col span={12}>
-        //         <Descriptions size={"small"} column={1}>
-        //           <Descriptions.Item label="Полное наименование">
-        //             {record.full_name}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="Юридический адрес">
-        //             {record.address_legal} {record.office_number_legal}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="Почтовый адрес">
-        //             {record.address_mail} {record.office_number_mail}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="Электронный адресс">
-        //             {record.email}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="Факс">
-        //             {record.fax_number}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="ИНН">
-        //             {record.INN}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="ОГРН">
-        //             {record.OGRN}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="ОКПО">
-        //             {record.OKPO}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="КПП">
-        //             {record.KPP}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="БИК">
-        //             {record?.bik?.BIK} - {record?.bik?.name}
-        //           </Descriptions.Item>
-        //           <Descriptions.Item label="Расчетный счет">
-        //             {record.payment_account}
-        //           </Descriptions.Item>
-        //         </Descriptions>
-        //       </Col>
-        //       <Col span={12}>
-        //         <OrganizationContactsCompactTable data={record?.employees} />
-        //       </Col>
-        //     </Row>
-        //   ),
-        // }}
+        expandable={{
+          expandedRowKeys,
+          onExpand: (expanded, record) => {
+            const keys = expanded ? [record.key] : [];
+            setExpandedRowKeys(keys);
+          },
+          expandedRowRender: (record) => (
+            <Space
+              direction={"vertical"}
+              align={"start"}
+              style={{
+                width: "100%",
+                padding: "20px 70px 20px 20px",
+                borderRadius: "10px",
+                backgroundColor: "#fff",
+              }}
+            >
+              <Tabs
+                size={"small"}
+                type="card"
+                accordion
+                style={{
+                  width: "100%",
+                }}
+                items={[
+                  {
+                    key: "0",
+                    label: "Список постовляемых типов оборудования",
+                    icon: <SettingOutlined />,
+                    children: (
+                      <div>
+                        <Space.Compact
+                          direction="vertical"
+                          style={{ textAlign: "center" }}
+                        >
+                          <Divider style={{ marginBottom: "0px" }}>
+                            Список типов оборудования
+                          </Divider>
+                          <Link
+                            onClick={() =>
+                              setEquipmentTypeSupplierModalStatus(record.id)
+                            }
+                          >
+                            Изменить
+                          </Link>
+                        </Space.Compact>
+
+                        <div>
+                          <ul>
+                            {record?.equipment_types.length > 0
+                              ? record?.equipment_types?.map((row) => (
+                                  <li>{row.name}</li>
+                                ))
+                              : "Оборудование не указано"}
+                          </ul>
+                        </div>
+                      </div>
+                    ),
+                  },
+                ]}
+              />
+            </Space>
+          ),
+        }}
       />
       <Modal
-        key={
-          organizationModalStatus?.mode ||
-          organizationModalStatus?.organization_id ||
-          null
-        }
-        open={organizationModalStatus}
-        onCancel={() => setOrganizationModalStatus(null)}
+        key={nanoid()}
+        open={equipmentTypeSupplierModalStatus}
+        onCancel={() => setEquipmentTypeSupplierModalStatus(null)}
         footer={null}
         width={"max-content"}
         children={
-          <OrganizationForm
-            cardProps={{ title: "Организация" }}
+          // <EquipmentTypeForm
+          //   cardProps={{ title: "Класс оборудования" }}
+          //   onCompleted={() => {
+          //     refetch();
+          //     setEquipmentTypeSupplierModalStatus(null);
+          //   }}
+          //   initialObject={
+          //     equipmentTypeSupplierModalStatus?.equipmentType_id
+          //       ? { id: equipmentTypeSupplierModalStatus?.equipmentType_id }
+          //       : null
+          //   }
+          // />
+          <div>В разработке</div>
+        }
+      />
+      <Modal
+        key={nanoid()}
+        open={supplierModalStatus}
+        onCancel={() => setSupplierModalStatus(null)}
+        footer={null}
+        width={"max-content"}
+        children={
+          <SupplierForm
+            cardProps={{ title: "Поставщик" }}
             onCompleted={() => {
               refetch();
-              setOrganizationModalStatus(null);
+              setSupplierModalStatus(null);
             }}
             initialObject={
-              organizationModalStatus?.organization_id
-                ? { id: organizationModalStatus?.organization_id }
+              supplierModalStatus?.supplier_id
+                ? { id: supplierModalStatus?.supplier_id }
                 : null
             }
           />

@@ -13,7 +13,6 @@ final readonly class CheckStatusProject
         $projectId = $args['projectId'];
         $notifications = [];
 
-        // Получаем проект с задачами и ИРД
         $project = Project::with(['project_irds', 'project_tasks'])->find($projectId);
 
         if (!$project) {
