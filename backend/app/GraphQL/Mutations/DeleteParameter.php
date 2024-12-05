@@ -2,11 +2,14 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Models\ParameterModel;
+
 final readonly class DeleteParameter
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        // TODO implement the resolver
+        ParameterModel::destroy($args['id']);
+        return true;
     }
 }

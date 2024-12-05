@@ -2,15 +2,15 @@ import { useLazyQuery, useMutation } from "@apollo/client";
 import { Card, Form, Input, Space } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import { NotificationContext } from "../../NotificationProvider";
+
 import {
-  ADD_TASK_MUTATION,
-  UPDATE_TASK_MUTATION,
-} from "../../graphql/mutations/task";
-import { TASKS_QUERY_BY_ID } from "../../graphql/queries/queriesByID";
-import { StyledButtonGreen } from "../components/style/ButtonStyles";
+  CREATE_EQUIPMENT_TYPE_ACTIVITY_MUTATION,
+  UPDATE_EQUIPMENT_TYPE_ACTIVITY_MUTATION,
+} from "../../graphql/mutations/equipmentTypeActivity";
+import { EQUIPMENT_TYPE_QUERY } from "../../graphql/queries/queriesSingle";
 import { ModalButton } from "./formComponents/ModalButtonComponent";
 
-const EquipmentTypeActivirtyForm = ({
+const EquipmentTypeActivityForm = ({
   localObject,
   initialObject,
   onCompleted,
@@ -22,7 +22,7 @@ const EquipmentTypeActivirtyForm = ({
   const [actualObject, setActualObject] = useState(
     localObject?.id ?? initialObject ?? null
   );
-  const [loadContext, { loading, data }] = useLazyQuery(TASKS_QUERY_BY_ID, {
+  const [loadContext, { loading, data }] = useLazyQuery(EQUIPMENT_TYPE_QUERY, {
     variables: { id: initialObject?.id },
     onCompleted: (data) => {
       setActualObject(data?.tasks?.items[0]);
@@ -39,18 +39,24 @@ const EquipmentTypeActivirtyForm = ({
 
   // Мутация
   const [mutate, { loading: loadingSave }] = useMutation(
-    actualObject ? UPDATE_TASK_MUTATION : ADD_TASK_MUTATION,
+    actualObject
+      ? UPDATE_EQUIPMENT_TYPE_ACTIVITY_MUTATION
+      : CREATE_EQUIPMENT_TYPE_ACTIVITY_MUTATION,
     {
       onCompleted: (data) => {
-        openNotification("topRight", "success", `Задача создана`);
+        openNotification("topRight", "success", `Тип создана`);
         form.resetFields();
-        onCompleted && onCompleted(data?.updateTask || data?.createTask);
+        onCompleted &&
+          onCompleted(
+            data?.updateEquipmentTypeActivity ||
+              data?.createEquipmentTypeActivity
+          );
       },
       onError: (error) => {
         openNotification(
           "topRight",
           "error",
-          `Ошибка при создании задачи: ${error.message}`
+          `Ошибка при создании типа: ${error.message}`
         );
       },
     }
@@ -107,14 +113,6 @@ const EquipmentTypeActivirtyForm = ({
             >
               <Input />
             </Form.Item>
-
-            <StyledButtonGreen
-              loading={loading}
-              type="primary"
-              onClick={handleSubmit}
-            >
-              {actualObject ? `Обновить` : `Создать`}
-            </StyledButtonGreen>
           </Space.Compact>
         </Form>
       }
@@ -122,4 +120,4 @@ const EquipmentTypeActivirtyForm = ({
   );
 };
 
-export default EquipmentTypeActivirtyForm;
+export default EquipmentTypeActivityForm;

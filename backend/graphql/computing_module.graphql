@@ -1,0 +1,76 @@
+extend type Query {
+    units(queryOptions: QueryOptions, queryType: String): UnitResult
+    unit(id: ID!): Unit
+
+    parameter(id: ID!): Parameter
+    parameters(queryOptions: QueryOptions, queryType: String): ParameterResult
+
+    parameterGroups(
+        queryOptions: QueryOptions
+        queryType: String
+    ): ParameterGroupResult
+    parameterGroup(id: ID): ParameterGroup
+}
+
+extend type Mutation {
+    createParameter(data: ParameterInput!): Parameter
+    updateParameter(id: ID!, data: ParameterInput!): Parameter
+    deleteParameter(id: ID!): Boolean @delete
+
+    createParameterGroup(data: ParameterGroupInput!): ParameterGroup
+    updateParameterGroup(id: ID!, data: ParameterGroupInput!): ParameterGroup
+    deleteParameterGroup(id: ID!): Boolean @delete
+
+    createUnit(data: UnitInput!): Unit
+    updateUnit(id: ID!, data: UnitInput!): Unit
+    deleteUnit(id: ID!): Boolean @delete
+}
+
+type Parameter {
+    id: ID!
+    name: String!
+    unit_id: ID
+    group_id: ID
+    unit: Unit
+    reference: Reference
+    group: ParameterGroup
+    min: Float
+    max: Float
+}
+type ParameterResult {
+    items: [Parameter]
+    count: Int
+}
+input ParameterInput {
+    name: String!
+    unit_id: ID
+    group_id: ID
+    min: Float
+    max: Float
+}
+
+type ParameterGroup {
+    id: ID!
+    name: String!
+}
+type ParameterGroupResult {
+    items: [ParameterGroup]
+    count: Int
+}
+input ParameterGroupInput {
+    name: String!
+}
+
+type UnitResult {
+    items: [Unit]
+    count: Int
+}
+type Unit {
+    id: ID!
+    name: String!
+    name_latex: String
+}
+input UnitInput {
+    name: String!
+    name_latex: String
+}

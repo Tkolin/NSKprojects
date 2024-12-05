@@ -4,13 +4,13 @@ import React, { useContext, useEffect, useState } from "react";
 import { NotificationContext } from "../../NotificationProvider";
 
 import {
-  CREATE_EQUIPMENT_TYPE_GROUP_MUTATION,
-  UPDATE_EQUIPMENT_TYPE_GROUP_MUTATION,
-} from "../../graphql/mutations/equipmentTypeGroup";
+  CREATE_PARAMETER_GROUP_MUTATION,
+  UPDATE_PARAMETER_GROUP_MUTATION,
+} from "../../graphql/mutations/parameterGroup";
 import { TASKS_QUERY_BY_ID } from "../../graphql/queries/queriesByID";
 import { ModalButton } from "./formComponents/ModalButtonComponent";
 
-const EquipmentTypeGroupForm = ({
+const ParameterGroupForm = ({
   localObject,
   initialObject,
   onCompleted,
@@ -40,16 +40,14 @@ const EquipmentTypeGroupForm = ({
   // Мутация
   const [mutate, { loading: loadingSave }] = useMutation(
     actualObject
-      ? UPDATE_EQUIPMENT_TYPE_GROUP_MUTATION
-      : CREATE_EQUIPMENT_TYPE_GROUP_MUTATION,
+      ? UPDATE_PARAMETER_GROUP_MUTATION
+      : CREATE_PARAMETER_GROUP_MUTATION,
     {
       onCompleted: (data) => {
         openNotification("topRight", "success", `Группа создана`);
         form.resetFields();
         onCompleted &&
-          onCompleted(
-            data?.updateEquipmentTypeGroup || data?.createEquipmentTypeGroup
-          );
+          onCompleted(data?.updateParameterGroup || data?.createParameterGroup);
       },
       onError: (error) => {
         openNotification(
@@ -119,4 +117,4 @@ const EquipmentTypeGroupForm = ({
   );
 };
 
-export default EquipmentTypeGroupForm;
+export default ParameterGroupForm;

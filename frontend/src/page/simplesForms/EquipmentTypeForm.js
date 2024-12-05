@@ -14,7 +14,7 @@ import { EQUIPMENT_TYPE_QUERY } from "../../graphql/queries/queriesSingle";
 import { NotificationContext } from "../../NotificationProvider";
 import { AutoCompleteFormItem } from "../components/CustomForm";
 import { CustomAutoCompleteAndCreateWitchEdit } from "../components/style/SearchAutoCompleteStyles";
-import EquipmentTypeActivirtyForm from "./EquipmentTypeActivirtyForm.js";
+import EquipmentTypeActivityForm from "./EquipmentTypeActivityForm.js";
 import EquipmentTypeGroupForm from "./EquipmentTypeGroupForm.js";
 import { ModalButton } from "./formComponents/ModalButtonComponent";
 
@@ -201,14 +201,14 @@ const EquipmentTypeForm = ({
                     onChange={(value) => form.setFieldValue("group", value)}
                     placeholder="Выберите группу"
                     firstBtnOnClick={() => {
-                      handleSubmit(true);
+                      //handleSubmit(true);
                       setGroupModalStatus({
                         group_id: form.getFieldValue("group")?.selected,
                         mode: "add",
                       });
                     }}
                     secondBtnOnClick={() => {
-                      handleSubmit(true);
+                      //handleSubmit(true);
                       form.getFieldValue("group")?.selected &&
                         setGroupModalStatus({
                           group_id: form.getFieldValue("group")?.selected,
@@ -234,7 +234,7 @@ const EquipmentTypeForm = ({
                     }
                     placeholder="Выберите единицу измерения"
                     firstBtnOnClick={() => {
-                      handleSubmit(true);
+                      //handleSubmit(true);
                       setTypeActivityModalStatus({
                         type_activity_id:
                           form.getFieldValue("type_activity")?.selected,
@@ -242,7 +242,7 @@ const EquipmentTypeForm = ({
                       });
                     }}
                     secondBtnOnClick={() => {
-                      handleSubmit(true);
+                      //handleSubmit(true);
                       form.getFieldValue("type_activity")?.selected &&
                         setTypeActivityModalStatus({
                           type_activity_id:
@@ -269,7 +269,7 @@ const EquipmentTypeForm = ({
                 style={{ justifyContent: "center", width: "100%" }}
                 children={
                   <EquipmentTypeGroupForm
-                    cardProps={{ title: "Еденица измерения" }}
+                    cardProps={{ title: "Группа типа техники" }}
                     onCompleted={(value) => {
                       form.setFieldValue("group", {
                         selected: value?.id,
@@ -302,8 +302,8 @@ const EquipmentTypeForm = ({
               <Space
                 style={{ justifyContent: "center", width: "100%" }}
                 children={
-                  <EquipmentTypeActivirtyForm
-                    cardProps={{ title: "Еденица измерения" }}
+                  <EquipmentTypeActivityForm
+                    cardProps={{ title: "Сфера применения" }}
                     onCompleted={(value) => {
                       form.setFieldValue("type_activity", {
                         selected: value?.id,

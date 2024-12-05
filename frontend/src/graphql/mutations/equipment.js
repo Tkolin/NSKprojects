@@ -2,18 +2,7 @@ import { gql } from "@apollo/client";
 
 export const DELETE_EQUIPMENT_TYPE_MUTATION = gql`
   mutation DeleteEquipmentType($id: ID!) {
-    deleteEquipmentType(data: $data) {
-      id
-      name
-      type_activity {
-        id
-        name
-      }
-      group {
-        id
-        name
-      }
-    }
+    deleteEquipmentType(data: $data)
   }
 `;
 export const CREATE_EQUIPMENT_TYPE_MUTATION = gql`
@@ -46,44 +35,6 @@ export const UPDATE_EQUIPMENT_TYPE_MUTATION = gql`
         id
         name
       }
-    }
-  }
-`;
-
-export const DELETE_PARAMETER_MUTATION = gql`
-  mutation DeleteParameter($id: ID!) {
-    deleteParameter(data: $data) {
-      id
-      name
-      group_id
-      unit_id
-      min
-      max
-    }
-  }
-`;
-export const CREATE_PARAMETER_MUTATION = gql`
-  mutation CreateParameter($data: ParameterInput!) {
-    createParameter(data: $data) {
-      id
-      name
-      group_id
-      unit_id
-      min
-      max
-    }
-  }
-`;
-
-export const UPDATE_PARAMETER_MUTATION = gql`
-  mutation UpdateParameter($data: ParameterInput!, $id: ID!) {
-    updateParameter(data: $data, id: $id) {
-      id
-      name
-      group_id
-      unit_id
-      min
-      max
     }
   }
 `;

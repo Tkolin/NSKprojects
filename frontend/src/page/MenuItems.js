@@ -354,20 +354,20 @@ const MenuItems = [
     permission: ["math"],
     children: [
       {
-        label: "Справочники",
+        label: "Табличные параметры",
         key: "/math/reference",
         icon: null,
         permission: ["math"],
         children: [
           {
-            label: "Создать справочник",
+            label: "Создать табличный параметр",
             key: "/math/reference/form",
             icon: null,
             children: null,
             permission: ["math"],
           },
           {
-            label: "Список справочников",
+            label: "Список табличных параметров",
             key: "/math/reference/table",
             icon: null,
             children: null,

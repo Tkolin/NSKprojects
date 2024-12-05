@@ -12,10 +12,11 @@ import {
 import { nanoid } from "nanoid";
 import React, { useContext, useEffect, useState } from "react";
 import { NotificationContext } from "../../NotificationProvider";
+
 import {
   CREATE_PARAMETER_MUTATION,
   UPDATE_PARAMETER_MUTATION,
-} from "../../graphql/mutations/equipment";
+} from "../../graphql/mutations/parameter";
 import {
   PARAMETER_GROUPS_QUERY_COMPACT,
   UNITS_QUERY_COMPACT,
@@ -86,6 +87,7 @@ const ParameterForm = ({
 
   // Подгрузка при обновлении
   useEffect(() => {
+    console.log("initialObject", initialObject);
     if (initialObject?.id) loadContext();
   }, [initialObject]);
   useEffect(() => {
@@ -133,12 +135,13 @@ const ParameterForm = ({
       group_id: formData?.parameterGroup?.selected ?? null,
     };
     if (cold) {
-      coldMutate({
-        variables: {
-          ...(actualObject ? { id: actualObject.id } : {}),
-          data,
-        },
-      });
+      return;
+      // coldMutate({
+      //   variables: {
+      //     ...(actualObject ? { id: actualObject.id } : {}),
+      //     data,
+      //   },
+      // });
     } else {
       mutate({
         variables: {
@@ -278,7 +281,7 @@ const ParameterForm = ({
           </Form>
 
           <Modal
-            key={nanoid()}
+            key={[nanoid(), unitModalStatus?.unit_id]}
             open={unitModalStatus}
             onCancel={() => setUnitModalStatus(null)}
             footer={null}
@@ -308,7 +311,7 @@ const ParameterForm = ({
             }
           />
           <Modal
-            key={nanoid()}
+            key={[nanoid(), parameterGroupModalStatus?.parameterGroup_id]}
             open={parameterGroupModalStatus}
             onCancel={() => setParameterGroupModalStatus(null)}
             footer={null}

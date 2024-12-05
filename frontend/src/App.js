@@ -24,9 +24,12 @@ import SimpleProjectTable from "./page/simplesTables/ProjectTable";
 import StatusLegendComponent from "./page/ProjectTable/components/StatusLegendComponent";
 import ProjectTSManagerForm from "./page/ProjectTSManagerForm";
 import ProjectTSStructureForm from "./page/ProjectTSStructureForm";
+import EquipmentModelForm from "./page/simplesForms/EquipmentModelForm";
+import EquipmentTypeForm from "./page/simplesForms/EquipmentTypeForm";
 import MathForm from "./page/simplesForms/MathForm";
 import ReferenceForm from "./page/simplesForms/ReferenceForm";
 import RequestForm from "./page/simplesForms/RequestForm";
+import SupplierForm from "./page/simplesForms/SupplierForm";
 import TechSpecForm from "./page/simplesForms/TechChapterForm";
 import EquipmentModelTable from "./page/simplesTables/EquipmentModelTable";
 import EquipmentTypeTable from "./page/simplesTables/EquipmentTypeTable";
@@ -124,7 +127,7 @@ const App = () => {
                   element={
                     <Space
                       style={{ width: "100%", justifyContent: "center" }}
-                      children={<OrganizationForm />}
+                      children={<SupplierForm />}
                     />
                   }
                 />
@@ -142,7 +145,7 @@ const App = () => {
                   element={
                     <Space
                       style={{ width: "100%", justifyContent: "center" }}
-                      children={<OrganizationForm />}
+                      children={<EquipmentTypeForm />}
                     />
                   }
                 />
@@ -156,7 +159,7 @@ const App = () => {
                   element={
                     <Space
                       style={{ width: "100%", justifyContent: "center" }}
-                      children={<OrganizationForm />}
+                      children={<EquipmentModelForm />}
                     />
                   }
                 />

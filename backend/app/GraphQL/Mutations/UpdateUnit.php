@@ -2,11 +2,13 @@
 
 namespace App\GraphQL\Mutations;
 
-final readonly class UpdateEmployeesToTasks
+use App\Models\Unit;
+
+final readonly class UpdateUnit
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        // TODO implement the resolver
+        return Unit::findOrFail($args['id'])->update($args["data"]);
     }
 }

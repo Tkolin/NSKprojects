@@ -2,11 +2,13 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Models\EquipmentModel;
+
 final readonly class UpdateEquipmentModel
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        // TODO implement the resolver
+        return EquipmentModel::findOrFail($args['id'])->update($args["data"]);
     }
 }

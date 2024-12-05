@@ -1,14 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace App\GraphQL\Queries;
+namespace App\GraphQL\Mutations;
 
 use App\Models\EquipmentTypeActivity;
 
-final readonly class EquipmentTypesActivitys
+final readonly class UpdateEquipmentTypeActivity
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        return ['items ' => EquipmentTypeActivity::all()];
+        return EquipmentTypeActivity::findOrFail($args['id'])->update($args["data"]);
     }
 }

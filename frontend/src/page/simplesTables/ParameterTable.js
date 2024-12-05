@@ -1,17 +1,20 @@
 import { useQuery } from "@apollo/client";
-import { Divider, Form, Input, notification, Space, Table } from "antd";
-import React, { useState } from "react";
-import { PARAMETERS_QUERY } from "../../graphql/queries/all";
-// import ParameterModalForm from "../components/modal/ParameterModalForm";
+import { Divider, Form, Input, Modal, notification, Space, Table } from "antd";
 import Title from "antd/es/skeleton/Title";
+import { nanoid } from "nanoid";
+import React, { useEffect, useState } from "react";
+import { PARAMETERS_QUERY } from "../../graphql/queries/all";
 import { StyledButtonGreen } from "../components/style/ButtonStyles";
 import { DeleteAndEditStyledLinkManagingDataTable } from "../components/style/TableStyles";
+import ParameterForm from "../simplesForms/ParameterForm";
 const { Search } = Input;
 const ParameterTable = () => {
   // Состояния
   const [formSearch] = Form.useForm();
   const [parameterModalStatus, setParameterModalStatus] = useState(null);
-
+  useEffect(() => {
+    console.log("setParameterModalStatus", parameterModalStatus);
+  }, [parameterModalStatus]);
   // Данные
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -79,9 +82,33 @@ const ParameterTable = () => {
       title: "Наименование",
       dataIndex: "name",
       key: "name",
-
-      sorter: true,
-      ellipsis: true,
+    },
+    // {
+    //   title: "Наименование LaTex (Приведённое)",
+    //   key: "name_latex_render",
+    //   render: () => {
+    //     "-";
+    //   },
+    // },
+    {
+      title: "Наименование LaTex (Не приведённое)",
+      key: "name_latex",
+      render: (record) => record?.unit?.name,
+    },
+    {
+      title: "Минимум",
+      dataIndex: "min",
+      key: "min",
+    },
+    {
+      title: "Максимум",
+      dataIndex: "max",
+      key: "max",
+    },
+    {
+      title: "Группа параметра",
+      key: "group_name",
+      render: (record) => record?.group?.name,
     },
     {
       title: "Управление",
@@ -171,14 +198,27 @@ const ParameterTable = () => {
           pageSizeOptions: ["10", "20", "50", "100"],
         }}
       />
-      {/* <ParameterModalForm
-        key={parameterModalStatus?.parameter?.id ?? nanoid()}
-        onClose={() => {
-          setParameterModalStatus(null);
-        }}
-        object={parameterModalStatus?.parameter ?? null}
-        mode={parameterModalStatus?.mode ?? null}
-      /> */}
+      <Modal
+        key={[nanoid(), parameterModalStatus?.parameter?.id]}
+        open={parameterModalStatus}
+        onCancel={() => setParameterModalStatus(null)}
+        footer={null}
+        width={"max-content"}
+        title={"Параметр"}
+        children={
+          <ParameterForm
+            onCompleted={(value) => {
+              setParameterModalStatus(null);
+              refetch();
+            }}
+            initialObject={
+              parameterModalStatus?.parameter?.id
+                ? { id: parameterModalStatus?.parameter?.id }
+                : null
+            }
+          />
+        }
+      />
     </div>
   );
 };

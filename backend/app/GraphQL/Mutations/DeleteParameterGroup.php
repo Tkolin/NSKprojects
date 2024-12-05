@@ -2,11 +2,14 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Models\ParameterGroup;
+
 final readonly class DeleteParameterGroup
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        // TODO implement the resolver
+        ParameterGroup::destroy($args['id']);
+        return true;
     }
 }

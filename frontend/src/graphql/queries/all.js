@@ -194,7 +194,7 @@ export const IRDS_QUERY = gql`
 `;
 
 export const PARAMETERS_QUERY = gql`
-  query IrdQuery($queryOptions: QueryOptions) {
+  query ParametersQuery($queryOptions: QueryOptions) {
     parameters(queryOptions: $queryOptions) {
       items {
         id

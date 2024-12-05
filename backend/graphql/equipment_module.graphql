@@ -10,22 +10,38 @@ extend type Mutation {
     createSupplier(data: SupplierInput!): Supplier
     updateSupplier(id: ID!, data: SupplierInput!): Supplier
 }
+extend type Mutation {
+    deleteEquipmentTypeActivity(id: ID!): Boolean
+    createEquipmentTypeActivity(
+        data: EquipmentTypeActivityInput!
+    ): EquipmentTypeActivity
+    updateEquipmentTypeActivity(
+        id: ID!
+        data: EquipmentTypeActivityInput!
+    ): EquipmentTypeActivity
+    deleteEquipmentTypeGroup(id: ID!): Boolean
+    createEquipmentTypeGroup(data: EquipmentTypeGroupInput!): EquipmentGroup
+    updateEquipmentTypeGroup(
+        id: ID!
+        data: EquipmentTypeGroupInput!
+    ): EquipmentGroup
+}
+input EquipmentTypeActivityInput {
+    name: String
+}
+input EquipmentTypeGroupInput {
+    name: String
+}
 input SupplierInput {
     name: String
 }
 extend type Query {
     suppliers(queryOptions: QueryOptions, queryType: String): SupplierResult
-    parameter(id: ID): Parameter
-    parameters(queryOptions: QueryOptions, queryType: String): ParameterResult
-    parameterGroups(
-        queryOptions: QueryOptions
-        queryType: String
-    ): ParameterGroupResult
-    units(queryOptions: QueryOptions, queryType: String): UnitResult
+
     equipmentTypeActivitys(
         queryOptions: QueryOptions
         queryType: String
-    ): EquipmentTypeActivitysResult
+    ): EquipmentTypeActivityResult
 
     equipmentGroups(
         queryOptions: QueryOptions
@@ -47,22 +63,11 @@ type EquipmentTypeActivity {
     name: String
 }
 
-type EquipmentTypeActivitysResult {
+type EquipmentTypeActivityResult {
     items: [EquipmentTypeActivity]
     count: Int
 }
-type UnitResult {
-    items: [Unit]
-    count: Int
-}
-type ParameterResult {
-    items: [Parameter]
-    count: Int
-}
-type ParameterGroupResult {
-    items: [ParameterGroup]
-    count: Int
-}
+
 type SupplierResult {
     items: [Supplier]
     count: Int
@@ -86,48 +91,6 @@ type Supplier {
     email: String
     phone_number: String
     equipment_types: [EquipmentType]
-}
-
-extend type Mutation {
-    createParameter(data: ParameterInput!): Parameter
-    updateParameter(data: ParameterInput!, id: ID): Parameter
-    updateParameter(id: ID!, data: ParameterInput!): Parameter
-    deleteParameter(id: ID!): Boolean @delete
-}
-
-input ParameterInput {
-    name: String
-    unit_id: ID
-    group_id: ID
-    min: Float
-    max: Float
-}
-type Mutation {
-    createParameterGroup(data: ParameterInputGroup!): ParameterGroup @create
-    updateParameterGroup(data: ParameterInputGroup!, id: ID): ParameterGroup
-        @create
-    updateParameterGroup(id: ID!, data: ParameterInputGroup!): ParameterGroup
-        @update
-    deleteParameterGroup(id: ID!): Boolean @delete
-}
-
-input ParameterInputGroup {
-    name: String
-}
-
-type Mutation {
-    createEquipmentTypesActivity(
-        data: EquipmentTypesActivityInput!
-    ): EquipmentTypesActivity @create
-    updateEquipmentTypesActivity(
-        id: ID!
-        data: EquipmentTypesActivityInput!
-    ): EquipmentTypesActivity @update
-    deleteEquipmentTypesActivity(id: ID!): Boolean
-}
-
-input EquipmentTypesActivityInput {
-    name: String
 }
 
 extend type Mutation {
@@ -202,37 +165,12 @@ type EquipmentModel {
 type EquipmentType {
     id: ID!
     name: String!
-    type_activity: EquipmentTypesActivity
+    type_activity: EquipmentTypeActivity
     group: EquipmentGroup
     parameters: [Parameter]
 }
 
-type EquipmentTypesActivity {
-    id: ID!
-    name: String!
-}
-
-type Parameter {
-    id: ID!
-    name: String!
-    unit_id: ID
-    group_id: ID
-    unit: Unit
-    reference: Reference
-    group: ParameterGroup
-    min: Float
-    max: Float
-}
-type ParameterGroup {
-    id: ID!
-    name: String!
-}
 type ParameterValue {
     parameter: Parameter
     value: Float
-}
-type Unit {
-    id: ID!
-    name: String!
-    name_latex: String
 }

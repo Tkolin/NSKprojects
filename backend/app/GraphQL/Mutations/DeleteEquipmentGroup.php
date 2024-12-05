@@ -2,11 +2,15 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Models\EquipmentGroup;
+use App\Models\EquipmentModel;
+
 final readonly class DeleteEquipmentGroup
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        // TODO implement the resolver
+        EquipmentGroup::destroy($args['id']);
+        return true;
     }
 }
