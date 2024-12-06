@@ -1,11 +1,11 @@
 // Мутации
 import { gql } from "@apollo/client";
 
-// export const DELETE_SUPPLIER_MUTATION = gql`
-//   mutation DeleteSupplier($id: ID!) {
-//     deleteSupplier(id: $id)
-//   }
-// `;
+export const DELETE_SUPPLIER_MUTATION = gql`
+  mutation DeleteSupplier($id: ID!) {
+    deleteSupplier(id: $id)
+  }
+`;
 
 export const CREATE_SUPPLIER_MUTATION = gql`
   mutation CreateSupplier($data: SupplierInput!) {
@@ -21,6 +21,24 @@ export const UPDATE_SUPPLIER_MUTATION = gql`
     updateSupplier(id: $id, data: $data) {
       id
       name
+    }
+  }
+`;
+
+export const SUPPLIER_EQUIPMENT_TYPE_SYNC_MUTATION = gql`
+  mutation SyncEquipmentTypeParameters(
+    $supplierId: ID!
+    $equipmentTypesIds: [ID]!
+  ) {
+    syncEquipmentTypeParameters(
+      supplierId: $supplierId
+      equipmentTypesIds: $equipmentTypesIds
+    ) {
+      id
+      equipment_type {
+        id
+        name
+      }
     }
   }
 `;

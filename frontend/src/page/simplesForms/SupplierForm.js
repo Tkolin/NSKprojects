@@ -3,7 +3,6 @@ import { Alert, Card, Form, Input, Skeleton } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 
 import "react-dadata/dist/react-dadata.css";
-import { SUPPLIER_QUERY_BY_ID } from "../../graphql/queries/queriesByID";
 import {
   BIKS_QUERY_COMPACT,
   CONTACTS_QUERY_COMPACT,
@@ -16,6 +15,7 @@ import {
   CREATE_SUPPLIER_MUTATION,
   UPDATE_SUPPLIER_MUTATION,
 } from "../../graphql/mutations/supplier";
+import { SUPPLIER_QUERY } from "../../graphql/queries/all";
 import { ModalButton } from "./formComponents/ModalButtonComponent";
 
 const SupplierForm = ({
@@ -32,11 +32,11 @@ const SupplierForm = ({
   const [actualObject, setActualObject] = useState(
     localObject?.id ?? initialObject ?? null
   );
-  const [loadContext, { loading, data }] = useLazyQuery(SUPPLIER_QUERY_BY_ID, {
+  const [loadContext, { loading, data }] = useLazyQuery(SUPPLIER_QUERY, {
     variables: { id: initialObject?.id ?? null },
     onCompleted: (data) => {
-      setActualObject(data?.suppliers?.items[0]);
-      updateForm(data?.suppliers?.items[0]);
+      setActualObject(data?.supplier);
+      updateForm(data?.supplier);
     },
     onError: (error) => {
       openNotification(

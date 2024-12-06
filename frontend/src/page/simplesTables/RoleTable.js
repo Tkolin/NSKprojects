@@ -1,7 +1,9 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { Form, Input, Modal, Space, Table, Typography } from "antd";
 import { format } from "date-fns";
+import { nanoid } from "nanoid";
 import React, { useContext, useState } from "react";
+import { Link } from "react-router-dom";
 import { DELETE_CONTACT_MUTATION } from "../../graphql/mutations/contact";
 import { ROLES_TABLE } from "../../graphql/queries/all";
 import { NotificationContext } from "../../NotificationProvider";
@@ -16,6 +18,7 @@ const RoleTable = () => {
 
   const [formSearch] = Form.useForm();
   const [contactModalStatus, setContactModalStatus] = useState(null);
+  const [userRoleModalStatus, setUserRoleModalStatus] = useState(null);
 
   // Данные
   const [page, setPage] = useState(1);
@@ -111,7 +114,12 @@ const RoleTable = () => {
       ellipsis: true,
       width: "10%",
       render: (text, record) => (
-        <>В разработке</>
+        <Space>
+          <>В разработке</>
+          <Link onClick={() => setUserRoleModalStatus({ id: record.id })}>
+            Изменить права доступа
+          </Link>
+        </Space>
         // <DeleteAndEditStyledLinkManagingDataTable
         //     title={"Удаление контакта"}
         //     description={"Вы уверены, что нужно удалить этот контакт?"}
@@ -193,6 +201,23 @@ const RoleTable = () => {
                 : null
             }
           />
+        }
+      />
+      <Modal
+        key={[userRoleModalStatus?.id, nanoid()]}
+        open={userRoleModalStatus}
+        onCancel={() => setContactModalStatus(null)}
+        footer={null}
+        width={"600px"}
+        title={"Список прав"}
+        children={
+          <div></div>
+          // <UserRolesManager
+          //   onCompleted={() => setContactModalStatus(null)}
+          //   initialObject={
+          //     userRoleModalStatus?.id ? { id: userRoleModalStatus?.id } : null
+          //   }
+          // />
         }
       />
     </div>

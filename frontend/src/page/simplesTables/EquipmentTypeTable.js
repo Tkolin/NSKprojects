@@ -17,6 +17,7 @@ import { SettingOutlined } from "@ant-design/icons";
 import Link from "antd/es/typography/Link";
 import { DELETE_EQUIPMENT_TYPE_MUTATION } from "../../graphql/mutations/equipment";
 import { EQUIPMENT_TYPES_QUERY } from "../../graphql/queries/all";
+import { DeleteAndEditStyledLinkManagingDataTable } from "../components/style/TableStyles";
 import EquipmentTypeParametersStructureForm from "../EquipmentTypeParametersStructureForm";
 import EquipmentTypeForm from "../simplesForms/EquipmentTypeForm";
 const { Search } = Input;
@@ -113,12 +114,23 @@ const EquipmentTypeTable = () => {
       render: (record) => record?.type_activity?.name,
     },
     {
-      title: "Действия",
-      dataIndex: "action",
-      key: "action",
-      sorter: true,
-      render: (record) => (
-        <Space.Compact direction="vertical">{record?.id}</Space.Compact>
+      title: "Управление",
+      key: "edit",
+      width: 100,
+      render: (text, record) => (
+        <DeleteAndEditStyledLinkManagingDataTable
+          deletePermission={"delete-supplier"}
+          updatePermission={"update-supplier"}
+          title={"Удаление организации"}
+          description={"Вы уверены, что нужно удалить этого поставщика?"}
+          handleEdit={() =>
+            setEquipmentTypeModalStatus({
+              equipmentType_id: record.id,
+              mode: "edit",
+            })
+          }
+          handleDelete={() => handleDelete(record.id)}
+        />
       ),
     },
   ];

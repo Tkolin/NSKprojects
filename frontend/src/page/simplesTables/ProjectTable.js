@@ -176,7 +176,7 @@ const ProjectTable = ({ columnKey = "v1" }) => {
         render: (record) => record?.organization_customer?.name,
       },
       {
-        title: "Дата подписания - дата окончания (по договору)",
+        title: "Продолжительность (по договору)",
         key: "date_signing",
         render: (record) => {
           const status =
@@ -217,7 +217,7 @@ const ProjectTable = ({ columnKey = "v1" }) => {
         },
       },
       {
-        title: "Дата получения ИРД (на 1 этап) - дата получения аванса",
+        title: "ИРД/АВАНС",
         key: "date_first_ird_completed",
         render: (record) => {
           const getStatusClass = (date) => {
@@ -262,8 +262,9 @@ const ProjectTable = ({ columnKey = "v1" }) => {
         },
       },
       {
-        title: "Фактическая дата начала - окончания",
+        title: "Продолжительность (факт)",
         key: "date_start",
+        minWidth: 60,
         render: (record) => {
           const getStatusClass = (date) => {
             if (!date || !record?.date_signing) return "default";
@@ -329,6 +330,7 @@ const ProjectTable = ({ columnKey = "v1" }) => {
       {
         title: "Этап в работе",
         key: "actual_stage",
+        minWidth: 80,
         render: (record) => (
           <ColumnDurationRender
             record={record}
@@ -399,7 +401,7 @@ const ProjectTable = ({ columnKey = "v1" }) => {
     },
     {
       key: "PRE_WORK",
-      name: "Подготовка к работе",
+      name: "Оформление преддоговорных",
     },
     {
       key: "WORK",

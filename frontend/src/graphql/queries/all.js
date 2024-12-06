@@ -742,6 +742,30 @@ export const SUPPLIERS_QUERY = gql`
     }
   }
 `;
+export const SUPPLIER_QUERY = gql`
+  query supplierQuery($id: ID!) {
+    supplier(id: $id) {
+      id
+      name
+      contact {
+        id
+      }
+      email
+      phone_number
+      equipment_types {
+        id
+        name
+        parameters {
+          id
+          name
+
+          min
+          max
+        }
+      }
+    }
+  }
+`;
 export const EQUIPMENT_MODELS_QUERY = gql`
   query EquipmentModels($queryOptions: QueryOptions) {
     equipmentModels(queryOptions: $queryOptions) {

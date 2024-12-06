@@ -37,6 +37,7 @@ input SupplierInput {
 }
 extend type Query {
     suppliers(queryOptions: QueryOptions, queryType: String): SupplierResult
+    supplier(id: ID!): Supplier
 
     equipmentTypeActivitys(
         queryOptions: QueryOptions

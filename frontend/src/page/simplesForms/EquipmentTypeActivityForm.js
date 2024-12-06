@@ -7,7 +7,7 @@ import {
   CREATE_EQUIPMENT_TYPE_ACTIVITY_MUTATION,
   UPDATE_EQUIPMENT_TYPE_ACTIVITY_MUTATION,
 } from "../../graphql/mutations/equipmentTypeActivity";
-import { EQUIPMENT_TYPE_QUERY } from "../../graphql/queries/queriesSingle";
+import { EQUIPMENT_TYPES_ACTIVITY_QUERY_COMPACT } from "../../graphql/queries/queriesCompact";
 import { ModalButton } from "./formComponents/ModalButtonComponent";
 
 const EquipmentTypeActivityForm = ({
@@ -22,20 +22,23 @@ const EquipmentTypeActivityForm = ({
   const [actualObject, setActualObject] = useState(
     localObject?.id ?? initialObject ?? null
   );
-  const [loadContext, { loading, data }] = useLazyQuery(EQUIPMENT_TYPE_QUERY, {
-    variables: { id: initialObject?.id },
-    onCompleted: (data) => {
-      setActualObject(data?.tasks?.items[0]);
-      updateForm(data?.tasks?.items[0]);
-    },
-    onError: (error) => {
-      openNotification(
-        "topRight",
-        "error",
-        `Ошибка при загрузке данных: ${error.message}`
-      );
-    },
-  });
+  const [loadContext, { loading, data }] = useLazyQuery(
+    EQUIPMENT_TYPES_ACTIVITY_QUERY_COMPACT,
+    {
+      variables: { id: initialObject?.id },
+      onCompleted: (data) => {
+        setActualObject(data?.tasks?.items[0]);
+        updateForm(data?.tasks?.items[0]);
+      },
+      onError: (error) => {
+        openNotification(
+          "topRight",
+          "error",
+          `Ошибка при загрузке данных: ${error.message}`
+        );
+      },
+    }
+  );
 
   // Мутация
   const [mutate, { loading: loadingSave }] = useMutation(

@@ -1,0 +1,44 @@
+extend type Query {
+    users(
+        id: ID
+        queryOptions: QueryOptions
+        queryType: String
+        organizationId: ID
+    ): UsersResult @checkRole(permission: ["dev"])
+
+    permissionGroups(
+        queryOptions: QueryOptions
+        queryType: String
+    ): PermissionGroupResult
+    permissionGroup(id: ID): PermissionGroup
+}
+type PermissionGroupResult {
+    items: [PermissionGroup]
+    count: Number
+}
+#   user
+type User {
+    id: ID
+    name: String
+    email: String
+    roles: [Role]
+    person: Person
+    organization: Organization
+}
+type Role {
+    permissions: [Permission]
+    description: String
+    name: String
+    name_key: String
+}
+type Permission {
+    name_key: String
+    name: String
+    description: String
+    group: PermissionGroup
+}
+type PermissionGroup {
+    name_key: String
+    name: String
+    permissions: [Permission]
+}

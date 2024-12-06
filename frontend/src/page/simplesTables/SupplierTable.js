@@ -17,7 +17,9 @@ import { SettingOutlined } from "@ant-design/icons";
 import { nanoid } from "nanoid";
 import { Link } from "react-router-dom";
 import { SUPPLIERS_QUERY } from "../../graphql/queries/all";
+import { DeleteAndEditStyledLinkManagingDataTable } from "../components/style/TableStyles";
 import SupplierForm from "../simplesForms/SupplierForm";
+import SuppliersEquipmentTypesListForm from "../SuppliersEquipmentTypesListForm";
 const { Search } = Input;
 
 const SupplierTable = () => {
@@ -106,6 +108,26 @@ const SupplierTable = () => {
         <Button onClick={() => getLinkToForm(record)}>
           Форма для заполнения
         </Button>
+      ),
+    },
+    {
+      title: "Управление",
+      key: "edit",
+      width: 100,
+      render: (text, record) => (
+        <DeleteAndEditStyledLinkManagingDataTable
+          deletePermission={"delete-supplier"}
+          updatePermission={"update-supplier"}
+          title={"Удаление организации"}
+          description={"Вы уверены, что нужно удалить этого поставщика?"}
+          handleEdit={() =>
+            setSupplierModalStatus({
+              supplier_id: record.id,
+              mode: "edit",
+            })
+          }
+          handleDelete={() => handleDelete(record.id)}
+        />
       ),
     },
   ];
@@ -243,19 +265,18 @@ const SupplierTable = () => {
         footer={null}
         width={"max-content"}
         children={
-          // <EquipmentTypeForm
-          //   cardProps={{ title: "Класс оборудования" }}
-          //   onCompleted={() => {
-          //     refetch();
-          //     setEquipmentTypeSupplierModalStatus(null);
-          //   }}
-          //   initialObject={
-          //     equipmentTypeSupplierModalStatus?.equipmentType_id
-          //       ? { id: equipmentTypeSupplierModalStatus?.equipmentType_id }
-          //       : null
-          //   }
-          // />
-          <div>В разработке</div>
+          <SuppliersEquipmentTypesListForm
+            cardProps={{ title: "Класс оборудования" }}
+            onCompleted={() => {
+              refetch();
+              setEquipmentTypeSupplierModalStatus(null);
+            }}
+            initialObject={
+              equipmentTypeSupplierModalStatus?.equipmentType_id
+                ? { id: equipmentTypeSupplierModalStatus?.equipmentType_id }
+                : null
+            }
+          />
         }
       />
       <Modal

@@ -36,4 +36,15 @@ class Role extends Model
     {
         return $this->belongsToMany(Permission::class, 'permission_role', 'role_id', 'permission_id');
     }
+    public function permission_groups(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            PermissionGroup::class, // Связанная модель
+            'permissions',          // Промежуточная таблица
+            'group_key',            // Локальный ключ в промежуточной таблице
+            'name_key',             // Связанный ключ в конечной таблице (PermissionGroups)
+            'name_key',             // Локальный ключ в модели Role
+            'name_key'              // Ключ в модели PermissionGroup
+        )->distinct(); // Убираем дубли в случае пересекающихся прав.
+    }
 }

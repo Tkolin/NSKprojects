@@ -111,26 +111,6 @@ type VariablesInTechSpecChapter {
     reference_key: ID
 }
 
-#   user
-type User {
-    id: ID
-    name: String
-    email: String
-    roles: [Role]
-    person: Person
-    organization: Organization
-}
-type Role {
-    permissions: [Permission]
-    description: String
-    name: String
-    name_key: String
-}
-type Permission {
-    name_key: String
-    name: String
-    description: String
-}
 #   formula 1
 type Fenrir {
     id: ID
