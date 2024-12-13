@@ -57,15 +57,15 @@ export const ADD_PROJECT_MUTATION = gql`
         id
         name
         code
-        group_facility {
+        facility_group {
           id
           name
           code
-          subselection_facility {
+          facility_subselection {
             id
             name
             code
-            selection_facility {
+            facility_selection {
               id
               name
               code
@@ -214,15 +214,15 @@ export const UPDATE_PROJECT_MUTATION = gql`
         id
         name
         code
-        group_facility {
+        facility_group {
           id
           name
           code
-          subselection_facility {
+          facility_subselection {
             id
             name
             code
-            selection_facility {
+            facility_selection {
               id
               name
               code

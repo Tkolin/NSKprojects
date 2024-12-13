@@ -16,16 +16,16 @@ class FacilityType extends Model
         'name',
         'type_id',
         'code',
-        'group_facility_id',
+        'facility_group_id',
     ];
 
-    public function type_facility(): BelongsTo
+    // public function facility_type(): BelongsTo
+    // {
+    //     return $this->belongsTo(TypeFacility::class);
+    // }
+    public function facility_group(): BelongsTo
     {
-        return $this->belongsTo(TypeFacility::class);
-    }
-    public function group_facility(): BelongsTo
-    {
-        return $this->belongsTo(GroupFacilities::class);
+        return $this->belongsTo(FacilityGroup::class);
     }
 
     public function projects(): HasMany

@@ -73,7 +73,7 @@ type Query {
     projectStatuses: [ProjectStatus!]!
 
     legalForms: [LegalForm]!
-    facilities: [SelectionFacility!]!
+    facilities: [FacilitySelection!]!
 }
 #-TYPES:
 #   reference
@@ -370,35 +370,35 @@ type FacilityType {
     id: ID!
     name: String!
     code: Int
-    type_facility: TypeFacility
-    group_facility: GroupFacility
+
+    facility_group: FacilityGroup
 }
 #   facility 2 (Указаны в основной модели)
 type TypeFacility {
     id: ID!
     name: String!
 }
-type GroupFacility {
+type FacilityGroup {
     id: ID!
     name: String!
     code: Int
     facilities: [FacilityType]
-    subselection_facility: SubselectionFacility
+    facility_subselection: FacilitySubselection
 }
 #   facility 3 (Указаны в моделях 2 уровня)
-type SubselectionFacility {
+type FacilitySubselection {
     id: ID!
     name: String!
     code: Int
-    group_facility: [GroupFacility]
-    selection_facility: SelectionFacility
+    facility_group: [FacilityGroup]
+    facility_selection: FacilitySelection
 }
 #   facility 3 (Указаны в моделях 3 уровня)
-type SelectionFacility {
+type FacilitySelection {
     id: ID!
     name: String!
     code: Int
-    subselection_facility: [SubselectionFacility]
+    facility_subselection: [FacilitySubselection]
 }
 #   file
 type File {

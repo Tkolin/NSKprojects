@@ -302,15 +302,15 @@ export const PROJECTS_QUERY = gql`
           id
           name
           code
-          group_facility {
+          facility_group {
             id
             name
             code
-            subselection_facility {
+            facility_subselection {
               id
               name
               code
-              selection_facility {
+              facility_selection {
                 id
                 name
                 code
@@ -604,11 +604,11 @@ export const FACILITYS_QUERY = gql`
       id
       name
       code
-      subselection_facility {
+      facility_subselection {
         id
         name
         code
-        group_facility {
+        facility_group {
           id
           name
           code

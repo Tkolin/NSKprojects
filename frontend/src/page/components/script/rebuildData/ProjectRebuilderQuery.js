@@ -1,125 +1,162 @@
- import dayjs from "dayjs";
+import dayjs from "dayjs";
 
 export const facilitiesToFullCode = (faclility) => {
-    if (!(faclility && faclility?.group_facility && faclility?.group_facility?.subselection_facility
+  if (
+    !(
+      faclility &&
+      faclility?.facility_group &&
+      faclility?.facility_group?.facility_subselection &&
+      faclility?.facility_group?.facility_subselection?.facility_selection
+    )
+  )
+    return "";
 
-        && faclility?.group_facility?.subselection_facility
-            ?.selection_facility))
-        return "";
-
-    return `${faclility?.group_facility?.subselection_facility?.selection_facility.code.toString().padStart(2, '0')}-` +
-        `${faclility?.group_facility?.subselection_facility?.code.toString().padStart(2, '0')}-` +
-        `${faclility?.group_facility?.code.toString().padStart(3, '0')}-` +
-        `${faclility?.code?.toString().padStart(3, '0')}`
-}
-
+  return (
+    `${faclility?.facility_group?.facility_subselection?.facility_selection.code
+      .toString()
+      .padStart(2, "0")}-` +
+    `${faclility?.facility_group?.facility_subselection?.code
+      .toString()
+      .padStart(2, "0")}-` +
+    `${faclility?.facility_group?.code.toString().padStart(3, "0")}-` +
+    `${faclility?.code?.toString().padStart(3, "0")}`
+  );
+};
 
 export const rebuildProjectResultQuery = (data) => {
-    return {
-        ...data,
+  return {
+    ...data,
 
-            dateEnd: data?.date_end ? dayjs(data?.date_end) : null,
-            dateStart: data?.date_signing ? dayjs(data?.date_signing) : null,
-            duration: data?.duration ?? null,
+    dateEnd: data?.date_end ? dayjs(data?.date_end) : null,
+    dateStart: data?.date_signing ? dayjs(data?.date_signing) : null,
+    duration: data?.duration ?? null,
 
-        date_start: data?.date_start ? dayjs(data?.date_start) : null,
-        date_end: data?.date_end ? dayjs(data?.date_end) : null,
-        date_signing: data?.date_signing ? dayjs(data?.date_signing) : null,
-        delegates: data?.delegations ? {selected: data?.delegations?.map(k => k?.id), output: data?.delegations} : null,
-        facility_id: {
-            checkedKeys: data?.facilities?.map(k => facilitiesToFullCode(k)),
-            checkedObjects: data?.facilities?.map(k =>
-                ({
-                    key: facilitiesToFullCode(k),
-                    title: k.name,
-                    value: [k.id
-                        , k.code
-                    ]
-                })
-            )
-        },
-        organization_customer: data?.organization_customer ? {selected: data?.organization_customer?.id, output: data?.organization_customer?.name} : null,
-        status_id: data?.status ? {selected: data?.status?.name_key, output: data?.status?.name} : null,
-        type_project_document: data?.type_project_document ? {
-            selected: data?.type_project_document?.id,
-            output: data?.type_project_document?.code + " - " + data?.type_project_document?.name
-        } : null,
-        group_type_project_document: data?.type_project_document?.group ? {
-            selected: data?.type_project_document?.group?.id,
-            output: data?.type_project_document?.group?.code + " - " + data?.type_project_document?.group?.name
-        } : null,
-    }
-        ;
+    date_start: data?.date_start ? dayjs(data?.date_start) : null,
+    date_end: data?.date_end ? dayjs(data?.date_end) : null,
+    date_signing: data?.date_signing ? dayjs(data?.date_signing) : null,
+    delegates: data?.delegations
+      ? {
+          selected: data?.delegations?.map((k) => k?.id),
+          output: data?.delegations,
+        }
+      : null,
+    facility_id: {
+      checkedKeys: data?.facilities?.map((k) => facilitiesToFullCode(k)),
+      checkedObjects: data?.facilities?.map((k) => ({
+        key: facilitiesToFullCode(k),
+        title: k.name,
+        value: [k.id, k.code],
+      })),
+    },
+    organization_customer: data?.organization_customer
+      ? {
+          selected: data?.organization_customer?.id,
+          output: data?.organization_customer?.name,
+        }
+      : null,
+    status_id: data?.status
+      ? { selected: data?.status?.name_key, output: data?.status?.name }
+      : null,
+    type_project_document: data?.type_project_document
+      ? {
+          selected: data?.type_project_document?.id,
+          output:
+            data?.type_project_document?.code +
+            " - " +
+            data?.type_project_document?.name,
+        }
+      : null,
+    group_type_project_document: data?.type_project_document?.group
+      ? {
+          selected: data?.type_project_document?.group?.id,
+          output:
+            data?.type_project_document?.group?.code +
+            " - " +
+            data?.type_project_document?.group?.name,
+        }
+      : null,
+  };
 };
 export const rebuildStagesResultQuery = (data) => {
-    let f = 1;
-    return data?.map((row,) => ({
-        ...row,
-        date_range: {
-            dateStart: row?.date_start ? dayjs(row?.date_start) : null,
-            dateEnd: row?.date_end ? dayjs(row?.date_end) : null,
-            duration: row?.duration ?? null
-        },
-        stage: {selected: row?.stage?.id, output: row?.stage?.name},
-    }));
+  let f = 1;
+  return data?.map((row) => ({
+    ...row,
+    date_range: {
+      dateStart: row?.date_start ? dayjs(row?.date_start) : null,
+      dateEnd: row?.date_end ? dayjs(row?.date_end) : null,
+      duration: row?.duration ?? null,
+    },
+    stage: { selected: row?.stage?.id, output: row?.stage?.name },
+  }));
 };
 export const rebuildIrdsResultQuery = (data) => {
-    return data?.map((row, index) => ({
-        ...row,
-        received_date: row.received_date ? dayjs(row.received_date?.[1]).format("YYYY-MM-DD") : null,
-        ird: {selected: row?.ird?.id, output: row?.ird?.name},
-
-    }));
+  return data?.map((row, index) => ({
+    ...row,
+    received_date: row.received_date
+      ? dayjs(row.received_date?.[1]).format("YYYY-MM-DD")
+      : null,
+    ird: { selected: row?.ird?.id, output: row?.ird?.name },
+  }));
 };
 export const rebuildStagesToQuery = (data, projectId) => {
-    if (!data)
-        return [];
-    const dataArray = [Object.values(data)];
+  if (!data) return [];
+  const dataArray = [Object.values(data)];
 
-    return dataArray?.map((row, index) => ({
-        project_id: projectId ?? null,
-        duration: row?.date_range?.duration ?? null,
-        stage_id: row?.stage?.selected ?? null,
-        number: index + 1,
-        offset: row.offset ?? null,
-        percent: row?.percent ?? null,
-      }));
+  return dataArray?.map((row, index) => ({
+    project_id: projectId ?? null,
+    duration: row?.date_range?.duration ?? null,
+    stage_id: row?.stage?.selected ?? null,
+    number: index + 1,
+    offset: row.offset ?? null,
+    percent: row?.percent ?? null,
+  }));
 };
 export const rebuildIrdToQuery = (data, project) => {
-    if (!data)
-        return [];
-    const dataArray = Object.values(data);
-    return dataArray?.map((row, index) => ({
-        id: row?.id ?? null,
-        project_id: project?.id ?? null,
-        ird_id: row?.ird?.selected ?? null,
-        stage_number: row?.stage_number ? parseInt(row?.stage_number) : null,
-        application_project: row?.application_project ? parseInt(row?.application_project) : null,
-        received_date: row?.received_date ? dayjs(row?.received_date).format("YYYY-MM-DD") : null,
-    }));
+  if (!data) return [];
+  const dataArray = Object.values(data);
+  return dataArray?.map((row, index) => ({
+    id: row?.id ?? null,
+    project_id: project?.id ?? null,
+    ird_id: row?.ird?.selected ?? null,
+    stage_number: row?.stage_number ? parseInt(row?.stage_number) : null,
+    application_project: row?.application_project
+      ? parseInt(row?.application_project)
+      : null,
+    received_date: row?.received_date
+      ? dayjs(row?.received_date).format("YYYY-MM-DD")
+      : null,
+  }));
 };
 export const rebuildProjectToQuery = (data) => {
-    console.log("rebuildProjectToQuery", data);
-    if (!data)
-        return [];
+  console.log("rebuildProjectToQuery", data);
+  if (!data) return [];
 
-    return {
-        number: data?.number,
-        name: data?.name,
-        organization_customer_id: data?.organization_customer?.selected,
-        type_project_document_id: data?.type_project_document_id,
-        date_signing: data?.date_range?.dateStart ? dayjs(data?.date_range?.dateStart).format("YYYY-MM-DD") : null,
-        duration: data?.date_range?.duration,
-        date_end: data?.date_range?.dateEnd ? dayjs(data?.date_range?.dateEnd).format("YYYY-MM-DD") : null,
- 
-        date_start: data?.date_start ? dayjs(data?.date_start).format("YYYY-MM-DD") : null,
- 
-        status_id: data?.status_id,
-        date_completion: data?.date_completion ? dayjs(data?.date_completion).format("YYYY-MM-DD") : null,
-        price: data?.price,
-        prepayment: data?.prepayment,
-        facility_id: data?.facility_id?.checkedObjects?.map(row => row?.value[0] ?? null) ?? null,
-        delegates_id: null //data?.delegates_id,
-    };
+  return {
+    number: data?.number,
+    name: data?.name,
+    organization_customer_id: data?.organization_customer?.selected,
+    type_project_document_id: data?.type_project_document_id,
+    date_signing: data?.date_range?.dateStart
+      ? dayjs(data?.date_range?.dateStart).format("YYYY-MM-DD")
+      : null,
+    duration: data?.date_range?.duration,
+    date_end: data?.date_range?.dateEnd
+      ? dayjs(data?.date_range?.dateEnd).format("YYYY-MM-DD")
+      : null,
+
+    date_start: data?.date_start
+      ? dayjs(data?.date_start).format("YYYY-MM-DD")
+      : null,
+
+    status_id: data?.status_id,
+    date_completion: data?.date_completion
+      ? dayjs(data?.date_completion).format("YYYY-MM-DD")
+      : null,
+    price: data?.price,
+    prepayment: data?.prepayment,
+    facility_id:
+      data?.facility_id?.checkedObjects?.map((row) => row?.value[0] ?? null) ??
+      null,
+    delegates_id: null, //data?.delegates_id,
+  };
 };
-

@@ -49,9 +49,9 @@ final class UpProjectStatus
             }
             if ($project->status_id === "APPROVAL_AGREEMENT" && !isset($project->number)) {
                 $facilityA = $project->facilities->first();
-                $facilityB = $facilityA->group_facility;
-                $facilityC = $facilityB->subselection_facility;
-                $facilityD = $facilityC->selection_facility;
+                $facilityB = $facilityA->facility_group;
+                $facilityC = $facilityB->facility_subselection;
+                $facilityD = $facilityC->facility_selection;
                 $facilityCode =
                     FormatterService::formatWithLeadingZeros($facilityD->code, 2) . '-' .
                     FormatterService::formatWithLeadingZeros($facilityC->code, 2) . '-' .

@@ -15,20 +15,20 @@ const FacilitiesCascader = ({ value, onChange }) => {
 
   const sortFacilitysForCascader = (facilities) => {
     return facilities.map((facility) => {
-      const subselectionFacilities = facility.subselection_facility.map(
+      const facilitySubselections = facility.facility_subselection.map(
         (subFacility) => {
-          const groupFacilities = subFacility.group_facility.map(
-            (groupFacility) => {
-              const facilities = groupFacility.facilities.map((facility) => ({
+          const facilityGroups = subFacility.facility_group.map(
+            (FacilityGroup) => {
+              const facilities = FacilityGroup.facilities.map((facility) => ({
                 key: facility.id,
                 label: facility.name,
                 value: [facility.id, facility.code],
               }));
 
               return {
-                key: groupFacility.id,
-                label: groupFacility.name,
-                value: [groupFacility.id, groupFacility.code],
+                key: FacilityGroup.id,
+                label: FacilityGroup.name,
+                value: [FacilityGroup.id, FacilityGroup.code],
                 children: facilities,
               };
             }
@@ -38,7 +38,7 @@ const FacilitiesCascader = ({ value, onChange }) => {
             key: subFacility.id,
             label: subFacility.name,
             value: [subFacility.id, subFacility.code],
-            children: groupFacilities,
+            children: facilityGroups,
           };
         }
       );
@@ -47,7 +47,7 @@ const FacilitiesCascader = ({ value, onChange }) => {
         key: facility.id,
         label: facility.name,
         value: [facility.id, facility.code],
-        children: subselectionFacilities,
+        children: facilitySubselections,
       };
     });
   };

@@ -177,12 +177,12 @@ CREATE TABLE `facilities` (
   `type_id` bigint unsigned NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `group_facility_id` bigint unsigned DEFAULT NULL,
+  `facility_group_id` bigint unsigned DEFAULT NULL,
   `code` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `facilities_type_id_foreign` (`type_id`),
-  KEY `facilities_group_facility_id_foreign` (`group_facility_id`),
-  CONSTRAINT `facilities_group_facility_id_foreign` FOREIGN KEY (`group_facility_id`) REFERENCES `group_facilities` (`id`) ON DELETE SET NULL,
+  KEY `facilities_facility_group_id_foreign` (`facility_group_id`),
+  CONSTRAINT `facilities_facility_group_id_foreign` FOREIGN KEY (`facility_group_id`) REFERENCES `facility_groups` (`id`) ON DELETE SET NULL,
   CONSTRAINT `facilities_type_id_foreign` FOREIGN KEY (`type_id`) REFERENCES `type_facilities` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -263,19 +263,19 @@ CREATE TABLE `formulas` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `group_facilities`;
+DROP TABLE IF EXISTS `facility_groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `group_facilities` (
+CREATE TABLE `facility_groups` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `subselection_facility_id` bigint unsigned DEFAULT NULL,
+  `facility_subselection_id` bigint unsigned DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `code` int DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `group_facilities_subselection_facility_id_foreign` (`subselection_facility_id`),
-  CONSTRAINT `group_facilities_subselection_facility_id_foreign` FOREIGN KEY (`subselection_facility_id`) REFERENCES `subselection_facilities` (`id`) ON DELETE SET NULL
+  KEY `facility_groups_facility_subselection_id_foreign` (`facility_subselection_id`),
+  CONSTRAINT `facility_groups_facility_subselection_id_foreign` FOREIGN KEY (`facility_subselection_id`) REFERENCES `facility_subselections` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `group_type_project_documents`;
@@ -904,10 +904,10 @@ CREATE TABLE `sections_reference` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `selection_facilities`;
+DROP TABLE IF EXISTS `facility_selections`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `selection_facilities` (
+CREATE TABLE `facility_selections` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -930,19 +930,19 @@ CREATE TABLE `stages` (
   CONSTRAINT `stages_task_id_foreign` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `subselection_facilities`;
+DROP TABLE IF EXISTS `facility_subselections`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `subselection_facilities` (
+CREATE TABLE `facility_subselections` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `selection_facility_id` bigint unsigned DEFAULT NULL,
+  `facility_selection_id` bigint unsigned DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `code` int DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `subselection_facilities_selection_facility_id_foreign` (`selection_facility_id`),
-  CONSTRAINT `subselection_facilities_selection_facility_id_foreign` FOREIGN KEY (`selection_facility_id`) REFERENCES `selection_facilities` (`id`) ON DELETE SET NULL
+  KEY `facility_subselections_facility_selection_id_foreign` (`facility_selection_id`),
+  CONSTRAINT `facility_subselections_facility_selection_id_foreign` FOREIGN KEY (`facility_selection_id`) REFERENCES `facility_selections` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `tasks`;
@@ -1158,8 +1158,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (91,'2024_03_13_043
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (92,'2024_03_14_110854_update_project_table',8);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (93,'2024_03_18_025645_create_group_project_documents_table',8);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (94,'2024_03_18_032129_create_technical_specification_table',8);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (95,'2024_03_19_045129_create_selection_facility_tables',9);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (96,'2024_03_19_053131_update_selection_facility_tables',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (95,'2024_03_19_045129_create_facility_selection_tables',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (96,'2024_03_19_053131_update_facility_selection_tables',9);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (97,'2024_03_27_091740_create__sections_terms_reference_table',10);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (98,'2024_03_28_040207_update__sections_terms_reference_table',11);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (99,'2024_04_02_100016_update_project_tasks_table',12);

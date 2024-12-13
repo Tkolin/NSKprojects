@@ -307,11 +307,11 @@ export const FACILITYS_QUERY_COMPACT = gql`
       id
       name
       code
-      subselection_facility {
+      facility_subselection {
         id
         name
         code
-        group_facility {
+        facility_group {
           id
           name
           code

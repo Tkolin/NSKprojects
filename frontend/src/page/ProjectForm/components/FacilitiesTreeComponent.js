@@ -24,16 +24,16 @@ const FacilitiesTreeComponent = ({ value = { checkedKeys: [] }, onChange }) => {
       const key = parentKey
         ? `${parentKey}-${formatNumber(facility.code, 2)}`
         : formatNumber(facility.code, 2);
-      const subselectionFacilities = facility.subselection_facility.map(
+      const facilitySubselections = facility.facility_subselection.map(
         (subFacility) => {
           const subKey = `${key}-${formatNumber(subFacility.code, 2)}`;
-          const groupFacilities = subFacility.group_facility.map(
-            (groupFacility) => {
+          const facilityGroups = subFacility.facility_group.map(
+            (FacilityGroup) => {
               const groupKey = `${subKey}-${formatNumber(
-                groupFacility.code,
+                FacilityGroup.code,
                 3
               )}`;
-              const facilities = groupFacility.facilities.map(
+              const facilities = FacilityGroup.facilities.map(
                 (innerFacility) => ({
                   key: `${groupKey}-${formatNumber(innerFacility.code, 3)}`,
                   title: innerFacility.name,
@@ -43,8 +43,8 @@ const FacilitiesTreeComponent = ({ value = { checkedKeys: [] }, onChange }) => {
 
               return {
                 key: groupKey,
-                title: groupFacility.name,
-                value: [groupFacility.id, groupFacility.code],
+                title: FacilityGroup.name,
+                value: [FacilityGroup.id, FacilityGroup.code],
                 children: facilities,
               };
             }
@@ -54,7 +54,7 @@ const FacilitiesTreeComponent = ({ value = { checkedKeys: [] }, onChange }) => {
             key: subKey,
             title: subFacility.name,
             value: [subFacility.id, subFacility.code],
-            children: groupFacilities,
+            children: facilityGroups,
           };
         }
       );
@@ -63,7 +63,7 @@ const FacilitiesTreeComponent = ({ value = { checkedKeys: [] }, onChange }) => {
         key: key,
         title: facility.name,
         value: [facility.id, facility.code],
-        children: subselectionFacilities,
+        children: facilitySubselections,
       };
     });
   };

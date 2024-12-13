@@ -7,20 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class SubselectionFacility extends Model
+class FacilityGroup extends Model
 {
     protected $fillable = [
         'name',
         'code',
-        'selection_facility_id',
+        'facility_subselection_id',
     ];
-    public function selection_facility(): BelongsTo
+    public function facility_subselection(): BelongsTo
     {
-        return $this->belongsTo(SelectionFacility::class);
+        return $this->belongsTo(FacilitySubselection::class);
     }
 
-    public function group_facility(): HasMany
+    public function facilities(): HasMany
     {
-        return $this->hasMany(GroupFacilities::class, 'subselection_facility_id','id');
+        return $this->hasMany(FacilityType::class);
     }
 }

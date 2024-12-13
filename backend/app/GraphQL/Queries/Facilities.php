@@ -2,12 +2,12 @@
 
 namespace App\GraphQL\Queries;
 
-use App\Models\SelectionFacility;
+use App\Models\FacilitySelection;
 
 final readonly class Facilities
 {
     public function __invoke(null $_, array $args)
     {
-        return SelectionFacility::with('subselection_facility.group_facility.facilities')->get();
+        return FacilitySelection::with('facility_subselection.facility_group.facilities')->get();
     }
 }
