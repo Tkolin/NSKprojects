@@ -150,7 +150,7 @@ type Project {
     type_project_document: TypeProjectDocument
     leader_id: Int
     leader: Person
-    facilities: [Facility]
+    facilities: [FacilityType]
     date_signing: String
     duration: Int
     date_end: String
@@ -366,7 +366,7 @@ type PassportPlaceIssue {
     code: String!
 }
 #   facility 1
-type Facility {
+type FacilityType {
     id: ID!
     name: String!
     code: Int
@@ -382,7 +382,7 @@ type GroupFacility {
     id: ID!
     name: String!
     code: Int
-    facilities: [Facility]
+    facilities: [FacilityType]
     subselection_facility: SubselectionFacility
 }
 #   facility 3 (Указаны в моделях 2 уровня)

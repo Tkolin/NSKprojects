@@ -214,7 +214,7 @@ class Project extends Model
     }
     public function facilities(): BelongsToMany
     {
-        return $this->belongsToMany(Facility::class, "project_facilities", "project_id", "facility_id");
+        return $this->belongsToMany(FacilityType::class, "project_facilities", "project_id", "facility_id");
     }
 
     public function organization_customer(): BelongsTo

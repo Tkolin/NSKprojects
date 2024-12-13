@@ -19,6 +19,6 @@ class ProjectFacilities extends Model
     }
     public function facilitys(): BelongsTo
     {
-        return $this->belongsTo(Facility::class);
+        return $this->belongsTo(FacilityType::class);
     }
 }

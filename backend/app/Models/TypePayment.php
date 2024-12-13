@@ -16,6 +16,6 @@ class TypePayment extends Model
     ];
     public function facility(): HasMany
     {
-        return $this->hasMany(Facility::class);
+        return $this->hasMany(FacilityType::class);
     }
 }

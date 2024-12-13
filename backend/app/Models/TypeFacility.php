@@ -13,6 +13,6 @@ class TypeFacility extends Model
     ];
     public function facilitys(): HasMany
     {
-        return $this->hasMany(Facility::class);
+        return $this->hasMany(FacilityType::class);
     }
 }

@@ -1,5 +1,5 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { useMutation, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { Button, Card, Checkbox, Divider, Form, Modal, Space } from "antd";
 import React, { useContext, useState } from "react";
 
@@ -33,24 +33,25 @@ const EquipmentTypeParametersStructureForm = ({
     },
   });
   const [form] = Form.useForm();
-  const [mutateSyncParametrs, { loading: loadingSync }] = useMutation(
-    SUPPLIER_EQUIPMENT_TYPE_SYNC_MUTATION,
-    {
-      onCompleted: (data) => {
-        openNotification("topRight", "success", `Параметры синхронизированы`);
-        onCompleted && onCompleted(data.equipmentTypeSyncParameters);
-      },
-      onError: (error) => {
-        openNotification(
-          "topRight",
-          "error",
-          `Ошибка при синхронизации: ${error.message}`
-        );
-        return false;
-      },
-    }
-  );
-
+  // const [mutateSyncParametrs, { loading: loadingSync }] = useMutation(
+  //   SUPPLIER_EQUIPMENT_TYPE_SYNC_MUTATION,
+  //   {
+  //     onCompleted: (data) => {
+  //       openNotification("topRight", "success", `Параметры синхронизированы`);
+  //       onCompleted && onCompleted(data.equipmentTypeSyncParameters);
+  //     },
+  //     onError: (error) => {
+  //       openNotification(
+  //         "topRight",
+  //         "error",
+  //         `Ошибка при синхронизации: ${error.message}`
+  //       );
+  //       return false;
+  //     },
+  //   }
+  // );
+  const mutateSyncParametrs = null;
+  const loadingSync = null;
   const load = (data) => {
     console.log("load", {
       parametersList: Object.values(data.parameters).map((row) => row),

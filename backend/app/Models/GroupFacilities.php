@@ -21,6 +21,6 @@ class GroupFacilities extends Model
 
     public function facilities(): HasMany
     {
-        return $this->hasMany(Facility::class, 'group_facility_id','id');
+        return $this->hasMany(FacilityType::class, 'group_facility_id','id');
     }
 }

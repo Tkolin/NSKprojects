@@ -2,13 +2,13 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\Models\Facility;
+use App\Models\FacilityType;
 
 final readonly class UpdateFacility
 {
     /** @param array{} $args */
-    public function __invoke(null $_, array $args): Facility
+    public function __invoke(null $_, array $args): FacilityType
     {
-        return Facility::findOrFail($args['id'])->update($args["data"]);
+        return FacilityType::findOrFail($args['id'])->update($args["data"]);
     }
 }

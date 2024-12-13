@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use function Laravel\Prompts\select;
 
-class Facility extends Model
+class FacilityType extends Model
 {
     protected $fillable = [
         'name',

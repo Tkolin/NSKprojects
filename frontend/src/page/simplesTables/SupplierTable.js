@@ -19,7 +19,6 @@ import { Link } from "react-router-dom";
 import { SUPPLIERS_QUERY } from "../../graphql/queries/all";
 import { DeleteAndEditStyledLinkManagingDataTable } from "../components/style/TableStyles";
 import SupplierForm from "../simplesForms/SupplierForm";
-import SuppliersEquipmentTypesListForm from "../SuppliersEquipmentTypesListForm";
 const { Search } = Input;
 
 const SupplierTable = () => {
@@ -258,7 +257,7 @@ const SupplierTable = () => {
           ),
         }}
       />
-      <Modal
+      {/* <Modal
         key={nanoid()}
         open={equipmentTypeSupplierModalStatus}
         onCancel={() => setEquipmentTypeSupplierModalStatus(null)}
@@ -278,7 +277,7 @@ const SupplierTable = () => {
             }
           />
         }
-      />
+      /> */}
       <Modal
         key={nanoid()}
         open={supplierModalStatus}

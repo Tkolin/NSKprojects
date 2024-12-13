@@ -2,7 +2,7 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\Models\Facility;
+use App\Models\FacilityType;
 
 final readonly class CreateFacility
 {
@@ -13,6 +13,6 @@ final readonly class CreateFacility
             throw new \InvalidArgumentException('data is required.');
 
         $data = $args['data'];
-        return Facility::create($data);
+        return FacilityType::create($data);
     }
 }

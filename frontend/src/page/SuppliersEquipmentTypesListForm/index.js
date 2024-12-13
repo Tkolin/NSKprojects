@@ -1,2 +1,2 @@
-import SuppliersEquipmentTypesListForm from "./SuppliersEquipmentTypesListForm";
-export default SuppliersEquipmentTypesListForm;
+// import SuppliersEquipmentTypesListForm from "./SuppliersEquipmentTypesListForm";
+// export default SuppliersEquipmentTypesListForm;
