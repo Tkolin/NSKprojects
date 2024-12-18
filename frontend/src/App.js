@@ -89,6 +89,15 @@ const App = () => {
                     />
                   }
                 />
+                <Route
+                  path="/project/document"
+                  element={
+                    <Space
+                      style={{ width: "100%", justifyContent: "center" }}
+                      children={<ProjectTable mode={"files"} />}
+                    />
+                  }
+                />
                 <Route path="/references/person" element={<Home />} />
                 <Route
                   path="/references/person/table"

@@ -233,9 +233,15 @@ const MenuItems = [
       // },
       {
         label: "Обзор проектов",
-        key: "/project/extra/table_1",
+        key: "/project/extra/table_2",
         icon: <EyeOutlined />,
         permission: ["read-project-extra1"],
+      },
+      {
+        label: "Документы к проектам",
+        key: "/project/document",
+        icon: <EyeOutlined />,
+        permission: ["read-project-files"],
       },
       {
         label: "Стадия: Заявка",
@@ -305,6 +311,13 @@ const MenuItems = [
         children: null,
         permission: ["read-project-payments"],
       },
+      // {
+      //   label: "Документы к проектам",
+      //   key: "/bookeep/all_projects_documents",
+      //   icon: null,
+      //   children: null,
+      //   permission: ["read-project-stage"],
+      // },
     ],
   },
   {

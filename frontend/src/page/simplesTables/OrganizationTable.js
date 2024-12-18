@@ -1,23 +1,22 @@
 import { useMutation, useQuery } from "@apollo/client";
 import {
-  Col,
   Descriptions,
   Form,
   Input,
   Modal,
   notification,
-  Row,
   Space,
   Table,
+  Tabs,
 } from "antd";
 import React, { useState } from "react";
 import { DELETE_ORGANIZATION_MUTATION } from "../../graphql/mutations/organization";
 import { ORGANIZATIONS_QUERY } from "../../graphql/queries/all";
 import { StyledButtonGreen } from "../components/style/ButtonStyles";
 import { DeleteAndEditStyledLinkManagingDataTable } from "../components/style/TableStyles";
-
 import OrganizationContactsCompactTable from "../ProjectTable/components/OrganizationContactsCompactTable";
 
+import { BarsOutlined, BulbOutlined } from "@ant-design/icons";
 import OrganizationForm from "../simplesForms/OrganizationForm";
 const { Search } = Input;
 
@@ -35,6 +34,7 @@ const OrganizationTable = () => {
   const [sortOrder, setSortOrder] = useState("");
 
   const [search, setSearch] = useState("");
+  const [uniqueKey, setUniqueKey] = useState("");
 
   const {
     loading: loading,
@@ -222,48 +222,145 @@ const OrganizationTable = () => {
             setExpandedRowKeys(keys);
           },
           expandedRowRender: (record) => (
-            <Row>
-              <Col span={12}>
-                <Descriptions size={"small"} column={1}>
-                  <Descriptions.Item label="Полное наименование">
-                    {record.full_name}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Юридический адрес">
-                    {record.address_legal} {record.office_number_legal}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Почтовый адрес">
-                    {record.address_mail} {record.office_number_mail}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Электронный адресс">
-                    {record.email}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Факс">
-                    {record.fax_number}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="ИНН">
-                    {record.INN}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="ОГРН">
-                    {record.OGRN}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="ОКПО">
-                    {record.OKPO}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="КПП">
-                    {record.KPP}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="БИК">
-                    {record?.bik?.BIK} - {record?.bik?.name}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Расчетный счет">
-                    {record.payment_account}
-                  </Descriptions.Item>
-                </Descriptions>
-              </Col>
-              <Col span={12}>
-                <OrganizationContactsCompactTable data={record?.employees} />
-              </Col>
-            </Row>
+            <Space
+              direction={"vertical"}
+              align={"start"}
+              style={{
+                width: "100%",
+                padding: "20px 70px 20px 20px",
+                borderRadius: "10px",
+                backgroundColor: "#fff",
+              }}
+            >
+              <Tabs
+                size={"small"}
+                type="card"
+                accordion
+                style={{
+                  width: "100%",
+                }}
+                // TODO: Раставить ключи доступа
+                items={[
+                  ...(true
+                    ? [
+                        {
+                          key: "tab_item_0",
+                          icon: <BulbOutlined />,
+                          children: (
+                            <Descriptions size={"small"} column={1}>
+                              <Descriptions.Item label="Полное наименование">
+                                {record.full_name}
+                              </Descriptions.Item>
+                              <Descriptions.Item label="Юридический адрес">
+                                {record.address_legal}{" "}
+                                {record.office_number_legal}
+                              </Descriptions.Item>
+                              <Descriptions.Item label="Почтовый адрес">
+                                {record.address_mail}{" "}
+                                {record.office_number_mail}
+                              </Descriptions.Item>
+                              <Descriptions.Item label="Электронный адресс">
+                                {record.email}
+                              </Descriptions.Item>
+                              <Descriptions.Item label="Факс">
+                                {record.fax_number}
+                              </Descriptions.Item>
+                              <Descriptions.Item label="ИНН">
+                                {record.INN}
+                              </Descriptions.Item>
+                              <Descriptions.Item label="ОГРН">
+                                {record.OGRN}
+                              </Descriptions.Item>
+                              <Descriptions.Item label="ОКПО">
+                                {record.OKPO}
+                              </Descriptions.Item>
+                              <Descriptions.Item label="КПП">
+                                {record.KPP}
+                              </Descriptions.Item>
+                              <Descriptions.Item label="БИК">
+                                {record?.bik?.BIK} - {record?.bik?.name}
+                              </Descriptions.Item>
+                              <Descriptions.Item label="Расчетный счет">
+                                {record.payment_account}
+                              </Descriptions.Item>
+                            </Descriptions>
+                          ),
+                        },
+                      ]
+                    : []),
+                  ...(true
+                    ? [
+                        {
+                          key: "tab_item_1",
+                          icon: <BarsOutlined />,
+                          label: "Сотрудники",
+                          children: (
+                            <OrganizationContactsCompactTable
+                              data={record?.employees}
+                            />
+                          ),
+                        },
+                      ]
+                    : []),
+                  ...(true
+                    ? [
+                        {
+                          key: "tab_item_2",
+                          icon: <BarsOutlined />,
+                          label: "Обьекты недвижимости",
+                          children: (
+                            <OrganizationContactsCompactTable
+                              data={record?.employees}
+                            />
+                          ),
+                        },
+                      ]
+                    : []),
+                ]}
+              />
+            </Space>
+            // <Row>
+            //   <Col span={12}>
+            // <Descriptions size={"small"} column={1}>
+            //   <Descriptions.Item label="Полное наименование">
+            //     {record.full_name}
+            //   </Descriptions.Item>
+            //   <Descriptions.Item label="Юридический адрес">
+            //     {record.address_legal} {record.office_number_legal}
+            //   </Descriptions.Item>
+            //   <Descriptions.Item label="Почтовый адрес">
+            //     {record.address_mail} {record.office_number_mail}
+            //   </Descriptions.Item>
+            //   <Descriptions.Item label="Электронный адресс">
+            //     {record.email}
+            //   </Descriptions.Item>
+            //   <Descriptions.Item label="Факс">
+            //     {record.fax_number}
+            //   </Descriptions.Item>
+            //   <Descriptions.Item label="ИНН">
+            //     {record.INN}
+            //   </Descriptions.Item>
+            //   <Descriptions.Item label="ОГРН">
+            //     {record.OGRN}
+            //   </Descriptions.Item>
+            //   <Descriptions.Item label="ОКПО">
+            //     {record.OKPO}
+            //   </Descriptions.Item>
+            //   <Descriptions.Item label="КПП">
+            //     {record.KPP}
+            //   </Descriptions.Item>
+            //   <Descriptions.Item label="БИК">
+            //     {record?.bik?.BIK} - {record?.bik?.name}
+            //   </Descriptions.Item>
+            //   <Descriptions.Item label="Расчетный счет">
+            //     {record.payment_account}
+            //   </Descriptions.Item>
+            // </Descriptions>
+            //   </Col>
+            //   <Col span={12}>
+            //     <OrganizationContactsCompactTable data={record?.employees} />
+            //   </Col>
+            // </Row>
           ),
         }}
       />

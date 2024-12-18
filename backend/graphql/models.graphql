@@ -551,7 +551,7 @@ input PersonInput {
     passport_place_issue_id: ID
     address_registration: String
     address_residential: String
-    birth_date: String!
+    birth_date: String
     date: String
     SHILS: String
     INN: String

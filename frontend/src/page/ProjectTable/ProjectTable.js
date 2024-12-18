@@ -160,7 +160,25 @@ const template = {
       "executor_orders",
     ],
   },
-
+  files: {
+    projectStatuses: [
+      "WORKING",
+      "APPROVAL_AGREEMENT",
+      "APPROVAL_KP",
+      "ARCHIVE",
+      "COMPLETED",
+      "DESIGN_REQUEST",
+      "WAITING_SOURCE",
+    ],
+    column: {
+      tool: {
+        menu: ["contract", "kp", "request"],
+        hotKey: ["archive", "up"],
+      },
+      columns: ["main", "money", "files"],
+    },
+    expandable: ["stages-extra"],
+  },
   extra: {
     //  Параметры фильтрации таблицы (статус)
     projectStatuses: [
