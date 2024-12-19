@@ -109,7 +109,7 @@ export const UploadFilePopconfirm = ({
 
   const coldFetch = () => {
     const url =
-      process.env.REACT_APP_BACKGROUND_URL +
+      process.env.REACT_APP_API_URL +
       action +
       (options?.datePicker ? "&date=" + selectedDateContract : "");
     fetch(url, {
@@ -238,7 +238,7 @@ const UploadFile = ({
     name: "file",
     maxCount: 1,
     accept: accept,
-    action: process.env.REACT_APP_BACKGROUND_URL + action,
+    action: process.env.REACT_APP_API_URL + action,
     headers: {
       authorization: "authorization-text",
     },
