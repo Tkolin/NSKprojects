@@ -10,7 +10,7 @@ import { Cookies } from "react-cookie";
 import getCsrfToken from "./setupAxios";
 
 const httpLink = createHttpLink({
-  uri: `${process.env.REACT_APP_API_URL}graphql/`,
+  uri: `${process.env.REACT_APP_GRAPHQL_API_URL}`,
 });
 
 const createApolloClient = () => {
