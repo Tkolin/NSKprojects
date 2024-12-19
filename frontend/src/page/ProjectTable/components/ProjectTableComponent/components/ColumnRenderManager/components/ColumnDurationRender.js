@@ -40,6 +40,16 @@ const ColumnDurationRender = ({
 
   return (
     <Space direction="vertical">
+      {option?.anyStageStatus && (
+        <Text>
+          {currentStage?.number
+            ? "Этап " +
+              (currentStage?.number || 0) +
+              "/" +
+              (record?.project_stages?.length || 0)
+            : "Не начат, всего " + record?.project_stages?.length + " этапов"}
+        </Text>
+      )}
       {option?.projectDuration && (
         <Text>
           {record?.date_start
@@ -50,7 +60,7 @@ const ColumnDurationRender = ({
             ? dayjs(record.date_start)
                 .add(record.duration, "day")
                 .format("DD.MM.YYYY") + "г."
-            : "—"}
+            : ""}
           {projectDuration !== null && `(${projectDuration} дней)`}{" "}
           {daysRemaining !== null && `(осталось ${daysRemaining} дней)`}
         </Text>
@@ -58,10 +68,12 @@ const ColumnDurationRender = ({
       {option?.projectCurrentStageInfo && (
         <Text>
           {currentStage
-            ? `№${currentStage.number} ${currentStage.stage.name}\n(${
+            ? `№${currentStage.number} из ${record.project_stages.length} ${
+                currentStage.stage.name
+              }\n(${
                 dayjs(currentStage.date_start).format("DD.MM.YYYY") + "г."
               } - ${dayjs(currentStage.date_end).format("DD.MM.YYYY") + "г."})`
-            : "—"}
+            : ""}
           {"\n"}
           {currentStageDuration !== null &&
             `Продолжительность: ${currentStageDuration} дней (прошло ${daysToEndOfCurrentStage}/ осталось ${

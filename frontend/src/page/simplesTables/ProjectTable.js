@@ -332,10 +332,17 @@ const ProjectTable = ({ columnKey = "v1" }) => {
         key: "actual_stage",
         minWidth: 80,
         render: (record) => (
-          <ColumnDurationRender
-            record={record}
-            option={{ projectDuration: false, projectCurrentStageInfo: true }}
-          />
+          <Space.Compact direction="vertical">
+            <div>{record.date}</div>
+            <ColumnDurationRender
+              record={record}
+              option={{
+                projectDuration: false,
+                projectCurrentStageInfo: true,
+                anyStageStatus: true,
+              }}
+            />
+          </Space.Compact>
         ),
       },
       {
