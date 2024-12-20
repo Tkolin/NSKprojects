@@ -643,24 +643,19 @@ const TablePaymentExecutorOrdersComponent = ({
   const filterAndSortOrders = (orders) => {
     if (!orders) return;
 
-    // Функция для определения приоритета кнопки
     const getButtonPriority = (record) => {
-      // Сначала договоры, требующие оплаты аванса
       if (!record?.payment_file_completed?.includes("PREPAYMENT")) {
         return record.is_possible_mainpayment ? 1 : 2; // 1: Одобрено, 2: Не одобрено
       }
-      // Затем основная оплата
       if (!record?.payment_file_completed?.includes("PAYMENT")) {
         return record.is_possible_mainpayment ? 3 : 4; // 3: Одобрено, 4: Не одобрено
       }
-      // Потом постоплата
       if (
         !record?.payment_file_completed?.includes("POSTPAYMENT") &&
         record.project_completed
       ) {
         return record.is_possible_postpayment ? 5 : 6; // 5: Одобрено, 6: Не одобрено
       }
-      // Остальные договоры
       return 7;
     };
 
