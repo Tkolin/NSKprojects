@@ -10,8 +10,8 @@ import ContactForm from "./page/simplesForms/ContactForm";
 import OrganizationForm from "./page/simplesForms/OrganizationForm";
 import PersonForm from "./page/simplesForms/PersonForm";
 
+import OrganizationTable from "./page/OrganizationTable";
 import ContactTable from "./page/simplesTables/ContactTable";
-import OrganizationTable from "./page/simplesTables/OrganizationTable";
 import PersonTable from "./page/simplesTables/PersonTable";
 
 import moment from "moment";

@@ -4,6 +4,7 @@ import { Button, notification, Space, Table, Tooltip, Typography } from "antd";
 import Link from "antd/es/typography/Link";
 import { nanoid } from "nanoid";
 import React, { useEffect } from "react";
+import { ALLOW_NEXT_PAYMENT_EXECUTOR_CONTRACT } from "../../../../../../../graphql/mutations/executorOrder";
 import { DOWNLOAD_FILE } from "../../../../../../../graphql/mutations/file";
 import { EXECUTOR_ORDERS_PROJECT_QUERY } from "../../../../../../../graphql/queries/queriesSpecial";
 import { StyledButtonGreen } from "../../../../../../components/style/ButtonStyles";
@@ -27,6 +28,7 @@ const { Text } = Typography;
 const TablePaymentExecutorOrdersComponent = ({
   setEditModalStatus,
   projectId,
+  options,
 }) => {
   useEffect(() => {
     refetch();
@@ -39,6 +41,7 @@ const TablePaymentExecutorOrdersComponent = ({
       },
     }
   );
+
   const [downloadFileMutation, { loading: loadingDownload }] = useMutation(
     DOWNLOAD_FILE,
     {
@@ -54,6 +57,25 @@ const TablePaymentExecutorOrdersComponent = ({
       },
     }
   );
+  const [allowNextPayment, { loading: loadingAllowNextPayment }] = useMutation(
+    ALLOW_NEXT_PAYMENT_EXECUTOR_CONTRACT,
+    {
+      onCompleted: (data) => {
+        refetch();
+        openNotification("topRight", "success", "Договор отправленн на оплату");
+      },
+      onError: (error) => {
+        openNotification(
+          "topRight",
+          "error",
+          "Ошибка при одобрении: " + error.message
+        );
+      },
+    }
+  );
+  const handleAllowNextPayment = (orderId) => {
+    allowNextPayment({ variables: { orderId } });
+  };
   const LaravelURL = process.env.REACT_APP_API_URL;
   const downloadFile = (fileId) => {
     downloadFileMutation({ variables: { id: fileId } });
@@ -86,7 +108,7 @@ const TablePaymentExecutorOrdersComponent = ({
       ),
       children: [
         {
-          width: "30%",
+          width: "15%",
           title: "Основная информация",
           key: "task",
           align: "left",
@@ -106,7 +128,7 @@ const TablePaymentExecutorOrdersComponent = ({
           ),
         },
         {
-          width: "30%",
+          width: "15%",
           title: "Суммы",
           key: "task",
           align: "left",
@@ -134,9 +156,18 @@ const TablePaymentExecutorOrdersComponent = ({
             );
           },
         },
+        // {
+        //   width: "15%",
+        //   title: "test",
+        //   key: "task",
+        //   align: "left",
+        //   render: (text, record) => {
+        //     return <>{record?.is_project_prepayment}</>;
+        //   },
+        // },
         {
-          width: "30%",
-          title: "Статус",
+          width: "15%",
+          title: "Неообходимость оплачивать",
           key: "task",
           align: "left",
           render: (text, record) => {
@@ -145,6 +176,13 @@ const TablePaymentExecutorOrdersComponent = ({
                 return (
                   <Button type="text" disabled>
                     Договор не подписан
+                  </Button>
+                );
+              }
+              if (!record?.is_project_prepayment) {
+                return (
+                  <Button type="text" disabled>
+                    Аванс не получен
                   </Button>
                 );
               }
@@ -172,6 +210,13 @@ const TablePaymentExecutorOrdersComponent = ({
                   </Button>
                 );
               }
+              if (!record?.is_possible_mainpayment) {
+                return (
+                  <Button type="text" disabled>
+                    Ждёт одобрения на оплату
+                  </Button>
+                );
+              }
               if (!record?.payment_file_completed?.includes("PAYMENT")) {
                 return (
                   <UploadFilePopconfirm
@@ -190,10 +235,17 @@ const TablePaymentExecutorOrdersComponent = ({
               }
               if (!record.project_completed)
                 return (
-                  <Button type="text" disabled>
+                  <Text type="text" danger disabled>
                     Ожидает завершения проекта
+                  </Text>
+                );
+              if (!record?.is_possible_postpayment) {
+                return (
+                  <Button type="text" disabled>
+                    Ждёт одобрения на оплату
                   </Button>
                 );
+              }
               if (!record?.payment_file_completed?.includes("POSTPAYMENT")) {
                 return (
                   <UploadFilePopconfirm
@@ -231,7 +283,70 @@ const TablePaymentExecutorOrdersComponent = ({
           },
         },
         {
-          width: "30%",
+          width: "15%",
+          title: "Одобрение на оплату",
+          key: "pre_task",
+          align: "left",
+          render: (text, record) => {
+            return (
+              <Space direction="vertical">
+                {record?.is_project_prepayment ? (
+                  <span style={{ color: "#52c41a" }}>
+                    Аванс по проекту оплачен
+                  </span>
+                ) : (
+                  <span style={{ color: "#faad14" }}>
+                    Аванс по проекту не оплачен
+                  </span>
+                )}
+                {record?.is_all_tasks_payment ? (
+                  <span style={{ color: "#52c41a" }}>
+                    Все задачи оплачены заказчиком
+                  </span>
+                ) : (
+                  <span style={{ color: "#faad14" }}>
+                    Не все задачи оплачены заказчиком
+                  </span>
+                )}
+                {record?.is_possible_mainpayment ? (
+                  <span style={{ color: "#52c41a" }}>
+                    Оплата основной части договора разрешена
+                  </span>
+                ) : (
+                  <span style={{ color: "#f5222d" }}>
+                    Оплата основной части договора не разрешена
+                  </span>
+                )}
+                {record?.is_possible_postpayment ? (
+                  <span style={{ color: "#52c41a" }}>Постоплата разрешена</span>
+                ) : (
+                  <span style={{ color: "#f5222d" }}>
+                    Постоплата не разрешена
+                  </span>
+                )}
+                {record?.is_possible_mainpayment ? (
+                  !record?.is_possible_postpayment && (
+                    <Button
+                      onClick={() => handleAllowNextPayment(record.id)}
+                      loading={loadingAllowNextPayment}
+                    >
+                      Одобрить постоплату
+                    </Button>
+                  )
+                ) : (
+                  <Button
+                    onClick={() => handleAllowNextPayment(record.id)}
+                    loading={loadingAllowNextPayment}
+                  >
+                    Одобрить оплату основной суммы
+                  </Button>
+                )}
+              </Space>
+            );
+          },
+        },
+        {
+          width: "15%",
           title: "Подтвер. платёж файлы",
           key: "paycheck",
           align: "left",
@@ -304,7 +419,7 @@ const TablePaymentExecutorOrdersComponent = ({
           ),
         },
         {
-          width: "30%",
+          width: "15%",
           title: "Чек исполнителя",
           key: "order_payment_download",
           align: "left",
@@ -441,7 +556,7 @@ const TablePaymentExecutorOrdersComponent = ({
         //   ),
         // },
         {
-          width: "20%",
+          width: "15%",
           title: "Этапность",
           key: "task",
           align: "left",
@@ -527,34 +642,43 @@ const TablePaymentExecutorOrdersComponent = ({
   };
   const filterAndSortOrders = (orders) => {
     if (!orders) return;
+
     // Функция для определения приоритета кнопки
     const getButtonPriority = (record) => {
+      // Сначала договоры, требующие оплаты аванса
       if (!record?.payment_file_completed?.includes("PREPAYMENT")) {
-        return 1; // Аванс
+        return record.is_possible_mainpayment ? 1 : 2; // 1: Одобрено, 2: Не одобрено
       }
+      // Затем основная оплата
       if (!record?.payment_file_completed?.includes("PAYMENT")) {
-        return 2; // Основная оплата
+        return record.is_possible_mainpayment ? 3 : 4; // 3: Одобрено, 4: Не одобрено
       }
+      // Потом постоплата
       if (
         !record?.payment_file_completed?.includes("POSTPAYMENT") &&
         record.project_completed
       ) {
-        return 3; // Постоплата
+        return record.is_possible_postpayment ? 5 : 6; // 5: Одобрено, 6: Не одобрено
       }
-      return 4; // Остальные
+      // Остальные договоры
+      return 7;
     };
 
+    // Сортировка заказов по приоритету
     const sortedOrders = [...orders]?.sort((a, b) => {
-      // Сортировка по приоритету кнопок
       const priorityA = getButtonPriority(a);
       const priorityB = getButtonPriority(b);
 
       if (priorityA !== priorityB) {
-        return priorityA - priorityB;
+        return priorityA - priorityB; // Сравнение приоритетов
       }
+      // Если приоритеты одинаковы, сортируем по `updated_at` (последнее обновление)
+      return new Date(a.updated_at) - new Date(b.updated_at);
     });
+
     return sortedOrders;
   };
+
   return (
     <Table
       style={{ margin: 0, width: "100%" }}

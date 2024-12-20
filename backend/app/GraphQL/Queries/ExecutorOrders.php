@@ -27,12 +27,15 @@ final readonly class ExecutorOrders
             $result = ExecutorOrder::whereHas('project_tasks', function ($query) use ($taskIds) {
                 $query->whereIn('id', $taskIds); // Added condition for signed_file_id not null
             })->with("executor_order_payments")->with("project_tasks.executor.passport")->get()->map(function ($order) {
+
                 return [
                     ...$order->toArray(),
                     'executor' => $order->project_tasks[0]->executor,
                     'is_project_completed' => $order->isProjectCompleted(),
                     'is_tasks_completed' => $order->isTaskCompleted(),
-                    'payment_file_completed' => $order->getFilesPaymentsTypes()
+                    'payment_file_completed' => $order->getFilesPaymentsTypes(),
+                    'is_project_prepayment' => $order->isProjectPrepayment(),
+                    'is_all_tasks_payment' => $order->isAllTasksPayment(),
                 ];
             });
 

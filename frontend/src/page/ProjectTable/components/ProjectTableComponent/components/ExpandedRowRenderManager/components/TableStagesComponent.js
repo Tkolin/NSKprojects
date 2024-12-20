@@ -10,10 +10,7 @@ import ActRenderingProjectDownload from "../../../../../../components/script/fil
 import PaymentInvoiceProjectDownload from "../../../../../../components/script/fileDownloadScripts/PaymentInvoiceProjectDownload";
 import LinkToDownload from "../../../../../../components/script/LinkToDownload";
 import { StyledButtonGreen } from "../../../../../../components/style/ButtonStyles";
-import {
-  UploadFilePaymentSuccess,
-  UploadFileWorkActSinging,
-} from "../../../../../../components/UploadFile";
+import { UploadFileWorkActSinging } from "../../../../../../components/UploadFile";
 
 const { Text } = Typography;
 
@@ -136,7 +133,7 @@ const TableStagesComponent = ({
                             projectId={projectId}
                             type="acts"
                           />
-                          <UploadFilePaymentSuccess
+                          {/* <UploadFilePaymentSuccess
                             stageNumber={
                               record?.type === "prepayment" ? 0 : record.number
                             }
@@ -145,7 +142,7 @@ const TableStagesComponent = ({
                               updateProject();
                             }}
                             projectId={projectId}
-                          />
+                          /> */}
                         </Space.Compact>
                       )
                     ) : record?.payment_date ? (
@@ -177,7 +174,7 @@ const TableStagesComponent = ({
                           projectId={projectId}
                           type="acts"
                         />
-                        <UploadFilePaymentSuccess
+                        {/* <UploadFilePaymentSuccess
                           stageNumber={
                             record?.type === "prepayment" ? 0 : record.number
                           }
@@ -186,7 +183,7 @@ const TableStagesComponent = ({
                             updateProject();
                           }}
                           projectId={projectId}
-                        />
+                        /> */}
                       </Space.Compact>
                     )}
                   </Space.Compact>

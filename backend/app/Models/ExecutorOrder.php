@@ -16,9 +16,53 @@ class ExecutorOrder extends Model
         'date_order',
         'date_attachment',
         'signed_file_id',
+        'executor_id',
         'original_file_id',
+        'is_possible_mainpayment',
+        'is_possible_postpayment',
+        'is_possible_prepayment'
     ];
 
+    public function isProjectPrepayment(): bool
+    {
+        $task = $this->tasks()->first();
+
+        if ($task && $project = $task->project()->first())
+            return $project ? (bool) $project->prepayment_file_id : false;
+
+        return false;
+    }
+
+    public function isAllTasksPayment(): bool
+    {
+        $tasks = $this->tasks;
+        if ($tasks->isEmpty()) {
+            error_log("isEmpty " . "false");
+
+            return false; // Нет задач, не все этапы могут быть оплачены
+        }
+
+        foreach ($tasks as $task) {
+            $project = $task->project()->first();
+
+            if (!$project) {
+                error_log("!project " . "false");
+
+                return false; // Если нет проекта, этапы не могут быть оплачены
+            }
+
+            $unpaidStages = $project->project_stages()->whereNull('payment_file_id')->exists();
+
+            if ($unpaidStages) {
+                error_log("!unpaidStages " . "false");
+
+                return false; // Есть неоплаченные этапы
+            }
+        }
+        error_log(message: "true " . "true");
+
+        return true; // Все этапы оплачены
+    }
     public function isTaskCompleted(): bool
     {
         return !$this->tasks()->where('status', '<>', 'COMPLETED')->exists();

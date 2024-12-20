@@ -264,6 +264,11 @@ type ExecutorOrder {
     executor_order_payments: [ExecutorOrderPayment]
     project: Project
     executor: Person
+    is_project_prepayment: Boolean
+    is_all_tasks_payment: Boolean
+    is_possible_prepayment: Boolean
+    is_possible_mainpayment: Boolean
+    is_possible_postpayment: Boolean
 }
 type ExecutorOrderPayment {
     id: ID

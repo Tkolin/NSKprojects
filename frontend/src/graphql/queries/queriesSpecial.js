@@ -43,6 +43,11 @@ export const EXECUTOR_ORDERS_QUERY = gql`
         project_id
         is_delay
       }
+      is_possible_mainpayment
+      is_possible_postpayment
+      is_possible_prepayment
+      is_project_prepayment
+      is_all_tasks_payment
       executor_order_payments {
         id
         file_id
@@ -90,6 +95,11 @@ export const EXECUTOR_ORDERS_PROJECT_QUERY = gql`
           }
         }
       }
+      is_possible_mainpayment
+      is_possible_postpayment
+      is_possible_prepayment
+      is_project_prepayment
+      is_all_tasks_payment
       executor_order_payments {
         id
         file_id
@@ -266,6 +276,11 @@ export const FULL_EXECUTOR_ORDERS_QUERY = gql`
           }
         }
       }
+      is_possible_mainpayment
+      is_possible_postpayment
+      is_possible_prepayment
+      is_project_prepayment
+      is_all_tasks_payment
       executor_order_payments {
         id
         file_id

@@ -309,9 +309,10 @@ const OrganizationTable = () => {
                           icon: <BarsOutlined />,
                           label: "Обьекты недвижимости",
                           children: (
-                            <OrganizationContactsCompactTable
-                              data={record?.employees}
-                            />
+                            <></>
+                            // <OrganizationFacilityCompactTable
+                            //   data={record?.employees}
+                            // />
                           ),
                         },
                       ]

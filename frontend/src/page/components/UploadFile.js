@@ -79,12 +79,13 @@ export const UploadFilePaymentSuccess = ({
         "&projectId=" +
         projectId
       }
-      children={
-        <Button
-          icon={<UploadOutlined />}
-          children={"Прикрепить платёжное поручение"}
-        />
-      }
+      // children={
+
+      // <Button
+      //   icon={<UploadOutlined />}
+      //   children={"Прикрепить платёжное поручение"}
+      // />
+      // }
     />
   );
 };

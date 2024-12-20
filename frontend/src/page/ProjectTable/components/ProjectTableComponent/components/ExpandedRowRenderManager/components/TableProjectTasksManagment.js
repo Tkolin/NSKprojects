@@ -62,7 +62,7 @@ const TableProjectTasksManagment = ({ setEditModalStatus, projectId }) => {
             >
               <Text strong>{record?.task?.name}</Text>
               {record.status !== "COMPLETED" && (
-                <Link onClick={() => stopTask(record.id)}>
+                <Link onClick={() => stopTask(record.id)} type="danger">
                   Приостоновить задачу
                 </Link>
               )}

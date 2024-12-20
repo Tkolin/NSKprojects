@@ -139,6 +139,7 @@ class TaskExecutorContractGeneratorService extends DocumentGeneratorService
 
         // Создание записи о заказе в базе данных
         $executorOrder = ExecutorOrder::create([
+            'executor_id' => $personData->id ,
             'number' => $orderNumber,
             'date_generate' => $dateGenerated,
             'date_order' => $dateGenerated,
