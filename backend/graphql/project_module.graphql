@@ -51,6 +51,10 @@ type ProjectStatistic {
 #   - MUTATIONS -
 #
 extend type Mutation {
+    checkedSendDocumentsStageExecutors(
+        projectId: ID!
+        stageId: ID!
+    ): ProjectStage
     allowNextPaymentExecutorContract(orderId: ID!): ExecutorOrder
     setNewProjectLeader(projectId: ID!, personId: ID!): Project
     acceptIrd(irdId: ID!, dateAccept: String!): ProjectIrd

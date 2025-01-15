@@ -1,4 +1,4 @@
-import { EditOutlined } from "@ant-design/icons";
+import { DownloadOutlined, EditOutlined } from "@ant-design/icons";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { Button, notification, Space, Table, Tooltip, Typography } from "antd";
 import Link from "antd/es/typography/Link";
@@ -6,6 +6,7 @@ import { nanoid } from "nanoid";
 import React, { useEffect } from "react";
 import { DOWNLOAD_FILE } from "../../graphql/mutations/file";
 import { FULL_EXECUTOR_ORDERS_QUERY } from "../../graphql/queries/queriesSpecial";
+import ReUploadFileButton from "../components/ReUploadFileButton";
 import { UploadFilePopconfirm } from "../components/UploadFile";
 import { StyledButtonGreen } from "../components/style/ButtonStyles";
 
@@ -162,18 +163,23 @@ const TablePaymentExecutorOrdersComponent = ({
 
               if (!record?.payment_file_completed?.includes("PREPAYMENT")) {
                 return (
-                  <UploadFilePopconfirm
-                    key={nanoid()}
-                    options={{ datePicker: true }}
-                    onUpdated={() => refetch()}
-                    action={
-                      "project/upload/executor_order_payment/page?executorOrderId=" +
-                      record.id +
-                      "&status=PREPAYMENT"
-                    }
-                  >
-                    <Button danger>Подтвердите оплату аванса</Button>
-                  </UploadFilePopconfirm>
+                  <Space.Compact direction="vertical">
+                    <UploadFilePopconfirm
+                      key={nanoid()}
+                      options={{ datePicker: true }}
+                      onUpdated={() => refetch()}
+                      action={
+                        "project/upload/executor_order_payment/page?executorOrderId=" +
+                        record.id +
+                        "&status=PREPAYMENT"
+                      }
+                    >
+                      <Button danger>Подтвердите оплату аванса</Button>
+                    </UploadFilePopconfirm>
+                    <StyledButtonGreen icon={<DownloadOutlined />} disabled>
+                      Сгенерировать платёжное поручение
+                    </StyledButtonGreen>
+                  </Space.Compact>
                 );
               }
               if (!record.is_tasks_completed) {
@@ -192,18 +198,23 @@ const TablePaymentExecutorOrdersComponent = ({
               }
               if (!record?.payment_file_completed?.includes("PAYMENT")) {
                 return (
-                  <UploadFilePopconfirm
-                    key={nanoid()}
-                    options={{ datePicker: true }}
-                    onUpdated={() => refetch()}
-                    action={
-                      "project/upload/executor_order_payment/page?executorOrderId=" +
-                      record.id +
-                      "&status=PAYMENT"
-                    }
-                  >
-                    <Button danger>Подтвердите оплату основной суммы</Button>
-                  </UploadFilePopconfirm>
+                  <Space.Compact direction="vertical">
+                    <UploadFilePopconfirm
+                      key={nanoid()}
+                      options={{ datePicker: true }}
+                      onUpdated={() => refetch()}
+                      action={
+                        "project/upload/executor_order_payment/page?executorOrderId=" +
+                        record.id +
+                        "&status=PAYMENT"
+                      }
+                    >
+                      <Button danger>Подтвердите оплату основной суммы</Button>
+                    </UploadFilePopconfirm>
+                    <StyledButtonGreen icon={<DownloadOutlined />} disabled>
+                      Сгенерировать платёжное поручение
+                    </StyledButtonGreen>
+                  </Space.Compact>
                 );
               }
               if (!record.project_completed)
@@ -221,20 +232,25 @@ const TablePaymentExecutorOrdersComponent = ({
               }
               if (!record?.payment_file_completed?.includes("POSTPAYMENT")) {
                 return (
-                  <UploadFilePopconfirm
-                    key={nanoid()}
-                    options={{ datePicker: true }}
-                    onUpdated={() => refetch()}
-                    action={
-                      "project/upload/executor_order_payment/page?executorOrderId=" +
-                      record.id +
-                      "&status=POSTPAYMENT"
-                    }
-                  >
-                    <Button danger type="text">
-                      Подтвердите постоплату
-                    </Button>
-                  </UploadFilePopconfirm>
+                  <Space.Compact direction="vertical">
+                    <UploadFilePopconfirm
+                      key={nanoid()}
+                      options={{ datePicker: true }}
+                      onUpdated={() => refetch()}
+                      action={
+                        "project/upload/executor_order_payment/page?executorOrderId=" +
+                        record.id +
+                        "&status=POSTPAYMENT"
+                      }
+                    >
+                      <Button danger type="text">
+                        Подтвердите постоплату
+                      </Button>
+                    </UploadFilePopconfirm>
+                    <StyledButtonGreen icon={<DownloadOutlined />} disabled>
+                      Сгенерировать платёжное поручение
+                    </StyledButtonGreen>
+                  </Space.Compact>
                 );
               }
 
@@ -266,61 +282,106 @@ const TablePaymentExecutorOrdersComponent = ({
               direction={"vertical"}
               style={{ alignContent: "start", width: "100%" }}
             >
+              {/* Аванс */}
               {record?.payment_file_completed.includes("PREPAYMENT") &&
               record?.executor_order_payments?.find(
                 (row) => row.type_payment === "PREPAYMENT"
               )?.file_id ? (
-                <StyledButtonGreen
-                  onClick={() =>
-                    downloadFile(
-                      record?.executor_order_payments?.find(
-                        (row) => row.type_payment === "PREPAYMENT"
-                      )?.file_id
-                    )
-                  }
-                >
-                  Скачать
-                </StyledButtonGreen>
+                <Space.Compact direction="horizontal">
+                  <StyledButtonGreen
+                    onClick={() =>
+                      downloadFile(
+                        record?.executor_order_payments?.find(
+                          (row) => row.type_payment === "PREPAYMENT"
+                        )?.file_id
+                      )
+                    }
+                  >
+                    Загрузить подтверждающий документ
+                  </StyledButtonGreen>{" "}
+                  <UploadFilePopconfirm
+                    key={nanoid()}
+                    options={{ datePicker: true }}
+                    onUpdated={() => refetch()}
+                    action={
+                      "project/upload/executor_order_payment/page?executorOrderId=" +
+                      record.id +
+                      "&status=PAYMENT"
+                    }
+                  >
+                    <ReUploadFileButton />
+                  </UploadFilePopconfirm>
+                </Space.Compact>
               ) : (
                 <Button type={"text"} disabled>
                   Нет файла
                 </Button>
               )}
+              {/* Основаня оплата */}
               {record?.payment_file_completed.includes("PAYMENT") &&
               record?.executor_order_payments?.find(
                 (row) => row.type_payment === "PAYMENT"
               )?.file_id ? (
-                <StyledButtonGreen
-                  onClick={() =>
-                    downloadFile(
-                      record?.executor_order_payments?.find(
-                        (row) => row.type_payment === "PAYMENT"
-                      )?.file_id
-                    )
-                  }
-                >
-                  Скачать
-                </StyledButtonGreen>
+                <Space.Compact direction="horizontal">
+                  <StyledButtonGreen
+                    onClick={() =>
+                      downloadFile(
+                        record?.executor_order_payments?.find(
+                          (row) => row.type_payment === "PAYMENT"
+                        )?.file_id
+                      )
+                    }
+                  >
+                    Загрузить подтверждающий документ
+                  </StyledButtonGreen>
+                  <UploadFilePopconfirm
+                    key={nanoid()}
+                    options={{ datePicker: true }}
+                    onUpdated={() => refetch()}
+                    action={
+                      "project/upload/executor_order_payment/page?executorOrderId=" +
+                      record.id +
+                      "&status=PAYMENT"
+                    }
+                  >
+                    <ReUploadFileButton />
+                  </UploadFilePopconfirm>
+                </Space.Compact>
               ) : (
                 <Button type={"text"} disabled>
                   Нет файла
                 </Button>
               )}
+              {/* Постоплата */}
               {record?.payment_file_completed.includes("POSTPAYMENT") &&
               record?.executor_order_payments?.find(
                 (row) => row.type_payment === "POSTPAYMENT"
               )?.file_id ? (
-                <StyledButtonGreen
-                  onClick={() =>
-                    downloadFile(
-                      record?.executor_order_payments?.find(
-                        (row) => row.type_payment === "POSTPAYMENT"
-                      )?.file_id
-                    )
-                  }
-                >
-                  Скачать
-                </StyledButtonGreen>
+                <Space.Compact direction="horizontal">
+                  <StyledButtonGreen
+                    onClick={() =>
+                      downloadFile(
+                        record?.executor_order_payments?.find(
+                          (row) => row.type_payment === "POSTPAYMENT"
+                        )?.file_id
+                      )
+                    }
+                  >
+                    Загрузить подтверждающий документ
+                  </StyledButtonGreen>{" "}
+                  <UploadFilePopconfirm
+                    key={nanoid()}
+                    options={{ datePicker: true }}
+                    onUpdated={() => refetch()}
+                    action={
+                      "project/upload/executor_order_payment/page?executorOrderId=" +
+                      record.id +
+                      "&status=PAYMENT"
+                    }
+                  >
+                    <ReUploadFileButton />
+                  </UploadFilePopconfirm>
+                </Space.Compact>
               ) : (
                 <Button type={"text"} disabled>
                   Нет файла
@@ -329,6 +390,7 @@ const TablePaymentExecutorOrdersComponent = ({
             </Space>
           ),
         },
+
         {
           width: "15%",
           title: "Чек исполнителя",
@@ -352,7 +414,7 @@ const TablePaymentExecutorOrdersComponent = ({
                       )
                     }
                   >
-                    Скачать
+                    Загрузить подтверждающий документ
                   </StyledButtonGreen>
                 ) : (
                   <UploadFilePopconfirm
@@ -387,7 +449,7 @@ const TablePaymentExecutorOrdersComponent = ({
                       )
                     }
                   >
-                    Скачать
+                    Загрузить подтверждающий документ
                   </StyledButtonGreen>
                 ) : (
                   <UploadFilePopconfirm
@@ -422,7 +484,7 @@ const TablePaymentExecutorOrdersComponent = ({
                       )
                     }
                   >
-                    Скачать
+                    Загрузить подтверждающий документ
                   </StyledButtonGreen>
                 ) : (
                   <UploadFilePopconfirm

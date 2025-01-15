@@ -9,6 +9,7 @@ export const PROJECT_STAGES_QUERY = gql`
         name
         task_id
       }
+      is_send_executor
       date_start
       duration
       offset

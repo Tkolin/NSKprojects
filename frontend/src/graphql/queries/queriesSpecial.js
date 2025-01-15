@@ -51,6 +51,7 @@ export const EXECUTOR_ORDERS_QUERY = gql`
       executor_order_payments {
         id
         file_id
+        updated_at
         type_payment
         paycheck_file_id
         status
@@ -103,6 +104,7 @@ export const EXECUTOR_ORDERS_PROJECT_QUERY = gql`
       executor_order_payments {
         id
         file_id
+        updated_at
         type_payment
         paycheck_file_id
         status
@@ -215,14 +217,7 @@ export const PROJECTS_QUERY_STATISTICS = gql`
             id
             number
           }
-          project_delays {
-            id
-            date_start
-            date_end
-            delay_type {
-              name
-            }
-          }
+
           stage_number
           executor {
             id
@@ -284,6 +279,7 @@ export const FULL_EXECUTOR_ORDERS_QUERY = gql`
       executor_order_payments {
         id
         file_id
+        updated_at
         type_payment
         paycheck_file_id
         status

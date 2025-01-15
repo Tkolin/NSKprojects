@@ -27,6 +27,8 @@ class ProjectStage extends Pivot
         'price',
         'price_to_paid',
 
+        'is_send_executor',
+
         'payment_file_id',
         'payment_date',
 

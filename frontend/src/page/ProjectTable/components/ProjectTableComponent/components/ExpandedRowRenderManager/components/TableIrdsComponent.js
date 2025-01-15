@@ -215,50 +215,54 @@ const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
                   " )г."
                 : "Не переданно заказчиком"}
               <br />
-              <Popconfirm
-                title={
-                  <Space direction="vertical" style={{ width: "200px" }}>
-                    <CustomDatePicker
-                      size="small"
-                      placeholder="Выберите дату..."
-                      onChange={(value) =>
-                        setReceivedDate(
-                          value ? dayjs(value).format("YYYY-MM-DD") : null
-                        )
-                      }
-                    />
-                  </Space>
-                }
-                onConfirm={() => handleReceived(record.id)}
-                okText="Принять"
-                cancelText="Отмена"
-              >
-                <Button loading={loadingReceivedProjectIrd}>
-                  Отметить как полученное
-                </Button>
-              </Popconfirm>
-              <Popconfirm
-                title={
-                  <Space direction="vertical" style={{ width: "200px" }}>
-                    <CustomDatePicker
-                      size="small"
-                      placeholder="Выберите дату..."
-                      onChange={(value) =>
-                        setAcceptDate(
-                          value ? dayjs(value).format("YYYY-MM-DD") : null
-                        )
-                      }
-                    />
-                  </Space>
-                }
-                onConfirm={() => handleAccept(record.id)}
-                okText="Принять"
-                cancelText="Отмена"
-              >
-                <Button loading={loadingAcceptProjectIrd}>
-                  Отметить как принятое
-                </Button>
-              </Popconfirm>
+              {!record.acceptance_date && !record.received_date && (
+                <Popconfirm
+                  title={
+                    <Space direction="vertical" style={{ width: "200px" }}>
+                      <CustomDatePicker
+                        size="small"
+                        placeholder="Выберите дату..."
+                        onChange={(value) =>
+                          setReceivedDate(
+                            value ? dayjs(value).format("YYYY-MM-DD") : null
+                          )
+                        }
+                      />
+                    </Space>
+                  }
+                  onConfirm={() => handleReceived(record.id)}
+                  okText="Принять"
+                  cancelText="Отмена"
+                >
+                  <Button loading={loadingReceivedProjectIrd}>
+                    Отметить как полученное
+                  </Button>
+                </Popconfirm>
+              )}
+              {!record.acceptance_date && (
+                <Popconfirm
+                  title={
+                    <Space direction="vertical" style={{ width: "200px" }}>
+                      <CustomDatePicker
+                        size="small"
+                        placeholder="Выберите дату..."
+                        onChange={(value) =>
+                          setAcceptDate(
+                            value ? dayjs(value).format("YYYY-MM-DD") : null
+                          )
+                        }
+                      />
+                    </Space>
+                  }
+                  onConfirm={() => handleAccept(record.id)}
+                  okText="Принять"
+                  cancelText="Отмена"
+                >
+                  <Button loading={loadingAcceptProjectIrd}>
+                    Отметить как принятое
+                  </Button>
+                </Popconfirm>
+              )}
             </Text>
           ),
         },

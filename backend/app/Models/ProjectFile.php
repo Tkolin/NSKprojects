@@ -16,6 +16,14 @@ class ProjectFile extends Model
         'date_document',
         'document_number'
     ];
-
+    /**
+     * Получить количество файлов с типом 'KP'.
+     *
+     * @return int
+     */
+    public static function getCountKP(): int
+    {
+        return self::where('type', 'KP')->count();
+    }
 
 }

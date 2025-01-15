@@ -7,10 +7,14 @@ import {
   Table,
   Typography,
 } from "antd";
+import dayjs from "dayjs";
+
 import { useEffect } from "react";
 import { EXECUTOR_ORDER_REMOVE } from "../../../graphql/mutations/fileGenerated";
+import ReUploadFileButton from "../../components/ReUploadFileButton";
 import ExecutorOrderFileGenerated from "../../components/script/fileGenerated/ExecutorOrderFileGenerated";
 import LinkToDownload from "../../components/script/LinkToDownload";
+import { StyledButtonGreen } from "../../components/style/ButtonStyles";
 import { UploadFileExecutorOrder } from "../../components/UploadFile";
 
 const { Text } = Typography;
@@ -64,10 +68,23 @@ export const ExecutorOrdersTable = ({ executorOrders, onUpdated }) => {
           <Space.Compact>
             {record?.signed_file_id ? (
               <Space.Compact direction={"vertical"}>
-                <LinkToDownload fileId={record.signed_file_id}>
-                  <Button>Скачать (подписан)</Button>
-                </LinkToDownload>
-                <Text type={"secondary"}>{record.date_attachment}</Text>
+                <Space.Compact direction="horizontal">
+                  <LinkToDownload fileId={record.signed_file_id}>
+                    <StyledButtonGreen>
+                      Скачать (подписан){" "}
+                      {dayjs(record?.date_attachment).format("DD.MM.YYYY") +
+                        "г."}
+                    </StyledButtonGreen>
+                  </LinkToDownload>
+                  <UploadFileExecutorOrder
+                    onUpdated={() => onUpdated()}
+                    orderId={record.id}
+                    size={"small"}
+                    style={{ width: "300px" }}
+                  >
+                    <ReUploadFileButton />
+                  </UploadFileExecutorOrder>
+                </Space.Compact>
               </Space.Compact>
             ) : (
               <Space.Compact direction={"vertical"}>

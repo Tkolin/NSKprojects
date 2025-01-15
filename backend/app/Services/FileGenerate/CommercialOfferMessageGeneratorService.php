@@ -36,7 +36,8 @@ class CommercialOfferMessageGeneratorService extends DocumentGeneratorService
 
 
         // Извлечение данных
-        $contractNumber =  FormatterService::formatWithLeadingZeros(count($data['projectData']->project_kp_history) + 1, 2);
+        // $contractNumber =  FormatterService::formatWithLeadingZeros(count($data['projectData']->project_kp_history) + 1, 2);
+        $contractNumber = ProjectFile::getCountKP();
         $projectData = $data['projectData'];
         $delegation = $data['delegationData'];
         $dateOffer = $data['dateOffer'];
@@ -48,12 +49,12 @@ class CommercialOfferMessageGeneratorService extends DocumentGeneratorService
         $myOrg = FormatterService::getMyOrg();
         $full_date = FormatterService::getFullDate($dateOffer, true);
         $stagesNames = [
-            ['blockContent' => $projectData->prepayment . '% Аванс (' .number_format($projectData->price / 100 * $projectData->prepayment, 0, ',', ' ') . ' руб.);']
+            ['blockContent' => $projectData->prepayment . '% Аванс (' . number_format($projectData->price / 100 * $projectData->prepayment, 0, ',', ' ') . ' руб.);']
         ];
 
         // Добавление остальных этапов в массив
         foreach ($projectData->project_stages as $stage) {
-            $_price =   $stage->price /100 * (100 - $projectData->prepayment);
+            $_price = $stage->price / 100 * (100 - $projectData->prepayment);
             $stagesNames[] = ['blockContent' => $stage->percent . "% " . $stage->stage->name . ' (' . number_format($_price, 0, ',', ' ') . ' руб.);'];
         }
         $this->templateProcessor->cloneBlock("stagesBlock", 0, true, false, $stagesNames);
@@ -67,12 +68,17 @@ class CommercialOfferMessageGeneratorService extends DocumentGeneratorService
             'delegate_org.name' => $delegationOrgData['name'],
             'delegate_org.type_org' => $delegationOrgData['legal_form']->name,
             'project.main_delegation_short_name' => FormatterService::getFullName($delegation['last_name'], $delegation['first_name'], $delegation['patronymic'], true, true),
-            'project.main_delegation_short_nameDG' => $nclNameCaseRu->q(FormatterService::getFullName($delegation['last_name'], 
-            $delegation['first_name'], $delegation['patronymic'], true, true),NCLNameCaseRu::$DATELN ),
- 
+            'project.main_delegation_short_nameDG' => $nclNameCaseRu->q(FormatterService::getFullName(
+                $delegation['last_name'],
+                $delegation['first_name'],
+                $delegation['patronymic'],
+                true,
+                true
+            ), NCLNameCaseRu::$DATELN),
+
             'project.main_delegation_full_name' => $delegation['first_name'] . " " . $delegation['patronymic'],
             'project.name' => $projectData['name'],
-                'project.price' =>  number_format($projectData['price'], 0,',', ' '),
+            'project.price' => number_format($projectData['price'], 0, ',', ' '),
             'project.price_name' => FormatterService::convertNumbToStringr($projectData['price']),
             'project.durationMark' => FormatterService::formatDuration($projectData['duration']) . " ",
             'project.prepayment' => $projectData['prepayment'] . "; </w:r><w:r>",

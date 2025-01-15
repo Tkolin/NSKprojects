@@ -20,7 +20,12 @@ const UPLOAD_FILE_LINK_MUTATION = gql`
     }
   }
 `;
-export const UploadFileExecutorOrder = ({ onUpdated, orderId, ...props }) => {
+export const UploadFileExecutorOrder = ({
+  onUpdated,
+  orderId,
+  children,
+  ...props
+}) => {
   return (
     <UploadFile
       action={"project/upload/executor_order/page?executor_order_id=" + orderId}
@@ -28,9 +33,11 @@ export const UploadFileExecutorOrder = ({ onUpdated, orderId, ...props }) => {
       title={"Укажите дату подписания"}
       onConfirm={() => onUpdated && onUpdated()}
       children={
-        <Button style={{ width: 200 }} icon={<UploadOutlined />}>
-          Прикрепить договор
-        </Button>
+        children || (
+          <Button style={{ width: 200 }} icon={<UploadOutlined />}>
+            Прикрепить договор
+          </Button>
+        )
       }
     />
   );
@@ -40,6 +47,7 @@ export const UploadFileWorkActSinging = ({
   stageNumber,
   projectId,
   onUpdated,
+  children,
   ...props
 }) => {
   return (
@@ -54,10 +62,12 @@ export const UploadFileWorkActSinging = ({
         projectId
       }
       children={
-        <Button
-          icon={<UploadOutlined />}
-          children={"Прикрепить подписанный акт"}
-        />
+        children || (
+          <Button
+            icon={<UploadOutlined />}
+            children={"Прикрепить подписанный акт"}
+          />
+        )
       }
     />
   );
@@ -66,6 +76,7 @@ export const UploadFilePaymentSuccess = ({
   onUpdated,
   stageNumber,
   projectId,
+  children,
   ...props
 }) => {
   return (
@@ -80,7 +91,9 @@ export const UploadFilePaymentSuccess = ({
         projectId
       }
       children={
-        <Button icon={<UploadOutlined />} children={"Подтвердить оплату"} />
+        children || (
+          <Button icon={<UploadOutlined />} children={"Подтвердить оплату"} />
+        )
       }
     />
   );

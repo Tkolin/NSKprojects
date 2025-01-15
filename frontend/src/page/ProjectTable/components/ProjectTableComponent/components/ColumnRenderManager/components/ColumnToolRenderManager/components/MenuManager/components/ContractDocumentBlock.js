@@ -5,8 +5,9 @@ import {
   PlusOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import { Col, Divider, Row, Tooltip } from "antd";
+import { Col, Divider, Row, Space, Tooltip } from "antd";
 import React from "react";
+import ReUploadFileButton from "../../../../../../../../../../components/ReUploadFileButton";
 import ProjectContractFileGenerated from "../../../../../../../../../../components/script/fileGenerated/ProjectContractFileGenerated";
 import LinkToDownload from "../../../../../../../../../../components/script/LinkToDownload";
 import { UploadFilePopconfirm } from "../../../../../../../../../../components/UploadFile";
@@ -38,11 +39,20 @@ const ContractDocumentBlock = ({ record, onUpdated }) => {
       <Divider style={{ margin: "5px" }} orientation={"left"}>
         Договор проекта
       </Divider>
-      <LinkToDownload fileId={record.contract_file_id}>
-        <CustomMenuButton icon={<DownloadOutlined />}>
-          Скачать (подписан) от {record.date_signing}
-        </CustomMenuButton>
-      </LinkToDownload>
+      <Space.Compact style={{ display: "flex", alignContent: "center" }}>
+        <LinkToDownload fileId={record.contract_file_id}>
+          <CustomMenuButton icon={<DownloadOutlined />}>
+            Скачать (подписан) от {record.date_signing}
+          </CustomMenuButton>
+        </LinkToDownload>
+        <UploadFilePopconfirm
+          options={{ datePicker: true }}
+          title={"Укажите дату подписания"}
+          onUpdated={() => onUpdated()}
+          action={"project/upload/project_contract/page?projectId=" + record.id}
+          children={<ReUploadFileButton />}
+        />
+      </Space.Compact>
     </>
   ) : (
     <div>

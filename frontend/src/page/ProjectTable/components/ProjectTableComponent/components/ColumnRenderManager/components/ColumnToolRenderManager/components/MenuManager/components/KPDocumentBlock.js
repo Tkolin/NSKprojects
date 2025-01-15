@@ -25,6 +25,7 @@ import { nanoid } from "nanoid";
 import { DOWNLOAD_FILE } from "../../../../../../../../../../../graphql/mutations/file";
 import { CONTACTS_BY_ORGANIZATION } from "../../../../../../../../../../../graphql/queries/queriesSpecial";
 import { CustomDatePicker } from "../../../../../../../../../../components/FormattingDateElementComponent";
+import ReUploadFileButton from "../../../../../../../../../../components/ReUploadFileButton";
 import LinkToDownload from "../../../../../../../../../../components/script/LinkToDownload";
 import { UploadFilePopconfirm } from "../../../../../../../../../../components/UploadFile";
 import ContactForm from "../../../../../../../../../../simplesForms/ContactForm";
@@ -117,11 +118,23 @@ const KPDocumentBlock = ({ project, onUpdated }) => {
           <Divider style={{ margin: "5px" }} orientation={"left"}>
             КП проекта
           </Divider>
-          <LinkToDownload fileId={project.kp_file_id}>
-            <CustomMenuButton icon={<DownloadOutlined />}>
-              Скачать (согласован)
-            </CustomMenuButton>
-          </LinkToDownload>
+          <Space.Compact
+            direction="horizontal"
+            style={{ display: "flex", alignContent: "center" }}
+          >
+            <LinkToDownload fileId={project.kp_file_id}>
+              <CustomMenuButton icon={<DownloadOutlined />}>
+                Скачать (согласован)
+              </CustomMenuButton>
+            </LinkToDownload>
+            <UploadFilePopconfirm
+              options={{ datePicker: true }}
+              title={"Укажите дату принятия"}
+              onUpdated={() => onUpdated()}
+              action={"project/upload/project_kp/page?projectId=" + project.id}
+              children={<ReUploadFileButton />}
+            />
+          </Space.Compact>
         </>
       ) : (
         <>

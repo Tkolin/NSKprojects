@@ -15,6 +15,7 @@ class ExecutorOrderPayment extends Model
         'file_id',
         'paycheck_file_id',
         'status',
+        'updated_at',
         'type_payment',
     ];
     public function executor_order(): BelongsTo

@@ -7,46 +7,46 @@
 #-INPUTS:
 #-TYPES:
 
-
 #
 #   - MUTATIONS -
 #
 extend type Mutation {
-    downloadFile(id: ID!): Url! @checkRole(permission:  ["download-file"])
-    uploadFileLink(url: String!): UploadFileLinkResponse! @checkRole(permission:  ["upload-file"])
+    downloadFile(id: ID!): Url! @checkRole(permission: ["download-file"])
+    uploadFileLink(url: String!): UploadFileLinkResponse!
+        @checkRole(permission: ["upload-file"])
 
- 
+    generatedPaymentFileInExecutorOrder(
+        executorOrderId: ID!
+        paymentModeKey: String!
+    ): String
     projectPaymentInvoiceFileDownload(
         projectId: ID!
         stageNumber: ID
         dateGenerated: String!
-    ): Url! @checkRole(permission:  ["download-file-paymentInvoice"])
+    ): Url! @checkRole(permission: ["download-file-paymentInvoice"])
     projectActRenderingFileDownload(
         projectId: ID!
         stageNumber: Int!
         dateGenerated: String!
-    ): Url! @checkRole(permission:  ["download-file-actRendering"])
+    ): Url! @checkRole(permission: ["download-file-actRendering"])
     projectContractGenerated(
         projectId: ID!
         dateCreateContract: String!
-    ): Project! @checkRole(permission:  ["download-file-projectContract"])
-    projectOrderFileDownload(
-        projectId: ID
-    ): Url! @checkRole(permission:  ["download-file-projectOrder"])
- 
-    projectStagesFileDownload(
-        projectId: ID
-    ): Url! @checkRole(permission:  ["download-file-projectStages"])
-    taskExecutorContractFileDownload(
-        projectTasksIds: [ID]
-    ): Url! @checkRole(permission:  ["download-file-taskExecutorContract"])
+    ): Project! @checkRole(permission: ["download-file-projectContract"])
+    projectOrderFileDownload(projectId: ID): Url!
+        @checkRole(permission: ["download-file-projectOrder"])
+
+    projectStagesFileDownload(projectId: ID): Url!
+        @checkRole(permission: ["download-file-projectStages"])
+    taskExecutorContractFileDownload(projectTasksIds: [ID]): Url!
+        @checkRole(permission: ["download-file-taskExecutorContract"])
     generatedExecutorOrder(
         project_task_ids: [ID]!
         date_generated: String!
-    ): GenerateFileResult! @checkRole(permission:  ["generated-file-executorOrder"])
-    removeExecutorOrder(
-        oreder_id: ID!
-    ): Boolean @checkRole(permission:  ["remove-file-executorOrder"])
+    ): GenerateFileResult!
+        @checkRole(permission: ["generated-file-executorOrder"])
+    removeExecutorOrder(oreder_id: ID!): Boolean
+        @checkRole(permission: ["remove-file-executorOrder"])
 }
 #-INPUTS:
 #-RESULTS:
