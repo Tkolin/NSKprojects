@@ -10,5 +10,6 @@
 #import models.graphql
 #import auth_module.graphql
 #import delay_module.graphql
+# Знаешь зато это было быстрее и монёврнее чем твой подход, заюзай code:model и дампер схем, я если чё скину, скажешь что мол за мной надо переписывать, потомучто видно что торопился @tkolin_
 
 directive @checkRole(permission: [String!]) on FIELD_DEFINITION | FIELD

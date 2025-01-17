@@ -7,6 +7,7 @@ use App\Http\Controllers\FileUpload\ProjectExecutor;
 use App\Http\Controllers\FileUpload\ProjectMain;
 use App\Http\Controllers\FileUpload\ProjectStage;
 // use App\Http\Controllers\FileUploadController;
+use App\Http\Controllers\OrganizationFastCreatorController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,8 @@ Route::get('/download-projectActRender/{filename}', [ProjectController::class, '
 Route::get('/download-projectPaymentInvoice/{filename}', [ProjectController::class, 'downloadPaymentInvoiceProject']);
 
 Route::get('/temporary/{filename}', [FileController::class, 'downloadFile']);
+
+Route::get('/create_organization_by_inn/{inn}', [OrganizationFastCreatorController::class, 'createByInn']);
 
 // Загрузка файлов по проекту
 Route::post('/upload', [ProjectMain::class, 'upload']);

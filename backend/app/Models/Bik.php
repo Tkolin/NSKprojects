@@ -11,7 +11,10 @@ class Bik extends Model
     protected $fillable = [
         'BIK',
         'name',
+        'city',
         'correspondent_account',
+        'created_at',
+        'updated_at'
     ];
     public function person(): HasMany
     {

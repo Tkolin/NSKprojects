@@ -5,7 +5,10 @@ import Link from "antd/es/typography/Link";
 import { nanoid } from "nanoid";
 import React, { useEffect } from "react";
 import { ALLOW_NEXT_PAYMENT_EXECUTOR_CONTRACT } from "../../../../../../../graphql/mutations/executorOrder";
-import { DOWNLOAD_FILE } from "../../../../../../../graphql/mutations/file";
+import {
+  DOWNLOAD_FILE,
+  GENERATED_PAYMENT_FILE_IN_EXECUTROR_ORDER,
+} from "../../../../../../../graphql/mutations/file";
 import { EXECUTOR_ORDERS_PROJECT_QUERY } from "../../../../../../../graphql/queries/queriesSpecial";
 import ReUploadFileButton from "../../../../../../components/ReUploadFileButton";
 import { StyledButtonGreen } from "../../../../../../components/style/ButtonStyles";
@@ -74,6 +77,7 @@ const TablePaymentExecutorOrdersComponent = ({
       },
     }
   );
+
   const handleAllowNextPayment = (orderId) => {
     allowNextPayment({ variables: { orderId } });
   };
@@ -92,6 +96,29 @@ const TablePaymentExecutorOrdersComponent = ({
     } catch (error) {
       console.error("Ошибка при скачивании файла:", error);
     }
+  };
+  const [generatedPaymentFile, { loading: loadingGeneratedPaymentFile }] =
+    useMutation(GENERATED_PAYMENT_FILE_IN_EXECUTROR_ORDER, {
+      onCompleted: (data) => {
+        openNotification("topRight", "success", "Договор отправленн на оплату");
+        console.log("generatedPaymentFile", data);
+        handleDownloadClick(data);
+      },
+      onError: (error) => {
+        openNotification(
+          "topRight",
+          "error",
+          "Ошибка при генерации, проверьте данные: " + error.message
+        );
+      },
+    });
+  const handleDownloadPaymentFile = (orderId, paymentStage) => {
+    generatedPaymentFile({
+      variables: {
+        executorOrderId: orderId,
+        paymentModeKey: paymentStage,
+      },
+    });
   };
   const columnsTasks = [
     {
@@ -203,7 +230,12 @@ const TablePaymentExecutorOrdersComponent = ({
                     >
                       <Button danger>Подтвердите оплату аванса</Button>
                     </UploadFilePopconfirm>
-                    <StyledButtonGreen icon={<DownloadOutlined />}>
+                    <StyledButtonGreen
+                      icon={<DownloadOutlined />}
+                      onClick={() =>
+                        handleDownloadPaymentFile(record.id, "PREPAYMENT")
+                      }
+                    >
                       Сгенерировать платёжное поручение
                     </StyledButtonGreen>
                   </Space.Compact>
@@ -238,7 +270,12 @@ const TablePaymentExecutorOrdersComponent = ({
                     >
                       <Button danger>Подтвердите оплату основной суммы</Button>
                     </UploadFilePopconfirm>
-                    <StyledButtonGreen icon={<DownloadOutlined />}>
+                    <StyledButtonGreen
+                      icon={<DownloadOutlined />}
+                      onClick={() =>
+                        handleDownloadPaymentFile(record.id, "PAYMENT")
+                      }
+                    >
                       Сгенерировать платёжное поручение
                     </StyledButtonGreen>
                   </Space.Compact>
@@ -274,7 +311,12 @@ const TablePaymentExecutorOrdersComponent = ({
                         Подтвердите постоплату
                       </Button>
                     </UploadFilePopconfirm>
-                    <StyledButtonGreen icon={<DownloadOutlined />}>
+                    <StyledButtonGreen
+                      icon={<DownloadOutlined />}
+                      onClick={() =>
+                        handleDownloadPaymentFile(record.id, "POSTPAYMENT")
+                      }
+                    >
                       Сгенерировать платёжное поручение
                     </StyledButtonGreen>
                   </Space.Compact>
@@ -505,6 +547,7 @@ const TablePaymentExecutorOrdersComponent = ({
                     >
                       Загрузить подтверждающий документ
                     </StyledButtonGreen>
+
                     <UploadFilePopconfirm
                       key={nanoid()}
                       options={{ datePicker: false }}

@@ -5,65 +5,116 @@ namespace App\GraphQL\Mutations;
 use App\Models\ExecutorOrder;
 use App\Models\ExecutorOrderPayment;
 use App\Models\Organization;
+use App\Models\Passport;
 use App\Models\Person;
+use App\Services\FileGenerate\FormatterService;
+use Cache;
 
 final readonly class GeneratedPaymentFileInExecutorOrder
 {
     /** @param  array{}  $args */
     public function __invoke(null $_, array $args)
     {
-        // TODO implement the resolver
-        $executorOrderId = $args["executorOrderId"];
-        $paymentModeKey = $args["paymentModeKey"];
+        $template = <<<EOD
+SIBNIPI_ERP
+ВерсияФормата=1.03
+Кодировка=Windows
+Отправитель=Бухгалтерия предприятия
+Получатель=
+ДатаСоздания={\$paycheck['creationDate']}
+ВремяСоздания={\$paycheck['creationTime']}
+ДатаНачала={\$paycheck['startDate']}
+ДатаКонца={\$paycheck['endDate']}
+РасчСчет={\$payer['account']}
+Документ=Платежное поручение
+СекцияДокумент=Платежное поручение
+Номер={\$paycheck['documentNumber']}
+Дата={\$paycheck['documentDate']}
+Сумма={\$paycheck['amount']}
+ПлательщикСчет={\$payer['account']}
+Плательщик=ИНН {\$payer['inn']} {\$payer['name']}
+ПлательщикИНН={\$payer['inn']}
+Плательщик1={\$payer['name']}
+ПлательщикРасчСчет={\$payer['account']}
+ПлательщикБанк1={\$payer['bankName']}
+ПлательщикБанк2={\$payer['bankCity']}
+ПлательщикБИК={\$payer['bik']}
+ПлательщикКорсчет={\$payer['corrAccount']}
+ПолучательСчет={\$recipient['account']}
+Получатель=ИНН {\$recipient['inn']} {\$recipient['name']}
+ПолучательИНН={\$recipient['inn']}
+Получатель1={\$recipient['name']}
+ПолучательРасчСчет={\$recipient['account']}
+ПолучательБанк1={\$recipient['bankName']}
+ПолучательБанк2={\$recipient['bankCity']}
+ПолучательБИК={\$recipient['bik']}
+ПолучательКорсчет={\$recipient['corrAccount']}
+ВидОплаты={\$paycheck['paymentType']}
+Очередность={\$paycheck['paymentOrder']}
+НазначениеПлатежа=Оплата по договору {\$order['contractNumber']} от {\$order['contractDate']}. Разработка экон.части по проекту «{\$order['projectName']}» Сумма {\$order['amountFormatted']}-00 Без налога (НДС)
+НазначениеПлатежа1=Оплата по договору {\$order['contractNumber']} от {\$order['contractDate']}. Разработка экон.части по проекту «{\$order['projectName']}»
+НазначениеПлатежа2=Сумма {\$paycheck['amountFormatted']}-00
+НазначениеПлатежа3=Без налога (НДС)
+КонецДокумента
+КонецФайла
+EOD;
 
-        $order = ExecutorOrder::find($executorOrderId);
-        $payer = Organization::find(0);
-        $recipient = Person::find($order->executor_id);
+        $order = ExecutorOrder::find($args['executorOrderId']);
 
- 
+        $payment_coefficient = [
+            'PREPAYMENT' => 0.3,
+            'PAYMENT' => 0.3,
+            'POSTPAYMENT' => 0.4,
+        ];
+        $payment_key = $args["paymentModeKey"];
+        $actual_amount = round($order->get_price() * $payment_coefficient[$payment_key], 2);
+        $date_insert = date('d.m.Y');
+        $time_insert = date('H:i:s');
+        $counter = Cache::increment('payment_order_counter', 1);
 
-        $link = "sfaf";
-        return $link;
-            "1CClientBankExchange
-            ВерсияФормата=1.03
-            Кодировка=Windows
-            Отправитель=Бухгалтерия предприятия, редакция 3.0
-            Получатель= {$sendler}
-            ДатаСоздания=14.01.2025{$sendler}
-            ВремяСоздания=21:09:49{$sendler}
-            ДатаНачала=14.01.2025{$sendler}
-            ДатаКонца=14.01.2025{$sendler}
-            РасчСчет=40702810302500128817{$sendler}
-            Документ=Платежное поручение{$sendler}
-            СекцияДокумент=Платежное поручение{$sendler}
-            Номер=11{$sendler}
-            Дата=14.01.2025{$sendler}
-            Сумма=30000.00{$sendler}
-            ПлательщикСчет=40702810302500128817{$sendler}
-            Плательщик=ИНН 5402029908 ООО ПО "СИБНИПИ"{$sendler}
-            ПлательщикИНН=5402029908{$sendler}
-            Плательщик1=ООО ПО "СИБНИПИ"{$sendler}
-            ПлательщикРасчСчет=40702810302500128817{$sendler}
-            ПлательщикБанк1=ООО "Банк Точка"{$sendler}
-            ПлательщикБанк2=г. Москва{$sendler}
-            ПлательщикБИК=044525104{$payer->bik_number}
-            ПлательщикКорсчет=30101810745374525104{$sendler}
-            ПолучательСчет=40817810474002442558{$sendler}
-            Получатель=ИНН 753612679378 Серебрякова Наталья Павловна{$sendler}
-            ПолучательИНН=753612679378{$sendler}
-            Получатель1=Серебрякова Наталья Павловна{$sendler}
-            ПолучательРасчСчет=40817810474002442558{$sendler}
-            ПолучательБанк1=ЧИТИНСКОЕ ОТДЕЛЕНИЕ  N8600 ПАО СБЕРБАНК{$sendler}
-            ПолучательБанк2=г. Чита{$sendler}
-            ПолучательБИК=047601637{$recipient->bik_number}
-            ПолучательКорсчет=30101810500000000637{$sendler}
-            ВидОплаты={$order->type_payment}
-            Очередность={$order->iteration}
-            НазначениеПлатежа=Оплата по договору 114-004-240001 от 24.09.2024. Разработка экон.части по проекту «Технический проект разработки золоторудного месторождения "Нявленга" Сумма 30000-00 Без налога (НДС){$sendler}
-            НазначениеПлатежа1=Оплата по договору 114-004-240001 от 24.09.2024. Разработка экон.части по проекту «Технический проект разработки золоторудного месторождения "Нявленга"{$sendler}
-            НазначениеПлатежа2=Сумма {$order->price}-00
-            НазначениеПлатежа3=Без налога (НДС)
-            КонецДокумента
-            КонецФайла"
+        $paycheck = [
+            'creationDate' => $date_insert,
+            'creationTime' => $time_insert,
+            'startDate' => $date_insert,
+            'endDate' => $date_insert,
+            'documentNumber' => $counter,
+            'documentDate' => $date_insert,
+            'amount' => $actual_amount,
+            'amountFormatted' => $actual_amount,
+            'paymentType' => 'Перевод',
+            'paymentOrder' => '1',
+        ];
+        $my_organization_data = Organization::find(0);
+        $payer = [
+            'account' => $my_organization_data["payment_account"],
+            'inn' => $my_organization_data->INN,
+            'name' => $my_organization_data->name,
+            'bankName' => $my_organization_data->bik->name,
+            'bankCity' => $my_organization_data->bik->city,
+            'bik' => $my_organization_data->bik->BIK,
+            'corrAccount' => $my_organization_data->bik->correspondent_account,
+        ];
+        $executor_key = $args["executorOrderId"];
+
+        $person = $order->get_executor();
+        error_log("sfaf" . $person->id);
+        $recipient = [
+            'account' => $person->payment_account,
+            'inn' => $person->INN,
+            'name' => FormatterService::getFullName($person->passport['last_name'], $person->passport['first_name'], $person->passport['patronymic'], true, true),
+            'bankName' => $person->bik->name,
+            'bankCity' => 'г. ' . $person->bik->city,
+            'bik' => $person->bik->BIK,
+            'corrAccount' => $person->bik->correspondent_account,
+        ];
+
+        $filledTemplate = eval ("return \"$template\";");
+
+        $filePath = storage_path('app/public/payment_order.txt');
+        file_put_contents($filePath, $filledTemplate);
+        asset('storage/payment_order.txt');
+        return
+            "sss"
+        ;
     }
 }

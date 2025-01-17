@@ -408,23 +408,27 @@ const OrganizationForm = ({
                     </AutoCompleteFormItem>
                   </Col>
                   <Col span={12}>
-                    <Form.Item
-                      name="INN"
-                      label="ИНН"
-                      rules={[
-                        {
-                          pattern: /^[\d\s]+$/,
-                          message: "Пожалуйста, введите корректный номер ИНН",
-                        },
-                      ]}
-                    >
-                      <Input
-                        placeholder="Введите номер ИНН"
-                        maxLength={12}
-                        minLength={10}
-                        pattern="\d*"
-                      />
-                    </Form.Item>
+                    <Space.Compact style={{ width: "100%" }}>
+                      <Form.Item
+                        style={{ width: "100%" }}
+                        name="INN"
+                        label="ИНН"
+                        rules={[
+                          {
+                            pattern: /^[\d\s]+$/,
+                            message: "Пожалуйста, введите корректный номер ИНН",
+                          },
+                        ]}
+                      >
+                        <Input
+                          placeholder="Введите номер ИНН"
+                          maxLength={12}
+                          minLength={10}
+                          pattern="\d*"
+                        />
+                      </Form.Item>
+                    </Space.Compact>
+
                     <Form.Item
                       name="OGRN"
                       label="ОГРН"

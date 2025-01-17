@@ -332,6 +332,7 @@ type bik {
     id: ID!
     BIK: String
     name: String
+    city: String
     correspondent_account: String
 }
 #   bank
@@ -507,6 +508,7 @@ type Mutation {
     #   bik
     createBik(data: BikInput): bik!
     updateBik(id: ID!, data: BikInput): bik!
+    deleteBik(id: ID!): Boolean
     #   person
     createPerson(data: PersonInput): Person!
         @checkRole(permission: ["create-person"])
@@ -620,6 +622,7 @@ input IrdInput {
 input BikInput {
     BIK: String!
     name: String!
+    city: String
     correspondent_account: String
 }
 input TypeProjectInput {

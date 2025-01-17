@@ -16,7 +16,7 @@ import { StyledButtonGreen } from "../components/style/ButtonStyles";
 import { DeleteAndEditStyledLinkManagingDataTable } from "../components/style/TableStyles";
 import OrganizationContactsCompactTable from "../ProjectTable/components/OrganizationContactsCompactTable";
 
-import { BarsOutlined, BulbOutlined } from "@ant-design/icons";
+import { BarsOutlined, BulbOutlined, GlobalOutlined } from "@ant-design/icons";
 import OrganizationForm from "../simplesForms/OrganizationForm";
 const { Search } = Input;
 
@@ -77,6 +77,40 @@ const OrganizationTable = () => {
   };
   const onSearch = (value) => {
     setSearch(value);
+  };
+  const getOrganizationByINN = () => {
+    const inn = formSearch.getFieldValue("get_inn");
+
+    // Проверка: длина и наличие значения
+    if (!inn || inn.length < 10 || inn.length > 13) {
+      console.log("ИНН некорректный: неверная длина");
+      return;
+    }
+
+    // Проверка: только цифры
+    const isNumeric = /^\d+$/.test(inn);
+    if (!isNumeric) {
+      console.log("ИНН некорректный: содержит недопустимые символы");
+      return;
+    }
+
+    console.log("ИНН корректный:", inn);
+
+    // Отправка запроса на сервер
+    const apiUrl = process.env.REACT_APP_API_URL;
+    fetch(`${apiUrl}create_organization_by_inn/${inn}`)
+      .then((response) => response.json())
+      .then((data) => {
+        refetch();
+        openNotification("topRight", "success", "Успешно");
+      })
+      .catch((error) => {
+        openNotification(
+          "topRight",
+          "error",
+          "Ошибка при добавлении данных: " + error.message
+        );
+      });
   };
 
   // Обработка загрузки и ошибок
@@ -186,6 +220,17 @@ const OrganizationTable = () => {
             </StyledButtonGreen>
           </Space>
         </Form.Item>
+        <Space.Compact>
+          <Form.Item label="Получить из интернета по ИНН:" name="get_inn">
+            <Input placeholder="Введите номер ИНН" pattern="\d*" />
+          </Form.Item>
+          <StyledButtonGreen
+            icon={<GlobalOutlined />}
+            onClick={() => getOrganizationByINN()}
+          >
+            Получить
+          </StyledButtonGreen>
+        </Space.Compact>
       </Form>
       <Table
         data-permission={"read-organization"}

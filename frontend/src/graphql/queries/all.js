@@ -151,6 +151,7 @@ export const ORGANIZATIONS_QUERY = gql`
         bik {
           id
           BIK
+          city
           name
         }
         payment_account
@@ -457,6 +458,7 @@ export const PERSONS_QUERY = gql`
         bik {
           id
           BIK
+          city
           name
         }
       }
@@ -661,6 +663,7 @@ export const BIKS_QUERY = gql`
         id
         name
         BIK
+        city
         correspondent_account
       }
       count

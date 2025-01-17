@@ -4,7 +4,10 @@ import { Button, notification, Space, Table, Tooltip, Typography } from "antd";
 import Link from "antd/es/typography/Link";
 import { nanoid } from "nanoid";
 import React, { useEffect } from "react";
-import { DOWNLOAD_FILE } from "../../graphql/mutations/file";
+import {
+  DOWNLOAD_FILE,
+  GENERATED_PAYMENT_FILE_IN_EXECUTROR_ORDER,
+} from "../../graphql/mutations/file";
 import { FULL_EXECUTOR_ORDERS_QUERY } from "../../graphql/queries/queriesSpecial";
 import ReUploadFileButton from "../components/ReUploadFileButton";
 import { UploadFilePopconfirm } from "../components/UploadFile";
@@ -74,7 +77,29 @@ const TablePaymentExecutorOrdersComponent = ({
   useEffect(() => {
     console.log(executorOrders);
   }, [executorOrders]);
-
+  const [generatedPaymentFile, { loading: loadingGeneratedPaymentFile }] =
+    useMutation(GENERATED_PAYMENT_FILE_IN_EXECUTROR_ORDER, {
+      onCompleted: (data) => {
+        openNotification("topRight", "success", "Договор отправленн на оплату");
+        console.log("generatedPaymentFile", data);
+        handleDownloadClick(data);
+      },
+      onError: (error) => {
+        openNotification(
+          "topRight",
+          "error",
+          "Ошибка при генерации, проверьте данные: " + error.message
+        );
+      },
+    });
+  const handleDownloadPaymentFile = (orderId, paymentStage) => {
+    generatedPaymentFile({
+      variables: {
+        executorOrderId: orderId,
+        paymentModeKey: paymentStage,
+      },
+    });
+  };
   const columnsTasks = [
     {
       title: (
@@ -176,7 +201,12 @@ const TablePaymentExecutorOrdersComponent = ({
                     >
                       <Button danger>Подтвердите оплату аванса</Button>
                     </UploadFilePopconfirm>
-                    <StyledButtonGreen icon={<DownloadOutlined />} disabled>
+                    <StyledButtonGreen
+                      icon={<DownloadOutlined />}
+                      onClick={() =>
+                        handleDownloadPaymentFile(record.id, "PREPAYMENT")
+                      }
+                    >
                       Сгенерировать платёжное поручение
                     </StyledButtonGreen>
                   </Space.Compact>
@@ -211,7 +241,12 @@ const TablePaymentExecutorOrdersComponent = ({
                     >
                       <Button danger>Подтвердите оплату основной суммы</Button>
                     </UploadFilePopconfirm>
-                    <StyledButtonGreen icon={<DownloadOutlined />} disabled>
+                    <StyledButtonGreen
+                      icon={<DownloadOutlined />}
+                      onClick={() =>
+                        handleDownloadPaymentFile(record.id, "PAYMENT")
+                      }
+                    >
                       Сгенерировать платёжное поручение
                     </StyledButtonGreen>
                   </Space.Compact>
@@ -247,7 +282,12 @@ const TablePaymentExecutorOrdersComponent = ({
                         Подтвердите постоплату
                       </Button>
                     </UploadFilePopconfirm>
-                    <StyledButtonGreen icon={<DownloadOutlined />} disabled>
+                    <StyledButtonGreen
+                      icon={<DownloadOutlined />}
+                      onClick={() =>
+                        handleDownloadPaymentFile(record.id, "POSTPAYMENT")
+                      }
+                    >
                       Сгенерировать платёжное поручение
                     </StyledButtonGreen>
                   </Space.Compact>
@@ -405,17 +445,33 @@ const TablePaymentExecutorOrdersComponent = ({
                 record?.executor_order_payments?.find(
                   (row) => row.type_payment === "PREPAYMENT"
                 )?.paycheck_file_id ? (
-                  <StyledButtonGreen
-                    onClick={() =>
-                      downloadFile(
+                  <Space.Compact direction="horizontal">
+                    <StyledButtonGreen
+                      onClick={() =>
+                        downloadFile(
+                          record?.executor_order_payments?.find(
+                            (row) => row.type_payment === "PREPAYMENT"
+                          )?.paycheck_file_id
+                        )
+                      }
+                    >
+                      Загрузить подтверждающий документ
+                    </StyledButtonGreen>
+
+                    <UploadFilePopconfirm
+                      key={nanoid()}
+                      options={{ datePicker: false }}
+                      onUpdated={() => refetch()}
+                      action={
+                        "project/upload/executor_order_payment_paycheck/page?executorOrderPaymentId=" +
                         record?.executor_order_payments?.find(
                           (row) => row.type_payment === "PREPAYMENT"
-                        )?.paycheck_file_id
-                      )
-                    }
-                  >
-                    Загрузить подтверждающий документ
-                  </StyledButtonGreen>
+                        )?.id
+                      }
+                    >
+                      <ReUploadFileButton />
+                    </UploadFilePopconfirm>
+                  </Space.Compact>
                 ) : (
                   <UploadFilePopconfirm
                     key={nanoid()}
@@ -440,17 +496,32 @@ const TablePaymentExecutorOrdersComponent = ({
                 record?.executor_order_payments?.find(
                   (row) => row.type_payment === "PAYMENT"
                 )?.paycheck_file_id ? (
-                  <StyledButtonGreen
-                    onClick={() =>
-                      downloadFile(
+                  <Space.Compact direction="horizontal">
+                    <StyledButtonGreen
+                      onClick={() =>
+                        downloadFile(
+                          record?.executor_order_payments?.find(
+                            (row) => row.type_payment === "PAYMENT"
+                          )?.paycheck_file_id
+                        )
+                      }
+                    >
+                      Загрузить подтверждающий документ
+                    </StyledButtonGreen>
+                    <UploadFilePopconfirm
+                      key={nanoid()}
+                      options={{ datePicker: false }}
+                      onUpdated={() => refetch()}
+                      action={
+                        "project/upload/executor_order_payment_paycheck/page?executorOrderPaymentId=" +
                         record?.executor_order_payments?.find(
                           (row) => row.type_payment === "PAYMENT"
-                        )?.paycheck_file_id
-                      )
-                    }
-                  >
-                    Загрузить подтверждающий документ
-                  </StyledButtonGreen>
+                        )?.id
+                      }
+                    >
+                      <ReUploadFileButton />
+                    </UploadFilePopconfirm>
+                  </Space.Compact>
                 ) : (
                   <UploadFilePopconfirm
                     key={nanoid()}
@@ -475,17 +546,32 @@ const TablePaymentExecutorOrdersComponent = ({
                 record?.executor_order_payments?.find(
                   (row) => row.type_payment === "POSTPAYMENT"
                 )?.paycheck_file_id ? (
-                  <StyledButtonGreen
-                    onClick={() =>
-                      downloadFile(
+                  <Space.Compact direction="horizontal">
+                    <StyledButtonGreen
+                      onClick={() =>
+                        downloadFile(
+                          record?.executor_order_payments?.find(
+                            (row) => row.type_payment === "POSTPAYMENT"
+                          )?.paycheck_file_id
+                        )
+                      }
+                    >
+                      Загрузить подтверждающий документ
+                    </StyledButtonGreen>
+                    <UploadFilePopconfirm
+                      key={nanoid()}
+                      options={{ datePicker: false }}
+                      onUpdated={() => refetch()}
+                      action={
+                        "project/upload/executor_order_payment_paycheck/page?executorOrderPaymentId=" +
                         record?.executor_order_payments?.find(
                           (row) => row.type_payment === "POSTPAYMENT"
-                        )?.paycheck_file_id
-                      )
-                    }
-                  >
-                    Загрузить подтверждающий документ
-                  </StyledButtonGreen>
+                        )?.id
+                      }
+                    >
+                      <ReUploadFileButton />
+                    </UploadFilePopconfirm>
+                  </Space.Compact>
                 ) : (
                   <UploadFilePopconfirm
                     key={nanoid()}

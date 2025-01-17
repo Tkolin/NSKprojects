@@ -1,140 +1,176 @@
-import React, { useState } from "react";
-
 import { useMutation, useQuery } from "@apollo/client";
-import { Button, notification, Table } from "antd";
-import { DELETE_CONTACT_MUTATION } from "../../graphql/mutations/contact";
-import { CONTACTS_QUERY } from "../../graphql/queries/all";
+import { Form, Input, Modal, Space, Table } from "antd";
 
+import { format } from "date-fns";
+import { nanoid } from "nanoid";
+import React, { useContext, useState } from "react";
+import { DELETE_BIK_MUTATION } from "../../graphql/mutations/bik";
+import { BIKS_QUERY } from "../../graphql/queries/all";
+import { NotificationContext } from "../../NotificationProvider";
+import { StyledButtonGreen } from "../components/style/ButtonStyles";
+import { DeleteAndEditStyledLinkManagingDataTable } from "../components/style/TableStyles";
+import BikForm from "../simplesForms/BikForm";
+const { Search } = Input;
 const BikTable = () => {
   // Состояния
-  const { loading, error, data } = useQuery(CONTACTS_QUERY);
-  const [selectedContact, setSelectedContact] = useState(null);
-  const [editModalVisible, setEditModalVisible] = useState(false);
+  const { openNotification } = useContext(NotificationContext);
+
+  const [formSearch] = Form.useForm();
+  const [BikModalStatus, setBikModalStatus] = useState(null);
+
+  // Данные
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+
+  const [currentSort, setCurrentSort] = useState({});
+
+  const [sortField, setSortField] = useState("");
+  const [sortOrder, setSortOrder] = useState("");
+
+  const [search, setSearch] = useState("");
+  // id;
+  // name;
+  // BIK;
+  // city;
+  // correspondent_account;
+  const {
+    loading: loading,
+    error: error,
+    data: data,
+    refetch,
+  } = useQuery(BIKS_QUERY, {
+    variables: {
+      queryOptions: { page, limit, search, sortField, sortOrder },
+    },
+  });
 
   // Функции уведомлений
-  const openNotification = (placement, type, message) => {
-    notification[type]({
-      message: message,
-      placement,
-    });
-  };
 
   // Мутация для удаления
-  const [deleteContact] = useMutation(DELETE_CONTACT_MUTATION, {
+  const [deleteBik] = useMutation(DELETE_BIK_MUTATION, {
     onCompleted: () => {
-      openNotification("topRight", "success", "Данные успешно удалены!");
       refetch();
+      openNotification("topRight", "success", "Данные успешно удалены!");
     },
     onError: (error) => {
+      refetch();
       openNotification(
         "topRight",
         "error",
         "Ошибка при удалении данных: " + error.message
       );
-      refetch();
     },
   });
 
   // Обработчик событий
-  const handleClose = () => {
-    refetch();
-    setEditModalVisible(false);
+  const handleDelete = (BikId) => {
+    deleteBik({ variables: { id: BikId } });
   };
-  const handleEdit = (contactId) => {
-    const contact = data.contacts.find((contact) => contact.id === contactId);
-    setSelectedContact(contact);
-    setEditModalVisible(true);
-  };
-  const handleDelete = (contactId) => {
-    deleteContact({ variables: { id: contactId } });
+  const onSearch = (value) => {
+    setSearch(value);
   };
 
   // Обработка загрузки и ошибок
   if (error) return `Ошибка! ${error.message}`;
 
+  // Функция для форматирования даты
+  const formatDate = (date) => {
+    return format(new Date(date), "dd.MM.yyyy");
+  };
   // Формат таблицы
   const columns = [
     {
-      title: "Бик",
-      dataIndex: "BIK",
-      key: "BIK",
-    },
-    {
-      title: "Банк",
+      title: "Наименование",
       dataIndex: "name",
       key: "name",
+      sorter: true,
+      ellipsis: false,
     },
     {
-      title: "Счёт",
+      title: "БИК",
+      dataIndex: "BIK",
+      key: "BIK",
+      sorter: true,
+      ellipsis: false,
+    },
+    {
+      title: "Город",
+      dataIndex: "city",
+      key: "city",
+      sorter: true,
+      ellipsis: false,
+    },
+    {
+      title: "Счет",
       dataIndex: "correspondent_account",
       key: "correspondent_account",
+      sorter: true,
+      ellipsis: false,
     },
-    {
-      title: "Дата рождения",
-      dataIndex: "birth_day",
-      key: "birth_day",
-    },
-    {
-      title: "Номер телефона",
-      dataIndex: "mobile_phone",
-      key: "mobile_phone",
-    },
-    {
-      title: "Рабочий Номер телефона",
-      dataIndex: "work_phone",
-      key: "work_phone",
-    },
-    {
-      title: "Личный E-mail",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Рабочий E-mail",
-      dataIndex: "work_email",
-      key: "work_email",
-    },
-    {
-      title: "Должность",
-      dataIndex: "position",
-      key: "position",
-      render: (position) => (position ? position.name : null),
-    },
-    {
-      title: "Организация",
-      dataIndex: "organization",
-      key: "organization",
-      render: (organization) => (organization ? organization.name : null),
-    },
+
     {
       title: "Управление",
       key: "edit",
+      ellipsis: true,
+      width: 100,
       render: (text, record) => (
-        <div>
-          <Button onClick={() => handleEdit(record.id)}>Изменить</Button>
-          <Button danger={true} onClick={() => handleDelete(record.id)}>
-            Удалить
-          </Button>
-        </div>
+        <DeleteAndEditStyledLinkManagingDataTable
+          updatePermission={"update-Bik"}
+          deletePermission={"delete-Bik"}
+          title={"Удаление контакта"}
+          description={"Вы уверены, что нужно удалить этот контакт?"}
+          handleEdit={() => {
+            setBikModalStatus({ Bik: record, mode: "edit" });
+          }}
+          handleDelete={() => handleDelete(record.id)}
+        />
       ),
     },
   ];
+  const onChange = (sorter) => {
+    setSortField(sorter?.field ?? "");
+    setSortOrder(
+      sorter?.order === "descend"
+        ? "desc"
+        : sorter?.order === "ascend"
+        ? "asc"
+        : ""
+    );
+  };
 
   return (
     <div>
+      <Form form={formSearch} layout="horizontal">
+        <Form.Item label="Поиск:" name="search">
+          <Space>
+            <Search placeholder="Найти..." allowClear onSearch={onSearch} />
+            <StyledButtonGreen
+              data-permission={"create-Bik"}
+              style={{ marginBottom: 0 }}
+              onClick={() => setBikModalStatus({ Bik: null, mode: "add" })}
+            >
+              Создать новую запись
+            </StyledButtonGreen>
+          </Space>
+        </Form.Item>
+      </Form>
       <Table
+        data-permission={"read-Bik"}
         size={"small"}
         sticky={{
-          offsetHeader: 0,
+          offsetHeader: "64px",
         }}
         loading={loading}
-        dataSource={data?.irds?.items}
+        dataSource={data?.biks?.items?.map((row) => ({
+          ...row,
+          key: row.id,
+        }))}
         columns={columns}
-        onChange={onChange}
+        onChange={(pagination, filters, sorter, extra) => onChange(sorter)}
         pagination={{
-          total: data?.irds?.count,
+          total: data?.biks?.count,
           current: page,
-          limit: limit,
+          pageSize: limit,
           onChange: (page, limit) => {
             setPage(page);
             setLimit(limit);
@@ -144,9 +180,40 @@ const BikTable = () => {
             setLimit(size);
           },
           showSizeChanger: true,
-          pageSizeOptions: ["10", "20", "50", "100"],
+          pageSizeOptions: ["10", "50", "100"],
         }}
       />
+      <Modal
+        key={nanoid()}
+        open={BikModalStatus?.mode === "add" || BikModalStatus?.mode === "edit"}
+        onCancel={() => setBikModalStatus(null)}
+        footer={null}
+        width={"max-content"}
+        title={"Бик"}
+        styles={{ header: { textAlign: "center" } }}
+      >
+        {BikModalStatus?.mode === "edit" ? (
+          BikModalStatus?.Bik && (
+            <BikForm
+              data-permission={"update-Bik"}
+              onCompleted={() => {
+                setBikModalStatus(null);
+                refetch();
+              }}
+              initialObject={BikModalStatus?.Bik}
+              localObject={BikModalStatus?.Bik}
+            />
+          )
+        ) : (
+          <BikForm
+            data-permission={"create-Bik"}
+            onCompleted={() => {
+              setBikModalStatus(null);
+              refetch();
+            }}
+          />
+        )}
+      </Modal>
     </div>
   );
 };

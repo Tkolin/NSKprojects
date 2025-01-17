@@ -11,6 +11,7 @@ class LegalForm extends Model
     protected $fillable = [
         'name',
         'full_name',
+        'code_OPF',
     ];
     public function organization(): HasMany
     {

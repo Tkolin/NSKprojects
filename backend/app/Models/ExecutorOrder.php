@@ -119,6 +119,33 @@ class ExecutorOrder extends Model
             'project_task_id'      // Foreign key on executor_order_task table
         );
     }
+    public function get_price(): float
+    {
+        // Получаем все связанные проектные задачи
+        $project_tasks = $this->project_tasks;
+
+        // Суммируем цену всех задач
+        $result = $project_tasks->sum(function ($task) {
+            return $task->price ?: 0; // Если цена задачи не указана, считаем 0
+        });
+
+        return $result;
+    }
+    public function get_executor(): Person
+    {
+        // Получаем все связанные проектные задачи
+        $project_tasks = $this->project_tasks;
+
+        // Проверяем, есть ли задачи и возвращаем executor первой задачи
+        if ($project_tasks->isNotEmpty()) {
+            $executor = $project_tasks[0]->executor; // Это уже объект Person
+            return $executor;
+        }
+
+        // Если задач нет, возвращаем null или выбрасываем исключение, в зависимости от того, что вам нужно
+        return null;
+    }
+
 
 
     public function tasks(): BelongsToMany

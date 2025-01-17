@@ -351,6 +351,7 @@ export const BIKS_QUERY_COMPACT = gql`
         id
         name
         BIK
+        city
       }
     }
   }

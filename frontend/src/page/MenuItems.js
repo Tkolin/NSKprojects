@@ -1,6 +1,7 @@
 // MenuItems.js
 import {
   AuditOutlined,
+  BankOutlined,
   CalculatorOutlined,
   ContactsOutlined,
   EyeOutlined,
@@ -56,6 +57,28 @@ const MenuItems = [
             icon: <FormOutlined />,
             children: null,
             permission: ["create-contact"],
+          },
+        ],
+      },
+      {
+        label: "БИК",
+        key: "/references/bik",
+        icon: <BankOutlined />,
+        permission: ["read-bik", "create-bik"],
+        children: [
+          {
+            label: "Просмотр БИК",
+            key: "/references/bik/table",
+            icon: <EyeOutlined />,
+            children: null,
+            permission: ["read-bik"],
+          },
+          {
+            label: "Создать новый БИК",
+            key: "/references/bik/form",
+            icon: <FormOutlined />,
+            children: null,
+            permission: ["create-bik"],
           },
         ],
       },

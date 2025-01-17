@@ -78,6 +78,7 @@ const BikForm = ({ localObject, initialObject, onCompleted, cardProps }) => {
     const data = {
       BIK: formData.BIK,
       name: formData.name,
+      city: formData.city,
       correspondent_account: formData.correspondent_account,
     };
     mutate({
@@ -110,6 +111,13 @@ const BikForm = ({ localObject, initialObject, onCompleted, cardProps }) => {
                 name="name"
                 label="Наименование"
                 rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="city"
+                label="Город (Название)"
+                rules={[{ required: false }]}
               >
                 <Input />
               </Form.Item>

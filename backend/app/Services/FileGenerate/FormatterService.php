@@ -11,7 +11,7 @@ class FormatterService
 {
     public static function formatWithLeadingZeros(int $number, int $length): string
     {
-        return str_pad((string)$number, $length, '0', STR_PAD_LEFT);
+        return str_pad((string) $number, $length, '0', STR_PAD_LEFT);
     }
 
     public static function mb_ucfirst($text)
@@ -24,27 +24,28 @@ class FormatterService
         return preg_replace('/\+(\d{1,2})?(\d{3})(\d{3})(\d{2})(\d{2})/', '+$1 ($2) $3-$4-$5', $number);
     }
     public static function formattedMoney($number)
-    { 
+    {
         // Форматируем число: 
-    // 1. первый параметр — само число
-    // 2. второй параметр — количество десятичных знаков (2)
-    // 3. третий параметр — разделитель для десятичных знаков (",")
-    // 4. четвертый параметр — разделитель тысяч (" ")
-    return number_format($number, 2, ',', ' ');
+        // 1. первый параметр — само число
+        // 2. второй параметр — количество десятичных знаков (2)
+        // 3. третий параметр — разделитель для десятичных знаков (",")
+        // 4. четвертый параметр — разделитель тысяч (" ")
+        return number_format($number, 2, ',', ' ');
     }
-    public static function removeFirstPartBeforeComma($address) {
+    public static function removeFirstPartBeforeComma($address)
+    {
         if (!$address) {
             return "_____";
         }
-        
+
         $pos = strpos($address, ',');
         if ($pos !== false) {
             return trim(substr($address, $pos + 1));
         }
-        
+
         return $address;
     }
-    
+
     public static function formatDuration($days): string
     {
         $months = floor($days / 30); // Рассчитываем количество месяцев
@@ -99,9 +100,9 @@ class FormatterService
         return $myOrg;
     }
 
-    public static function convertToMany($value, $index = true, $customIndex = null) 
+    public static function convertToMany($value, $index = true, $customIndex = null)
     {
-        $result = number_format($value, 0, ',', ' ') . $customIndex ? $customIndex : ($index ? " р." : "") ;
+        $result = number_format($value, 0, ',', ' ') . $customIndex ? $customIndex : ($index ? " р." : "");
         return $result;
     }
 
@@ -115,7 +116,7 @@ class FormatterService
     public static function getFullDate($date, $enableHerringboneQuotes = false): string
     {
         if (!isset($date)) {
-           return "Дата не указана";
+            return "Дата не указана";
         }
         $dateComponents = explode('-', $date);
         $year = $dateComponents[0] ?? "__";
@@ -143,28 +144,52 @@ class FormatterService
             error_log("getAbbreviation getter nullable string");
             return "";
         }
-        return substr((string)$string, 0, 2);
+        return substr((string) $string, 0, 2);
 
     }
 
     public static function getFullName($lastName, $firstName, $patronymic, $short = false, $reverse = false): ?string
     {
+        // Проверка на обязательные параметры
         if (!isset($lastName) || !isset($firstName)) {
             error_log("getFullName getter nullable string");
             return null;
         }
+
+        // Если требуется краткое имя
         if ($short) {
-            if (!$reverse)
-                return $lastName . ' ' . FormatterService::getAbbreviation($firstName) . '.' . FormatterService::getAbbreviation($patronymic) . '.';
-            else
-                return FormatterService::getAbbreviation($firstName) . '.' . FormatterService::getAbbreviation($patronymic) . '.' . " " . $lastName;
+            // Если отчество отсутствует, не добавляем его в сокращенный вид
+            if (empty($patronymic)) {
+                // Без отчества
+                if (!$reverse)
+                    return $lastName . ' ' . FormatterService::getAbbreviation($firstName) . '.';
+                else
+                    return FormatterService::getAbbreviation($firstName) . '.' . " " . $lastName;
+            } else {
+                // С отчество
+                if (!$reverse)
+                    return $lastName . ' ' . FormatterService::getAbbreviation($firstName) . '.' . FormatterService::getAbbreviation($patronymic) . '.';
+                else
+                    return FormatterService::getAbbreviation($firstName) . '.' . FormatterService::getAbbreviation($patronymic) . '.' . " " . $lastName;
+            }
         } else {
-            if (!$reverse)
-                return $lastName . ' ' . $firstName . ' ' . $patronymic;
-            else
-                return $firstName . ' ' . $lastName . ' ' . $patronymic;
+            // Полное имя
+            if (empty($patronymic)) {
+                // Без отчества
+                if (!$reverse)
+                    return $lastName . ' ' . $firstName;
+                else
+                    return $firstName . ' ' . $lastName;
+            } else {
+                // С отчество
+                if (!$reverse)
+                    return $lastName . ' ' . $firstName . ' ' . $patronymic;
+                else
+                    return $firstName . ' ' . $lastName . ' ' . $patronymic;
+            }
         }
     }
+
 
     public static function getFullNameInArray($fio, $short = false): ?string
     {

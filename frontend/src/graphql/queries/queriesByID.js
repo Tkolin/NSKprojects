@@ -416,6 +416,7 @@ export const PERSONS_QUERY_BY_ID = gql`
         bik {
           id
           BIK
+          city
           name
         }
       }
@@ -503,6 +504,7 @@ export const BIKS_QUERY_BY_ID = gql`
         id
         name
         BIK
+        city
         correspondent_account
       }
     }
