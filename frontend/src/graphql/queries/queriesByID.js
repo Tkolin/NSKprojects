@@ -58,6 +58,7 @@ export const PROJECT_QUERY = gql`
       }
       project_tasks {
         id
+        work_hours
         stage_number
         task {
           id
@@ -83,6 +84,7 @@ export const PROJECT_TASK_QUERY = gql`
       id
       is_delay
       project_id
+      work_hours
       task_id
       project_task_inherited_id
       task
@@ -516,6 +518,8 @@ export const POSITIONS_QUERY_BY_ID = gql`
       items {
         id
         name
+        okpd_code
+        okz_code
       }
       count
     }

@@ -78,7 +78,7 @@ const ProjectLeaderForm = ({ cardProps, project, onCompleted }) => {
       children={
         <Form form={form} onFinish={handleSubmit} layout="vertical">
           <Divider>Назначьте главного на проекте</Divider>
-          <Form.Item name={"leader"} label="Главный проекта">
+          <Form.Item name={"leader"} label="ГИП">
             <CustomAutoComplete
               loading={loadingPersons}
               typeData="FIO"

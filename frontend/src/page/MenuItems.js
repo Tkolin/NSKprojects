@@ -15,6 +15,7 @@ import {
   ProfileOutlined,
   ReconciliationOutlined,
   SolutionOutlined,
+  TagsFilled,
   TeamOutlined,
   TruckOutlined,
 } from "@ant-design/icons";
@@ -79,6 +80,28 @@ const MenuItems = [
             icon: <FormOutlined />,
             children: null,
             permission: ["create-bik"],
+          },
+        ],
+      },
+      {
+        label: "Должности",
+        key: "/references/position",
+        icon: <TagsFilled />,
+        permission: ["read-person", "create-person"],
+        children: [
+          {
+            label: "Просмотр должностей",
+            key: "/references/position/table",
+            icon: <EyeOutlined />,
+            children: null,
+            permission: ["read-person"],
+          },
+          {
+            label: "Создать новую должность",
+            key: "/references/position/form",
+            icon: <FormOutlined />,
+            children: null,
+            permission: ["create-person"],
           },
         ],
       },

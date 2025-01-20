@@ -163,7 +163,7 @@ const DelayCustomerDocumentBlock = ({ project, onUpdated }) => {
             <CustomMenuButton
               className={"danger_text_btn"}
               icon={<UploadOutlined />}
-              children={"Прикрепить Delay"}
+              children={"Отправить Delay"}
             />
           }
         />

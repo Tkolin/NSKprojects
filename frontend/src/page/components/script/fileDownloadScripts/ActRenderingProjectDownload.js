@@ -1,11 +1,12 @@
+import { DownloadOutlined } from "@ant-design/icons";
 import { useMutation } from "@apollo/client";
 import { Button, notification, Popconfirm, Space, Typography } from "antd";
 import dayjs from "dayjs";
 import React, { useState } from "react";
 import { DOWNLOAD_FILE } from "../../../../graphql/mutations/file";
 import { ACT_RENDERING_PROJECT_DOWNLOAD } from "../../../../graphql/mutations/project";
-import CustomMenuButton from "../../../ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/MenuManager/components/CustomMenuButton";
 import { CustomDatePicker } from "../../FormattingDateElementComponent";
+import { StyledButtonGreen } from "../../style/ButtonStyles";
 
 const { Text, Link } = Typography;
 
@@ -117,7 +118,11 @@ const ActRenderingProjectDownload = ({
         },
       }}
       showCancel={false}
-      children={<CustomMenuButton>Сгенерировать Акт</CustomMenuButton>}
+      children={
+        <StyledButtonGreen icon={<DownloadOutlined />}>
+          Сгенерировать
+        </StyledButtonGreen>
+      }
     />
   );
 };

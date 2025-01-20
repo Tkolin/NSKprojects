@@ -29,8 +29,9 @@ final readonly class Contacts
                     if (!isset($args['organizationId'])) {
                         return ['items' => 'Ошибка, отсутствует id'];
                     }
+                    error_log("get_user_by_org");
                     $data = Contact::where('organization_id', $args['organizationId'])->get();
-                    if ($data) {
+                    if (isset($data)) {
                         return ['items' => $data];
                     } else {
                         return ['items' => 'Ошибка, контакт не найден'];

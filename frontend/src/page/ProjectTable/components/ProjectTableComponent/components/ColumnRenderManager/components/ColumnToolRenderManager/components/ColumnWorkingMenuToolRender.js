@@ -66,7 +66,7 @@
 //                                     action={"project/upload/project_contract/page?projectId=" + record.id}
 //                                     children={<Button className={'danger_text_btn'}
 //                                                       icon={<UploadOutlined/>}
-//                                                       children={"Прикрепить договор"}
+//                                                       children={"Отправить договор"}
 //                                                       onUpdated={() => onUpdated()}
 //                                                       {...buttonProps}
 //                                                       danger/>}

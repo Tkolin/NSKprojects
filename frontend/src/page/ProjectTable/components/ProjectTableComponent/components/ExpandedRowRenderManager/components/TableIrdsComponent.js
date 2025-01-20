@@ -1,6 +1,7 @@
 import { EditOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "@apollo/client";
 import {
+  Alert,
   Button,
   notification,
   Popconfirm,
@@ -58,7 +59,7 @@ const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
     ACCEPT_IRD_MUTATION,
     {
       onCompleted: (data) => {
-        openNotification("topRight", "success", "ИРД подтвержено специалистом");
+        openNotification("topRight", "success", "ИРД одобрено специалистом");
         refetch();
       },
       onError: (error) => {
@@ -69,7 +70,7 @@ const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
   const [receivedProjectIrd, { loading: loadingReceivedProjectIrd }] =
     useMutation(RECEIVED_IRD_MUTATION, {
       onCompleted: (data) => {
-        openNotification("topRight", "success", "ИРД подтвержено специалистом");
+        openNotification("topRight", "success", "ИРД принято специалистом");
         refetch();
       },
       onError: (error) => {
@@ -80,7 +81,7 @@ const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
     REJECT_IRD_MUTATION,
     {
       onCompleted: (data) => {
-        openNotification("topRight", "success", "ИРД подтвержено специалистом");
+        openNotification("topRight", "success", "ИРД забраковано специалистом");
         refetch();
       },
       onError: (error) => {
@@ -124,6 +125,7 @@ const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
           <Tooltip title={"Список ИРД"}>
             <Text style={{ marginRight: 10 }}>Список ИРД</Text>
           </Tooltip>
+
           <Link type={"warning"}>
             <EditOutlined
               onClick={() => setEditModalStatus && setEditModalStatus()}
@@ -147,10 +149,11 @@ const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
               {record.is_viewed ? "Да" : "Нет"}
               <Button
                 type="link"
+                disabled={record.is_viewed || record.acceptance_date}
                 onClick={() => handleViewed(record?.id)}
                 loading={loadingViewedProjectIrd}
               >
-                отметить
+                {record.is_viewed ? "Просмотрено" : "Отметиться"}
               </Button>
             </Space.Compact>
           ),
@@ -164,15 +167,16 @@ const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
           render: (text, record) => (
             <Space.Compact
               direction={"vertical"}
-              style={{ alignContent: "start" }}
+              style={{ alignContent: "center", textAlign: "center" }}
             >
               {record.is_broken ? "Да" : "Нет"}
               <Button
                 type="link"
+                disabled={record.is_broken || record.acceptance_date}
                 onClick={() => handleReject(record.id)}
                 loading={loadingRejectProjectIrd}
               >
-                +
+                {record.is_broken ? "Забраковано" : "Забраковать"}
               </Button>
             </Space.Compact>
           ),
@@ -209,13 +213,27 @@ const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
                 ? "Принято: " +
                   dayjs(record?.acceptance_date).format("DD.MM.YYYY") +
                   " г."
+                : record.is_broken
+                ? "Забраковано (получено от " +
+                  dayjs(record?.received_date).format("DD.MM.YYYY") +
+                  " )г."
                 : record.received_date
                 ? "Не проверенно (получено от " +
                   dayjs(record?.received_date).format("DD.MM.YYYY") +
                   " )г."
                 : "Не переданно заказчиком"}
+              {record.acceptance_date && (
+                <Button
+                  danger
+                  type="Link"
+                  onClick={() => handleReject(record.id)}
+                >
+                  {" "}
+                  отменить{" "}
+                </Button>
+              )}
               <br />
-              {!record.acceptance_date && !record.received_date && (
+              {record.is_broken && (
                 <Popconfirm
                   title={
                     <Space direction="vertical" style={{ width: "200px" }}>
@@ -234,12 +252,38 @@ const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
                   okText="Принять"
                   cancelText="Отмена"
                 >
-                  <Button loading={loadingReceivedProjectIrd}>
-                    Отметить как полученное
+                  <Button danger loading={loadingReceivedProjectIrd}>
+                    Заменить ИРД
                   </Button>
                 </Popconfirm>
               )}
-              {!record.acceptance_date && (
+              {!record.acceptance_date &&
+                !record.received_date &&
+                !record.is_broken && (
+                  <Popconfirm
+                    title={
+                      <Space direction="vertical" style={{ width: "200px" }}>
+                        <CustomDatePicker
+                          size="small"
+                          placeholder="Выберите дату..."
+                          onChange={(value) =>
+                            setReceivedDate(
+                              value ? dayjs(value).format("YYYY-MM-DD") : null
+                            )
+                          }
+                        />
+                      </Space>
+                    }
+                    onConfirm={() => handleReceived(record.id)}
+                    okText="Принять"
+                    cancelText="Отмена"
+                  >
+                    <Button loading={loadingReceivedProjectIrd}>
+                      Отметить как полученное
+                    </Button>
+                  </Popconfirm>
+                )}
+              {!record.acceptance_date && !record.is_broken && (
                 <Popconfirm
                   title={
                     <Space direction="vertical" style={{ width: "200px" }}>
@@ -270,14 +314,49 @@ const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
     },
   ];
   return (
-    <Table
-      style={{ margin: 0, width: "100%" }}
-      size={"small"}
-      loading={loading}
-      columns={columnsIrds}
-      dataSource={data?.projectIrds}
-      pagination={false}
-    />
+    <Space direction="vertical" style={{ width: "100%" }}>
+      <Table
+        style={{ margin: 0, width: "100%" }}
+        size={"small"}
+        loading={loading}
+        columns={columnsIrds}
+        dataSource={data?.projectIrds}
+        pagination={false}
+      />
+      <Alert
+        message="Подсказка по прохождению ИРД"
+        description={
+          <>
+            Ирд может быть забраковано или принято:
+            <ui>
+              <li>
+                1. При получении ирд от заказчика (в первые) необходимо нажать
+                на "отметить ка полученное"{" "}
+              </li>
+              <li>
+                2. После чего отобразиться дата получения ирд, следующий шаг -
+                проверка ирд специалистом Когда специалист начет проверку, ему
+                необходимо отметить, то что он просмотрелл данное ирд
+              </li>
+              <li>
+                3. Во время проверки специалист может забраковать ИРД - после
+                чего заказчик должен повторно его предоставить
+              </li>
+              <li>
+                4. После предоставления ИРД заказчиком процедура повторяеться с
+                пункта 2
+              </li>
+              <li>
+                5. Если ИРД устраивает специалиста он отмечает его как принятое,
+                после чего действия с ИРД заканчиваються
+              </li>
+            </ui>
+          </>
+        }
+        type="info"
+        showIcon
+      />{" "}
+    </Space>
   );
 };
 export default TableIrdsComponent;

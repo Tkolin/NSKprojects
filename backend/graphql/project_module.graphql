@@ -126,6 +126,7 @@ input TaskToProjectDetailInput {
 
     description: String
     duration: Int
+    work_hours: Int
     offset: Int
     price: Float
     executor_id: ID
@@ -148,9 +149,11 @@ input StageToProjectInput {
 input RequestInput {
     name: ID!
     organization_id: ID!
+    project_leader_id: ID!
     type_project: ID
     contact_id: ID!
     message: String
+    start_file_url: String
     number_message: String
     date_send: String!
     file_name: String

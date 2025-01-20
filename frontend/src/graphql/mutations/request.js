@@ -5,6 +5,7 @@ export const ADD_REQUEST_MUTATION = gql`
     createRequests(data: $data) {
       id
       name
+      start_file_url
       organization_customer {
         id
         name
@@ -15,10 +16,11 @@ export const ADD_REQUEST_MUTATION = gql`
 `;
 
 export const UPDATE_REQUEST_MUTATION = gql`
-  mutation UpdateRequests($data: RequestInput) {
-    updateRequests(data: $data) {
+  mutation UpdateRequests($id: ID!, $data: RequestInput) {
+    updateRequests(data: $data, id: $id) {
       id
       name
+      start_file_url
       organization_customer {
         id
         name

@@ -11,6 +11,7 @@ export const ADD_PROJECT_MUTATION = gql`
       contract_file_id
       kp_file_id
       prepayment_file_id
+      start_file_url
       requirements {
         comment
       }
@@ -122,6 +123,7 @@ export const ADD_PROJECT_MUTATION = gql`
       }
       project_tasks {
         id
+        work_hours
         project_id
         task_id
         is_delay
@@ -168,6 +170,7 @@ export const UPDATE_PROJECT_MUTATION = gql`
       contract_file_id
       kp_file_id
       prepayment_file_id
+      start_file_url
       requirements {
         comment
       }
@@ -279,6 +282,7 @@ export const UPDATE_PROJECT_MUTATION = gql`
       }
       project_tasks {
         id
+        work_hours
         project_id
         task_id
         is_delay
@@ -377,6 +381,7 @@ export const PROJECT_TASKS_DETAIL_UPDATE = gql`
       task_id
       offset
       duration
+      work_hours
 
       executor {
         id
@@ -399,6 +404,7 @@ export const PROJECT_TASKS_STRUCTURE_UPDATE = gql`
       id
       project_tasks {
         id
+        work_hours
         is_delay
         task_id
         project_task_inherited_id

@@ -106,7 +106,10 @@ final readonly class Projects
                     ]);
                     break;
                 case "POST_WORK":
-                    $result->where('status_id', "=", 'COMPLETED');
+                    $result->whereIn('status_id', [
+                        'COMPLETED',
+                        'ARCHIVE',
+                    ]);
                     break;
             }
         }

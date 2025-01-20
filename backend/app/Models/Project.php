@@ -14,6 +14,7 @@ class Project extends Model
     protected $fillable = [
         'number',
         'name',
+        'start_file_url',
         'organization_customer_id',
         'type_project_document_id',
         'date_signing',

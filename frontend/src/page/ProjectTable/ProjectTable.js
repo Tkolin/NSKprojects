@@ -12,7 +12,7 @@ const template = {
       //  Первая колонка кнопок управления таблицей
       tool: {
         //  Компоненты скрытые в ...
-        menu: ["crud", "request"],
+        menu: ["crud", "request", "files"],
         //  Кнопки быстрых действий
         hotKey: ["archive", "up"],
       },
@@ -28,7 +28,7 @@ const template = {
       //  Первая колонка кнопок управления таблицей
       tool: {
         //  Компоненты скрытые в ...
-        menu: ["crud", "kp", "tech_spec", "stages", "template"],
+        menu: ["crud", "kp", "tech_spec", "stages", "template", "files"],
         //  Кнопки быстрых действий
         hotKey: ["archive", "up"],
       },
@@ -53,6 +53,8 @@ const template = {
           "irds",
           "template",
           "tasks_management",
+          ,
+          "files",
         ],
         //  Кнопки быстрых действий
         hotKey: ["archive", "up"],
@@ -76,6 +78,8 @@ const template = {
           "tasks_management",
           "template",
           "delay_customer",
+          ,
+          "files",
         ],
         //  Кнопки быстрых действий
         hotKey: ["archive"],
@@ -101,7 +105,7 @@ const template = {
       //  Первая колонка кнопок управления таблицей
       tool: {
         //  Компоненты скрытые в ...
-        menu: ["contract", "tasks_management", "kp", "template"],
+        menu: ["contract", "tasks_management", "kp", "template", "files"],
         //  Кнопки быстрых действий
         hotKey: ["archive"],
       },
@@ -143,7 +147,7 @@ const template = {
       //  Первая колонка кнопок управления таблицей
       tool: {
         //  Компоненты скрытые в ...
-        menu: ["crud", "contract", "kp", "request"],
+        menu: ["crud", "contract", "kp", "request", "files"],
         //  Кнопки быстрых действий
         hotKey: ["archive", "up"],
       },
@@ -172,7 +176,7 @@ const template = {
     ],
     column: {
       tool: {
-        menu: ["contract", "kp", "request"],
+        menu: ["contract", "kp", "request", "files"],
         hotKey: ["archive", "up"],
       },
       columns: ["main", "money", "files"],
@@ -195,7 +199,7 @@ const template = {
       //  Первая колонка кнопок управления таблицей
       tool: {
         //  Компоненты скрытые в ...
-        menu: ["crud", "contract", "kp", "request"],
+        menu: ["crud", "contract", "kp", "request", "files"],
         //  Кнопки быстрых действий
         hotKey: ["archive", "up"],
       },

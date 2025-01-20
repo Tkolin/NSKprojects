@@ -85,6 +85,7 @@ const TaskProjectForm = ({
       form.resetFields();
       form.setFieldsValue({
         duration: taskToProject.duration ?? null,
+        work_hours: taskToProject.work_hours ?? null,
         offset: taskToProject.offset ?? null,
         price: taskToProject.price,
         executor: taskToProject?.executor
@@ -114,6 +115,7 @@ const TaskProjectForm = ({
           price: formData.price,
           offset: formData.offset,
           duration: formData.duration,
+          work_hours: formData.work_hours,
         },
       },
     });
@@ -203,6 +205,14 @@ const TaskProjectForm = ({
                   setLimitTimes({ ...limitTimes, duration: value })
                 }
                 placeholder={"Продолжительность задачи"}
+              />
+            </FormItem>
+            <FormItem name={"work_hours"} label={"Трудо-часы (Факт)"}>
+              <InputNumber
+                style={{ width: "100%" }}
+                min={0}
+                max={9000}
+                placeholder={"Кол-во затраченного времени"}
               />
             </FormItem>
 

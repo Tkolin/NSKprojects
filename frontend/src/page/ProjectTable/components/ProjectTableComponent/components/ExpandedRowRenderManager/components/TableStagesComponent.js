@@ -98,14 +98,57 @@ const TableStagesComponent = ({
               style={{ alignContent: "start" }}
             >
               {record?.date_start &&
-                dayjs(record?.date_start).format("DD.MM.YYYY") + "г."}{" "}
-              -{" "}
+                dayjs(record?.date_start).format("DD.MM.YYYY") + "г. - "}
               {record?.date_end &&
                 dayjs(record?.date_end).format("DD.MM.YYYY") + "г."}{" "}
-              ({record.duration})
+              {record.duration && "(" + record.duration + ")"}
             </Space.Compact>
           ),
         },
+        ...(options?.includes("acts")
+          ? [
+              {
+                title: "Счёт на оплату",
+                dataIndex: "payment_gen",
+                key: "payment_gen",
+                align: "left",
+                render: (text, record) => (
+                  <Space.Compact
+                    direction="vertical"
+                    style={{ alignContent: "start" }}
+                  >
+                    <PaymentInvoiceProjectDownload
+                      stageNumber={record.number}
+                      projectId={projectId}
+                      type="acts"
+                    />
+                  </Space.Compact>
+                ),
+              },
+            ]
+          : []),
+        ...(options?.includes("acts")
+          ? [
+              {
+                title: "Акт выполненых работ",
+                dataIndex: "act_gen",
+                key: "act_gen",
+                align: "left",
+                render: (text, record) => (
+                  <Space.Compact
+                    direction="vertical"
+                    style={{ alignContent: "start" }}
+                  >
+                    <ActRenderingProjectDownload
+                      stageNumber={record.number}
+                      projectId={projectId}
+                      type="acts"
+                    />
+                  </Space.Compact>
+                ),
+              },
+            ]
+          : []),
         ...(options?.includes("acts")
           ? [
               {
@@ -138,7 +181,7 @@ const TableStagesComponent = ({
                 ),
               },
               {
-                title: "Счёт на оплату",
+                title: "Подтверждающий платеж документ",
                 dataIndex: "payment",
                 key: "payment",
                 align: "left",
@@ -175,12 +218,22 @@ const TableStagesComponent = ({
                             </UploadFilePaymentSuccess>
                           </>
                         ) : (
-                          <>
+                          <Space.Compact direction="horizontal">
                             Файл отсутствует, подтверждено от:{" "}
                             {dayjs(
                               actualProject?.project?.prepayment_date
                             ).format("DD.MM.YYYY") + "г."}
-                          </>
+                            <UploadFilePaymentSuccess
+                              stageNumber={0}
+                              onUpdated={() => {
+                                refetch();
+                                updateProject();
+                              }}
+                              projectId={projectId}
+                            >
+                              <ReUploadFileButton />
+                            </UploadFilePaymentSuccess>
+                          </Space.Compact>
                         )}
                       </Space.Compact>
                     ) : record?.payment_date ? (
@@ -199,12 +252,22 @@ const TableStagesComponent = ({
                               </StyledButtonGreen>
                             </LinkToDownload>
                           ) : (
-                            <>
+                            <Space.Compact direction="horizontal">
                               Файл отсутствует, подтверждено от:{" "}
                               {dayjs(record?.payment_date).format(
                                 "DD.MM.YYYY"
                               ) + "г."}
-                            </>
+                              <UploadFilePaymentSuccess
+                                stageNumber={0}
+                                onUpdated={() => {
+                                  refetch();
+                                  updateProject();
+                                }}
+                                projectId={projectId}
+                              >
+                                <ReUploadFileButton />
+                              </UploadFilePaymentSuccess>
+                            </Space.Compact>
                           )}
                         </>
                         <UploadFilePaymentSuccess
@@ -221,11 +284,6 @@ const TableStagesComponent = ({
                       </Space.Compact>
                     ) : (
                       <Space.Compact direction="vertical">
-                        <PaymentInvoiceProjectDownload
-                          stageNumber={record.number}
-                          projectId={projectId}
-                          type="acts"
-                        />
                         <UploadFilePaymentSuccess
                           stageNumber={
                             record?.type === "prepayment" ? 0 : record.number
@@ -247,7 +305,7 @@ const TableStagesComponent = ({
         ...(options?.includes("payments")
           ? [
               {
-                title: "Акт работ",
+                title: "Подписанный с двух сторон акт выполненых работ",
                 dataIndex: "act",
                 key: "act",
                 align: "left",
@@ -283,11 +341,6 @@ const TableStagesComponent = ({
                       </Space.Compact>
                     ) : (
                       <Space.Compact direction="vertical">
-                        <ActRenderingProjectDownload
-                          stageNumber={record.number}
-                          projectId={projectId}
-                          type="acts"
-                        />
                         <UploadFileWorkActSinging
                           stageNumber={record.number}
                           onUpdated={() => {

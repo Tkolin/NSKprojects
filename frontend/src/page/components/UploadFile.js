@@ -35,7 +35,7 @@ export const UploadFileExecutorOrder = ({
       children={
         children || (
           <Button style={{ width: 200 }} icon={<UploadOutlined />}>
-            Прикрепить договор
+            Отправить договор
           </Button>
         )
       }
@@ -65,7 +65,7 @@ export const UploadFileWorkActSinging = ({
         children || (
           <Button
             icon={<UploadOutlined />}
-            children={"Прикрепить подписанный акт"}
+            children={"Отправить подписанный акт"}
           />
         )
       }
@@ -84,6 +84,7 @@ export const UploadFilePaymentSuccess = ({
       options={{ datePicker: true, fileNoRequired: true }}
       title={"Укажите дату оплаты"}
       onUpdated={() => onUpdated && onUpdated()}
+      style={{ width: "100%" }}
       action={
         "project/upload/payment_invoice/page?stageNumber=" +
         stageNumber +
@@ -92,7 +93,11 @@ export const UploadFilePaymentSuccess = ({
       }
       children={
         children || (
-          <Button icon={<UploadOutlined />} children={"Подтвердить оплату"} />
+          <Button
+            style={{ width: "100%" }}
+            icon={<UploadOutlined />}
+            children={"Загрузить"}
+          />
         )
       }
     />
@@ -212,7 +217,7 @@ export const UploadFilePopconfirm = ({
               disabled={options?.datePicker && !selectedDateContract}
               style={{ width: "200px", marginTop: 0 }}
             >
-              Подтвердить без файла
+              Отправить без файла
             </Button>
           )}
         </Space>
@@ -223,7 +228,7 @@ export const UploadFilePopconfirm = ({
         children ? (
           cloneElement(children, { onClick: () => setOpen(true) })
         ) : (
-          <Button children={"Прикрепить файл"} />
+          <Button children={"Отправить файл"} />
         )
       }
       {...props}

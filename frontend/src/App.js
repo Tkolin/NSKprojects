@@ -28,6 +28,7 @@ import BikForm from "./page/simplesForms/BikForm";
 import EquipmentModelForm from "./page/simplesForms/EquipmentModelForm";
 import EquipmentTypeForm from "./page/simplesForms/EquipmentTypeForm";
 import MathForm from "./page/simplesForms/MathForm";
+import PositionForm from "./page/simplesForms/PositionForm";
 import ReferenceForm from "./page/simplesForms/ReferenceForm";
 import RequestForm from "./page/simplesForms/RequestForm";
 import SupplierForm from "./page/simplesForms/SupplierForm";
@@ -37,6 +38,7 @@ import EquipmentModelTable from "./page/simplesTables/EquipmentModelTable";
 import EquipmentTypeTable from "./page/simplesTables/EquipmentTypeTable";
 import ExecutorPaymentsTable from "./page/simplesTables/ExecutorPaymentsTable";
 import ParameterTable from "./page/simplesTables/ParameterTable";
+import PositionTable from "./page/simplesTables/PositionTable";
 import ReferenceTable from "./page/simplesTables/ReferenceTable";
 import RoleTable from "./page/simplesTables/RoleTable";
 import SupplierTable from "./page/simplesTables/SupplierTable";
@@ -91,6 +93,20 @@ const App = () => {
                     <Space
                       style={{ width: "100%", justifyContent: "center" }}
                       children={<BikForm />}
+                    />
+                  }
+                />
+                <Route path="/references/position" element={<Home />} />
+                <Route
+                  path="/references/position/table"
+                  element={<PositionTable />}
+                />
+                <Route
+                  path="/references/position/form"
+                  element={
+                    <Space
+                      style={{ width: "100%", justifyContent: "center" }}
+                      children={<PositionForm />}
                     />
                   }
                 />

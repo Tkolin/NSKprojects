@@ -78,7 +78,7 @@ const ContractDocumentBlock = ({ record, onUpdated }) => {
               <CustomMenuButton
                 className={"danger_text_btn"}
                 icon={<UploadOutlined />}
-                children={"Прикрепить договор"}
+                children={"Отправить договор"}
               />
             }
           />

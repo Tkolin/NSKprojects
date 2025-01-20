@@ -52,7 +52,9 @@ const LinkToDownload = ({ children, fileId, disabled, ...props }) => {
           {children}
         </div>
       ) : (
-        <div style={{ color: "red" }}>Файл не передан</div>
+        <div style={{ color: "red", width: "100%", textAlign: "center" }}>
+          Файл не передан
+        </div>
       )}
     </>
   );

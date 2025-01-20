@@ -22,6 +22,7 @@ class ProjectTasks extends Model
         'date_end',
         'date_end_fact',
         'date_start_fact',
+        'work_hours',
         'duration',
         'offset',
         'executor_id',

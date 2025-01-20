@@ -40,6 +40,7 @@ export const EXECUTOR_ORDERS_QUERY = gql`
       signed_file_id
       project_tasks {
         id
+        work_hours
         project_id
         is_delay
       }
@@ -77,6 +78,7 @@ export const EXECUTOR_ORDERS_PROJECT_QUERY = gql`
       signed_file_id
       project_tasks {
         id
+        work_hours
         project_id
         date_start
         date_end
@@ -252,6 +254,7 @@ export const FULL_EXECUTOR_ORDERS_QUERY = gql`
       signed_file_id
       project_tasks {
         id
+        work_hours
         project_id
         date_start
         date_end

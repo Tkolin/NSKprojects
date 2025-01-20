@@ -145,6 +145,7 @@ type Project {
     status_id: ID
     prepayment_file_id: ID
     prepayment_date: String
+    start_file_url: String
     organization_customer: Organization
     date_first_ird_completed: String
     type_project_document: TypeProjectDocument
@@ -221,6 +222,7 @@ type ProjectStage {
 type ProjectTask {
     id: ID
     is_delay: Boolean
+    work_hours: Int
     project_id: ID
     task_id: ID
     executor_orders: [ExecutorOrder]
@@ -325,6 +327,8 @@ type Contact {
 type Position {
     id: ID!
     name: String!
+    okz_code: String!
+    okpd_code: String!
 }
 
 #   bik
@@ -468,8 +472,13 @@ type TypePayment {
 #   - MUTATIONS -
 #
 type Mutation {
+    #   postion
+    updatePosition(id: ID!, data: PositionInput): Position!
+    createPosition(data: PositionInput): Position!
+    deletePosition(id: ID!): Boolean!
+
     #   request
-    updateRequests(data: RequestInput): Project!
+    updateRequests(id: ID!, data: RequestInput): Project!
         @checkRole(permission: ["update-request"])
     createRequests(data: RequestInput): Project!
         @checkRole(permission: ["create-request"])
@@ -551,6 +560,11 @@ type Mutation {
     deleteTSChapter(id: ID): TSChapter @checkRole(permission: ["math"])
 }
 #-INPUTS:
+input PositionInput {
+    name: String
+    okpd_code: String
+    okz_code: String
+}
 input PersonInput {
     first_name: String!
     last_name: String!
@@ -644,7 +658,7 @@ input ProjectInput {
     price: Int
 
     prepayment: Int!
-
+    project_leader_id: ID
     facility_id: [ID]
     delegates_id: [ID]
 }

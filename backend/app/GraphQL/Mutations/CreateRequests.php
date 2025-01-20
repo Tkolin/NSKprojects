@@ -19,7 +19,9 @@ final readonly class CreateRequests
             'name' => $data['name'],
             'organization_customer_id' => $data['organization_id'],
             'status_id' => 'DESIGN_REQUEST',
+            'leader_id' => $data['project_leader_id'],
             'prepayment' => 30,
+
         ]);
         ProjectDelegations::create([
             'project_id' => $project->id,

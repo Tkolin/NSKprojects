@@ -6,6 +6,7 @@ import CRUDBlock from "./components/CRUDBlock";
 import ContractDocumentBlock from "./components/ContractDocumentBlock";
 import DelayCustomerDocumentBlock from "./components/DelayCustomerDocumentBlock";
 import KPDocumentBlock from "./components/KPDocumentBlock";
+import ProjectFilesBlock from "./components/ProjectFilesBlock";
 import TasksManagementBlock from "./components/TasksManagementBlock";
 import TechSpecDocumentBlock from "./components/TechSpecDocumentBlock";
 import TemplateBlock from "./components/TemplateBlock";
@@ -74,6 +75,11 @@ const Index = ({ record, onUpdated, itemOptions = [] }) => {
               project={record}
               onUpdated={onUpdated}
             />
+          </>
+        )}
+        {itemOptions.includes("files") && (
+          <>
+            <ProjectFilesBlock project={record} onUpdated={onUpdated} />
           </>
         )}
 

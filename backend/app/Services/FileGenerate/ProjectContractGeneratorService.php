@@ -68,7 +68,7 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
             ];
         }
         $this->templateProcessor->cloneRowAndSetValues('project_irds.number', $table);
-
+«${actual_day}» ${month_name_lower}
 
         // Формируем массив для отображения в таблице
         $tableStage = [];
@@ -95,9 +95,9 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
             throw new Exception("Ошибка данных заказчика");
         }
         $nclNameCaseRu = new NCLNameCaseRu();
-
-
+ 
         $this->replacements = [
+            'year' => date("Y"),
             'date_create_full' => $date_create_full ? mb_strtolower($date_create_full) : null,
             'date_create_short' => $date_create_short ? mb_strtolower($date_create_short) : null,
             'projectStages.stage.priceTotal' => isset($projectData['price']) ? number_format($projectData['price'], 0, ',', ' ') : null,

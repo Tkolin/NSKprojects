@@ -1,19 +1,37 @@
-import {Divider, Space, Typography} from "antd";
+import { Divider, Space, Typography } from "antd";
 import Title from "antd/es/typography/Title";
 import React from "react";
 
-const {Text} = Typography;
+const { Text } = Typography;
 
-const ColumnMainDataRender =  ({text, record}) => {
-    return (
-        <Space.Compact direction={"vertical"} style={{alignContent: "start"}}>
-            <Title level={5} style={{marginTop: 0}}>{record.name}</Title>
-            <Divider style={{margin: "3px"}}/>
-            <Text>{record.number}</Text>
-            <Text>{record?.organization_customer?.name}</Text>
-            <Text>({record.type_project_document?.code ?? ""}) {record.type_project_document?.name ?? ""}</Text>
-            <Divider style={{margin: "3px", marginBottom: 0}}/>
-        </Space.Compact>
-    );
-}
+const ColumnMainDataRender = ({ text, record }) => {
+  return (
+    <Space.Compact direction={"vertical"} style={{ alignContent: "start" }}>
+      <Title level={5} style={{ marginTop: 0 }}>
+        {record.name}
+      </Title>
+      <Divider style={{ margin: "3px" }} />
+      <Text>{record.number}</Text>
+      <Text>{record?.organization_customer?.name}</Text>
+      {record.type_project_document ? (
+        <Text>
+          ({record.type_project_document?.code ?? ""}){" "}
+          {record.type_project_document?.name ?? ""}
+        </Text>
+      ) : (
+        "Тип проекта не указан"
+      )}
+      {record.leader ? (
+        <Text>
+          {"ГИП: "} {record?.leader?.passport?.last_name}{" "}
+          {record?.leader?.passport?.first_name}{" "}
+          {record?.leader?.passport?.patronymic}{" "}
+        </Text>
+      ) : (
+        "Тип проекта не указан"
+      )}
+      <Divider style={{ margin: "3px", marginBottom: 0 }} />
+    </Space.Compact>
+  );
+};
 export default ColumnMainDataRender;

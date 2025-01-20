@@ -13,12 +13,14 @@ import { REQUEST_QUERY_BY_ID } from "../../graphql/queries/queriesByID";
 import {
   CONTACTS_QUERY_COMPACT,
   ORGANIZATIONS_QUERY_COMPACT,
+  PERSONS_QUERY_COMPACT,
 } from "../../graphql/queries/queriesCompact";
 import { AutoCompleteFormItem } from "../components/CustomForm";
 import { CustomDatePicker } from "../components/FormattingDateElementComponent";
 import { CustomAutoCompleteAndCreateWitchEdit } from "../components/style/SearchAutoCompleteStyles";
 import ContactForm from "./ContactForm";
 import OrganizationForm from "./OrganizationForm";
+import PersonForm from "./PersonForm";
 import { ModalButton } from "./formComponents/ModalButtonComponent";
 
 const RequestForm = ({
@@ -36,6 +38,7 @@ const RequestForm = ({
   const [loadContext, { loading, data }] = useLazyQuery(REQUEST_QUERY_BY_ID, {
     variables: { id: initialObject?.id },
     onCompleted: (data) => {
+      openNotification("topRight", "success", `Успешно`);
       setActualObject(data?.requests?.items[0]);
       updateForm(data?.requests?.items[0]);
     },
@@ -50,6 +53,7 @@ const RequestForm = ({
 
   // Состояния
   const [organizationModalStatus, setOrganizationModalStatus] = useState(null);
+  const [personModalStatus, setPersonModalStatus] = useState(null);
   const [contactModalStatus, setContactModalStatus] = useState(null);
   useEffect(() => {
     console.log("organizationModalStatus", organizationModalStatus);
@@ -91,10 +95,22 @@ const RequestForm = ({
       form.setFieldsValue({
         data: {
           name: data.name,
+          start_file_url: data.start_file_url,
           organization: {
             selected: data?.organization?.id,
             output: data?.organization?.name,
           },
+          project_leader: {
+            selected: data?.leader?.id,
+            output:
+              data?.leader?.last_name +
+              " " +
+              data?.leader?.first_name +
+              " " +
+              data?.leader?.patronymic +
+              " ",
+          },
+
           contact: { selected: data?.contact?.id, output: data?.contact?.name },
         },
       });
@@ -114,22 +130,32 @@ const RequestForm = ({
     data: dataOrganizations,
     refetch: refetchOrganizations,
   } = useQuery(ORGANIZATIONS_QUERY_COMPACT);
+  const {
+    loading: loadingPersons,
+    error: errorPersons,
+    data: dataPersons,
+    refetch: refetchPersons,
+  } = useQuery(PERSONS_QUERY_COMPACT);
 
   const handleSubmit = () => {
     const formData = form.getFieldsValue();
+    console.log("formData.project_leader", formData.project_leader);
     mutate({
       variables: {
+        ...(actualObject ? { id: actualObject.id } : {}),
         data: {
           name: formData.name,
+          start_file_url: formData.start_file_url,
           number_message: null,
           organization_id: formData.organization.selected,
+          project_leader_id: formData.project_leader.selected,
           contact_id: formData.contact.selected,
           date_send: dayjs(formData?.date_send).format("YYYY-MM-DD"),
         },
       },
     });
   };
-  if (errorOrganizations || errorContacts)
+  if (errorOrganizations || errorContacts || errorPersons)
     return `Ошибка! ${errorOrganizations?.message || errorContacts?.message}`;
 
   return (
@@ -152,9 +178,9 @@ const RequestForm = ({
             onChange={() => console.log("change", form.getFieldsValue())}
             form={form}
             onFinish={handleSubmit}
-            labelCol={{ span: 5 }}
+            labelCol={{ span: 8 }}
             labelAlign="left"
-            wrapperCol={{ span: 19 }}
+            wrapperCol={{ span: 17 }}
           >
             {!loading ? (
               <>
@@ -166,6 +192,18 @@ const RequestForm = ({
                     {
                       required: true,
                       message: "Пожалуйста, укажите наименование проекта",
+                    },
+                  ]}
+                />
+                <Form.Item
+                  name="start_file_url"
+                  label="Ссылка на начальные файлы"
+                  children={<Input />}
+                  rules={[
+                    {
+                      required: true,
+                      message:
+                        "Пожалуйста, укажите ссылку где находятся начальные файлы",
                     },
                   ]}
                 />
@@ -195,9 +233,40 @@ const RequestForm = ({
                     />
                   }
                 />
+
+                <AutoCompleteFormItem
+                  name="project_leader"
+                  label="ГИП"
+                  rulesValidationMessage={"Пожалуйста, укажите ГИПа"}
+                  rulesValidationRequired={true}
+                  children={
+                    <CustomAutoCompleteAndCreateWitchEdit
+                      loading={loadingPersons}
+                      typeData={"FIO"}
+                      firstBtnOnClick={() =>
+                        setPersonModalStatus({
+                          person_id: null,
+                          mode: "add",
+                        })
+                      }
+                      secondBtnOnClick={() =>
+                        form.getFieldValue("project_leader")?.selected &&
+                        setPersonModalStatus({
+                          person_id:
+                            form.getFieldValue("project_leader")?.selected,
+                          mode: "edit",
+                        })
+                      }
+                      data={dataPersons?.persons?.items?.map((row, index) => ({
+                        ...row?.passport,
+                        id: row?.id,
+                      }))}
+                    />
+                  }
+                />
                 <AutoCompleteFormItem
                   name="contact"
-                  label="Контакт"
+                  label="Контакт (Заказчика)"
                   rulesValidationMessage={"Пожалуйста, укажите контакт"}
                   rulesValidationRequired={true}
                   children={
@@ -319,6 +388,42 @@ const RequestForm = ({
                               name: form.getFieldValue("organization").output,
                             },
                           }
+                    }
+                  />
+                }
+              />
+            }
+          />
+          <Modal
+            key={nanoid()}
+            open={personModalStatus}
+            onCancel={() => setPersonModalStatus(null)}
+            footer={null}
+            width={"max-content"}
+            children={
+              <Space
+                style={{ justifyContent: "center", width: "100%" }}
+                children={
+                  <PersonForm
+                    cardProps={{ title: "ГИП" }}
+                    onCompleted={(value) => {
+                      setPersonModalStatus(null);
+                      refetchPersons();
+                      form.setFieldValue("project_leader", {
+                        selected: value?.id,
+                        output:
+                          value.passport.last_name +
+                          " " +
+                          value.passport.first_name +
+                          " " +
+                          value.passport.patronymic,
+                      });
+                      form.validateFields(["project_leader"]);
+                    }}
+                    initialObject={
+                      personModalStatus?.person_id
+                        ? { id: personModalStatus?.person_id }
+                        : null
                     }
                   />
                 }

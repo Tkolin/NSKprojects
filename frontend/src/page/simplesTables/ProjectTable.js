@@ -163,6 +163,11 @@ const ProjectTable = ({ columnKey = "v1" }) => {
         dataIndex: "name",
         key: "name",
       },
+      {
+        title: "Статусы",
+        dataIndex: "statuses",
+        key: "statuses",
+      },
       // {
       //   title: "Заказчик",
       //   key: "organization_customer",
@@ -382,6 +387,16 @@ const ProjectTable = ({ columnKey = "v1" }) => {
   const handleChangeSelectedDelayFilter = (selectedValue) => {
     setSelectedDelayFilter(selectedValue);
   };
+  const [selectedArchivedFilter, setSelectedArchivedFilter] = useState("ALL");
+
+  const handleBlurSelectedArchivedFilter = () => {
+    if (!selectedArchivedFilter) {
+      console.error("Выберите значение из списка!");
+    }
+  };
+  const handleChangeSelectedArchivedFilter = (selectedValue) => {
+    setSelectedArchivedFilter(selectedValue);
+  };
   useEffect(() => {
     console.log(
       "selectedStatusFilter, selectedDelayFilter",
@@ -416,7 +431,7 @@ const ProjectTable = ({ columnKey = "v1" }) => {
     },
     {
       key: "POST_WORK",
-      name: "Завершённые",
+      name: "Не актуальные",
     },
   ];
   const options_delay = [
@@ -435,6 +450,23 @@ const ProjectTable = ({ columnKey = "v1" }) => {
     {
       key: "END_DELAY",
       name: "С закрытыми задержками",
+    },
+  ];
+  const options_post_work = [
+    {
+      key: "ARCHIVE",
+      name: "Архив",
+      disabled: true,
+    },
+    {
+      key: "DROP",
+      name: "С задержками",
+      disabled: true,
+    },
+    {
+      key: "...",
+      name: "...",
+      disabled: true,
     },
   ];
   // Обработка загрузки и ошибок
@@ -473,23 +505,43 @@ const ProjectTable = ({ columnKey = "v1" }) => {
                 <Option value={row.key}>{row.name}</Option>
               ))}
             </Select>
-            <Space>
-              Задержки:
-              <Select
-                placeholder="Задержки"
-                disabled={selectedStatusFilter !== "WORK"}
-                value={selectedDelayFilter}
-                defaultValue={"ALL"}
-                onChange={handleChangeSelectedDelayFilter}
-                onBlur={handleBlurSelectedDelayFilter}
-                style={{ minWidth: 200 }}
-                allowClear
-              >
-                {options_delay.map((row) => (
-                  <Option value={row.key}>{row.name}</Option>
-                ))}
-              </Select>
-            </Space>
+            {selectedStatusFilter === "WORK" && (
+              <Space>
+                <span>Задержки:</span>
+                <Select
+                  placeholder="Задержки"
+                  disabled={selectedStatusFilter !== "WORK"}
+                  value={selectedDelayFilter}
+                  defaultValue={"ALL"}
+                  onChange={handleChangeSelectedDelayFilter}
+                  onBlur={handleBlurSelectedDelayFilter}
+                  style={{ minWidth: 200 }}
+                  allowClear
+                >
+                  {options_delay.map((row) => (
+                    <Option value={row.key}>{row.name}</Option>
+                  ))}
+                </Select>
+              </Space>
+            )}
+            {selectedStatusFilter === "END_DELAY" && (
+              <Space>
+                <span>Варианты:</span>
+                <Select
+                  placeholder="Варианты"
+                  value={selectedArchivedFilter}
+                  defaultValue={"ALL"}
+                  onChange={handleChangeSelectedArchivedFilter}
+                  onBlur={handleBlurSelectedArchivedFilter}
+                  style={{ minWidth: 200 }}
+                  allowClear
+                >
+                  {options_post_work.map((row) => (
+                    <Option value={row.key}>{row.name}</Option>
+                  ))}
+                </Select>
+              </Space>
+            )}
           </Space>
         </Form.Item>
       </Form>

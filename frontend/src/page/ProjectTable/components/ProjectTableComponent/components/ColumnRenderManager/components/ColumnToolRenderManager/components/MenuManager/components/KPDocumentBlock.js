@@ -7,6 +7,7 @@ import {
   Popconfirm,
   Select,
   Space,
+  Tooltip,
 } from "antd";
 import React, { useEffect, useState } from "react";
 import { GENERATED_COMMERCIAL_OFFER_MESSAGE } from "../../../../../../../../../../../graphql/mutations/project";
@@ -161,29 +162,31 @@ const KPDocumentBlock = ({ project, onUpdated }) => {
                       : setSelectedDateContract(null);
                   }}
                 />
-                <Space.Compact style={{ width: "100%" }}>
-                  <Select
-                    placeholder={"Кому обращение"}
-                    style={{ width: "100%" }}
-                    onChange={(value, option) =>
-                      value
-                        ? setSelectedDelegations(value)
-                        : setSelectedDelegations(null)
-                    }
-                    value={selectedDelegations}
-                    loading={loadingContacts}
-                  >
-                    {dataContacts?.contacts?.items?.map((row) => (
-                      <Select.Option key={row.id} value={row.id}>
-                        {row.last_name} {row.first_name} {row.patronymic}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                  <StyledButtonGreen
-                    icon={<PlusOutlined />}
-                    onClick={() => setContactModalStatus("add")}
-                  />
-                </Space.Compact>
+                <Tooltip title="Кому обращение (Контакт из организации)">
+                  <Space.Compact style={{ width: "100%" }}>
+                    <Select
+                      placeholder={"Кому обращение (Контакт из организации)"}
+                      style={{ width: "100%" }}
+                      onChange={(value, option) =>
+                        value
+                          ? setSelectedDelegations(value)
+                          : setSelectedDelegations(null)
+                      }
+                      value={selectedDelegations}
+                      loading={loadingContacts}
+                    >
+                      {dataContacts?.contacts?.items?.map((row) => (
+                        <Select.Option key={row.id} value={row.id}>
+                          {row.last_name} {row.first_name} {row.patronymic}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                    <StyledButtonGreen
+                      icon={<PlusOutlined />}
+                      onClick={() => setContactModalStatus("add")}
+                    />
+                  </Space.Compact>
+                </Tooltip>
 
                 <Button
                   block
@@ -229,7 +232,7 @@ const KPDocumentBlock = ({ project, onUpdated }) => {
               <CustomMenuButton
                 className={"danger_text_btn"}
                 icon={<UploadOutlined />}
-                children={"Прикрепить КП"}
+                children={"Отправить КП"}
               />
             }
           />

@@ -1,11 +1,12 @@
+import { DownloadOutlined } from "@ant-design/icons";
 import { useMutation } from "@apollo/client";
 import { Button, notification, Popconfirm, Space, Typography } from "antd";
 import dayjs from "dayjs";
 import React, { useState } from "react";
 import { DOWNLOAD_FILE } from "../../../../graphql/mutations/file";
 import { PAYMENT_INVOICE_PROJECT_DOWNLOAD } from "../../../../graphql/mutations/project";
-import CustomMenuButton from "../../../ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnToolRenderManager/components/MenuManager/components/CustomMenuButton";
 import { CustomDatePicker } from "../../FormattingDateElementComponent";
+import { StyledButtonGreen } from "../../style/ButtonStyles";
 
 const { Text, Link } = Typography;
 
@@ -119,7 +120,9 @@ const PaymentInvoiceProjectDownload = ({
       }}
       showCancel={false}
       children={
-        <CustomMenuButton>Сгенерировать счёт на оплату</CustomMenuButton>
+        <StyledButtonGreen icon={<DownloadOutlined />}>
+          Сгенерировать
+        </StyledButtonGreen>
       }
     />
   );

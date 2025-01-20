@@ -7,6 +7,7 @@ import {
   CONTACTS_QUERY_COMPACT,
   GROUP_TYPE_PROJECTS_QUERY_COMPACT,
   ORGANIZATIONS_QUERY_COMPACT,
+  PERSONS_QUERY_COMPACT,
   PROJECT_COUNT_BY_ORGANIZATION,
   PROJECT_STATUSES_QUERY_COMPACT,
   TYPES_PROJECTS_QUERY_COMPACT,
@@ -87,6 +88,8 @@ const defaultViews = {
 };
 
 const ProjectForm = ({ onCompleted, project, type, options, cardProps }) => {
+  const [personModalStatus, setPersonModalStatus] = useState(null);
+
   const [requiredOptions, setRequiredOptions] = useState(defaultRequired.base);
   const [disabledOptions, setDisabledOptions] = useState(defaultRequired.base);
   // Получение данных для выпадающих списков
@@ -95,7 +98,12 @@ const ProjectForm = ({ onCompleted, project, type, options, cardProps }) => {
     error: errorStatuses,
     data: dataStatuses,
   } = useQuery(PROJECT_STATUSES_QUERY_COMPACT);
-
+  const {
+    loading: loadingPersons,
+    error: errorPersons,
+    data: dataPersons,
+    refetch: refetchPersons,
+  } = useQuery(PERSONS_QUERY_COMPACT);
   const {
     loading: loadingTypeProject,
     error: errorTypeProject,
@@ -166,6 +174,17 @@ const ProjectForm = ({ onCompleted, project, type, options, cardProps }) => {
       ...project,
       ...rebuildProjectResultQuery(project),
       id: project?.id ?? null,
+      project_leader: {
+        selected: project?.leader?.id,
+        output:
+          (project?.leader?.passport?.last_name ?? "") +
+          " " +
+          (project?.leader?.passport?.first_name ?? "") +
+          " " +
+          (project?.leader?.passport?.patronymic ?? "") +
+          " ",
+      },
+
       date_signing: project?.date_signing ? dayjs(project?.date_signing) : null,
       date_end: project?.date_end ? dayjs(project?.date_end) : null,
       date_completion: project?.date_completion
@@ -229,6 +248,7 @@ const ProjectForm = ({ onCompleted, project, type, options, cardProps }) => {
         : null,
       status_id: formData.status_id.selected,
       price: formData.price,
+      project_leader_id: formData.project_leader.selected,
       prepayment: formData.prepayment,
       delegates_id: null,
       facility_id,
@@ -407,6 +427,35 @@ const ProjectForm = ({ onCompleted, project, type, options, cardProps }) => {
                 </Form.Item>
               </Collapse.Panel>
             </Collapse>
+            <AutoCompleteFormItem
+              name="project_leader"
+              label="ГИП"
+              rulesValidationMessage={"Пожалуйста, укажите ГИПа"}
+              rulesValidationRequired={true}
+              children={
+                <CustomAutoCompleteAndCreateWitchEdit
+                  loading={loadingPersons}
+                  typeData={"FIO"}
+                  firstBtnOnClick={() =>
+                    setPersonModalStatus({
+                      person_id: null,
+                      mode: "add",
+                    })
+                  }
+                  secondBtnOnClick={() =>
+                    form.getFieldValue("person")?.selected &&
+                    setPersonModalStatus({
+                      person_id: form.getFieldValue("person")?.selected,
+                      mode: "edit",
+                    })
+                  }
+                  data={dataPersons?.persons?.items?.map((row, index) => ({
+                    ...row?.passport,
+                    id: row?.id,
+                  }))}
+                />
+              }
+            />
             {/*<Space.Compact direction={"horizontal"}  style={{width: "100%",...(disabledOptions?.includes("date_range") ? {display: "none"} : {})}} >*/}
             {/*    <Form.Item name="dateStart"*/}
             {/*               rules={[{*/}

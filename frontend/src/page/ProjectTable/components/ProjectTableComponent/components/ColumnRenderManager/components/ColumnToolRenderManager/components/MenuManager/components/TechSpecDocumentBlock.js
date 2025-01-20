@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { Divider, Modal, notification } from "antd";
+import { Badge, Divider, Modal, notification } from "antd";
 import React, { useEffect, useState } from "react";
 import { GENERATED_COMMERCIAL_OFFER_MESSAGE } from "../../../../../../../../../../../graphql/mutations/project";
 
@@ -108,16 +108,20 @@ const TechSpecDocumentBlock = ({ project, onUpdated }) => {
         </>
       ) : (
         <>
-          <Divider style={{ margin: "5px" }} orientation={"left"}>
+          <Divider disabled style={{ margin: "5px" }} orientation={"left"}>
             Формирование ТЗ
           </Divider>
+          <Badge.Ribbon text="В разработке" color="grey">
+            <CustomMenuButton
+              disabled
+              icon={<DownloadOutlined />}
 
-          <CustomMenuButton
-            icon={<DownloadOutlined />}
-            disabled={project?.project_kp_history?.length <= 0}
-          >
-            Скачать Шаблон ТЗ
-          </CustomMenuButton>
+              // disabled={project?.project_kp_history?.length <= 0}
+            >
+              Скачать Шаблон ТЗ
+            </CustomMenuButton>
+          </Badge.Ribbon>
+
           {/* <Popconfirm
                         style={
                             {
@@ -171,21 +175,23 @@ const TechSpecDocumentBlock = ({ project, onUpdated }) => {
                             <CustomMenuButton>Сгенерировать ТЗ</CustomMenuButton>
                         }
                     /> */}
-
-          <UploadFilePopconfirm
-            options={{ datePicker: true }}
-            title={"Укажите дату принятия"}
-            onUpdated={() => onUpdated()}
-            action={"project/upload/project_kp/page?projectId=" + project.id}
-            children={
-              <CustomMenuButton
-                className={"danger_text_btn"}
-                icon={<UploadOutlined />}
-                children={"Прикрепить ТЗ"}
-              />
-            }
-          />
-
+          <Badge.Ribbon text="В разработке" color="grey">
+            <UploadFilePopconfirm
+              disabled
+              options={{ datePicker: true }}
+              title={"Укажите дату принятия"}
+              onUpdated={() => onUpdated()}
+              action={"project/upload/project_kp/page?projectId=" + project.id}
+              children={
+                <CustomMenuButton
+                  disabled
+                  className={"danger_text_btn"}
+                  icon={<UploadOutlined />}
+                  children={"Отправить ТЗ"}
+                />
+              }
+            />
+          </Badge.Ribbon>
           <Modal
             key={nanoid()}
             open={contactModalStatus}

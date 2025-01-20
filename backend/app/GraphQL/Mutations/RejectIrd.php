@@ -6,19 +6,20 @@ use App\Models\ProjectIrds;
 
 final readonly class RejectIrd
 {
-    /** @param  array{}  $args */
-    public function __invoke(null $_, array $args)
-    {
-         $irdId = $args["irdId"];
- 
-        $projectIrd = ProjectIrds::find($irdId);
+     /** @param  array{}  $args */
+     public function __invoke(null $_, array $args)
+     {
+          $irdId = $args["irdId"];
 
-        $projectIrd->update([
-             'is_broken' => true,
-            'is_viewed' => true
-        ]);
-        $projectIrd->save();
+          $projectIrd = ProjectIrds::find($irdId);
 
-        return $projectIrd;
+          $projectIrd->update([
+               'is_broken' => true,
+               'acceptance_date' => null,
+               'is_viewed' => true
+          ]);
+          $projectIrd->save();
+
+          return $projectIrd;
      }
 }
