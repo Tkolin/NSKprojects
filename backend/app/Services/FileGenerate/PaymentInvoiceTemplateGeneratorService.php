@@ -73,12 +73,12 @@ class PaymentInvoiceTemplateGeneratorService extends DocumentGeneratorService
             'myOrg.director.position' => $myOrg['director']['position']['name'] ?? null,
             'myOrg.nameOrType' => $myOrg["legal_form"]['name'] . " " . $myOrg['name'],
             'myOrg.director.ShortFullName' => $myOrg['director']['last_name'] . ' ' .
-                substr((string)$myOrg['director']['first_name'], 0, 2) . '.' .
-                substr((string)$myOrg['director']['patronymic'], 0, 2) . '.',
+                substr((string) $myOrg['director']['first_name'], 0, 2) . '.' .
+                substr((string) $myOrg['director']['patronymic'], 0, 2) . '.',
             'projectOrganization.director.ShortFullName' => isset($projectData["organization_customer"]['director']) ?
                 $projectData["organization_customer"]['director']['last_name'] . ' ' .
-                substr((string)$projectData["organization_customer"]['director']['first_name'], 0, 2) . '.' .
-                substr((string)$projectData["organization_customer"]['director']['patronymic'], 0, 2) . '.' : '',
+                substr((string) $projectData["organization_customer"]['director']['first_name'], 0, 2) . '.' .
+                substr((string) $projectData["organization_customer"]['director']['patronymic'], 0, 2) . '.' : '',
             'projectOrganization.nameOrType' => isset($projectData["organization_customer"]) ?
                 $projectData["organization_customer"]["legal_form"]['name'] . " " . $projectData["organization_customer"]['name'] :
                 "(данные отсутствуют)",
@@ -119,9 +119,9 @@ class PaymentInvoiceTemplateGeneratorService extends DocumentGeneratorService
             'date_document' => $dateCreated,
             'document_number' => $orderNumber,
         ]);
-          ProjectStage::where("project_id","=",$projectData["id"])->where("number", "=", $stageNumber)
-        ->update(["payment_file_id"=> $projectFile->file_id ]) ;
+        ProjectStage::where("project_id", "=", $projectData["id"])->where("number", "=", $stageNumber)
+            ->update(["payment_file_id" => $projectFile->file_id]);
 
-         return $file->id;
+        return $file->id;
     }
 }

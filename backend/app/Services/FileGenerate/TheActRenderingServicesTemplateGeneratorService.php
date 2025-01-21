@@ -57,13 +57,19 @@ class TheActRenderingServicesTemplateGeneratorService extends DocumentGeneratorS
             'por.director.position' => $projectData["organization_customer"]['director']['position']['name'] ?? null,
             'myOrg.director.position' => $myOrg['director']['position']['name'] ?? null,
             'myOrg.nameOrType' => $myOrg["legal_form"]['name'] . " " . $myOrg['name'],
-            'myOrg.director.ShortFullName' => FormatterService::getFullName($myOrg['director']['last_name'],
+            'myOrg.director.ShortFullName' => FormatterService::getFullName(
+                $myOrg['director']['last_name'],
                 $myOrg['director']['first_name'],
-                $myOrg['director']['patronymic'], true),
+                $myOrg['director']['patronymic'],
+                true
+            ),
 
-            'projectOrganization.director.ShortFullName' => FormatterService::getFullName($projectData["organization_customer"]['director']['last_name'],
+            'projectOrganization.director.ShortFullName' => FormatterService::getFullName(
+                $projectData["organization_customer"]['director']['last_name'],
                 $projectData["organization_customer"]['director']['first_name'],
-                $projectData["organization_customer"]['director']['patronymic'], true) ?? null,
+                $projectData["organization_customer"]['director']['patronymic'],
+                true
+            ) ?? null,
 
             'projectOrganization.nameOrType' => isset($projectData["organization_customer"]) ? $projectData["organization_customer"]["legal_form"]['name'] . " " . $projectData["organization_customer"]['name'] : "(данные отсутвуют)",
             'projectOrganization.director.position' => $projectData["organization_customer"]['director']['position']['name'] ?? null,
@@ -116,9 +122,9 @@ class TheActRenderingServicesTemplateGeneratorService extends DocumentGeneratorS
             'date_document' => $dateCreated,
             'document_number' => $orderNumber,
         ]);
-        ProjectStage::where("project_id","=",$projectData["id"])->where("number", "=", $stageNumber)
-        ->update(["work_act_file_id"=> $projectFile->file_id ]) ;
- 
+        ProjectStage::where("project_id", "=", $projectData["id"])->where("number", "=", $stageNumber)
+            ->update(["work_act_file_id" => $projectFile->file_id]);
+
         return $file->id;
     }
 

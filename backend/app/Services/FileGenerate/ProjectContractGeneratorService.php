@@ -68,7 +68,6 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
             ];
         }
         $this->templateProcessor->cloneRowAndSetValues('project_irds.number', $table);
-«${actual_day}» ${month_name_lower}
 
         // Формируем массив для отображения в таблице
         $tableStage = [];
@@ -78,7 +77,7 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
             "projectStages.stage.duration" => '',
             "projectStages.stage.price" => "",
             "projectStages.stage.endPrice" => number_format(($projectData["price"] * $projectData["prepayment"] / 100), 0, ',', ' ') . " р.",
-            "projectStages.payDay" => "В течение 5 банковских дней с даты подписания договора",
+            "projectStages.payDay" => "",
         ];
         foreach ($projectData->project_stages as $projectStage) {
             $tableStage[] = [
@@ -87,7 +86,7 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
                 "projectStages.stage.duration" => $projectStage["duration"],
                 "projectStages.stage.price" => number_format($projectStage["price"], 0, ',', ' ') . " р.",
                 "projectStages.stage.endPrice" => number_format($projectStage["price_to_paid"], 0, ',', ' ') . " р.",
-                "projectStages.payDay" => "В течение 5 банковских дней с даты подписания акта",
+                "projectStages.payDay" => $projectStage["duration"] > 0 ? "Через " . $projectStage["duration"] . " дней после начала действий договора." : "Со дня начала действия договора",
             ];
         }
         $this->templateProcessor->cloneRowAndSetValues('projectStages.number', $tableStage);
@@ -95,7 +94,7 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
             throw new Exception("Ошибка данных заказчика");
         }
         $nclNameCaseRu = new NCLNameCaseRu();
- 
+
         $this->replacements = [
             'year' => date("Y"),
             'date_create_full' => $date_create_full ? mb_strtolower($date_create_full) : null,
