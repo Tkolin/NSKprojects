@@ -86,7 +86,13 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
                 "projectStages.stage.duration" => $projectStage["duration"],
                 "projectStages.stage.price" => number_format($projectStage["price"], 0, ',', ' ') . " р.",
                 "projectStages.stage.endPrice" => number_format($projectStage["price_to_paid"], 0, ',', ' ') . " р.",
-                "projectStages.payDay" => $projectStage["duration"] > 0 ? "Через " . $projectStage["duration"] . " дней после начала действий договора." : "Со дня начала действия договора",
+                "projectStages.payDay" =>
+                    strpos($projectStage["stage"]["name"], "эксперт")
+                    ?
+                    "После приемки и подписания актов Заказчиком"
+                    : ($projectStage["offset"] > 0 ? "Через " . $projectStage["offset"]
+                        . " дней после начала действий договора согласно разделам 2 и 5."
+                        : "Со дня начала действия договора согласно разделам 2 и 5"),
             ];
         }
         $this->templateProcessor->cloneRowAndSetValues('projectStages.number', $tableStage);
