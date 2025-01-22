@@ -96,12 +96,19 @@ class ExecutorOrder extends Model
     {
         return $this->belongsTo(File::class, 'signed_file_id', 'id');
     }
-    public function project(): BelongsTo
+    public function project()
     {
         $task = $this->project_tasks()->first();
 
         return $task ? $task->project : null;
     }
+    public function fetchProject()
+    {
+        $task = $this->project_tasks()->first();
+
+        return $task ? $task->project : null;
+    }
+
 
 
     public function executor_order_payments(): HasMany

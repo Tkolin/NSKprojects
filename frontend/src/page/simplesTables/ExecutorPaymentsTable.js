@@ -81,8 +81,11 @@ const TablePaymentExecutorOrdersComponent = ({
     useMutation(GENERATED_PAYMENT_FILE_IN_EXECUTROR_ORDER, {
       onCompleted: (data) => {
         openNotification("topRight", "success", "Договор отправленн на оплату");
-        console.log("generatedPaymentFile", data);
-        handleDownloadClick(data);
+        console.log(
+          "generatedPaymentFile",
+          data.generatedPaymentFileInExecutorOrder
+        );
+        handleDownloadClick(data.generatedPaymentFileInExecutorOrder);
       },
       onError: (error) => {
         openNotification(
