@@ -327,6 +327,7 @@ const MenuItems = [
         label: "Стадия: Подготовка к работе",
         key: "/project/waiting_start_work/table",
         icon: <HistoryOutlined />,
+        disabled: true,
         permission: ["read-project-work", "create-project-work"],
       },
       {

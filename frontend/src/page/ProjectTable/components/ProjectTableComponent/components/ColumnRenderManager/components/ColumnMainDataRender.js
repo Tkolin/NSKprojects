@@ -28,7 +28,7 @@ const ColumnMainDataRender = ({ text, record }) => {
           {record?.leader?.passport?.patronymic}{" "}
         </Text>
       ) : (
-        "Тип проекта не указан"
+        "Гип не указан"
       )}
       <Divider style={{ margin: "3px", marginBottom: 0 }} />
     </Space.Compact>

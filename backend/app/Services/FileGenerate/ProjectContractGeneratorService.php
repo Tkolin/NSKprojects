@@ -89,7 +89,7 @@ class ProjectContractGeneratorService extends DocumentGeneratorService
                 "projectStages.payDay" =>
                     strpos($projectStage["stage"]["name"], "эксперт")
                     ?
-                    "После приемки и подписания актов Заказчиком"
+                    "После приемки и подписания актов Заказчиком согласно разделам 2 и 5"
                     : ($projectStage["offset"] > 0 ? "Через " . $projectStage["offset"]
                         . " дней после начала действий договора согласно разделам 2 и 5."
                         : "Со дня начала действия договора согласно разделам 2 и 5"),

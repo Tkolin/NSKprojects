@@ -20,8 +20,7 @@ final readonly class SetTemplateProjectIrds
 
         $syncData = [];
         foreach ($stages as $stage) {
-            $syncData[(int)$stage["ird_id"]] = [
-                'received_date' => $stage["received_date"] ?? null,
+            $syncData[(int) $stage["ird_id"]] = [
                 'application_project' => $stage["application_project"] ?? null,
                 'stage_number' => $stage["stage_number"] ?? null,
             ];

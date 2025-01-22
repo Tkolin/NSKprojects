@@ -18,7 +18,7 @@ const Index = ({ record, onUpdated, itemOptions = [] }) => {
   }, [open]);
   return (
     <>
-      <Tooltip title={"Внести уточнения"}>
+      <Tooltip title={"Панель инструментов"}>
         <Button
           type={"text"}
           onClick={() => setOpen(!open)}
