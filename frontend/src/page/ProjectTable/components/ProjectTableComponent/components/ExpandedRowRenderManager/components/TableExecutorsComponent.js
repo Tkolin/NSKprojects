@@ -14,6 +14,9 @@ const TableExecutorsComponent = ({
   projectId,
   onUpdated,
 }) => {
+  const permissions = JSON.parse(localStorage.getItem("userPermissions")).map(
+    (row) => row.name_key
+  );
   const [executorOrderModalStatus, setExecutorOrderModalStatus] = useState();
   const { data, loading, refetch } = useQuery(PROJECT_TASKS_QUERY, {
     variables: {
@@ -92,7 +95,7 @@ const TableExecutorsComponent = ({
             const s = data?.projectTasks?.filter(
               (row) => row?.executor?.id === record?.executor.id
             );
-            return (
+            return permissions.includes("read-project-payments") ? (
               <Link
                 onClick={() =>
                   setExecutorOrderModalStatus({
@@ -103,6 +106,8 @@ const TableExecutorsComponent = ({
               >
                 Договора...
               </Link>
+            ) : (
+              <Text>Отказанно в доступе</Text>
             );
           },
         },

@@ -153,7 +153,6 @@ class Project extends Model
             case 'COMPLETED':
             case 'WAITING_SOURCE':
             case 'WORKING':
-                $result[] = ['comment' => 'Не реализованно'];
                 break;
         }
 

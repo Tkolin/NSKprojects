@@ -252,6 +252,10 @@ const App = () => {
                   element={<ProjectTable mode={"archive"} />}
                 />
                 <Route
+                  path="/project/completed"
+                  element={<ProjectTable mode={"completed"} />}
+                />
+                <Route
                   path="/project/request/form"
                   element={
                     <Space

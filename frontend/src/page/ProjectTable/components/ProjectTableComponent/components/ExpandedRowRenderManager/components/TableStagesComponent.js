@@ -25,6 +25,9 @@ const TableStagesComponent = ({
   options,
   onUpdated,
 }) => {
+  const permissions = JSON.parse(localStorage.getItem("userPermissions")).map(
+    (row) => row.name_key
+  );
   const { data, loading, refetch } = useQuery(PROJECT_STAGES_QUERY, {
     variables: {
       projectId: projectId,
@@ -59,11 +62,13 @@ const TableStagesComponent = ({
           <Tooltip title={"Список ИРД"}>
             <Text style={{ marginRight: 10 }}>Список этапов</Text>
           </Tooltip>
-          <Link type={"warning"}>
-            <EditOutlined
-              onClick={() => setEditModalStatus && setEditModalStatus()}
-            />
-          </Link>
+          {permissions.includes("read-project-payments") && (
+            <Link type={"warning"}>
+              <EditOutlined
+                onClick={() => setEditModalStatus && setEditModalStatus()}
+              />
+            </Link>
+          )}
         </Space>
       ),
       children: [

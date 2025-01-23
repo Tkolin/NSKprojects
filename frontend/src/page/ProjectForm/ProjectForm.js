@@ -88,6 +88,9 @@ const defaultViews = {
 };
 
 const ProjectForm = ({ onCompleted, project, type, options, cardProps }) => {
+  const permissions = JSON.parse(localStorage.getItem("userPermissions")).map(
+    (row) => row.name_key
+  );
   const [personModalStatus, setPersonModalStatus] = useState(null);
 
   const [requiredOptions, setRequiredOptions] = useState(defaultRequired.base);
@@ -516,63 +519,65 @@ const ProjectForm = ({ onCompleted, project, type, options, cardProps }) => {
                 placeholder={"Выберите статус проекта..."}
               />
             </Form.Item>
-            <Space.Compact
-              style={{ width: "100%" }}
-              data-permission="update-project-payments"
-            >
-              <Form.Item
-                name="price"
-                style={{
-                  ...(disabledOptions?.includes("price") &&
-                  disabledOptions?.includes("prepayment")
-                    ? { display: "none" }
-                    : {}),
-                  width: "100%",
-                }}
-                label="Стоимость"
-                rules={[
-                  {
-                    required: requiredOptions?.includes("price"),
-                    message: "Укажите стоимость",
-                  },
-                ]}
+            {permissions.includes("read-project-payments") && (
+              <Space.Compact
+                style={{ width: "100%" }}
+                data-permission="update-project-payments"
               >
-                <InputNumber
-                  suffix={"₽"}
-                  style={{ width: "100%" }}
-                  disabled={disabledOptions?.includes("price")}
-                  formatter={(value) =>
-                    `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                  }
-                  parser={(value) => `${value}`.replace(/[^0-9]/g, "")}
-                />
-              </Form.Item>
-              <Form.Item
-                name="prepayment"
-                style={{
-                  ...(disabledOptions?.includes("price") &&
-                  disabledOptions?.includes("prepayment")
-                    ? { display: "none" }
-                    : {}),
-                  width: "75px",
-                }}
-                label="Аванс"
-                rules={[
-                  {
-                    required: requiredOptions?.includes("prepayment"),
-                    message: "Укажите аванс",
-                  },
-                ]}
-              >
-                <InputNumber
-                  suffix={"%"}
-                  style={{ width: "100%" }}
-                  disabled={disabledOptions?.includes("prepayment")}
-                  min={0}
-                  max={100}
-                />
-              </Form.Item>
-            </Space.Compact>
+                <Form.Item
+                  name="price"
+                  style={{
+                    ...(disabledOptions?.includes("price") &&
+                    disabledOptions?.includes("prepayment")
+                      ? { display: "none" }
+                      : {}),
+                    width: "100%",
+                  }}
+                  label="Стоимость"
+                  rules={[
+                    {
+                      required: requiredOptions?.includes("price"),
+                      message: "Укажите стоимость",
+                    },
+                  ]}
+                >
+                  <InputNumber
+                    suffix={"₽"}
+                    style={{ width: "100%" }}
+                    disabled={disabledOptions?.includes("price")}
+                    formatter={(value) =>
+                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                    parser={(value) => `${value}`.replace(/[^0-9]/g, "")}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="prepayment"
+                  style={{
+                    ...(disabledOptions?.includes("price") &&
+                    disabledOptions?.includes("prepayment")
+                      ? { display: "none" }
+                      : {}),
+                    width: "75px",
+                  }}
+                  label="Аванс"
+                  rules={[
+                    {
+                      required: requiredOptions?.includes("prepayment"),
+                      message: "Укажите аванс",
+                    },
+                  ]}
+                >
+                  <InputNumber
+                    suffix={"%"}
+                    style={{ width: "100%" }}
+                    disabled={disabledOptions?.includes("prepayment")}
+                    min={0}
+                    max={100}
+                  />
+                </Form.Item>
+              </Space.Compact>
+            )}
           </Form>
 
           <Modal

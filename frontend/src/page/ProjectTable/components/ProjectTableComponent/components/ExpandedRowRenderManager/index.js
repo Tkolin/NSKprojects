@@ -24,6 +24,9 @@ import TableStagesComponent from "./components/TableStagesComponent";
 import TaskGanttChartComponent from "./components/TaskGanttChartComponent";
 
 const Index = ({ project, expandable, refetchProject, options }) => {
+  const permissions = JSON.parse(localStorage.getItem("userPermissions")).map(
+    (row) => row.name_key
+  );
   const [editModalStatus, setEditModalStatus] = useState();
   const [uniqueKey, setUniqueKey] = useState("");
   const getNameModalView = (type) => {
@@ -178,7 +181,8 @@ const Index = ({ project, expandable, refetchProject, options }) => {
                   },
                 ]
               : []),
-            ...(options.includes("executor_orders")
+            ...(options.includes("executor_orders") &&
+            permissions.includes("read-project-payments")
               ? [
                   {
                     key: project.id + "_tab_item_6",

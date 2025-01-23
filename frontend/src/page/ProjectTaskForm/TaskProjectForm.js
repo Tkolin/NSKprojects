@@ -23,6 +23,9 @@ const TaskProjectForm = ({
   cardProps,
   durationLock,
 }) => {
+  const permissions = JSON.parse(localStorage.getItem("userPermissions")).map(
+    (row) => row.name_key
+  );
   // Состояния
   const [form] = Form.useForm();
   const { openNotification } = useContext(NotificationContext);
@@ -215,24 +218,24 @@ const TaskProjectForm = ({
                 placeholder={"Кол-во затраченного времени"}
               />
             </FormItem>
-
-            <Form.Item
-              name="price"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              style={{ width: "100%" }}
-              label="Стоимость"
-              data-permission={"read-project-payments"}
-            >
-              <InputNumber
-                suffix={"₽"}
+            {permissions.includes("read-project-payments") && (
+              <Form.Item
+                name="price"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
                 style={{ width: "100%" }}
-                formatter={(value) =>
-                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                }
-                parser={(value) => `${value}`.replace(/[^0-9]/g, "")}
-              />
-            </Form.Item>
+                label="Стоимость"
+              >
+                <InputNumber
+                  suffix={"₽"}
+                  style={{ width: "100%" }}
+                  formatter={(value) =>
+                    `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  }
+                  parser={(value) => `${value}`.replace(/[^0-9]/g, "")}
+                />
+              </Form.Item>
+            )}
             <Form.Item label={"Исполнитель"} name={"executor"}>
               <CustomAutoComplete
                 typeData={"FIO"}

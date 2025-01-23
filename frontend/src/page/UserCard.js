@@ -33,6 +33,16 @@ export const UserCard = ({}) => {
       user: JSON.parse(localStorage.getItem("userData")),
     });
   }, []);
+  const [devMode, setDevMode] = useState(
+    localStorage.getItem("developer_mode") === "true"
+  );
+
+  // При клике меняем в localStorage и перезагружаем
+  const toggleDevMode = () => {
+    const newValue = !devMode;
+    localStorage.setItem("developer_mode", newValue ? "true" : "false");
+    window.location.reload(); // перезагрузить страницу
+  };
   const Out = () => {
     console.log("Данные кэша сброшены");
     setUser(null);
@@ -185,7 +195,10 @@ export const UserCard = ({}) => {
         <Text style={{ fontSize: "16px" }} strong>
           {user?.user?.name ?? "Неизвестно"}
         </Text>
-        <Button size="small" onClick={()=>}>Обновить</Button>
+        <Button onClick={toggleDevMode} data-permission={"dev"}>
+          {" "}
+          {devMode ? "Отключить Developer Mode" : "Включить Developer Mode"}
+        </Button>
         <Collapse
           items={[
             {

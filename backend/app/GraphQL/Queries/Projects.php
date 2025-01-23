@@ -90,28 +90,25 @@ final readonly class Projects
         // Фильтрация по статусу проекта
         if (isset($options['status_key'])) {
             error_log("projectExtraFilters status_key");
+            $result->where('status_id', "=", $options['status_key']);
+            // switch ($options['status_key']) {
+            //     case "PRE_WORK":
+            //         $result->whereIn('status_id', [
+            //             'DESIGN_REQUEST',
+            //             'APPROVAL_KP',
+            //             'APPROVAL_AGREEMENT'
+            //         ]);
+            //         break;
+            //     case "WORK":
+            //         $result->whereIn('status_id', [
+            //             'WAITING_START_WORK',
+            //             'WORKING'
+            //         ]);
+            //         break;
+            //     case "POST_WORK":
 
-            switch ($options['status_key']) {
-                case "PRE_WORK":
-                    $result->whereIn('status_id', [
-                        'DESIGN_REQUEST',
-                        'APPROVAL_KP',
-                        'APPROVAL_AGREEMENT'
-                    ]);
-                    break;
-                case "WORK":
-                    $result->whereIn('status_id', [
-                        'WAITING_START_WORK',
-                        'WORKING'
-                    ]);
-                    break;
-                case "POST_WORK":
-                    $result->whereIn('status_id', [
-                        'COMPLETED',
-                        'ARCHIVE',
-                    ]);
-                    break;
-            }
+            //         break;
+            // }
         }
 
         if (isset($options['delay_mode'])) {

@@ -25,6 +25,9 @@ import { CustomDatePicker } from "../../../../../../components/FormattingDateEle
 const { Text } = Typography;
 
 const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
+  const permissions = JSON.parse(localStorage.getItem("userPermissions")).map(
+    (row) => row.name_key
+  );
   const openNotification = (placement, type, message) => {
     notification[type]({
       message: message,
@@ -125,12 +128,13 @@ const TableIrdsComponent = ({ setEditModalStatus, projectId }) => {
           <Tooltip title={"Список ИРД"}>
             <Text style={{ marginRight: 10 }}>Список ИРД</Text>
           </Tooltip>
-
-          <Link type={"warning"}>
-            <EditOutlined
-              onClick={() => setEditModalStatus && setEditModalStatus()}
-            />
-          </Link>
+          {permissions.includes("read-project-payments") && (
+            <Link type={"warning"}>
+              <EditOutlined
+                onClick={() => setEditModalStatus && setEditModalStatus()}
+              />
+            </Link>
+          )}
         </Space>
       ),
       children: [

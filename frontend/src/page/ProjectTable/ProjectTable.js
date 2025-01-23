@@ -107,7 +107,7 @@ const template = {
         //  Компоненты скрытые в ...
         menu: ["contract", "tasks_management", "kp", "template", "files"],
         //  Кнопки быстрых действий
-        hotKey: ["archive"],
+        hotKey: ["archive", "up"],
       },
       //  Ключи колонок таблицы
       columns: ["main", "files", "duration"],
@@ -141,7 +141,31 @@ const template = {
   },
 
   archive: {
-    projectStatuses: ["ARCHIVE", "COMPLETED"],
+    projectStatuses: ["ARCHIVE"],
+    //  Параметры таблицы
+    column: {
+      //  Первая колонка кнопок управления таблицей
+      tool: {
+        //  Компоненты скрытые в ...
+        // menu: ["crud", "contract", "kp", "request", "files"],
+        //  Кнопки быстрых действий
+        // hotKey: ["archive", "up"],
+      },
+      //  Ключи колонок таблицы
+      columns: ["main", "files"],
+    },
+    //  Все компоненты в выпадающем меню
+    expandable: [
+      "stages",
+      "irds",
+      "executors",
+      "stages-extra",
+      "tasks",
+      "executor_orders",
+    ],
+  },
+  completed: {
+    projectStatuses: ["COMPLETED"],
     //  Параметры таблицы
     column: {
       //  Первая колонка кнопок управления таблицей

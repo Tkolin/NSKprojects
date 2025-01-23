@@ -6,7 +6,10 @@ import {
   ContactsOutlined,
   EyeOutlined,
   FileAddOutlined,
+  FileDoneOutlined,
+  FileExcelOutlined,
   FileProtectOutlined,
+  FolderOpenOutlined,
   FormOutlined,
   HistoryOutlined,
   HomeOutlined,
@@ -283,16 +286,11 @@ const MenuItems = [
         icon: <EyeOutlined />,
         permission: ["read-project-extra1"],
       },
-      {
-        label: "Архив",
-        key: "/project/archive",
-        icon: <EyeOutlined />,
-        permission: ["read-project-archive"],
-      },
+
       {
         label: "Документы к проектам",
         key: "/project/document",
-        icon: <EyeOutlined />,
+        icon: <FolderOpenOutlined />,
         permission: ["read-project-files"],
       },
       {
@@ -341,6 +339,18 @@ const MenuItems = [
         key: "/project/work/table",
         icon: <ReconciliationOutlined />,
         permission: ["read-project-work", "create-project-work"],
+      },
+      {
+        label: "Не актульные",
+        key: "/project/archive",
+        icon: <FileExcelOutlined />,
+        permission: ["read-project-archive"],
+      },
+      {
+        label: "Завершенные",
+        key: "/project/completed",
+        icon: <FileDoneOutlined />,
+        permission: ["read-project-archive"],
       },
     ],
   },
@@ -613,12 +623,12 @@ const MenuItems = [
 
 const MenuItemsByPermission = (currentUser) => {
   if (!currentUser) return [];
-  console.log("112 currentUser", currentUser.permissions);
   // Получаем список прав пользователя
   const userPermissions =
     currentUser?.permissions?.map((p) => p.name_key) ?? [];
 
   console.log(userPermissions);
+  const devMode = localStorage.getItem("developer_mode") === "true";
 
   const hasPermission = (userPermissions, requiredPermissions) => {
     return requiredPermissions.some((row) => userPermissions.includes(row));
@@ -635,6 +645,28 @@ const MenuItemsByPermission = (currentUser) => {
       })
       .map((item) => ({
         ...item,
+        label: devMode ? (
+          <div style={{ position: "relative" }}>
+            {item.label}
+            <br />
+            <div
+              style={{
+                position: "absolute",
+                top: 30,
+                right: 0,
+                backgroundColor: "rgb(0.3,0.3,0.3,0.02)",
+                color: "red",
+                fontSize: 10,
+              }}
+            >
+              {item?.permission?.map((row_second) => (
+                <p>{row_second}</p>
+              ))}
+            </div>
+          </div>
+        ) : (
+          item.label
+        ),
         children: item.children
           ? filterMenuItems(item.children, userPermissions)
           : null,

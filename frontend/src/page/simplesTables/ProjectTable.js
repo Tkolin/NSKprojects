@@ -422,16 +422,33 @@ const ProjectTable = ({ columnKey = "v1" }) => {
       name: "Все",
     },
     {
-      key: "PRE_WORK",
-      name: "Оформление преддоговорных",
+      key: "DESIGN_REQUEST",
+      name: "Запрос на проектирование",
+    },
+    {
+      key: "APPROVAL_KP",
+      name: "Согласование КП",
+    },
+    {
+      key: "APPROVAL_AGREEMENT",
+      name: "Согласование договора",
+    },
+
+    {
+      key: "WAITING_START_WORK",
+      name: "Подготовка к работе",
     },
     {
       key: "WORK",
       name: "В работе",
     },
     {
-      key: "POST_WORK",
-      name: "Не актуальные",
+      key: "ARCHIVE",
+      name: "Не актуален",
+    },
+    {
+      key: "COMPLETED",
+      name: "Завершён",
     },
   ];
   const options_delay = [

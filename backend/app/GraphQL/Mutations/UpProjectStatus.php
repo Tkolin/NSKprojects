@@ -16,8 +16,7 @@ final class UpProjectStatus
             2 => 'APPROVAL_KP',
             3 => 'APPROVAL_AGREEMENT',
             4 => 'WORKING',
-            5 => 'COMPLETED',
-            6 => 'ARCHIVE'
+            5 => 'COMPLETED'
         ];
 
         $id = $args['projectId'];
@@ -39,7 +38,6 @@ final class UpProjectStatus
             if (isset($statuses[$key + 1])) {
                 $project->status_id = $statuses[$key + 1];
             } else {
-                // Если следующий статус не существует, установить статус на ARCHIVE
                 $project->status_id = "ARCHIVE"; // ID статуса ARCHIVE
             }
 
@@ -57,14 +55,17 @@ final class UpProjectStatus
                     FormatterService::formatWithLeadingZeros($facilityC->code, 2) . '-' .
                     FormatterService::formatWithLeadingZeros($facilityB->code, 3) . '-' .
                     FormatterService::formatWithLeadingZeros($facilityA->code, 3);
-                $organizationCustomer = str_pad((string)$project->organization_customer_id, 3, '0', STR_PAD_LEFT);
+                $organizationCustomer = str_pad((string) $project->organization_customer_id, 3, '0', STR_PAD_LEFT);
                 $groupTypeCode = $project->type_project_document->group->code ?? "___";
                 // Убедитесь, что у вас есть счетчик проектов по организации
                 $projectCount = $project->organization_customer->project()->count();
-                $projectNumber = $groupTypeCode . '–24–' . str_pad((string)$projectCount, 2, '0', STR_PAD_LEFT) . '–' . $organizationCustomer . '–' . $facilityCode;
+                $projectNumber = $groupTypeCode . '–24–' . str_pad((string) $projectCount, 2, '0', STR_PAD_LEFT) . '–' . $organizationCustomer . '–' . $facilityCode;
 
                 $project->number = $projectNumber;
                 $project->path_project_folder = $projectNumber;
+            }
+            if ($project->status_id === "COMPLETED") {
+                $project->date_completion = date('Y-m-d');
             }
             $project->save();
             return $project;

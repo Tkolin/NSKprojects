@@ -9,6 +9,9 @@ import { CustomAutoComplete } from "./components/style/SearchAutoCompleteStyles"
 import { ModalButton } from "./simplesForms/formComponents/ModalButtonComponent";
 
 const ProjectLeaderForm = ({ cardProps, project, onCompleted }) => {
+  const permissions = JSON.parse(localStorage.getItem("userPermissions")).map(
+    (row) => row.name_key
+  );
   // Первичные данные
   const { openNotification } = useContext(NotificationContext);
   const [form] = Form.useForm();
@@ -60,40 +63,40 @@ const ProjectLeaderForm = ({ cardProps, project, onCompleted }) => {
       },
     });
   };
-
-  return (
-    <Card
-      style={{ width: 400 }}
-      {...cardProps}
-      actions={[
-        <ModalButton
-          modalType={"green"}
-          isMany={cardProps?.actions}
-          loading={loadingSave}
-          onClick={() => form.submit()}
-          children={`Обновить`}
-        />,
-        ...(cardProps?.actions ?? []),
-      ]}
-      children={
-        <Form form={form} onFinish={handleSubmit} layout="vertical">
-          <Divider>Назначьте главного на проекте</Divider>
-          <Form.Item name={"leader"} label="ГИП">
-            <CustomAutoComplete
-              loading={loadingPersons}
-              typeData="FIO"
-              style={{ width: "100%" }}
-              placeholder={"Выбор исполнителя..."}
-              data={dataPersons?.persons?.items.map((row) => ({
-                ...row.passport,
-                id: row.id,
-              }))}
-            />
-          </Form.Item>
-        </Form>
-      }
-    />
-  );
+  if (permissions.includes("read-project-payments"))
+    return (
+      <Card
+        style={{ width: 400 }}
+        {...cardProps}
+        actions={[
+          <ModalButton
+            modalType={"green"}
+            isMany={cardProps?.actions}
+            loading={loadingSave}
+            onClick={() => form.submit()}
+            children={`Обновить`}
+          />,
+          ...(cardProps?.actions ?? []),
+        ]}
+        children={
+          <Form form={form} onFinish={handleSubmit} layout="vertical">
+            <Divider>Назначьте главного на проекте</Divider>
+            <Form.Item name={"leader"} label="ГИП">
+              <CustomAutoComplete
+                loading={loadingPersons}
+                typeData="FIO"
+                style={{ width: "100%" }}
+                placeholder={"Выбор исполнителя..."}
+                data={dataPersons?.persons?.items.map((row) => ({
+                  ...row.passport,
+                  id: row.id,
+                }))}
+              />
+            </Form.Item>
+          </Form>
+        }
+      />
+    );
 };
 
 export default ProjectLeaderForm;
