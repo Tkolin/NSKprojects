@@ -578,8 +578,10 @@ export const ROLES_TABLE = gql`
     roles(queryOptions: $queryOptions) {
       items {
         name
+        name_key
         description
         permissions {
+          name_key
           name
           description
         }

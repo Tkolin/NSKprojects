@@ -185,6 +185,7 @@ export const UserCard = ({}) => {
         <Text style={{ fontSize: "16px" }} strong>
           {user?.user?.name ?? "Неизвестно"}
         </Text>
+        <Button size="small" onClick={()=>}>Обновить</Button>
         <Collapse
           items={[
             {

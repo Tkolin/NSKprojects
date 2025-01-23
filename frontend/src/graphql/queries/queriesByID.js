@@ -207,6 +207,20 @@ export const ORGANIZATIONS_QUERY_BY_ID = gql`
     }
   }
 `;
+export const ROLE_QUERY_BY_ID = gql`
+  query RoleQuery($id: ID) {
+    role(id: $id) {
+      name
+      name_key
+      description
+      permissions {
+        name_key
+        name
+        description
+      }
+    }
+  }
+`;
 export const ORGANIZATIONS_SHORT_QUERY_BY_ID = gql`
   query OrganizationsQueryByID($id: ID) {
     organizations(queryType: "BY_ID", id: $id) {

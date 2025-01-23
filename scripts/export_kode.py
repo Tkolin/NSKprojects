@@ -3,7 +3,7 @@ import csv
 from sqlalchemy import create_engine, inspect
 
 # Настройки подключения к базе данных
-DB_URL = "mysql+pymysql://root:root@localhost:3306/projectdatabase"
+DB_URL = "mysql+pymysql://root:root@localhost:3306/sibnipi"
 EXPORT_FOLDER = "exported_csv"
 
 # Создание подключения к базе данных

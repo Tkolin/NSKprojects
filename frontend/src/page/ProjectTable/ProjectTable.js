@@ -147,12 +147,12 @@ const template = {
       //  Первая колонка кнопок управления таблицей
       tool: {
         //  Компоненты скрытые в ...
-        menu: ["crud", "contract", "kp", "request", "files"],
+        // menu: ["crud", "contract", "kp", "request", "files"],
         //  Кнопки быстрых действий
-        hotKey: ["archive", "up"],
+        // hotKey: ["archive", "up"],
       },
       //  Ключи колонок таблицы
-      columns: ["main"],
+      columns: ["main", "files"],
     },
     //  Все компоненты в выпадающем меню
     expandable: [

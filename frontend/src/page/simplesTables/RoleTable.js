@@ -1,14 +1,13 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { Form, Input, Modal, Space, Table, Typography } from "antd";
+import { Button, Form, Input, Modal, Space, Table, Typography } from "antd";
 import { format } from "date-fns";
 import { nanoid } from "nanoid";
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
 import { DELETE_CONTACT_MUTATION } from "../../graphql/mutations/contact";
 import { ROLES_TABLE } from "../../graphql/queries/all";
 import { NotificationContext } from "../../NotificationProvider";
 import { StyledButtonGreen } from "../components/style/ButtonStyles";
-import ContactForm from "../simplesForms/ContactForm";
+import RoleForm from "../simplesForms/RoleForm/Index";
 const { Text } = Typography;
 const { Search } = Input;
 
@@ -68,9 +67,7 @@ const RoleTable = () => {
   });
 
   // Обработчик событий
-  const handleDelete = (contactId) => {
-    deleteContact({ variables: { id: contactId } });
-  };
+
   const onSearch = (value) => {
     setSearch(value);
   };
@@ -115,10 +112,14 @@ const RoleTable = () => {
       width: "10%",
       render: (text, record) => (
         <Space>
-          <>В разработке</>
-          <Link onClick={() => setUserRoleModalStatus({ id: record.id })}>
-            Изменить права доступа
-          </Link>
+          <Button
+            type="link"
+            onClick={() =>
+              setUserRoleModalStatus({ name_key: record.name_key })
+            }
+          >
+            Изменить
+          </Button>
         </Space>
         // <DeleteAndEditStyledLinkManagingDataTable
         //     title={"Удаление контакта"}
@@ -185,39 +186,26 @@ const RoleTable = () => {
           pageSizeOptions: ["10", "50", "100"],
         }}
       />
-      <Modal
-        key={contactModalStatus?.mode || contactModalStatus?.contact_id || null}
-        open={contactModalStatus}
-        onCancel={() => setContactModalStatus(null)}
-        footer={null}
-        width={"600px"}
-        title={"Организация"}
-        children={
-          <ContactForm
-            onCompleted={() => setContactModalStatus(null)}
-            initialObject={
-              contactModalStatus?.contact_id
-                ? { id: contactModalStatus?.contact_id }
-                : null
-            }
-          />
-        }
-      />
+
       <Modal
         key={[userRoleModalStatus?.id, nanoid()]}
         open={userRoleModalStatus}
-        onCancel={() => setContactModalStatus(null)}
+        onCancel={() => setUserRoleModalStatus(null)}
         footer={null}
-        width={"600px"}
+        width={"max-content"}
         title={"Список прав"}
         children={
-          <div></div>
-          // <UserRolesManager
-          //   onCompleted={() => setContactModalStatus(null)}
-          //   initialObject={
-          //     userRoleModalStatus?.id ? { id: userRoleModalStatus?.id } : null
-          //   }
-          // />
+          <RoleForm
+            onCompleted={() => {
+              setUserRoleModalStatus(null);
+              refetch();
+            }}
+            initialObject={
+              userRoleModalStatus?.name_key
+                ? { name_key: userRoleModalStatus?.name_key }
+                : null
+            }
+          />
         }
       />
     </div>

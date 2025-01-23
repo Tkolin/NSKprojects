@@ -31,14 +31,19 @@ type Role {
     name: String
     name_key: String
 }
+
 type Permission {
     name_key: String
+    created_at: String
+    updated_at: String
     name: String
+    group_key: String
     description: String
     group: PermissionGroup
 }
 type PermissionGroup {
     name_key: String
     name: String
+    comment: String
     permissions: [Permission]
 }

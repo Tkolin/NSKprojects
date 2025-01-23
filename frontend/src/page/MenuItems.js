@@ -284,6 +284,12 @@ const MenuItems = [
         permission: ["read-project-extra1"],
       },
       {
+        label: "Архив",
+        key: "/project/archive",
+        icon: <EyeOutlined />,
+        permission: ["read-project-archive"],
+      },
+      {
         label: "Документы к проектам",
         key: "/project/document",
         icon: <EyeOutlined />,
@@ -374,6 +380,12 @@ const MenuItems = [
     permission: ["dev"],
     children: [
       {
+        label: "Права доступа",
+        key: "/user/permissions/table",
+        icon: null,
+        permission: ["dev"],
+      },
+      {
         label: "Учётные записи",
         key: "/user/person",
         icon: null,
@@ -396,7 +408,7 @@ const MenuItems = [
         ],
       },
       {
-        label: "Роли и права доступа",
+        label: "Роли с правами доступа",
         key: "/user/role",
         icon: null,
         permission: ["dev"],

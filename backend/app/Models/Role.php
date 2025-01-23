@@ -34,8 +34,14 @@ class Role extends Model
      */
     public function permissions(): BelongsToMany
     {
-        return $this->belongsToMany(Permission::class, 'permission_role', 'role_id', 'permission_id');
+        return $this->belongsToMany(
+            Permission::class,
+            'permission_role',  // pivot-таблица
+            'role_id',         // внешний ключ на Role
+            'permission_id'    // внешний ключ на Permission
+        );
     }
+
     public function permission_groups(): BelongsToMany
     {
         return $this->belongsToMany(

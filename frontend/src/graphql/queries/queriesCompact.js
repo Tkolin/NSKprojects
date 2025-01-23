@@ -188,6 +188,7 @@ export const PERMISSIONS_QUERY_COMPACT = gql`
     }
   }
 `;
+
 export const ORGANIZATIONS_QUERY_COMPACT = gql`
   query OrganizationsQuery {
     organizations(queryType: "COMPACT") {

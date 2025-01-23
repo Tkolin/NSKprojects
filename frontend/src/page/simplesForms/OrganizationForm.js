@@ -415,6 +415,7 @@ const OrganizationForm = ({
                         label="ИНН"
                         rules={[
                           {
+                            required: true,
                             pattern: /^[\d\s]+$/,
                             message: "Пожалуйста, введите корректный номер ИНН",
                           },

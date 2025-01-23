@@ -38,6 +38,7 @@ import EquipmentModelTable from "./page/simplesTables/EquipmentModelTable";
 import EquipmentTypeTable from "./page/simplesTables/EquipmentTypeTable";
 import ExecutorPaymentsTable from "./page/simplesTables/ExecutorPaymentsTable";
 import ParameterTable from "./page/simplesTables/ParameterTable";
+import PermissionTable from "./page/simplesTables/PermissionTable";
 import PositionTable from "./page/simplesTables/PositionTable";
 import ReferenceTable from "./page/simplesTables/ReferenceTable";
 import RoleTable from "./page/simplesTables/RoleTable";
@@ -84,7 +85,6 @@ const App = () => {
                     />
                   }
                 />
-
                 <Route path="/references/bik" element={<Home />} />
                 <Route path="/references/bik/table" element={<BikTable />} />
                 <Route
@@ -246,6 +246,11 @@ const App = () => {
                   path="/project/request/table"
                   element={<ProjectTable mode={"request"} />}
                 />
+
+                <Route
+                  path="/project/archive"
+                  element={<ProjectTable mode={"archive"} />}
+                />
                 <Route
                   path="/project/request/form"
                   element={
@@ -293,6 +298,10 @@ const App = () => {
                 <Route path="/project/work/form" element={<Home />} />
                 {/*Учётки*/}
                 <Route path="/user/person/table" element={<UserTable />} />
+                <Route
+                  path="/user/permissions/table"
+                  element={<PermissionTable />}
+                />
                 <Route path="/user/role/table" element={<RoleTable />} />
                 <Route path="/auth/register" element={<RegisterForm />} />
                 <Route

@@ -14,6 +14,7 @@ extend type Query {
         queryType: String
         organizationId: ID
     ): RolesResult @checkRole(permission: ["dev"])
+    role(id: ID): Role @checkRole(permission: ["dev"])
 }
 # INPUTS:
 
@@ -29,6 +30,8 @@ type CurrentUser {
 extend type Mutation {
     register(input: RegisterInput!): AuthPayload!
     login(input: LoginInput!): AuthPayload!
+    createRole(data: RoleInput!): Role!
+    updateRole(data: RoleInput!, name_key: String!): Role!
 }
 # INPUTS:
 input RegisterInput {
@@ -39,6 +42,10 @@ input RegisterInput {
 input LoginInput {
     email: String
     password: String
+}
+input RoleInput {
+    name: String!
+    permission_keys: [ID]
 }
 # RESULTS:
 type AuthPayload {

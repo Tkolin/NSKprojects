@@ -296,7 +296,7 @@ type Organization {
     phone_number: String
     fax_number: String
     email: String
-    INN: String
+    INN: String!
     OGRN: String
     OKPO: String
     KPP: String
@@ -577,7 +577,7 @@ input PersonInput {
     birth_date: String
     date: String
     SHILS: String
-    INN: String
+    INN: String!
     payment_account: String
     phone_number: String!
     email: String
@@ -596,7 +596,7 @@ input OrganizationInput {
     phone_number: String
     fax_number: String
     email: String
-    INN: String
+    INN: String!
     OGRN: String
     OKPO: String
     KPP: String
