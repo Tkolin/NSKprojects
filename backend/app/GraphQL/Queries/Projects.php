@@ -90,7 +90,10 @@ final readonly class Projects
         // Фильтрация по статусу проекта
         if (isset($options['status_key'])) {
             error_log("projectExtraFilters status_key");
-            $result->where('status_id', "=", $options['status_key']);
+            if ($options['status_key'] == "ALL")
+                $result;
+            else
+                $result->where('status_id', "=", $options['status_key']);
             // switch ($options['status_key']) {
             //     case "PRE_WORK":
             //         $result->whereIn('status_id', [

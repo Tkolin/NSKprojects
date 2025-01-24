@@ -4,6 +4,7 @@ export const STATUS_PROJECTS_QUERY = gql`
   query StagesQuery($projectStatuses: [String]!) {
     projectsStatistic(projectStatuses: $projectStatuses) {
       project_ids
+      total_price
       status {
         name_key
         name

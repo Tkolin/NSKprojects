@@ -528,6 +528,7 @@ export const UP_STATUS_PROJECT = gql`
     }
   }
 `;
+
 export const CHANGE_TEMPLATE_TYPE_PROJECT = gql`
   mutation ChangeTemplateTypeProject($typeProject: ID!, $newTemplate: ID!) {
     changeTemplateTypeProject(

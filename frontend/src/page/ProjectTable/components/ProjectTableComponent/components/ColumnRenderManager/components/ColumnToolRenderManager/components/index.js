@@ -3,7 +3,6 @@ import ArchivedButton from "./components/ArchivedButton";
 import ExpandableButton from "./components/ExpandableButton";
 import MenuManager from "./components/MenuManager";
 
-import RemoveArchiveButton from "./components/RemoveArchiveButton";
 import UpButton from "./components/UpButton";
 // options: {
 //     //  Компоненты скрытые в ...

@@ -1,11 +1,12 @@
 import { useQuery } from "@apollo/client";
-import { Form, Input, notification, Select, Space, Table } from "antd";
+import { Alert, Form, Input, notification, Select, Space, Table } from "antd";
 import React, { useEffect, useState } from "react";
 import { StyledButtonGreen } from "../components/style/ButtonStyles";
 
 import { Option } from "antd/es/mentions";
 import dayjs from "dayjs";
 import { PROJECTS_QUERY } from "../../graphql/queries/all";
+import { STATUS_PROJECTS_QUERY } from "../../graphql/queries/queriesSpecial";
 import { formatToRub } from "../../utils/MoneyFormater";
 import ColumnDurationRender from "../ProjectTable/components/ProjectTableComponent/components/ColumnRenderManager/components/ColumnDurationRender";
 const { Search } = Input;
@@ -397,6 +398,17 @@ const ProjectTable = ({ columnKey = "v1" }) => {
   const handleChangeSelectedArchivedFilter = (selectedValue) => {
     setSelectedArchivedFilter(selectedValue);
   };
+  const {
+    loading: loadingStatus,
+    error: errorStatus,
+    data: dataStatus,
+    refetch: refetchStatus,
+  } = useQuery(STATUS_PROJECTS_QUERY, {
+    variables: {
+      projectStatuses: [selectedStatusFilter],
+    },
+  });
+
   useEffect(() => {
     console.log(
       "selectedStatusFilter, selectedDelayFilter",
@@ -409,7 +421,7 @@ const ProjectTable = ({ columnKey = "v1" }) => {
       queryOptions: { page, limit, search, sortField, sortOrder },
       projectExtraFilters: {
         delay_mode:
-          selectedStatusFilter !== "WORK"
+          selectedStatusFilter !== "WORKING"
             ? selectedDelayFilter || "ALL"
             : "ALL",
         status_key: selectedStatusFilter || "ALL",
@@ -439,7 +451,7 @@ const ProjectTable = ({ columnKey = "v1" }) => {
       name: "Подготовка к работе",
     },
     {
-      key: "WORK",
+      key: "WORKING",
       name: "В работе",
     },
     {
@@ -522,12 +534,25 @@ const ProjectTable = ({ columnKey = "v1" }) => {
                 <Option value={row.key}>{row.name}</Option>
               ))}
             </Select>
-            {selectedStatusFilter === "WORK" && (
+            {
+              <Alert
+                message={
+                  "Итого в группе: " +
+                  formatToRub(
+                    dataStatus?.projectsStatistic.reduce(
+                      (acc, row) => acc + (row.total_price || 0),
+                      0
+                    ) || 0
+                  )
+                }
+              ></Alert>
+            }
+            {selectedStatusFilter === "WORKING" && (
               <Space>
                 <span>Задержки:</span>
                 <Select
                   placeholder="Задержки"
-                  disabled={selectedStatusFilter !== "WORK"}
+                  disabled={selectedStatusFilter !== "WORKING"}
                   value={selectedDelayFilter}
                   defaultValue={"ALL"}
                   onChange={handleChangeSelectedDelayFilter}

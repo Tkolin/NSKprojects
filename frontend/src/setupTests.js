@@ -1,5 +1,9 @@
-// jest-dom adds custom jest matchers for asserting on DOM nodes.
-// allows you to do things like:
-// expect(element).toHaveTextContent(/react/i)
-// learn more: https://github.com/testing-library/jest-dom
-import '@testing-library/jest-dom';
+35000_[https://www.ozon.ru/product/asrock-videokarta-intel-arc-a770-challenger-16g-oc-16-gb-a770-cl-16go-1610362630/?at=VvtzZV5l5IlYlWZwHnpqo5WFlOornlUqGYGqRivGoPLo&avtc=1&avte=4&avts=1737685111&keywords=a770+arc | Intel_Arc_A770]
+16000_[https://www.dns-shop.ru/product/f00d752b9e6c2ff1/materinskaa-plata-asus-tuf-gaming-b450m-plus-ii/ | ASUS_TUF_GAMING_B450M-PLUS_II]
+8000_[https://www.dns-shop.ru/product/c13134cd7bf33332/operativnaa-pamat-adata-xpg-spectrix-d41-rgb-ax4u320016g16a-dt41-32-gb/ | ADATA_XPG_SPECTRIX_D41_RGB_32_ГБ]
+2000_[https://www.dns-shop.ru/product/85c93a0a16e5ed20/ventilator-id-cooling-fl-series-fl-12025-white/ | ID-COOLING_FL_Series]
+1000_[https://www.dns-shop.ru/product/82e35863490ded20/kuler-dla-processora-id-cooling-se-224-xt-b-lga1700/ | ID-COOLING_SE-224-XT-B]
+5000_[https://www.dns-shop.ru/product/0c5e1cab5a463330/blok-pitania-be-quiet-system-power-9-700w-bn248-cernyj/ | be_quiet_SYSTEM_POWER_9_700W]
+3000_[https://www.dns-shop.ru/product/b48c9330b8d9ed20/wi-fi-adapter--bluetooth-tp-link-archer-tx20e/ | Wi-Fi_адаптер_+_Bluetooth_TP-LINK_Archer_TX20E]
+4000_[https://www.ozon.ru/product/korpus-ginzzu-v400-matx-kubik-zakalennoe-steklo-rgb-podsvetka-1054357755/?avtc=1&avte=4&avts=1737685626 | Корпус_Ginzzu_V400_mATX]
+12000_[https://www.dns-shop.ru/product/6467bfc8fbfded20/processor-amd-ryzen-5-5600g-oem/ | AMD_Ryzen_5_5600G]

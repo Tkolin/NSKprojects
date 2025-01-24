@@ -14,13 +14,6 @@ final readonly class ChangeProjectStatus
         $statusKey = $args['statusKey'];
         $project = Project::find($id);
         $project->status_id = $statusKey;
-        switch ($statusKey) {
-            case 'WORKING': {
-                if (!isset($args['dateStart']))
-                    return throwException("need dateStart");
-                $project->date_start = $args['dateStart'];
-            }
-        }
         $project->save();
         return $project;
     }

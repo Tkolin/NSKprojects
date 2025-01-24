@@ -45,6 +45,7 @@ type ProjectTSValue {
 }
 type ProjectStatistic {
     status: ProjectStatus
+    total_price: Float
     project_ids: [ID]
 }
 #

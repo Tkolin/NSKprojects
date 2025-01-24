@@ -149,7 +149,7 @@ const template = {
         //  Компоненты скрытые в ...
         // menu: ["crud", "contract", "kp", "request", "files"],
         //  Кнопки быстрых действий
-        // hotKey: ["archive", "up"],
+        hotKey: ["remove-archive"],
       },
       //  Ключи колонок таблицы
       columns: ["main", "files"],

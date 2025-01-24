@@ -47,8 +47,24 @@ const TemplatesStageForm = ({ project, onCompleted }) => {
           {data?.projects?.items
             ?.filter((row) => row.project_stages.length > 0)
             .map((row) => (
-              <Select.Option key={row.id} value={row.id}>
-                {row.name}
+              <Select.Option
+                style={{
+                  width: "400px",
+                  wordWrap: "break-word",
+                  textWrap: "auto",
+                }}
+                key={row.id}
+                value={row.id}
+              >
+                <span
+                  style={{
+                    width: "400px",
+                    wordWrap: "break-word",
+                    textWrap: "auto",
+                  }}
+                >
+                  {row.name}
+                </span>
               </Select.Option>
             ))}
         </Select>
